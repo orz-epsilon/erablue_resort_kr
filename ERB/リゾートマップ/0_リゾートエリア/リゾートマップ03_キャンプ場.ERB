@@ -1,0 +1,332 @@
+
+
+@マップ紹介_3
+;とりあえず5行
+PRINTFORML ※소개글 모집 중※
+PRINTFORML 
+PRINTFORML 
+PRINTFORML 
+PRINTFORML 
+
+
+@MAP_RESORT_0_3(AA)
+#DIMS REF AA, 0
+
+
+AA:00 = 山山山山山山山木木木木川川川木木木木木木山山山山山木木木木木木木木木木木木木
+AA:01 = 山山山山山木木木木　　川川川　　　　木木木山山山木木木木木木　　　　　木木木
+AA:02 = 山山木木木木木　　　川川川川　　　　　　木木木木木　　　　　　　　　　　　木
+AA:03 = 山木木木木木　　　　川川川　　　　　　　　　木木　　　　　　　　　　　　　
+AA:04 = 木木木木　　　　　　川川川──┐　　　　　　　　　　　　　┌─────┐　→02
+AA:05 = 木木木　　　　　　川川川川　　│　　　　　　　　　　　　　│　　　　　│
+AA:06 = 木木　　　　　　　川川川　　　│　　　　　　　　　　　　　│　　03　　│
+AA:07 = 木　　　　　　　　川川川　05　│　　　　　　　　　　　　　│　　　　　│
+AA:08 = 木　　　　　　　　川川川　　　│　　　　　　　　　　　　　└─────┘
+AA:09 = 木　　　　　　　　川川川───┘　　　　　　　　　　　　　　　　　　　　　木
+AA:10 = 　　　　　　　　　川川川　　　　　　　　　　　　　　　　　　　　　　　　　木
+AA:11 = 　　　　　　　　川川川　　　　　　　　　　　　　　　　　　　　　　　　　木木
+AA:12 = 　　　　　　　　川川川　　　　　　　　　　　　　┌─┐　　　　　　　　　木木
+AA:13 = 　　　　　　　　川川川　　　　　　　　　　　　　│07│　　　　　　　　　　木
+AA:14 = 　　　　　　　川川川川川　　　　　　　　　　　　└─┘　　　　　　　　　　木
+AA:15 = 　　　　　湖湖湖湖湖湖湖湖湖　　┌─┐
+AA:16 = 　　　湖湖湖湖湖湖湖湖湖湖湖湖湖│06│
+AA:17 = 　　　湖湖湖湖湖湖湖湖湖湖湖湖湖└─┘
+AA:18 = 　　　湖湖湖湖湖湖湖湖湖湖湖湖湖
+AA:19 = 　　　　湖湖湖湖湖湖湖湖湖湖湖　　　　　　　┌─────────┐
+AA:20 = 　　　　　湖湖湖湖湖湖湖湖湖　　　　　　　　│　　　　　　　　　│　　　　木
+AA:21 = 木　　　　　　湖湖湖湖湖　　　　　　　　　　│　　　　04　　　　│　　　　木
+AA:22 = 木　　　　　　　川川川　　　　　　　　　　　│　　　　　　　　　│　　　木木
+AA:23 = 木　　　　　　川川川川　　　　　　　　　　　└─────────┘　　木木木
+AA:24 = 木木　　　　　川川川　　　　　　　　　　　　　　　　　　　　　　木木木木木木
+AA:25 = 木木木　　　川川川川　　　　　　　　　　　　　　　　　　　　　木木木木木木木
+AA:26 = 
+AA:27 = 二：ロビーへ　　　　　三：メインテント　　　四：バーベキューエリア
+AA:28 = 五：渓流エリア　　　　六：サウナテント　　　七：キャンプファイアー
+
+IF 施設改造度:3:8 > 0
+	AA:10 = 　┌────┐　　川川川　　　　　　　　　　　　　　　　　　　　　　　　　木
+	AA:11 = 　│　　　　│　川川川　　　　　　　　　　　　　　　　　　　　　　　　　木木
+	AA:12 = 　│　08　　│　川川川　　　　　　　　　　　　　┌─┐　　　　　　　　　木木
+	AA:13 = 　│　　　　│　川川川　　　　　　　　　　　　　│07│　　　　　　　　　　木
+	AA:14 = 　└────┘川川川川川　　　　　　　　　　　　└─┘　　　　　　　　　　木
+
+	AA:29 = 八：訓練場
+ENDIF
+
+@GETPLACENAME_0_3(ARG)
+#FUNCTION
+SELECTCASE ARG
+	CASE 302
+		TSTR:場所名受渡 = 로비
+	CASE 303
+		TSTR:場所名受渡 = 메인 텐트
+	CASE 304
+		TSTR:場所名受渡 = 바비큐 구역
+	CASE 305
+		TSTR:場所名受渡 = 계곡 구역
+	CASE 306
+		TSTR:場所名受渡 = 사우나 텐트
+	CASE 307
+		TSTR:場所名受渡 = 캠프파이어
+	CASE 308
+		IF 施設改造度:3:8 > 0
+			TSTR:場所名受渡 = 훈련장
+		ENDIF
+ENDSELECT
+
+
+@DRAW_MAP_BG_0_3(SLICED, 表示文字列)
+#DIMS REF 表示文字列
+#DIMS SLICED
+SELECTCASE SLICED
+;色つけたいときはこんな感じ
+CASE "木", "竹"
+	表示文字列 += @"<font color='#90EE90'>%SLICED%</font>"
+CASE "山"
+	表示文字列 += @"<font color='#5C985C'>%SLICED%</font>"
+CASE "川", "湖"
+	表示文字列 += @"<font color='#5C5CFF'>%SLICED%</font>"
+;違う文字を表示させる例
+;下部一覧の数字を三桁表示しつつボタン化させる
+CASE "二"
+	表示文字列 += @"<button value='302'>302</button>"
+CASE "三"
+	表示文字列 += @"<button value='303'>303</button>"
+CASE "四"
+	表示文字列 += @"<button value='304'>304</button>"
+CASE "五"
+	表示文字列 += @"<button value='305'>305</button>"
+CASE "六"
+	表示文字列 += @"<button value='306'>306</button>"
+CASE "七"
+	表示文字列 += @"<button value='307'>307</button>"
+CASE "八"
+	表示文字列 += @"<button value='308'>308</button>"
+;ふつうの
+CASEELSE
+	表示文字列 += @"%SLICED%"
+ENDSELECT
+
+;サウナテントにいる場合の特殊イベント
+@COM_END_PLACEEVENT_0_306
+
+;別の場所からサウナに来たならまず熱気ゲージリセット
+IF CFLAG:MASTER:前ターン位置 != CFLAG:MASTER:現在位置
+	PRINTL 사우나 안에서는 후끈한 열기가 풍겨온다
+	PRINTW 오랫동안 머무를 수는 없을 것이다
+	熱気ゲージ = 0
+	RETURN 0
+ENDIF
+
+;特定のコマンドの場合実行しない（移動、覗く、川で冷やした場合）
+SIF SELECTCOM == 400 || SELECTCOM == 404 || SELECTCOM == 380
+	RETURN 0
+
+;オートコマンド時は発動しない
+SIF TFLAG:オートコマンドフラグ
+	RETURN 0
+
+;サウナにいるキャラ全員の歓楽と露出と苦痛を少量増加させる。水で冷やしたターンは増加しない。
+;その場に居るTARGET全員で回す
+IF 熱気ゲージ >= 0
+	LOCAL:1 = TARGET
+	FOR LOCAL,1,CHARANUM
+		SIF TARGET:LOCAL <= 0
+			CONTINUE
+		SIF CFLAG:(TARGET:LOCAL):睡眠
+			CONTINUE
+		SIF CFLAG:(TARGET:LOCAL):隠密
+			CONTINUE
+		TARGET = TARGET:LOCAL
+		
+		CALL SOURCE_CALC_歓楽(TARGET, PLAYER, 70)
+		CALL SOURCE_CALC_苦痛(TARGET, PLAYER, 20)
+		CALL SOURCE_CALC_露出(TARGET, PLAYER, 30)
+	NEXT
+	TARGET = LOCAL:1
+ENDIF
+
+;熱気ゲージを増加させ、値により反応を返す。水で冷やしたターンは増加しない。
+;具体的な数値は表示しない隠しパラメータとする
+
+熱気ゲージ += RAND:15 + 20
+DRAWLINE
+SELECTCASE 熱気ゲージ
+	CASE IS < 20
+		;0～19
+		PRINTL 아직은 여유롭게 사우나에 있을 수 있을 것 같다.
+		RETURN 0
+	CASE IS < 40
+		;20～39
+		PRINTL 몸이 기분 좋게 따뜻해졌다.
+		RETURN 0
+	CASE IS < 60
+		;40～59
+		PRINTL 뜨거워졌다. 슬슬 식히는 편이 좋을지도 모른다.
+		RETURN 0
+	CASE IS < 80
+		;60～79
+		PRINTL 꽤 뜨겁다!
+		PRINTL 머리가 멍해졌다…
+		RETURN 0
+	CASE IS < 100
+		;80～99
+		;サウナに弱いだとギブアップ
+		IF TALENT:MASTER:サウナ耐性 == -1
+		ELSE
+			PRINTL 한계 아슬아슬하다!
+			PRINTL 몸을 식힐 만한 것은 없을까?
+			RETURN 0
+		ENDIF
+	CASEELSE
+		;100～
+		;通常時ギブアップ
+		IF TALENT:MASTER:サウナ耐性 == 1 && 熱気ゲージ < 120
+			PRINTL 한계 아슬아슬하다!
+			PRINTL 몸을 식힐 만한 것은 없을까?
+			RETURN 0
+		ENDIF
+ENDSELECT
+
+
+PRINTL 이제 안 돼!
+PRINTFORML %CALLNAME:MASTER%은(는) 더위를 견디지 못하고 사우나에서 뛰쳐나왔다!
+PRINTL 다른 곳에서 잠시 식히고, 겨우 몸의 열기가 가라앉았다…
+
+TIME += 30
+CFLAG:MASTER:現在位置 = 303
+;隠密時解除
+CFLAG:MASTER:隠密 = 0
+CFLAG:TARGET:隠密 = 0
+CALL うふふ終了処理("サウナ限界")
+RETURN 1
+
+
+@庭系列改造メニュー()
+#FUNCTIONS
+;100~199と999は大本のメニュー操作で使うため、使用しないこと
+
+LOCALS = 리조트 하우스에서 이어지는 야외 주변을 개조합니다. <br><br>
+IF 施設改造度:3:0 < 1
+	LOCALS += @"■<button value='200'>[캠프장 개조]</button> Lv{施設改造度:3:0}>{施設改造度:3:0 + 1} (필요:150,000루피)<br>"
+ELSE
+	LOCALS += @"■[캠프장 개조] Lv{施設改造度:3:0}: 상한<br>"
+ENDIF
+IF 施設改造度:3:0 > 0 && 施設改造度:3:8 < 1
+	LOCALS += @"└■<button value='201'>[훈련장을 증축한다]</button> (필요:80,000루피)<br>"
+ELSEIF 施設改造度:3:8 > 0
+	LOCALS += @"└■[훈련장을 증축한다] 증축 완료<br>"
+ENDIF
+
+RETURNF LOCALS
+
+@庭系列改造実行関数(ARG)
+
+SELECTCASE ARG
+	CASE 200
+		DRAWLINE
+		PRINTL 정원이 캠프장이 되고, 다음 시설이 도입됩니다.
+		PRINTBUTTON "■캠프장 개별 맵 해방", 300
+		PRINTL 
+		PRINTBUTTON "■메인 텐트 도입", 301
+		PRINTL 
+		PRINTBUTTON "■바비큐장 도입", 302
+		PRINTL 
+		PRINTBUTTON "■계곡 지역 도입", 303
+		PRINTL 
+		PRINTBUTTON "■사우나 텐트 도입", 304
+		PRINTL 
+		PRINTBUTTON "■캠프파이어 도입", 305
+		PRINTL 
+		PRINTL 
+		PRINTL 정원을 캠핑장으로 개조하시겠습니까? (필요:150,000루피)
+		PRINTBUTTONLC "[0] 예", 0
+		PRINTBUTTONLC "[1] 아니요", 1
+		BINPUT
+		SELECTCASE RESULT
+			CASE 0
+				IF MONEY < 150000
+					PRINTW 루피가 부족합니다.
+					RETURN
+				ENDIF
+				施設改造度:3:0 = 1
+				MONEY -= 150000
+				PRINTL 정원을 캠핑장으로 개조했습니다!
+				PRINTW (滞在キャラ上限＋５)
+				CALL 滞在可能キャラ数再計算
+				CALL RESET_GRAPH_0
+				CALL 履歴データベース登録(CFLAG:MASTER:人物番号, @"庭をキャンプ場Lv1に改造した","実績")
+				RETURN
+			CASE 1
+				RETURN
+			CASE 300
+				DRAWLINE
+				PRINTL 맵 해방으로, 캠핑장으로 이동하면 개별 맵으로 이동하게 됩니다.
+				PRINTL 개조가 진행되면 맵이 더욱 확장되어 내부 시설을 강화할 수 있게 됩니다. (미구현입니다)
+				PRINTW
+			CASE 301
+				DRAWLINE
+				PRINTL 캠핑의 거점이 되는 큰 텐트입니다.
+				PRINTL 모닥불을 둘러싸고 느긋하게 보낼 수 있습니다.
+				PRINTL 또한, 캠핑 중인 캐릭터는 야간에 이곳에서 수면하게 됩니다.
+				PRINTW
+			CASE 302
+				DRAWLINE
+				PRINTL 고기나 생선 등이 준비된 바비큐 구역입니다.
+				PRINTL 요리나 음주가 가능하므로, 캠핑 중인 캐릭터는 점심・저녁을 이곳에서 먹게 됩니다.
+				PRINTL 또한, 야간에는 이곳에서 연회를 하는 캐릭터도 있을 것입니다. (미구현입니다)
+				PRINTW 
+			CASE 303
+				DRAWLINE
+				PRINTL 깨끗한 강에서 놀 수 있는 계류 구역입니다.
+				PRINTL 느긋하게 낚시를 즐기거나, 물놀이로 즐겁게 시간을 보낼 수 있습니다.
+				PRINTW 
+			CASE 304
+				DRAWLINE
+				PRINTL 사우나를 즐길 수 있는 텐트 시설입니다.
+				PRINTL 뛰어들 수 있는 차가운 호수와 함께 있습니다.
+				PRINTW 
+			CASE 305
+				DRAWLINE
+				PRINTL 매우 크게 타오르는 불꽃과, 그것의 골조입니다.
+				PRINTL 18시 이전에는 불꽃이 붙어있지 않습니다.
+				PRINTL 밤이 되면 많은 캐릭터가 이곳에 모일 것입니다.
+				PRINTW 
+		ENDSELECT
+		RESTART
+	CASE 201
+		DRAWLINE
+		PRINTL 캠프장 외곽에 훈련장이 도입됩니다.
+		PRINTL 훈련장을 도입하면, 장기 고용 중인 캐릭터가 하루의 끝에 경험치를 얻게 됩니다.
+		PRINTL 또한 직원 업무 분배에 「훈련」이 추가되어, 하루의 끝에 경험치를 얻을 수 있게 됩니다.
+		PRINTL 단, 둘 다 「모든 캐릭터 중 가장 높은 레벨」까지만 상승합니다.
+		PRINTL 
+		PRINTL 훈련장을 도입하시겠습니까? (필요:80,000루피)
+		PRINTBUTTONLC "[0] 예", 0
+		PRINTBUTTONLC "[1] 아니요", 1
+		INPUT
+		SELECTCASE RESULT
+			CASE 0
+				IF MONEY < 80000
+					PRINTW 루피가 부족합니다.
+					RETURN
+				ENDIF
+				施設改造度:3:8 = 1
+				MONEY -= 80000
+				PRINTL 훈련장을 도입했습니다!
+				PRINTW (滞在キャラ上限＋５)
+				CALL 滞在可能キャラ数再計算
+				CALL RESET_GRAPH_0
+				RETURN
+			CASE 1
+				RETURN
+		ENDSELECT
+		RESTART
+ENDSELECT
+
+
+
+
+
+
+

@@ -1,0 +1,72 @@
+
+@イベント発生条件_サブイベント_「平行世界」という場所
+;開放条件を満たしたら1を返すこと
+SIF GETBIT(ダンジョン構造配列_人食い鳥の島:11:4, 2) == 0
+	RETURN 0
+SIF ダンジョンクリアフラグ_人食い鳥の島 == 0
+	RETURN 0
+RETURN 1
+
+@イベント関数_サブイベント_「平行世界」という場所(ARG)
+DRAWLINE
+PRINTL ［「평행세계」라는 장소］
+DRAWLINE
+PRINTW
+PRINTFORMW %CALLNAME:PLAYER%은(는) 성정수 era를 동반하여, 식인조를 물리친 섬을 방문하고 있었다.
+PRINTFORMW 목적은 동굴 안에 있던 의문의 문이다.
+PRINTFORMW 꽤 오래된 것 같고, 밀어도 당겨도 꼼짝도 하지 않는다.
+PRINTFORMW 현재 아무것도 일어날 기미는 없지만, 위험한 것이 아닌지 조사하기 위해, %CALLNAME:PLAYER%은(는) 성정수의 지식을 빌렸던 것이다.
+PRINTL
+PRINTFORMW 문 앞에 도착하자, 성정수 era는 살짝 소리를 내며 놀랐다.
+PRINTL
+CALL 画像表示("顔エラ","LEFT",,,,1,)
+PRINTL 성정수 era:
+PRINTFORMW 「저승의 문인가. 이런 곳에 남아있었다니, 몰랐군」
+PRINTL
+PRINTFORMW 아는 것인가? 라고 %CALLNAME:PLAYER%은(는) era에게 물었다.
+PRINTL
+PRINTL 성정수 era:
+PRINTFORMW 「아아, 아주 먼 옛날, 별의 백성들과 하늘의 백성들 모두와 적대했던 존재가 만든 것이다
+PRINTFORMW 　평행세계를 건너, 타자의 존재를 지워버리면서 세계를 멸망시키려 했던 자들
+PRINTFORMW 　……이 세계에서는 패공전쟁 무렵에 나타나 레기온 보이드(Legion Void)를 만들었지만, 어떤 영웅들에게 패배하여……
+PRINTFORMW 　뭐, 자세한 건 됐고
+PRINTFORMW 　중요한 것은 이 문은 평행세계를 잇는 힘이 있다는 것. 과거의 침략자가 남긴 것이라는 것이다」
+PRINTL
+PRINTFORMW %CALLNAME:PLAYER%은(는) 잠시 생각하고, era에게 말을 건다.
+PRINTBUTTON "[0]위험한 것이라면, 파괴하는 편이 좋을 것 같다", 0
+PRINTL
+PRINTBUTTON "[1]세계를 잇는다는 것은 대단한 힘이다. 무언가에 쓸 수 없을까", 1
+PRINTL
+BINPUT
+SELECTCASE RESULT
+	CASE 0
+		PRINTL
+		PRINTL 성정수 era:
+		PRINTFORMW 「아니…… 오히려, 이쪽에서 사용하는 편이 좋을지도 모르겠네
+		PRINTFORMW 　파괴해도 존재했다는 흔적은 남는다. 저승이 재침공을 꾀한다면, 파편을 발판으로 삼는 것은 쉬울 것이다
+		PRINTFORMW 　그렇다면 적극적으로 우리가 사용함으로써 존재를 덮어쓰는 거야. '저승의 문'에서 '우리의 문'으로 말이야」
+		PRINTL
+		PRINTL 성정수 era:
+		PRINTFORMW 「……감이 오지 않는 모양이군. 즉 편리하게 사용하라는 것이다, 나의 계약자여」
+ENDSELECT
+PRINTL
+PRINTL 성정수 era:
+PRINTFORMW 「이 문에 ZP를 부으면, 다른 평행세계와 길을 이을 수 있을 것이다
+PRINTFORMW 　그 세계에도 인간은 있을 것이고, 리조트에 초대하면 ZP를 산출할 수도 있을 것이다……
+PRINTFORMW 　뭐, 즉 평소와 같다. 좋아하는 상대를 고르고, 원하는 대로 행동해라
+PRINTFORMW 　문을 사용할 권한은 너에게 부여해 둘게. 여러 가지 시도해 보는 것이 좋다」
+PRINTL
+SETCOLOR 0xFFFF00
+PRINTFORML ZP 상점의 「특별한 캐릭터를 초대 후보에 추가」에, 새로운 캐릭터가 등록되었습니다.
+RESETCOLOR
+FORCEWAIT
+
+CALL イベント完了フラグ汎用処理("「平行世界」という場所")
+
+
+
+
+
+
+
+

@@ -1,0 +1,707 @@
+@従業員仕事割り振り
+#DIM 従業員一覧, 500
+#DIM ソート配列, 500
+#DIM ページ数
+#DIM 変更キャラ
+#DIMS 屋号保存
+#DIM ソートタイプ
+#DIMS 改行判定文字列
+#DIM 空き店舗あり
+#DIMS 常駐業務名
+#DIM 固有仕事数
+#DIMS 固有仕事配列, 50
+#DIMS 固有仕事名
+#DIM 固有仕事キー
+
+変更キャラ = -1
+
+$表示ループ
+VARSET 従業員一覧, -1
+VARSET ソート配列
+VARSET 仕事人数表示用
+
+DRAWLINE
+PRINTL 직원이 수행할 업무를 설정합니다.
+PRINTL ※개발 중이므로, 업무가 올바르게 작동하지 않을 수 있습니다.
+DRAWLINE
+LOCALS = <div rect='81,31,1937,3762' border='31' bcolor='#C0C0C0'></div><div rect='2050,710,3875,3080' border='31' bcolor='#C0C0C0'></div>
+
+;現在いる従業員を配列へ
+従業員一覧:0 = 0
+LOCAL:1 = 1
+仕事人数表示用:(現在仕事:0:0) += 1
+ソート配列:0 = 現在仕事:0:0 * 100 + 現在仕事:0:1 + 1
+FOR LOCAL, 1, CHARANUM
+	SIF TALENT:LOCAL:従業員 == 0
+		CONTINUE
+	従業員一覧:(LOCAL:1) = LOCAL
+	SIF 現在仕事:LOCAL:0 >= 0 && 現在仕事:LOCAL:0 < 100000
+		仕事人数表示用:(現在仕事:(従業員一覧:(LOCAL:1)):0) += 1
+	IF 現在仕事:LOCAL:0 == -1
+		ソート配列:(LOCAL:1) = 99999
+	ELSE
+		ソート配列:(LOCAL:1) = 現在仕事:LOCAL:0 * 100 + 現在仕事:LOCAL:1 + 1
+	ENDIF
+	LOCAL:1 += 1
+NEXT
+IF ソートタイプ
+	ARRAYMSORT ソート配列, 従業員一覧
+ENDIF
+
+;一覧表示
+LOCALS += "<div rect='156,156,1737,3662'><nobr>"
+FOR LOCAL, ページ数 * 17, ページ数 * 17 + 17
+	IF 従業員一覧:LOCAL < 0
+		LOCALS += "<br>"
+		CONTINUE
+	ENDIF
+	IF 現在仕事:(従業員一覧:LOCAL):0 == -1
+		LOCALS += @"<font color='#%カラーパレット_HTML("グレーアウト")%'><nonbutton>%CALLNAME:(従業員一覧:LOCAL), 16, LEFT%[상점 경영]</nonbutton></font>"
+	ELSE
+		SIF 変更キャラ == 従業員一覧:LOCAL
+			LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'>"
+		LOCALS += @"<button value='{LOCAL}'>%CALLNAME:(従業員一覧:LOCAL), 16, LEFT%[%現在仕事数字文字列変換(現在仕事:(従業員一覧:LOCAL):0, 0, 従業員一覧:LOCAL)%"
+		IF 現在仕事:(従業員一覧:LOCAL):0 == 2
+			LOCALS = %SUBSTRING(LOCALS, 0, STRLENS(LOCALS) - 4)%
+			IF 現在仕事:(従業員一覧:LOCAL):1 >= 10003 && 現在仕事:(従業員一覧:LOCAL):1 <= 10010
+				屋号保存 = 『%空艇港店舗屋号記録:(現在仕事:(従業員一覧:LOCAL):1 % 10000)%』
+			ELSE
+				屋号保存 = 
+			ENDIF
+			LOCALS += @"：%MAP_GET("常駐業務名", REPLACE(GETPLACENAME(現在仕事:(従業員一覧:LOCAL):1 / 10000, 現在仕事:(従業員一覧:LOCAL):1 % 10000), "『.*』", ""))%%屋号保存%"
+		ELSEIF (現在仕事:(従業員一覧:LOCAL):0 == 8 || 現在仕事:(従業員一覧:LOCAL):0 == 7)
+			LOCALS += "："
+			SIF 現在仕事:(従業員一覧:LOCAL):1 > 0
+				LOCALS += @"%ERDNAME(知識素質, 現在仕事:(従業員一覧:LOCAL):1)%"
+		ENDIF
+		LOCALS += "]</button>"
+		SIF 変更キャラ == 従業員一覧:LOCAL
+			LOCALS += @"</font>"
+	ENDIF
+	LOCALS += "<br>"
+NEXT
+IF ページ数 > 0
+	LOCALS += "<button value='1000'>　＜ 이전 페이지</button>"
+ELSE
+	LOCALS += "　　　　　　　 "
+ENDIF
+LOCALS += "　　　　"
+IF 従業員一覧:(ページ数 * 17 + 17) > -1
+	LOCALS += "<button value='1001'>다음 페이지 ＞</button>"
+ENDIF
+LOCALS += "<br>"
+LOCALS += "<br>"
+LOCALS += "<button value='999'>[999] 돌아가기</button>　　"
+IF ソートタイプ
+	LOCALS += "업무 순 <button value='998'>[전환]</button>"
+ELSE
+	LOCALS += "번호 순 <button value='998'>[전환]</button>"
+ENDIF
+LOCALS += "<br>"
+LOCALS += "</nobr></div>"
+
+
+;仕事の種類と現在そこに従事している人数を表示
+LOCALS += "<div rect='2125,770,3675,2812'><nobr>"
+IF 変更キャラ > -1
+	LOCALS += @"현재 종사 중인 업무:%NAME表示(変更キャラ)%<br>"
+	LOCALS += @"■%現在仕事数字文字列変換(現在仕事:変更キャラ:0, 0, 変更キャラ), 16, LEFT%<br><br>"
+	LOCALS += @"%現在仕事数字文字列変換(現在仕事:変更キャラ:0, 1, 変更キャラ)%<br><br>"
+	;仕事レベルが存在するなら表示
+	IF 現在仕事:変更キャラ:0 == 2 && 現在仕事:変更キャラ:1 > 0
+		常駐業務名 '= MAP_GET("常駐業務名", REPLACE(GETPLACENAME(現在仕事:変更キャラ:1 / 10000, 現在仕事:変更キャラ:1 % 10000), "『.*』", ""))
+		LOCALS += @"현재%常駐業務名%레벨:{常駐業務レベル:変更キャラ:(GETNUM(常駐業務レベル, 常駐業務名))}"
+	ELSEIF 仕事レベル存在チェック(現在仕事:変更キャラ:0)
+		LOCALS += @"현재%現在仕事数字文字列変換(現在仕事:変更キャラ:0, 0, 変更キャラ)%레벨:{仕事レベル:変更キャラ:(現在仕事:変更キャラ:0)}"
+	ELSEIF 現在仕事:変更キャラ:0 == 9
+		LOCALS += @"현재 지식 소질: 요리사 레벨:{知識素質:変更キャラ:料理人}"
+	ELSE
+		LOCALS += @"직업 레벨 없음"
+	ENDIF
+ELSE
+	LOCALS += "업무 내용과 종사 인원 목록<br><br>"
+	FOR LOCAL, 0, 50
+		IF 現在仕事数字文字列変換(LOCAL) != ""
+			LOCALS += @"■%現在仕事数字文字列変換(LOCAL), 16, LEFT%: 종사 인원{仕事人数表示用:LOCAL,3}명<br>"
+		ENDIF
+	NEXT
+ENDIF
+LOCALS += "</nobr></div>"
+
+;仕事切り替え用枠
+LOCALS += "<div rect='2050,31,3875,650' padding='50,25,50' border='31' bcolor='#C0C0C0'>"
+IF 変更キャラ > -1
+	改行判定文字列 = 
+	FOR LOCAL, 0, 50
+		IF 現在仕事数字文字列変換(LOCAL) != ""
+			SIF 仕事条件判定関数(変更キャラ, LOCAL) == 0
+				CONTINUE
+			IF LOCAL > 0
+				IF STRLENS(改行判定文字列 + 現在仕事数字文字列変換(LOCAL)) > 75
+					LOCALS += "<br>"
+					改行判定文字列 = 
+				ELSE
+					LOCALS += " / "
+					改行判定文字列 += " / "
+				ENDIF
+			ENDIF
+			IF 現在仕事:変更キャラ:0 == LOCAL
+				LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'>[%現在仕事数字文字列変換(LOCAL)%]</font>"
+				改行判定文字列 += @"[%現在仕事数字文字列変換(LOCAL)%]"
+			ELSE
+				LOCALS += @"<button value='{LOCAL + 2000}'>[%現在仕事数字文字列変換(LOCAL)%]</button>"
+				改行判定文字列 += @"[%現在仕事数字文字列変換(LOCAL)%]"
+			ENDIF
+		ENDIF
+	NEXT
+
+	VARSET RESULTS
+	固有仕事数 = ENUMFUNCBEGINSWITH(@"固有仕事設定_{NO:変更キャラ}_")
+	ARRAYCOPY "RESULTS", "固有仕事配列"
+	IF 固有仕事数 > 0
+		FOR LOCAL, 0, 固有仕事数
+			SIF GETMETH(固有仕事配列:LOCAL, 0, 変更キャラ, "条件判定") == 0
+				CONTINUE
+			CALLFORMF %固有仕事配列:LOCAL%(変更キャラ, "仕事名")
+			固有仕事名 '= TSTR:コマンド名受渡
+			固有仕事キー = TOINT(REPLACE(固有仕事配列:LOCAL, @"固有仕事設定_{NO:変更キャラ}_", ""))
+			SIF 固有仕事キー < 0
+				CONTINUE
+			IF STRLENS(改行判定文字列 + 固有仕事名) > 75
+				LOCALS += "<br>"
+				改行判定文字列 = 
+			ELSE
+				LOCALS += " / "
+				改行判定文字列 += " / "
+			ENDIF
+			IF 現在仕事:変更キャラ:0 == 固有仕事キー + 100000
+				LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'>[%固有仕事名%]</font>"
+				改行判定文字列 += @"[%固有仕事名%]"
+			ELSE
+				LOCALS += @"<button value='{固有仕事キー + 100000}'>[%固有仕事名%]</button>"
+				改行判定文字列 += @"[%固有仕事名%]"
+			ENDIF
+		NEXT
+	ENDIF
+
+	空き店舗あり = 0
+	;空き店舗を検索
+	FOR LOCAL, 0, VARSIZE("商業区店割り配列", 1)
+		IF 商業区店割り配列:LOCAL:店舗名 == "" || 商業区店割り配列:LOCAL:店員配列 == "-1_"
+			空き店舗あり = 1
+			BREAK
+		ENDIF
+	NEXT
+	IF 空き店舗あり && 港改造度:0:0 && TALENT:変更キャラ:定住者 && EXISTFUNCTION(@"特殊店舗_建設条件_{NO:変更キャラ}")
+		LOCALS += "<br><button value='997'>[상점을 열게 하다]</button>"
+	ENDIF
+ENDIF
+LOCALS += "</div>"
+
+
+
+HTML_PRINT LOCALS
+FOR LOCAL, 0, 34
+	PRINTL
+NEXT
+DRAWLINE
+
+BINPUT
+
+LOCAL = RESULT
+SELECTCASE LOCAL
+	CASE IS >= 100000
+		現在仕事:変更キャラ:0 = LOCAL
+		現在仕事:変更キャラ:1 = 0
+	CASE IS >= 3000
+		CALL 仕事追加処理関数(変更キャラ, LOCAL)
+	CASE IS >= 2000
+		現在仕事:変更キャラ:0 = LOCAL - 2000
+		現在仕事:変更キャラ:1 = 0
+	CASE 1000
+		ページ数 -= 1
+	CASE 1001
+		ページ数 += 1
+	CASE 999
+		CALL 仕事切替時補正(変更キャラ)
+		ページ数 = 0
+		IF 高速船記録:派遣先登録 != ""
+			CALLFORM 高速船派遣先関数_%高速船記録:派遣先登録%("派遣条件")
+			IF RESULT == 0
+				CALLFORM 高速船派遣先関数_%高速船記録:派遣先登録%("解説文")
+				DRAWLINE
+				HTML_PRINT TSTR:ツールチップ受渡
+				PRINTL
+				DRAWLINE
+				PRINTL 더 이상 고속선 파견 조건을 충족하지 못하므로, 파견을 중지합니다.
+				PRINTL 괜찮으시겠습니까?
+				PRINTBUTTONLC "[0] 예", 0
+				PRINTBUTTONLC "[1] 아니요", 1
+				PRINTL
+				BINPUT
+				IF RESULT == 0
+					高速船記録:派遣先登録 = 
+					高速船記録:派遣状態 = 
+					PRINTL
+					PRINTL
+					PRINTW 파견을 중지했습니다.
+				ELSE
+					GOTO 表示ループ
+				ENDIF
+			ENDIF
+		ENDIF
+		RETURN 0
+	CASE 998
+		INVERTBIT ソートタイプ, 0
+	CASE 997
+		PRINTL
+		PRINTL
+		DRAWLINE
+		PRINTL ※※※※※주의※※※※※
+		PRINTFORML %CALLNAME:変更キャラ%이(가) 상업 지구에 점포를 열게 됩니다.
+		PRINTL 앞으로, 통상적인 업무에 종사할 수 없게 됩니다.
+		PRINTL 특수 점포가 준비된 캐릭터만 이 선택지가 나오지만,
+		PRINTL 점포를 열 조건이 갖춰져 있는지 여부는 별개이므로 주의해 주십시오.
+		DRAWLINE
+		PRINTL
+		PRINTFORML %NAME表示(変更キャラ)%에 상점을 열도록 권유하시겠습니까?
+		PRINTBUTTONLC "[0] 예", 0
+		PRINTBUTTONLC "[1] 아니요", 1
+		PRINTL
+		BINPUT
+		IF RESULT == 0
+			PRINTFORMW %NAME表示(変更キャラ)%에게 상점을 여는 업무를 명했습니다.
+			現在仕事:変更キャラ:0 = -1
+			RETURN 0
+		ELSE
+			RESTART
+		ENDIF
+	CASE 0 TO 499
+		CALL 仕事切替時補正(変更キャラ)
+		変更キャラ = 従業員一覧:LOCAL
+		;CALL 従業員仕事割り振り_切り替え(従業員一覧:LOCAL)
+ENDSELECT
+
+GOTO 表示ループ
+
+@仕事切替時補正(対象キャラ)
+#DIM 対象キャラ
+
+SIF 対象キャラ < 0
+	RETURN 0
+
+;キャラ切り替え時や戻るボタンを押した時、設定必須の項目が設定されてなかった場合
+;仕事をなしに戻す
+IF 現在仕事:対象キャラ:0 == 2 && 現在仕事:対象キャラ:1 == 0
+	現在仕事:対象キャラ:0 = 0
+ENDIF
+IF 現在仕事:対象キャラ:0 == 7
+	SIF 現在仕事:対象キャラ:1 == 0
+		現在仕事:対象キャラ:0 = 0
+	IF 知識素質:対象キャラ:(現在仕事:対象キャラ:1) > 1
+		現在仕事:対象キャラ:0 = 0
+		現在仕事:対象キャラ:1 = 0
+	ENDIF
+ENDIF
+IF 現在仕事:対象キャラ:0 == 8
+	SIF 現在仕事:対象キャラ:1 == 0
+		現在仕事:対象キャラ:0 = 0
+	IF 知識素質:対象キャラ:(現在仕事:対象キャラ:1) < 2
+		現在仕事:対象キャラ:0 = 0
+		現在仕事:対象キャラ:1 = 0
+	ENDIF
+ENDIF
+
+@従業員仕事割り振り_切り替え(ARG)
+#DIM 空き店舗あり
+
+DRAWLINE
+PRINTL 직원이 수행할 업무 설정을 합니다.
+PRINTL ※개발 중이므로, 업무가 올바르게 작동하지 않을 수 있습니다.
+DRAWLINE
+LOCALS = <div rect='81,31,1937,2812' border='31' bcolor='#C0C0C0'></div><div rect='2050,31,3875,2812' border='31' bcolor='#C0C0C0'></div>
+LOCALS += "<div rect='156,156,1937,2812'>"
+LOCALS += @"■%CALLNAME:ARG%의 업무를 <br>"
+FOR LOCAL, 0, 50
+	IF 現在仕事数字文字列変換(LOCAL) != ""
+		SIF 仕事条件判定関数(ARG, LOCAL) == 0
+			CONTINUE
+		IF 現在仕事:ARG:0 == LOCAL
+			LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'>[{LOCAL}] %現在仕事数字文字列変換(LOCAL), 14, LEFT%</font><br>"
+		ELSE
+			LOCALS += @"<button value='{LOCAL}'>[{LOCAL}] %現在仕事数字文字列変換(LOCAL), 14, LEFT%으로 변경</button><br>"
+		ENDIF
+	ENDIF
+NEXT
+LOCALS += "<br>"
+
+RESULT = 0
+RESULTS = 
+空き店舗あり = 0
+;空き店舗を検索
+FOR LOCAL, 0, VARSIZE("商業区店割り配列", 1)
+	IF 商業区店割り配列:LOCAL:店舗名 == "" || 商業区店割り配列:LOCAL:店員配列 == "-1_"
+		空き店舗あり = 1
+		BREAK
+	ENDIF
+NEXT
+IF 空き店舗あり && 港改造度:0:0 && TALENT:ARG:定住者 && EXISTFUNCTION(@"特殊店舗_建設条件_{NO:ARG}")
+	LOCALS += "<button value='998'>[998] 상점을 열게 하다</button><br>"
+	LOCALS += "<br>"
+ENDIF
+
+LOCALS += "<button value='999'>[999] 돌아가기</button>"
+LOCALS += "<br>"
+LOCALS += "</div>"
+
+;仕事の説明を表示
+LOCALS:1 = <div rect='2125,156,3675,2812'>
+LOCALS:1 += "현재 종사하고 있는 업무<br>"
+LOCALS:1 += @"■%現在仕事数字文字列変換(現在仕事:ARG:0, 0, ARG), 16, LEFT%"
+LOCALS:1 += "</div>"
+LOCALS:1 += "<div rect='2312,437,3675,2812'>"
+LOCALS:1 += @"<nobr>%現在仕事数字文字列変換(現在仕事:ARG:0, 1, ARG)%</nobr>"
+LOCALS:1 += "<br><br>"
+;仕事レベルが存在するなら表示
+IF 仕事レベル存在チェック(現在仕事:ARG:0)
+	LOCALS:1 += @"현재의 %現在仕事数字文字列変換(現在仕事:ARG:0, 0, ARG)% 레벨: {仕事レベル:ARG:(現在仕事:ARG:0)}"
+ELSEIF 現在仕事:ARG:0 == 9
+	LOCALS:1 += @"현재의 지식 소질: 요리사 레벨: {知識素質:ARG:料理人}"
+ELSE
+	LOCALS:1 += @"업무 레벨 없음"
+ENDIF
+LOCALS:1 += "</div>"
+
+
+HTML_PRINT LOCALS, 1
+HTML_PRINT LOCALS:1, 1
+FOR LOCAL, 0, 25
+	PRINTL
+NEXT
+DRAWLINE
+
+$INPUT_LOOP
+BINPUT
+
+LOCAL = RESULT
+SELECTCASE LOCAL
+	CASE 999
+		IF 現在仕事:ARG:0 == 2 && 現在仕事:ARG:1 == 0
+			現在仕事:ARG:0 = 0
+		ENDIF
+		IF 現在仕事:ARG:0 == 7
+			SIF 現在仕事:ARG:1 == 0
+				現在仕事:ARG:0 = 0
+			IF 知識素質:ARG:(現在仕事:ARG:1) > 1
+				現在仕事:ARG:0 = 0
+				現在仕事:ARG:1 = 0
+			ENDIF
+		ENDIF
+		IF 現在仕事:ARG:0 == 8
+			SIF 現在仕事:ARG:1 == 0
+				現在仕事:ARG:0 = 0
+			IF 知識素質:ARG:(現在仕事:ARG:1) < 2
+				現在仕事:ARG:0 = 0
+				現在仕事:ARG:1 = 0
+			ENDIF
+		ENDIF
+		RETURN 0
+	CASE 998
+		PRINTL
+		PRINTL
+		DRAWLINE
+		PRINTL ※※※※※주의※※※※※
+PRINTFORML %CALLNAME:ARG%이(가) 상업 지구에 점포를 열게 됩니다.
+PRINTL 앞으로는 통상적인 업무를 할 수 없게 됩니다.
+PRINTL 특수 점포가 준비된 캐릭터만 이 선택지가 나오지만,
+PRINTL 점포를 열 조건이 갖춰져 있는지 여부는 별개이므로 주의해 주십시오.
+		DRAWLINE
+		PRINTL
+PRINTFORML %NAME表示(ARG)%에게 상점을 열도록 권유하시겠습니까?
+PRINTBUTTONLC "[0] 예", 0
+PRINTBUTTONLC "[1] 아니요", 1
+		PRINTL
+		BINPUT
+		IF RESULT == 0
+PRINTFORMW %NAME表示(ARG)%에게 상점을 여는 업무를 명했습니다.
+			現在仕事:ARG:0 = -1
+			RETURN 0
+		ELSE
+			RESTART
+		ENDIF
+	CASE 0 TO 11
+		IF 仕事条件判定関数(ARG, LOCAL) == 0
+PRINTFORMW %CALLNAME:ARG%은(는) %現在仕事数字文字列変換(LOCAL)%의 일을 할 수 없습니다.
+			REUSELASTLINE 
+			GOTO INPUT_LOOP
+		ENDIF
+		現在仕事:ARG:0 = LOCAL
+		現在仕事:ARG:1 = 0
+		RESTART
+	CASEELSE
+		CALL 仕事追加処理関数(ARG, LOCAL)
+		RESTART
+ENDSELECT
+
+@現在仕事数字文字列変換(ARG, ARG:1 = 0, キャラ番号 = 0)
+#FUNCTIONS
+#DIM キャラ番号
+#DIMS 一時文字列
+
+;固有業務
+IF ARG >= 100000
+	IF ARG:1
+		CALLFORMF 固有仕事設定_{NO:キャラ番号}_{ARG - 100000}(キャラ番号, "仕事解説")
+		RETURNF TSTR:ツールチップ受渡
+	ENDIF
+	CALLFORMF 固有仕事設定_{NO:キャラ番号}_{ARG - 100000}(キャラ番号, "仕事名")
+	RETURNF TSTR:コマンド名受渡
+ENDIF
+
+SELECTCASE ARG
+	CASE -1
+		IF ARG:1
+			RETURNF "港エリアにて、商店を経営してもらっている状態。<br>効果：特になし<br>　　　通常の店舗持ちキャラと同じように行動する。"
+		ENDIF
+		RETURNF "商店経営"
+	CASE 0
+		IF ARG:1
+			RETURNF "特に仕事を申し付けず、待機している状態。<br>効果：特になし<br>　　　通常の客と同じように行動する。"
+		ENDIF
+		RETURNF "なし"
+	CASE 1
+		IF ARG:1
+			RETURNF "リゾート内の細々とした雑務を処理する業務。<br>効果：一日の最後に、全ての場所の雑務ゲージが<br>　　　［（仕事レベル＋１）＾２×１００］減少する。<br>　　　リゾート内をランダムに移動する。"
+		ENDIF
+		RETURNF "雑務"
+	CASE 2
+		IF ARG:1
+LOCALS = 특정 장소에서 전문적인 일을 하는 업무. <br>효과: 하루의 마지막에, 루피가 <br>　　　［체류자 수×(일 레벨＋１)＾３］증가한다.
+			LOCALS += "<br><br>"
+			IF 現在仕事:キャラ番号:1 == 2
+				LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'>[3002] 로비 :현재 상주 장소</font><br>"
+			ELSE
+				LOCALS += @"<button value='3002'>[3002] 로비 에서 로비 접수원으로 일한다</button><br>"
+			ENDIF
+			IF 施設改造度:5:0
+				IF 現在仕事:キャラ番号:1 == 503
+					LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'>[3503] 바 구역 :현재 상주 장소</font><br>"
+				ELSE
+					LOCALS += @"<button value='3503'>[3503] 바 구역 에서 바텐더로 일한다</button><br>"
+				ENDIF
+			ENDIF
+			IF 施設改造度:5:6
+				IF 現在仕事:キャラ番号:1 == 506
+					LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'>[3506] 도서실 ：현재 상주 장소</font><br>"
+				ELSE
+					LOCALS += @"<button value='3506'>[3506] 도서실 에서 사서로 일한다</button><br>"
+				ENDIF
+			ENDIF
+			IF 施設改造度:15:0
+				IF 現在仕事:キャラ番号:1 == 1503
+					LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'>[4503] 수영장 옆 ：현재 상주 장소</font><br>"
+				ELSE
+					LOCALS += @"<button value='4503'>[4503] 수영장 옆 에서 감시원으로 일한다</button><br>"
+				ENDIF
+			ELSE
+				IF 現在仕事:キャラ番号:1 == 15
+					LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'>[3015] 수영장 ：현재 상주 장소</font><br>"
+				ELSE
+					LOCALS += @"<button value='3015'>[3015] 수영장 에서 감시원으로 일한다</button><br>"
+				ENDIF
+			ENDIF
+			IF 空艇港初来訪イベントフラグ
+				FOR LOCAL, 3, 9
+					IF 空艇港店舗状況:LOCAL:0 > 0
+						CALLFORMF 空艇港店舗名表示_{空艇港店舗状況:LOCAL:0}(LOCAL)
+						IF 現在仕事:キャラ番号:1 == LOCAL + 10000
+							LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'>[{10000 + LOCAL}] 점포{LOCAL}:%TSTR:場所名受渡% ：현재 상주 장소</font><br>"
+						ELSE
+							LOCALS += @"<button value='{10000 + LOCAL}'>[{10000 + LOCAL}] 점포{LOCAL}:%TSTR:場所名受渡% 에서 점원으로 일한다</button><br>"
+						ENDIF
+					ENDIF
+				NEXT
+			ENDIF
+			IF 海改造度:6:0
+				IF 現在仕事:キャラ番号:1 == 30103
+					LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'>[30103] 어선단 ：현재 상주 장소</font><br>"
+				ELSE
+					LOCALS += @"<button value='30103'>[30103] 어선단 에서 어부로 일한다</button><br>"
+				ENDIF
+			ENDIF
+			IF 海改造度:6:1 || 海改造度:6:2
+				IF 海改造度:6:1
+					IF 海改造度:6:2
+						一時文字列 = 유람선・해저 산책
+					ELSE
+						一時文字列 = 유람선
+					ENDIF
+				ELSE
+					一時文字列 = 해저 산책
+				ENDIF
+				IF 現在仕事:キャラ番号:1 == 30104
+					LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'>[30104] %一時文字列% ：현재 상주 장소</font><br>"
+				ELSE
+					LOCALS += @"<button value='30104'>[30104] %一時文字列% 에서 씨 가이드로 일한다</button><br>"
+				ENDIF
+			ENDIF
+			RETURNF LOCALS
+		ENDIF
+		RETURNF "常駐業務"
+	CASE 3
+		IF ARG:1
+			RETURNF @"%CALLNAME:PLAYER%の補佐を行う業務。<br>効果：一日の最後に、好感度要素：信頼度が<br>　　　［（仕事レベル＋１）＾２×２００］増加する。<br>　　　リゾート内をランダムに移動する。"
+		ENDIF
+		RETURNF "秘書"
+	CASE 4
+		IF ARG:1
+			RETURNF @"手紙や広告などでリゾートを宣伝する業務。<br>効果：一日の最後に、リゾートの人気度が<br>　　　［（仕事レベル＋１）＾２×１］増加する。<br>　　　従業員部屋の自室でチラシ作りなどを行う。"
+		ENDIF
+		RETURNF "宣伝"
+	CASE 5
+		IF 施設改造度:3:8 == 0
+			RETURNF ""
+		ENDIF
+		IF ARG:1
+			RETURNF @"訓練場で戦闘能力を鍛える業務。<br>効果：一日の最後にEXPを獲得する。<br>　　　獲得量は全キャラ中最も高いレベルに応じて変動する。<br>　　　（全キャラ中最も高いレベルより上には成長しない）<br>　　　一日につき500kcal消費する。<br>　　　訓練場に常駐する。"
+		ENDIF
+		RETURNF "訓練"
+	CASE 6
+		IF あなた特殊能力:ダンジョン探索PRO < 1
+			RETURNF ""
+		ENDIF
+		IF ARG:1
+			RETURNF @"クリア済みのダンジョンに赴き、素材を集めてくる業務。<br>効果：一日の最後に素材やEXPを獲得する。<br>　　　獲得量は赴いたダンジョンによって変動する。<br>　　　（赴くダンジョンの設定は「探索へ出かける」から行う）<br>　　　%CALLNAME:MASTER%が探索をしていない日は効果が増加する。<br>　　　日中はリゾートにおらず、夕方以降は自室にいる。<br>　　　一日につき400kcal消費する。<br>　　　この業務に業務レベルは存在しない。"
+		ENDIF
+		RETURNF "自動探索"
+	CASE 7
+		IF 居住区改造度:0:0 == 0
+			RETURNF ""
+		ENDIF
+		IF ARG:1
+			LOCALS = 학교에 가서 지정된 지식에 대해 학습하는 업무. <br>효과: 오전과 오후 학습 종료 시 지식 경험치를 얻는다. <br>　　　학교에 없는 시간대에는 자기 방에 있다. <br>　　　Lv2에 도달한 지식은 선택할 수 없다.
+			LOCALS += "<br><br>"
+			LOCAL:1 = 0
+			FOR LOCAL, 1, 100
+				SIF ERDNAME(知識素質, LOCAL) == ""
+					BREAK
+				IF 知識素質:キャラ番号:LOCAL > 1
+					LOCALS += @"<font color='#%カラーパレット_HTML("グレーアウト")%'>[{LOCAL + 3000}] %ERDNAME(知識素質, LOCAL), 9, LEFT%을(를) 배우다(현재Lv{知識素質:キャラ番号:LOCAL})</font>　　　"
+				ELSEIF 現在仕事:キャラ番号:1 == LOCAL
+					LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'>[{LOCAL + 3000}] %ERDNAME(知識素質, LOCAL), 9, LEFT%을(를) 배우다(현재Lv{知識素質:キャラ番号:LOCAL})선택</font>　"
+				ELSE
+					LOCALS += @"<button value='{LOCAL + 3000}'>[{LOCAL + 3000}] %ERDNAME(知識素質, LOCAL), 9, LEFT%을(를) 배우다(현재Lv{知識素質:キャラ番号:LOCAL})</button>　　　"
+				ENDIF
+				LOCAL:1 ++
+				SIF LOCAL:1 % 2 == 0
+					LOCALS += "<br>"
+			NEXT
+			RETURNF LOCALS
+		ENDIF
+		RETURNF "知識習得"
+	CASE 8
+		IF 居住区改造度:0:0 == 0
+			RETURNF ""
+		ENDIF
+		IF ARG:1
+			LOCALS = 학교에 가서 지정된 지식에 대해 강의하는 업무. <br>효과: 학교에서 배우는 캐릭터의 학습 효율이 상승한다. <br>　　　학교에 없는 시간대에는 자기 방에 있다. <br>　　　Lv2 이상의 지식만 선택 가능.
+			LOCALS += "<br><br>"
+			LOCAL:1 = 0
+			FOR LOCAL, 1, 100
+				SIF ERDNAME(知識素質, LOCAL) == ""
+					BREAK
+				IF 知識素質:キャラ番号:LOCAL < 2
+					LOCALS += @"<font color='#%カラーパレット_HTML("グレーアウト")%'>[{LOCAL + 3000}] %ERDNAME(知識素質, LOCAL), 9, LEFT%교사(현재Lv{知識素質:キャラ番号:LOCAL})</font>　　　　"
+				ELSEIF 現在仕事:キャラ番号:1 == LOCAL
+					LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'>[{LOCAL + 3000}] %ERDNAME(知識素質, LOCAL), 9, LEFT%교사(현재Lv{知識素質:キャラ番号:LOCAL})선택</font>　　"
+				ELSE
+					LOCALS += @"<button value='{LOCAL + 3000}'>[{LOCAL + 3000}] %ERDNAME(知識素質, LOCAL), 9, LEFT%교사(현재Lv{知識素質:キャラ番号:LOCAL})</button>　　　　"
+				ENDIF
+				LOCAL:1 ++
+				SIF LOCAL:1 % 2 == 0
+					LOCALS += "<br>"
+			NEXT
+			RETURNF LOCALS
+		ENDIF
+		RETURNF "教師"
+	CASE 9
+		IF ARG:1
+			RETURNF "リゾート内の食堂で料理を担当する業務。<br>効果：料理メニューの効果によるZP収入が<br>　　　［（知識素質：料理人レベル＋１）✕５］％増加する。<br>　　　複数人の効果は加算されるが、上限は<br>　　　［滞在人数÷１０］％まで。（モブ・ユニーク合算）<br>　　　料理人レベルがマイナスのキャラをこの業務に就けてはいけない。"
+		ENDIF
+		RETURNF "調理師"
+	CASE 10
+		IF ARG:1
+			RETURNF "リゾート内の食堂で給仕を担当する業務。<br>効果：料理メニューの効果によるルピ収入が<br>　　　［（仕事レベル＋１）✕５］％増加する。<br>　　　複数人の効果は加算されるが、上限は<br>［滞在人数÷１０］％まで。（モブ・ユニーク合算）"
+		ENDIF
+		RETURNF "給仕"
+	CASE 11
+		IF ARG:1
+			RETURNF @"高速船に乗り込み、派遣先に向かう業務。<br>効果：派遣先により変化。"
+		ENDIF
+		RETURNF "高速船員"
+	CASE 12
+		IF ARG:1
+			RETURNF "リゾートを襲う外敵を排除する業務。<br>効果：一日の最後に、特定のイベントが発生している場合<br>　　　仕事レベルに応じた確率でイベントを解決する。<br>　　　（複数人いる場合、確率は加算）<br>　　　リゾート内をランダムに移動する。"
+		ENDIF
+		RETURNF "警備員"
+ENDSELECT
+
+@仕事条件判定関数(キャラ番号, 仕事番号)
+#FUNCTION
+#DIM キャラ番号
+#DIM 仕事番号
+
+SELECTCASE 仕事番号
+	CASE 2,3,7,8,9,10,11
+		SIF キャラ番号 == PLAYER
+			RETURNF 0
+	CASE 5,6,12
+		SIF キャラ番号 == PLAYER
+			RETURNF 0
+		SIF TALENT:キャラ番号:非戦闘キャラ
+			RETURNF 0
+ENDSELECT
+
+RETURNF 1
+
+
+@仕事追加処理関数(キャラ番号, 選択番号)
+#DIM キャラ番号
+#DIM 選択番号
+
+SELECTCASE 現在仕事:キャラ番号:0
+	CASE 2
+		;常駐する店舗を選べる
+		IF 選択番号 > 10000
+			現在仕事:キャラ番号:1 = 選択番号
+		ELSE
+			現在仕事:キャラ番号:1 = 選択番号 - 3000
+		ENDIF
+	CASE 7
+		;知識を選べる
+		現在仕事:キャラ番号:1 = 選択番号 - 3000
+	CASE 8
+		;知識を選べる
+		現在仕事:キャラ番号:1 = 選択番号 - 3000
+ENDSELECT
+
+@仕事レベル存在チェック(チェック番号)
+#FUNCTION
+#DIM チェック番号
+
+IF GROUPMATCH(チェック番号, 1, 2, 3, 4, 8, 10, 12)
+	RETURNF 1
+ELSE
+	RETURNF 0
+ENDIF
+
+@従業員休暇判定(対象キャラ)
+#FUNCTION
+#DIM 対象キャラ
+
+;ゲーム中に変動しない数値として、人物番号を使う
+IF DAY % 7 == CFLAG:対象キャラ:人物番号 % 7
+	RETURNF 1
+ENDIF
+
+RETURNF 0

@@ -1,0 +1,301 @@
+
+@空艇港_店舗改装処理(店番号, 画面表示用変数)
+#DIM 店番号
+#DIM 画面表示用変数
+VARSET LOCALS
+
+IF 空艇港店舗屋号記録:店番号 == ""
+	空艇港店舗屋号記録:店番号 = %空艇港_店舗屋号ランダム決定()%
+ENDIF
+
+DRAWLINE
+PRINTL 공정항 에리어의 점포를 개장합니다.
+PRINTL 어떤 점포로 하시겠습니까?
+DRAWLINE
+LOCALS = <div rect='81,0,1912,344' border='31' bcolor='#C0C0C0'></div>
+LOCALS += @"<div rect='156,62,1912,281'>소지 루피:%NUM_FORMAT(MONEY)%<br>소지 ZP　:%ZP所持量全文字列()%</div>"
+LOCALS += "<div rect='81,375,1937,2812' border='31' bcolor='#C0C0C0'></div><div rect='2050,375,3875,2812' border='31' bcolor='#C0C0C0'></div>"
+LOCALS += "<div rect='156,500,1937,2812'>"
+CALLFORMF 空艇港店舗名表示_{空艇港店舗状況:店番号:0}(店番号)
+LOCALS += @"<button value='99'>[99] 현재 점포:%TSTR:場所名受渡%</button>"
+LOCALS += "<br>"
+IF 空艇港店舗状況:店番号:0 != 0
+	LOCALS += "<button value='100'>[100] 빈 방</button>"
+	LOCALS += "<br>"
+ENDIF
+IF 空艇港店舗状況:店番号:0 != 1
+	LOCALS += @"<button value='101'>[101] 도구점</button>"
+	LOCALS += "<br>"
+ENDIF
+IF 空艇港店舗状況:店番号:0 != 2
+	LOCALS += @"<button value='102'>[102] 기념품점</button>"
+	LOCALS += "<br>"
+ENDIF
+IF 空艇港店舗状況:店番号:0 != 3
+	LOCALS += @"<button value='103'>[103] 식당</button>"
+	LOCALS += "<br>"
+ENDIF
+IF 空艇港店舗状況:店番号:0 != 4
+	LOCALS += @"<button value='104'>[104] 장식품점</button>"
+	LOCALS += "<br>"
+ENDIF
+LOCALS += "<button value='999'>[999] 돌아가기</button>"
+LOCALS += "<br>"
+LOCALS += "</div>"
+
+;現在の店舗状況表示
+CALL 空艇港_店舗改装右画面表示(画面表示用変数, 店番号)
+
+HTML_PRINT LOCALS, 1
+FOR LOCAL, 0, 29
+	PRINTL
+NEXT
+DRAWLINE
+
+$INPUT_LOOP
+BINPUT
+
+LOCAL = RESULT
+SELECTCASE LOCAL
+	CASE 99
+		画面表示用変数 = 0
+		RESTART
+	CASE 100 TO 104
+		IF 空艇港店舗状況:店番号:0 == LOCAL - 100
+			REUSELASTLINE 
+			GOTO INPUT_LOOP
+		ENDIF
+		画面表示用変数 = LOCAL
+		RESTART
+	CASE 999
+		RETURN -1
+	CASE 0
+		CALLFORM 空艇港店舗解説文_{画面表示用変数 - 100}(LOCALS:1, 店番号)
+		LOCAL:1 = RESULT
+		IF MONEY < LOCAL:1
+			DRAWLINE
+			PRINTW 루피가 부족합니다.
+			画面表示用変数 = 0
+			RESTART
+		ENDIF
+		CALLFORMF 空艇港店舗名表示_{画面表示用変数 - 100}(店番号)
+		DRAWLINE
+		PRINTFORMW %NUM_FORMAT(LOCAL:1)%루피를 소비하여, 점포를 %TSTR:場所名受渡%으로 개장했습니다.
+		空艇港店舗状況:店番号:0 = 画面表示用変数 - 100
+		画面表示用変数 = 0
+		MONEY -= LOCAL:1
+		RESTART
+	CASE 1
+		画面表示用変数 = 0
+		RESTART
+	CASE 10
+		PRINTL 
+		PRINTL 
+		DRAWLINE
+		PRINTL 상호명을 입력해 주세요.
+		DRAWLINE
+		INPUTS
+		IF RESULTS == ""
+			PRINTL 
+			PRINTL 
+			PRINTFORMW 입력이 공란이었으므로, 상호명을 무작위로 변경했습니다.
+			空艇港店舗屋号記録:店番号 = %空艇港_店舗屋号ランダム決定()%
+		ELSE
+			空艇港店舗屋号記録:店番号 = %RESULTS%
+			PRINTL 
+			PRINTL 
+			PRINTFORMW 상호명을 %空艇港店舗屋号記録:店番号%으로 변경했습니다.
+		ENDIF
+		RESTART
+	CASE 11
+		空艇港店舗屋号記録:店番号 = %空艇港_店舗屋号ランダム決定()%
+		RESTART
+ENDSELECT
+
+@空艇港_店舗改装右画面表示(画面表示用変数, 店番号)
+#DIM 画面表示用変数
+#DIM 店番号
+#DIMS 建物文章受け渡し文字列
+建物文章受け渡し文字列 = 
+
+SELECTCASE 画面表示用変数
+	CASE 0
+		LOCALS = <div rect='2125,500,3775,2812'>
+		CALLFORM 空艇港店舗解説文_{空艇港店舗状況:店番号:0}(建物文章受け渡し文字列, 店番号)
+		LOCALS += 建物文章受け渡し文字列
+		IF 空艇港店舗状況:店番号:0 != 0
+			LOCALS += "<br>"
+			LOCALS += "<button value='10'>[10] 상호를 입력한다</button><br>"
+			LOCALS += "<button value='11'>[11] 상호를 무작위로 변경한다</button><br>"
+			LOCALS += "<br>"
+		ENDIF
+		LOCALS += "</div>"
+	CASE 100 TO 104
+		LOCALS = <div rect='2125,500,3775,2812'>
+		CALLFORM 空艇港店舗解説文_{画面表示用変数 - 100}(建物文章受け渡し文字列, 店番号)
+		LOCALS += 建物文章受け渡し文字列
+		LOCALS += "<br>"
+		IF 画面表示用変数 != 100
+			LOCALS += "<button value='10'>[10] 상호를 입력한다</button><br>"
+			LOCALS += "<button value='11'>[11] 상호를 무작위로 변경한다</button><br>"
+			LOCALS += "<br>"
+		ENDIF
+		LOCALS += "이 상태로 개조하시겠습니까?<br>"
+		LOCALS += @"필요 루피：%NUM_FORMAT(RESULT), 7%"
+		LOCALS += "<br>"
+		LOCALS += "<button value='0'>[0]예</button><br>"
+		LOCALS += "<button value='1'>[1]아니요</button><br>"
+		LOCALS += "</div>"
+ENDSELECT
+
+HTML_PRINT LOCALS, 1
+
+
+@空艇港_店舗屋号ランダム決定()
+#FUNCTIONS
+#DIMS 屋号_上
+#DIMS 屋号_下
+
+
+STRDATA 屋号_上
+	DATA era
+	DATAFORM %CALLNAME:MASTER%
+	DATA 화염
+	DATA 유수
+	DATA 산들바람
+	DATA 대지
+	DATA 영광
+	DATA 밤의 어둠
+	DATA 몽상
+	DATA 마법
+	DATA 마술
+	DATA 비밀
+	DATA 신비
+	DATA 결실
+	DATA 별들
+	DATA 은혜
+	DATA 연애
+	DATA 전차
+	DATA 승리
+	DATA 괴력
+	DATA 용기
+	DATA 은자
+	DATA 현자
+	DATA 운명
+	DATA 행운
+	DATA 시대
+	DATA 정의
+	DATA 평등
+	DATA 예지
+	DATA 절제
+	DATA 악마
+	DATA 숙명
+	DATA 탑
+	DATA 별
+	DATA 희망
+	DATA 달
+	DATA 환상
+	DATA 태양
+	DATA 청춘
+	DATA 쌍둥이
+	DATA 심판
+	DATA 부활
+	DATA 세계
+	DATA 우주
+	DATA 진실
+	DATA 검
+	DATA 탐험
+	DATA 단검
+	DATA 강도끼
+	DATA 예리한 창
+	DATA 마법 지팡이
+	DATA 강궁
+	DATA 대총
+	DATA 낙금
+	DATA 철권
+	DATA 명도
+	DATA 추억
+	DATA 활달
+	DATA 강건
+	DATA 호방
+	DATA 대지
+	DATA 천품
+	DATA 열혈
+	DATA 열렬
+	DATA 비상
+	DATA 불굴
+	DATA 복룡
+	DATA 봉리
+	DATA 불패
+	DATA 분신
+	DATA 무적
+	DATA 일심
+	DATA 위풍
+	DATA 영웅
+	DATA 과단
+	DATA 긍지
+	DATA 조화
+	DATA 투혼
+	DATA 매진
+	DATA 우정
+	DATA 승리
+	DATA 노력
+	DATA 단결
+	DATA 도전
+	DATA 질풍
+	DATA 용맹
+	DATA 아침 안개
+	DATA 번개
+	DATA 영원
+	DATA 벚꽃
+	DATA 눈꽃
+	DATA 월하
+	DATA 자원
+	DATA 월화
+	DATA 새벽
+	DATA 추수
+	DATA 청운
+	DATA 창공
+	DATA 옥향
+	DATA 박빙
+	DATA 비취
+	DATA 백야
+	DATA 명월
+	DATA 구가
+	DATA 잔향
+	DATA 만뢰
+	DATA 산호
+	DATA 진주
+	DATA 남옥
+	DATA 황옥
+	DATA 석류
+	DATA 수정
+	DATA 옥수
+	DATA 공작
+	DATA 월장
+	DATA 홍옥
+	DATA 흑옥
+	DATA 흑요
+	DATA 금강
+	DATA 호박
+	DATA 호안
+	DATA 에치고
+ENDDATA
+
+STRDATA 屋号_下
+	DATA 야
+	DATA 상점
+	DATA 당
+	DATA 본점
+	DATA 스토어
+	DATA 숍
+	DATA 사
+	DATA 기획
+	DATA 공방
+	DATA 마켓
+	DATA 시장
+	DATA 창고
+ENDDATA
+
+RETURNF 屋号_上 + 屋号_下
+

@@ -1,0 +1,280 @@
+;-------------------------------------------------
+;セックス系コマンド
+;-------------------------------------------------
+@RAPE_COMNAME23
+#FUNCTIONS
+TSTR:コマンド名受渡 = 항문으로 성기를 범하다
+
+
+;===================================================
+;コマンドタイプ
+;===================================================
+@RAPE_COMTYPE_23
+#FUNCTION
+TFLAG:コマンドタイプ受渡 = RAPE_COMTYPE("Ａ系")
+
+
+@RAPE_COM_TOOLTIP_23
+LOCALS = <br>■항문으로 성기를 범하다<br>
+LOCALS += "항문에 상대의 페니스를 삽입하여 애널 섹스를 하는 커맨드. <br>억지로 하는 것이므로 기승위밖에 할 수 없다. <br>A삽입계 모드가 되어, 모드를 변경하거나 성행위를 종료할 때까지 지속적으로 쾌락이 발생한다."
+LOCALS += "<br>RAPE_COM 타입: A계<br>획득 소스: 쾌A・노출・접촉・고통"
+LOCALS += "<br>고유 획득 경험: C성교 경험_A삽입(TARGET)・A성교 경험(PLAYER)<br>"
+TSTR:ツールチップ受渡 = %LOCALS%
+
+@RAPE_COM23
+
+	$体位_LOOP
+	DRAWLINE
+	PRINTL ■체위를 선택해주세요
+	PRINTL
+	FOR LOCAL, 0, 20
+		TRYCCALLFORM RAPE_COM_ABLE23_{LOCAL}
+			IF RESULT
+				PRINTBUTTONLC "[5]A기승위", 5
+			ENDIF
+		CATCH
+			CONTINUE
+		ENDCATCH
+	NEXT
+
+	PRINTL
+	PRINTL
+	PRINTBUTTONLC "[999]돌아가기", 999
+
+	$INPUT_LOOP
+	INPUT
+
+	LOCAL = RESULT
+	SELECTCASE LOCAL
+		CASE 0 TO 11
+			TRYCALLFORM RAPE_COM_ABLE23_{LOCAL}
+			IF RESULT
+				IF TARGET == MASTER
+					TARGET = PLAYER
+					PLAYER = MASTER
+					RFLAG:指示モード対象あなたフラグ = 1
+					TRYCALLFORM CAN_Ａ体位{LOCAL}(1)
+					IF !RESULT
+						TRYCALLFORM CAN_Ａ体位{LOCAL}(0)
+						PLAYER = TARGET
+						TARGET = MASTER
+						GOTO 体位_LOOP
+					ENDIF
+					RFLAG:指示モード対象あなたフラグ = 0
+					PLAYER = TARGET
+					TARGET = MASTER
+				ELSE
+					TRYCALLFORM CAN_Ａ体位{LOCAL}(1)
+					IF !RESULT
+						TRYCALLFORM CAN_Ａ体位{LOCAL}(0)
+						GOTO 体位_LOOP
+					ENDIF
+				ENDIF
+				TRYCALLFORM RAPE_COM23_{LOCAL}
+				;メッセージ用に体位の種類を保存
+				RFLAG:コマンド結果受渡し変数 = LOCAL
+				RETURN 1
+			ENDIF
+			GOTO INPUT_LOOP
+		CASE 999
+			RETURN -1
+		CASEELSE
+			GOTO INPUT_LOOP
+	ENDSELECT
+
+
+@RAPE_COM23_5
+;騎乗位
+CALL Ａ体位逆RAPE_COM(500, 120, 150)
+CALL SOURCE_CALC_奉仕(TARGET, PLAYER, 250)
+CALL MODE_CHANGE("Ａ騎乗位", TARGET, PLAYER)
+RETURN RESULT
+
+
+
+
+@Ａ体位逆RAPE_COM(ARG, ARG:1, ARG:2)
+;-------------------------------------------------
+;RAPE_COM別FLAGの設定
+;-------------------------------------------------
+
+;-------------------------------------------------
+;ソース追加処理
+;-------------------------------------------------
+
+CALL SOURCE_CALC_快Ａ(PLAYER ,TARGET, ARG)
+CALL SOURCE_CALC_露出(PLAYER, TARGET, ARG:1)
+CALL SOURCE_CALC_接触(PLAYER, TARGET, ARG:2)
+
+IF MODE_確認_ターゲット側("ペニスバンド", PLAYER) < 0
+	CALL SOURCE_CALC_快Ｃ(TARGET, PLAYER, ARG)
+ELSE
+	CALL SOURCE_CALC_快Ｖ(TARGET, PLAYER, ARG / 3)
+ENDIF
+
+;苦痛
+LOCAL = 800 * PAIN_CHECK_A(TARGET) / 1000
+CALL SOURCE_CALC_苦痛(PLAYER, TARGET, LOCAL)
+
+;-------------------------------------------------
+;経験の処理
+;-------------------------------------------------
+IF EXP:Ａ性交経験 == 0
+	CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>%CALLNAME:TARGET%에게 Ａ처녀를 바쳤다.</font><img src='えっちハート'>","うふふ")
+	CALL 履歴データベース登録(CFLAG:TARGET:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>%CALLNAME:PLAYER%의 Ａ처녀를 빼앗았다.</font><img src='えっちハート'>","うふふ")
+ENDIF
+EXP:TARGET:Ｃ性交経験_Ａ挿入 ++
+EXP:Ａ性交経験 ++
+CALL LOST_A_VIRGIN(PLAYER, TARGET, 1)
+CALL LOST_MAN_A_VIRGIN(TARGET, PLAYER)
+;同性愛　レズなら戻り値1ゲイなら戻り値2
+IF HETEROSEX(TARGET,PLAYER)
+	EXP:同性愛経験 += 4
+	EXP:PLAYER:同性愛経験 += 4
+ENDIF
+
+
+;愛情経験
+EXP:愛情経験 += TALENT:恋慕
+
+RETURN 1
+
+
+
+;-------------------------------------------------
+;実行判定処理
+;-------------------------------------------------
+;レイプなので素通し
+
+RETURN 1
+;-------------------------------------------------
+;実行判定
+;-------------------------------------------------
+
+@RAPE_COM_ABLE23
+;Ａ挿入共通実行判定
+;一括管理
+SIF GLOBAL_RAPE_COMABLE(23)
+	RETURN RESULT
+;Aがない場合駄目
+SIF TALENT:PLAYER:Ａ感度 == -2
+	RETURN 0
+;調教者がオトコ、半人半妖、ふたなりの場合はある程度勃起してないとダメ
+SIF (TALENT:TARGET:性別 & 2) && BASE:TARGET:勃起 < 1000
+	RETURN 0
+;アナルバイブ挿入中はダメ
+SIF TEQUIP:14
+	RETURN 0
+;アナルビーズ使用中は不可
+SIF TEQUIP:15
+	RETURN 0
+;普通の浣腸使用中は不可
+SIF TEQUIP:21
+	RETURN 0
+;バルーン使用中は不可
+SIF TEQUIP:22
+	RETURN 0
+;電極使用中は不可
+SIF TEQUIP:23
+	RETURN 0
+;一定のＡ経験が必要　無理やりなのでボーダーを下げた
+SIF EXP:2 < EXPLV:2
+	RETURN 0
+
+;調教者がオトコ、半人半妖、ふたなり、もしくはペニスバンドがないとダメ
+SIF !(TALENT:TARGET:性別 & 2) && MODE_確認_ターゲット側("ペニスバンド", TARGET) < 0
+	RETURN 0
+
+;下半身着衣
+;前鎧、めくれない服、タイツがあると無理
+SIF TEQUIP:下腹部前鎧あり
+	RETURN 0
+SIF TEQUIP:下半身服あり && (!TEQUIP:スカートめくり可 && !TEQUIP:ずらし可)
+	RETURN 0
+SIF TEQUIP:下タイツあり && !TEQUIP:下タイツ破れ
+	RETURN 0
+
+IF MODE_確認_完全一致("Ａ挿入系", TARGET, TARGET) < 0 && MODE_確認_完全一致("Ａ挿入系", TARGET, TARGET) < 0
+	;ちんこを何かに使ってる・届かないなら無理
+	SIF TEQUIP:TARGET:ペニス
+		RETURN 0
+	SIF TEQUIP:PLAYER:アナル
+		RETURN 0
+ENDIF
+
+;オートコマンド中の制限
+IF FLAG:オートコマンド判定中フラグ
+	SIF EXP:PLAYER:Ａ経験 == 0 || EXP:TARGET:Ａ経験 == 0
+		RETURN 0
+	SIF MODE_確認_完全一致("Ａ挿入系", PLAYER, TARGET) > -1 && MODE_確認_完全一致("Ａ挿入系", TARGET, PLAYER) > -1
+		RETURN 0
+ENDIF
+
+RETURN 1
+
+@RAPE_COM_ABLE23_5
+;騎乗位
+
+;睡眠中ダメ
+SIF CFLAG:TARGET:睡眠
+	RETURN 0
+
+RETURN 1
+
+;-------------------------------------------------
+;実行時メッセージ
+;-------------------------------------------------
+@RAPE_MESSAGE_COM23
+
+
+PRINTFORM %CALLNAME:PLAYER%은(는)%CALLNAME:TARGET%%TEXTR("위에 올라타/허리에 올라타/허리에 올라앉아/위에 올라타")%,
+
+IF MODE_確認_ターゲット側("ペニスバンド", TARGET) < 0
+
+	;おちんぽ冠詞群……いる？
+	;「パーシヴァルの高貴な童貞ちんぽ」とか「ウーノの小さな童貞おちんちん」とか出てきたら興奮とかより笑いが出てきちゃわない？
+	;高貴は流石に面白すぎちゃいそうだからいったん候補から外す
+
+	IF TALENT:男性器サイズ <= -1
+	;短小以下
+		PRINTFORM 팽팽하게 굳어진%TEXTR("작은/한입 크기의/자그마한")%
+	ELSEIF TALENT:男性器サイズ == 2
+	;デカい
+		PRINTFORM %TEXTR("/바싹 발기한/단단하게 솟아 위용을 뽐내는")%규격 외 사이즈의
+	ELSE
+		PRINTFORM %TEXTR("단단하게 발기하고/단단하게 솟아오른")%
+	ENDIF
+	
+	SIF CFLAG:TARGET:発情期フラグ < 0
+		PRINTFORM 발정
+	
+	;GETBITのほうがいいんだろうけど結局のところよくわかってないのでTALENTで
+	SIF TALENT:非童貞 == 0
+		PRINTFORM 동정
+	
+	IF TALENT:イキやすさ == 1
+		PRINTFORM %TEXTR("하찮은/나약한")%
+	ELSEIF TALENT:Ｃ感度 == 1
+		PRINTFORM 민감
+	ENDIF
+	
+	IF TALENT:男性器サイズ <= -1
+		PRINTFORM %TEXTR("자지/고추/작은 자지")%
+	ELSEIF TALENT:男性器サイズ == 0
+		PRINTFORM %TEXTR("자지/고추/페니스")%
+	ELSEIF TALENT:男性器サイズ == 1
+		PRINTFORM %TEXTR("큰 자지/큰 자지")%
+	ELSEIF TALENT:男性器サイズ == 2
+		PRINTFORM %TEXTR("큰 자지/큰 자지")%
+	ENDIF
+ELSE
+	PRINTFORM 페니스 밴드
+ENDIF
+
+PRINTFORM 을(를)%TEXTR("항문/애널")%에 대고, 그대로%TEXTR("천천히/푹/질퍽질퍽")%하고%TEXTR("물고/허리를 내리고/")%갔다…
+
+;ここまでを全て繋げると
+;「%CALLNAME:PLAYER%は%CALLNAME:TARGET%%TEXTRに馬乗りになり"、硬くそそり立ったよわよわちんちんをアナルにあてがって、そのままゆっくりと咥えこんでいった…」
+;となる。
+;Q.この場合、%CALLNAME:TARGET%にあたるのはいったい誰ームニルでしょうか？
+

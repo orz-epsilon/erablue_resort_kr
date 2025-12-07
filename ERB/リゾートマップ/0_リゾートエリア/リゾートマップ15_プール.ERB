@@ -1,0 +1,172 @@
+
+
+@マップ紹介_15
+;とりあえず5行
+PRINTFORML ※소개글 모집 중※
+PRINTFORML 
+PRINTFORML 
+PRINTFORML 
+PRINTFORML 
+
+
+@MAP_RESORT_0_15(AA)
+#DIMS REF AA, 0
+
+AA:00 = 　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　┃
+AA:01 = 　┌───────┐　　　　＿＿＿＿　　　　　　＿＿＿＿＿＿＿＿　　　　　┃
+AA:02 = 　│三三三三三三三│　　　／三三三 │ 　　　　／三三三三三三三三＼　　　　┃
+AA:03 = 　│三三三三三三三│　　 /三三三三 │ 　　　 /三三三三三三三三三 │ 　　　┃
+AA:04 = 　│三三三三三三三│　　/ 三三三三 │ 　　　│三三 /￣￣￣ヽ三三 │ 　　　┃
+AA:05 = 　│三三三三三三三│　 /三三三三三 │ 　　　│三三│　　　│三三 │ 　　　┃
+AA:06 = 　│三三三三三三三│　│三三05三三 /　　　　━━━━　　　━━━━━　　　┃
+AA:07 = 　│三三三三三三三│　│三三三三三/ 　　　　　　　　　　　　　　　　　　　┃
+AA:08 = 　│三三三三三三三│　│三三三三_/　　　　　━━━━　　　━━━━━　　　┃
+AA:09 = 　│三三三三三三三│　　￣￣￣￣　　　　　　│三三│　　　│三三 │ 　　　┃
+AA:10 = 　│三三三04三三三│　　　　　　　　　　　　│三三│　　　│三三 │ 　　　┃
+AA:11 = 　│三三三三三三三│　　　　　　　　　　　　│三三│　　　│三三 │ 　　　┃
+AA:12 = 　│三三三三三三三│　　　　　　　　　　　　/ 三三ヽ＿＿＿/ 三三 │ 　　　■
+AA:13 = 　│三三三三三三三│　　　　　　　　　　　 /三三三三三三三三三三 /　　　　■
+AA:14 = 　│三三三三三三三│　　　　　　　　　　　/ 三三三三三三三三三三/ 　　　　■
+AA:15 = 　│三三三三三三三│　　　　＿＿＿＿＿＿／三三三06三三三三三三／　　　　　■
+AA:16 = 　│三三三三三三三│　　　／三三三三三三三三三三三三三三三三／　　　　　　■
+AA:17 = 　│三三三三三三三│　　 /三三三三三三三三三三三三三 /￣￣￣　　　　　　　■
+AA:18 = 　│三三三三三三三│　　│三三 /￣￣￣￣￣＼三三三三/ 　　　　　　　　　　■
+AA:19 = 　└───────┘　　│三三/ 　　　　＿／三三三／　　　　　　　　　　　■
+AA:20 = 　　　　　　　　　　　　│三三ヽ＿＿＿／三三三三／　　　　　　　03　　　　■
+AA:21 = 　　　　　　　　　　　　ヽ三三三三三三三三三／￣　　　　　　　　　　　　　■
+AA:22 = 　　　　　　　　　　　　　ヽ三三三三三三三／　　　　　　　　　　　　　　　■
+AA:23 = 　　　　　　　　　　　　　　￣￣￣￣￣￣￣　　　　　　　　　　　　　　　　■
+AA:24 = ━━━━━━━━━━━━━━━━━━━━━■■■■■■■■■■■■■13■14■
+AA:25 = 　　　　　　　　　　　　　　　　　　　　　■　　　　　　　　　　　　↓　↓
+AA:26 = 
+AA:27 = ミ：プールサイド　　　　四：メインプール　　　　五：ボールプール
+AA:28 = 六：流れるプール　　　　オ：男子更衣室へ　　　　エ：女子更衣室へ
+
+@GETPLACENAME_0_15(ARG)
+#FUNCTION
+SELECTCASE ARG
+	CASE 1503
+		TSTR:場所名受渡 = 수영장 옆
+	CASE 1504
+		TSTR:場所名受渡 = 메인 풀
+	CASE 1505
+		TSTR:場所名受渡 = 볼 풀
+	CASE 1506
+		TSTR:場所名受渡 = 유수 풀
+	CASE 1513
+		TSTR:場所名受渡 = 남자 탈의실로
+	CASE 1514
+		TSTR:場所名受渡 = 여자 탈의실로
+ENDSELECT
+
+
+@DRAW_MAP_BG_0_15(SLICED, 表示文字列)
+#DIMS REF 表示文字列
+#DIMS SLICED
+SELECTCASE SLICED
+;色つけたいときはこんな感じ
+CASE "三", "─", "┘", "└", "┌", "┐", "│", "/", "／", "＿", "ヽ", "￣", "＼"
+	表示文字列 += @"<font color='#0067C0'>%SLICED%</font>"
+;違う文字を表示させる例
+;下部一覧の数字を表示しつつボタン化させる
+CASE "ミ"
+	表示文字列 += @"<button value='1503'>1503</button>"
+CASE "四"
+	表示文字列 += @"<button value='1504'>1504</button>"
+CASE "五"
+	表示文字列 += @"<button value='1505'>1505</button>"
+CASE "六"
+	表示文字列 += @"<button value='1506'>1506</button>"
+CASE "オ"
+	表示文字列 += @"<button value='1513'>1513</button>"
+CASE "エ"
+	表示文字列 += @"<button value='1514'>1514</button>"
+;ふつうの
+CASEELSE
+	表示文字列 += @"%SLICED%"
+ENDSELECT
+
+@プール系列改造メニュー()
+#FUNCTIONS
+;100~199と999は大本のメニュー操作で使うため、使用しないこと
+
+LOCALS = 리조트 하우스와 연결된 수영장을 개조합니다. <br><br>
+IF 施設改造度:15:0 < 1
+	LOCALS += @"■<button value='200'>[수영장 개조]</button> Lv{施設改造度:15:0}>{施設改造度:15:0 + 1} （필요:200,000루피）<br>"
+ELSE
+	LOCALS += @"■[수영장 개조] Lv{施設改造度:15:0}：상한<br>"
+ENDIF
+
+RETURNF LOCALS
+
+@プール系列改造実行関数(ARG)
+
+SELECTCASE ARG
+	CASE 200
+		DRAWLINE
+		PRINTL 수영장에 다음 시설이 도입됩니다.
+		PRINTBUTTON "■수영장 개별 맵 해방", 1500
+		PRINTL 
+		PRINTBUTTON "■수영장 옆 도입", 1501
+		PRINTL 
+		PRINTBUTTON "■메인 풀 도입", 1502
+		PRINTL 
+		PRINTBUTTON "■볼 풀 도입", 1503
+		PRINTL 
+		PRINTBUTTON "■유수풀 도입", 1504
+		PRINTL 
+		PRINTL 
+		PRINTL 수영장을 개조하시겠습니까? (필요: 200,000루피)
+		PRINTBUTTONLC "[0] 예", 0
+		PRINTBUTTONLC "[1] 아니오", 1
+		INPUT
+		SELECTCASE RESULT
+			CASE 0
+				IF MONEY < 200000
+					PRINTW 루피가 부족합니다.
+					RETURN
+				ENDIF
+				施設改造度:15:0 = 1
+				MONEY -= 200000
+				PRINTL 수영장을 개조했습니다!
+				PRINTW (滞在キャラ上限＋５)
+				CALL 滞在可能キャラ数再計算
+				CALL RESET_GRAPH_0
+				CALL 履歴データベース登録(CFLAG:MASTER:人物番号, @"プールをLv1に改造した","実績")
+				FOR LOCAL, 1, CHARANUM
+					SIF 現在仕事:LOCAL:1 == 15
+						現在仕事:LOCAL:1 = 1503
+				NEXT
+				RETURN
+			CASE 1
+				RETURN
+			CASE 1500
+				DRAWLINE
+				PRINTL 맵 해방으로, 수영장으로 이동하면 개별 맵으로 이동하게 됩니다.
+				PRINTL 개조가 진행되면 맵이 더욱 확장되어 내부 시설을 강화할 수 있게 됩니다. (미구현입니다)
+				PRINTW
+			CASE 1501
+				DRAWLINE
+				PRINTL 일광욕을 즐기거나, 수영하다 지쳤을 때 쉴 수 있는 공간입니다.
+				PRINTL 조건이 갖춰지면 노점을 열 수도 있게 됩니다. (미구현입니다)
+				PRINTW
+			CASE 1502
+				DRAWLINE
+				PRINTL 100m의 큰 수영장입니다.
+				PRINTL 자유롭게 수영하거나, 튜브를 가져와서 놀 수 있습니다.
+				PRINTW
+			CASE 1503
+				DRAWLINE
+				PRINTL 많은 공이 떠다니는 얕은 수영장입니다.
+				PRINTL 하빈족도 발이 닿는 깊이라 안심하고 놀 수 있습니다.
+				PRINTL 물총 등의 놀이 도구도 비치되어 있습니다.
+				PRINTW
+			CASE 1504
+				DRAWLINE
+				PRINTL 마법으로 항상 물이 흐르는 수영장입니다.
+				PRINTL 보통 수영장과는 또 다른 즐거움을 맛볼 수 있을 것입니다.
+				PRINTL 여성 캐릭터와 함께 놀면, 노출 이벤트가 발생할 수 있습니다.
+				PRINTW
+		ENDSELECT
+		RESTART
+ENDSELECT

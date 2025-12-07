@@ -1,0 +1,123 @@
+;-------------------------------------------------
+;触手乳首責め
+;触手系コマンド、レベル1
+;-------------------------------------------------
+@COMNAME100
+#FUNCTIONS
+TSTR:コマンド名受渡 = 촉수 유두 괴롭힘
+
+
+;===================================================
+;コマンドタイプ
+;===================================================
+@COMTYPE_100
+#FUNCTION
+TFLAG:コマンドタイプ受渡 = COMTYPE("触手系")
+;特殊な条件が必要なコマンドなので、弱点コマンドのランダム対象からは外す
+;弱点コマンドカテゴリ = B
+同時モード許可 = 999
+
+
+@COM_TOOLTIP_100
+LOCALS = <br>■촉수 유두 괴롭힘<br>
+LOCALS += "유두에 특화된 촉수를 내어 강한 쾌락을 주는 커맨드."
+LOCALS += "<br>COM타입: 촉수계<br>획득 소스: 쾌B・노출・접촉"
+LOCALS += "<br>고유 획득 경험: 촉수 조작 경험(PLAYER), 유두 개발(TARGET)<br>"
+TSTR:ツールチップ受渡 = %LOCALS%
+
+@COM100
+#DIM 快楽基礎値
+
+CALL MODE_CHANGE("触手乳首責め", PLAYER, TARGET)
+;-------------------------------------------------
+;ソース追加処理
+;-------------------------------------------------
+RCVAR:乳首開発フラグ = 3
+RCVAR:触手コマンドフラグ = 1
+
+快楽基礎値 = あなた特殊能力:触手変化術 * 3
+CALL SOURCE_CALC_快Ｂ(TARGET, PLAYER, 快楽基礎値 * 70)
+CALL SOURCE_CALC_露出(TARGET, PLAYER, 50)
+CALL SOURCE_CALC_接触(TARGET, PLAYER, 快楽基礎値 * 20)
+;-------------------------------------------------
+;経験の処理
+;-------------------------------------------------
+;同性愛
+SIF 同性愛性癖判定(TARGET,PLAYER)
+	EXP:TARGET:同性愛経験 += 1
+SIF 同性愛性癖判定(PLAYER,TARGET)
+	EXP:PLAYER:同性愛経験 += 1
+
+EXP:PLAYER:触手操作経験 ++
+RETURN 1
+;-------------------------------------------------
+;実行判定
+;-------------------------------------------------
+@COM_ABLE100
+SIF SAVESTR:ゲームフェイズ管理 != "通常モード"
+	RETURN 0
+;一括管理
+SIF GLOBAL_COMABLE(100)
+	RETURN RESULT
+SIF MODE_存在判定_ターゲット側("触手乳首責め", TARGET)
+	RETURN 0
+;Bがない場合駄目
+SIF TALENT:TARGET:Ｂ感度 == -2
+	RETURN 0
+;ニプレスだと不可
+SIF TEQUIP:上半身下着あり == 2
+	RETURN 0
+;胸を何かに使ってるなら無理（パイズリ中は許可）
+IF !MODE_存在判定_プレイヤー側("パイズリ系", TARGET)
+	SIF TEQUIP:TARGET:胸
+		RETURN 0
+ENDIF
+;将来的には許可する予定だけど（ユリウスとか）一旦あなた以外は封印
+SIF PLAYER != MASTER
+	RETURN 0
+RETURN 1
+
+;-------------------------------------------------
+;実行時メッセージ
+;-------------------------------------------------
+@MESSAGE_COM100
+#DIM 同時キャラ番号
+PRINTFORM %CALLNAME:PLAYER%는
+
+IF GETBIT(FLAG:モード管理, モードビット_同時)
+	PRINT 수많은 촉수를
+	FOR 同時キャラ番号, 0, 同時モード_選択数
+		SIF 同時キャラ番号 > 0
+			PRINT ,
+		PRINTFORM %CALLNAME:(同時モード_選択キャラ:同時キャラ番号)%
+	NEXT
+	PRINT 의 유두에 달라붙게 했다
+	RETURN 0
+ENDIF
+
+PRINTFORM 자신의 촉수를 %CALLNAME:TARGET%의
+IF TEQUIP:上半身鎧あり
+	PRINT 갑옷 틈새로
+	IF TEQUIP:上タイツあり
+		PRINT 타이츠 아래로
+	ENDIF
+	PRINT 파고들게 하고,
+ELSEIF TEQUIP:上半身服あり
+	PRINT 옷 틈새로
+	IF TEQUIP:上タイツあり
+		PRINT 타이츠 아래로
+	ENDIF
+	PRINT 파고들게 하고,
+ELSEIF TEQUIP:上半身下着あり == 1
+		IF TEQUIP:下タイツあり
+			PRINT 타이츠 아래에서
+		ENDIF
+		PRINT 브래지어 안으로 파고들게 하고,
+ENDIF
+IF TALENT:陥没乳首 && !TCVAR:陥没乳首露出フラグ
+	PRINT 아직 유륜에 가려진
+ELSEIF PALAM:欲情 >= PALAMLV:3
+	PRINT 딱딱하게 솟아오른
+ENDIF
+PRINTL 유두에 달라붙게 했다
+

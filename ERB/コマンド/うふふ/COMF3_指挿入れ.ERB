@@ -1,0 +1,162 @@
+;-------------------------------------------------
+;指挿入れ
+;愛撫系コマンド、レベル1
+;-------------------------------------------------
+@COMNAME3
+#FUNCTIONS
+TSTR:コマンド名受渡 = 손가락 삽입
+SIF GETBIT(FLAG:モード管理, モードビット_同時)
+	TSTR:コマンド名受渡 = 동시에 손가락 삽입
+
+
+
+
+
+;===================================================
+;コマンドタイプ
+;===================================================
+@COMTYPE_3
+#FUNCTION
+TFLAG:コマンドタイプ受渡 = COMTYPE("Ｖ系")
+弱点コマンドカテゴリ = V
+同時モード許可 = 2
+同時モード拡張許可 = 1
+オートコマンド許可 = 1
+
+
+@COM_TOOLTIP_3
+LOCALS = <br>■손가락 삽입<br>
+LOCALS += "상대의 질에 손가락을 넣어 애무를 하는 커맨드. <br>처녀에게 할 경우, 큰 고통을 수반한다."
+LOCALS += "<br>COM 타입: V계<br>획득 소스: 쾌V・노출・접촉・고통"
+LOCALS += "<br>고유 획득 경험: 없음<br>"
+TSTR:ツールチップ受渡 = %LOCALS%
+
+@COM3
+;-------------------------------------------------
+;ソース追加処理
+;-------------------------------------------------
+
+IF !TALENT:処女
+	CALL SOURCE_CALC_快Ｖ(TARGET, PLAYER, 120)
+ELSE
+	CALL SOURCE_CALC_快Ｖ(TARGET, PLAYER, 30)
+ENDIF
+SIF TALENT:PLAYER:器用な指
+	CALL SOURCE_CALC_快Ｖ(TARGET, PLAYER, 50)
+CALL SOURCE_CALC_露出(TARGET, PLAYER, 120)
+CALL SOURCE_CALC_接触(TARGET, PLAYER, 150)
+
+;苦痛
+LOCAL = 40 * PAIN_CHECK_V(TARGET) / 1000
+SIF TALENT:処女
+	TIMES LOCAL , 1.50
+
+CALL SOURCE_CALC_苦痛(TARGET, PLAYER, LOCAL)
+;-------------------------------------------------
+;経験の処理
+;-------------------------------------------------
+;同性愛
+SIF 同性愛性癖判定(TARGET,PLAYER)
+	EXP:TARGET:同性愛経験 += 1
+SIF 同性愛性癖判定(PLAYER,TARGET)
+	EXP:PLAYER:同性愛経験 += 1
+
+;手淫経験
+EXP:PLAYER:手淫経験 += 1
+
+RETURN 1
+
+;-------------------------------------------------
+;実行判定
+;-------------------------------------------------
+
+@COM_ABLE3
+;指挿入れ実行判定
+SIF SAVESTR:ゲームフェイズ管理 != "通常モード"
+	RETURN 0
+;一括管理
+SIF GLOBAL_COMABLE(3)
+	RETURN RESULT
+;Vがない場合駄目
+SIF TALENT:TARGET:Ｖ感度 == -2
+	RETURN 0
+SIF GETBIT(TALENT:TARGET:性別, 0) == 0
+	RETURN 0
+
+;下半身着衣
+;前鎧、めくれない服、タイツ、前張りがあると無理
+SIF TEQUIP:下腹部前鎧あり
+	RETURN 0
+SIF TEQUIP:下半身服あり && (!TEQUIP:スカートめくり可 && !TEQUIP:ずらし可)
+	RETURN 0
+SIF TEQUIP:下タイツあり && !TEQUIP:下タイツ破れ
+	RETURN 0
+SIF TEQUIP:下半身下着あり == 2
+	RETURN 0
+
+;指を何かに使ってるなら無理
+SIF TEQUIP:PLAYER:指
+	RETURN 0
+;膣を何かに使ってる・届かないなら無理
+SIF TEQUIP:TARGET:膣
+	RETURN 0
+CALL MODE_部位届く判定(部位_膣, PLAYER, TARGET)
+SIF RESULT == 0
+	RETURN 0
+
+;オートコマンド中の制限
+IF FLAG:オートコマンド判定中フラグ
+	SIF EXP:TARGET:Ｖ経験 == 0
+		RETURN 0
+ENDIF
+RETURN 1
+
+;-------------------------------------------------
+;実行時メッセージ
+;-------------------------------------------------
+
+@MESSAGE_COM3
+#DIM 同時キャラ番号
+;下半身着衣
+PRINTFORM %CALLNAME:PLAYER%는
+IF GETBIT(FLAG:モード管理, モードビット_同時)
+	FOR 同時キャラ番号, 0, 同時モード_選択数
+		SIF 同時キャラ番号 > 0
+			PRINT ,
+		PRINTFORM %CALLNAME:(同時モード_選択キャラ:同時キャラ番号)%
+	NEXT
+	PRINT 의 음부에 손가락을 천천히 삽입했다…
+	RETURN 0
+ENDIF
+
+SIF TEQUIP:下半身服あり
+		PRINTFORM 옷 속에 손을 집어넣어
+PRINTFORM %CALLNAME:TARGET%의
+;処女
+IF TALENT:処女 == 1
+	PRINT 남자를 모르는
+;潤滑LV4以上
+ELSEIF PALAM:潤滑 >= PALAMLV:4
+	PRINT 축축하게 젖은
+ENDIF
+;小柄体型の有無で分岐
+IF TALENT:種族 < 0
+	PRINT 어린 보지
+ELSE
+	PRINT 음부
+ENDIF
+PRINTFORML 에 손가락을 천천히 삽입했다…
+IF NOWEX:Ｖ絶頂
+	IF TALENT:処女 == 1
+		PRINTFORML %CALLNAME:TARGET%는 %CALLNAME:PLAYER%에게 매달려, 삽입된 손가락을 픽픽 조이고 있다…
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%는 침을 흘리며, 스스로 허리를 흔들어 쾌락을 탐하고 있다…
+	ENDIF
+ELSE
+	IF TALENT:処女 == 1
+		PRINTFORML %CALLNAME:TARGET%는 낯선 감촉에 몸을 굳히고 있다…
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%는 질 안에서 꿈틀거리는 손가락의 감촉에 달콤한 교성을 내지르고 있다…
+	ENDIF
+ENDIF
+

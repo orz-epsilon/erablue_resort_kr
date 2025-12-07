@@ -1,0 +1,53 @@
+
+@アイテム個別文章表示_薬草(ARGS)
+;薬草
+IF ARGS == "値段"
+	詳細文文字列受け渡し変数 = 루피
+	RETURN 200
+ENDIF
+
+LOCALS = 
+LOCALS += @"■약초　　　소지 수:{DT_CELL_GET("所持アイテムデータベース", 0, "薬草")}<br>"
+LOCALS += "하늘 세계에서 널리 사용되는, 다양한 상처에 효과적인 식물군의 총칭<br>"
+LOCALS += "가공하면 포션이 되지만, 이대로도 그럭저럭 효과<br>"
+LOCALS += "가 있다<br>"
+LOCALS += "<br>"
+LOCALS += "【효과】<br>"
+LOCALS += "아군 단일의 HP를 [100] 회복한다. <br>"
+
+詳細文文字列受け渡し変数 = %LOCALS%
+
+@アイテム使用先表示_薬草
+CALL 汎用使用先表示("味方単体")
+
+@アイテム効果処理_薬草(ARG)
+;ARG = 隊列の何番目か
+
+IF !BATTLE_STATE:ARG:キャラ登録番号
+	RETURN 0
+ENDIF
+
+IF DT_CELL_GET("所持アイテムデータベース", 0, "薬草") < 1
+	PRINTW 아이템이 없습니다
+	RETURN 0
+ENDIF
+
+IF BATTLE_STATE:ARG:最大ＨＰ == BATTLE_STATE:ARG:ＨＰ
+	PRINTW HP가 최대입니다
+	RETURN 0
+ENDIF
+
+IF BATTLE_STATE:ARG:ＨＰ < 1
+	PRINTW 전투 불능은 치료할 수 없습니다
+	RETURN 0
+ENDIF
+
+IF BATTLE_STATE:ARG:最大ＨＰ - BATTLE_STATE:ARG:ＨＰ < 100
+	PRINTFORMW %CALLNAME:(BATTLE_STATE:ARG:キャラ登録番号)%의 HP를{BATTLE_STATE:ARG:最大ＨＰ - BATTLE_STATE:ARG:ＨＰ}회복했습니다
+ELSE
+	PRINTFORMW %CALLNAME:(BATTLE_STATE:ARG:キャラ登録番号)%의 HP를100회복했습니다
+ENDIF
+
+BATTLE_STATE:ARG:ＨＰ = MIN(BATTLE_STATE:ARG:ＨＰ + 100, BATTLE_STATE:ARG:最大ＨＰ)
+
+RETURN 1

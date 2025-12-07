@@ -1,0 +1,121 @@
+;-------------------------------------------------
+;体外式ポルチオマッサージ
+;-------------------------------------------------
+@MASSAGE_COMNAME24
+#FUNCTIONS
+TSTR:コマンド名受渡 = 체외식 포르치오 마사지
+
+
+;===================================================
+;コマンドタイプ
+;===================================================
+@MASSAGE_COMTYPE_24
+#FUNCTION
+TFLAG:コマンドタイプ受渡 = MASSAGE_COMTYPE("エロマッサージ")
+
+@MASSAGE_COM_TOOLTIP_24
+LOCALS = <br>■체외식 포르치오 마사지<br>
+LOCALS += "자궁구 부근에 존재하는 성감대를 배 위에서 지압하여 강한 자극을 준다."
+LOCALS += "<br>COM 타입: 에로 마사지<br>획득 소스: 쾌V・접촉・고통・환락"
+LOCALS += "<br>고유 획득 경험: 포르치오 개발(TARGET)<br>"
+TSTR:ツールチップ受渡 = %LOCALS%
+
+@MASSAGE_COM24
+;-------------------------------------------------
+;ソース追加処理
+;-------------------------------------------------
+
+
+RCVAR:ポルチオ開発フラグ = 2
+IF BASE:TARGET:理性 <= 1
+;理性がおしまいになってしまった場合、快楽に流されて警戒が下がっていく。
+	BASE:TARGET:性欲 += 80
+	BASE:TARGET:警戒 += 警戒変動値算出(TARGET, -40)
+	CALL SOURCE_CALC_好感度要素_性愛度UP(TARGET, PLAYER, 80)
+ELSEIF 知識素質:TARGET:性知識 <= -1
+;性知識がない場合、そもそも警戒することができない。そういうもんかって受け入れるため理性は下がり続けるし、快感を伴うから警戒も下がり続ける。
+;……シヴァお前……
+	BASE:TARGET:理性 += 理性変動値算出(TARGET, -60)
+	BASE:TARGET:性欲 += 80
+	BASE:TARGET:警戒 += 警戒変動値算出(TARGET, -50)
+	CALL SOURCE_CALC_好感度要素_性愛度UP(TARGET, PLAYER, 100)
+ELSE
+;局部に直接触れるわけではないので、警戒は少し上がるが理性は削れる。警戒で理性が10上がり、ポルチオへの刺激で理性が50下がるイメージでこの数値。
+;性欲も大きく煽られる。だいぶ強コマンド。
+	BASE:TARGET:理性 += 理性変動値算出(TARGET, -40)
+	BASE:TARGET:性欲 += 80
+	BASE:TARGET:警戒 +=警戒変動値算出(TARGET, 20)
+	CALL SOURCE_CALC_好感度要素_性愛度UP(TARGET, PLAYER, 80)
+ENDIF
+
+;ポルチオ責めよりは弱い。お腹を押し込まれるため苦痛がちょっとある
+CALL SOURCE_CALC_快Ｖ(TARGET, PLAYER, 300)
+CALL SOURCE_CALC_接触(TARGET, PLAYER, 50)
+CALL SOURCE_CALC_苦痛(TARGET, PLAYER, 50)
+CALL SOURCE_CALC_歓楽(TARGET, PLAYER, 100)
+
+;苦痛コマンドフラグだと苦痛快楽じゃなくて苦痛絶頂ばっかり溜まりがちだから快楽固定でマゾ性感上げの緩和を図る
+EXP:TARGET:苦痛快楽経験 += 1
+
+;妊娠率が10%上昇する
+RCVAR:TARGET:妊娠率補正_加算値 += 10
+
+BASE:TARGET:ちんイラ = MAX(0, BASE:TARGET:ちんイラ - 100)
+;-------------------------------------------------
+;経験の処理
+;-------------------------------------------------
+
+RETURN 1
+
+;-------------------------------------------------
+;実行判定
+;-------------------------------------------------
+
+@MASSAGE_COM_ABLE24
+SIF SAVESTR:ゲームフェイズ管理 != "マッサージモード"
+	RETURN 0
+
+SIF GLOBAL_MASSAGE_COMABLE(24)
+	RETURN RESULT
+
+;Ｖがないとダメ
+SIF GETBIT(TALENT:TARGET:性別, 0) == 0
+	RETURN 0
+SIF TALENT:TARGET:Ｖ感度 == -2
+	RETURN 0
+
+;うつ伏せだとダメ
+SIF TCVAR:TARGET:マッサージ_うつ伏せフラグ == 1
+	RETURN 0
+
+;実行難易度もかなり緩い。ちょっと強すぎる気もしなくもないけど……えっちだからヨシ！
+SIF (BASE:TARGET:理性 + BASE:TARGET:警戒) > 1400
+	RETURN 0
+
+RETURN 1
+
+;-------------------------------------------------
+;実行時メッセージ
+;-------------------------------------------------
+@MASSAGE_MESSAGE_COM24
+PRINTFORM %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%의
+	IF TALENT:TARGET:体型 >= 1
+	;肉感的以上
+		PRINTFORM 탱탱한
+	ELSEIF TALENT:TARGET:体型 <= -2
+	;細身以下
+		PRINTFORM 가늘고 가녀린
+	ENDIF
+PRINTFORML 배 위에서, 손가락 끝으로 원을 그리듯이 포르치오를 %TEXTR("자극했다/주물렀다")%.
+
+;削りが十分な時は追加のメッセージ
+IF (BASE:TARGET:理性 + BASE:TARGET:警戒) < 900
+	PRINTW 
+	SELECTCASE RAND:2
+	CASE 0
+		PRINTFORM %CALLNAME:TARGET%은(는) %TEXTR("황홀하게 눈가를 녹이며/녹아내린 얼굴로 헤프게 입을 벌리고/법열에 눈가를 녹이며")%,
+	CASE 1
+		PRINTFORM %CALLNAME:TARGET%은(는) 헤프게 풀린 입에서 %TEXTR("망측한 소리/쾌락에 물든 교성/음란한 소리")%을(를) %TEXTR("내며/흘리며/흘리면서")%,
+	ENDSELECT
+	PRINTFORML %CALLNAME:PLAYER%%TEXTR("의 『마사지』/의 수기/가 주는 쾌락")%%TEXTR("에 취해 있다/에 당하는 대로 되어 있다/을 받아들이고 있다/을 감수하고 있다")%…
+ENDIF

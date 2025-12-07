@@ -1,0 +1,55 @@
+
+@アイテム個別文章表示_クリアソルト(ARGS)
+VARSET LOCALS
+CALL 口上変数初期化
+
+IF ARGS == "値段"
+	詳細文文字列受け渡し変数 = 루피
+	RETURN 2500
+ENDIF
+
+
+LOCALS += @"■클리어 솔트　　　소지 수:{DT_CELL_GET("所持アイテムデータベース", 0, "クリアソルト")}<br>"
+;LOCALS +="－－－－－－－－－－－－－－－－－－－－－－－－－－－－<br>" 改行目安
+LOCALS += "정화의 마력을 담은 소금 결정. <br>"
+LOCALS += "기동하면 부근의 마력에 따라 정화의 빛을 발생시킨다. <br>"
+LOCALS += "효과 범위는 좁지만, 사용자하기 나름으로 위력을 높일 수 있어 유용한<br>"
+LOCALS += "공격 도구이다. <br>"
+LOCALS += "<br>"
+LOCALS:1 += "【효과】<br>"
+LOCALS:1 += "적 단일 대상에게[ＰＴ의 최대 레벨✕５０]의 빛 속성 데미지<br>"
+
+詳細文文字列受け渡し変数 = %LOCALS%%LOCALS:1%
+KSTR:(K++) = %LOCALS:1%
+
+@アイテム使用先表示_クリアソルト
+CALL 汎用使用先表示("敵単体")
+
+@アイテム効果処理_クリアソルト(ARG)
+#DIM レベル記録
+;ARG = エネミーが何番目か、10からカウント
+CALL 口上変数初期化
+
+レベル記録 = 0
+FOR LOCAL, 0, 14
+	SIF LOCAL > 3 && LOCAL < 10
+		CONTINUE
+	SIF BATTLE_STATE:LOCAL:キャラ登録番号 < 1
+		CONTINUE
+	SIF BATTLE_STATE:LOCAL:Lv > レベル記録
+		レベル記録 = BATTLE_STATE:LOCAL:Lv
+NEXT
+
+アビ汎用変数:効果量 = レベル記録 * 50
+CALL アビテンプレート_ダメージ処理_光属性
+
+SIF アビテンプレート用_キャンセルフラグ
+	RETURN -1
+
+IF バフ番号取得_枠("闇のオーラ", アビテンプレート用_対象保存:0) > -1
+	CALL アビ汎用変数文字列リセット
+	アビ汎用変数:消去不可バフデバフ削除オプション = 1
+	CALL アビテンプレート_不利効果_バフ消去("闇のオーラ")
+ENDIF
+
+RETURN 1

@@ -1,0 +1,81 @@
+
+
+
+@起床時_疑似恋慕成長処理()
+#DIM キャラ番号
+#DIM 候補配列, 2000
+#DIM 候補数
+#DIM 成長キャラ
+
+候補数 = 0
+;疑似恋慕所持で性知識が０以上のキャラを探す
+FOR キャラ番号, 1, CHARANUM
+	SIF CFLAG:キャラ番号:滞在期間 < 1
+		CONTINUE
+	SIF CFLAG:キャラ番号:ゲージ起動分類 != 1
+		CONTINUE
+	SIF !TALENT:キャラ番号:疑似恋慕
+		CONTINUE
+	SIF 知識素質:キャラ番号:性知識 < 0
+		CONTINUE
+	候補配列:候補数 = キャラ番号
+	候補数 ++
+NEXT
+
+SIF 候補数 < 1
+	RETURN 0
+
+
+;全員発動させる
+FOR キャラ番号, 0, 候補数
+	成長キャラ = 候補配列:キャラ番号
+	;先にステータス置き換えておく
+	TALENT:成長キャラ:恋慕 = TALENT:成長キャラ:疑似恋慕
+	TALENT:成長キャラ:疑似恋慕 = 0
+	PRINTL
+	DRAWLINE
+	;口上があるならそっちを表示
+	TRYCCALLFORM KOJO_EVENT_起床時疑似恋慕成長_{NO:成長キャラ}(成長キャラ)
+	CATCH
+		;汎用告白処理
+		PRINTFORMW %CALLNAME:MASTER%이(가) 일어나 아침 준비를 하고 있자, 자기 방에 손님이 찾아왔다.
+		PRINTFORML 찾아온%CALLNAME:成長キャラ%을(를) 맞이하고, 차를 내어 대접한다. 아무래도 할 이야기가 있는 것 같다.
+		FORCEWAIT
+		PRINTL
+		PRINTFORMW %CALLNAME:成長キャラ%은(는) 붉어진 얼굴로 조금 망설이며, 지금까지의 자신의 지식 부족을 사과했다.
+		SELECTCASE TALENT:成長キャラ:恋慕
+			CASE 1
+				PRINTFORMW 올바른 지식을 얻은 지금, 다시 한번%CALLNAME:MASTER%와 연인 사이가 되고 싶어서, 고백하러 온 것 같다.
+			CASE 2
+				PRINTFORMW 올바른 지식을 얻은 지금, 다시 한번%CALLNAME:MASTER%의 결혼 상대가 되고 싶어서, 고백하러 온 것 같다.
+		ENDSELECT
+		PRINTL
+
+		PRINTFORMW %CALLNAME:MASTER%이(가) 승낙의 답장을 하자, %CALLNAME:成長キャラ%은(는) 미소를 지으며 기뻐했다.
+		
+		PRINTFORML %CALLNAME:MASTER%은(는)……
+		PRINTBUTTONLC @"[0] 일단%CALLNAME:成長キャラ%을(를) 돌려보낸다", 0
+		PRINTL
+		SELECTCASE TALENT:成長キャラ:恋慕
+			CASE 1
+				PRINTBUTTONLC @"[1] 연인다운 행위를 할까, 라며%CALLNAME:成長キャラ%을(를) 침대로 초대한다", 1
+			CASE 2
+				PRINTBUTTONLC @"[1] 부부다운 행위를 할까, 라며%CALLNAME:成長キャラ%을(를) 침대로 초대한다", 1
+		ENDSELECT
+		PRINTL
+		PRINTL
+
+		BINPUT
+		IF RESULT == 0
+			PRINTFORMW 기쁜 듯 웃는%CALLNAME:成長キャラ%와 잠시 이야기를 나누고, 만족한%CALLNAME:成長キャラ%은(는) 일단 자기 방으로 돌아갔다……
+		ELSE
+			PRINTFORMW 얼굴을 붉힌%CALLNAME:成長キャラ%은(는) 말의 의미를 이해하고 있는지, 긴장한 얼굴로%CALLNAME:MASTER%의 유혹에 응했다……
+			PRINTL
+			PRINTL
+			STR:イベントうふふ場所名 '= GETPLACENAME(0, CFLAG:MASTER:自室位置)
+			FLAG:イベントうふふベッドルーム = 1
+			CFLAG:成長キャラ:イベントうふふ対象フラグ = 1
+			CALL イベント中うふふ移行処理("疑似恋慕成長")
+		ENDIF
+	ENDCATCH
+NEXT

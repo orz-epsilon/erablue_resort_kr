@@ -1,0 +1,58 @@
+
+@アイテム個別文章表示_海苔おせんべセット(ARGS)
+;海苔おせんべセット
+IF ARGS == "値段"
+	詳細文文字列受け渡し変数 = 루피
+	RETURN 5500
+ENDIF
+
+LOCALS = 
+LOCALS += @"■김 센베 세트　　　소지 수:{DT_CELL_GET("所持アイテムデータベース", 0, "海苔おせんべセット")}<br>"
+LOCALS += "맛있는 센베 세트. 김이 바삭바삭해서 맛있다. <br>"
+LOCALS += "먹으면 기운이 솟아나, 전원의 마력이 조금 회복된다. <br>"
+LOCALS += "전투 중에 사용할 수 없다. <br>"
+LOCALS += "섭취 칼로리：98kcal<br>"
+LOCALS += "<br>"
+LOCALS += "【효과】<br>"
+LOCALS += "아군 전체의 MP를[１５０] 회복한다. <br>"
+
+詳細文文字列受け渡し変数 = %LOCALS%
+
+@アイテム使用先表示_海苔おせんべセット
+;戦闘時使用不可
+CALL 汎用使用先表示("味方全体", -1)
+
+@アイテム効果処理_海苔おせんべセット(ARG)
+;ARG = 隊列の何番目か
+
+IF DT_CELL_GET("所持アイテムデータベース", 0, "海苔おせんべセット") < 1
+	PRINTW 아이템이 없습니다
+	RETURN 0
+ENDIF
+
+LOCAL:1 = 0
+FOR LOCAL, 0, 14
+	SIF LOCAL > 3 && LOCAL < 10
+		CONTINUE
+	SIF !BATTLE_STATE:LOCAL:キャラ登録番号
+		CONTINUE
+	SIF BATTLE_STATE:LOCAL:最大ＭＰ == BATTLE_STATE:LOCAL:ＭＰ
+		CONTINUE
+	IF BATTLE_STATE:LOCAL:最大ＭＰ - BATTLE_STATE:LOCAL:ＭＰ < 150
+		PRINTFORML %CALLNAME:(BATTLE_STATE:LOCAL:キャラ登録番号)%의 MP를{BATTLE_STATE:LOCAL:最大ＭＰ - BATTLE_STATE:LOCAL:ＭＰ} 회복했습니다
+	ELSE
+		PRINTFORML %CALLNAME:(BATTLE_STATE:LOCAL:キャラ登録番号)%의 MP를150 회복했습니다
+	ENDIF
+	BATTLE_STATE:LOCAL:ＭＰ = MIN(BATTLE_STATE:LOCAL:ＭＰ + 150, BATTLE_STATE:LOCAL:最大ＭＰ)
+	TCVAR:(BATTLE_STATE:LOCAL:キャラ登録番号):摂取カロリー += 98
+	LOCAL:1 += 1
+NEXT
+
+IF LOCAL:1 > 0
+	WAIT
+ELSE
+	PRINTW 회복 가능한 대상이 없습니다.
+	RETURN 0
+ENDIF
+
+RETURN 1

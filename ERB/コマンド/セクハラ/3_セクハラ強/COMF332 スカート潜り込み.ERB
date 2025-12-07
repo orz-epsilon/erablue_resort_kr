@@ -1,0 +1,172 @@
+
+@COMNAME332
+#FUNCTIONS
+TSTR:コマンド名受渡 = 치마 속으로 잠입
+
+;===================================================
+;コマンドタイプ
+;===================================================
+@COMTYPE_332
+#FUNCTION
+TFLAG:コマンドタイプ受渡 = COMTYPE("セクハラ強")
+
+@COM_TOOLTIP_332
+LOCALS = <br>■치마 속으로 잠입<br>
+LOCALS += "상대의 치마 속에 머리를 들이미는 커맨드. <br>치마 형태가 아닌 옷으로는 불가능<br>둘만 있지 않으면 불가능."
+LOCALS += "<br>COM 타입: 성희롱<br>획득 소스: 접촉・노출・불쾌・반감"
+LOCALS += "<br>고유 획득 경험: 없음<br>"
+TSTR:ツールチップ受渡 = %LOCALS%
+
+
+@COM332
+
+CALL セクハラ反応タイプ判定(TARGET)
+;RFLAG:コマンド結果受渡し変数
+;1:拒絶  2:受け入れ  3:喜び
+;RFLAG:コマンド結果受渡し変数２
+;1:無知  2:無反応  3:嫌悪  4:拒否  5:余裕  6:羞恥  7:愉悦  8:汎用
+
+;結果に関わりなく発生する快楽部分
+CALL SOURCE_CALC_接触(TARGET, PLAYER, 100)
+CALL SOURCE_CALC_露出(TARGET, PLAYER, 200)
+;ノーパン時、露出が倍
+IF TEQUIP:TARGET:下半身下着あり < 1
+	CALL SOURCE_CALC_露出(TARGET, PLAYER, 150)
+ENDIF
+
+
+IF RFLAG:コマンド結果受渡し変数２ <= 2
+	;無知、あるいは無反応の場合不快反感発生無し
+	IF 陥落チェック(TARGET)
+		CALL SOURCE_CALC_好感度要素_性愛度UP(TARGET, PLAYER, 50)
+	ENDIF
+ELSE
+	;二人きりの場合
+	IF 陥落チェック(TARGET)
+		CALL SOURCE_CALC_好感度要素_性愛度UP(TARGET, PLAYER, 50)
+	ELSE
+		CALL SOURCE_CALC_不快(TARGET, PLAYER, 100)
+		CALL SOURCE_CALC_反感(TARGET, PLAYER, 100)
+	ENDIF
+ENDIF
+
+TIME += 3
+RETURN 1
+
+
+;-------------------------------------------------
+;実行判定
+;-------------------------------------------------
+@COM_ABLE332
+;実行判定
+SIF SAVESTR:ゲームフェイズ管理 != "通常モード"
+	RETURN 0
+;一括管理
+SIF GLOBAL_COMABLE(332)
+	RETURN RESULT
+;睡眠中
+SIF CFLAG:睡眠
+	RETURN 0
+;二人きりのみ
+SIF GET_TARGETNUM() > 1
+	RETURN 0
+;スカート着用必須
+SIF TEQUIP:TARGET:下半身服あり == 0
+	RETURN 0
+SIF TEQUIP:TARGET:スカートめくり可 == 0
+	RETURN 0
+RETURN 1
+
+;-------------------------------------------------
+;実行時メッセージ
+;-------------------------------------------------
+@MESSAGE_COM332
+
+PRINTFORML %CALLNAME:PLAYER%은(는)%CALLNAME:TARGET%에게 몰래 다가가, 옷자락에 머리를 들이밀었다.
+
+
+
+@MESSAGE_COM332_非口上時
+
+PRINTFORM %CALLNAME:TARGET%은(는)
+
+SELECTCASE RFLAG:コマンド結果受渡し変数２
+	CASE 1
+		;無知
+		PRINTFORM 무엇을 하는지 모르는 듯한 모습으로, %CALLNAME:PLAYER%을(를) 보고 있다.
+	CASE 2
+		;無反応
+		PRINTFORM 아무것도 신경 쓰지 않는 듯 무표정하게 당하고 있다.
+	CASE 3
+		;嫌悪
+		IF RFLAG:コマンド結果受渡し変数 == 1
+			;拒絶
+			PRINTFORM 황급히 옷을 붙잡고, 질색하는 듯한 눈으로%CALLNAME:PLAYER%을(를) 보고 있다.
+		ELSEIF RFLAG:コマンド結果受渡し変数 == 2
+			;受け入れ
+			PRINTFORM 옷을 붙잡고, 어이없다는 듯한 눈으로%CALLNAME:PLAYER%을(를) 보고 있다.
+		ELSE
+			;喜び
+			PRINTFORM 바보 같은 짓을 하는군, 하고 어이없다는 듯한 눈으로%CALLNAME:PLAYER%을(를) 보고 있다.
+		ENDIF
+	CASE 4
+		;拒否
+		IF RFLAG:コマンド結果受渡し変数 == 1
+			;拒絶
+			PRINTFORM 황급히 옷을 붙잡고, 엄한 어조로%CALLNAME:PLAYER%에게 주의를 주었다.
+		ELSEIF RFLAG:コマンド結果受渡し変数 == 2
+			;受け入れ
+			PRINTFORM 옷을 붙잡고, 부드럽게%CALLNAME:PLAYER%에게 주의를 주었다.
+		ELSE
+			;喜び
+			PRINTFORM 다른 사람이 있을 때는 하지 말라고, %CALLNAME:PLAYER%에게 주의를 주었다.
+		ENDIF
+	CASE 5
+		;余裕
+		IF RFLAG:コマンド結果受渡し変数 == 1
+			;拒絶
+			PRINTFORM 조용히 옷을 누르고, 차가운 눈으로 %CALLNAME:PLAYER%을(를) 노려보았다.
+		ELSEIF RFLAG:コマンド結果受渡し変数 == 2
+			;受け入れ
+			PRINTFORM 옷을 누르고, 부드럽게 %CALLNAME:PLAYER%을(를) 주의시켰다.
+		ELSE
+			;喜び
+			PRINTFORM 보고 싶으면 사양할 것 없다며, 스스로 옷자락을 펄럭이고 있다.
+		ENDIF
+	CASE 6
+		;羞恥
+		IF RFLAG:コマンド結果受渡し変数 == 1
+			;拒絶
+			PRINTFORM 황급히 옷을 누르고, 새빨개진 얼굴로 %CALLNAME:PLAYER%에게서 펄쩍 물러났다.
+		ELSEIF RFLAG:コマンド結果受渡し変数 == 2
+			;受け入れ
+			PRINTFORM 황급히 옷을 누르고, 새빨개진 얼굴로 %CALLNAME:PLAYER%을(를) 툭툭 때려왔다.
+		ELSE
+			;喜び
+			PRINTFORM 옷을 누르고, 새빨개진 얼굴로 %CALLNAME:PLAYER%을(를) 빤히 바라보고 있다.
+		ENDIF
+	CASE 7
+		;愉悦
+		IF RFLAG:コマンド結果受渡し変数 == 1
+			;拒絶
+			PRINTFORM 조용히 옷을 누르고, 차가운 눈으로 %CALLNAME:PLAYER%을(를) 노려보았다.
+		ELSEIF RFLAG:コマンド結果受渡し変数 == 2
+			;受け入れ
+			PRINTFORM 그렇게 속이 궁금하냐며 %CALLNAME:PLAYER%을(를) 놀려왔다.
+		ELSE
+			;喜び
+			PRINTFORM 보기만 해도 괜찮냐며 %CALLNAME:PLAYER%을(를) 놀려왔다.
+		ENDIF
+	CASEELSE
+		;汎用
+		IF RFLAG:コマンド結果受渡し変数 == 1
+			;拒絶
+			PRINTFORM 황급히 옷을 누르고, %CALLNAME:PLAYER%을(를) 노려보았다.
+		ELSEIF RFLAG:コマンド結果受渡し変数 == 2
+			;受け入れ
+			PRINTFORM 옷을 누르고, 곤란한 듯한 얼굴로 %CALLNAME:PLAYER%을(를) 보고 있다.
+		ELSE
+			;喜び
+			PRINTFORM 장난치면 안 된다며, 쓴웃음을 지으며 %CALLNAME:PLAYER%을(를) 주의시켰다.
+		ENDIF
+ENDSELECT

@@ -1,0 +1,1991 @@
+;-------------------------------------------------
+;関数名:GET_TALENTNAME
+;概　要:素質名取得関数
+;引　数:ARG:0…TALENT登録番号
+;　　　:ARG:1…TALENTの中身
+;戻り値:素質名
+;備　考:文中関数
+;素質の名前を返す。
+;-------------------------------------------------
+@GET_TALENTNAME(ARG,ARG:1,ツールチップフラグ, 対象キャラ = -1)
+#FUNCTIONS
+#DIM ツールチップフラグ
+#DIM 対象キャラ
+#DIMS 素質名保存
+
+IF 対象キャラ >= 0
+	TSTR:コマンド名受渡 = 
+	TRYCALLFORMF GET_固有TALENTNAME_{NO:対象キャラ}(ARG, ARG:1, ツールチップフラグ, 対象キャラ)
+	IF TSTR:コマンド名受渡 != ""
+		RETURNF TSTR:コマンド名受渡
+	ENDIF
+ENDIF
+
+SELECTCASE ARG
+	;処女
+	CASE 0
+		IF ARG:1 == 1
+			RETURNF "처녀"
+		ENDIF
+	;童貞
+	CASE 1
+		SIF ARG:1 == 0
+			RETURNF "동정"
+	;性別
+	CASE 2
+		IF ARG:1 == 3
+			RETURNF "후타나리"
+		ELSEIF ARG:1 == 2
+			RETURNF "남성"
+		ELSEIF ARG:1 == 1
+			RETURNF "여성"
+		ELSEIF ARG:1 == 0
+			RETURNF "그 외"
+		ENDIF
+	;疑似恋慕陥落
+	CASE 6
+		IF ARG:1 == 1
+			IF 対象キャラ >= 0 && CSTR:対象キャラ:擬似恋慕陥落名称 != ""
+				TSTR:コマンド名受渡 = 
+				TRYCALLFORMF 固有擬似恋慕陥落_解説_{NO:対象キャラ}(対象キャラ, CSTR:対象キャラ:擬似恋慕陥落名称)
+				IF ツールチップフラグ
+					IF TSTR:コマンド名受渡 == ""
+						TSTR:コマンド名受渡 = 아직 서툰 사랑이지만, 특별한 관계로 애태우는 것. <br>불쾌・반감 증가에 마이너스 보정이 걸린다. 모든 파라미터의 욕정・호감도 증가에 플러스 보정이 걸린다. <br>매우 많은 행동에 플러스 보정이 걸리는 경향이 있다.
+					ENDIF
+					RETURNF @"<br>■%CSTR:対象キャラ:擬似恋慕陥落名称%<br>%TSTR:コマンド名受渡%<br> "
+				ENDIF
+				RETURNF CSTR:対象キャラ:擬似恋慕陥落名称
+			ELSE
+				IF ツールチップフラグ
+					RETURNF "<br>■연인<br>아직 서툰 사랑이지만, 특별한 관계로 애태우는 것. <br>불쾌・반감 증가에 마이너스 보정이 걸린다. 모든 파라미터의 욕정・호감도 증가에 플러스 보정이 걸린다. <br>매우 많은 행동에 플러스 보정이 걸리는 경향이 있다. <br> "
+				ENDIF
+				RETURNF "연인"
+			ENDIF
+		ELSEIF ARG:1 == 2
+			IF 対象キャラ >= 0 && CSTR:対象キャラ:擬似恋慕陥落名称 != ""
+				TSTR:コマンド名受渡 = 
+				TRYCALLFORMF 固有擬似恋慕陥落_解説_結婚_{NO:対象キャラ}(対象キャラ, CSTR:対象キャラ:擬似恋慕陥落名称)
+				IF ツールチップフラグ
+					IF TSTR:コマンド名受渡 == ""
+						TSTR:コマンド名受渡 = 아직 미숙한 연심인 채로, 행복을 잡은 신부. <br>불쾌・반감 증가에 마이너스 보정이 걸린다. 모든 파라미터의 욕정・호감도 증가에 플러스 보정이 걸린다. <br>매우 많은 행동에 플러스 보정이 걸리는 경향이 있다.
+					ENDIF
+					RETURNF @"<br>■%CSTR:対象キャラ:擬似恋慕陥落名称%<br>%TSTR:コマンド名受渡%<br> "
+				ENDIF
+				RETURNF CSTR:対象キャラ:擬似恋慕陥落名称
+			ELSE
+				IF ツールチップフラグ
+					RETURNF "<br>■신부<br>아직 미숙한 연심인 채로, 행복을 잡은 신부. <br>불쾌・반감 증가에 마이너스 보정이 걸린다. 모든 파라미터의 욕정・호감도 증가에 플러스 보정이 걸린다. <br>매우 많은 행동에 플러스 보정이 걸리는 경향이 있다. <br> "
+				ENDIF
+				RETURNF "신부"
+			ENDIF
+		ENDIF
+	;非エロ陥落
+	CASE 7
+		IF ARG:1 == 1
+			IF 対象キャラ >= 0 && CSTR:対象キャラ:非エロ陥落名称 != ""
+				TSTR:コマンド名受渡 = 
+				TRYCALLFORMF 固有非エロ陥落_解説_{NO:対象キャラ}(対象キャラ, CSTR:対象キャラ:非エロ陥落名称)
+				IF ツールチップフラグ
+					IF TSTR:コマンド名受渡 == ""
+						TSTR:コマンド名受渡 = 강한 신뢰 관계로 맺어진 사이. <br>불쾌・반감 증가에 마이너스 보정이 걸린다. 모든 파라미터의 욕정・호감도 증가에 플러스 보정이 걸린다. <br>매우 많은 행동에 플러스 보정이 걸리는 경향이 있다.
+					ENDIF
+					RETURNF @"<br>■%CSTR:対象キャラ:非エロ陥落名称%<br>%TSTR:コマンド名受渡%<br> "
+				ENDIF
+				RETURNF CSTR:対象キャラ:非エロ陥落名称
+			ELSE
+				IF ツールチップフラグ
+					RETURNF "<br>■맹우<br>강한 신뢰 관계로 맺어진 사이. <br>불쾌・반감 증가에 마이너스 보정이 걸린다. 모든 파라미터의 욕정・호감도 증가에 플러스 보정이 걸린다. <br>매우 많은 행동에 플러스 보정이 걸리는 경향이 있다. <br> "
+				ENDIF
+				RETURNF "맹우"
+			ENDIF
+		ENDIF
+	;恋慕
+	CASE 8
+		IF ARG:1 == 1
+			IF 対象キャラ >= 0 && CSTR:対象キャラ:擬似恋慕陥落名称 != ""
+				TSTR:コマンド名受渡 = 
+				TRYCALLFORMF 固有擬似恋慕陥落_解説_{NO:対象キャラ}(対象キャラ, CSTR:対象キャラ:擬似恋慕陥落名称, 1)
+				IF ツールチップフラグ
+					IF TSTR:コマンド名受渡 == ""
+						TSTR:コマンド名受渡 = 서툰 사랑이었지만, 지금은 올바르게 상대를 애태우는 것. <br>불쾌・반감 증가에 마이너스 보정이 걸린다. 모든 파라미터의 욕정・호감도 증가에 플러스 보정이 걸린다. <br>매우 많은 행동에 플러스 보정이 걸리는 경향이 있다.
+					ENDIF
+					RETURNF @"<br>■%CSTR:対象キャラ:擬似恋慕陥落名称%<br>%TSTR:コマンド名受渡%<br> "
+				ENDIF
+				RETURNF CSTR:対象キャラ:擬似恋慕陥落名称
+			ELSE
+				IF ツールチップフラグ
+					RETURNF "<br>■연모<br>특정 상대를 연모하는 것. 애태우는 것. <br>불쾌・반감 증가에 마이너스 보정이 걸린다. 모든 파라미터의 욕정・호감도 증가에 플러스 보정이 걸린다. <br>정조 관념・저항에 의한 파라미터 감소를 무효화하고, 매우 많은 행동에 플러스 보정이 걸리는 경향이 있다. <br> "
+				ENDIF
+				RETURNF "연모"
+			ENDIF
+		ELSEIF ARG:1 == 2
+			IF 対象キャラ >= 0 && CSTR:対象キャラ:擬似恋慕陥落名称 != ""
+				TSTR:コマンド名受渡 = 
+				TRYCALLFORMF 固有擬似恋慕陥落_解説_結婚_{NO:対象キャラ}(対象キャラ, CSTR:対象キャラ:擬似恋慕陥落名称, 1)
+				IF ツールチップフラグ
+					IF TSTR:コマンド名受渡 == ""
+						TSTR:コマンド名受渡 = 미숙한 연심으로 행복을 잡고, 올바르게 마음이 성장한 신부. <br>불쾌・반감 증가에 마이너스 보정이 걸린다. 모든 파라미터의 욕정・호감도 증가에 플러스 보정이 걸린다. <br>매우 많은 행동에 플러스 보정이 걸리는 경향이 있다.
+					ENDIF
+					RETURNF @"<br>■%CSTR:対象キャラ:擬似恋慕陥落名称%<br>%TSTR:コマンド名受渡%<br> "
+				ENDIF
+				RETURNF CSTR:対象キャラ:擬似恋慕陥落名称
+			ELSE
+				IF ツールチップフラグ
+					RETURNF "<br>■반려<br>혼인 관계에 있는 상대. <br>불쾌・반감 증가에 마이너스 보정이 걸린다. 모든 파라미터의 욕정・호감도 증가에 플러스 보정이 걸린다. <br>정조 관념・저항에 의한 파라미터 감소를 무효화하고, 매우 많은 행동에 플러스 보정이 걸리는 경향이 있다. <br> "
+				ENDIF
+				RETURNF "반려"
+			ENDIF
+		ENDIF
+	;セフレ
+	CASE 9
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■섹스 파트너<br>섹스 프렌드. 섹스(성교)를 즐기는 것을 목적으로 교류하는 관계를 말한다.<br>특별히 언급할 만한 보정은 존재하지 않는다.<br> "
+			ENDIF
+			RETURNF "섹스 파트너"
+		ENDIF
+	;度胸
+	CASE 10
+		IF ARG:1 == -1
+			IF ツールチップフラグ
+				RETURNF "<br>■겁쟁이<br>사물에 쉽게 겁을 먹는 성질. 사소한 일에도 두려워하는 것.<br>[정복] 파라미터 증가에 마이너스 보정이 걸리고, [고통] 파라미터 증가에 플러스 보정이 걸린다.<br> "
+			ENDIF
+			RETURNF "겁쟁이"
+		ELSEIF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■기개<br>마음이 굳건한 것. 감정을 굳건히 유지하는 모습.<br>[정복] 파라미터 증가에 플러스 보정이 걸리고, [고통] 파라미터 증가에 마이너스 보정이 걸린다.<br> "
+			ENDIF
+			RETURNF "기개"
+		ENDIF
+	;態度
+	CASE 11
+		IF ARG:1 == -1
+			IF ツールチップフラグ
+				RETURNF "<br>■솔직함<br>생각, 태도, 동작이 곧은 것.<br>[봉사・굴복・고통] 파라미터 증가에 플러스 보정이 걸리고, [정복] 파라미터 증가에 마이너스 보정이 걸린다.<br>호감도 UP에 플러스 보정이 걸리고, 불쾌・반감 증가에 마이너스 보정이 걸린다<br> "
+			ENDIF
+			RETURNF "솔직함"
+		ELSEIF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■반항적<br>반항하는 태도나 언동을 보이는 모습. 반항하는 경향이 강한 모습.<br>[봉사・굴복・고통] 파라미터 증가에 마이너스 보정이 걸리고, [정복] 파라미터 증가에 플러스 보정이 걸린다.<br>호감도 UP에 마이너스 보정이 걸리고, 불쾌・반감 증가에 플러스 보정이 걸린다<br> "
+			ENDIF
+			RETURNF "반항적"
+		ENDIF
+	;応答
+	CASE 12
+		IF ARG:1 == -1
+			IF ツールチップフラグ
+				RETURNF "<br>■온순함<br>성질이나 태도 등이 온화하고 순종적인 모습.<br>[봉사・굴복・고통] 파라미터 증가에 플러스 보정이 걸리고, [정복] 파라미터 증가에 마이너스 보정이 걸린다.<br> "
+			ENDIF
+			RETURNF "온순함"
+		ELSEIF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■건방짐<br>자신의 나이나 능력을 생각하지 않고, 지나친 언동을 하는 것. 또한, 그 모습.<br>[봉사・굴복・고통] 파라미터 증가에 마이너스 보정이 걸리고, [정복] 파라미터 증가에 플러스 보정이 걸린다.<br> "
+			ENDIF
+			RETURNF "건방짐"
+		ENDIF
+	;プライド
+	CASE 13
+		IF ARG:1 == -1
+			IF ツールチップフラグ
+				RETURNF "<br>■자존심 낮음<br>자존심, 자부심이 낮은 인물. 또한, 그 모습.<br>[봉사・굴복・고통] 파라미터 증가에 플러스 보정이 걸리고, [정복] 파라미터 증가에 마이너스 보정이 걸린다.<br>호감도 UP에 플러스 보정이 걸리고, 불쾌・반감 증가에 마이너스 보정이 걸린다<br> "
+			ENDIF
+			RETURNF "자존심 낮음"
+		ELSEIF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■자존심 높음<br>자존심, 자부심이 높은 인물. 또는 그 모습.<br>[봉사・굴복・고통] 파라미터 증가에 마이너스 보정이 걸리며, [정복] 파라미터 증가에 플러스 보정이 걸린다.<br>호감도 UP에 마이너스 보정이 걸리며, 불쾌・반감 증가에 플러스 보정이 걸린다<br> "
+			ENDIF
+			RETURNF "자존심 높음"
+		ENDIF
+	;ツンデレ
+	CASE 14
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■츤데레<br>특정 상대에게 적대적인 태도와 과도하게 호의적인 태도의 두 가지 성질을 가진 모습, 또는 그러한 인물.<br>[봉사] 파라미터 증가에, 호감도가 낮을 때는 마이너스 보정이. 높을 때는 플러스 보정이 걸린다.<br>호감도 UP에, 호감도가 낮을 때는 마이너스 보정이. 높을 때는 플러스 보정이 걸린다.<br>불쾌・반감 증가에, 호감도가 낮을 때는 플러스 보정이. 높을 때는 마이너스 보정이 걸린다.<br> "
+			ENDIF
+			RETURNF "츤데레"
+		ENDIF
+	;早寝
+	CASE 15
+		IF ARG:1 == -1
+			IF ツールチップフラグ
+				RETURNF "<br>■밤샘 버릇<br>이제 자야 하는데, 그만 조금만 더 하고 계속 깨어있는 성질.<br>취침 시각이 60분 늦어진다<br> "
+			ENDIF
+			RETURNF "밤샘 버릇"
+		ELSEIF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■일찍 잠<br>이른 시간부터 이불에 들어가, 새근새근 잠드는 건강한 성질.<br>취침 시각이 60분 빨라진다<br> "
+			ENDIF
+			RETURNF "일찍 잠"
+		ENDIF
+	;早起き
+	CASE 16
+		IF ARG:1 == -1
+			IF ツールチップフラグ
+				RETURNF "<br>■잠꾸러기<br>아침이 되어도 졸려서, 조금만 더 자버리는 성질.<br>기상 시각이 30분 늦어진다<br> "
+			ENDIF
+			RETURNF "잠꾸러기"
+		ELSEIF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■일찍 일어남<br>아침이 되면 벌떡 눈이 떠져 일어나는 성질.<br>기상 시각이 30분 빨라진다<br> "
+			ENDIF
+			RETURNF "일찍 일어남"
+		ENDIF
+	;マイペース
+	CASE 17
+		IF ARG:1 == -1
+			IF ツールチップフラグ
+				RETURNF "<br>■강요에 약함<br>강하게 압박받으면 거절하지 못하는 성질.<br>[고통] 파라미터 증가에 플러스 보정이 걸린다<br> "
+			ENDIF
+			RETURNF "강요에 약함"
+		ELSEIF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■마이페이스<br>타인에게 좌우되지 않고, 자신의 방법이나 진도를 무너뜨리지 않는 성질.<br>[고통] 파라미터 증가에 마이너스 보정이 걸리며, 불쾌・반감 증가에 마이너스 보정이 걸린다<br> "
+			ENDIF
+			RETURNF "마이페이스"
+		ENDIF
+	;会話素質
+	CASE 18
+		IF ARG:1 == -1
+			IF ツールチップフラグ
+				RETURNF "<br>■말주변 없음<br>말하는 것이 서툴러서, 생각하는 것을 남에게 잘 말하지 못하는 것. 또한, 그 모습.<br>대화 계열 커맨드 실행 시, 화제가 빨리 고갈된다.<br> "
+			ENDIF
+			RETURNF "말주변 없음"
+		ELSEIF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■수다쟁이<br>말수가 많은 것. 또한, 대화를 좋아하는 인물.<br>대화 계열 커맨드 실행 시, 화제가 늦게 고갈된다.<br> "
+			ENDIF
+			RETURNF "수다쟁이"
+		ELSEIF ARG:1 == -2
+			IF ツールチップフラグ
+				RETURNF "<br>■대화 어려움<br>구두 의사소통에 큰 장애가 있는 것. 또한, 그 모습.<br>대화 계열 커맨드 실행 시, 화제가 매우 빨리 고갈된다.<br> "
+			ENDIF
+			RETURNF "대화 어려움"
+		ENDIF
+	;精神的余裕
+	CASE 19
+		IF ARG:1 == -1
+			IF ツールチップフラグ
+				RETURNF "<br>■어린애 같음<br>언행이 마치 어린아이와 같은 모습. <br>[욕정・치정・굴복] 파라미터 증가에 플러스 보정이 걸리며, 불쾌・반감 증가에 플러스 보정이 걸린다.<br> "
+			ENDIF
+			RETURNF "어린애 같음"
+		ELSEIF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■신사적<br>신사다운 모습. 품격 있고 예의 바르며, 상대방의 입장을 존중하는 모습. <br>[욕정・치정・굴복] 파라미터 증가에 마이너스 보정이 걸리며, 불쾌・반감 증가에 마이너스 보정이 걸린다.<br> "
+			ENDIF
+			RETURNF "신사적"
+		ELSEIF ARG:1 == 2
+			IF ツールチップフラグ
+				RETURNF "<br>■숙녀적<br>숙녀다운 모습. 고상하고 품위 있는 정숙한 태도. <br>[욕정・치정・굴복] 파라미터 증가에 마이너스 보정이 걸리며, 불쾌・반감 증가에 마이너스 보정이 걸린다.<br> "
+			ENDIF
+			RETURNF "숙녀적"
+		ENDIF
+	;自制心
+	CASE 20
+		IF ARG:1 == -1
+			IF ツールチップフラグ
+				RETURNF "<br>■불성실<br>성실하지 않은 것. 대충대충인 모습. <br>[봉사・치정・습득] 파라미터 증가에 마이너스 보정이 걸리며, [욕정] 파라미터 증가에 플러스 보정이 걸린다.<br>호감도 UP에 플러스 보정이 걸린다.<br> "
+			ENDIF
+			RETURNF "불성실"
+		ELSEIF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■성실<br>무슨 일이든 열성적으로 임하려는 자세. 또한, 그러한 인물.<br>[봉사・수치・습득] 파라미터 증가에 플러스 보정이 걸리며, [욕정] 파라미터 증가에 마이너스 보정이 걸린다.<br>호감도 UP에 마이너스 보정이 걸린다.<br> "
+			ENDIF
+			RETURNF "성실"
+		ELSEIF ARG:1 == 2
+			IF ツールチップフラグ
+				RETURNF "<br>■자제심<br>자신 스스로의 욕구나 욕망 등을 강하게 억제하는 것.<br>[봉사・수치・습득] 파라미터 증가에 플러스 보정이 걸리며, [욕정] 파라미터 증가에 마이너스 보정이 걸린다.<br>호감도 UP에 마이너스 보정이 걸린다. 새로운 성벽 소질이 눈뜰 가능성이 낮아진다.<br> "
+			ENDIF
+			RETURNF "자제심"
+		ENDIF
+	;無関心
+	CASE 21
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■무관심<br>무슨 일에도 관심・흥미가 부족하여, 신경 쓰지 않는 모습.<br>[욕정・수치] 파라미터 증가에 마이너스 보정이 걸린다. [불쾌・반감] 파라미터 증가에 큰 마이너스 보정이 걸린다.<br>호감도 UP에 마이너스 보정이 걸린다.<br>일부 자동 커맨드를 발동할 수 없다.<br> "
+			ENDIF
+			RETURNF "무관심"
+		ELSEIF ARG:1 == -1
+			IF ツールチップフラグ
+				RETURNF "<br>■잘 돌봐줌<br>자신도 모르게 타인을 돌봐주는, 친절한 모습.<br>[욕정・수치] 파라미터 증가에 플러스 보정이 걸린다.<br>호감도 UP에 플러스 보정이 걸린다.<br> "
+			ENDIF
+			RETURNF "잘 돌봐줌"
+		ENDIF
+	;感情乏しい
+	CASE 22
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■감정 결핍<br>사물에 마음이 움직이는 일이 적은 인물.<br>[수치] 파라미터 증가에 마이너스 보정이 걸린다. [불쾌・반감] 파라미터 증가에 마이너스 보정이 걸린다.<br>호감도 UP에 마이너스 보정이 걸린다.<br> "
+			ENDIF
+			RETURNF "감정 결핍"
+		ENDIF
+	;性的興味
+	CASE 23
+		IF ARG:1 == -1
+			IF ツールチップフラグ
+				RETURNF "<br>■보수적<br>새로운 생각이나 행동을 그다지 좋아하지 않는 모습. 또한, 그러한 인물.<br>[수치] 파라미터 증가에 플러스 보정이 걸리며, [욕정・봉사・습득] 파라미터 증가에 마이너스 보정이 걸린다.<br>많은 자동 커맨드의 발동률에 마이너스 보정이 걸린다. 새로운 성벽 소질이 눈뜰 가능성이 낮아진다.<br> "
+			ENDIF
+			RETURNF "보수적"
+		ELSEIF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■호기심<br>새로운 생각이나 행동을 좋아하고, 솔선수범하여 시도해보는 감정.<br>[수치] 파라미터 증가에 마이너스 보정이 걸리며, [욕정・봉사・습득] 파라미터 증가에 플러스 보정이 걸린다.<br>많은 자동 커맨드의 발동률에 플러스 보정이 걸린다. 새로운 성벽 소질이 눈뜰 가능성이 높아진다.<br> "
+			ENDIF
+			RETURNF "호기심"
+		ENDIF
+	;陽気／陰気,
+	CASE 24
+		IF ARG:1 == -1
+			IF ツールチップフラグ
+				RETURNF "<br>■음침<br>성격 등이 어둡고, 쾌활하지 않은 모습. 또한, 그러한 인물. <br>대화계열 커맨드 실행 시, 화제가 빨리 고갈된다. <br> "
+			ENDIF
+			RETURNF "음침"
+		ELSEIF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■쾌활<br>성격 등이 밝고, 시원시원한 모습. 또한, 그러한 인물. <br>대화계열 커맨드 실행 시, 화제가 늦게 고갈된다. <br> "
+			ENDIF
+			RETURNF "쾌활"
+		ENDIF
+	;一線越えない
+	CASE 25
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■선을 넘지 않음<br>타인과의 관계성을, 어느 일정 이상으로 발전시키려 하지 않는 것. <br>연모 상태가 아닐 때, 모든 성적 능력의 성장이 매우 느려진다. <br>성희롱이나 육체관계로 이끌기 위해, 호감도 레벨이나 연모 레벨이 더 많이 필요해진다. <br> "
+			ENDIF
+			RETURNF "선을 넘지 않음"
+		ENDIF
+	;目立ちたがり
+	CASE 26
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■튀고 싶어함<br>주변보다 튀고 싶다고 생각하여, 사람의 주의를 끄는 언동 등을 하는 인물. <br>능력: 노출증을 올리기 쉬워진다. 많은 커맨드를 실행하기 쉬워진다. <br> "
+			ENDIF
+			RETURNF "튀고 싶어함"
+		ENDIF
+	;性欲
+	CASE 27
+		IF ARG:1 == -1
+			IF ツールチップフラグ
+				RETURNF "<br>■성욕이 적음<br>좋든 싫든, 타인보다 성적인 욕구가 약한 것. <br>[욕정] 파라미터 증가에 마이너스 보정이 걸린다. 새로운 성벽 소질이 눈뜰 가능성이 낮아진다. <br>성욕이 쌓이는 속도가 느려진다. 종족: 엘룬의 경우, 발정기의 기간이 짧아지고, 간격이 길어진다. <br> "
+			ENDIF
+			RETURNF "성욕이 적음"
+		ELSEIF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■성욕이 강함<br>좋든 싫든, 타인보다 성적인 욕구가 강한 것. <br>[욕정] 파라미터 증가에 플러스 보정이 걸린다. 새로운 성벽 소질이 눈뜰 가능성이 높아진다. <br>성욕이 쌓이는 속도가 빨라진다. 종족: 엘룬의 경우, 발정기의 기간이 길어지고, 간격이 짧아진다. <br> "
+			ENDIF
+			RETURNF "성욕이 강함"
+		ELSEIF ARG:1 == -2
+			IF ツールチップフラグ
+				RETURNF "<br>■성욕 없음<br>성욕이 존재하지 않는 것. <br>[욕정] 파라미터 증가에 강한 마이너스 보정이 걸린다. 새로운 성벽 소질이 눈뜨지 않게 된다. <br>성욕이 쌓이지 않게 된다. 종족: 엘룬의 경우, 발정기가 발생하지 않게 된다. <br> "
+			ENDIF
+			RETURNF "성욕 없음"
+		ENDIF
+	;経験豊富
+	CASE 28
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■경험 풍부<br>성적인 경험이 많고, 다양한 상대와 몸을 겹친 적이 있는 인물. <br>※효과 미구현. 현재 거의 플레이버 소질. <br> "
+			ENDIF
+			RETURNF "경험 풍부"
+		ENDIF
+	;淫乱
+	CASE 29
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■음란<br>성적인 경험이 매우 많아, 이미 성의 노예가 된 인물. <br>많은 커맨드의 실행 조건이 완화된다. <br> "
+			ENDIF
+			RETURNF "음란"
+		ENDIF
+	;貞操観念
+	CASE 30
+		IF ARG:1 == -1
+			IF ツールチップフラグ
+				RETURNF "<br>■정조 무관심<br>육체적인 순결에 특별한 가치를 두지 않는 사고방식. <br>삽입계 커맨드 실행 시 발생하는 [불쾌・반감・굴복] 파라미터가 감소한다. <br>[성교를 부탁한다] 커맨드의 효력이 높아진다. <br> "
+			ENDIF
+			RETURNF "정조 무관심"
+		ELSEIF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■정조 관념<br>육체적인 순결을 지켜야 한다는 사고방식. <br>삽입계 커맨드 실행 시 발생하는 [불쾌・반감・굴복] 파라미터가 증가한다. <br>[성교를 부탁한다] 커맨드의 효력이 낮아진다. 모든 유리한 파라미터에 마이너스 보정이 걸린다. <br> "
+			ENDIF
+			RETURNF "정조 관념"
+		ENDIF
+	;抵抗
+	CASE 32
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■저항<br>타인과의 관계를 거부하고 부정하는 모습. <br>[습득] 파라미터 증가에 마이너스 보정이 걸린다. <br>모든 유리한 파라미터에 마이너스 보정이 걸린다. 모든 불리한 파라미터에 플러스 보정이 걸린다. <br> "
+			ENDIF
+			RETURNF "저항"
+		ENDIF
+	;羞恥心
+	CASE 33
+		IF ARG:1 == -1
+			IF ツールチップフラグ
+				RETURNF "<br>■수치심 옅음<br>부끄럽다고 느끼는 마음이 약해, 신경 쓰지 않는 인물. <br>노출 시 [욕정] 파라미터 증가에 마이너스 보정이 걸린다. <br> "
+			ENDIF
+			RETURNF "수치심 옅음"
+		ELSEIF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■수줍음<br>부끄럽다고 느끼는 마음을 강하게 가지는 것. <br>노출 시 [욕정] 파라미터 증가에 플러스 보정이 걸린다. 많은 커맨드가 조금 더 실행하기 어려워진다. <br>일부 자동 커맨드 실행에 일정 이상의 성욕 축적이 요구된다. <br> "
+			ENDIF
+			RETURNF "수줍음"
+		ENDIF
+	;弱味
+	CASE 34
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■약점<br>주변에 알려지고 싶지 않은 것. <br>많은 커맨드가 매우 실행하기 쉬워진다. <br> "
+			ENDIF
+			RETURNF "약점"
+		ENDIF
+	;習得速度
+	CASE 50
+		IF ARG:1 == -1
+			IF ツールチップフラグ
+				RETURNF "<br>■습득 느림<br>새로운 것을 배울 때 시간이 걸리는 모습.<br>[습득] 파라미터 증가에 마이너스 보정이 걸린다. 기술계 소질 습득이 늦어진다.<br> "
+			ENDIF
+			RETURNF "습득 느림"
+		ELSEIF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■습득 빠름<br>새로운 것을 배울 때 빨리 요령을 터득하는 모습.<br>[습득] 파라미터 증가에 플러스 보정이 걸린다. 기술계 소질 습득이 빨라진다.<br> "
+			ENDIF
+			RETURNF "습득 빠름"
+		ELSEIF ARG:1 == 2
+			IF ツールチップフラグ
+				RETURNF "<br>■천재<br>천부적인 재능. 뛰어난 재능은 전문 외의 것을 배울 때도 유용하게 작용한다.<br>[습득] 파라미터 증가에 플러스 보정이 걸린다. 기술계 소질 습득이 빨라진다.<br> "
+			ENDIF
+			RETURNF "천재"
+		ENDIF
+	;器用な指
+	CASE 51
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■능숙한 손가락<br>손가락으로 섬세하고 정밀한 동작을 할 수 있는 것.<br>[습득・정복] 파라미터 증가에 플러스 보정이 걸린다.<br>애무・핸드잡 등의 커맨드 효과가 상승한다.<br> "
+			ENDIF
+			RETURNF "능숙한 손가락"
+		ENDIF
+	;舌使い
+	CASE 52
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■혀놀림<br>혀로 섬세하고 정밀한 동작을 할 수 있는 것.<br>[습득・정복] 파라미터 증가에 플러스 보정이 걸린다.<br>키스・펠라・커닐링구스 등의 커맨드 효과가 상승한다.<br> "
+			ENDIF
+			RETURNF "혀놀림"
+		ENDIF
+	;猫舌
+	CASE 54
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■고양이 혀<br>고양이처럼 뜨거운 음식에 약한 것. 또한, 혀가 거칠거칠한 것.<br>키스 등의 커맨드 시, 약간의 고통이 발생한다. 펠라・커닐링구스 등의 커맨드 시, 그 효과가 감소한다.<br> "
+			ENDIF
+			RETURNF "고양이 혀"
+		ENDIF
+	;おもらし癖
+	CASE 57
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■실금 버릇<br>자신의 의도와 달리 소변을 흘리는 버릇.<br>※효과 미구현. 현재 거의 플레이버 소질.<br> "
+			ENDIF
+			RETURNF "실금 버릇"
+		ENDIF
+	;自慰しやすい
+	CASE 60
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■자위하기 쉬움<br>왠지 모르게, 조금 흥분했을 때 그만 자위를 해버린다.<br>하루 종료 시 자위하는 경우가 많아진다.<br> "
+			ENDIF
+			RETURNF "자위하기 쉽다"
+		ENDIF
+	;汚臭耐性
+	CASE 61
+		IF ARG:1 == -2
+			IF ツールチップフラグ
+				RETURNF "<br>■결벽증<br>청결에 대한 집착이 지나치게 강한 모습. 또한, 그러한 인물.<br>불결한 사물이나 정액에서 발생하는 [불쾌·반감] 파라미터 증가에 플러스 보정이 걸린다. 불결한 사물에서 발생하는 [굴복] 파라미터 증가에 플러스 보정이 걸린다.<br>몇몇 명령을 실행하기 어려워진다.<br> "
+			ENDIF
+			RETURNF "결벽증"
+		ELSEIF ARG:1 == -1
+			IF ツールチップフラグ
+				RETURNF "<br>■악취 민감<br>조금의 더러움에도 신경이 쓰이는 모습. 또한, 그러한 인물.<br>불결한 사물이나 정액에서 발생하는 [불쾌·반감] 파라미터 증가에 플러스 보정이 걸린다. 불결한 사물에서 발생하는 [굴복] 파라미터 증가에 플러스 보정이 걸린다.<br>몇몇 명령을 실행하기 어려워진다.<br> "
+			ENDIF
+			RETURNF "악취 민감"
+		ELSEIF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■악취 둔감<br>조금의 더러움이라면 신경 쓰지 않는 모습. 또한, 그러한 인물.<br>불결한 사물이나 정액에서 발생하는 [불쾌·반감] 파라미터 증가에 마이너스 보정이 걸린다. 불결한 사물에서 발생하는 [굴복] 파라미터 증가에 마이너스 보정이 걸린다.<br>몇몇 명령을 실행하기 쉬워진다.<br> "
+			ENDIF
+			RETURNF "악취 둔감"
+		ELSEIF ARG:1 == 2
+			IF ツールチップフラグ
+				RETURNF "<br>■더러움 무시<br>더럽거나 불결해도 전혀 신경 쓰지 않는 모습. 또한, 그러한 인물.<br>불결한 사물이나 정액에서 발생하는 [불쾌·반감] 파라미터 증가에 마이너스 보정이 걸린다. 불결한 사물에서 발생하는 [굴복] 파라미터 증가에 마이너스 보정이 걸린다.<br>몇몇 명령을 실행하기 쉬워진다.<br> "
+			ENDIF
+			RETURNF "더러움 무시"
+		ENDIF
+	;献身的
+	CASE 62
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■헌신적<br>자신을 돌보지 않고, 다른 사람이나 사물을 위해 힘쓰는 모습.<br>[봉사] 파라미터 증가에 플러스 보정이 걸린다.<br> "
+			ENDIF
+			RETURNF "헌신적"
+		ENDIF
+	;快感応答
+	CASE 70
+		IF ARG:1 == -1
+			IF ツールチップフラグ
+				RETURNF "<br>■쾌감의 부정<br>자신이 받은 쾌락을 인정하지 않고, 또한 쾌락을 바라지 않는 성질.<br>쾌락 발생 시 [욕정] 파라미터 증가에 마이너스 보정이 걸린다.<br> "
+			ENDIF
+			RETURNF "쾌감의 부정"
+		ELSEIF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■쾌감에 솔직<br>자신이 받은 쾌락을 긍정하고, 또한 쾌락을 적극적으로 바라는 성질.<br>쾌락 발생 시 [욕정] 파라미터 증가에 플러스 보정이 걸린다.<br> "
+			ENDIF
+			RETURNF "쾌감에 솔직"
+		ENDIF
+	;中毒しやすい
+	CASE 71
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■중독되기 쉬운<br>사물에 영향을 받기 쉽고, 한 가지 일에 몰두하기 쉬운 성질.<br>※효과 미구현. 현재 거의 플레이버 소질.<br> "
+			ENDIF
+			RETURNF "중독되기 쉬운"
+		ENDIF
+	;即落ち
+	CASE 72
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■즉시 함락<br>사소한 일로 타인에게 호의를 품어버리는 모습.<br>많은 명령을 실행하기 쉬워진다.<br>※효과 미조정.<br> "
+			ENDIF
+			RETURNF "즉시 함락"
+		ENDIF
+	;淫核
+	CASE 73
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■음핵<br>쾌락을 다량으로 받아, 클리토리스가 더욱 음란하게, 더욱 많은 쾌락을 발생하게 된 상태.<br>※효과 미구현. 현재 거의 플레이버 소질.<br> "
+			ENDIF
+			RETURNF "음핵"
+		ELSEIF ARG:1 == 2
+			IF ツールチップフラグ
+				RETURNF "<br>■음간<br>쾌락을 다량으로 받아, 페니스가 더욱 음란하게, 더욱 많은 쾌락을 발생하게 된 상태.<br>※효과 미구현. 현재 거의 플레이버 소질.<br> "
+			ENDIF
+			RETURNF "음간"
+		ENDIF
+	;淫壺
+	CASE 74
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■음호<br>쾌락을 다량으로 받아, 질이 더욱 음란하게, 더욱 많은 쾌락을 발생하게 된 상태.<br>※효과 미구현. 현재 거의 플레이버 소질.<br> "
+			ENDIF
+			RETURNF "음호"
+		ENDIF
+	;淫肛
+	CASE 75
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■음항<br>쾌락을 다량으로 받아, 장이나 항문이 더욱 음란하게, 더욱 많은 쾌락을 발생하게 된 상태.<br>※효과 미구현. 현재 거의 플레이버 소질.<br> "
+			ENDIF
+			RETURNF "음항"
+		ENDIF
+	;淫乳
+	CASE 76
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■음유<br>쾌락을 다량으로 받아, 유방이 더욱 음란하게, 더욱 많은 쾌락을 발생하게 된 상태.<br>※효과 미구현. 현재 거의 플레이버 소질.<br> "
+			ENDIF
+			RETURNF "음유"
+		ENDIF
+	;キス嗜好
+	CASE 77
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■키스 애호<br>키스를 좋아하고, 호의를 가진 상대와 키스하고 싶어 하는 인물.<br>키스 등의 명령을 실행하기 쉬워지고, 상대방으로부터 더욱 깊은 키스를 요구받기 쉬워진다.<br> "
+			ENDIF
+			RETURNF "키스 좋아함"
+		ELSEIF ARG:1 == 2
+			IF ツールチップフラグ
+				RETURNF "<br>■키스마<br>키스를 좋아하고, 누구에게든 상관없이 키스하려 드는 인물.<br>키스 등의 명령이 무조건 실행 가능하며, 상대방이 더 깊은 키스를 요구하기 쉬워진다.<br> "
+			ENDIF
+			RETURNF "키스마"
+		ENDIF
+	;倒錯的
+	CASE 80
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■도착적<br>사회적 규범에서 벗어난 행동이나 기호를 보이는 것. 또한, 그러한 인물.<br>[노출·고통·정복·굴복] 파라미터 증가에 플러스 보정이 걸린다. 그 파라미터들과 동시에 발생하는 [욕정] 파라미터 증가에 플러스 보정이 걸린다.<br>그 파라미터들과 동시에 발생하는 [반감·불쾌] 파라미터 증가에 마이너스 보정이 걸린다.<br> "
+			ENDIF
+			RETURNF "도착적"
+		ENDIF
+	;性別嗜好
+	CASE 81
+		IF ARG:1 == 3
+			IF ツールチップフラグ
+				RETURNF "<br>■인간 불신<br>어떤 원인으로 타인을 믿을 수 없게 되는 것. 싫어하는 것.<br>모든 유리한 파라미터 증가에 마이너스 보정이 걸린다. 모든 불리한 파라미터 증가에 플러스 보정이 걸린다.<br> "
+			ENDIF
+			RETURNF "인간 불신"
+		ELSEIF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■남성 혐오<br>어떤 원인으로 남성을 믿을 수 없게 되는 것. 싫어하는 것.<br>남성을 상대할 때, 모든 유리한 파라미터 증가에 마이너스 보정이 걸린다.<br>남성을 상대할 때, 모든 불리한 파라미터 증가에 플러스 보정이 걸린다.<br> "
+			ENDIF
+			RETURNF "남성 혐오"
+		ELSEIF ARG:1 == 2
+			IF ツールチップフラグ
+				RETURNF "<br>■여성 혐오<br>어떤 원인으로 여성을 믿을 수 없게 되는 것. 싫어하는 것.<br>여성을 상대할 때, 모든 유리한 파라미터 증가에 마이너스 보정이 걸린다.<br>여성을 상대할 때, 모든 불리한 파라미터 증가에 플러스 보정이 걸린다.<br> "
+			ENDIF
+			RETURNF "여성 혐오"
+		ENDIF
+	;性愛傾向
+	CASE 82
+		IF ARG:1 == 3
+			IF ツールチップフラグ
+				RETURNF "<br>■양성애<br>상대방의 성별에 관계없이 성적·연애적 대상으로 삼을 수 있는 성질.<br>동성을 상대할 때, 몇몇 명령이 실행하기 쉬워진다.<br> "
+			ENDIF
+			RETURNF "양성애"
+		ELSEIF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■여성애<br>육체적으로는 여성이지만, 여성을 연애 대상으로 삼는 성질.<br>성벽 소질 [동성애]가 [이성애]로 변화하여, 남성을 상대할 때 적용되게 된다.<br> "
+			ENDIF
+			RETURNF "여성애"
+		ELSEIF ARG:1 == 2
+			IF ツールチップフラグ
+				RETURNF "<br>■남성애<br>육체적으로는 남성이지만, 남성을 연애 대상으로 삼는 성질.<br>성벽 소질 [동성애]가 [이성애]로 변화하여, 여성을 상대로 할 때 적용된다.<br> "
+			ENDIF
+			RETURNF "남성애"
+		ENDIF
+	;嫉妬
+	CASE 84
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■질투<br>자신보다 뛰어나거나 원하는 것을 가지고 있다고 느끼는 사람에게 질투나 시기심 같은 감정을 품는 것<br>※효과 미구현. 현재 거의 플레이버 소질.<br> "
+			ENDIF
+			RETURNF "질투"
+		ENDIF
+	;妄信
+	CASE 85
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■맹신<br>사물의 결과나 옳고 그름을 생각하지 않고 맹목적으로 믿는 것.<br>일부 명령이 실행하기 쉬워진다.<br> "
+			ENDIF
+			RETURNF "맹신"
+		ENDIF
+	;性転換
+	CASE 86
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■전 여성<br>원래는 여성이었으나, 어떤 요인으로 남성이 된 인물.<br>모든 유리한 파라미터 증가에 마이너스 보정이 걸린다.<br>연모·섹스 프렌드 상태일 때, 모든 유리한 파라미터 증가에 플러스 보정이 걸린다.<br> "
+			ENDIF
+			RETURNF "전 여성"
+		ELSEIF ARG:1 == 2
+			IF ツールチップフラグ
+				RETURNF "<br>■전 남성<br>원래는 남성이었으나, 어떤 요인으로 여성이 된 인물.<br>모든 유리한 파라미터 증가에 마이너스 보정이 걸린다.<br>연모·섹스 프렌드 상태일 때, 모든 유리한 파라미터 증가에 플러스 보정이 걸린다.<br> "
+			ENDIF
+			RETURNF "전 남성"
+		ENDIF
+	;謎の魅力
+	CASE 94
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■수수께끼의 매력<br>구체적으로 어디가라고는 알 수 없지만, 어쨌든 끌리는 요소. 또한, 그러한 인물.<br>이 소질을 가진 캐릭터가 행동할 때, 상대방에게 모든 유리한 파라미터 증가에 플러스 보정이 걸린다.<br>이 소질을 가진 캐릭터가 행동할 때, 상대방에게 모든 불리한 파라미터 증가에 마이너스 보정이 걸린다.<br><br>이 소질을 가진 캐릭터가 행동할 때, 상대방에게 일부 명령이 실행하기 쉬워진다.<br> "
+			ENDIF
+			RETURNF "수수께끼의 매력"
+		ENDIF
+	;印象
+	CASE 95
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■온화<br>성질 등이 차분하고, 상냥하며 온화한 것. 또한, 그 모습.<br>호감도 요소 「우정」 증가에 플러스 보정이 걸리고, 호감도 요소 「연심」「성애」 증가에 마이너스 보정이 걸린다.<br> "
+			ENDIF
+			RETURNF "온화"
+		ELSEIF ARG:1 == 2
+			IF ツールチップフラグ
+				RETURNF "<br>■성실<br>사리사욕을 섞지 않고, 진심으로 사람이나 사물에 대하는 것. 또한, 그 모습.<br>호감도 요소 「신뢰」 증가에 플러스 보정이 걸리고, 호감도 요소 「성애」「우정」 증가에 마이너스 보정이 걸린다.<br> "
+			ENDIF
+			RETURNF "성실"
+		ELSEIF ARG:1 == 3
+			IF ツールチップフラグ
+				RETURNF "<br>■열렬<br>어떤 일에 열중하거나 감정이 격해져 격렬한 언동을 하는 것. 또한 그 모습. <br>호감도 요소 「연심」 증가에 플러스 보정이 걸리고, 호감도 요소 「우정」「신뢰」 증가에 마이너스 보정이 걸린다. <br> "
+			ENDIF
+			RETURNF "열렬"
+		ELSEIF ARG:1 == 4
+			IF ツールチップフラグ
+				RETURNF "<br>■요염<br>의심스러울 정도로 요염하고 아름다운 것. 또한 그 모습. <br>호감도 요소 「성애」 증가에 플러스 보정이 걸리고, 호감도 요소 「신뢰」「연심」 증가에 마이너스 보정이 걸린다. <br> "
+			ENDIF
+			RETURNF "요염"
+		ENDIF
+	;Ｃ感度
+	CASE 101
+		IF ARG:1 == -1
+			IF ツールチップフラグ
+				RETURNF "<br>■C둔감<br>클리토리스, 혹은 페니스의 감각이 둔한 것. <br>[쾌C] 파라미터 증가에 마이너스 보정이 걸린다. <br> "
+			ENDIF
+			RETURNF "C둔감"
+		ELSEIF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■C민감<br>클리토리스, 혹은 페니스의 감각이 민감한 것. <br>[쾌C] 파라미터 증가에 플러스 보정이 걸린다. <br> "
+			ENDIF
+			RETURNF "C민감"
+		ELSEIF ARG:1 == -2
+			IF ツールチップフラグ
+				RETURNF "<br>■C없음<br>클리토리스, 혹은 페니스가 존재하지 않는 것. <br>일부 명령을 실행할 수 없게 된다. [쾌C] 파라미터가 발생하지 않게 된다. <br> "
+			ENDIF
+			RETURNF "C없음"
+		ENDIF
+	;Ｖ感度
+	CASE 102
+		IF ARG:1 == -1
+			IF ツールチップフラグ
+				RETURNF "<br>■V둔감<br>질 전체의 감각이 둔한 것. <br>[쾌V] 파라미터 증가에 마이너스 보정이 걸린다. <br> "
+			ENDIF
+			RETURNF "V둔감"
+		ELSEIF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■V민감<br>질 전체의 감각이 민감한 것. <br>[쾌V] 파라미터 증가에 플러스 보정이 걸린다. <br> "
+			ENDIF
+			RETURNF "V민감"
+		ELSEIF ARG:1 == -2
+			IF ツールチップフラグ
+				RETURNF "<br>■V 없음<br>질이 존재하지 않는 것. <br>일부 명령을 실행할 수 없게 된다. [쾌V] 파라미터가 발생하지 않게 된다. <br> "
+			ENDIF
+			RETURNF "V 없음"
+		ENDIF
+	;Ａ感度
+	CASE 103
+		IF ARG:1 == -1
+			IF ツールチップフラグ
+				RETURNF "<br>■A 둔감<br>항문 전체의 감각이 둔한 것. <br>[쾌A] 파라미터 증가에 마이너스 보정이 걸린다. <br> "
+			ENDIF
+			RETURNF "A 둔감"
+		ELSEIF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■A 민감<br>항문 전체의 감각이 민감한 것. <br>[쾌A] 파라미터 증가에 플러스 보정이 걸린다. <br> "
+			ENDIF
+			RETURNF "A 민감"
+		ELSEIF ARG:1 == -2
+			IF ツールチップフラグ
+				RETURNF "<br>■A 없음<br>항문이 존재하지 않는 것. <br>일부 명령을 실행할 수 없게 된다. [쾌A] 파라미터가 발생하지 않게 된다. <br> "
+			ENDIF
+			RETURNF "A 없음"
+		ENDIF
+	;Ｂ感度
+	CASE 104
+		IF ARG:1 == -1
+			IF ツールチップフラグ
+				RETURNF "<br>■B 둔감<br>유방의 감각이 둔한 것. <br>[쾌B] 파라미터 증가에 마이너스 보정이 걸린다. <br> "
+			ENDIF
+			RETURNF "B 둔감"
+		ELSEIF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■B 민감<br>유방의 감각이 민감한 것. <br>[쾌B] 파라미터 증가에 플러스 보정이 걸린다. <br> "
+			ENDIF
+			RETURNF "B 민감"
+		ELSEIF ARG:1 == -2
+			IF ツールチップフラグ
+				RETURNF "<br>■B 없음<br>성감대로서의 유방이나 유두가 존재하지 않는 것. <br>일부 명령을 실행할 수 없게 된다. [쾌B] 파라미터가 발생하지 않게 된다. <br> "
+			ENDIF
+			RETURNF "B 없음"
+		ENDIF
+	;Ｓ感度
+	CASE 105
+		IF ARG:1 == -1
+			IF ツールチップフラグ
+				RETURNF "<br>■S 둔감<br>일반적인 성감대가 아닌 부위의 감각이 둔한 것. <br>[쾌S] 파라미터 증가에 마이너스 보정이 걸린다. <br> "
+			ENDIF
+			RETURNF "S 둔감"
+		ELSEIF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■S 민감<br>일반적인 성감대가 아닌 부위의 감각이 예민한 것.<br>[쾌S] 파라미터 증가에 플러스 보정이 걸린다.<br> "
+			ENDIF
+			RETURNF "S 민감"
+		ENDIF
+	;濡れやすさ
+	CASE 110
+		IF ARG:1 == -1
+			IF ツールチップフラグ
+				RETURNF "<br>■잘 젖지 않음<br>윤활 목적의 체액 분비가 적거나 빈도가 낮은 것.<br>[윤활] 파라미터 증가에 마이너스 보정이 걸린다.<br> "
+			ENDIF
+			RETURNF "잘 젖지 않음"
+		ELSEIF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■잘 젖음<br>윤활 목적의 체액 분비가 많거나 빈도가 높은 것.<br>[윤활] 파라미터 증가에 플러스 보정이 걸린다.<br> "
+			ENDIF
+			RETURNF "잘 젖음"
+		ENDIF
+	;陥没乳首
+	CASE 111
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■함몰 유두<br>평소 유두가 유방 안에 파묻혀 있는 것.<br>유두 괴롭힘・니플 캡의 효과가 높아진다.<br> "
+			ENDIF
+			RETURNF "함몰 유두"
+		ENDIF
+	;回復速度
+	CASE 130
+		IF ARG:1 == -1
+			IF ツールチップフラグ
+				RETURNF "<br>■회복 느림<br>어떠한 요인으로 체력 회복 속도가 느린 것.<br>HP 회복량에 마이너스 보정이 걸린다.<br> "
+			ENDIF
+			RETURNF "회복 느림"
+		ELSEIF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■회복 빠름<br>어떠한 요인으로 체력 회복 속도가 빠른 것.<br>HP 회복량에 플러스 보정이 걸린다.<br> "
+			ENDIF
+			RETURNF "회복 빠름"
+		ENDIF
+	;使い魔
+	CASE 131
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■사역마<br>도움을 주는 작은 존재. 혹은 그것을 부리는 능력.<br>※효과 미구현. 현재 거의 플레이버 소질.<br> "
+			ENDIF
+			RETURNF "사역마"
+		ENDIF
+	;吸血鬼
+	CASE 132
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■흡혈귀<br>고도 메드베키아에만 존재하며 스스로의 멸망을 받아들인 종족. 혹은 이세계에서 찾아온 동명 이종의 존재.<br>※효과 미구현. 현재 거의 플레이버 소질.<br> "
+			ENDIF
+			RETURNF "흡혈귀"
+		ENDIF
+	;ランダムキャラ
+	CASE 133
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■랜덤 캐릭터<br>랜덤으로 생성된 캐릭터.<br>탐색에 데려갈 수 없다.<br> "
+			ENDIF
+			RETURNF "랜덤 캐릭터"
+		ENDIF
+	;従業員
+	CASE 134
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■종업원<br>리조트에 고용되어 일을 하는 입장.<br>종업원으로서 업무 배정 대상이 된다.<br> "
+			ENDIF
+			RETURNF "종업원"
+		ENDIF
+	;常連
+	CASE 135
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■단골<br>리조트에 여러 번 방문한 단골 손님.<br>광고를 하지 않아도 리조트에 방문할 수 있다.<br> "
+			ENDIF
+			RETURNF "단골"
+		ENDIF
+	;定住者
+	CASE 136
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■정착자<br>리조트 섬에 정착해 있는 사람.<br>항상 리조트에 체류하고 있다.<br> "
+			ENDIF
+			RETURNF "정착자"
+		ELSEIF ARG:1 == 2
+			IF ツールチップフラグ
+				RETURNF @"<br>■동거<br>%CALLNAME:MASTER%의 자택에 동거하고 있는 사람.<br>항상 리조트에 체류하고 있다.<br> "
+			ENDIF
+			RETURNF "동거"
+		ENDIF
+	;死者
+	CASE 137
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■유령<br>이미 죽어 유령으로 활동하고 있는 존재.<br>※효과 미구현. 현재 거의 플레이버 소질.<br> "
+			ENDIF
+			RETURNF "유령"
+		ENDIF
+	;店持ち
+	CASE 138
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■가게 주인<br>공정항 에어리어의 상업 지구에 가게를 가지고 있는 것.<br>행동 루틴에 '가게 지키기'가 추가된다.<br> "
+			ENDIF
+			RETURNF "가게 소유"
+		ENDIF
+	;狂気
+	CASE 141
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■광기<br>정신이, 혹은 그 일부가 이상해져 상궤를 벗어나는 것. 또한, 그러한 마음.<br>※효과 미구현. 현재 거의 플레이버 소질.<br> "
+			ENDIF
+			RETURNF "광기"
+		ENDIF
+	;禁断の知識
+	CASE 144
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■금단의 지식<br>다양한 이유로 금기시된 지식 체계의 총칭.<br>조작 캐릭터가 가지고 있을 경우, 일부 아이템을 구매할 수 있게 된다. ※효과 조정 예정<br> "
+			ENDIF
+			RETURNF "금단의 지식"
+		ENDIF
+	;人気
+	CASE 145
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■인기<br>세간에 지명도가 높고, 일반적으로 호의적으로 보이는 것. 또한, 그러한 인물.<br>※효과 미구현. 현재 거의 플레이버 소질.<br> "
+			ENDIF
+			RETURNF "인기"
+		ENDIF
+	;母乳体質
+	CASE 149
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■모유 체질<br>임신 여부와 관계없이, 현재 모유가 나오는 체질을 말한다.<br>절정 시 모유가 뿜어져 나오게 된다. 하루 종료 시 모유를 짜낼 수 있다. ※효과 조정 예정<br> "
+			ENDIF
+			RETURNF "모유 체질"
+		ELSEIF ARG:1 == 2
+			IF ツールチップフラグ
+				RETURNF "<br>■모유 체질 (발정기)<br>발정기의 영향으로 모유가 나오는 체질을 말한다.<br>절정 시 모유가 뿜어져 나오게 된다. 하루 종료 시 모유를 짜낼 수 있다. ※효과 조정 예정<br> "
+			ENDIF
+			RETURNF "모유 체질 (발정기)"
+		ELSEIF ARG:1 == 3
+			IF ツールチップフラグ
+				RETURNF "<br>■모유 체질 (임신)<br>임신 진행에 따라 모유가 나오게 된 상태.<br>절정 시 모유가 뿜어져 나오게 된다. 하루 종료 시 모유를 짜낼 수 있다. ※효과 조정 예정<br> "
+			ENDIF
+			RETURNF "모유 체질 (임신)"
+		ENDIF
+	;幼児／幼児退行
+	CASE 150
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■유아/유아 퇴행<br>어린 아이인 것. 혹은 어린 아이와 같은 정신으로 퇴행하는 것.<br>※효과 미구현. 현재 거의 플레이버 소질.<br> "
+			ENDIF
+			RETURNF "유아/유아 퇴행"
+		ENDIF
+	;幼稚
+	CASE 151
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■유치<br>어린아이 같은 행동을 하거나 가치관을 가진 인물.<br>※효과 미구현. 현재는 거의 플레이버 소질.<br> "
+			ENDIF
+			RETURNF "유치"
+		ENDIF
+	;絶倫
+	CASE 152
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■절륜<br>정력이 남달리 뛰어나다는 것.<br>최대 정력이 크게 증가한다.<br> "
+			ENDIF
+			RETURNF "절륜"
+		ENDIF
+	;妊娠
+	CASE 153
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■임신<br>질내 사정을 동반한 성교로 임신한 상태.<br>임신이 진행되면 피로해지기 쉽고, 일시적인 모유 체질이 되기도 한다.<br> "
+			ENDIF
+			RETURNF "임신"
+		ENDIF
+	;受胎体質
+	CASE 154
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■쌍둥이 태<br>쌍둥이를 잘 낳는 체질.<br>출산 시, 쌍둥이가 되기 쉽다.<br> "
+			ENDIF
+			RETURNF "쌍둥이 태"
+		ELSEIF ARG:1 == 2
+			IF ツールチップフラグ
+				RETURNF "<br>■다산<br>많은 아이를 낳는 체질.<br>출산 시, 많은 아이가 태어나기 쉽다.<br> "
+			ENDIF
+			RETURNF "다산"
+		ELSEIF ARG:1 == 3
+			IF ツールチップフラグ
+				RETURNF "<br>■축생 태<br>동물처럼 많은 수의 아이를 낳는 체질.<br>출산 시, 상당히 많은 아이가 태어나기 쉽다.<br> "
+			ENDIF
+			RETURNF "축생 태"
+		ENDIF
+	;容姿(基本的にあなたとランダムキャラ専用)
+	CASE 160
+		IF ARG:1 == -1
+			RETURNF "추악한"
+		ELSEIF ARG:1 == 0
+			RETURNF "모브 얼굴"
+		ELSEIF ARG:1 == 1
+			RETURNF "미형"
+		ELSEIF ARG:1 == 2
+			RETURNF "절세의 미모"
+		ENDIF
+	;体格
+	CASE 161
+		IF ARG:1 == -3
+			RETURNF "하빈족 수준"
+		ELSEIF ARG:1 == -2
+			RETURNF "아이 수준"
+		ELSEIF ARG:1 == -1
+			RETURNF "작은 체구"
+		ELSEIF ARG:1 == 0
+			RETURNF "보통"
+		ELSEIF ARG:1 == 1
+			RETURNF "장신"
+		ELSEIF ARG:1 == 2
+			RETURNF "남성 드라프족 수준"
+		ENDIF
+	;男性器サイズ
+	CASE 162
+		IF ARG:1 == -2
+			RETURNF "어린이 고추"
+		ELSEIF ARG:1 == -1
+			RETURNF "단소"
+		ELSEIF ARG:1 == 0
+			RETURNF "평범"
+		ELSEIF ARG:1 == 1
+			RETURNF "거근"
+		ELSEIF ARG:1 == 2
+			RETURNF "규격 외"
+		ENDIF
+	;体型（基本的には隠し要素）
+	CASE 163
+		IF ARG:1 == -3
+			RETURNF "너무 말랐음"
+		ELSEIF ARG:1 == -2
+			RETURNF "가는 몸"
+		ELSEIF ARG:1 == -1
+			RETURNF "슬렌더"
+		ELSEIF ARG:1 == 0
+			RETURNF "보통"
+		ELSEIF ARG:1 == 1
+			RETURNF "육감적"
+		ELSEIF ARG:1 == 2
+			RETURNF "풍만"
+		ELSEIF ARG:1 == 3
+			RETURNF "비만"
+		ENDIF
+	;年齢層
+	CASE 164
+		IF ARG:1 == 年齢層_幼い
+			RETURNF "어림"
+		ELSEIF ARG:1 == 年齢層_若い
+			RETURNF "젊음"
+		ELSEIF ARG:1 == 年齢層_成人
+			RETURNF "성인"
+		ELSEIF ARG:1 == 年齢層_大人
+			RETURNF "어른"
+		ELSEIF ARG:1 == 年齢層_壮年
+			RETURNF "장년"
+		ELSEIF ARG:1 == 年齢層_中年
+			RETURNF "중년"
+		ELSEIF ARG:1 == 年齢層_老年
+			RETURNF "노년"
+		ELSEIF ARG:1 == 年齢層_人外
+			RETURNF "인외의 영역"
+		ELSEIF ARG:1 != 0
+			RETURNF "불명"
+		ENDIF
+	;外見年齢
+	CASE 165
+		IF ARG:1 != 0
+			RETURNF "외견 연령"
+		ENDIF
+	;種族
+	CASE 200
+;		IF ARG:1 == -3
+;			RETURNF "小人"
+;		ELSEIF ARG:1 == -2
+;			RETURNF "幼児体型"
+;		ELSEIF ARG:1 == -1
+;			RETURNF "小柄体型"
+;小柄系は一旦コメントアウト
+		IF ARG:1 == 1
+			RETURNF "휴먼"
+		ELSEIF ARG:1 == 2
+			RETURNF "엘룬"
+		ELSEIF ARG:1 == 3
+			RETURNF "드라프"
+		ELSEIF ARG:1 == 4
+			RETURNF "하빈"
+		ELSEIF ARG:1 == 5
+			RETURNF "성정수"
+		ELSEIF ARG:1 == 6
+			RETURNF "그외"
+		ENDIF
+	;バストサイズ
+	CASE 205
+		IF ARG:1 == -2
+			RETURNF "절벽 (AAA~AA)"
+		ELSEIF ARG:1 == -1
+			RETURNF "빈유(A~B)"
+		ELSEIF ARG:1 == 0
+			RETURNF "평유(C~D)"
+		ELSEIF ARG:1 == 1
+			RETURNF "거유(E~F)"
+		ELSEIF ARG:1 == 2
+			RETURNF "폭유(G~I)"
+		ELSEIF ARG:1 == 3
+			RETURNF "마유(J↑)"
+		ENDIF
+	;下半身
+	CASE 210
+		IF ARG:1 > 0
+			IF ツールチップフラグ
+				RETURNF "<br>■순산형<br>엉덩이가 큰 체형을 말한다.<br>허벅지나 엉덩이가 크게 묘사되는 플레이버 소질.<br> "
+			ENDIF
+			RETURNF "순산형"
+		ELSEIF ARG:1 < 0
+			IF ツールチップフラグ
+				RETURNF "<br>■역삼각형<br>위에서 아래로 갈수록 가늘고 탄탄하게 조여진 체형을 말한다.<br>허벅지나 엉덩이가 작게 묘사되는 플레이버 소질.<br> "
+			ENDIF
+			RETURNF "역삼각형"
+		ELSEIF ARG:1 == 0
+			RETURNF "보통"
+		ENDIF
+	CASE 220
+		IF ARG:1 == -1
+			IF ツールチップフラグ
+				RETURNF "<br>■전투 싫어함<br>실제로 싸우는지 여부와는 별개로, 싸움을 싫어하는 것.<br>모의 전투를 수행하는 명령어의 효과가 감소한다.<br> "
+			ENDIF
+			RETURNF "전투 싫어함"
+		ELSEIF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■전투 좋아함<br>실제로 싸우는지 여부와는 별개로, 싸움을 좋아하는 것.<br>모의 전투를 수행하는 명령어의 효과가 증가한다.<br> "
+			ENDIF
+			RETURNF "전투 좋아함"
+		ENDIF
+	;サウナ耐性
+	CASE 221
+		IF ARG:1 == -1
+			IF ツールチップフラグ
+				RETURNF "<br>■사우나에 약함<br>사우나가 체질에 맞지 않아 금방 참을 수 없게 되는 모습.<br>당신이 이것을 소지하고 있을 때, 사우나 시설에 머무를 수 있는 시간이 감소한다.<br> "
+			ENDIF
+			RETURNF "사우나에 약함"
+		ELSEIF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■사우나 내성<br>사우나를 좋아하여 장시간 사우나를 즐길 수 있는 모습.<br>당신이 이것을 소지하고 있을 때, 사우나 시설에 머무를 수 있는 시간이 증가한다.<br> "
+			ENDIF
+			RETURNF "사우나 내성"
+		ENDIF
+	;芸達者
+	CASE 222
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■예능에 능함<br>예능이나 유예의 기능에 숙달되어 있는 것. 또한, 그 사람이나 그 모습.<br>플레이버 소질.<br> "
+			ENDIF
+			RETURNF "예능에 능함"
+		ENDIF
+	;薬毒耐性
+	CASE 223
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■약독 내성<br>약이나 독 전반에 높은 내성을 가지는 것.<br>※효과 미구현. 현재 거의 플레이버 소질.<br> "
+			ENDIF
+			RETURNF "약독 내성"
+		ENDIF
+	;ギャンブラー
+	CASE 224
+		IF ARG:1 == -1
+			IF ツールチップフラグ
+				RETURNF "<br>■도박 싫어함<br>도박을 싫어하고, 유사한 행위를 하려 하지 않는 성질.<br>도박을 할 수 없다.<br> "
+			ENDIF
+			RETURNF "도박 싫어함"
+		ELSEIF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■도박꾼<br>도박을 좋아하고, 그것들을 적극적으로 하려 하는 성질.<br>도박을 할 가능성이 있을 때, 반드시 한다.<br> "
+			ENDIF
+			RETURNF "도박꾼"
+		ENDIF
+	;飲兵衛
+	CASE 225
+		IF ARG:1 == -1
+			IF ツールチップフラグ
+				RETURNF "<br>■술 싫어함<br>술을 잘 못 마시거나 싫어하는 것.<br>회식 참가 확률이 감소한다.<br> "
+			ENDIF
+			RETURNF "술 싫어함"
+		ELSEIF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■술고래<br>술을 너무나도 좋아하는 것.<br>회식 참가 확률이 증가한다.<br> "
+			ENDIF
+			RETURNF "술고래"
+		ENDIF
+	;酒に強い
+	CASE 226
+		IF ARG:1 == -1
+			IF ツールチップフラグ
+				RETURNF "<br>■주량 약함<br>술에 약해 금방 취하는 성질. <br>만취 게이지의 축적이 빨라진다. <br> "
+			ENDIF
+			RETURNF "주량 약함"
+		ELSEIF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■주량 강함<br>술에 강해 좀처럼 취하지 않는 성질. <br>만취 게이지의 축적이 늦어진다. <br> "
+			ENDIF
+			RETURNF "주량 강함"
+		ELSEIF ARG:1 == 2
+			IF ツールチップフラグ
+				RETURNF "<br>■술고래<br>아무리 술을 마셔도 취하지 않는 성질. <br>만취 게이지가 700 이상이 되지 않는다. <br> "
+			ENDIF
+			RETURNF "술고래"
+		ENDIF
+	;予知
+	CASE 227
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■예지<br>수단·정도는 다양하지만, 미래를 내다보는 능력의 총칭. <br>※효과 미구현. 현재 거의 플레이버 소질. <br> "
+			ENDIF
+			RETURNF "예지"
+		ENDIF
+	;命のリンク
+	CASE 228
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■생명의 링크<br>생명을 연결하여 감각을 공유하는 상태. <br>한쪽이 얻은 쾌락과 같은 양의 쾌락을 다른 한쪽이 얻는다. <br>지타·루리아·그랑 전용 소질. <br> "
+			ENDIF
+			RETURNF "생명의 링크"
+		ENDIF
+	;楽観的
+	CASE 229
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■낙관적<br>고난에 직면해도, 어떻게든 될 거라고 가볍게 생각하는 성격. <br>※효과 미구현. 현재 거의 플레이버 소질. <br> "
+			ENDIF
+			RETURNF "낙관적"
+		ELSEIF ARG:1 == -1
+			IF ツールチップフラグ
+				RETURNF "<br>■비관적<br>아무것도 아닌 일도, 무겁게 받아들이고 나쁜 쪽으로 상상해 버리는 성격. <br>※효과 미구현. 현재 거의 플레이버 소질. <br> "
+			ENDIF
+			RETURNF "비관적"
+		ENDIF
+	;ギャル
+	CASE 230
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■갸루<br>갸루. <br>※효과 미구현. 현재 거의 플레이버 소질. <br> "
+			ENDIF
+			RETURNF "갸루"
+		ENDIF
+	;豪快
+	CASE 231
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■호쾌<br>사소한 일은 신경 쓰지 않고 자기 길을 가는 성격.<br>※효과 미구현. 현재 거의 플레이버 소질.<br> "
+			ENDIF
+			RETURNF "호쾌"
+		ELSEIF ARG:1 == -1
+			IF ツールチップフラグ
+				RETURNF "<br>■섬세<br>섬세한 일에 잘 신경 쓰고, 마음이 움직이는 성격.<br>※효과 미구현. 현재 거의 플레이버 소질.<br> "
+			ENDIF
+			RETURNF "섬세"
+		ENDIF
+	;感情的
+	CASE 232
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■감정적<br>좋든 나쁘든, 일을 감정으로 판단해 버리는 성격.<br>※효과 미구현. 현재 거의 플레이버 소질.<br> "
+			ENDIF
+			RETURNF "감정적"
+		ELSEIF ARG:1 == -1
+			IF ツールチップフラグ
+				RETURNF "<br>■냉정<br>침착하게 일을 판단할 수 있는 성격.<br>※효과 미구현. 현재 거의 플레이버 소질.<br> "
+			ENDIF
+			RETURNF "냉정"
+		ELSEIF ARG:1 == -2
+			IF ツールチップフラグ
+				RETURNF "<br>■냉철<br>일체의 감정적 판단을 버리고, 항상 합리적인 판단을 하는 성격.<br>※효과 미구현. 현재 거의 플레이버 소질.<br> "
+			ENDIF
+			RETURNF "냉철"
+		ENDIF
+	;子持ち
+	CASE 233
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■자녀 있음<br>자녀가 있는 것. 부모인 것.<br>※효과 미구현. 현재 거의 플레이버 소질.<br> "
+			ENDIF
+			RETURNF "자녀 있음"
+		ENDIF
+	;恋人持ち
+	CASE 234
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■연인 있음<br>사랑을 속삭이는 관계의 존재가 있는 것.<br>※효과 미구현. 현재 거의 플레이버 소질.<br> "
+			ENDIF
+			RETURNF "연인 있음"
+		ELSEIF ARG:1 == 2
+			IF 対象キャラ > -1 && (TALENT:対象キャラ:性別 == 1 || TALENT:対象キャラ:性別 == 3)
+				素質名保存 = 人妻
+				IF ツールチップフラグ
+					RETURNF "<br>■유부녀<br>기혼자 호환. <br>혼인 관계를 맺은 상대가 있는 것. <br>※효과 미구현. 현재 거의 플레이버 소질. <br> "
+				ENDIF
+			ELSE
+				素質名保存 = 既婚者
+				IF ツールチップフラグ
+					RETURNF "<br>■기혼자<br>혼인 관계를 맺은 상대가 있는 것. <br>※효과 미구현. 현재 거의 플레이버 소질. <br> "
+				ENDIF
+			ENDIF
+			RETURNF 素質名保存
+		ELSEIF ARG:1 == 3
+			IF 対象キャラ > -1 && TALENT:対象キャラ:性別 == 2
+				素質名保存 = 男やもめ
+				IF ツールチップフラグ
+					RETURNF "<br>■홀아비<br>미망인 호환. <br>혼인 관계를 맺은 상대가 있었지만, 먼저 세상을 떠난 것. <br>※효과 미구현. 현재 거의 플레이버 소질. <br> "
+				ENDIF
+			ELSE
+				素質名保存 = 未亡人
+				IF ツールチップフラグ
+					RETURNF "<br>■미망인<br>혼인 관계를 맺은 상대가 있었지만, 먼저 세상을 떠난 것. <br>※효과 미구현. 현재 거의 플레이버 소질. <br> "
+				ENDIF
+			ENDIF
+			RETURNF 素質名保存
+		ELSEIF ARG:1 == -1
+			IF ツールチップフラグ
+				RETURNF "<br>■짝사랑 상대 있음<br>싫지 않게 생각하는 상대가 있는 것. <br>※효과 미구현. 현재 거의 플레이버 소질. <br> "
+			ENDIF
+			RETURNF "짝사랑 상대 있음"
+		ENDIF
+	;非戦闘キャラ
+	CASE 235
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■비전투 캐릭터<br>어떠한 이유로 전투에 참가할 수 없는 것. <br>탐색 파티에 편성할 수 없다. <br> "
+			ENDIF
+			RETURNF "비전투 캐릭터"
+		ENDIF
+	;浮気
+	CASE 236
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■바람<br>연인이나 결혼 상대가 있는데, 다른 사람과 육체관계를 가지고 있는 것. <br>※효과 미구현. 현재 거의 플레이버 소질. <br> "
+			ENDIF
+			RETURNF "바람"
+		ENDIF
+	;陥落不可
+	CASE 237
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				IF 対象キャラ >= 0 && !CFLAG:対象キャラ:恋慕不可_汎用解除禁止
+					RETURNF "<br>■연모 불가<br>연모 함락을 달성할 수 없는 상태. <br>연모도가 상승하지 않게 된다. <br>호감도 요소: 연심을 MAX로 만들면……<br> "
+				ELSE
+					RETURNF "<br>■연모 불가<br>연모 함락을 달성할 수 없는 상태. <br>연모도가 상승하지 않게 된다. <br> "
+				ENDIF
+			ENDIF
+			RETURNF "연모 불가"
+		ELSEIF ARG:1 == 2
+			IF ツールチップフラグ
+				IF 対象キャラ >= 0 && !CFLAG:対象キャラ:セフレ不可_汎用解除禁止
+					RETURNF "<br>■섹파 불가<br>섹파 함락을 달성할 수 없는 상태. <br>커맨드 「성교를 부탁한다」가 반드시 실패한다. <br>호감도 요소: 성애를 MAX로 만들면……<br> "
+				ELSE
+					RETURNF "<br>■섹파 불가<br>섹파 함락을 달성할 수 없는 상태. <br>커맨드 「성교를 부탁한다」가 반드시 실패한다. <br> "
+				ENDIF
+			ENDIF
+			RETURNF "섹스 파트너 불가"
+		ELSEIF ARG:1 == 3
+			IF ツールチップフラグ
+				IF 対象キャラ >= 0
+					IF !CFLAG:対象キャラ:セフレ不可_汎用解除禁止 && !CFLAG:対象キャラ:恋慕不可_汎用解除禁止
+						RETURNF "<br>■함락 불가<br>함락을 달성할 수 없는 상태.<br>연모도가 상승하지 않게 된다.<br>커맨드 「성교섭을 부탁한다」가 반드시 실패한다.<br>호감도 요소: 성애or호감도 요소: 연심을 MAX로 만들면……<br> "
+					ELSEIF !CFLAG:対象キャラ:恋慕不可_汎用解除禁止
+						RETURNF "<br>■함락 불가<br>함락을 달성할 수 없는 상태.<br>연모도가 상승하지 않게 된다.<br>커맨드 「성교섭을 부탁한다」가 반드시 실패한다.<br>호감도 요소: 연심을 MAX로 만들면……<br> "
+					ELSEIF !CFLAG:対象キャラ:セフレ不可_汎用解除禁止
+						RETURNF "<br>■함락 불가<br>함락을 달성할 수 없는 상태.<br>연모도가 상승하지 않게 된다.<br>커맨드 「성교섭을 부탁한다」가 반드시 실패한다.<br>호감도 요소: 성애를 MAX로 만들면……<br> "
+					ELSE
+						RETURNF "<br>■함락 불가<br>함락을 달성할 수 없는 상태.<br>연모도가 상승하지 않게 된다.<br>커맨드 「성교섭을 부탁한다」가 반드시 실패한다.<br> "
+					ENDIF
+				ELSE
+					RETURNF "<br>■함락 불가<br>함락을 달성할 수 없는 상태.<br>연모도가 상승하지 않게 된다.<br>커맨드 「성교섭을 부탁한다」가 반드시 실패한다.<br> "
+				ENDIF
+			ENDIF
+			RETURNF "함락 불가"
+		ENDIF
+	;妊娠不可
+	CASE 238
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■임신 불가<br>임신할 수 없는 상태.<br>다른 요소와 관계없이, 임신이 발생하지 않는다.<br> "
+			ENDIF
+			RETURNF "임신 불가"
+		ELSEIF ARG:1 == 2
+			IF ツールチップフラグ
+				RETURNF "<br>■초경 전<br>임신하기 위한 성징을 맞이하지 않은 상태.<br>성욕이 쌓이는 속도가 느려지고, 다른 요소와 관계없이, 임신이 발생하지 않는다.<br> "
+			ENDIF
+			RETURNF "초경 전"
+		ENDIF
+	;脱衣不可
+	CASE 239
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■탈의 불가<br>옷, 혹은 장갑이나 외장과 육체가 접합되어 있어, 탈의할 수 없는 상태.<br>다른 요소와 관계없이, 탈의 커맨드를 사용할 수 없다.<br> "
+			ENDIF
+			RETURNF "탈의 불가"
+		ENDIF
+	;情熱的
+	CASE 240
+		IF ARG:1 == 2
+			IF ツールチップフラグ
+				RETURNF "<br>■열혈<br>열기를 느낄 정도로 강한 정열을 가지고 일에 임하는 모습.<br>※효과 미구현. 현재 거의 플레이버 소질.<br> "
+			ENDIF
+			RETURNF "열혈"
+		ELSEIF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■정열적<br>강한 정열을 가지고 사물에 임하는 모습. <br>※효과 미구현. 현재 거의 플레이버 소질. <br> "
+			ENDIF
+			RETURNF "정열적"
+		ELSEIF ARG:1 == -1
+			IF ツールチップフラグ
+				RETURNF "<br>■쿨<br>한 발 물러선 태도로 사물에 임하는 모습. <br>※효과 미구현. 현재 거의 플레이버 소질. <br> "
+			ENDIF
+			RETURNF "쿨"
+		ELSEIF ARG:1 == -2
+			IF ツールチップフラグ
+				RETURNF "<br>■냉혈<br>정이 없는 것처럼 차가운 태도로 사물에 임하는 모습. <br>※효과 미구현. 현재 거의 플레이버 소질. <br> "
+			ENDIF
+			RETURNF "냉혈"
+		ENDIF
+	;イキやすさ
+	CASE 241
+		IF ARG:1 == -1
+			IF ツールチップフラグ
+				RETURNF "<br>■지연 절정<br>절정까지 걸리는 시간이 긴 성질. <br>절정 후에 남는 쾌락값이 2,000 감소한다<br> "
+			ENDIF
+			RETURNF "지연 절정"
+		ELSEIF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■조기 절정<br>한 번 절정하면 다음 절정까지 걸리는 시간이 짧은 성질. <br>절정 후에 남는 쾌락값이 2,000 증가한다<br> "
+			ENDIF
+			RETURNF "조기 절정"
+		ELSEIF ARG:1 == 2
+			IF ツールチップフラグ
+				RETURNF "<br>■즉시 절정<br>한 번 절정하면 바로 또 절정해버리는 성질. <br>절정 후에 남는 쾌락값이 5,000 증가한다<br> "
+			ENDIF
+			RETURNF "즉시 절정"
+		ENDIF
+	;分身
+	CASE 242
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■분신<br>분신하는 능력으로 생성된 캐릭터를 나타내는 소질. <br>우후후 종료 시 소멸한다. <br> "
+			ENDIF
+			RETURNF "분신"
+		ENDIF
+	;同居不可
+	CASE 243
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■동거 불가<br>다양한 이유로 새로운 동거인을 늘리지 않는 상태를 나타내는 소질. <br>동거를 제안하지 않으며, 동거 대상이 되지 않는다. 이미 동거하고 있는 상태에는 영향을 주지 않는다. <br> "
+			ENDIF
+			RETURNF "동거 불가"
+		ENDIF
+	CASE 244
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■섹스 프렌드 있음<br>육체관계만 있는 상대가 있는 것.<br>체력 최대치가 상승한다.<br> "
+			ENDIF
+			RETURNF "섹스 프렌드 있음"
+		ENDIF
+	CASE 245
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■스킨헤드<br>머리카락을 밀거나, 체질적으로 머리카락이 없는 상태.<br>머리카락 관련 명령을 실행할 수 없다.<br> "
+			ENDIF
+			RETURNF "스킨헤드"
+		ELSEIF ARG:1 == -1
+			IF ツールチップフラグ
+				RETURNF "<br>■머리카락 없음<br>머리카락이 처음부터 존재하지 않는 종족인 것.<br>머리카락 관련 명령을 실행할 수 없다.<br> "
+			ENDIF
+			RETURNF "머리카락 없음"
+		ENDIF
+	;射精不可
+	CASE 246
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■사정 불가<br>사정할 수 없는 상태.<br>다른 요소와 관계없이, 사정이 발생하지 않는다.<br> "
+			ENDIF
+			RETURNF "사정 불가"
+		ELSEIF ARG:1 == 2
+			IF ツールチップフラグ
+				RETURNF "<br>■미정통<br>사정하기 위한 성징을 맞이하지 않은 상태.<br>성욕이 쌓이는 속도가 느려지고, 다른 요소와 관계없이, 사정이 발생하지 않는다.<br> "
+			ENDIF
+			RETURNF "미정통"
+		ENDIF
+	;飲酒拒否
+	CASE 248
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■음주 거부<br>음주를 거부하는 것을 나타낸다. 음주 자체는 가능.<br>음주 경험이 100 미만일 때, 술자리 참가 판정에 매우 큰 마이너스 보정이 발생한다.<br>벌칙 게임 시 술을 마시게 할 수 없게 된다. <br> "
+			ENDIF
+			RETURNF "음주 거부"
+		ELSEIF ARG:1 == -1
+			IF ツールチップフラグ
+				RETURNF "<br>■상시 음주<br>대부분 항상 취해있음을 나타낸다.<br>만취 게이지가 0~99일 때, 100까지 상승한다.<br>술 관련 판정에 플러스 보정이 발생한다.<br> "
+			ENDIF
+			RETURNF "상시 음주"
+		ENDIF
+	;飲食不可
+	CASE 249
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■음식 섭취 불가<br>음식 섭취가 불가능함을 나타냅니다.<br>만취 게이지가 상승하지 않으며, 음식 섭취 관련 커맨드의 효과가 감소합니다.<br> "
+			ENDIF
+			RETURNF "음식 섭취 불가"
+		ENDIF
+	;性処理不可
+	CASE 250
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■성처리 불가<br>성처리 업무를 항상 거부함을 나타냅니다.<br>성처리 업무를 실행할 수 없습니다.<br>성적인 함락 상태일 때는 무효가 되어 실행 가능해집니다.<br>또한, 캐릭터 고유의 보정이 있는 경우에는 실행할 수 있습니다.<br> "
+			ENDIF
+			RETURNF "성처리 불가"
+		ENDIF
+	;体型固定
+	CASE 251
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■체형 고정<br>어떠한 이유로든 체형이 변화하지 않음을 나타냅니다.<br>옵션과 관계없이 스리 사이즈가 증가하거나 감소하지 않습니다.<br> "
+			ENDIF
+			RETURNF "체형 고정"
+		ENDIF
+	;太りやすい
+	CASE 252
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■살찌기 쉬움<br>지방이 늘기 쉬운 체질을 나타냅니다.<br>식사에 의한 허리 증가량이 상승합니다. 허리 감소량이 저하됩니다.<br>식사에 의한 엉덩이 증가량이 약간 증가합니다. 엉덩이 감소량이 약간 저하됩니다.<br> "
+			ENDIF
+			RETURNF "살찌기 쉬움"
+		ELSEIF ARG:1 == -1
+			IF ツールチップフラグ
+				RETURNF "<br>■살찌기 어려움<br>지방이 늘기 어렵고, 소비하기 쉬운 체질을 나타냅니다.<br>식사에 의한 허리 증가량이 저하됩니다. 허리 감소량이 증가합니다.<br>식사에 의한 엉덩이 증가량이 약간 저하됩니다. 엉덩이 감소량이 약간 증가합니다.<br> "
+			ENDIF
+			RETURNF "살찌기 어려움"
+		ELSEIF ARG:1 == -2
+			IF ツールチップフラグ
+				RETURNF "<br>■살찌지 않음<br>아무리 먹어도 살찌지 않는 체질을 나타냅니다.<br>식사에 의해 허리가 증가하지 않게 됩니다.<br>식사에 의한 가슴·엉덩이 증가량이 크게 저하됩니다<br> "
+			ENDIF
+			RETURNF "살찌지 않음"
+		ENDIF
+	;ＥＤ
+	CASE 253
+		IF ARG:1 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■ＥＤ<br>발기부전.<br>밤에 찾아가거나 캐릭터끼리 우후후가 발생했을 때, 삽입계 커맨드를 사용할 수 없습니다.<br> "
+			ENDIF
+			RETURNF "ＥＤ"
+		ENDIF
+	CASEELSE
+		SIF ARG:1 == 1
+			RETURNF @"%TALENTNAME:ARG%"
+ENDSELECT
+
+
+@GET_年齢文字列(性別, 年齢層, 外見年齢, 実年齢 = 0)
+#FUNCTIONS
+#DIM 性別
+#DIM 年齢層
+#DIM 外見年齢
+#DIM 実年齢
+#DIM 詳細表示フラグ
+
+LOCALS '= GET_TALENTNAME(164, (外見年齢? 外見年齢 # 年齢層))
+
+IF 外見年齢 == 年齢層_幼い && 年齢層 >= 年齢層_老年
+	LOCALS = \@ 性別 == 2? 쇼타 할배# 로리 할매\@
+ELSEIF 外見年齢 && !実年齢
+	LOCALS += "（실제 나이：" + GET_TALENTNAME(164, 年齢層) + "）"
+ELSEIF 外見年齢
+	LOCALS += @"（실제 나이：{実年齢}세）"
+ENDIF
+RETURNF LOCALS
+
+
+@GET_見た目年齢(年齢層, 外見年齢)
+#FUNCTION
+#DIM 年齢層
+#DIM 外見年齢
+
+IF INRANGE(外見年齢, 年齢層_幼い, 年齢層_人外)
+	;外見年齢の見た目年齢は[外見年齢]の値を使う
+	RETURNF 外見年齢
+ELSEIF 外見年齢
+	;[外見年齢]の値がおかしい場合は見た目大人として扱う
+	RETURNF 年齢層_大人
+ELSEIF INRANGE(年齢層, 年齢層_幼い, 年齢層_人外)
+	;年齢層が設定されている場合はそれを使う
+	RETURNF 年齢層
+ELSE
+	;年齢不詳や未設定は大人として扱う
+	RETURNF 年齢層_大人
+ENDIF
+
+@キャラ見た目年齢(対象キャラ)
+#FUNCTION
+#DIM 対象キャラ
+RETURNF GET_見た目年齢(TALENT:対象キャラ:年齢層, TALENT:対象キャラ:外見年齢)
+
+
+@GET_フレーバー素質NAME(ARG, ARG:1)
+#FUNCTIONS
+SELECTCASE ARG
+	CASE フレーバー素質_陰毛濃さ
+		IF ARG:1 == 1
+			RETURNF "음모 없음"
+		ELSEIF ARG:1 == 2
+			RETURNF "숱 적음"
+		ELSEIF ARG:1 == 3
+			RETURNF "보통"
+		ELSEIF ARG:1 == 4
+			RETURNF "숱 많음"
+		ELSEIF ARG:1 == 5
+			RETURNF "강모"
+		ENDIF
+	CASE フレーバー素質_乳首大きさ
+		IF ARG:1 == 1
+			RETURNF "콩알만 함"
+		ELSEIF ARG:1 == 2
+			RETURNF "작은 편"
+		ELSEIF ARG:1 == 3
+			RETURNF "평균적"
+		ELSEIF ARG:1 == 4
+			RETURNF "큰 편"
+		ELSEIF ARG:1 == 5
+			RETURNF "거대 유두"
+		ENDIF
+	CASE フレーバー素質_乳輪大きさ
+		IF ARG:1 == 1
+			RETURNF "극소"
+		ELSEIF ARG:1 == 2
+			RETURNF "작은 편"
+		ELSEIF ARG:1 == 3
+			RETURNF "평균적"
+		ELSEIF ARG:1 == 4
+			RETURNF "큰 편"
+		ELSEIF ARG:1 == 5
+			RETURNF "거대한 유륜"
+		ENDIF
+	CASE フレーバー素質_性器種類
+		IF ARG:1 == 1
+			RETURNF "지렁이 천 마리"
+		ELSEIF ARG:1 == 2
+			RETURNF "청어알 천장"
+		ELSEIF ARG:1 == 3
+			RETURNF "문어 항아리"
+		ELSEIF ARG:1 == 4
+			RETURNF "복주머니"
+		ELSEIF ARG:1 == 5
+			RETURNF "가마니 조임"
+		ENDIF
+	CASE フレーバー素質_クリ大きさ
+		IF ARG:1 == 1
+			RETURNF "작은 편"
+		ELSEIF ARG:1 == 2
+			RETURNF "평균적"
+		ELSEIF ARG:1 == 3
+			RETURNF "큰 편"
+		ELSEIF ARG:1 == 4
+			;後天的に変更するパターンのみ
+			RETURNF "클리칭포"
+		ENDIF
+	CASE フレーバー素質_ほくろ位置
+		LOCALS = 
+		SIF GETBIT(ARG:1, 0)
+			LOCALS += "젖꼭지 옆/"
+		SIF GETBIT(ARG:1, 1)
+			LOCALS += "음순 옆/"
+		SIF GETBIT(ARG:1, 2)
+			LOCALS += "항문 옆/"
+		SIF GETBIT(ARG:1, 3)
+			LOCALS += "음경/"
+		STRLENS LOCALS
+		SUBSTRING LOCALS, 0, RESULT - 1
+		RETURNF RESULTS
+	CASE フレーバー素質_ふたなり時_玉ありなし
+		IF ARG:1 == フレーバー素質_ふたなり時_玉なし
+			RETURNF "고환 없음"
+		ELSEIF ARG:1 == フレーバー素質_ふたなり時_玉あり
+			RETURNF "고환 있음"
+		ENDIF
+ENDSELECT
+
+@GET_知識素質TOOLTIP(素質番号)
+#FUNCTIONS
+#DIM 素質番号
+
+SELECTCASE 素質番号
+	CASE 1
+		RETURNF @"<br>■조합 지식<br>자연 소재로 약이나 독을 만들어내는 지식. 또는 그것들을 다루는 지식.<br>※효과 미구현. 현재 거의 플레이버 소질.<br> "
+	CASE 2
+		RETURNF @"<br>■마법 지식<br>마법을 자유자재로 다루는 지식. 또는 그 기술.<br>※효과 미구현. 현재 거의 플레이버 소질.<br> "
+	CASE 3
+		RETURNF @"<br>■기계 지식<br>기계의 구조를 알고, 해석할 수 있는 지식.<br>※효과 미구현. 현재 거의 플레이버 소질.<br> "
+	CASE 4
+		RETURNF @"<br>■연금 지식<br>마법도 기계도 아닌, 연금술이라는 학문에 대한 지식.<br>※효과 미구현. 현재 거의 플레이버 소질.<br> "
+	CASE 5
+		RETURNF @"<br>■마물 지식<br>마물의 행동이나 생태, 약점 등에 대한 지식.<br>※효과 미구현. 현재 거의 플레이버 소질.<br> "
+	CASE 6
+		RETURNF @"<br>■화가<br>회화나 일러스트 등을 그리기 위한 지식.<br>※효과 미구현. 현재 거의 플레이버 소질.<br> "
+	CASE 7
+		RETURNF @"<br>■고귀<br>상류 계급에 어울리는 행동이나, 그 지식.<br>※효과 미구현. 현재 거의 플레이버 소질.<br> "
+	CASE 8
+		RETURNF @"<br>■낚시꾼<br>물고기를 낚아 올리기 위한 지식이나 기술.<br>※효과 미구현. 현재 거의 플레이버 소질.<br> "
+	CASE 9
+		RETURNF @"<br>■무희<br>사람들을 매료하는 춤이나 춤에 대한 지식, 기술.<br>※효과 미구현. 현재 거의 플레이버 소질.<br> "
+	CASE 10
+		RETURNF @"<br>■가창 기술<br>사람들을 매료하는 성악의 지식, 기술.<br>※효과 미구현. 현재 거의 플레이버 소질.<br> "
+	CASE 11
+		RETURNF @"<br>■요리사<br>식재료를 맛있게 조리하기 위한 지식, 기술.<br>요리 계열 커맨드를 실행할 때, Lv에 따라 성공률이 높아진다.<br> "
+	CASE 12
+		RETURNF @"<br>■역사 지식<br>과거의 지견을 미래에 활용하기 위한 지식, 기술.<br>※효과 미구현. 현재 거의 플레이버 소질.<br> "
+	CASE 13
+		RETURNF @"<br>■경영 지식<br>집단이 지속적으로 활동하기 위한 지식, 기술.<br>※효과 미구현. 현재 거의 플레이버 소질.<br> "
+	CASE 14
+		RETURNF @"<br>■수영 기술<br>물속에서 자유롭게 헤엄치기 위한 지식, 기술.<br>※효과 미구현. 현재 거의 플레이버 소질.<br> "
+	CASE 15
+		RETURNF @"<br>■농업 지식<br>대지에서 식물을 기르기 위한 지식, 기술.<br>※효과 미구현. 현재 거의 플레이버 소질.<br> "
+ENDSELECT
+
+@GET_あなた特殊能力NAME(能力番号, 能力数値, ツールチップフラグ = 0)
+#FUNCTIONS
+#DIM 能力番号
+#DIM 能力数値
+#DIM ツールチップフラグ
+
+SELECTCASE 能力番号
+	CASE 1
+		IF 能力数値 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■하렘 입문<br>여러 상대를 모시기 시작한 상태.<br>연모 대상을 동시에 3명까지 설정할 수 있다.<br>회차 진행 시 인계 가능 인원이 1명 늘어난다.<br> "
+			ENDIF
+RETURNF "하렘 입문"
+		ELSEIF 能力数値 == 2
+			IF ツールチップフラグ
+				RETURNF "<br>■하렘의 일인분<br>어려움 없이 여러 연인을 유지할 수 있는 상태.<br>연모 대상을 동시에 5명까지 설정할 수 있다.<br>복수 플레이 시, 연모 캐릭터끼리 약간 친해지기 쉽다.<br>회차 플레이 시 인계 가능 인원이 1명 늘어난다.<br> "
+			ENDIF
+			RETURNF "하렘의 일인분"
+		ELSEIF 能力数値 == 3
+			IF ツールチップフラグ
+				RETURNF "<br>■하렘의 주인<br>항상 누군가를 시중들게 하는 것에 위화감조차 없어진 상태.<br>연모 대상을 동시에 10명까지 설정할 수 있다.<br>복수 플레이 시, 연모 캐릭터끼리 약간 친해지기 쉽다.<br>회차 플레이 시 인계 가능 인원이 2명 늘어난다.<br> "
+			ENDIF
+			RETURNF "하렘의 주인"
+		ELSEIF 能力数値 == 4
+			IF ツールチップフラグ
+				RETURNF "<br>■하렘 킹<br>이 세상의 모든 것과 사랑을 나눌 수 있는 존재.<br>연모 대상을 동시에 100명까지 설정할 수 있다.<br>복수 플레이 시, 연모 캐릭터끼리 조금 친해지기 쉽다.<br>회차 플레이 시 인계 가능 인원이 3명 늘어난다.<br> "
+			ENDIF
+			RETURNF "하렘 킹"
+		ELSEIF 能力数値 == 5
+			IF ツールチップフラグ
+				RETURNF @"<br>■하렘 킹 마그나<br>이 세상의 모든 것과 사랑을 나눌 수 있는 최고위 존재.<br>연모 대상을 동시에%TOFULL(TOSTR(キャラクタ数上限))%명까지 설정할 수 있다.<br>복수 플레이 시, 연모 캐릭터끼리 매우 친해지기 쉽다.<br>회차 플레이 시 인계 가능 인원이 10명 늘어난다.<br> "
+			ENDIF
+			RETURNF "하렘 킹 마그나"
+		ENDIF
+	CASE 2
+		IF 能力数値 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■갬블러<br>내기에 익숙하며, 독특한 위압감을 가진 상태.<br>게임 등을 할 때, 반드시 내기를 할 수 있다.<br> "
+			ENDIF
+			RETURNF "갬블러"
+		ELSEIF 能力数値 == 2
+			IF ツールチップフラグ
+				RETURNF "<br>■도박사의 풍격<br>내기에 모든 것을 걸고, 상대에게도 내기를 걸게 만드는 분위기를 가진 상태<br>게임 등을 할 때, 반드시 내기를 할 수 있다.<br>내기에서의 벌칙 게임 조건이 완화된다.<br> "
+			ENDIF
+			RETURNF "도박사의 풍격"
+		ENDIF
+	; CASE 3
+	; 	IF 能力数値 == 1
+	; 		IF ツールチップフラグ
+	; 			RETURNF "<br>■発情鑑定術<br>雰囲気や立ち振舞から、他者の発情期を察知するテクニック。<br>キャラの発情期周期を能力表示画面で確認出来る。<br> "
+	; 		ENDIF
+	; 		RETURNF "発情鑑定術"
+	; 	ENDIF
+	CASE 4
+		IF 能力数値 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■삭망 감정술<br>분위기나 행동거지로부터 타인의 발정기를 감지하는 기술.<br>캐릭터의 발정기 주기를 능력 표시 화면에서 확인할 수 있다.<br> "
+			ENDIF
+			RETURNF "삭망 감정술 Lv1"
+		ELSEIF 能力数値 == 2
+			IF ツールチップフラグ
+				RETURNF "<br>■삭망감정술<br>분위기나 행동거지로부터 타인의 위험일을 감지하는 테크닉. <br>캐릭터의 위험일 주기를 능력 표시 화면에서 확인할 수 있다. <br> "
+			ENDIF
+			RETURNF "삭망감정술 Lv2"
+		ENDIF
+	CASE 5
+		IF 能力数値 > 0
+			IF ツールチップフラグ
+				RETURNF "<br>■촉수변화술<br>육체 일부를 촉수로 변화시켜 자유자재로 조종하는 마술. <br>촉수 관련 커맨드의 전제 조건 중 하나. <br> "
+			ENDIF
+			RETURNF @"촉수변화술 Lv{能力数値}"
+		ENDIF
+	CASE 6
+		IF 能力数値 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■특수 마사지술<br>성정수 era의 힘을 구사한 성감 마사지술. <br>※미구현<br> "
+			ENDIF
+			RETURNF @"특수 마사지술"
+		ENDIF
+	CASE 7
+		IF 能力数値 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■위치 감지<br>리조트 주변에 있는 유니크 캐릭터의 위치를 감지하는 마술. <br>캐릭터 위치 감지 커맨드를 사용할 수 있게 된다. <br> "
+			ENDIF
+			RETURNF @"위치 감지"
+		ENDIF
+	CASE 8
+		IF 能力数値 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■프렌들리 센스<br>타인의 마음의 움직임을 세밀하게 감지하는 기술. <br>캐릭터의 호감도를 수치로 볼 수 있게 된다. <br>일부 커맨드의 성공률 축적치를 볼 수 있게 된다. <br> "
+			ENDIF
+			RETURNF @"프렌들리 센스"
+		ENDIF
+	CASE 9
+		IF 能力数値 > 0
+			IF ツールチップフラグ
+				RETURNF "<br>■체력 성장의 가호<br>성정수 era의 힘을 타인에게 전파하는 기술. <br>캐릭터가 다운된 경험에 따라 체력의 최대치가 상승하게 된다. <br> "
+			ENDIF
+			RETURNF @"체력 성장의 가호 Lv{能力数値}"
+		ENDIF
+	CASE 10
+		IF 能力数値 > 0
+			IF ツールチップフラグ
+				RETURNF "<br>■던전 탐색 PRO<br>성정수 era의 가호를 주어 안전하게 탐색하는 마술. <br>클리어한 던전을 자동 탐색할 수 있게 된다. <br> "
+			ENDIF
+			RETURNF @"던전 탐색 PRO Lv{能力数値}"
+		ENDIF
+	CASE 11
+		IF 能力数値 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■유흥인 입문<br>유흥을 배우기 시작한 상태. <br>커맨드 「성교섭을 부탁한다」의 성공률 축적치의 최저치가 상승한다. <br> "
+			ENDIF
+			RETURNF "유흥가 입문"
+		ELSEIF 能力数値 == 2
+			IF ツールチップフラグ
+				RETURNF "<br>■어엿한 유흥가 사람<br>노는 방식이 능숙해져서 몸에 밴 상태.<br>커맨드「성교를 부탁한다」의 성공률 축적치의 최저치가 상승한다.<br> "
+			ENDIF
+			RETURNF "어엿한 유흥가 사람"
+		ELSEIF 能力数値 == 3
+			IF ツールチップフラグ
+				RETURNF "<br>■호색한<br>깔끔하게 노는 방법을 완전히 터득한 상태.<br>커맨드「성교를 부탁한다」의 성공률 축적치의 최저치가 상승한다.<br> "
+			ENDIF
+			RETURNF "호색한"
+		ELSEIF 能力数値 == 4
+			IF ツールチップフラグ
+				RETURNF "<br>■환락가의 제왕<br>온갖 "놀이"를 숙지한 존재.<br>커맨드「성교를 부탁한다」의 성공률 축적치의 최저치가 상승한다.<br> "
+			ENDIF
+			RETURNF "환락가의 제왕"
+		ELSEIF 能力数値 == 5
+			IF ツールチップフラグ
+				RETURNF "<br>■환락가의 제왕・극<br>온갖 "놀이"를 숙지한 최고위의 존재.<br>커맨드「성교를 부탁한다」의 성공률 축적치의 최저치가 상승한다.<br>커맨드「꼬드기다」로 상대가 트랜스 상태가 될 수 있다.<br>트랜스 상태의 상대는 본래 받지 않는 성교 부탁을 받아들여 버릴 수 있다.<br> "
+			ENDIF
+			RETURNF "환락가의 제왕・극"
+		ENDIF
+	CASE 12
+		IF 能力数値 > 0
+			IF ツールチップフラグ
+				RETURNF "<br>■수면 진단<br>타인의 수면 주기를 감지하는 능력.<br>기상 예정 시간 및 취침 예정 시간을 표시할 수 있다.<br> "
+			ENDIF
+			RETURNF @"수면 진단"
+		ENDIF
+	CASE 13
+		IF 能力数値 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■잠재성 혈통<br>자신의 형질이 자손에게 발현되기 어려운 체질.<br>캐릭터와의 사이에 태어난 아이에게 당신의 특징이 유전되기 어려워진다.<br> "
+			ENDIF
+			RETURNF "잠재성 혈통"
+		ENDIF
+	CASE 14
+		IF 能力数値 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■약점 통찰술<br>타인의 약점을 감지하는 기술.<br>캐릭터의 육체를 숙지함으로써, 아직 간파하지 못한 약점 커맨드의 힌트를 얻을 수 있다.<br> "
+			ENDIF
+			RETURNF "약점 통찰술"
+		ENDIF
+	CASE 15
+		IF 能力数値 > 0
+			IF ツールチップフラグ
+				RETURNF "<br>■진정한 절륜<br>정력이 진정으로 남들보다 뛰어나다는 것.<br>한 번의 사정 시 정액량이 상승한다.<br> "
+			ENDIF
+			RETURNF @"진정한 절륜 Lv{能力数値}"
+		ENDIF
+	CASE 16
+		IF 能力数値 > 0
+			IF ツールチップフラグ
+				RETURNF "<br>■서큐버스 바디<br>꿈의 마물에 비유될 정도로 매혹적인 신체.<br>자신에게 쾌락을 주려 한 상대에게 쾌락을 되돌려준다.<br> "
+			ENDIF
+			RETURNF @"서큐버스 바디 Lv{能力数値}"
+		ENDIF
+	CASE 17
+		IF 能力数値 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■특이 체질<br>어떤 상대와도 아이를 가질 수 있는 체질.<br>이종족 캐릭터의 씨앗이라도 임신이 가능해진다.<br> "
+			ENDIF
+			RETURNF "특이 체질"
+		ENDIF
+	CASE 18
+		IF 能力数値 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■성애의 월경자<br>본래는 연애 대상이 아닌 상대마저도 미치게 하는 풍모와 행동을 가진 존재.<br>접촉을 반복한 상대를 드물게 해당하는 동성애/이성애 성벽에 눈뜨게 한다.<br> "
+			ENDIF
+			RETURNF "성애의 월경자"
+		ENDIF
+	CASE 19
+		IF 能力数値 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■종횡무진<br>방해받지 않고 자유롭게 일을 처리하는 모습.<br>리조트 내 단독 이동이 매우 빨라진다.<br> "
+			ENDIF
+			RETURNF "종횡무진"
+		ENDIF
+	CASE 20
+		IF 能力数値 > 0 && 能力数値 < 5
+			IF ツールチップフラグ
+				RETURNF "<br>■팔면육비<br>혼자서 여러 사람 몫의 활약을 하는 것.<br>동시 모드의 상한 인원수가 증가한다. 동시에 데리고 나갈 수 있는 인원수가 증가한다.<br> "
+			ENDIF
+			RETURNF @"팔면육비 Lv{能力数値}"
+		ELSEIF 能力数値 == 5
+			IF ツールチップフラグ
+				RETURNF "<br>■일기당천<br>혼자서 천 명을 상대할 수 있을 정도의 뛰어난 능력.<br>동시 모드의 상한 인원수가 증가한다. 동시에 데리고 나갈 수 있는 인원수가 증가한다.<br> "
+			ENDIF
+			RETURNF "일기당천"
+		ENDIF
+	CASE 21
+		IF 能力数値 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■무간 수면<br>언제든 영원히 잠들 수 있는 능력.<br>현재 시간에 영향을 받지 않고 커맨드「취침」을 선택할 수 있다.<br> "
+			ENDIF
+			RETURNF "무간수면"
+		ENDIF
+	CASE 22
+		IF 能力数値 == 1
+			;TODO ツールチップ
+			RETURNF "루피 에로 협상술"
+		ENDIF
+	CASE 23
+		IF 能力数値 > 0
+			IF ツールチップフラグ
+				RETURNF "<br>■정력 성장 가호<br>성정수 era의 힘을 타인에게 전파하는 기술.<br>캐릭터가 헛방을 쳤을 때, 정력의 최대치가 상승하게 된다.<br> "
+			ENDIF
+			RETURNF @"정력 성장 가호 Lv{能力数値}"
+		ENDIF
+	CASE 24
+		IF 能力数値 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■에너지 드레인<br>상대의 체력을 정력으로 빼앗을 수 있는 능력.<br>상대의 정력이 다할 것 같을 때, 체력을 정력으로 변환한다.<br> "
+			ENDIF
+			RETURNF "에너지 드레인"
+		ENDIF
+	CASE 25
+		IF 能力数値 > 0
+			IF ツールチップフラグ
+				RETURNF "<br>■통 말리기<br>사정을 멈출 수 없게 만드는 성적인 수단.<br>한 번의 사정에서 상대의 정액량이 상승한다.<br> "
+			ENDIF
+			RETURNF @"통 말리기 Lv{能力数値}"
+		ENDIF
+	CASE 26
+		IF 能力数値 > 0
+			IF ツールチップフラグ
+				RETURNF "<br>■성명 진단사<br>이름 짓기에 관한 지식이 풍부함을 나타내는 자격. 전공에서 통용된다.<br>캐릭터끼리의 아이에게도 이름을 지어줄 수 있게 된다.<br> "
+			ENDIF
+			RETURNF @"성명 진단사"
+		ENDIF
+	CASE 27
+		IF 能力数値 > 0
+			IF ツールチップフラグ
+				RETURNF "<br>■임의 이사술<br>이사(引っ越し)의 훌륭함을 상대에게 남김없이 전달하는 화술.<br>거주 구역에서, 정주자의 방을 조건을 만족하는 다른 방으로 변경할 수 있다.<br> "
+			ENDIF
+			RETURNF @"임의 이사술"
+		ENDIF
+	CASE 28
+		;肉体改造術
+		IF 能力数値 == 1
+			;TODO ツールチップ
+			RETURNF "육체 개조술"
+		ENDIF
+	CASE 29
+		;希釈精液
+		IF 能力数値 == 1
+			;TODO ツールチップ
+			RETURNF "희석 정액"
+		ENDIF
+	CASE 30
+		IF 能力数値 == 1
+			IF ツールチップフラグ
+				RETURNF "<br>■오는 자 막지 않음<br>도량의 넓음을 비유. 누구와도 차별 없이 대하는 모습.<br>연인이나 섹스 파트너가 야습을 망설이기 어려워진다.<br> "
+			ENDIF
+			RETURNF @"오는 자 막지 않는다"
+		ENDIF
+ENDSELECT

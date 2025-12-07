@@ -1,0 +1,164 @@
+
+@イベント発生条件_メインシナリオ_渡りに船の定期便
+
+;開放条件を満たしたら1を返すこと
+IF ダンジョンクリアフラグ_人食い鳥の島
+	RETURN 1
+ENDIF
+RETURN 0
+
+@イベント関数_メインシナリオ_渡りに船の定期便(ARG)
+#DIM 初見フラグ
+
+IF 初見フラグ == 0 || FLAG:クリア済み視聴フラグ
+	DRAWLINE
+	PRINTL ［때맞은 정기편］
+	DRAWLINE
+	PRINTW
+	PRINTFORMW %CALLNAME:PLAYER%은(는) 성공적으로 식인조 무리를 쫓아내는 데 성공했다.
+	PRINTFORMW 떨어져 나간 개체가 돌아올 수도 있겠지만, 사람에게 피해가 갈 정도의 수는 되지 않을 것이다.
+	PRINTL
+	PRINTFORMW 즉시 이 사실을 다른 섬에 알리고, 주요 항로에 이 섬을 포함시켜야 한다.
+	PRINTFORMW 그러기 위해서는 정기편 협상이나 항구 정비, 유력자에게 사전 교섭이나 항로가 열렸다는 선전……
+	PRINTFORMW 아득해질 것 같은 귀찮은 일들을 산더미처럼 해내야 할 필요가 있다.
+	PRINTL
+	PRINTFORMW 하지만 항로 변경은 리조트를 크게 키워나가기 위해서는 필수 사항이다.
+	PRINTFORMW 시간도 돈도 들겠지만, 해내야만 한다.
+	PRINTL
+	PRINTFORMW 그렇게 %CALLNAME:PLAYER%가 큰일의 계획을 세우기 시작했을 때, 공정항에 한 척의 기공정이 입항했다는 소식이 있었다.
+	PRINTFORMW 오늘은 더 이상 관광객이 올 예정은 없을 텐데, 라고 고개를 갸웃거리며 %CALLNAME:PLAYER%는 항구로 이동한다.
+	PRINTL
+	PRINTL 셰로카르테：
+	PRINTFORMW 「안녕하세요~. 기분은 어떠세요, %CALLNAME:PLAYER%님~」
+	PRINTL
+	PRINTFORMW 기공정에서 나타난 것은 작은 대 상인인 셰로카르테였다.
+	PRINTFORMW 그녀의 만물상에는 리조트 건설이나 시설 개조로 항상 신세를 지고 있다.
+	PRINTFORMW %CALLNAME:PLAYER%는 환영의 뜻을 표하며, 리조트에 놀러 온 것인지 물었다.
+	PRINTL
+	PRINTL 셰로카르테：
+	PRINTFORMW 「아니아니~. 놀고 싶은 마음은 굴뚝같지만, 오늘은 일 때문에요~
+	PRINTFORMW 　%CALLNAME:PLAYER%님께 좋은 이야기를 가져왔어요~」
+	PRINTL
+	PRINTFORMW 좋은 이야기? 라고%CALLNAME:PLAYER%은(는) 다시 고개를 갸웃거린다.
+	PRINTFORMW 그렇다고는 해도, 일 이야기라고 한다면 서서 이야기를 계속하는 것도 실례일 것이다.
+	PRINTFORMW %CALLNAME:PLAYER%은(는) 셰로카르테를 리조트 내의 응접실로 안내한다.
+	PRINTL
+	PRINTL ...
+	PRINTL ..
+	PRINTL .
+	PRINTW 
+	PRINTFORMW 미지근한 호지차를 끓여, %CALLNAME:PLAYER%은(는) 테이블을 사이에 두고 셰로카르테 앞에 앉는다.
+	PRINTL
+	PRINTL 셰로카르테：
+	PRINTFORMW 「좋은 호지차네요~. 이 맛을 온 하늘에 "알리고" 싶을 정도예요~
+	PRINTFORMW 　호지차라서요. 우훗훗~」
+	PRINTL
+	PRINTFORMW 여전한 말장난 취미에 쓴웃음을 지으며, %CALLNAME:PLAYER%은(는) 이야기의 다음을 재촉한다.
+	PRINTL
+	PRINTL 셰로카르테：
+	PRINTFORMW 「맞다 맞다, 들었어요~. %CALLNAME:PLAYER%님, 식인조를 쫓아내 주셨다고요~
+	PRINTFORMW 　이로써 이 섬도 주요 항로에 연결될 수 있게 되겠네요~
+	PRINTFORMW 　하지만 교섭이나 사전 작업은 여러모로 힘들죠. 그렇죠~?」
+	PRINTL
+	PRINTFORMW 언제 그것을 알았는지는 모르겠지만, 셰로카르테의 말대로다.
+	PRINTFORMW 마침 그 일로 골머리를 앓고 있던 %CALLNAME:PLAYER%는 순순히 고개를 끄덕인다.
+	PRINTL
+	PRINTL 셰로카르테:
+	PRINTFORMW 「그래서 말이죠~. 항로 주변의 번거로운 절차나 준비, 부디 만물상에 맡겨주시면 안 될까 해서요~」
+	PRINTL
+	PRINTFORMW 만물상이 해준다면, 확실히 %CALLNAME:PLAYER%가 하는 것보다 몇백 배는 빨리 일이 진행될 것이다.
+	PRINTFORMW 하지만 셰로카르테에게 아무런 이득도 없는 이야기다.
+	PRINTFORMW 그에 상응하는 루피를 %CALLNAME:PLAYER%는 지불할 수 없고, 적절한 보답도 떠오르지 않는다.
+	PRINTL
+	PRINTL 셰로카르테:
+	PRINTFORMW 「아니요 아니요~. 보답은 '항구의 일등지에 만물상 지점을 세울 허가'만으로 충분해요~
+	PRINTFORMW 　가능하면 항구 안, 내리자마자 바로 보이는 곳이면 좋겠네요~」
+	PRINTL
+	PRINTFORMW 그 정도로 괜찮을까. %CALLNAME:PLAYER%에게는 역시, 일방적으로 이쪽이 이득을 보는 거래처럼 느껴진다.
+	PRINTL
+	PRINTL 셰로카르테:
+	PRINTFORMW 「우후후~, 그렇지 않아요~
+	PRINTFORMW 　분명 이 리조트는 지금보다 훨씬 더 커질 테니까요~
+	PRINTFORMW 　그때, 항구의 일등지를 확보하고 있다면…… 엄청난 이익이 날 거라고 저는 보고 있어요~」
+	PRINTL
+	PRINTFORMW 이렇게 보여도 상기를 잡는 건 특기예요~, 라며 가슴을 펴는 셰로카르테.
+	PRINTFORMW 아직 무명인 리조트에 대해 과대평가라고 %CALLNAME:PLAYER%은(는) 생각하지만, 그것만으로 정기편 항로를 확보할 수 있다면 횡재다.
+	PRINTFORMW 때마침 좋은 기회인 이 제안, 바로 받아들일까?
+	PRINTL
+	PRINTBUTTONLC "[0]네", 0
+	PRINTBUTTONLC "[1]일단 보류한다", 1
+	PRINTL
+
+	BINPUT
+	SELECTCASE RESULT
+		CASE 0
+			PRINTFORMW 이 정도의 좋은 조건, 거절할 이유는 보이지 않는다.
+			PRINTFORMW %CALLNAME:PLAYER%은(는) 제안을 받아들이겠다고 셰로카르테에게 전했다.
+			PRINTL
+			PRINTL 셰로카르테:
+			PRINTFORMW 「알겠습니다~! 그럼 바로 절차에 착수할 테니, 기대해 주세요~」
+			PRINTL
+			PRINTL ...
+			PRINTL ..
+			PRINTL .
+			PRINTW
+			SETCOLOR 0xFFFF00
+			PRINTFORML 3일 후에 메인 시나리오 [대확장! 공정항]이 해방됩니다.
+			RESETCOLOR
+			SIF !FLAG:クリア済み視聴フラグ
+				渡りに船の定期便_受諾日付 = DAY
+			CALL イベント完了フラグ汎用処理("渡りに船の定期便")
+		CASE 1
+			PRINTFORMW 아니, 이렇게 큰 안건을 즉결하는 것은 두렵다.
+			PRINTFORMW 충분히 검토한 후에 답장을 하자.
+			PRINTL
+			PRINTL 셰로카르테:
+			PRINTFORMW 「알겠습니다~, 그럼 마음이 정해지면 연락 주세요~」
+			PRINTL
+			PRINTFORMW 셰로카르테는 바쁜 듯, %CALLNAME:PLAYER%에게 연락처를 건네고 비행선에 타고 바로 돌아간다.
+			PRINTFORMW 답장을 어떻게 할지 정해지면 연락하자
+			初見フラグ = 1
+	ENDSELECT
+ELSE
+	PRINTFORMW %CALLNAME:PLAYER%은(는) 이전에 셰로카르테에게서 제안받은 안을 떠올린다.
+	PRINTFORMW 지금부터라도 연락하면 바로 움직여 줄 것이다.
+	PRINTFORMW 만물상의 제안을 받아들일까?
+	PRINTL
+	PRINTBUTTONLC "[0]네", 0
+	PRINTBUTTONLC "[1]아직 보류한다", 1
+	PRINTL
+
+	BINPUT
+	SELECTCASE RESULT
+		CASE 0
+			PRINTFORMW 이 정도의 좋은 조건, 거절할 이유는 찾을 수 없다.
+			PRINTFORMW %CALLNAME:PLAYER%은(는) 제안을 받아들이겠다고 편지로 연락했다.
+			PRINTFORMW 그날 안에 셰로카르테에게서 답장이 도착한다.
+			PRINTL
+			PRINTL 셰로카르테:
+			PRINTFORMW 『알겠습니다~! 그럼 바로 절차에 착수할 테니, 기대해 주세요~』
+			PRINTL
+			PRINTL ...
+			PRINTL ..
+			PRINTL .
+			PRINTW
+			SETCOLOR 0xFFFF00
+			PRINTFORML 3일 후에 메인 시나리오 [대확장! 공정항]이 해방됩니다.
+			RESETCOLOR
+			SIF イベント完了フラグ確認("渡りに船の定期便") < 1
+				渡りに船の定期便_受諾日付 = DAY
+			CALL イベント完了フラグ汎用処理("渡りに船の定期便")
+		CASE 1
+			PRINTFORMW 좀 더 잘 생각해보고 하는 것이 좋다.
+			PRINTFORMW 충분히 검토한 후에 답장하자.
+	ENDSELECT
+ENDIF
+
+FORCEWAIT
+
+
+
+
+
+
+

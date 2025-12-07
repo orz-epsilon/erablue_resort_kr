@@ -1,0 +1,68 @@
+
+@COMNAME403
+#FUNCTIONS
+TSTR:コマンド名受渡 = 휴식
+
+;===================================================
+;コマンドタイプ
+;===================================================
+@COMTYPE_403
+#FUNCTION
+TFLAG:コマンドタイプ受渡 = COMTYPE("単独可能")
+
+@COM_TOOLTIP_403
+LOCALS = <br>■休憩<br>
+LOCALS += "휴식하여 시간을 소비하고 체력을 회복하는 커맨드.<br>통상 60분 소비하며, [회복 느림]이면 +20분, [회복 빠름]이면 -20분의 보정이 걸린다."
+LOCALS += "<br>COM 타입: 단독 가능<br>획득 소스: 없음"
+LOCALS += "<br>고유 획득 경험: 없음<br>"
+TSTR:ツールチップ受渡 = %LOCALS%
+
+
+;-------------------------------------------------
+;休憩
+;-------------------------------------------------
+@COM403
+IF TIME_PROGRESS(CFLAG:MASTER:314) >= 960 && !CFLAG:MASTER:睡眠
+	PRINTFORMW 쉬려던 %CALLNAME:MASTER%는 그대로 잠들어 버렸다
+	CFLAG:MASTER:睡眠 = 1
+	CFLAG:MASTER:就寝時刻 = DAY * 1440 + TIME
+	FLAG:一日終了 = 1
+ELSE
+	TIME += 60
+	RFLAG:休憩選択フラグ = 1
+ENDIF
+RETURN 1
+;-------------------------------------------------
+;実行判定
+;-------------------------------------------------
+@COM_ABLE403
+;移動実行判定
+SIF SAVESTR:ゲームフェイズ管理 != "通常モード"
+	RETURN 0
+;一括管理
+SIF GLOBAL_COMABLE(403)
+	RETURN RESULT
+;私室設定
+IF CFLAG:MASTER:現在マップ種別 == 0
+	SIF CFLAG:MASTER:現在位置 != CFLAG:MASTER:自室位置
+		RETURN 0
+ELSE
+	RETURN 0
+ENDIF
+SIF TIME_PROGRESS(CFLAG:MASTER:314) >= 960 && BATHROOM(CFLAG:MASTER:現在位置)
+	RETURN 0
+SIF CFLAG:うふふ == 2
+	RETURN 0
+RETURN 1
+
+;-------------------------------------------------
+;実行時メッセージ
+;-------------------------------------------------
+@MESSAGE_COM403
+IF BATHROOM(CFLAG:MASTER:現在位置)
+	PRINTFORML %CALLNAME:PLAYER%는 욕장에서 편히 쉬었다
+ELSE
+	PRINTFORML %CALLNAME:PLAYER%는 한숨 돌렸다
+ENDIF
+
+

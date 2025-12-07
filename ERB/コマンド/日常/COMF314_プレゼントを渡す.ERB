@@ -1,0 +1,309 @@
+@COMNAME314
+#FUNCTIONS
+TSTR:コマンド名受渡 = 선물을 건네다
+
+;===================================================
+;コマンドタイプ
+;===================================================
+@COMTYPE_314
+#FUNCTION
+TFLAG:コマンドタイプ受渡 = COMTYPE("日常")
+
+@COM_TOOLTIP_314
+LOCALS = <br>■선물을 건네다<br>
+LOCALS += "상대에게 선물을 건네는 커맨드. 건네는 종류에 따라 특수 반응, 대성공, 성공으로 분기."
+LOCALS += "<br>COM 타입: 일상<br>획득 소스: 환락・정복・접촉"
+LOCALS += "<br>고유 획득 경험: 없음<br>"
+TSTR:ツールチップ受渡 = %LOCALS%
+
+@COM314
+#DIMS カテゴリ配列, 10
+#DIMS カテゴリ配列_プレゼント, 10
+#DIM 選択プレゼント番号
+#DIMS 好み情報
+#DIMS 絞り込み文字列
+#DIMS 選択カテゴリ
+#DIMS 表示条件
+
+絞り込み文字列 = 
+
+; 対象の好みの情報を取得(要:フレンドリーセンス)
+IF あなた特殊能力:フレンドリーセンス
+	好み情報 = %CALLNAME:TARGET%のプレゼントの好み：%REPLACE(CSTR:TARGET:プレゼント好み, "_", "、")%
+	SIF CSTR:TARGET:プレゼント好み_恋慕影響 != ""
+		好み情報 += @" ,%CSTR:TARGET:プレゼント好み_恋慕影響%"
+ELSE
+	好み情報 '= ""
+ENDIF
+
+$表示_LOOP
+
+DRAWLINE
+PRINTL ・표시 카테고리 좁히기
+SIF 絞り込み文字列 == "飲食系"
+	SETCOLOR カラーパレット("黄")
+PRINTBUTTON "[음식계]", -100
+RESETCOLOR
+PRINT :
+FOR LOCAL, 0, VARSIZE("好物一覧_飲食系")
+	SIF 絞り込み文字列 == "飲食系"
+		SETCOLOR カラーパレット("黄")
+	SIF 絞り込み文字列 == 好物一覧_飲食系:LOCAL
+		SETCOLOR カラーパレット("黄")
+	PRINTBUTTON @"[%好物一覧_飲食系:LOCAL%]", -101 - LOCAL
+	RESETCOLOR
+	PRINT  
+NEXT
+PRINTL
+SIF 絞り込み文字列 == "芸術品"
+	SETCOLOR カラーパレット("黄")
+PRINTBUTTON "[예술품]", -200
+RESETCOLOR
+PRINT :
+FOR LOCAL, 0, VARSIZE("好物一覧_芸術品")
+	SIF 絞り込み文字列 == "芸術品"
+		SETCOLOR カラーパレット("黄")
+	SIF 絞り込み文字列 == 好物一覧_芸術品:LOCAL
+		SETCOLOR カラーパレット("黄")
+	PRINTBUTTON @"[%好物一覧_芸術品:LOCAL%]", -201 - LOCAL
+	RESETCOLOR
+	PRINT  
+NEXT
+PRINTL
+SIF 絞り込み文字列 == "美容系"
+	SETCOLOR カラーパレット("黄")
+PRINTBUTTON "[미용계]", -300
+RESETCOLOR
+PRINT :
+FOR LOCAL, 0, VARSIZE("好物一覧_美容系")
+	SIF 絞り込み文字列 == "美容系"
+		SETCOLOR カラーパレット("黄")
+	SIF 絞り込み文字列 == 好物一覧_美容系:LOCAL
+		SETCOLOR カラーパレット("黄")
+	PRINTBUTTON @"[%好物一覧_美容系:LOCAL%]", -301 - LOCAL
+	RESETCOLOR
+	PRINT  
+NEXT
+PRINTL
+SIF 絞り込み文字列 == "実用品"
+	SETCOLOR カラーパレット("黄")
+PRINTBUTTON "[실용품]", -400
+RESETCOLOR
+PRINT :
+FOR LOCAL, 0, VARSIZE("好物一覧_実用品")
+	SIF 絞り込み文字列 == "実用品"
+		SETCOLOR カラーパレット("黄")
+	SIF 絞り込み文字列 == 好物一覧_実用品:LOCAL
+		SETCOLOR カラーパレット("黄")
+	PRINTBUTTON @"[%好物一覧_実用品:LOCAL%]", -401 - LOCAL
+	RESETCOLOR
+	PRINT  
+NEXT
+PRINTL
+FOR LOCAL, 0, VARSIZE("好物一覧_その他")
+	SIF 絞り込み文字列 == 好物一覧_その他:LOCAL
+		SETCOLOR カラーパレット("黄")
+	PRINTBUTTON @"[%好物一覧_その他:LOCAL%]", -501 - LOCAL
+	RESETCOLOR
+	PRINT  
+NEXT
+PRINTL
+DRAWLINE
+
+;まずプレゼントアイテム一覧を出す
+IF 絞り込み文字列 == ""
+	CALL 素材アイテム一覧表示("プレゼントカテゴリ <> '' and 所持素材数 > 0", 1, , 好み情報)
+ELSE
+	IF 絞り込み文字列 == "飲食系"
+		表示条件 = プレゼントカテゴリ LIKE '\%肉\%' Or プレゼントカテゴリ LIKE '\%魚\%' Or プレゼントカテゴリ LIKE '\%野菜\%' Or プレゼントカテゴリ LIKE '\%お菓子\%' Or プレゼントカテゴリ LIKE '\%珍味\%' Or プレゼントカテゴリ LIKE '\%酒\%' Or プレゼントカテゴリ LIKE '\%茶類\%' Or プレゼントカテゴリ LIKE '\%飲食系\%'
+	ELSEIF 絞り込み文字列 == "芸術品"
+		表示条件 = プレゼントカテゴリ LIKE '\%宝石\%' Or プレゼントカテゴリ LIKE '\%絵画\%' Or プレゼントカテゴリ LIKE '\%彫刻\%' Or プレゼントカテゴリ LIKE '\%詩\%' Or プレゼントカテゴリ LIKE '\%芸術品\%'
+	ELSEIF 絞り込み文字列 == "美容系"
+		表示条件 = プレゼントカテゴリ LIKE '\%アクセサリ\%' Or プレゼントカテゴリ LIKE '\%化粧品\%' Or プレゼントカテゴリ LIKE '\%美容系\%'
+	ELSEIF 絞り込み文字列 == "実用品"
+		表示条件 = プレゼントカテゴリ LIKE '\%文房具\%' Or プレゼントカテゴリ LIKE '\%健康器具\%' Or プレゼントカテゴリ LIKE '\%日用品\%' Or プレゼントカテゴリ LIKE '\%調理器具\%' Or プレゼントカテゴリ LIKE '\%工具\%' Or プレゼントカテゴリ LIKE '\%実用品\%'
+	ELSE
+		表示条件 = プレゼントカテゴリ LIKE '\%%絞り込み文字列%\%'
+	ENDIF
+	CALL 素材アイテム一覧表示(@"(%表示条件%) and 所持素材数 > 0", 1, , 好み情報)
+ENDIF
+SIF RESULT == -1
+	RETURN -1
+IF RESULT <= -100
+	SELECTCASE RESULT
+		CASE -100
+			選択カテゴリ = 飲食系
+		CASE -200
+			選択カテゴリ = 芸術品
+		CASE -300
+			選択カテゴリ = 美容系
+		CASE -400
+			選択カテゴリ = 実用品
+		CASE -199 TO -101
+			選択カテゴリ '= 好物一覧_飲食系:(ABS(RESULT + 101))
+		CASE -299 TO -201
+			選択カテゴリ '= 好物一覧_芸術品:(ABS(RESULT + 201))
+		CASE -399 TO -301
+			選択カテゴリ '= 好物一覧_美容系:(ABS(RESULT + 301))
+		CASE -499 TO -401
+			選択カテゴリ '= 好物一覧_実用品:(ABS(RESULT + 401))
+		CASE -599 TO -501
+			選択カテゴリ '= 好物一覧_その他:(ABS(RESULT + 501))
+	ENDSELECT
+	IF 絞り込み文字列 == 選択カテゴリ
+		絞り込み文字列 = 
+	ELSE
+		絞り込み文字列 '= 선택 카테고리
+	ENDIF
+	GOTO 表示_LOOP
+ENDIF
+;選択プレゼント番号には行ではなくIDが入っているので注意
+選択プレゼント番号 = RESULT
+DT_CELL_SET "所持素材データベース", 選択プレゼント番号, "所持素材数", DT_CELL_GET("所持素材データベース", 選択プレゼント番号, "所持素材数", 1) - 1, 1
+
+;RSTR:コマンド結果受渡し文字列：渡したアイテムの名前
+;RFLAG:コマンド結果受渡し変数２：渡したアイテムのランク
+;RFLAG:コマンド結果受渡し変数３：渡したアイテムのカロリー
+RSTR:コマンド結果受渡し文字列 = %DT_CELL_GETS("所持素材データベース", 選択プレゼント番号, "素材アイテム名", 1)%
+RFLAG:コマンド結果受渡し変数２ = DT_CELL_GET("所持素材データベース", 選択プレゼント番号, "素材ランク", 1)
+RFLAG:コマンド結果受渡し変数３ = DT_CELL_GET("所持素材データベース", 選択プレゼント番号, "摂取カロリー", 1)
+
+;渡したプレゼントが記録するタイプのアイテムだった場合、DAYを記録
+IF GETNUM(プレゼント履歴, @"%RSTR:コマンド結果受渡し文字列%") > -1
+	SIF プレゼント履歴:TARGET:(RSTR:コマンド結果受渡し文字列) < 1
+		プレゼント履歴:TARGET:(RSTR:コマンド結果受渡し文字列) = DAY
+ENDIF
+
+;TARGETの好みカテゴリを取得
+VARSET カテゴリ配列
+SPLIT CSTR:TARGET:プレゼント好み, "_", カテゴリ配列
+SIF CSTR:TARGET:プレゼント好み_恋慕影響 != ""
+	カテゴリ配列:RESULT '= CSTR:TARGET:プレゼント好み_恋慕影響
+
+;好みに含まれているか判定
+RESULT = 0
+TRYCALLFORM プレゼント特殊反応_CHARAEVENT_{NO:TARGET}(RSTR:コマンド結果受渡し文字列)
+IF RESULT
+	;特殊反応あり
+	RFLAG:コマンド結果受渡し変数 = 2
+ELSE
+	VARSET カテゴリ配列_プレゼント
+	SPLIT DT_CELL_GETS("所持素材データベース", 選択プレゼント番号, "プレゼントカテゴリ", 1), "_", カテゴリ配列_プレゼント
+	FOR LOCAL, 0, RESULT
+		IF LOCAL == 0
+			;先頭の要素だけは大カテゴリも見る
+			IF MATCH(カテゴリ配列, カテゴリ配列_プレゼント:LOCAL)
+				;好みに含まれる
+				RFLAG:コマンド結果受渡し変数 = 1
+				BREAK
+			ELSE
+				;大カテゴリ判定
+				SELECTCASE カテゴリ配列_プレゼント:LOCAL
+					CASE "肉","魚","野菜","お菓子","珍味","酒","茶類"
+						IF MATCH(カテゴリ配列, "飲食系")
+							;好みに含まれる
+							RFLAG:コマンド結果受渡し変数 = 1
+							BREAK
+						ENDIF
+					CASE "宝石","絵画","彫刻","詩"
+						IF MATCH(カテゴリ配列, "芸術品")
+							;好みに含まれる
+							RFLAG:コマンド結果受渡し変数 = 1
+							BREAK
+						ENDIF
+					CASE "アクセサリ","化粧品"
+						IF MATCH(カテゴリ配列, "美容系")
+							;好みに含まれる
+							RFLAG:コマンド結果受渡し変数 = 1
+							BREAK
+						ENDIF
+					CASE "文房具","健康器具","日用品","調理器具","工具"
+						IF MATCH(カテゴリ配列, "実用品")
+							;好みに含まれる
+							RFLAG:コマンド結果受渡し変数 = 1
+							BREAK
+						ENDIF
+				ENDSELECT
+			ENDIF
+		ELSE
+			;あとは完全一致だけ
+			IF MATCH(カテゴリ配列, カテゴリ配列_プレゼント:LOCAL)
+				;好みに含まれる
+				RFLAG:コマンド結果受渡し変数 = 1
+				BREAK
+			ENDIF
+		ENDIF
+	NEXT
+	IF MATCH(カテゴリ配列, DT_CELL_GETS("所持素材データベース", 選択プレゼント番号, "プレゼントカテゴリ", 1))
+		;好みに含まれる
+		RFLAG:コマンド結果受渡し変数 = 1
+	ELSE
+		;好みに含まれない
+		RFLAG:コマンド結果受渡し変数 = 0
+	ENDIF
+
+	;歓楽強度
+	LOCAL:0 = 200 * RFLAG:コマンド結果受渡し変数２ + 400
+	;征服
+	LOCAL:1 = 50 * RFLAG:コマンド結果受渡し変数２ + 100
+	IF RFLAG:コマンド結果受渡し変数 == 0
+		;通常反応
+		TIMES LOCAL:0 , 1.00
+		TIMES LOCAL:1 , 1.00
+	ELSEIF RFLAG:コマンド結果受渡し変数 == 1
+		;大成功時
+		TIMES LOCAL:0 , 2.00
+		TIMES LOCAL:1 , 2.00
+	ENDIF
+
+	CALL SOURCE_CALC_歓楽(TARGET, PLAYER, LOCAL:0)
+	CALL SOURCE_CALC_征服(TARGET, PLAYER, LOCAL:1)
+	CALL SOURCE_CALC_接触(TARGET, PLAYER, 80)
+
+	CALL SOURCE_CALC_好感度要素_友情度UP(TARGET, PLAYER, LOCAL:0)
+	CALL SOURCE_CALC_好感度要素_恋心度UP(TARGET, PLAYER, LOCAL:0 / 4)
+
+	TCVAR:TARGET:摂取カロリー += RFLAG:コマンド結果受渡し変数３
+ENDIF
+
+TIME += 5
+TCVAR:TARGET:プレゼント時刻 = TIME
+
+RETURN 1
+
+;-------------------------------------------------
+;実行判定
+;-------------------------------------------------
+@COM_ABLE314
+
+;実行判定
+SIF SAVESTR:ゲームフェイズ管理 != "通常モード"
+	RETURN 0
+;一括管理
+SIF GLOBAL_COMABLE(314)
+	RETURN RESULT
+;睡眠中
+SIF CFLAG:睡眠
+	RETURN 0
+;２時間に１回
+SIF TIME < TCVAR:TARGET:プレゼント時刻 + 120
+	RETURN 0
+RETURN 1
+
+;-------------------------------------------------
+;実行時メッセージ
+;-------------------------------------------------
+@MESSAGE_COM314
+PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%에게 %RSTR:コマンド結果受渡し文字列%을(를) 선물했다.
+IF RFLAG:コマンド結果受渡し変数３
+	PRINTFORML （섭취 칼로리：{RFLAG:コマンド結果受渡し変数３}kcal）
+ENDIF
+
+@MESSAGE_COM314_非口上時
+IF RFLAG:コマンド結果受渡し変数 == 0
+	PRINTFORML %CALLNAME:TARGET%은(는) 기뻐하는 것 같다
+ELSEIF RFLAG:コマンド結果受渡し変数 == 1
+	PRINTFORML %CALLNAME:TARGET%은(는) 매우 기뻐하는 것 같다!
+	PRINTFORML %CALLNAME:PLAYER%에게 감사를 표하며 얼굴을 활짝 피고 있다.
+ENDIF
+

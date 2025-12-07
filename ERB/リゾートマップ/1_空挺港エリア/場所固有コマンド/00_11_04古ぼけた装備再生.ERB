@@ -1,0 +1,190 @@
+
+;-------------------------------------------------
+;古ぼけた装備再生
+;-------------------------------------------------
+@COMNAME_PLACE_383_1_11
+#FUNCTION
+TSTR:コマンド名受渡 = 낡은 장비 재생
+RETURNF 1
+
+;===================================================
+;コマンドタイプ
+;===================================================
+@COMTYPE_383_1_11
+#FUNCTION
+TFLAG:コマンドタイプ受渡 = COMTYPE("単独可能")
+
+@COM_TOOLTIP_383_1_11
+LOCALS = <br>■낡은 장비 재생<br>
+LOCALS += "낡은 반지 또는 낡은 귀걸이를 재생하는 명령어."
+LOCALS += "<br>무작위로 새로운 장비를 얻을 수 있다."
+LOCALS += "<br>낡은 장비의 랭크가 높을수록 좋은 장비를 재생할 수 있다."
+LOCALS += "<br>COM 타입: 단독 가능<br>획득 소스: 없음"
+LOCALS += "<br>고유 획득 경험: 없음<br>"
+TSTR:ツールチップ受渡 = %LOCALS%
+
+@COM383_1_11
+
+CALL 古ぼけた装備_再生処理
+
+TIME += 60
+RETURN 1
+
+;-------------------------------------------------
+;実行判定
+;-------------------------------------------------
+@COM_ABLE383_1_11
+;条件に合う場合0（不許可）を返す
+;どの条件にも引っかからないなら1（許可）を返す
+;一括管理
+SIF GLOBAL_COMABLE(383)
+	RETURN RESULT
+;隠密中はダメ
+SIF CFLAG:PLAYER:隠密
+	RETURN 0
+RETURN 1
+
+;-------------------------------------------------
+;実行時メッセージ
+;-------------------------------------------------
+@MESSAGE_COM383_1_11
+
+
+
+@古ぼけた装備_再生処理()
+#DIMS HTML文字列
+#DIM 改行数
+#DIM 古指輪銅数
+#DIM 古指輪銀数
+#DIM 古指輪金数
+#DIM 古耳飾り銅数
+#DIM 古耳飾り銀数
+#DIM 古耳飾り金数
+#DIM CONST 銅ランク = 1
+#DIM CONST 銀ランク = 3
+#DIM CONST 金ランク = 5
+
+
+古指輪銅数 = 素材アイテム数量算出("古ぼけた指輪・銅")
+古指輪銀数 = 素材アイテム数量算出("古ぼけた指輪・銀")
+古指輪金数 = 素材アイテム数量算出("古ぼけた指輪・金")
+古耳飾り銅数 = 素材アイテム数量算出("古ぼけた耳飾り・銅")
+古耳飾り銀数 = 素材アイテム数量算出("古ぼけた耳飾り・銀")
+古耳飾り金数 = 素材アイテム数量算出("古ぼけた耳飾り・金")
+
+
+DRAWLINE
+PRINTL 낡은 장비를 재생합니다. 재생할 낡은 장비를 선택해 주세요.
+PRINTL ※재생 후 장비 랭크 상한은 스토리 진행도에 따라 상승합니다.
+DRAWLINE
+
+HTML文字列 = 
+HTML文字列 += "<div rect='100,0,5662,1750' border='31' bcolor='#C0C0C0' padding='50,25,50'>"
+HTML文字列 += "■반지 재생<br>"
+IF 古指輪銅数 > 0
+	HTML文字列 += @"　　<button value='0'>[0] 낡은 반지・동　　　✕{古指輪銅数, 3}　을(를) 재생한다</button><br>"
+ELSE
+	HTML文字列 += @"　　<font color='#%カラーパレット_HTML("グレーアウト")%'>[0] 낡은 반지・동　　　✕{古指輪銅数, 3}　을(를) 재생한다</font><br>"
+ENDIF
+IF 古指輪銀数 > 0
+	HTML文字列 += @"　　<button value='1'>[1] 낡은 반지・은　　　✕{古指輪銀数, 3}　을(를) 재생한다</button><br>"
+ELSE
+	HTML文字列 += @"　　<font color='#%カラーパレット_HTML("グレーアウト")%'>[1] 낡은 반지・은　　　✕{古指輪銀数, 3}　을(를) 재생한다</font><br>"
+ENDIF
+IF 古指輪金数 > 0
+	HTML文字列 += @"　　<button value='2'>[2] 낡은 반지・금　　　✕{古指輪金数, 3}　을(를) 재생한다</button><br>"
+ELSE
+	HTML文字列 += @"　　<font color='#%カラーパレット_HTML("グレーアウト")%'>[2] 낡은 반지・금　　　✕{古指輪金数, 3}　을(를) 재생한다</font><br>"
+ENDIF
+HTML文字列 += "<br>"
+HTML文字列 += "■귀걸이 재생<br>"
+IF 古耳飾り銅数 > 0
+	HTML文字列 += @"　　<button value='10'>[10] 낡은 귀걸이・동　　　✕{古耳飾り銅数, 3}　을(를) 재생한다</button><br>"
+ELSE
+	HTML文字列 += @"　　<font color='#%カラーパレット_HTML("グレーアウト")%'>[10] 낡은 귀걸이・동　　　✕{古耳飾り銅数, 3}　을(를) 재생한다</font><br>"
+ENDIF
+IF 古耳飾り銀数 > 0
+	HTML文字列 += @"　　<button value='11'>[11] 낡은 귀걸이・은　　　✕{古耳飾り銀数, 3}　을(를) 재생한다</button><br>"
+ELSE
+	HTML文字列 += @"　　<font color='#%カラーパレット_HTML("グレーアウト")%'>[11] 낡은 귀걸이・은　　　✕{古耳飾り銀数, 3}　을(를) 재생한다</font><br>"
+ENDIF
+IF 古耳飾り金数 > 0
+	HTML文字列 += @"　　<button value='12'>[12] 낡은 귀걸이・금　　　✕{古耳飾り金数, 3}　을(를) 재생한다</button><br>"
+ELSE
+	HTML文字列 += @"　　<font color='#%カラーパレット_HTML("グレーアウト")%'>[12] 낡은 귀걸이・금　　　✕{古耳飾り金数, 3}　을(를) 재생한다</font><br>"
+ENDIF
+HTML文字列 += "<br>"
+HTML文字列 += "<br>"
+HTML文字列 += "<button value='999'>[999] 돌아가기</button><br>"
+HTML文字列 += "</div>"
+HTML_PRINT HTML文字列
+FOR 改行数, 0, 17
+	PRINTL
+NEXT
+
+BINPUT
+SELECTCASE RESULT
+	CASE 0
+		CALL 古ぼけた指輪抽選取得処理(銅ランク)
+		CALL 素材消費処理("古ぼけた指輪・銅")
+		PRINTW 낡은 반지・동 재생 중…………
+		PRINTW ………
+		PRINTW ……
+		PRINTW …
+		PRINTFORML %RESULTS% 을(를) 손에 넣었다!
+		FORCEWAIT
+		RESTART
+	CASE 1
+		CALL 古ぼけた指輪抽選取得処理(銀ランク)
+		CALL 素材消費処理("古ぼけた指輪・銀")
+		PRINTW 낡은 반지・은 재생 중…………
+		PRINTW ………
+		PRINTW ……
+		PRINTW …
+		PRINTFORML %RESULTS% 을(를) 손에 넣었다!
+		FORCEWAIT
+		RESTART
+	CASE 2
+		CALL 古ぼけた指輪抽選取得処理(金ランク)
+		CALL 素材消費処理("古ぼけた指輪・金")
+		PRINTW 낡은 반지・금 재생 중…………
+		PRINTW ………
+		PRINTW ……
+		PRINTW …
+		PRINTFORML %RESULTS% 을(를) 손에 넣었다!
+		FORCEWAIT
+		RESTART
+	CASE 10
+		CALL 古ぼけた耳飾り抽選取得処理(銅ランク)
+		CALL 素材消費処理("古ぼけた耳飾り・銅")
+		PRINTW 낡은 귀걸이・동 재생 중…………
+		PRINTW ………
+		PRINTW ……
+		PRINTW …
+		PRINTFORML %RESULTS% 을(를) 손에 넣었다!
+		FORCEWAIT
+		RESTART
+	CASE 11
+		CALL 古ぼけた耳飾り抽選取得処理(銀ランク)
+		CALL 素材消費処理("古ぼけた耳飾り・銀")
+		PRINTW 낡은 귀걸이・은 재생 중…………
+		PRINTW ………
+		PRINTW ……
+		PRINTW …
+		PRINTFORML %RESULTS% 을(를) 손에 넣었다!
+		FORCEWAIT
+		RESTART
+	CASE 12
+		CALL 古ぼけた耳飾り抽選取得処理(金ランク)
+		CALL 素材消費処理("古ぼけた耳飾り・金")
+		PRINTW 낡은 귀걸이・금 재생 중…………
+		PRINTW ………
+		PRINTW ……
+		PRINTW …
+		PRINTFORML %RESULTS% 을(를) 손에 넣었다!
+		FORCEWAIT
+		RESTART
+	CASE 999
+		RETURN 0
+ENDSELECT
+

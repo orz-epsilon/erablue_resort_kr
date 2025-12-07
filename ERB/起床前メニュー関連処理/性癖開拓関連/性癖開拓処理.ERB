@@ -1,0 +1,480 @@
+
+@性癖開拓処理
+#DIM DYNAMIC 表示候補, キャラクタ数上限
+#DIM 現在ページ
+#DIM 開拓対象
+#DIM 複数名フラグ
+#DIM キャラ番号
+#DIM 性癖番号
+#DIM スキップフラグ
+#DIM 開拓性癖ループ
+#DIMS 複数登録キャラ
+#DIMS DYNAMIC 複数登録配列, 100
+#DIM DYNAMIC 開拓性癖配列, 100
+#DIMS HTML文字列
+#DIM 選択番号
+#DIM 入力値
+
+VARSET 表示候補, -1
+現在ページ = 0
+複数名フラグ = 0
+複数登録キャラ = _
+選択番号 = 0
+
+;表示キャラを登録
+LOCAL:1 = 0
+FOR LOCAL, 1, CHARANUM
+	;非滞在は出さない
+	SIF CFLAG:LOCAL:滞在期間 < 0
+		CONTINUE
+	表示候補:(LOCAL:1) = LOCAL
+	LOCAL:1 += 1
+NEXT
+CALL キャラ配列フィルタ処理(表示候補, -1)
+
+$表示_LOOP
+PRINTL
+PRINTL
+PRINTL
+DRAWLINE
+PRINTL 도서실의 장서에서 해당하는 에로책이 임의의 캐릭터에게 전달되도록 세공하여, 캐릭터의 성벽을 개척합니다
+PRINTL 누구의 성벽을 개척하시겠습니까?
+DRAWLINE
+PRINTBUTTON "[9000] 복수명 일괄 개척", 9000
+PRINTL
+IF OPTION変数:性癖開拓自動継続
+	HTML_PRINT @"<button value='9997'>[9997] 失敗時自動継続オプション ON / <font color='#%カラーパレット_HTML("グレーアウト")%'>OFF</font></button>"
+ELSE
+	HTML_PRINT @"<button value='9997'>[9997] 失敗時自動継続オプション <font color='#%カラーパレット_HTML("グレーアウト")%'>ON</font> / OFF</button>"
+ENDIF
+DRAWLINE
+LOCAL:1 = 0
+;キャラの表示（15人まで）
+FOR LOCAL, (現在ページ * 15), ((現在ページ * 15) + 15)
+	;登録が終わったら表示終了
+	IF 表示候補:LOCAL == -1
+		LOCAL:1 = 1
+		BREAK
+	ENDIF
+	LOCALS = %GET_NAME(表示候補:LOCAL, 1)%　
+	IF 性癖素質:(表示候補:LOCAL):性癖開発用フラグ変数 == 0
+		LOCALS += "현재 성벽 개척: 없음　　　　　　"
+	ELSE
+		LOCALS += @"현재 성벽 개척: %GET_性癖素質NAME(性癖素質:(表示候補:LOCAL):性癖開発用フラグ変数, 表示候補:LOCAL), 16, LEFT%"
+	ENDIF
+	IF キャラ一覧ソート:0 != ""
+		LOCALS += @"%ソート情報表示(表示候補:LOCAL)%"
+	ENDIF
+	IF 文字色グループ取得(表示候補:LOCAL) >= 0
+		SETCOLOR 同室時_グループ文字色:(文字色グループ取得(表示候補:LOCAL))
+	ELSEIF CFLAG:(表示候補:LOCAL):同室文字色
+		SETCOLOR CFLAG:(表示候補:LOCAL):同室文字色
+	ENDIF
+	PRINTBUTTON @"[{LOCAL, 3}] %LOCALS%", LOCAL
+	RESETCOLOR
+	PRINTL 
+NEXT
+
+DRAWLINE
+
+;ページめくり表示
+IF 現在ページ > 0
+	PRINTBUTTONLC "[9009]이전 페이지로", 9009
+ELSE
+	PRINTLC 　
+ENDIF
+PRINTFORM - {現在ページ + 1} -
+IF LOCAL:1 == 0
+	PRINTBUTTONC "[9010]다음 페이지로", 9010
+ENDIF
+PRINTL 
+
+DRAWLINE
+CALL フィルタソートボタンセット表示(9020, 9030, 9031, 9040)
+DRAWLINE
+
+PRINTBUTTON "[9998]시스템 설명", 9998
+PRINT 　　
+PRINTBUTTON "[9999]돌아가기", 9999
+
+IF チュートリアルフラグ:性癖開拓 == 0
+	入力値 = 9998
+ELSE
+	BINPUT
+	入力値 = RESULT
+ENDIF
+;広告対象のINPUT
+SELECTCASE 入力値
+	CASE 9020, 9030, 9031, 9040
+		CALL フィルタソートボタンセット実行部(入力値, 9020, 9030, 9031, 9040)
+		現在ページ = 0
+		RESTART
+	CASE 9009
+		現在ページ = MAX(現在ページ - 1, 0)
+		GOTO 表示_LOOP
+	CASE 9010
+		SIF LOCAL:1 == 0
+			現在ページ += 1
+		GOTO 表示_LOOP
+	CASE 9999
+		RETURN -1
+	CASE 9997
+		INVERTBIT OPTION変数:性癖開拓自動継続, 0
+		GOTO 表示_LOOP
+	CASE 9998
+		PRINTL
+		DRAWLINE
+		PRINTL ［성벽 개척 시스템: 튜토리얼］
+		DRAWLINE
+		HTML_PRINT "<img src='顔エラ' height='900' width='900'>"
+		PRINTL 
+		PRINTL 
+		PRINTL 
+		PRINTL 
+		PRINTL 
+		PRINTL 
+		PRINTL 
+		CALL 性癖開拓システムチュートリアル
+		DRAWLINE
+		RESTART
+	CASE 9000
+		複数名フラグ = 1
+	CASEELSE
+		開拓対象 = 表示候補:入力値
+ENDSELECT
+
+IF 複数名フラグ
+	VARSET 開拓性癖配列
+	$性癖表示LOOP
+	現在ページ = 0
+	DRAWLINE
+	PRINTFORML 복수명의 일괄 성벽 개척을 진행합니다
+	PRINTL 어떤 성벽을 개척하시겠습니까?
+	PRINTL ※우선순위를 부여하여 복수 선택 가능합니다.
+	PRINTL 　선택한 캐릭터에 대해, 0의 성벽을 이미 획득했다면 1을, 1의 성벽을 이미 획득했다면 2를,
+	PRINTL 　처럼 책이 배부됩니다.
+	DRAWLINE
+	
+	;左枠
+	HTML文字列 = <div rect='81,31,1937,2812' padding='50,25,50' border='31' bcolor='#C0C0C0'>
+	FOR LOCAL, 1, 100
+		IF ERDNAME(性癖素質, LOCAL) != ""
+			IF ENUMFUNCBEGINSWITH(@"性癖開拓チャレンジ処理_%ERDNAME(性癖素質, LOCAL)%")
+				IF 選択番号 == LOCAL
+					HTML文字列 += @"<font color='#%カラーパレット_HTML("黄")%'><button value='{LOCAL}'>[{LOCAL, 2}]%GET_性癖素質NAME(LOCAL)%</button></font>"
+				ELSE
+					HTML文字列 += @"<button value='{LOCAL}'>[{LOCAL, 2}]%GET_性癖素質NAME(LOCAL)%</button>"
+				ENDIF
+				IF MATCH(開拓性癖配列, LOCAL)
+					HTML文字列 += @"<font color='#%カラーパレット_HTML("黄")%'>：%TOFULL(TOSTR(FINDELEMENT(開拓性癖配列, LOCAL)))%</font>"
+				ENDIF
+				HTML文字列 += "<br>"
+			ENDIF
+		ENDIF
+	NEXT
+	HTML文字列 += "<br>"
+	IF 開拓性癖配列:0
+		HTML文字列 += "<button value='998'>[998]이 우선순위로 개척한다</button><br>"
+	ELSE
+		HTML文字列 += @"<font color='#%カラーパレット_HTML("グレーアウト")%'>[998]이 우선순위로 개척한다</font><br>"
+	ENDIF
+	HTML文字列 += "<button value='999'>[999]돌아가기</button><br>"
+	HTML文字列 += "<br>"
+	HTML文字列 += "우선순위 기록 1　<button value='990'>[기억]</button> <button value='994'>[불러오기]</button><br>"
+	HTML文字列 += "우선순위 기록 2　<button value='991'>[기억]</button> <button value='995'>[불러오기]</button><br>"
+	HTML文字列 += "우선순위 기록 3　<button value='992'>[기억]</button> <button value='996'>[불러오기]</button><br>"
+	HTML文字列 += "</div>"
+
+	;右枠
+	HTML文字列 += "<div rect='2050,31,3875,2812' padding='50,25,50' border='31' bcolor='#C0C0C0'>"
+	IF 選択番号
+		CALLF GET_性癖素質NAME(選択番号, , 1)
+		HTML文字列 += TSTR:ツールチップ受渡
+		HTML文字列 += "<br><button value='997'>[997] 획득 후보에 추가한다</button><br>"
+	ENDIF
+	HTML文字列 += "</div>"
+
+	
+	HTML_PRINT HTML文字列, 1
+	FOR LOCAL, 0, 30
+		PRINTL 
+	NEXT
+
+	BINPUT
+	性癖番号 = RESULT
+	SELECTCASE 性癖番号
+		CASE 1 TO 100
+			選択番号 = 性癖番号
+			GOTO 性癖表示LOOP
+		CASE 990
+			ARRAYCOPY "開拓性癖配列", "開拓性癖セット記録１"
+			PRINTW 현재 우선순위를 기록했습니다.
+			GOTO 性癖表示LOOP
+		CASE 991
+			ARRAYCOPY "開拓性癖配列", "開拓性癖セット記録２"
+			PRINTW 현재 우선순위를 기록했습니다.
+			GOTO 性癖表示LOOP
+		CASE 992
+			ARRAYCOPY "開拓性癖配列", "開拓性癖セット記録３"
+			PRINTW 현재 우선순위를 기록했습니다.
+			GOTO 性癖表示LOOP
+		CASE 994
+			ARRAYCOPY "開拓性癖セット記録１", "開拓性癖配列"
+			PRINTW 기록에서 우선순위를 불러왔습니다.
+			GOTO 性癖表示LOOP
+		CASE 995
+			ARRAYCOPY "開拓性癖セット記録２", "開拓性癖配列"
+			PRINTW 기록에서 우선순위를 불러왔습니다.
+			GOTO 性癖表示LOOP
+		CASE 996
+			ARRAYCOPY "開拓性癖セット記録３", "開拓性癖配列"
+			PRINTW 기록에서 우선순위를 불러왔습니다.
+			GOTO 性癖表示LOOP
+		CASE 997
+			IF MATCH(開拓性癖配列, 選択番号)
+				ARRAYREMOVE 開拓性癖配列, FINDELEMENT(開拓性癖配列, 選択番号), 1
+			ELSE
+				開拓性癖配列:(FINDELEMENT(開拓性癖配列, 0)) = 選択番号
+			ENDIF
+			GOTO 性癖表示LOOP
+		CASE 998
+			$フィルタソートLOOP
+			;表示キャラを登録
+			VARSET 表示候補, -1
+			LOCAL:1 = 0
+			FOR キャラ番号, 1, CHARANUM
+				;非滞在は出さない
+				SIF CFLAG:キャラ番号:滞在期間 < 0
+					CONTINUE
+				スキップフラグ = 1
+				FOR 開拓性癖ループ, 0, 100
+					SIF 開拓性癖配列:開拓性癖ループ == 0
+						BREAK
+					;すでに性癖持ってるならスキップ
+					SIF 性癖素質:キャラ番号:(開拓性癖配列:開拓性癖ループ)
+						CONTINUE
+					;名前の設定されていない性癖は取れない
+					SIF GET_性癖素質NAME(開拓性癖配列:開拓性癖ループ, キャラ番号) == ""
+						CONTINUE
+					スキップフラグ = 0
+				NEXT
+				SIF スキップフラグ
+					CONTINUE
+				表示候補:(LOCAL:1) = キャラ番号
+				LOCAL:1 += 1
+			NEXT
+			CALL キャラ配列フィルタ処理(表示候補, -1)
+
+			$表示_LOOP2
+			DRAWLINE
+			PRINTFORML 복수 인원의 일괄 성벽 개척을 진행합니다
+			PRINTL 어떤 캐릭터의 성벽을 개척하시겠습니까? (선택은 100명까지)
+			DRAWLINE
+			PRINTBUTTON "[9001] 표시 캐릭터를 모두 개척한다", 9001
+			PRINTL
+			DRAWLINE
+			LOCAL:1 = 0
+			;キャラの表示（15人まで）
+			FOR LOCAL, (現在ページ * 15), ((現在ページ * 15) + 15)
+				;登録が終わったら表示終了
+				IF 表示候補:LOCAL == -1
+					LOCAL:1 = 1
+					BREAK
+				ENDIF
+				IF STRFIND(複数登録キャラ, @"_{表示候補:LOCAL}_") > -1
+					SETCOLOR カラーパレット("黄")
+				ELSEIF 文字色グループ取得(表示候補:LOCAL) >= 0
+					SETCOLOR 同室時_グループ文字色:(文字色グループ取得(表示候補:LOCAL))
+				ELSEIF CFLAG:(表示候補:LOCAL):同室文字色
+					SETCOLOR CFLAG:(表示候補:LOCAL):同室文字色
+				ENDIF
+				LOCALS = %GET_NAME(表示候補:LOCAL, 1)%
+				IF 性癖素質:(表示候補:LOCAL):性癖開発用フラグ変数 == 0
+					LOCALS += "현재 성벽 개척: 없음　　　　　　"
+				ELSE
+					LOCALS += @"현재 성벽 개척: %GET_性癖素質NAME(性癖素質:(表示候補:LOCAL):性癖開発用フラグ変数, 表示候補:LOCAL), 16, LEFT%"
+				ENDIF
+				IF キャラ一覧ソート:0 != ""
+					LOCALS += @"%ソート情報表示(表示候補:LOCAL)%"
+				ENDIF
+				PRINTBUTTON @"[{LOCAL, 3}] %LOCALS%", LOCAL
+				RESETCOLOR
+				PRINTL 
+			NEXT
+
+			DRAWLINE
+
+			;ページめくり表示
+			IF 現在ページ > 0
+				PRINTBUTTONLC "[9009]이전 페이지로", 9009
+			ELSE
+				PRINTLC 　
+			ENDIF
+			PRINTFORM - {現在ページ + 1} -
+			IF LOCAL:1 == 0
+				PRINTBUTTONC "[9010]다음 페이지로", 9010
+			ENDIF
+			PRINTL 
+			DRAWLINE
+			CALL フィルタソートボタンセット表示(9020, 9030, 9031, 9040)
+			DRAWLINE
+
+			PRINTBUTTON "[9000] 이걸로 확정한다", 9000
+			PRINTL
+			PRINTBUTTON "[9999]돌아가기", 9999
+			BINPUT
+
+			;広告対象のINPUT
+			SELECTCASE RESULT
+				CASE 9020, 9030, 9031, 9040
+					CALL フィルタソートボタンセット実行部(RESULT, 9020, 9030, 9031, 9040)
+					現在ページ = 0
+					GOTO フィルタソートLOOP
+				CASE 9009
+					現在ページ = MAX(現在ページ - 1, 0)
+					GOTO 表示_LOOP2
+				CASE 9010
+					SIF LOCAL:1 == 0
+						現在ページ += 1
+					GOTO 表示_LOOP2
+				CASE 9999
+					GOTO 性癖表示LOOP
+				CASE 9000
+					VARSET 複数登録配列
+					SPLIT 複数登録キャラ, "_", 複数登録配列
+					FOR LOCAL, 1, 100
+						SIF 複数登録配列:LOCAL == ""
+							BREAK
+						REPLACE 複数登録配列:LOCAL, "_", ""
+						開拓対象 = TOINT(RESULTS)
+						FOR 開拓性癖ループ, 0, 100
+							SIF 開拓性癖配列:開拓性癖ループ == 0
+								BREAK
+							;すでに性癖持ってるならスキップ
+							SIF 性癖素質:開拓対象:(開拓性癖配列:開拓性癖ループ)
+								CONTINUE
+							;名前の設定されていない性癖は取れない
+							SIF GET_性癖素質NAME(開拓性癖配列:開拓性癖ループ, 開拓対象) == ""
+								CONTINUE
+
+							性癖素質:開拓対象:性癖開発用フラグ変数 = 開拓性癖配列:開拓性癖ループ
+							PRINTFORML %CALLNAME:開拓対象%에게 %GET_性癖素質NAME(開拓性癖配列:開拓性癖ループ, 開拓対象)%의 야한 책이 전달되도록 세공을 합니다
+							BREAK
+						NEXT
+					NEXT
+					PRINTW ※결과는 하루 종료 시에 표시됩니다
+					RESTART
+				CASE 9001
+					FOR LOCAL, 0, CHARANUM
+						SIF 表示候補:LOCAL < 0
+							CONTINUE
+						FOR 開拓性癖ループ, 0, 100
+							SIF 開拓性癖配列:開拓性癖ループ == 0
+								BREAK
+							;すでに性癖持ってるならスキップ
+							SIF 性癖素質:(表示候補:LOCAL):(開拓性癖配列:開拓性癖ループ)
+								CONTINUE
+							;名前の設定されていない性癖は取れない
+							SIF GET_性癖素質NAME(開拓性癖配列:開拓性癖ループ, 表示候補:LOCAL) == ""
+								CONTINUE
+
+							性癖素質:(表示候補:LOCAL):性癖開発用フラグ変数 = 開拓性癖配列:開拓性癖ループ
+							BREAK
+						NEXT
+					NEXT
+					PRINTFORML 표시된 모든 캐릭터에게 각각의 야한 책이 전달되도록 세공을 합니다
+					PRINTW ※결과는 하루 종료 시에 표시됩니다
+					RESTART
+				CASEELSE
+					LOCALS = _{表示候補:RESULT}_
+					IF STRFIND(複数登録キャラ, LOCALS) > -1
+						REPLACE 複数登録キャラ, LOCALS, "_"
+						複数登録キャラ = %RESULTS%
+					ELSE
+						IF STRCOUNT(複数登録キャラ, "_") < 99
+							複数登録キャラ += @"{表示候補:RESULT}_"
+						ENDIF
+					ENDIF
+					GOTO 表示_LOOP2
+			ENDSELECT
+		CASE 999
+			複数登録キャラ = 
+			RESTART
+	ENDSELECT
+ELSE
+	$単体開拓ループ
+	PRINTL
+	DRAWLINE
+	PRINTFORML %CALLNAME:開拓対象%의 성벽 개척을 진행합니다
+	PRINTL 어떤 성벽을 개척하시겠습니까?
+	DRAWLINE
+
+	;左枠
+	HTML文字列 = <div rect='81,31,1937,2812' padding='50,25,50' border='31' bcolor='#C0C0C0'>
+
+	FOR LOCAL, 1, 100
+		IF ERDNAME(性癖素質, LOCAL) != ""
+			;すでに性癖持ってるならスキップ
+			SIF 性癖素質:開拓対象:LOCAL
+				CONTINUE
+			;名前の設定されていない性癖は取れない
+			SIF GET_性癖素質NAME(LOCAL, 開拓対象) == ""
+				CONTINUE
+			IF ENUMFUNCBEGINSWITH(@"性癖開拓チャレンジ処理_%ERDNAME(性癖素質, LOCAL)%")
+				IF 選択番号 == LOCAL
+					HTML文字列 += @"<font color='#%カラーパレット_HTML("黄")%'><button value='{LOCAL}'>[{LOCAL}]%GET_性癖素質NAME(LOCAL, 開拓対象)%</button></font><br>"
+				ELSE
+					HTML文字列 += @"<button value='{LOCAL}'>[{LOCAL}]%GET_性癖素質NAME(LOCAL, 開拓対象)%</button><br>"
+				ENDIF
+			ENDIF
+		ENDIF
+	NEXT
+	HTML文字列 += "<br>"
+	IF 性癖素質:開拓対象:性癖開発用フラグ変数
+		HTML文字列 += "<button value='0'>[0]개척 예정 취소</button><br>"
+	ENDIF
+	HTML文字列 += "<button value='999'>[999]돌아가기</button><br>"
+	HTML文字列 += "</div>"
+
+	;右枠
+	HTML文字列 += "<div rect='2050,31,3875,2812' padding='50,25,50' border='31' bcolor='#C0C0C0'>"
+	IF 選択番号
+		CALLF GET_性癖素質NAME(選択番号, 開拓対象, 1)
+		HTML文字列 += TSTR:ツールチップ受渡
+		HTML文字列 += "<br><button value='998'>[998] 이 성벽으로 결정한다</button><br>"
+	ENDIF
+	HTML文字列 += "</div>"
+
+	HTML_PRINT HTML文字列, 1
+	FOR LOCAL, 0, 30
+		PRINTL 
+	NEXT
+	BINPUT
+	LOCAL = RESULT
+	SELECTCASE LOCAL
+		CASE 0
+			PRINTW 세공을 취소합니다
+			性癖素質:開拓対象:性癖開発用フラグ変数 = LOCAL
+			RESTART
+		CASE 1 TO 100
+			選択番号 = LOCAL
+			GOTO 単体開拓ループ
+		CASE 998
+			PRINTFORML %CALLNAME:開拓対象%에게%GET_性癖素質NAME(選択番号, 開拓対象)%의 에로책이 전달되도록 세공을 합니다
+			PRINTW ※결과는 하루 종료 시에 표시됩니다
+			性癖素質:開拓対象:性癖開発用フラグ変数 = 選択番号
+			RESTART
+		CASE 999
+			GOTO 表示_LOOP
+	ENDSELECT
+ENDIF
+
+@性知識条件_性癖開拓チャレンジ()
+#FUNCTION
+;性癖チャレンジで必要な最低の性知識レベルを返す
+
+IF 高速船記録:派遣先登録 == "叡智の殿堂" && 高速船記録:派遣状態 == "派遣中"
+	RETURNF -1
+ELSE
+	RETURNF 0
+ENDIF

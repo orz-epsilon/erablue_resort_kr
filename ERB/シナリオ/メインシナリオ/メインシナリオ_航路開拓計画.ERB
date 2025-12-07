@@ -1,0 +1,71 @@
+
+@イベント発生条件_メインシナリオ_航路開拓計画
+
+;開放条件を満たしたら1を返すこと
+IF 空艇港初来訪イベントフラグ
+	RETURN 1
+ENDIF
+RETURN 0
+
+@イベント関数_メインシナリオ_航路開拓計画(ARG)
+DRAWLINE
+PRINTL ［항로 개척 계획］
+DRAWLINE
+PRINTW
+PRINTFORMW 공사를 방해하는 마물을 쓰러뜨리고, 리조트를 개조할 전망은 섰다.
+PRINTFORMW 항구 근처의 가게도 개축해나가면, 행락지로서 발전해나가는 것이 가능할 것이다.
+PRINTL
+PRINTFORMW 하지만……아무래도, 섬의 입지가 너무 불편하다.
+PRINTFORMW 이 이름 없는 섬은 주요 항로에서 벗어나 있어, 먼 곳에서 오기 위해서는 몇 번이나 배를 갈아타야 한다.
+PRINTFORMW 많은 손님을 불러들이기에는 치명적인 결점이다.
+PRINTL
+PRINTFORMW 원인은 분명하다.
+PRINTFORMW 이 섬과, 가장 가까운 큰 섬을 잇는 선상에, 식인조 무리가 서식하는 무인도가 있기 때문이다.
+PRINTFORMW 무장하지 않은 배는 물론이고, 기공정조차도 불필요한 전투를 피하기 위해 식인조들에게는 가까이 가지 않는다.
+PRINTFORMW 그래서 항로가 크게 우회하게 되어, 불편한 입지가 되어버렸다.
+PRINTL
+PRINTFORMW 즉, 이 새 무리를 토벌해버리면 어느 정도 개선될 것이지만…….
+PRINTFORMW %CALLNAME:PLAYER%은(는) 한가롭게 과자를 먹고 있는 성정수 era에게 시선을 준다.
+PRINTL
+CALL 画像表示("顔エラ","LEFT",,,,1,)
+PRINTL 성정수 era:
+PRINTFORMW 「뭐야. 그런 눈을 해도, 나는 돕지 않을 거야」
+PRINTL
+PRINTFORMW 하지만, 별의 짐승이라고 하면 패공전쟁에서 맹위를 떨쳤던 전쟁 병기.
+PRINTFORMW 고작 마물 무리 정도, 한 손으로 쓰러뜨릴 수 있지 않을까? 라는 뜻을 전해본다.
+PRINTL
+PRINTL 성정수era：
+PRINTFORMW 「내가 관장하는 것은 쾌락과 절정, 전투는 전문 분야가 아니다
+PRINTFORMW 　물론, 진심을 내면 어렵지 않게 쓰러뜨릴 수 있겠지. 하지만, 그러기 위해서는 많은 ZP가 필요하다
+PRINTFORMW 　수지로는 확실히 마이너스다. 편하게 하려 하지 말고, 꾸준히 토벌해라」
+PRINTL
+PRINTFORMW 그렇게 말하며 era는 소파에 드러누워, 오락 소설을 읽기 시작했다.
+PRINTFORMW 그녀의 말이 진실인지 거짓인지는 모르겠지만, 적어도 손을 댈 생각이 없다는 점은 진심인 것 같다.
+PRINTL
+PRINTFORMW 어쩔 수 없다. 스톤 이터와 마찬가지로, 싸울 수 있을 만한 자의 협력을 구하는 수밖에 없을 것이다.
+PRINTFORMW 무리 토벌이 된다면, 어느 정도 장기전이 될 것이다.
+SETCOLOR カラーパレット("真っ赤")
+PRINT 며칠에 걸쳐 공략하는 것을 의식하는 편이 좋다
+RESETCOLOR
+PRINTFORMW 지도 모른다.
+PRINTFORMW 공략 전에, 잠시 루피 벌이에 전념하여 장비를 갖추는 것도 좋을 것이다.
+PRINTL
+PRINTFORMW 어느 쪽이든 섬으로의 접근은 리조트에게 있어 중요한 과제이다.
+PRINTFORMW 이것을 해결하면, 손님의 유입은 크게 개선될 것이다. %CALLNAME:PLAYER%의 야망에도, 한 걸음 다가갈 것이다─────
+PRINTL 
+PRINTL 
+SETCOLOR 0xFFFF00
+PRINTFORML 던전 [식인조의 섬]이 해방되었습니다.
+RESETCOLOR
+FORCEWAIT
+ダンジョン出現フラグ_人食い鳥の島 = 1
+
+CALL イベント完了フラグ汎用処理("航路開拓計画")
+
+
+
+
+
+
+
+

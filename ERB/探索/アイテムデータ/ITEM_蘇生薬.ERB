@@ -1,0 +1,49 @@
+
+@アイテム個別文章表示_蘇生薬(ARGS)
+;蘇生薬
+IF ARGS == "値段"
+	詳細文文字列受け渡し変数 = 루피
+	RETURN 3000
+ENDIF
+
+LOCALS = 
+LOCALS += @"■소생약　　　소지 수:{DT_CELL_GET("所持アイテムデータベース", 0, "蘇生薬")}<br>"
+;LOCALS += -------------------------------------------------|←文字横幅ここまで
+LOCALS += "하늘 세계에서 널리 사용되는, 소생을 위한 범용적인 약<br>"
+LOCALS += "다양한 재료가 필요하며, 정제도 그럭저럭 어렵다<br>"
+LOCALS += "이것을 만들 수 있다면 연금술사로서 한 사람 몫을 한다고 말할 수 있을 것이다<br>"
+LOCALS += "<br>"
+LOCALS += "【효과】<br>"
+LOCALS += "전투 불능 상태의 아군 HP를[１００] 회복한다<br>"
+
+詳細文文字列受け渡し変数 = %LOCALS%
+
+@アイテム使用先表示_蘇生薬
+CALL 汎用使用先表示("味方単体")
+
+@アイテム効果処理_蘇生薬(ARG)
+;ARG = 隊列の何番目か
+
+IF !BATTLE_STATE:ARG:キャラ登録番号
+	RETURN 0
+ENDIF
+
+IF DT_CELL_GET("所持アイテムデータベース", 0, "蘇生薬") < 1
+	PRINTW 아이템이 없습니다
+	RETURN 0
+ENDIF
+
+IF BATTLE_STATE:ARG:ＨＰ > 0
+	PRINTW 대상이 전투 불능이 아닙니다
+	RETURN 0
+ENDIF
+
+IF BATTLE_STATE:ARG:最大ＨＰ < 100
+	PRINTFORMW %CALLNAME:(BATTLE_STATE:ARG:キャラ登録番号)%의 HP를{BATTLE_STATE:ARG:最大ＨＰ} 회복했습니다
+ELSE
+	PRINTFORMW %CALLNAME:(BATTLE_STATE:ARG:キャラ登録番号)%의 HP를100 회복했습니다
+ENDIF
+
+BATTLE_STATE:ARG:ＨＰ = MIN(BATTLE_STATE:ARG:ＨＰ + 100, BATTLE_STATE:ARG:最大ＨＰ)
+
+RETURN 1

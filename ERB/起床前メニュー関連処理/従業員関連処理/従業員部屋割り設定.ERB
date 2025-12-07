@@ -1,0 +1,151 @@
+@従業員部屋割り設定
+#DIM ページ数
+#DIM 入れ替え記録
+#DIM ループ用
+#DIM 退避配列, 従業員関連配列数
+
+入れ替え記録 = -1
+
+$表示LOOP
+
+DRAWLINE
+PRINTL 직원 방 할당을 변경합니다.
+PRINTL 왼쪽의 일괄 변경을 선택하거나, 변경하고 싶은 방을 클릭해주세요.
+PRINTL ※개발 중이므로, 일이 올바르게 작동하지 않을 수 있습니다.
+DRAWLINE
+
+LOCALS = <div rect='81,131,1231,2950' padding='50,25,50' border='31' bcolor='#C0C0C0'>
+LOCALS += "<br>"
+LOCALS += "<button value='990'>[990] 빈 방 채우기</button><br>"
+LOCALS += "<button value='991'>[991] 정렬 순서대로 나열</button><br>"
+LOCALS += "<br>"
+LOCALS += "<button value='999'>[999] 돌아가기</button><br>"
+LOCALS += "</div>"
+HTML_PRINT LOCALS, 1
+CALL 宿泊エリア_従業員室_表示(ページ数, "入れ替え時", 入れ替え記録)
+
+FOR LOCAL, 0, 27
+	PRINTL
+NEXT
+
+BINPUT
+LOCAL = RESULT
+SELECTCASE LOCAL
+	CASE 999
+		ページ数 = 0
+		入れ替え記録 = -1
+		RETURN 1
+	CASE 1000
+		ページ数 -= 1
+		GOTO 表示LOOP
+	CASE 1001
+		ページ数 += 1
+		GOTO 表示LOOP
+	CASE 990
+		DRAWLINE
+		PRINTL 직원의 순서는 유지한 채, 중간에 비어있는 방을 채웁니다.
+		PRINTL 실행하시겠습니까?
+		PRINTBUTTONLC "[0] 예", 0
+		PRINTBUTTONLC "[1] 아니오", 1
+		BINPUT
+		IF RESULT == 0
+			;退避配列にコピーしてからリセットし、一個ずつ登録
+			VARSET 退避配列
+			ARRAYCOPY "従業員部屋割り配列", "退避配列"
+			VARSET 従業員部屋割り配列
+			LOCAL:1 = 0
+			FOR LOCAL, 0, 従業員関連配列数
+				SIF 退避配列:LOCAL < 1
+					CONTINUE
+				従業員部屋割り配列:(LOCAL:1) = 退避配列:LOCAL
+				LOCAL:1 ++
+			NEXT
+			PRINTW 빈 방을 채웠습니다.
+		ENDIF
+	CASE 991
+		DRAWLINE
+		PRINTL 직원의 소질이나 능력 순으로 방을 재배열합니다. (빈 방은 채웁니다)
+		PRINTL 어떤 순서로 재배열하시겠습니까?
+		PRINTBUTTONLC "[0] 캐릭터 번호순", 0
+		PRINTBUTTONLC "[1] 호감도 레벨순", 1
+		PRINTBUTTONLC "[2] 연모 레벨순", 2
+		PRINTL
+		PRINTBUTTONLC "[3] 전투 레벨순", 3
+		PRINTBUTTONLC "[4] 가슴 사이즈순", 4
+		PRINTL
+		PRINTBUTTONLC "[999] 그만두다", 999
+		BINPUT
+		LOCAL = RESULT
+		IF LOCAL == 999
+			RESTART
+		ELSE
+			SELECTCASE LOCAL
+				CASE 0
+					PRINT 캐릭터 번호순
+				CASE 1
+					PRINT 호감도 레벨순
+				CASE 2
+					PRINT 연모 레벨순
+				CASE 3
+					PRINT 전투 레벨순
+				CASE 4
+					PRINT 가슴 사이즈순
+			ENDSELECT
+			PRINTL 으로 정렬합니다. 괜찮습니까?
+			PRINTBUTTONLC "[0] 예", 0
+			PRINTBUTTONLC "[1] 아니요", 1
+			BINPUT
+			IF RESULT == 1
+				RESTART
+			ENDIF
+		ENDIF
+		VARSET 退避配列
+		FOR ループ用, 0, 従業員関連配列数
+			IF 従業員部屋割り配列:ループ用 < 1
+				退避配列:ループ用 = 1
+			ELSE
+				;降順にするために全部-1を掛けておく
+				SELECTCASE LOCAL
+					CASE 0
+						退避配列:ループ用 = 従業員部屋割り配列:ループ用 * -1
+					CASE 1
+						退避配列:ループ用 = CFLAG:(従業員部屋割り配列:ループ用):好感度レベル * -1
+					CASE 2
+						退避配列:ループ用 = CFLAG:(従業員部屋割り配列:ループ用):恋慕レベル * -1
+					CASE 3
+						退避配列:ループ用 = 基礎BATTLE_STATE:(従業員部屋割り配列:ループ用):Lv * -1
+					CASE 4
+						退避配列:ループ用 = 補正込みバストサイズ(従業員部屋割り配列:ループ用) * -1
+				ENDSELECT
+			ENDIF
+		NEXT
+		;退避配列基準でソート
+		ARRAYMSORT 退避配列, 従業員部屋割り配列
+		IF LOCAL == 0
+			;キャラ番号順だけは昇順なので並べ直す
+			VARSET 退避配列
+			LOCAL:1 = 0
+			FOR ループ用, 0, 従業員関連配列数
+				SIF 従業員部屋割り配列:ループ用 < 1
+					BREAK
+				LOCAL:1 ++
+			NEXT
+			ARRAYSORT 従業員部屋割り配列, FORWARD, 0, LOCAL:1
+		ENDIF
+		PRINTW 정렬이 완료되었습니다.
+	CASEELSE
+		IF 入れ替え記録 == LOCAL
+			;選択を外す
+			RESTART
+		ELSEIF 入れ替え記録 > -1
+			;既に選択されてるので入れ替える
+			SWAP 従業員部屋割り配列:LOCAL, 従業員部屋割り配列:入れ替え記録
+			RESTART
+		ELSE
+			;まだ選択されてないので選択状態になるだけ
+			入れ替え記録 = LOCAL
+			GOTO 表示LOOP
+		ENDIF
+ENDSELECT
+
+RESTART

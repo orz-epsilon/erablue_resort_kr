@@ -1,0 +1,102 @@
+
+@イベント発生条件_サブイベント_もっと速い船が必要だ
+
+;開放条件を満たしたら1を返すこと
+SIF イベント完了フラグ確認("大拡張！空艇港") < 1
+	RETURN 0
+
+RETURN 1
+
+@イベント関数_サブイベント_もっと速い船が必要だ(ARG)
+DRAWLINE
+PRINTL ［더 빠른 배가 필요하다］
+DRAWLINE
+PRINTW
+PRINTFORMW 예상보다 훨씬 빨리 항로가 열려, 리조트를 찾는 손님도 서서히 늘고 있다.
+PRINTFORMW 그러나 그에 비해, 아직 리조트의 시설·설비는 분명히 부족했다.
+PRINTFORMW 본래는 항로 구축과 병행하여 시설 확충을 진행할 예정이었으니 어쩔 수 없지만.
+PRINTL
+PRINTFORMW 지금 관광객의 수요를 보면, 만들어야 할 것은…….
+PRINTL
+CALL 画像表示("顔エラ","LEFT",,,,1,)
+PRINTL 성정수 era:
+PRINTFORMW "고속선을 만들지 않겠는가, 나의 계약자여"
+PRINTL
+PRINTFORMW 왜 갑자기.
+PRINTL
+PRINTL 성정수 era:
+PRINTFORMW "별것 아니다, 걱정할 것 없다. 성정수의 힘을 빌려 개조하면, 기존 배의 강화로 충분하다.
+PRINTFORMW 　누구든 좋다. 바람 속성을 가지고 태어난 성정수와 인연을 맺으면, 연료 없이 하늘을 가르는 속도로 날 수 있을 것이다.
+PRINTFORMW 　물자 조달에도 홍보에도 VIP 영접에도, 있어서 나쁠 것은 없지 않겠는가?"
+PRINTL
+PRINTFORMW 드물게, 묘하게 의욕이 넘치는 것 같지만…….
+PRINTFORMW ……그러고 보니, 얼마 전 만물상에 음식을 주로 다룬 잡지가 놓여 있던 것을 떠올린다.
+PRINTFORMW 분명 "미식가 사바랭이 선정한 전공 최고의 가게 10선"이라든가 "라멘 삼기사가 결정한다! 올해는 이 가게로 가라!" 같은 기사를 본 것 같다.
+PRINTL
+PRINTFORMW 가만히 era의 얼굴을 본다.
+PRINTL
+PRINTL 성정수 era：
+PRINTFORMW 「……무슨 일이냐, 나의 계약자여.
+PRINTFORMW 　나는 아무것도 잘못된 것을 말하고 있지 않지 않느냐?」
+PRINTL
+PRINTFORMW ……뭐, 괜찮겠지.
+PRINTFORMW 확실히 자가 소유의 배를 가지고 있다면 급한 용건에도 유연하게 대응할 수 있다.
+PRINTFORMW 이미 계류할 항구는 있는 셈이고, 고성능 배는 가지고 있어서 손해 볼 일은 없다.
+PRINTL
+PRINTFORMW 그래서, 바람의 성정수와 인연을 맺는다고 했었는데.
+PRINTFORMW 인연이라고 하면 [연모], 혹은 [섹스 프렌드] 정도까지 관계를 진전시키라는 것이겠지.
+IF 風の星晶獣_陥落チェック()
+	PRINTFORMW 그렇다면 이미 달성했다. 당장이라도 착수하자.
+	PRINTL
+	PRINTL 성정수 era：
+	PRINTFORMW 「오호, 알고 있었던 건가 우연인가. 어쨌든 이야기가 빠른 것은 좋은 일이다
+	PRINTFORMW 　그럼 기존의 배에 바람의 힘을 부여해 두지. 당장이라도 고속선으로 사용할 수 있도록 말이야.」
+	PRINTL
+	PRINTL 성정수 era：
+	PRINTFORMW 「덤으로, 바람을 잘 다루는 성정수가 있는 섬의 좌표도 알려주지.
+	PRINTFORMW 　고속선을 조종하는 조타 기술의 참고도 된다. 꼭 한번, 이야기를 들어보게나」
+	PRINTL
+	SETCOLOR 0xFFFF00
+	PRINTFORML 고속선을 작성하여, 리조트의 체류 캐릭터 상한이 +10되었다!
+	高速船作成済フラグ = 1
+	;即座に反映させるために再計算を呼ぶ
+	CALL 滞在可能キャラ数再計算()
+ELSE
+	PRINTFORMW 짐작 가는 바는 있지만, 바로 그런 관계가 될 리도 없다.
+	PRINTFORMW 좀 더 다른 방법은 없을까, 하고 era에게 묻는다.
+	PRINTL
+	PRINTL 성정수 era：
+	PRINTFORMW 「그렇군……그렇다면, 여행의 가호를 가진 성정수가 있는 섬의 좌표를 알려주지
+	PRINTFORMW 　그 성정수는 옛날부터 특정 섬에 바람을 일으켜, 여행자를 보내고 있다
+	PRINTFORMW 　그녀라면 인연을 맺지 않아도, 분신을 리조트에 데려오는 것만으로도 대용이 될 것이다
+	PRINTFORMW 　잘 유혹할 수 있을지는 너에게 달렸지만 말이야. 나의 계약자여」
+	PRINTL
+ENDIF
+SETCOLOR 0xFFFF00
+PRINTFORML 포트 브리즈 군도의 좌표를 손에 넣었습니다.
+PRINTFORML 던전 [바람이 노니는 계곡의 참배길]이 해방되었습니다.
+ダンジョン出現フラグ_風遊ぶ渓谷の参道 = 1
+RESETCOLOR
+FORCEWAIT
+
+CALL イベント完了フラグ汎用処理("もっと速い船が必要だ")
+
+
+@風の星晶獣_陥落チェック()
+#FUNCTION
+#DIM キャラ番号
+
+FOR キャラ番号, 1, CHARANUM
+	SIF TALENT:キャラ番号:種族 != 5
+		CONTINUE
+	SIF 基礎BATTLE_STATE:キャラ番号:属性 != 2
+		CONTINUE
+	SIF 陥落チェック_性的(キャラ番号)
+		RETURNF 1
+NEXT
+
+RETURNF 0
+
+
+
+

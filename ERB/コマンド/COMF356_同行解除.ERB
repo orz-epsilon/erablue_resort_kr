@@ -1,0 +1,79 @@
+
+@COMNAME356
+#FUNCTIONS
+TSTR:コマンド名受渡 = 동행 해제
+IF CFLAG:TARGET:デート == MASTER + 100
+	TSTR:コマンド名受渡 = 데이트를 끝낸다
+ENDIF
+
+;===================================================
+;コマンドタイプ
+;===================================================
+@COMTYPE_356
+#FUNCTION
+TFLAG:コマンドタイプ受渡 = COMTYPE("日常")
+
+@COM_TOOLTIP_356
+LOCALS = <br>■同行解除<br>
+LOCALS += "캐릭터의 동행을 해제하는 커맨드.<br>함께 은밀 중・우후후 중에는 동행이 해제되지 않는다.<br>데이트 중에는 [데이트를 끝낸다]로 변화."
+LOCALS += "<br>COM 타입: 일상<br>획득 소스: 없음"
+LOCALS += "<br>고유 획득 경험: 없음<br>"
+TSTR:ツールチップ受渡 = %LOCALS%
+
+@COM356
+IF CFLAG:TARGET:デート == MASTER + 100
+	;将来的にデートの内容に応じて好感度上昇とかしたいが未実装
+	PRINTFORMW %CALLNAME:TARGET%와의 데이트를 마치고 헤어졌다
+ELSEIF TCVAR:TARGET:デートちょっかい値 > 0
+	PRINTFORM %CALLNAME:TARGET%는
+	IF CHECK_SPERM(TARGET, MASTER) > 0
+		PRINTFORM %CALLNAME:MASTER%의 정액을 태 안에 남긴 채,
+	ENDIF
+	PRINTFORMW %CALLNAME:(ABS(CFLAG:TARGET:デート) - 100)%와의 데이트로 돌아갔다
+	CALL デートちょっかい終了処理(TARGET)
+ELSE
+	PRINTFORMW %CALLNAME:TARGET%와의 동행을 마치고 헤어졌다
+ENDIF
+
+;SOURCEまで回さないのでここで口上を表示させる
+RESULT = 0
+RESULTS =
+IF FLAG:口上表示切り替えオプション > 0
+	TRYCALLFORM KOJO_COM_{NO:TARGET}_356(TARGET)
+ENDIF
+
+CALL 同行解除処理(TARGET)
+IF CFLAG:TARGET:デート == MASTER + 100
+	CALL デート採点処理(TARGET)
+ENDIF
+TIME += 1
+
+RETURN 1
+
+;-------------------------------------------------
+;実行判定
+;-------------------------------------------------
+@COM_ABLE356
+;連れ出す実行判定
+SIF SAVESTR:ゲームフェイズ管理 != "通常モード"
+	RETURN 0
+;一括管理
+SIF GLOBAL_COMABLE(356)
+	RETURN RESULT
+;同行状態
+SIF CFLAG:TARGET:同行 < 1 && CFLAG:TARGET:デート != MASTER + 100
+	RETURN 0
+RETURN 1
+
+;-------------------------------------------------
+;実行時メッセージ
+;-------------------------------------------------
+
+
+
+
+@同行解除処理(対象キャラ)
+#DIM 対象キャラ
+
+CFLAG:対象キャラ:同行 = 0
+CALL MODE_DELETE_完全一致("同行系", PLAYER, 対象キャラ)

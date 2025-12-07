@@ -1,0 +1,96 @@
+
+@イベント発生条件_サブイベント_強い装備が作れないか？
+
+;開放条件を満たしたら1を返すこと
+SIF イベント完了フラグ確認("大拡張！空艇港") < 1
+	RETURN 0
+
+RETURN 1
+
+@イベント関数_サブイベント_強い装備が作れないか？(ARG)
+DRAWLINE
+PRINTL ［강한 장비를 만들 수 없을까?］
+DRAWLINE
+PRINTW
+PRINTFORMW 예상보다 훨씬 빨리 항로가 열려, 리조트를 찾는 손님도 서서히 늘고 있다.
+PRINTFORMW 그러나 그에 비해, 아직 리조트의 시설·설비는 분명히 부족했다.
+PRINTFORMW 본래는 항로 구축과 병행하여 시설을 확충할 예정이었으니 어쩔 수 없지만.
+PRINTL
+PRINTFORMW 지금 관광객의 수요를 보면…… 필요한 것은 더 광대한 부지. 그렇다면 이 섬을 더 개척할 필요가 있을 것이다.
+PRINTFORMW 협력해 주는 모두의 전력에 불만은 없다.
+PRINTFORMW 다만, 이 리조트 섬은 대부분이 미개척 상태이며, 강한 마물이 영역으로 삼고 있는 지역도 있다.
+PRINTFORMW 전력은 많을수록 좋다. 나 자신도 아이템을 던지는 것뿐만 아니라, 더 적극적으로 싸움에 개입해야 한다.
+PRINTL
+PRINTFORMW 그래서 ZP로 나 자신도 쓸 수 있는 뭔가 대단한 장비를 만들어줬으면 하는데.
+PRINTL
+CALL 画像表示("顔エラ","LEFT",,,,1,)
+PRINTL 성정수 era:
+PRINTFORMW 「뭐, 불가능하다고는 말하지 않겠지만…… 내가 관장하는 것은 쾌락과 절정
+PRINTFORMW 　무턱대고 ZP를 쏟아붓는 것보다, 대장장이와 발명에 관련된 성정수를 데려오는 편이 싸고 빨리 실현할 수 있을 것이다」
+PRINTL
+PRINTFORMW 그런 특수한 성정수가 있을까? 라고 %CALLNAME:PLAYER%은(는) 묻는다.
+PRINTL
+PRINTL 성정수 era:
+PRINTFORMW 「약간의 분야 차이는 ZP로 어떻게든 될 거야. 중요한 것은 '불의 성정수'라는 것이다
+PRINTFORMW 　불꽃은 파괴를 관장한다. 다만, 현재는 그 이치(코토와리)를 만든 존재가 창조에도 빠져 있어서 말이지
+PRINTFORMW 　숯덩이 같은 요리밖에 만들 수 없는 것 같지만, 뭐 창조는 창조다」
+PRINTL
+PRINTL 성정수era:
+PRINTFORMW 「누구라도 좋다. 불의 속성을 가지고 태어난 성정수와 인연을 맺으면, ZP와 성정수의 힘을 사용해 대장간 시설을 만들 수 있을 것이다
+PRINTFORMW 　거기서 사람을 고용해 장비를 개발하게 하면 된다
+PRINTFORMW 　물건에 따라서는 리조트의 명산품도 되어, 일석이조가 아닌가?」
+PRINTL
+PRINTFORMW 인연이라고 하면 [연모], 혹은 [섹스 프렌드] 정도로 관계를 진전시키라는 것이겠지.
+IF 火の星晶獣_陥落チェック()
+	PRINTFORMW 그렇다면 이미 달성했다. 당장이라도 착수하자.
+	PRINTL
+	PRINTL 성정수era:
+	PRINTFORMW 「호오, 알고 있었던 건가 우연인가. 어쨌든 이야기가 빠른 것은 좋은 일이다
+	PRINTFORMW 　대장간 시설 생성을 위한 권능을 추가해 두겠다. 나머지는 시설을 정비하면 된다」
+	PRINTL
+	PRINTL 성정수era:
+	PRINTFORMW 「덤으로, 대장간이 번성한 섬의 좌표도 알려주겠다
+	PRINTFORMW 　대장간 시설의 참고도 될 것이다. 공부하고 오거라」
+	PRINTL
+	SETCOLOR 0xFFFF00
+	PRINTFORML ZP 상점에 「대장간 시설 생성」이 추가되었습니다.
+	PRINTFORML 도구점에 「불의 마석」이 추가되었습니다.
+	鍛冶場作成許可フラグ = 1
+ELSE
+	PRINTFORMW 짐작 가는 곳은 있지만, 바로 그런 관계가 될 리는 없다.
+	PRINTFORMW 조금 더 다른 방법은 없는지, era에게 묻는다.
+	PRINTL
+	PRINTL 성정수 era:
+	PRINTFORMW 「그렇군……그렇다면, 대장장이와 가까운 불의 성정수가 있는 섬의 좌표를 알려주지
+	PRINTFORMW 　그 성정수는, 별의 백성이 아닌 드라프족이 만들어낸 철과 불의 거인
+	PRINTFORMW 　그, 혹은 그녀라면 인연을 맺지 않아도, 분신을 리조트에 데려오는 것만으로도 대체가 될 것이다
+	PRINTFORMW 　잘 유혹할 수 있을지는 너에게 달렸지만 말이야. 나의 계약자여」
+	PRINTL
+ENDIF
+SETCOLOR 0xFFFF00
+PRINTFORML 발츠 공국의 좌표를 손에 넣었습니다.
+PRINTFORML 던전 [발츠 지하 폐공장]이 해방되었습니다.
+RESETCOLOR
+FORCEWAIT
+ダンジョン出現フラグ_バルツ地下廃工場 = 1
+CALL イベント完了フラグ汎用処理("強い装備が作れないか？")
+
+
+@火の星晶獣_陥落チェック()
+#FUNCTION
+#DIM キャラ番号
+
+FOR キャラ番号, 1, CHARANUM
+	SIF TALENT:キャラ番号:種族 != 5
+		CONTINUE
+	SIF 基礎BATTLE_STATE:キャラ番号:属性 != 0
+		CONTINUE
+	SIF 陥落チェック_性的(キャラ番号)
+		RETURNF 1
+NEXT
+
+RETURNF 0
+
+
+
+

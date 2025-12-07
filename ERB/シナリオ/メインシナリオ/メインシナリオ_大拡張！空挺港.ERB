@@ -1,0 +1,75 @@
+
+@イベント発生条件_メインシナリオ_大拡張！空艇港
+
+;開放条件を満たしたら1を返すこと
+SIF ダンジョンクリアフラグ_人食い鳥の島 == 0
+	RETURN 0
+SIF 渡りに船の定期便_受諾日付 + 3 > DAY
+	RETURN 0
+SIF イベント完了フラグ確認("渡りに船の定期便") < 1
+	RETURN 0
+RETURN 1
+
+@イベント関数_メインシナリオ_大拡張！空艇港(ARG)
+
+DRAWLINE
+PRINTL ［대확장! 비행선 항구］
+DRAWLINE
+PRINTW
+PRINTFORMW 며칠 전 셰로카르테에게 의뢰한 정기편 건은 놀라운 속도로 진전되었다.
+PRINTFORMW 게다가 비행선 항구도 확장되었고, 만물상의 새 점포도 오늘 완성된다고 한다.
+PRINTL
+PRINTL 셰로카르테:
+PRINTFORMW 「이번에는 열심히 해봤어요~
+PRINTFORMW 　%CALLNAME:PLAYER%님의 리조트에는, 기대하고 있으니까요~」
+PRINTL
+PRINTFORMW 기쁜 반면, 압박감도 느낀다.
+PRINTFORMW 은혜를 갚기 위해서라도, 이 리조트를 크게 키워나가야 할 것이다.
+PRINTL
+PRINTL 셰로카르테:
+PRINTFORMW 「그런데~, 만물상 지점에서는 유용한 정보나 의뢰 중개도 다루고 있으니~
+PRINTFORMW 　부디 %CALLNAME:PLAYER%님도 많이 이용해 주세요~」
+PRINTL
+PRINTFORMW 전 하늘에 넓은 인맥을 가진 만물상이라면, 다양한 일을 할 수 있을 것이다.
+SETCOLOR カラーパレット("赤")
+PRINTFORM 용병이나 기공사에게 의뢰를 내서 소재를 모으게 하는 것
+RESETCOLOR
+PRINTFORM 이나,
+SETCOLOR カラーパレット("赤")
+PRINTFORMW 다른 섬으로 이동하기 위한 항로 정보 구매 (미구현).
+RESETCOLOR
+PRINT 혹은,
+SETCOLOR カラーパレット("赤")
+PRINTFORM 성정수나 미지의 섬 등 귀중한 정보(미구현)
+RESETCOLOR
+PRINTW 등도 얻을 수 있을지도 모른다…….
+PRINTL
+PRINTL 셰로카르테:
+PRINTFORMW 「그럼, 저는 다른 섬에서 할 일이 있으니, 이만 실례하겠습니다~
+PRINTFORMW 　다시 만날 날을, 기대하고 있겠습니다~」
+PRINTL
+PRINTFORMW %CALLNAME:PLAYER%은(는) 떠나가는 셰로카르테를 배웅하고, 앞으로의 계획에 대해 생각하기 시작한다.
+PRINTFORMW 일단은…… 늘어난 관광객에 대한 대응일까.
+PRINTL
+SETCOLOR 0xFFFF00
+PRINTFORML 일반 관광객의 수가 상시 [1.2배]가 됩니다.
+PRINTFORML 「일반 광고를 내다」에 의한 초대 캐릭터 수가 상시 +[1명] 됩니다.
+PRINTFORML 비행정 항구 맵이 업그레이드되었습니다.
+PRINTFORML 비행정 항구 맵에 「만물상」이 개점했습니다.
+PRINTFORML 　├・소재 수집 의뢰를 할 수 있게 되었습니다.
+PRINTFORML 　└・희귀한 소재나 강력한 장비품이 진열된 수입품점을 이용할 수 있게 되었습니다.
+PRINTFORML 도구점의 품목이 증가했습니다.
+PRINTFORML 항구 앞 광장에 가끔 특별한 가게가 출현하게 되었습니다.
+RESETCOLOR
+CALL イベント完了フラグ汎用処理("大拡張！空艇港")
+SIF !FLAG:クリア済み視聴フラグ
+	CALL RESET_GRAPH_1
+
+FORCEWAIT
+
+
+
+
+
+
+

@@ -1,0 +1,226 @@
+
+@イベント発生条件_メインシナリオ_星の獣と空との繋がり
+
+;開放条件を満たしたら1を返すこと
+SIF 特定状況口上用フラグ:(GETCHARA(997)):0 < 1
+	RETURN 0
+
+RETURN 1
+
+@イベント関数_メインシナリオ_星の獣と空との繋がり(ARG)
+#DIM era番号
+
+era番号 = GETCHARA(998)
+
+
+DRAWLINE
+PRINTL ［별의 짐승과 하늘과의 연결］
+DRAWLINE
+PRINTW
+PRINTL
+CALL 画像表示("顔エラ","LEFT",,,,1,)
+PRINTL 성정수era：
+PRINTFORMW 「～～♪」
+PRINTL
+PRINTFORMW %CALLNAME:PLAYER%이 일하는 틈에 소파로 눈을 돌리자, era가 누워서 그림 이야기를 읽고 있었다.
+PRINTFORMW 오락을 즐기는 모습은, 아무것도 모른다면 휴먼의 아이로밖에 보이지 않는다.
+PRINTFORM 하지만 그녀는 큰 힘을 가진 성정수이며,
+CALL CALLPRINT_用語解説("星の民")
+PRINTW 타피라에게 들은 이야기에 따르면 지금도 봉인된 상태라고 한다.
+IF GETBIT(TALENT:PLAYER:性別, 1)
+	PRINTFORMW 그리고, 그 봉인을 강화하기 위해%CALLNAME:PLAYER%은(는) era와 아이를 만들기를 바라고 있다.
+ELSE
+	PRINTFORMW 그리고, 그 봉인을 강화하기 위해%CALLNAME:PLAYER%은(는) era와 가족이 되기를 바라고 있다.
+ENDIF
+PRINTL
+PRINTL 성정수era：
+PRINTFORMW 「……응? 왜 그러느냐, 나의 계약자여. 무슨 용무라도 있느냐?」
+PRINTL
+PRINTFORMW 상반신을 일으키고, era가 고개를 갸웃거린다.
+PRINTFORMW 변함없이, 외모는 좋다.
+PRINTFORMW 왠지 모르게 항상 눈을 감고 있지만, 조형은 매우 잘 정돈되어 있다. 하얀 피부도 매력적이다.
+PRINTFORMW 돌이켜보면, 처음 만났을 때도 era의 아름다움에 넋을 잃었었지.
+PRINTL
+PRINTFORMW %CALLNAME:MASTER%은(는)――
+PRINTBUTTON "[0] 사정을 설명하고 협력을 구해야 한다. 라고 생각했다.", 0
+PRINTL
+PRINTBUTTON "[1] 그때부터 품고 있던 마음을 이룰 좋은 기회일지도 모른다. 라고 생각했다", 1
+PRINTL
+PRINTBUTTON "[2] 음란한 암컷, 지금 당장 범하고 싶다. 라고 생각했다.", 2
+PRINTL
+BINPUT
+SELECTCASE RESULT
+	CASE 0
+		PRINTL
+		PRINTFORMW 사정이 사정이다. 시간이 있다고는 해도, era 본인에게 설명하고 협력을 구해야 한다.
+		PRINTFORMW 그렇게 생각하고, 타피라에게 들은 이야기를 그대로 전해보자……
+		PRINTL
+		PRINTL 성정수 era:
+		PRINTFORMW 「흥」
+		PRINTL
+		PRINTFORMW 코웃음 쳤다.
+		PRINTL
+		PRINTL 성정수 era:
+		PRINTFORMW 「좀 더 현실성 있는 거짓말을 해라, 나의 계약자여.
+		PRINTFORMW 　이렇게 보여도, 나는 성정수로서는 최상위의 힘을 가지고 있다.
+		PRINTFORM 　그것이 봉인 상태? 하하하, 해방되면
+		CALL CALLPRINT_用語解説("創世神")
+		PRINTW 라도 될 수 있지 않겠나」
+		PRINTL
+		PRINTFORMW 확실히, era의 힘은 방대하다.
+		PRINTFORMW 인식의 개변이나 물체의 창조, 나아가서는 운명을 개찬하여 올 리 없는 자를 리조트에 부를 수도 있다.
+		PRINTFORMW 이것이 봉인 상태라니 쉽사리 믿기 어렵다……。
+		PRINTFORMW 하지만, 굳이 다른 세계에서 %CALLNAME:MASTER%을(를) 불러들인 타피라의 말이 거짓말이라고도 생각되지 않는다.
+		PRINTL
+		PRINTFORMW 으음. 하고 고민하고 있자, era가 히죽히죽 웃음을 띠며 %CALLNAME:MASTER%을(를) 바라보고 있었다.
+		PRINTL
+		PRINTL 성정수 era:
+		PRINTFORMW 「하지만 뭐……그런 거짓말까지 하면서 나와 관계를 맺고 싶어 한다는 건 나쁜 기분은 아니네.
+		PRINTFORMW 　그래그래. 내 계약자가 말이지……」
+		PRINTL
+		PRINTFORMW 완전히 먹이를 발견한 고양이 같은 얼굴이 되어 있다.
+		PRINTFORMW 사정을 설명하는 것은 성급했을지도 모른다.
+		PRINTL
+		PRINTL 성정수 era:
+		PRINTFORMW 「뭐! 나도 그렇게 싼 여자는 아니니까 말이야.
+		PRINTFORMW 　'그런' 것을 하고 싶다면, 노력해서 나를 그 기분으로 만들어 보라고? 내 계약자」
+		PRINTL
+		PRINTFORMW ……경위는 석연치 않지만, 어쨌든 era 본인에게서 허락은 얻었다.
+		PRINTFORMW 나머지는 평소대로 교류를 거듭하여 마음을 통하게 하고, '그런' 관계가 되면 해결될 것이다. ……그럴 것이다.
+		PRINTL
+		PRINTL
+		PRINTL
+	CASE 1
+		PRINTL
+		PRINTFORMW %CALLNAME:MASTER%은(는) era가 앉은 소파 앞에 무릎을 꿇고, era의 얼굴을 응시한다.
+		PRINTL
+		PRINTL 성정수 era:
+		PRINTFORMW 「뭐, 뭐야? 이상한 분위기를 풍기며…… 오늘은 몰래 먹지 않았어?」
+		PRINTL
+		PRINTFORMW 여죄가 있을 것 같은 일은 제쳐두고.
+		PRINTFORMW %CALLNAME:MASTER%는 성실하게, 솔직하게 자신의 마음을 전했다.
+		PRINTFORMW era에게 끌리고 있다는 것. era를 사랑하고 있다는 것. era와 가족이 되고 싶다는 것.
+		PRINTFORMW 가능하다면, era도 자신을 사랑해 주었으면 하는 것.
+		PRINTL
+		PRINTL 성정수 era:
+		PRINTFORMW 「잠깐…………만, 기다려」
+		PRINTL
+		PRINTFORMW 얼굴을 새빨갛게 물들이며, era는 자신의 혼란을 가라앉히기 위해 심호흡을 반복하고 있다.
+		PRINTFORMW 투명한 피부가 붉게 물드는 것도 또한 아름답고 귀엽다고 생각하며, %CALLNAME:MASTER%는 솔직하게 기다렸다.
+		PRINTL
+		PRINTL 성정수 era:
+		PRINTFORMW 「……아, 확인을 하겠는데.
+		PRINTFORMW 　나는 키도 작고, 가슴이나 엉덩이 등 여성적인 매력도 부족하다.
+		PRINTFORMW 　또 말투나 성격도 귀엽지 않다고 생각하는데…… 뭔가 착각한 것이 아닌가?」
+		PRINTL
+		PRINTFORMW 착각투성이다, 라고 %CALLNAME:MASTER%는 단언했다.
+		PRINTFORMW 키는 era의 환상적인 아름다움에 일조하고 있으며, 결코 단점이 아니다.
+		PRINTFORMW 굴곡은 완만하지만, 부드러운 곡선은 안쪽에 숨겨진 몸을 의식하게 하여, 선정성을 부추기는 것이다.
+		PRINTFORMW 언뜻 보기에 언밸런스한 말투는 소녀 같은 외모에 수백 년을 살아온 영혼이 들어있음을 의식하게 하여, 언밸런스함이 요염한 매력이 되고 있다.
+		PRINTFORMW 성격도, 계속 자신을 도와주고 있지 않은가. 라고 %CALLNAME:MASTER%는 주장했다.
+		PRINTL
+		PRINTL 성정수 era:
+		PRINTFORMW 「알았어! 알았으니까, 그렇게 정면으로 칭찬하지 마!」
+		PRINTL
+		PRINTFORMW 자신도 얼굴을 붉히고 있다는 것을 아는지, era는 양손으로 얼굴을 가려버렸다.
+		PRINTFORMW 하지만, 가리지 못한 귀까지 새빨갛게 물들어 있다. 귀엽다.
+		PRINTL
+		PRINTL 성정수 era:
+		PRINTFORMW 「크윽……! 나를 이렇게까지 동요시키다니…… 건방진……!
+		PRINTFORMW 　언제부터, 이런……!」
+		PRINTL
+		PRINTFORMW era가 얼굴을 가리고 있는 것을 틈타, %CALLNAME:MASTER%는 살며시 얼굴을 era의 귀에 가까이 대고 속삭인다.
+		PRINTFORMW 처음 만났을 때부터, 너에게 첫눈에 반했다고.
+		PRINTL
+		PRINTL 성정수 era:
+		PRINTFORMW 「윽, 으, 끄아아아아악!!」
+		PRINTL
+		PRINTFORMW 이것저것 얼버무리듯이, era가%CALLNAME:MASTER%을(를) 뿌리치고 그 자리에 일어선다.
+		PRINTFORMW 그리고 기세 좋게%CALLNAME:MASTER%을(를) 가리키며, 큰 소리로 선언했다.
+		PRINTL
+		PRINTL 성정수 era：
+		PRINTFORMW 「크, 이런 한순간의 기세에 휩쓸릴 만큼, 나는 값싼 여자가 아니니까!
+		PRINTFORMW 　『그런』 것을 하고 싶다면, 노력해서 나를 그럴 기분으로 만들어 보거라! 나의 계약자여!」
+		PRINTL
+		PRINTFORMW 그대로, era는 도망치듯이 방에서 뛰쳐나가 버렸다.
+		PRINTFORMW 그 자리의 흐름으로 밀어붙이는 것은 실패했지만, era에게서 언질을 받는 데는 성공했다.
+		PRINTFORMW 이제는 평소대로 교류를 거듭하여 마음을 나누고, 『그런』 관계가 된다면.
+		PRINTFORMW 아무런 거리낌도 필요 없다는 것이다.
+		PRINTL
+		PRINTL
+		PRINTL
+		SIF !FLAG:クリア済み視聴フラグ
+			CFLAG:era番号:恋心度 = 経験値テーブル:(関係閾値:1)
+	CASE 2
+		PRINTFORMW 다소 어린 육체지만, 가슴도 엉덩이도 작게나마 부풀어 있다. 오히려 야하다.
+		PRINTFORMW 평소의 언동은 그렇지만――정말 그렇지만――키스로 입을 막아두면 시들 일도 없을 것이다. 뒤치기로 베개에 얼굴을 눌러도 좋다.
+		IF GETBIT(TALENT:PLAYER:性別, 1)
+			PRINTFORMW 조금 거시기가 부풀어 올랐네.
+		ELSE
+			PRINTFORMW 조금 젖어 버렸네.
+		ENDIF
+		PRINTL
+		PRINTL 성정수 era：
+		PRINTFORMW 「……이봐, 나의 계약자. 왠지 눈이 수상한데
+		PRINTFORMW 　뭔가 시시한 일을 꾸미고 있군?」
+		PRINTL
+		PRINTFORMW 괜찮아 괜찮아. 금방 기분 좋아질 테니까.
+		PRINTFORMW 천장 얼룩을 세는 동안 끝날 테니까. 얼룩 수만큼 절정시켜 줄게.
+		PRINTFORMW 천천히 다가오는 %CALLNAME:MASTER%에, era는 크게 한숨을 쉰다.
+		PRINTL
+		PRINTL 성정수 era:
+		PRINTFORMW 「하아…… 이 바보 같은 녀석.
+		PRINTFORMW 　나를 덮쳐도, 너와는 1ZP도 생기지 않을 거야」
+		PRINTL
+		PRINTFORMW ZP가 생기지 않는다고 해도, era와 야한 짓을 하고 싶다.
+		PRINTFORMW %CALLNAME:MASTER%이 힘차게 선언하자, era는 더욱 크게 한숨을 쉬었다.
+		PRINTL
+		PRINTL 성정수 era:
+		PRINTFORMW 「너 말이야…… 그렇다면 그렇다고, 유혹하는 방법이라는 게 있을 거 아니야.
+		PRINTFORMW 　어느 정도 함께 있었다고는 해도, 「하고 싶으니까」로 몸을 허락할 만큼 싼 여자는 아닐 생각인데?」
+		PRINTL
+		PRINTFORMW 그럼. 하고, %CALLNAME:MASTER%는 분위기 가득 로맨틱하게 era를 침대로 유혹해 본다.
+		PRINTL
+		PRINTL 성정수 era:
+		PRINTFORMW 「이제 와서 늦었어. 게다가 꾸며낸 티가 너무 나잖아.
+		PRINTFORMW 　나와 '그런' 일을 하고 싶다면, 좀 더 노력해서 나를 그 기분으로 만들어 보거라. 나의 계약자」
+		PRINTL
+		PRINTFORMW 기가 막힌 듯 세 번째 한숨을 쉬고, era는 다시 그림 이야기를 읽기 시작했다.
+		PRINTFORMW 될 리 없다고 era는 생각하는 것 같지만…… 언질은 받았다.
+		PRINTFORMW 이제는 평소대로 교류를 거듭하여 마음을 나누고, '그런' 관계가 되면 마음대로 할 수 있다는 것이다.
+		PRINTFORMW 어떤 플레이를 할지, 지금부터 기대된다──.
+		PRINTL
+		PRINTL
+		PRINTL
+ENDSELECT
+
+PRINTL
+PRINTL
+SETCOLOR 0xFFFF00
+PRINTFORMW 캐릭터 「era」가 해방되었습니다.
+RESETCOLOR
+PRINTFORMW ※era를 연모 함락 상태로 만들었을 때, 다음 이벤트가 발생합니다. (미구현이므로, 일시적으로 함락 금지를 해제할 수 없게 되어 있습니다)
+IF !FLAG:クリア済み視聴フラグ
+	CFLAG:era番号:招待不可フラグ = 0
+	CFLAG:era番号:滞在期間 = 999
+	CFLAG:era番号:友情度 = 経験値テーブル:(関係閾値:4)
+	CFLAG:era番号:信頼度 = 経験値テーブル:(関係閾値:3)
+	;セフレは話がめんどくさくなるので禁止
+	CFLAG:era番号:セフレ不可_汎用解除禁止 = 1
+	TALENT:era番号:妊娠不可 = 1
+	SKIPDISP 1
+	CALL FAVOR_LvUPCheck(era番号)
+	SKIPDISP 0
+	;一時的措置
+	CFLAG:era番号:恋慕不可_汎用解除禁止 = 1
+ENDIF
+CALL イベント完了フラグ汎用処理("星の獣と空との繋がり")
+
+FORCEWAIT
+
+
+
+
+
+
+

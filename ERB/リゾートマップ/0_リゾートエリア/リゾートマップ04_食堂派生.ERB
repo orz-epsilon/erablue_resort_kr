@@ -1,0 +1,164 @@
+
+
+@マップ紹介_4
+;とりあえず5行
+PRINTFORML ※소개글 모집 중※
+PRINTFORML 
+PRINTFORML 
+PRINTFORML 
+PRINTFORML 
+
+
+@MAP_RESORT_0_4(AA)
+#DIMS REF AA, 0
+#DIM MAP
+
+MAP = 0
+AA:(MAP++) = ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+AA:(MAP++) = ■　　　○│　│○　　○│　│○　　　　■　　　　　　　　　　　　　　　　■
+AA:(MAP++) = ■　　　　└─┘　　　　└─┘　　　　　│　　　　　　　　　　　　　　　　│
+AA:(MAP++) = ■　　　　　○　　　　　　○　　　　　　│　　　　　　　　　　　　　　　　│
+AA:(MAP++) = ■　　　　　　　　　　　　　　　　　　　■　　　　　　　　　　　　　　　　■
+AA:(MAP++) = ■　　　　　　　　　　　　　　　　　　　■　　　　　　　　　　　　　　　　■
+AA:(MAP++) = ■　　　　　　　○　　　　　　○　　　　■　　　　　　　 06 　　　　　　　■
+AA:(MAP++) = ■　　　　　　┌─┐　　　　┌─┐　　　■　　　　　　　　　　　　　　　　■
+AA:(MAP++) = ■　　　　　○│　│○　　○│　│○　　■　　　　　　　　　　　　　　　　■
+AA:(MAP++) = ■　　　　　　└─┘　　　　└─┘　　　■　　　　　　　　　　　　　　　　■
+AA:(MAP++) = ■　　　　　　　○　　　　　　○　　　　■　　　　　　　　　　　　　　　　■
+AA:(MAP++) = ■　　　　　　　　　　　　　　　　　　　■■■■■■■■■■■■■■■■■■
+AA:(MAP++) = ■　　　　　　　　　　　　04　　　　　　　　　　　　　　　　　　　　　　　┃
+AA:(MAP++) = ■　　　　　　　　　○　　　　　　○　　　　　　　　　　　　　　　　　　　┃
+AA:(MAP++) = ■　　　　　　　　┌─┐　　　　┌─┐　　　　　　　　　　　　　　／＼○　┃
+AA:(MAP++) = ■　　　　　　　○│　│○　　○│　│○　　　　　　　／＼○　　○＼／　　┃
+AA:(MAP++) = ■　　　　　　　　└─┘　　　　└─┘　　　　　　　○＼／　　　　　　　　┃
+AA:(MAP++) = ■　　　　　　　　　○　　　　　　○　　　　　　　　　　　　　　　　　　　┃
+AA:(MAP++) = ■　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　／＼○　┃
+AA:(MAP++) = ■　　　　　　　　　　　　　　　　　　　　　　　　　　／＼○　　○＼／　　┃
+AA:(MAP++) = ■　　　　　　　　　○　　　　　　○　　　　　　　　○＼／　　　　　　　　┃
+AA:(MAP++) = ■　　　　　　　　┌─┐　　　　┌─┐　　　　　　　　　　　 05 　　　　　┃
+AA:(MAP++) = ■　　　　　　　○│　│○　　○│　│○　　　　　　　　　　　　　／＼○　┃
+AA:(MAP++) = ■　　　　　　　　└─┘　　　　└─┘　　　　　　　　／＼○　　○＼／　　┃
+AA:(MAP++) = 　　　　　　　　　　○　　　　　　○　　　　　　　　○＼／　　　　　　　　┃
+AA:(MAP++) = 　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　┃
+AA:(MAP++) = ←02　　　　　　　　　　　　03　　　　　　　　　　　　　　　　　　／＼○　┃
+AA:(MAP++) = 　　　　　　　○　○　○　○　○　○　○　○　　　　　／＼○　　○＼／　　┃
+AA:(MAP++) = 　　　　　　┌───────────────┐　　　○＼／　　　　　　　　┃
+AA:(MAP++) = ■　　　　　│　　　　　　　　　　　　　　　│　　　　　　　　　　　　　　┃
+AA:(MAP++) = ■　　　　　│┌─────────────┐│　　　　　　　　　　　　　　┃
+AA:(MAP++) = ■　　　　　││　　　　　　　　　　　　　││　　　　　　　　　　　　　　┃
+AA:(MAP++) = ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+AA:(MAP++) = 
+AA:(MAP++) = 二：ロビーへ　　　　　三：カウンター席　　　四：テーブル席
+AA:(MAP++) = 五：窓際席　　　　　　六：厨房
+AA:(MAP++) = 
+
+@GETPLACENAME_0_4(ARG)
+#FUNCTION
+SELECTCASE ARG
+	CASE 402
+		TSTR:場所名受渡 = 로비
+	CASE 403
+		TSTR:場所名受渡 = 카운터석
+	CASE 404
+		TSTR:場所名受渡 = 테이블석
+	CASE 405
+		TSTR:場所名受渡 = 창가석
+	CASE 406
+		TSTR:場所名受渡 = 주방
+ENDSELECT
+
+
+@DRAW_MAP_BG_0_4(SLICED, 表示文字列)
+#DIMS REF 表示文字列
+#DIMS SLICED
+SELECTCASE SLICED
+;下部一覧の数字を三桁表示しつつボタン化させる
+CASE "二"
+	表示文字列 += @"<button value='402'>402</button>"
+CASE "三"
+	表示文字列 += @"<button value='403'>403</button>"
+CASE "四"
+	表示文字列 += @"<button value='404'>404</button>"
+CASE "五"
+	表示文字列 += @"<button value='405'>405</button>"
+CASE "六"
+	表示文字列 += @"<button value='406'>406</button>"
+;ふつうの
+CASEELSE
+	表示文字列 += @"%SLICED%"
+ENDSELECT
+
+
+@レストラン系列改造メニュー()
+#FUNCTIONS
+;100~199と999は大本のメニュー操作で使うため、使用しないこと
+
+LOCALS = 리조트 하우스 내의 식당을 개조합니다.<br><br>
+IF 施設改造度:4:0 < 1
+	LOCALS += @"■<button value='200'>[레스토랑 개조]</button> Lv{施設改造度:4:0}>{施設改造度:4:0 + 1} (필요: 100,000 루피)<br>"
+ELSE
+	LOCALS += @"■[레스토랑 개조] Lv{施設改造度:4:0}: 상한<br>"
+ENDIF
+
+RETURNF LOCALS
+
+@レストラン系列改造実行関数(ARG)
+
+SELECTCASE ARG
+	CASE 200
+		DRAWLINE
+		PRINTL 식당이 레스토랑이 되며, 다음 시설이 도입됩니다.
+		PRINTBUTTON "■레스토랑 개별 맵 해방", 300
+		PRINTL 
+		PRINTBUTTON "■카운터, 테이블, 창가석 도입", 301
+		PRINTL 
+		PRINTBUTTON "■주방 도입", 302
+		PRINTL 
+		PRINTL 
+		PRINTL 식당을 레스토랑으로 개조하시겠습니까? (필요: 100,000 루피)
+		PRINTBUTTONLC "[0] 예", 0
+		PRINTBUTTONLC "[1] 아니오", 1
+		BINPUT
+		SELECTCASE RESULT
+			CASE 0
+				IF MONEY < 100000
+					PRINTW 루피가 부족합니다.
+					RETURN
+				ENDIF
+				施設改造度:4:0 = 1
+				MONEY -= 100000
+				PRINTL 예배당을 레스토랑으로 개조했습니다!
+				PRINTW (滞在キャラ上限＋５)
+				CALL 滞在可能キャラ数再計算
+				CALL RESET_GRAPH_0
+				CALL 履歴データベース登録(CFLAG:MASTER:人物番号, @"食堂をレストランLv1に改造した","実績")
+				RETURN
+			CASE 1
+				RETURN
+			CASE 300
+				DRAWLINE
+				PRINTL 맵 해방으로, 레스토랑으로 이동하면 개별 맵으로 이동하게 됩니다.
+				PRINTL 개조가 진행되면 더욱 맵이 확장되어, 내부 시설을 강화할 수 있게 됩니다. (미구현입니다)
+				PRINTW
+			CASE 301
+				DRAWLINE
+				PRINTL 객석이 카운터, 테이블, 창가석 세 가지로 나뉩니다.
+				PRINTL 현재, 캐릭터가 어디에 앉을지는 랜덤으로 결정됩니다.
+				PRINTL 서빙 업무를 맡는 캐릭터는 기본적으로 여기에 있습니다.
+				PRINTL 또한, 밤에는 여기서 연회를 하는 캐릭터도 있을 것입니다. (미구현입니다)
+				PRINTW
+			CASE 302
+				DRAWLINE
+				PRINTL 주방입니다. 조리 업무를 맡는 캐릭터는 기본적으로 여기에 있습니다.
+				PRINTL 식사 메뉴 개발 및 설정을 기상 후에도 여기서 할 수 있게 됩니다.
+				PRINTW 
+		ENDSELECT
+		RESTART
+ENDSELECT
+
+
+
+
+
+
+

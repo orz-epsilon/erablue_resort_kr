@@ -1,0 +1,85 @@
+;-------------------------------------------------
+;抱きつく
+;愛撫系コマンド　レベル2
+;-------------------------------------------------
+@RAPE_COMNAME8
+#FUNCTIONS
+TSTR:コマンド名受渡 = 끌어안다
+
+
+
+
+;===================================================
+;コマンドタイプ
+;===================================================
+@RAPE_COMTYPE_8
+#FUNCTION
+TFLAG:コマンドタイプ受渡 = RAPE_COMTYPE("うふふ")
+
+
+
+@RAPE_COM_TOOLTIP_8
+LOCALS = <br>■끌어안다<br>
+LOCALS += "상대를 강하게 끌어안고, 자신의 것이라고 마킹한다."
+LOCALS += "<br>RAPE_COM 타입: 우후후<br>획득 소스: 접촉·노출"
+LOCALS += "<br>고유 획득 경험: 없음<br>"
+TSTR:ツールチップ受渡 = %LOCALS%
+
+@RAPE_COM8
+;-------------------------------------------------
+;ソース追加処理
+;-------------------------------------------------
+
+
+CALL SOURCE_CALC_露出(TARGET, PLAYER, 80)
+CALL SOURCE_CALC_接触(TARGET, PLAYER, 110)
+
+
+;-------------------------------------------------
+;経験の処理
+;-------------------------------------------------
+;同性愛　レズなら戻り値1ゲイなら戻り値2
+IF HETEROSEX(TARGET,PLAYER)
+	EXP:同性愛経験 += 5
+	EXP:PLAYER:同性愛経験 += 5
+ENDIF
+
+
+RETURN 1
+
+;-------------------------------------------------
+;愛撫実行判定
+;-------------------------------------------------
+@RAPE_COM_ABLE8
+;一括管理
+SIF GLOBAL_RAPE_COMABLE(8)
+	RETURN RESULT
+
+RETURN 1
+
+;-------------------------------------------------
+;愛撫時メッセージ
+;-------------------------------------------------
+@RAPE_MESSAGE_COM8
+
+PRINTFORM %CALLNAME:PLAYER%은(는)
+
+IF MODE_確認_完全一致("Ｖ挿入系", PLAYER, TARGET) > -1 || MODE_確認_完全一致("Ａ挿入系", PLAYER, TARGET) > -1 || MODE_確認_完全一致("Ｖ挿入系", TARGET, PLAYER) > -1 || MODE_確認_完全一致("Ａ挿入系", TARGET, PLAYER) > -1
+	PRINTFORML %TEXTR(@"%CALLNAME:TARGET%을(를) 짓밟고 범하고 있는/%CALLNAME:TARGET%와 이어진 채")%강하게 끌어안고, 자신의 것이라고 마킹했다…
+ELSEIF CFLAG:TARGET:睡眠
+	IF TCVAR:TARGET:泥酔眠姦
+		PRINTFORML 술에 취해 쓰러진 %CALLNAME:TARGET%을(를) 끌어안았다.
+	ELSE
+		PRINTFORML 잠든 %CALLNAME:TARGET%을(를) 끌어안았다.
+	ENDIF
+ELSE
+	PRINTFORML 벗어나려고 발버둥 치는 %CALLNAME:TARGET%을(를) 강하게 끌어안고, %TEXTR("이제 도망칠 수 없다고/이제 너는 내 것이라고/저항은 무의미하다고/저항은 헛수고라고")%알려주었다…
+ENDIF
+PRINTL
+PRINTFORM 콧구멍을 간지럽히는 %CALLNAME:TARGET%의
+IF TALENT:性別 == 1
+	PRINTFORM %TEXTR("암컷/메스")%의
+ELSE
+	PRINTFORM %TEXTR("수컷/오스")%의
+ENDIF
+PRINTFORML %TEXTR("향기/페로몬")%은(는), %CALLNAME:PLAYER%의 %TEXTR("번식 욕구/육욕/생식 본능/성욕/정복욕/지배욕")%을(를) 크게 부추기고, 고조시킨다…

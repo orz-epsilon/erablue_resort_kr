@@ -1,0 +1,82 @@
+@ダンジョンハプニング_発情罠(対象キャラ番号)
+#DIM 対象キャラ番号
+#DIM オナニー部位
+#DIMS 部位名称
+;覚えたてでＣを覚えた時に0になってしまうので定数だけずらす
+#DIM CONST 覚えたて定数 = 100
+
+WSTR:(K++) = 발정 가스 함정이다!
+KSTR:(K++) = %CALLNAME:対象キャラ番号%이(가) 가스를 들이마셔, 발정 상태가 되어버렸다!
+
+CALL メッセージ欄表示用関数()
+CALL 口上変数初期化
+
+IF 陥落チェック_性的(対象キャラ番号) && 初体験日取得("初うふふ", 対象キャラ番号, MASTER)
+	TRYCALLFORM KOJO_ハプニング_発情罠セックス_{NO:対象キャラ番号}(対象キャラ番号)
+	IF 口上有無確認(0, 1) == 0
+		KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) %CALLNAME:PLAYER%을(를) 그늘진 곳으로 데려가, 함께 몸의 열기를 가라앉혔다……
+		CALL メッセージ欄表示用関数()
+	ENDIF
+
+	CALL SOURCE_CALC_接触(対象キャラ番号, PLAYER, 180)
+	CALL SOURCE_CALC_快Ｃ(対象キャラ番号, PLAYER, RAND:100 + 500)
+
+	IF HAS_VAGINA(対象キャラ番号)
+		IF 初体験済みチェック("Ｖ挿入初体験", 対象キャラ番号)
+			CALL SOURCE_CALC_快Ｖ(対象キャラ番号, PLAYER, RAND:100 + 500)
+		ENDIF
+		CALL SOURCE_CALC_快Ｂ(対象キャラ番号, PLAYER, RAND:100 + 500)
+	ENDIF
+
+	IF EXP:対象キャラ番号:Ａ性交経験
+		CALL SOURCE_CALC_快Ａ(対象キャラ番号, PLAYER, RAND:100 + 500)
+	ENDIF
+
+	CALL SOURCE_CALC_快Ｓ(対象キャラ番号, PLAYER, RAND:50)
+
+ELSEIF 一日終了時オナニーOPTION:(TALENT:対象キャラ番号:性別) > 0
+	;オナニー非表示、あるいは禁止時
+	KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는)%TEXTR("약을 사용하여/마법을 사용하여/기합으로")% 상태 이상을 치료하고, 함정을 해제했다.
+	CALL メッセージ欄表示用関数()
+	CALL 口上変数初期化
+	RETURN -1
+ELSE
+	オナニー部位 = WEIGHTED_RANDOM_PART(対象キャラ番号)
+	IF 知識素質:対象キャラ番号:性知識 < 0 && EXP:対象キャラ番号:自慰経験 <= 0
+		TRYCALLFORM KOJO_ハプニング_発情罠オナニー_{NO:対象キャラ番号}(対象キャラ番号)
+		IF 口上有無確認(0, 1) == 0
+			;無知
+			WSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 무슨 일이 일어나고 있는지 몰라, 자신의 육체 변화에 당황하고 있다.
+			KSTR:(K++) = %CALLNAME:PLAYER%은(는) %CALLNAME:対象キャラ番号%을(를) 그늘진 곳으로 데려가, 열기를 가라앉히는 방법을 가르쳐주었다……
+			CALL メッセージ欄表示用関数()
+		ENDIF
+		CALL SOURCE_CALC_接触(対象キャラ番号, PLAYER, 200)
+		CFLAG:対象キャラ番号:オナニー覚えたて = オナニー部位 + 覚えたて定数
+	ELSE
+		TRYCALLFORM KOJO_ハプニング_発情罠オナニー_{NO:対象キャラ番号}(対象キャラ番号)
+		IF 口上有無確認(0, 1) == 0
+			KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 그늘진 곳에 숨어, 몰래 자신의 열기를 가라앉혔다……
+			CALL メッセージ欄表示用関数()
+		ENDIF
+	ENDIF
+	CALL オナニー実処理(対象キャラ番号, オナニー部位)
+	;オナニー回数が帰って来るので野外経験を増やしておく
+	EXP:対象キャラ番号:野外オナニー経験 += RESULT
+ENDIF
+
+;共通ソース増減部分
+CALL SOURCE_CALC_露出(対象キャラ番号, PLAYER, 120)
+
+
+
+@ダンジョンハプニング_ABLE_発情罠(判定キャラ番号)
+#DIM 判定キャラ番号
+
+;性欲無い場合駄目
+SIF TALENT:判定キャラ番号:性欲 == -2
+	RETURN 0
+;性感帯無い場合も駄目
+SIF !HAS_EROGENOUS_ZONE(判定キャラ番号)
+	RETURN 0
+
+RETURN 1

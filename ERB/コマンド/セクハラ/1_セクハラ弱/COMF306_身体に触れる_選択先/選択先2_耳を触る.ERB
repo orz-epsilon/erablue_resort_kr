@@ -1,0 +1,273 @@
+
+@COMNAME_S306_2
+#FUNCTIONS
+TSTR:コマンド名受渡 = 귀를 만지다
+
+;===================================================
+;コマンドタイプ
+;===================================================
+@COMTYPE_S_306_2
+#FUNCTION
+TFLAG:コマンドタイプ受渡 = COMTYPE("セクハラ弱")
+弱点コマンドカテゴリ = S
+睡眠中許可 = 1
+
+
+@COM_TOOLTIP_S306_2
+LOCALS = <br>■귀를 만지다<br>
+LOCALS += "상대의 귀를 만지는 커맨드."
+LOCALS += "<br>COM 타입: 성희롱<br>획득 소스: 접촉・노출・쾌S・환락(일정 조건 시)・불쾌(일정 조건 시)・반감(일정 조건 시)"
+LOCALS += "<br>고유 획득 경험: 없음<br>"
+TSTR:ツールチップ受渡 = %LOCALS%
+
+
+@COM_S306_2
+
+;発生する快楽は受け手の状態に依存しない
+CALL SOURCE_CALC_快Ｓ(TARGET, PLAYER, 40)
+SIF TALENT:PLAYER:器用な指
+	CALL SOURCE_CALC_快Ｓ(TARGET, PLAYER, 20)
+TIME += 10
+
+SIF CFLAG:TARGET:睡眠
+	RETURN 1
+
+CALL セクハラ反応タイプ判定(TARGET)
+;RFLAG:コマンド結果受渡し変数
+;1:拒絶  2:受け入れ  3:喜び
+;RFLAG:コマンド結果受渡し変数２
+;1:無知  2:無反応  3:嫌悪  4:拒否  5:余裕  6:羞恥  7:愉悦  8:汎用
+
+SELECTCASE RFLAG:コマンド結果受渡し変数２
+	CASE 2
+		;無反応
+		SELECTCASE RFLAG:コマンド結果受渡し変数
+			CASE 1 TO 2
+				;拒絶と受け入れ時は反応なし
+				CALL SOURCE_CALC_接触(TARGET, PLAYER, 100)
+				CALL SOURCE_CALC_露出(TARGET, PLAYER, 50)
+			CASE 3
+				;喜び時はちょっと喜ぶ
+				CALL SOURCE_CALC_歓楽(TARGET, PLAYER, 50)
+				CALL SOURCE_CALC_接触(TARGET, PLAYER, 100)
+				CALL SOURCE_CALC_露出(TARGET, PLAYER, 50)
+				CALL SOURCE_CALC_好感度要素_恋心度UP(TARGET, PLAYER, 10)
+				CALL SOURCE_CALC_好感度要素_性愛度UP(TARGET, PLAYER, 10)
+		ENDSELECT
+	CASE 3 TO 4
+		;嫌悪と拒否
+		SELECTCASE RFLAG:コマンド結果受渡し変数
+			CASE 1
+				;拒絶
+				CALL SOURCE_CALC_不快(TARGET, PLAYER, 100)
+				CALL SOURCE_CALC_反感(TARGET, PLAYER, 200)
+				CALL SOURCE_CALC_接触(TARGET, PLAYER, 100)
+				CALL SOURCE_CALC_露出(TARGET, PLAYER, 50)
+			CASE 2
+				;受け入れ
+				CALL SOURCE_CALC_接触(TARGET, PLAYER, 100)
+				CALL SOURCE_CALC_露出(TARGET, PLAYER, 50)
+				CALL SOURCE_CALC_好感度要素_恋心度UP(TARGET, PLAYER, 10)
+				CALL SOURCE_CALC_好感度要素_性愛度UP(TARGET, PLAYER, 10)
+			CASE 3
+				;喜び
+				CALL SOURCE_CALC_歓楽(TARGET, PLAYER, 150)
+				CALL SOURCE_CALC_接触(TARGET, PLAYER, 100)
+				CALL SOURCE_CALC_露出(TARGET, PLAYER, 50)
+				CALL SOURCE_CALC_好感度要素_恋心度UP(TARGET, PLAYER, 50)
+				CALL SOURCE_CALC_好感度要素_性愛度UP(TARGET, PLAYER, 50)
+		ENDSELECT
+	CASE 6
+		;羞恥
+		SELECTCASE RFLAG:コマンド結果受渡し変数
+			CASE 1
+				;拒絶
+				CALL SOURCE_CALC_不快(TARGET, PLAYER, 10)
+				CALL SOURCE_CALC_反感(TARGET, PLAYER, 10)
+				CALL SOURCE_CALC_接触(TARGET, PLAYER, 100)
+				CALL SOURCE_CALC_露出(TARGET, PLAYER, 100)
+			CASE 2
+				;受け入れ
+				CALL SOURCE_CALC_歓楽(TARGET, PLAYER, 50)
+				CALL SOURCE_CALC_接触(TARGET, PLAYER, 100)
+				CALL SOURCE_CALC_露出(TARGET, PLAYER, 100)
+				CALL SOURCE_CALC_好感度要素_恋心度UP(TARGET, PLAYER, 20)
+				CALL SOURCE_CALC_好感度要素_性愛度UP(TARGET, PLAYER, 20)
+			CASE 3
+				;喜び
+				CALL SOURCE_CALC_歓楽(TARGET, PLAYER, 150)
+				CALL SOURCE_CALC_接触(TARGET, PLAYER, 100)
+				CALL SOURCE_CALC_露出(TARGET, PLAYER, 100)
+				CALL SOURCE_CALC_好感度要素_恋心度UP(TARGET, PLAYER, 100)
+				CALL SOURCE_CALC_好感度要素_性愛度UP(TARGET, PLAYER, 100)
+		ENDSELECT
+	CASEELSE
+		;上記以外は同じソースを発生
+		SELECTCASE RFLAG:コマンド結果受渡し変数
+			CASE 1
+				;拒絶
+				CALL SOURCE_CALC_接触(TARGET, PLAYER, 100)
+				CALL SOURCE_CALC_露出(TARGET, PLAYER, 50)
+			CASE 2
+				;受け入れ
+				CALL SOURCE_CALC_歓楽(TARGET, PLAYER, 50)
+				CALL SOURCE_CALC_接触(TARGET, PLAYER, 100)
+				CALL SOURCE_CALC_露出(TARGET, PLAYER, 50)
+				CALL SOURCE_CALC_好感度要素_恋心度UP(TARGET, PLAYER, 10)
+				CALL SOURCE_CALC_好感度要素_性愛度UP(TARGET, PLAYER, 10)
+			CASE 3
+				;喜び
+				CALL SOURCE_CALC_歓楽(TARGET, PLAYER, 150)
+				CALL SOURCE_CALC_接触(TARGET, PLAYER, 100)
+				CALL SOURCE_CALC_露出(TARGET, PLAYER, 50)
+				CALL SOURCE_CALC_好感度要素_恋心度UP(TARGET, PLAYER, 50)
+				CALL SOURCE_CALC_好感度要素_性愛度UP(TARGET, PLAYER, 50)
+		ENDSELECT
+ENDSELECT
+
+RETURN 1
+
+;-------------------------------------------------
+;実行判定
+;-------------------------------------------------
+@COM_ABLE_S306_2
+;選択から飛んでくるのでABLEは常に0
+RETURN 0
+
+@身体に触れる_ABLE_耳を触る
+;一括管理
+SIF GLOBAL_COMABLE_S("306_2") && !RFLAG:罰ゲーム中
+	RETURN RESULT
+;関数実行のため、派生番号を返す
+RETURN 2
+
+;-------------------------------------------------
+;実行時メッセージ
+;-------------------------------------------------
+@MESSAGE_COM_S306_2
+
+PRINTFORM %CALLNAME:PLAYER%은(는) 등 뒤에서%CALLNAME:TARGET%의
+IF TALENT:TARGET:エルーン耳
+	PRINT 복슬복슬한
+ELSEIF TALENT:TARGET:ハーヴィン耳
+	PRINT 뾰족한
+ENDIF
+PRINTL 귀에 손을 뻗어, 부드럽게 쓰다듬었다
+IF CUP:TARGET:快Ｓ > 1000
+	;一定以上の快楽が発生した時にちょっと声が出る
+	IF CFLAG:TARGET:睡眠
+		PRINTFORML 뜻밖의 쾌락에, %CALLNAME:TARGET%은(는) 잠든 채 작게 신음했다…
+	ELSE
+		PRINTFORML 뜻밖의 쾌락에, %CALLNAME:TARGET%은(는) 무심코 작은 소리를 흘리고 말았다…
+	ENDIF
+	PRINTL
+ENDIF
+
+@MESSAGE_COM_S306_2_非口上時
+
+IF CFLAG:TARGET:睡眠
+	PRINTFORML %CALLNAME:TARGET%은(는) 새근새근 잠들어 있다……
+	RETURN 0
+ENDIF
+
+SELECTCASE RFLAG:コマンド結果受渡し変数２
+	CASE 1
+		;無知
+		SELECTCASE RFLAG:コマンド結果受渡し変数
+			CASE 1 TO 2
+				;拒絶と受け入れに違い無し
+				PRINTFORML %CALLNAME:TARGET%은(는) 무슨 용건일까, 하고 고개를 갸웃거리고 있다
+			CASE 3
+				;喜び時は喜ぶ
+				PRINTFORML %CALLNAME:TARGET%은(는) 잘 모르겠지만, %CALLNAME:PLAYER%이(가) 즐겁다면 좋다고 기뻐하고 있다
+		ENDSELECT
+	CASE 2
+		;無反応
+		SELECTCASE RFLAG:コマンド結果受渡し変数
+			CASE 1 TO 2
+				;拒絶と受け入れ時は反応なし
+				PRINTFORML %CALLNAME:TARGET%은(는) 아무런 반응도 보이지 않고, 태연하다
+			CASE 3
+				;喜び時はちょっと喜ぶ
+				PRINTFORML %CALLNAME:TARGET%은(는) 태연한 척하지만, 조금 얼굴을 붉히며 %CALLNAME:PLAYER%에게 몸을 비벼왔다…
+		ENDSELECT
+	CASE 3
+		;嫌悪
+		SELECTCASE RFLAG:コマンド結果受渡し変数
+			CASE 1
+				;拒絶
+				PRINTFORML %CALLNAME:TARGET%은(는) 싫은 듯한 얼굴로 떨어져, %CALLNAME:PLAYER%의 손에서 벗어났다…
+			CASE 2
+				;受け入れ
+				PRINTFORML %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%을(를) 무시하고, 마음대로 쓰다듬게 내버려 두고 있다
+			CASE 3
+				;喜び
+				PRINTFORML %CALLNAME:TARGET%은(는) 무시하는 듯하지만, 조금 머리를 %CALLNAME:PLAYER%의 손에 가까이 가져왔다…
+		ENDSELECT
+	CASE 4
+		;拒否
+		SELECTCASE RFLAG:コマンド結果受渡し変数
+			CASE 1
+				;拒絶
+				PRINTFORML %CALLNAME:TARGET%은(는) 함부로 그곳을 만져서는 안 된다며, %CALLNAME:PLAYER%의 손을 거부했다
+			CASE 2
+				;受け入れ
+				PRINTFORML %CALLNAME:TARGET%은(는) 불만스러운 얼굴을 하고 있지만, %CALLNAME:PLAYER%의 손을 거부하지는 않는 것 같다…
+			CASE 3
+				;喜び
+				PRINTFORML %CALLNAME:TARGET%은(는) 싫지 않은 듯한 모습으로, %CALLNAME:PLAYER%이(가) 마음대로 하게 내버려 두고 있다…
+		ENDSELECT
+	CASE 5
+		;余裕
+		SELECTCASE RFLAG:コマンド結果受渡し変数
+			CASE 1
+				;拒絶
+				PRINTFORML %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%을(를) 꾸짖으며, 함부로 몸에 손대서는 안 된다고 타이르듯 말했다
+			CASE 2
+				;受け入れ
+				PRINTFORML %CALLNAME:TARGET%은(는) 곤란한 듯 웃으며, 말로만 주의를 %CALLNAME:PLAYER%에게 주고 있다
+			CASE 3
+				;喜び
+				PRINTFORML %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%이(가) 쓰다듬기 쉽도록, 몸을 기대어왔다…
+		ENDSELECT
+	CASE 6
+		;羞恥
+		SELECTCASE RFLAG:コマンド結果受渡し変数
+			CASE 1
+				;拒絶
+				PRINTFORML %CALLNAME:TARGET%은(는) 새빨개져서, %CALLNAME:PLAYER%에게서 조금 거리를 두어버렸다…
+			CASE 2
+				;受け入れ
+				PRINTFORML %CALLNAME:TARGET%은(는) 얼굴을 붉히면서, %CALLNAME:PLAYER%에게 당하는 대로 내버려 두고 있다
+			CASE 3
+				;喜び
+				PRINTFORML %CALLNAME:TARGET%은(는) 붉어진 얼굴로 %CALLNAME:PLAYER%을(를) 바라보며, 살며시 몸을 기대어왔다…
+		ENDSELECT
+	CASE 7
+		;愉悦
+		SELECTCASE RFLAG:コマンド結果受渡し変数
+			CASE 1
+				;拒絶
+				PRINTFORML %CALLNAME:TARGET%은(는) 재미있다는 듯 미소 지으며, %CALLNAME:PLAYER%의 만지는 방식이 서툴다고 지적해왔다
+			CASE 2
+				;受け入れ
+				PRINTFORML %CALLNAME:TARGET%은(는) 다른 곳도 만질 거냐며, 농담조로 %CALLNAME:PLAYER%을(를) 놀리고 있다…
+			CASE 3
+				;喜び
+				PRINTFORML %CALLNAME:TARGET%은(는) 다른 곳도 만질까 하고, 요염한 표정으로 %CALLNAME:PLAYER%을(를) 도발하고 있다…
+		ENDSELECT
+	CASE 8
+		;汎用
+		SELECTCASE RFLAG:コマンド結果受渡し変数
+			CASE 1
+				;拒絶
+				PRINTFORML %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%에게 만져지는 것을 싫어하고 있다…
+			CASE 2
+				;受け入れ
+				PRINTFORML %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%의 손길을 싫어하지 않고, 받아들이고 있다
+			CASE 3
+				;喜び
+				PRINTFORML %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%에게 만져지는 것을 조금 기쁘게 생각하는 것 같다…
+		ENDSELECT
+ENDSELECT
+

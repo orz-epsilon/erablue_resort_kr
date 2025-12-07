@@ -1,0 +1,345 @@
+;-------------------------------------------------
+;性処理業務交渉
+;-------------------------------------------------
+@COMNAME315
+#FUNCTIONS
+IF TALENT:従業員 == 0
+;なんとなくつけてみた
+	IF TALENT:PLAYER:性別 == 2
+		TSTR:コマンド名受渡 = 파파활 가격 협상
+	ELSE
+		TSTR:コマンド名受渡 = 마마활 가격 협상
+	ENDIF
+ELSE
+	TSTR:コマンド名受渡 = 성처리 업무 협상
+ENDIF
+
+;===================================================
+;コマンドタイプ
+;===================================================
+@COMTYPE_315
+#FUNCTION
+TFLAG:コマンドタイプ受渡 = COMTYPE("日常")
+
+@COM_TOOLTIP_315
+LOCALS = <br>■성처리 업무 협상<br>
+LOCALS += "직원을 상대로 성처리 업무를 해달라고 협상하는 명령어. <br>"
+LOCALS += "무엇을 부탁하느냐에 따라 성공률이나 지불하는 보상이 달라진다. <br>"
+LOCALS += "<br>COM 타입: 일상<br>획득 소스: 선택지에 따라 변동"
+LOCALS += "<br>고유 획득 경험: 선택지에 따라 변동<br>"
+TSTR:ツールチップ受渡 = %LOCALS%
+
+
+@COM315
+#DIMS CONST 選択先順番制御 = "手コキ処理", "パイズリ処理", "フェラチオ処理", "手マン処理", "クンニ処理"
+#DIM 選択先保存
+#DIMS DYNAMIC 性処理選択肢, 100
+#DIM DYNAMIC 性処理数
+
+
+DRAWLINE
+TRYCALLFORM KOJO_COM_{NO:TARGET}_315_BEFORE(TARGET)
+PRINTFORML %CALLNAME:TARGET%에게 어떤 성처리를 의뢰하시겠습니까?
+PRINTL
+
+FOR LOCAL, 0, VARSIZE("選択先順番制御")
+	;固有条件
+	IF GETMETH(@"固有COMABLE_ターゲット側_%選択先順番制御:LOCAL%_{NO:TARGET}", 1, TARGET) == 0
+		CONTINUE
+	ENDIF
+	IF GETMETH(@"固有COMABLE_プレイヤー側_%選択先順番制御:LOCAL%_{NO:PLAYER}", 1, PLAYER) == 0
+		CONTINUE
+	ENDIF
+	CALLFORM 性処理_ABLE_%選択先順番制御:LOCAL%
+	IF RESULT == -1
+		CALLFORMF 性処理NAME_%選択先順番制御:LOCAL%
+		IF OPTION変数:ツールチップ切り替え == 0
+			TSTR:ツールチップ受渡 = 
+			TRYCALLFORM 性処理_TOOLTIP_%選択先順番制御:LOCAL%
+			HTML_PRINT @"<nonbutton title='%TSTR:ツールチップ受渡%'><font color='#%カラーパレット_HTML("グレーアウト")%'>[{LOCAL}] %TSTR:コマンド名受渡%</font></nonbutton>"
+		ELSE
+			SETCOLOR カラーパレット("グレーアウト")
+			PRINTPLAINFORM [{LOCAL}] %TSTR:コマンド名受渡%
+			RESETCOLOR
+			PRINTL 
+		ENDIF
+	ELSEIF RESULT == 1
+		CALLFORMF 性処理NAME_%選択先順番制御:LOCAL%
+		IF OPTION変数:ツールチップ切り替え == 0
+			TSTR:ツールチップ受渡 = 
+			TRYCALLFORM 性処理_TOOLTIP_%選択先順番制御:LOCAL%
+			HTML_PRINT @"<button value='{LOCAL}' title='%TSTR:ツールチップ受渡%'>[{LOCAL}] %TSTR:コマンド名受渡%</button>"
+		ELSE
+			PRINTBUTTON @"[{LOCAL}] %TSTR:コマンド名受渡%", LOCAL
+			PRINTL 
+		ENDIF
+	ENDIF
+NEXT
+
+VARSET RESULTS
+VARSET 性処理選択肢
+ENUMFUNCBEGINSWITH "性処理_ABLE_"
+性処理数 = RESULT
+ARRAYCOPY "RESULTS", "性処理選択肢"
+FOR LOCAL, 0, 性処理数
+	性処理選択肢:LOCAL = %REPLACE(性処理選択肢:LOCAL, "性処理_ABLE_", "")%
+	SIF MATCH(選択先順番制御, 性処理選択肢:LOCAL)
+		CONTINUE
+	;固有条件
+	IF GETMETH(@"固有COMABLE_ターゲット側_%RESULTS:LOCAL%_{NO:TARGET}", 1, TARGET) == 0
+		CONTINUE
+	ENDIF
+	IF GETMETH(@"固有COMABLE_プレイヤー側_%RESULTS:LOCAL%_{NO:PLAYER}", 1, PLAYER) == 0
+		CONTINUE
+	ENDIF
+	CALLFORM %RESULTS:LOCAL%
+	IF RESULT == -1
+		CALLFORMF 性処理NAME_%性処理選択肢:LOCAL%
+		IF OPTION変数:ツールチップ切り替え == 0
+			TSTR:ツールチップ受渡 = 
+			TRYCALLFORM 性処理_TOOLTIP_%性処理選択肢:LOCAL%
+			HTML_PRINT @"<nonbutton title='%TSTR:ツールチップ受渡%'><font color='#%カラーパレット_HTML("グレーアウト")%'>[{LOCAL + 100}] %TSTR:コマンド名受渡%</font></nonbutton>"
+		ELSE
+			SETCOLOR カラーパレット("グレーアウト")
+			PRINTPLAINFORM [{LOCAL + 100}] %TSTR:コマンド名受渡%
+			RESETCOLOR
+			PRINTL 
+		ENDIF
+	ELSEIF RESULT == 1
+		CALLFORMF 性処理NAME_%性処理選択肢:LOCAL%
+		IF OPTION変数:ツールチップ切り替え == 0
+			TSTR:ツールチップ受渡 = 
+			TRYCALLFORM 性処理_TOOLTIP_%性処理選択肢:LOCAL%
+			HTML_PRINT @"<button value='{LOCAL + 100}' title='%TSTR:ツールチップ受渡%'>[{LOCAL + 100}] %TSTR:コマンド名受渡%</button>"
+		ELSE
+			PRINTBUTTON @"[{LOCAL + 100}] %TSTR:コマンド名受渡%", LOCAL + 100
+			PRINTL 
+		ENDIF
+	ENDIF
+NEXT
+
+
+PRINTL
+PRINTBUTTON "[999] 돌아가기", 999
+PRINTL
+
+DRAWLINE
+BINPUT
+
+LOCAL = RESULT
+SELECTCASE LOCAL
+	CASE 999
+		RETURN -1
+	CASE IS < 100
+		CALL 性処理業務交渉処理(TARGET, 選択先順番制御:LOCAL)
+		SIF RESULT == -1
+			RESTART
+			
+		IF STRFIND(コマンド初回フラグ:TARGET:0, @"-WORKING_%選択先順番制御:LOCAL%-") < 0
+			コマンド初回フラグ_一時保存:TARGET:0 += @"-WORKING_%選択先順番制御:LOCAL%-"
+		ENDIF
+	CASEELSE
+		CALL 性処理業務交渉処理(TARGET, 性処理選択肢:(LOCAL - 100))
+		SIF RESULT == -1
+			RESTART
+		
+		IF STRFIND(コマンド初回フラグ:TARGET:0, @"-WORKING_%性処理選択肢:(LOCAL - 100)%-") < 0
+			コマンド初回フラグ_一時保存:TARGET:0 += @"-WORKING_%性処理選択肢:(LOCAL - 100)%-"
+		ENDIF
+ENDSELECT
+
+RETURN 1
+
+;-------------------------------------------------
+;実行判定
+;-------------------------------------------------
+@COM_ABLE315
+
+;移動実行判定
+SIF SAVESTR:ゲームフェイズ管理 != "通常モード"
+	RETURN 0
+;一括管理
+SIF GLOBAL_COMABLE(315)
+	RETURN RESULT
+;睡眠中
+SIF CFLAG:睡眠
+	RETURN 0
+;従業員もしくルピえっち交渉術必須
+SIF TALENT:従業員 == 0 && あなた特殊能力:ルピえっち交渉術 != 1
+	RETURN 0
+;他人とデート中はダメ
+SIF CFLAG:TARGET:デート && CFLAG:TARGET:デート != MASTER + 100 && TCVAR:TARGET:デートちょっかい値 <= 0
+	RETURN 0
+
+RETURN 1
+
+
+;-------------------------------------------------
+;メッセージ
+;-------------------------------------------------
+
+@MESSAGE_COM315(対象キャラ, 実行性処理)
+#DIM 対象キャラ
+#DIMS 実行性処理
+
+PRINTFORM %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%에게,
+
+IF RSTR:コマンド結果受渡し文字列 == "手コキ処理"
+	PRINTFORML %TEXTR("핸드잡으로 빼줬으면 좋겠다고/손으로 빼줬으면 좋겠다고/손으로 기분 좋게 해줬으면 좋겠다고/여기서 핸드잡 해줬으면 좋겠다고/핸드잡 '일'을")% 부탁했다.
+ELSEIF RSTR:コマンド結果受渡し文字列 == "パイズリ処理"
+	PRINTFORML %TEXTR("가슴을 사용해서 빼줬으면 좋겠다고/파이즈리로 빼줬으면 좋겠다고/여기서 파이즈리 해줬으면 좋겠다고/파이즈리 '일'을")% 부탁했다.
+ELSEIF RSTR:コマンド結果受渡し文字列 == "フェラチオ処理"
+	PRINTFORML %TEXTR("입으로 빼줬으면 좋겠다고/펠라로 빼줬으면 좋겠다고/흥분했으니 여기서 빨아줬으면 좋겠다고/펠라치오 '일'을")% 부탁했다.
+ELSEIF RSTR:コマンド結果受渡し文字列 == "手マン処理"
+	PRINTFORML %TEXTR("손으로 보지를 파줬으면 좋겠다고/핑거링으로 기분 좋게 해줬으면 좋겠다고/여기서 핑거링 해줬으면 좋겠다고/핑거링 '일'을")% 부탁했다.
+ELSEIF RSTR:コマンド結果受渡し文字列 == "クンニ処理"
+	PRINTFORML %TEXTR("보지를 핥아 기분 좋게 해줬으면 한다고/여기서 보지를 핥아줬으면 한다고/보지 핥기 '일'을")% 부탁했다.
+ELSEIF RSTR:コマンド結果受渡し文字列 == "セックス処理"
+	PRINTFORML %TEXTR("보지를 써서 시원하게 해줬으면 한다고/여기서 보지를 쓰게 해줬으면 한다고/보지로 빼줬으면 한다고/성 처리 섹스 '일'을/여기서 자위하는 데 보지를 빌려줬으면 한다고/자궁에 정액을 쏟아버리게 해줬으면 한다고")% 부탁했다.
+ELSEIF RSTR:コマンド結果受渡し文字列 == "被セックス処理"
+	PRINTFORML %TEXTR("자지로 보지를 파줬으면 한다고/자지를 육 딜도로 쓰게 해줬으면 한다고/육 바이브로서의 '일'을/섹스 '일'을")% 부탁했다。
+ELSEIF RSTR:コマンド結果受渡し文字列 == "アナルセックス処理"
+	PRINTFORML %TEXTR("항문을 써서 시원하게 해줬으면 한다고/자위하는 데 항문을 쓰게 해줬으면 한다고/항문으로 빼줬으면 한다고/성 처리 항문 섹스 '일'을/항문에 정액을 쏟아버리게 해줬으면 한다고")% 부탁했다.
+ELSEIF RSTR:コマンド結果受渡し文字列 == "被アナルセックス処理"
+	PRINTFORML %TEXTR("자지로 항문을 파줬으면 한다고/자지를 육 딜도로 쓰게 해줬으면 한다고/육 항문 바이브로서의 '일'을/성 처리 항문 섹스 '일'을")% 부탁했다.
+ELSE
+	;あとから増えた時用に一応おいとく
+	PRINTFORML %RSTR:コマンド結果受渡し文字列%을(를) 부탁했다.
+ENDIF
+CALLFORM MESSAGE_性処理_%RSTR:コマンド結果受渡し文字列%
+
+
+@MESSAGE_COM315_非口上時
+
+TRYCALLFORM MESSAGE_性処理_%RSTR:コマンド結果受渡し文字列%_非口上時
+
+
+
+@性処理業務交渉処理(対象キャラ, 実行性処理)
+#DIM 対象キャラ
+#DIM 値段計算
+#DIM 余裕金額
+#DIMS 実行性処理
+
+CALLFORM CAN_性処理_%実行性処理%(対象キャラ)
+PRINTL
+
+IF RESULT == -1
+	値段計算 = 0
+	RFLAG:コマンド結果受渡し変数 = 1
+ELSE
+	値段計算 = RESULT
+ENDIF
+
+;地の文もオプションが勝手につく仕様にしたので、すまんがハードルを上げさせてもらう。
+;高貴処女とかの相手を考えるとこれでも多分借金まで到達する可能性がある。
+PRINTFORML 소지 루피：%MON_FORMAT(MONEY)%
+IF 実行性処理 == "セックス処理"
+	余裕金額 = 値段計算 + 30000 + 性処理_セックス処理_中出し価格(対象キャラ) 
+	IF 知識素質:対象キャラ:高貴 > 0
+		IF 初体験済みチェック("ファーストキス", 対象キャラ) == 0
+			余裕金額 += 100000
+		ENDIF
+	ENDIF
+ELSE
+	余裕金額 = 値段計算 + 20000
+ENDIF
+IF MONEY < 余裕金額
+	PRINTL 옵션을 생각하면 군자금은 좀 더 있는 편이 좋을 것이다.
+	PRINTFORMW 대략%MON_FORMAT(余裕金額)%정도는 가지고 있는 편이 좋을 것 같다……
+	RETURN -1
+ENDIF
+
+PRINTL
+PRINTFORML %実行性処理%을(를) %CALLNAME:対象キャラ%에게 부탁하시겠습니까?
+PRINTBUTTON "[0] 예", 0
+PRINTL
+PRINTBUTTON "[1] 아니요", 1
+PRINTL
+
+BINPUT
+SELECTCASE RESULT
+	CASE 0
+		RSTR:コマンド結果受渡し文字列 = %実行性処理%
+		RFLAG:コマンド結果受渡し変数２ = 値段計算
+		MONEY -= 値段計算
+		CALLFORM 性処理_%実行性処理%()
+		RETURN RESULT
+	CASE 1
+		RETURN -1
+ENDSELECT
+
+
+@補正後好感度算出(対象キャラ)
+#FUNCTION
+#DIM 対象キャラ
+#DIM 補正後好感度
+
+補正後好感度 = CFLAG:対象キャラ:好感度レベル
+補正後好感度 += CFLAG:対象キャラ:恋慕レベル / 3
+
+補正後好感度 -= TALENT:対象キャラ:自制心 * 7
+補正後好感度 -= TALENT:対象キャラ:一線越えない * 10
+補正後好感度 -= TALENT:対象キャラ:貞操 * 10
+補正後好感度 -= TALENT:対象キャラ:羞恥心 * 5
+補正後好感度 -= TALENT:対象キャラ:抵抗 * 15
+補正後好感度 -= TALENT:対象キャラ:態度 * 5
+SIF GETBIT(TALENT:対象キャラ:陥落不可, 1)
+	補正後好感度 -= 20
+SIF (TALENT:対象キャラ:恋人持ち == 1 || TALENT:対象キャラ:恋人持ち == 2) && EXP:対象キャラ:売春経験 < 10
+	補正後好感度 -= 15
+
+IF 同性愛性癖判定(対象キャラ, PLAYER)
+	SELECTCASE 性癖素質:対象キャラ:同性愛
+		CASE 1
+			;補正なし
+		CASE 2
+			補正後好感度 -= 5
+		CASE 3
+			補正後好感度 -= 15
+		CASEELSE
+			補正後好感度 += 15
+	ENDSELECT
+ENDIF
+
+SELECTCASE TALENT:対象キャラ:性別嗜好
+	CASE 1
+		SIF TALENT:PLAYER:性別 == 2
+			補正後好感度 += 20
+	CASE 2
+		SIF TALENT:PLAYER:性別 == 1
+			補正後好感度 += 20
+	CASE 3
+		補正後好感度 += 20
+ENDSELECT
+
+補正後好感度 += TALENT:対象キャラ:性的興味 * 5
+補正後好感度 += TALENT:対象キャラ:経験豊富 * 5
+補正後好感度 += TALENT:対象キャラ:ギャル * 5
+補正後好感度 += TALENT:対象キャラ:弱味 * 20
+補正後好感度 += EXP:対象キャラ:売春経験 / 10 * 5
+SIF TALENT:対象キャラ:マイペース < 0
+	補正後好感度 += 10
+SIF 初体験日取得("初うふふ", 対象キャラ, MASTER) || フィールド展開:うふふ目撃スルー
+	補正後好感度 += 10
+SIF TALENT:対象キャラ:恋人持ち == 3 && TALENT:対象キャラ:子持ち
+	補正後好感度 += 10
+
+SIF TALENT:対象キャラ:セフレ
+	補正後好感度 = 999
+
+RETURNF 補正後好感度
+
+
+@経過時間算出(行為回数)
+#FUNCTION
+#DIM CONST 減衰閾値 = 24
+#DIM 行為回数
+
+IF 行為回数 <= 減衰閾値
+	;2時間までは線形
+	RETURNF 行為回数 * 5
+ELSE
+	;以降は減衰
+	RETURNF (減衰閾値 + LOG(行為回数 - 減衰閾値)) * 5
+ENDIF

@@ -1,0 +1,242 @@
+;特定のキャラをメインにするイベントカテゴリ
+;未神宮の若夫婦を任意のイベント名に変えて使うこと、他との重複不可
+
+@イベントカテゴリ登録_キャライベント_未神宮の若夫婦
+;汎用結婚イベントを発生させず、代わりにこのイベントを発生させる時に使用する。
+;1を任意のキャラのNOに変更すること
+
+RESULTS = 結婚イベント1_
+
+
+@イベント発生条件_キャライベント_未神宮の若夫婦
+#DIM 対象キャラ
+
+対象キャラ = GETCHARA(1) ;任意のキャラのNOを入れる
+
+;開放条件を満たしたら1を返すこと
+;結婚周りのフラグチェック、理由がないなら残しておくことを推奨
+SIF CFLAG:対象キャラ:結婚イベント解放 < 1
+	RETURN 0
+SIF CFLAG:対象キャラ:結婚イベント禁止 > 0
+	RETURN 0
+
+RETURN 1
+
+@イベント消滅条件_キャライベント_未神宮の若夫婦
+#DIM 対象キャラ
+
+対象キャラ = GETCHARA(1) ;任意のキャラのNOを入れる
+
+;この条件を満たした時、イベントは発生してない扱いとなる
+;発生条件＞消滅条件で見るので、発生と消滅を両方満たしている時は「発生した！」というメッセージが出るが発生していない扱いになる
+;そのため条件には注意すること
+
+;消滅条件を満たしたら1を返す
+; IF 消滅条件式
+; 	RETURN 1
+; ENDIF
+; RETURN 0
+
+;結婚相手は滞在していること
+SIF CFLAG:対象キャラ:滞在期間 < 1
+	RETURN 1
+;結婚周りのフラグチェック、理由がないなら残しておくことを推奨
+SIF CFLAG:対象キャラ:結婚イベント解放 < 1
+	RETURN 1
+SIF CFLAG:対象キャラ:結婚イベント禁止 > 0
+	RETURN 1
+
+RETURN 0
+
+;例えば、「発生条件を満たしている時のみ出現させたい」のなら以下のようになる
+; CALL イベント発生条件_キャライベント_未神宮の若夫婦
+; IF RESULT
+; 	;発生条件OKなので0を返す
+; 	RETURN 0
+; ELSE
+; 	;発生条件アウトなので1を返す
+; 	RETURN 1
+; ENDIF
+
+@イベント関数_キャライベント_未神宮の若夫婦(ARG)
+#DIM 対象キャラ
+
+対象キャラ = GETCHARA(1) ;任意のキャラのNOを入れる
+
+
+DRAWLINE
+PRINTL ［미신궁의 젊은 부부］
+DRAWLINE
+PRINTW
+PRINTL 노 궁사:
+PRINTFORMW 「두렵고도 경외로운 미신궁의 신령님께────」
+PRINTL
+PRINTFORMW 미신궁 본사 안, 엄숙한 분위기 속에서 궁사가 축문을 낭독한다.
+PRINTFORMW %CALLNAME:MASTER%와 아닐라는 얼굴을 살짝 숙이고, 신에게 바치는 말씀을 듣고 있었다.
+PRINTL
+IF TALENT:MASTER:性別 == 2
+	PRINTFORMW %CALLNAME:MASTER%은 급히 정한 가문 문양이 새겨진 하카마를 입고, 아닐라는 시로무쿠와 츠노카쿠시를 두르고 있다.
+ELSE
+	PRINTFORMW %CALLNAME:MASTER%와 아닐라는 함께, 시로무쿠와 츠노카쿠시를 두르고 있다.
+ENDIF
+PRINTFORMW 시선만으로 아닐라 쪽을 바라보니, 마찬가지로 이쪽을 보고 있던 아닐라와 눈이 마주쳤다.
+PRINTFORMW 화장이 곱게 된 아름다운 아닐라의 입술이 옅게 미소 짓고, %CALLNAME:MASTER%은 행복한 기분에 휩싸인다.
+PRINTL
+PRINTL 노 궁사:
+PRINTFORMW 「자손의 팔십 대까지, 비자나무처럼 영원히 번성하게 하소서. 삼가 아뢰옵니다────」
+PRINTL
+PRINTFORMW 축문 낭독이 끝나고, 삼헌의 의식으로 넘어간다.
+PRINTFORMW 납작한 잔에 신주가 따라지고, %CALLNAME:MASTER%와 아닐라는 잔을 주고받으며 부부의 인연을 맺었다.
+PRINTL
+PRINTFORMW ………
+PRINTFORMW ……
+PRINTFORMW …
+PRINTL
+PRINTFORMW 신전식이 끝난 미신궁에서는, 큰 축제가 열리고 있었다.
+PRINTFORMW 현 시대의 십이신장인 아닐라의 혼인이라는 경사를 축하하기 위해, 인근 섬에서도 많은 참배객이 찾아오고 있다.
+PRINTFORMW 사람이 모이는 곳에 상인이 있는 법. 많은 노점도 열려 있고, 술과 간단한 식사가 저렴하게 제공되고 있다.
+PRINTFORMW 십이 년에 한 번 있는 세신(歲神)의 설날보다도 더 흥겨운 것이 아닌가, 하고 생각될 정도의 분위기였다.
+PRINTL
+PRINTFORMW %CALLNAME:MASTER%은 미신궁 안에 마련된 방에서, 멀리 보이는 소란을 바라보고 있다.
+PRINTFORMW 옆에 있는 아닐라도, 어딘가 꿈꾸는 듯한 얼굴로 마찬가지로 축제의 풍경을 응시하고 있었다.
+PRINTL
+PRINTL 아닐라:
+PRINTFORMW 「……쿠후후, 설마 내가 이렇게 빨리 결혼할 줄이야」
+PRINTL
+PRINTFORMW 불만이었나? 하고 %CALLNAME:MASTER%이 묻는다.
+PRINTL
+PRINTL 아닐라:
+PRINTFORMW 「아니, 반대다. 너무나도 행복해서, 마치 꿈속에 있는 것 같아서 말이야.
+PRINTFORMW 　%CSTR:対象キャラ:二人称%을(를) 꽉 잡고 있지 않으면, 꿈에서 깨어날지도 모르겠어」
+PRINTL
+PRINTFORMW 꼬옥, 하고 아닐라가 %CALLNAME:MASTER%을(를) 다소 강하게 끌어안는다.
+PRINTFORMW %CALLNAME:MASTER%도 이에 답하듯 아닐라를 안자, 품 안에서 아닐라가 쿠후후 하고 웃었다.
+PRINTL
+PRINTL 아닐라:
+PRINTFORMW 「이런…… 그러고 보니, 결혼했으니 언제까지나 「%CSTR:対象キャラ:二人称%」라고 부르는 것도 멋없지.
+PRINTFORMW 　자, %CSTR:対象キャラ:二人称%은(는) 나를 뭐라고 불러주길 바라는가?」
+PRINTL
+PRINTBUTTON "[0] 「당신」이라고 불리게 한다", 0
+PRINTL
+PRINTBUTTON "[1] 「주인님」이라고 불리게 한다", 1
+PRINTL
+PRINTBUTTON "[2] 임의 입력", 2
+PRINTL
+DRAWLINE
+PRINTBUTTON @"[999] %CSTR:対象キャラ:二人称% 그대로가 좋다", 999
+PRINTL
+PRINTL
+BINPUT
+
+IF RESULT == 999
+	PRINTL
+	PRINTL 아닐라:
+	PRINTFORMW 「「%CSTR:対象キャラ:二人称%」 그대로가 좋다고? 후후후, %CSTR:対象キャラ:二人称%가 말한다면, 그대로 두도록 하지.
+	PRINTFORMW 　혹시, %CSTR:対象キャラ:二人称%라고 불리는 것을 마음에 들어 했던 것인가?」
+ELSE
+	SELECTCASE RESULT
+		CASE 0
+			CSTR:対象キャラ:二人称 = 당신
+		CASE 1
+			CSTR:対象キャラ:二人称 = 주인님
+		CASE 2
+			DRAWLINE
+			PRINTL 불리게 할 2인칭을 입력해 주세요.
+			DRAWLINE
+
+			INPUTS
+			CSTR:対象キャラ:二人称 '= RESULTS
+	ENDSELECT
+	PRINTL
+	PRINTL 아닐라:
+	PRINTFORMW 「알겠다. 그럼, 이제부터는 「%CSTR:対象キャラ:二人称%」라고 부르도록 하지.
+	PRINTFORMW 　후후후. %CSTR:対象キャラ:二人称%, %CSTR:対象キャラ:二人称%……왠지 쑥스럽지만, 기쁘기도 하구나」
+ENDIF
+PRINTL
+PRINTFORMW 그렇게 아니와 아무렇지 않은 대화를 하고 있자, 점점 하늘이 어두워졌다.
+PRINTFORMW 이제 곧 밤이 되지만, 축제의 활기는 더욱 커지고 있다.
+PRINTFORMW 이야기에 따르면, 오늘의 축제는 밤새도록 열릴 예정이라고 한다.
+PRINTL
+PRINTL 아닐라:
+PRINTFORMW 「이봐, %CSTR:対象キャラ:二人称%。
+PRINTFORMW 　축제를 구경하는 것도 좋지만, 슬슬……그렇지?」
+PRINTL
+PRINTFORMW 아닐라는 슬쩍슬쩍, 방 한가운데 깔린 이불에 시선을 던진다.
+PRINTFORMW 두 사람이 있는 이 방에는, 내일 정오까지는 아무도 가까이 오지 않는다.
+PRINTFORMW 물론, 그것은 신혼부부인 두 사람의 시간을 확보하기 위함이고.
+PRINTFORMW 속된 말로 하자면 「신혼 첫날밤」인 것이다.
+PRINTL
+PRINTFORMW %CALLNAME:MASTER%은(는) 아닐라의 손을 이끌어, 이불 위로 눕혔다.
+PRINTL
+PRINTL 아닐라:
+IF GETBIT(TALENT:MASTER:性別, 1)
+	PRINTFORMW 「쿠후후, %CSTR:対象キャラ:二人称%。
+	CALL PRINT_STRW("　我の胎に、次の十二神将を授けてもらえるかのう_H_？」")
+ELSE
+	PRINTFORMW 「쿠후후, %CSTR:対象キャラ:二人称%。
+	CALL PRINT_STRW("　今夜はずっと、ずーっと愛して欲しいのじゃ_H_」")
+ENDIF
+PRINTL
+PRINTFORMW %CALLNAME:MASTER%은(는) 방의 불을 끄고, 아닐라에게 덮쳐들었다.
+PRINTL
+PRINTFORMW ………
+PRINTFORMW ……
+PRINTFORMW …
+
+;以下は汎用結婚イベで表示される、素質変化の文章。必要ないなら消しても良い
+;-----------ここから
+PRINTL 
+SETCOLOR 0xFFFF00
+PRINTFORMW %CALLNAME:対象キャラ%은(는) ［반려］를 얻었습니다.
+RESETCOLOR
+IF TALENT:対象キャラ:浮気 > 0
+	PRINTFORM %CALLNAME:対象キャラ%은(는)
+	SETCOLOR カラーパレット("えっちな色")
+	PRINT [바람기]
+	RESETCOLOR
+	PRINT 를 잃었다……
+ENDIF
+IF TALENT:対象キャラ:恋人持ち != 2
+	SIF TALENT:対象キャラ:浮気 > 0
+		WAIT
+	PRINTFORM %CALLNAME:対象キャラ%은(는)
+	SETCOLOR カラーパレット("えっちな色")
+	IF TALENT:対象キャラ:性別 == 1 || TALENT:対象キャラ:性別 == 3
+		PRINT [유부녀]
+	ELSE
+		PRINT [기혼자]
+	ENDIF
+	RESETCOLOR
+	PRINT 를 얻었다!
+ENDIF
+PRINTL
+PRINTL
+FORCEWAIT
+;-----------ここまで
+
+;イベント中にアイテムやステータスの変動が起こる場合、以下の分岐の中に記述すること
+;イベント再視聴で無限に稼ぎが出来たりしないようにする措置
+IF !FLAG:クリア済み視聴フラグ
+	;結婚イベントなので、伴侶素質を付与して履歴に登録する
+	;何かの理由があるなら消しても良いが、残すことを推奨
+	;-----------ここから
+	TALENT:対象キャラ:恋慕 = 2
+	初体験日:対象キャラ:伴侶 = DAY
+	CALL 履歴データベース登録(CFLAG:MASTER:人物番号, @"<img src='えっちハート'><font color='#%カラーパレット_HTML("赤ピンク")%'>%CALLNAME:対象キャラ%を[伴侶]陥落させた</font><img src='えっちハート'>","うふふ実績")
+	CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"<img src='えっちハート'><font color='#%カラーパレット_HTML("赤ピンク")%'>陥落素質[伴侶]を得た</font><img src='えっちハート'>","うふふ実績")
+	IF TALENT:対象キャラ:浮気 > 0
+		TALENT:対象キャラ:浮気 = 0
+	ENDIF
+	IF TALENT:対象キャラ:恋人持ち != 2
+		TALENT:対象キャラ:恋人持ち = 2
+	ENDIF
+	;-----------ここまで
+ENDIF
+
+CALL イベント完了フラグ汎用処理("未神宮の若夫婦")
+
+
+
+
+
+

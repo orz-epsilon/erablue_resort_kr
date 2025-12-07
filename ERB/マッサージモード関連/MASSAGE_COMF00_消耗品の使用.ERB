@@ -1,0 +1,159 @@
+;-------------------------------------------------
+;消耗品の使用
+;-------------------------------------------------
+@MASSAGE_COMNAME0
+#FUNCTIONS
+TSTR:コマンド名受渡 = 소모품 사용
+
+
+;===================================================
+;コマンドタイプ
+;===================================================
+@MASSAGE_COMTYPE_0
+#FUNCTION
+TFLAG:コマンドタイプ受渡 = MASSAGE_COMTYPE("通常マッサージ")
+
+@MASSAGE_COM_TOOLTIP_0
+LOCALS = <br>■소모품 사용<br>
+LOCALS += "마사지에 사용할 수 있는 아이템을 사용하여 다양한 효과를 얻는다."
+LOCALS += "<br>COM 타입: 일반 마사지<br>획득 소스: 없음"
+LOCALS += "<br>고유 획득 경험: 없음<br>"
+TSTR:ツールチップ受渡 = %LOCALS%
+
+@MASSAGE_COM0
+#DIM 消耗品種類数
+#DIMS 選択肢配列  , 10
+#DIM  使用条件配列, 10
+#DIMS 追加情報配列, 10
+#DIM リザルト保存
+#DIM ITEMNAME_LEN
+#DIMS BUTTON_TEXT
+;-------------------------------------------------
+;ソース追加処理
+;-------------------------------------------------
+
+;使用可能オイルを並べる
+;本来は所持とかを見るべきだが、仮実装なのでとりあえずオイルと媚薬
+消耗品種類数 = 0
+VARSET 選択肢配列
+VARSET 使用条件配列, 1
+VARSET 追加情報配列
+ITEMNAME_LEN = 0
+
+;- 消耗品の情報設定
+; オイル
+選択肢配列:消耗品種類数 = オイル
+ITEMNAME_LEN =MAX(STRLENS(選択肢配列:消耗品種類数), ITEMNAME_LEN)
+消耗品種類数 += 1
+
+; 鬼灯の香
+選択肢配列:消耗品種類数 = 鬼灯の香
+ITEMNAME_LEN =MAX(STRLENS(選択肢配列:消耗品種類数), ITEMNAME_LEN)
+使用条件配列:消耗品種類数 = TFLAG:マッサージ_鬼灯の香使用時間 == 0
+SIF TFLAG:マッサージ_鬼灯の香使用時間
+	追加情報配列:消耗品種類数 = 使用済（{(DAY * 1440 + TIME) - TFLAG:マッサージ_鬼灯の香使用時間}分経過）
+消耗品種類数 += 1
+
+DO
+DRAWLINE
+PRINTL 어떤 소모품을 사용하시겠습니까?
+DRAWLINE
+FOR COUNT, 0, 消耗品種類数
+	BUTTON_TEXT '= @"[{COUNT}] %選択肢配列:COUNT, ITEMNAME_LEN, LEFT%"
+	IF GETNUM(ITEM, 選択肢配列:COUNT) >= 0
+		; 所持数設定があるもの(ITEMに定義がある)
+		BUTTON_TEXT += @"　소지 수:{ITEM:(選択肢配列:COUNT)}"
+		
+		;特殊分岐。これ口上にいずれ格納したい
+		IF 選択肢配列:COUNT == "鬼灯の香" && NO:TARGET == 998
+			;era様に鬼灯の香は効かない
+			SETCOLOR カラーパレット("グレーアウト")
+			PRINTPLAINFORM %BUTTON_TEXT%
+			PRINT (성정수 era에는 효과가 없습니다)
+		ELSEIF ITEM:(選択肢配列:COUNT) > 0 && 使用条件配列:COUNT
+			PRINTBUTTON BUTTON_TEXT, COUNT
+		ELSE
+			SETCOLOR カラーパレット("グレーアウト")
+			PRINTPLAINFORM %BUTTON_TEXT%
+		ENDIF
+	ELSE
+		; 所持数設定がないもの(ITEMに定義がない)
+		BUTTON_TEXT += "　소지 수:∞"
+		IF 使用条件配列:COUNT
+			PRINTBUTTON BUTTON_TEXT, COUNT
+		ELSE
+			SETCOLOR カラーパレット("グレーアウト")
+			PRINTPLAINFORM %BUTTON_TEXT%
+		ENDIF
+	ENDIF
+	SIF 追加情報配列:COUNT != ""
+		PRINTFORM 　%追加情報配列:COUNT%
+	RESETCOLOR
+	PRINTL
+NEXT
+PRINTL
+PRINTBUTTON "[999] 돌아가기", 999
+PRINTL
+PRINTL
+BINPUT
+リザルト保存 = RESULT
+SELECTCASE リザルト保存
+	CASE 999
+		RETURN -1
+	CASEELSE
+		RSTR:コマンド結果受渡し文字列 '= 選択肢配列:リザルト保存
+		SELECTCASE 選択肢配列:リザルト保存
+			CASE "オイル"
+				;オイル共通部分
+				CALL SOURCE_CALC_液体(TARGET, PLAYER, 20000)
+				CALL SOURCE_CALC_接触(TARGET, PLAYER, 60)
+				RETURN 1
+			CASE "鬼灯の香"
+				IF TFLAG:マッサージ_鬼灯の香使用時間 != 0
+					;使用済み
+					PRINTW 꽈리 향은 이미 피워져 있다.
+				ELSE
+					;使用時間をセット
+					TFLAG:マッサージ_鬼灯の香使用時間 = DAY * 1440 + TIME
+					;ITEM消費
+					ITEM:鬼灯の香 -= 1
+					RETURN 1
+				ENDIF
+		ENDSELECT
+ENDSELECT
+
+LOOP 1
+
+;-------------------------------------------------
+;経験の処理
+;-------------------------------------------------
+
+RETURN 1
+
+;-------------------------------------------------
+;実行判定
+;-------------------------------------------------
+
+@MASSAGE_COM_ABLE0
+SIF SAVESTR:ゲームフェイズ管理 != "マッサージモード"
+	RETURN 0
+
+SIF GLOBAL_MASSAGE_COMABLE(0)
+	RETURN RESULT
+
+
+
+RETURN 1
+
+;-------------------------------------------------
+;実行時メッセージ
+;-------------------------------------------------
+@MASSAGE_MESSAGE_COM0
+
+SELECTCASE RSTR:コマンド結果受渡し文字列
+	CASE "オイル"
+		PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%의 몸에 오일을 떨어뜨렸다…
+	CASE "鬼灯の香"
+		PRINTFORML %CALLNAME:PLAYER%은(는) %TEXTR("릴랙스용 향/릴랙세이션 아로마")%이라고 말하며 향로에 불을 붙이고, 꽈리 향을 피우기 시작했다…
+		PRINTFORML 조용히 피어오르는 연기는 달콤하고, 느긋하게 방에 가득 차서, 이윽고%CALLNAME:TARGET%의 %TEXTR("이성/의식/경계심")%을 %TEXTR("녹여서/녹여서")%%TEXTR("갈/줄")% 것이다…
+ENDSELECT

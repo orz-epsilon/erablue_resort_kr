@@ -1,0 +1,93 @@
+
+@イベント発生条件_サブイベント_温泉を作るために
+
+;開放条件を満たしたら1を返すこと
+IF イベント完了フラグ確認("大拡張！空艇港") > 0
+	RETURN 1
+ENDIF
+RETURN 0
+
+@イベント関数_サブイベント_温泉を作るために(ARG)
+DRAWLINE
+PRINTL ［온천을 만들기 위해］
+DRAWLINE
+PRINTW
+PRINTFORMW 예상보다 훨씬 빨리 항로가 열려, 리조트를 찾는 손님도 점차 늘고 있다.
+PRINTFORMW 하지만 그에 비해, 아직 리조트의 시설·설비는 분명히 부족했다.
+PRINTFORMW 본래는 항로 구축과 병행하여 시설 확충을 진행할 예정이었으니 어쩔 수 없지만.
+PRINTL
+PRINTFORMW 지금 관광객의 수요를 보면…… 만들어야 할 것은 『온천』일까.
+PRINTFORMW 대욕장도 평판이 나쁜 것은 아니지만, 관광의 목적이 될 정도는 아니다.
+PRINTFORMW 리조트에 오는 동기가 될 만한 시설을 만들어내면, 평판도 크게 오를 것이다.
+PRINTL
+PRINTFORMW 그런 이유로 ZP로 원천을 찾거나 만들었으면 하는데.
+PRINTL
+CALL 画像表示("顔エラ","LEFT",,,,1,)
+PRINTL 성정수 era:
+PRINTFORMW 「뭐, 불가능하다고는 말하지 않겠지만…… 내가 관장하는 것은 쾌락과 절정
+PRINTFORMW 맹목적으로 ZP를 쏟아붓는 것보다, 비슷한 권능을 가진 성정수를 데려오는 편이 저렴하고 빠르게 실현할 수 있을 것이다」
+PRINTL
+PRINTFORMW 불의 성정수가 필요할까? 라고 %CALLNAME:PLAYER%은(는) 묻는다.
+PRINTL
+PRINTL 성정수 era:
+PRINTFORMW 「아니, 온천은 대지에서 솟아나는 것. 『땅의 성정수』의 영역이다
+PRINTFORMW 누구라도 좋다. 땅의 속성을 가지고 태어난 성정수와 인연을 맺으면, ZP와 성정수의 힘을 사용하여 온천을 만들어낼 수 있을 것이다」
+PRINTL
+PRINTFORMW 인연이라고 하면 [연모], 혹은 [섹프] 정도로 관계를 진전시키라는 것이겠지.
+IF 土の星晶獣_陥落チェック()
+	PRINTFORMW 그렇다면 이미 달성했다. 당장이라도 착수하자.
+	PRINTL
+	PRINTL 성정수 era:
+	PRINTFORMW "호오, 알고 있었던 건가 우연인가. 어쨌든 이야기가 빠른 건 좋은 일이다
+	PRINTFORMW 원천 생성을 위한 권능을 추가해 두지. 나머지는 시설을 정비하면 된다"
+	PRINTL
+	PRINTFORMW "덤이다, 흙의 성정수가 있는 섬의 좌표도 알려주지
+	PRINTFORMW 온천 만들기에 참고가 될 테니 말이야. 공부하고 오도록 해"
+	PRINTL
+	SETCOLOR 0xFFFF00
+	PRINTFORML 시설 개조에 "온천 계열을 개조"가 추가되었습니다.
+	PRINTFORML 도구점에 "흙의 마석"이 추가되었습니다.
+	温泉作成許可フラグ = 1
+ELSE
+	PRINTFORMW 짐작 가는 곳은 있지만, 당장 그런 관계가 될 리도 없다.
+	PRINTFORMW 좀 더 다른 방법은 없는지 era에게 묻는다.
+	PRINTL
+	PRINTL 성정수 era:
+	PRINTFORMW "그렇군…… 그렇다면, 흙의 성정수가 있는 섬의 좌표를 알려주지
+	PRINTFORMW 그 성정수는 '네더맨틀'이라는 온천 만들기에 최적인 기술을 가지고 있다
+	PRINTFORMW 그녀라면
+	SETCOLOR カラーパレット("黄")
+	PRINT 인연을 맺지 않아도, 분신을 리조트에 데려오는 것만으로 대체가 된다
+	RESETCOLOR
+	PRINTW 겠지
+	PRINTFORMW 　잘 유혹할 수 있을지는 너에게 달렸지만 말이야. 나의 계약자」
+	PRINTL
+ENDIF
+SETCOLOR 0xFFFF00
+PRINTFORML 루마시 군도의 좌표를 손에 넣었습니다.
+PRINTFORML 던전 [이름을 잃은 유적]이 해방되었습니다.
+RESETCOLOR
+FORCEWAIT
+
+ダンジョン出現フラグ_名前を亡くした遺跡 = 1
+CALL イベント完了フラグ汎用処理("温泉を作るために")
+
+
+@土の星晶獣_陥落チェック()
+#FUNCTION
+#DIM キャラ番号
+
+FOR キャラ番号, 1, CHARANUM
+	SIF TALENT:キャラ番号:種族 != 5
+		CONTINUE
+	SIF 基礎BATTLE_STATE:キャラ番号:属性 != 3
+		CONTINUE
+	SIF 陥落チェック_性的(キャラ番号)
+		RETURNF 1
+NEXT
+
+RETURNF 0
+
+
+
+

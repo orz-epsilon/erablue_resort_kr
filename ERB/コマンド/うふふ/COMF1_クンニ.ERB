@@ -1,0 +1,192 @@
+;-------------------------------------------------
+;クンニ
+;愛撫系コマンド　レベル1
+;-------------------------------------------------
+@COMNAME1
+#FUNCTIONS
+IF MODE_存在判定_完全一致("シックスナイン可能", TARGET, PLAYER)
+	TSTR:コマンド名受渡 = 식스나인
+ELSE
+	TSTR:コマンド名受渡 = 쿤니
+ENDIF
+
+;許可時の特別文章はここに記入
+IF TFLAG:オートコマンドフラグ >= 4000
+	;反転時、つまりあなたが舐める方
+	許可取り文章 = %CALLNAME:TARGET%이(가)%CALLNAME:PLAYER%에게[%TSTR:コマンド名受渡%]을(를) 요구하고 있는 것 같다.
+ELSE
+	許可取り文章 = %CALLNAME:PLAYER%이(가)%CALLNAME:TARGET%에게[%TSTR:コマンド名受渡%]을(를) 실행하려고 하는 것 같다.
+ENDIF
+
+
+;===================================================
+;コマンドタイプ
+;===================================================
+@COMTYPE_1
+#FUNCTION
+TFLAG:コマンドタイプ受渡 = COMTYPE("うふふ")
+弱点コマンドカテゴリ = C_女
+オートコマンド許可 = 3
+連続オート許可 = 1
+
+
+@COM_TOOLTIP_1
+LOCALS = <br>■커닐링구스<br>
+LOCALS += "상대의 클리토리스를 중심으로 혀로 애무를 하는 커맨드. <br>쿤니 모드가 되어, 모드를 변경하거나 성행위를 종료할 때까지 지속적으로 특정 소스가 발생한다."
+LOCALS += "<br>실행자가[혀놀림][고양이 혀]를 가지고 있을 경우, 효과가 증감한다."
+LOCALS += "<br>COM 타입: 우후후<br>획득 소스: 쾌C・노출・접촉・액체"
+LOCALS += "<br>고유 획득 경험: 구강성교 경험(PLAYER)<br>"
+TSTR:ツールチップ受渡 = %LOCALS%
+
+@COM1
+;-------------------------------------------------
+;モードの設定
+;-------------------------------------------------
+SIF !MODE_シックスナイン中_完全一致(TARGET, PLAYER) && MODE_存在判定_完全一致("シックスナイン可能", TARGET, PLAYER)
+	RFLAG:コマンド結果受渡し変数 = 1
+CALL MODE_CHANGE("クンニ", PLAYER, TARGET)
+;-------------------------------------------------
+;COM別FLAGの設定
+;-------------------------------------------------
+
+;奉仕快楽
+RCVAR:PLAYER:奉仕コマンドフラグ = 1
+RCVAR:PLAYER:汎用喘ぎ_文節低減フラグ = 1
+;-------------------------------------------------
+;ソース追加処理
+;-------------------------------------------------
+
+LOCAL = 150
+;舌を使う調教では、調教者の舌使いによって、快感のソース増加
+SIF TALENT:PLAYER:舌使い
+	TIMES LOCAL , 1.50
+;猫舌では減少
+SIF TALENT:PLAYER:猫舌
+	TIMES LOCAL , 0.75
+CALL SOURCE_CALC_快Ｃ(TARGET, PLAYER, LOCAL)
+
+CALL SOURCE_CALC_液体(TARGET, PLAYER, 60)
+CALL SOURCE_CALC_露出(TARGET, PLAYER, 80)
+CALL SOURCE_CALC_接触(TARGET, PLAYER, 100)
+
+
+;-------------------------------------------------
+;経験の処理
+;-------------------------------------------------
+;同性愛
+SIF 同性愛性癖判定(TARGET,PLAYER)
+	EXP:TARGET:同性愛経験 += 3
+SIF 同性愛性癖判定(PLAYER,TARGET)
+	EXP:PLAYER:同性愛経験 += 3
+
+
+;調教者が猫舌持ちの場合は、調教者に嗜虐快楽経験を追加
+SIF TALENT:PLAYER:猫舌
+	EXP:PLAYER:嗜虐快楽経験 += 1
+;口淫経験
+EXP:PLAYER:口淫経験 ++
+
+CALL 初体験日登録処理(PLAYER, TARGET, "ファーストキス", DAY * 1440 + TIME, GETPLACENAME(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置), "クリトリス", "", 1)
+IF RESULT
+	RCVAR:PLAYER:ファーストキス中フラグ = 1
+	CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>%CALLNAME:TARGET%의 [크리토리스]에 첫 키스를 바쳤다.</font><img src='えっちハート'>","うふふ")
+ENDIF
+
+RETURN 1
+
+;-------------------------------------------------
+;実行判定
+;-------------------------------------------------
+@COM_ABLE1
+;クンニ実行判定
+SIF SAVESTR:ゲームフェイズ管理 != "通常モード"
+	RETURN 0
+;一括管理
+SIF GLOBAL_COMABLE(1)
+	RETURN RESULT
+;クリがない場合駄目
+SIF TALENT:TARGET:Ｃ感度 == -2
+	RETURN 0
+;女性器がないとダメ
+SIF GETBIT(TALENT:TARGET:性別, 0) == 0
+	RETURN 0
+;下半身着衣
+;前鎧、めくれない服、タイツ、前張りがあると無理
+SIF TEQUIP:下腹部前鎧あり
+	RETURN 0
+SIF TEQUIP:下半身服あり && (!TEQUIP:スカートめくり可 && !TEQUIP:ずらし可)
+	RETURN 0
+SIF TEQUIP:下タイツあり && !TEQUIP:下タイツ破れ
+	RETURN 0
+SIF TEQUIP:下半身下着あり == 2
+	RETURN 0
+;口を何かに使ってるなら無理
+SIF TEQUIP:PLAYER:口
+	RETURN 0
+;クリを何かに使ってるなら無理
+SIF TEQUIP:TARGET:クリトリス
+	RETURN 0
+;挿入系・素股系時は個別にOFF
+SIF MODE_存在判定_順不同("ＶＡ挿入系", PLAYER, TARGET)
+	RETURN 0
+SIF MODE_存在判定_順不同("素股系", PLAYER, TARGET)
+	RETURN 0
+
+;オートコマンド中の制限
+IF FLAG:オートコマンド判定中フラグ
+	SIF 初体験済みチェック("ファーストキス", PLAYER) == 0
+		RETURN 0
+ENDIF
+
+RETURN 1
+
+;-------------------------------------------------
+;実行時メッセージ
+;-------------------------------------------------
+@MESSAGE_COM1
+PRINTFORM %CALLNAME:PLAYER%는
+
+IF RFLAG:コマンド結果受渡し変数
+	PRINTFORML %CALLNAME:TARGET%와 머리 위치가 서로 엇갈리도록 자세를 바꿔서,
+	PRINTFORM %CALLNAME:TARGET%의
+ELSEIF MODE_シックスナイン中_完全一致(TARGET, PLAYER)
+	PRINTFORM 눈앞에 있는 %CALLNAME:TARGET%의
+ELSEIF !TEQUIP:下半身服あり && TEQUIP:下半身下着あり > 0
+	IF TALENT:恋慕 && PLAYER == MASTER
+		PRINTFORM 스스로 속옷을 내려 준비하고 있는
+	ELSE
+		PRINTFORM 속옷을 내려 노출시킨
+	ENDIF
+	PRINTFORM %CALLNAME:TARGET%의
+ELSEIF TEQUIP:ずらし可
+	IF TALENT:恋慕 && PLAYER == MASTER
+		PRINTFORM 스스로 옷을 내려 준비하고 있는
+	ELSE
+		PRINTFORM 옷을 내려 노출시킨
+	ENDIF
+	PRINTFORM %CALLNAME:TARGET%의
+ELSEIF TEQUIP:スカートめくり可
+	IF TALENT:恋慕 && PLAYER == MASTER
+		PRINTFORM 스스로 옷을 걷어 올려 준비하고 있는
+	ELSE
+		PRINTFORM 옷을 걷어 올려 노출시킨
+	ENDIF
+	PRINTFORM %CALLNAME:TARGET%의
+ELSE
+	SIF TALENT:恋慕 && PLAYER == MASTER
+		PRINT 다리를 벌려 준비하고 있는
+	PRINTFORM %CALLNAME:TARGET%의
+ENDIF
+PRINTFORM 비밀스러운 입술을 정성껏 핥아 풀고
+;ふたなり＋欲情のPLAMLV3以上
+IF GETBIT(TALENT:性別, 1) && PALAM:欲情 >= PALAMLV:3
+	PRINT , 꼿꼿이 선 페니스에 혀를 훑어 올리며 핥아 올리고
+;ふたなり
+ELSEIF GETBIT(TALENT:性別, 1)
+	PRINT , 페니스 뿌리 부분을 혀로 핥아 올리고
+;欲情のPALAMLV3以上
+ELSEIF PALAM:欲情 >= PALAMLV:3
+	PRINT , 잔뜩 부푼 클리토리스를 혀로 빨아 올렸
+ENDIF
+PRINTL 다…
+

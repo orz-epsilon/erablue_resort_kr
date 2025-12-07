@@ -1,0 +1,106 @@
+@ダンジョンハプニング_スカート捲れ(対象キャラ番号)
+#DIM 対象キャラ番号
+#DIM 選定用配列, 10
+
+WSTR:(K++) = 갑자기 돌풍이 불었다!
+KSTR:(K++) = %CALLNAME:対象キャラ番号%의 옷이 걷어 올라가,
+NSTR:(K++) = 눈앞에 있던%CALLNAME:PLAYER%는
+IF TEQUIP:対象キャラ番号:下タイツあり
+	IF TEQUIP:対象キャラ番号:下タイツ破れ
+		NSTR:(K++) = 찢어진
+	ENDIF
+	NSTR:(K++) = 타이츠 안쪽의
+ENDIF
+SELECTCASE TEQUIP:対象キャラ番号:下半身下着あり
+	CASE 1
+		KSTR:(K++) = %CALLNAME:対象キャラ番号%의 속옷을 제대로 보고 말았다._PAGE
+	CASE 2
+		KSTR:(K++) = %CALLNAME:対象キャラ番号%의 작은 천이 붙어 있을 뿐인 중요한 부분을 보고 말았다._PAGE
+	CASE 3
+		KSTR:(K++) = %CALLNAME:対象キャラ番号%의 훈도시를 제대로 보고 말았다._PAGE
+	CASE 4
+		KSTR:(K++) = %CALLNAME:対象キャラ番号%의 사타구니가 리본으로만 덮여 있는 것을 제대로 보고 말았다._PAGE
+	CASE -1
+		KSTR:(K++) = %CALLNAME:対象キャラ番号%의 속옷이 숨기는 것을 포기한 은밀한 부분을 제대로 보고 말았다._PAGE
+	CASE -2
+		KSTR:(K++) = %CALLNAME:対象キャラ番号%의, 피어스가 반짝하고 빛을 내는 성기를 제대로 보고 말았다._PAGE
+	CASE -3
+		KSTR:(K++) = %CALLNAME:対象キャラ番号%의 음핵에서 명찰이 매달려 있는 것을 제대로 보고 말았다._PAGE
+	CASEELSE
+		KSTR:(K++) = %CALLNAME:対象キャラ番号%의 아무것도 입고 있지 않은 은밀한 부분을 제대로 보고 말았다._PAGE
+ENDSELECT
+
+CALL メッセージ欄表示用関数()
+CALL 口上変数初期化
+
+CALL セクハラ反応タイプ判定(対象キャラ番号)
+TRYCALLFORM KOJO_ハプニング_スカート捲れ_{NO:対象キャラ番号}(対象キャラ番号)
+IF 口上有無確認(0, 1) == 0
+	SELECTCASE RFLAG:コマンド結果受渡し変数２
+		CASE 1
+			;無知
+			KSTR:(K++) = 하지만, %CALLNAME:対象キャラ番号%는 딱히 아무것도 신경 쓰지 않는 듯하다.
+		CASE 2
+			;無反応
+			KSTR:(K++) = 하지만, %CALLNAME:対象キャラ番号%는 아무 일도 없었다는 듯이 탐색으로 돌아갔다.
+		CASE 6
+			;羞恥
+			SELECTCASE RFLAG:コマンド結果受渡し変数
+				CASE 1
+					;拒絶
+					KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 얼굴을 새빨갛게 물들이고 작게 비명을 질러버렸다.
+				CASE 2
+					;受入れ
+					KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 새빨간 얼굴로 옷을 누르고 있다.
+				CASE 3
+					;喜び
+					KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 얼굴을 붉게 물들이고, 이쪽을 바라보고 있다……
+			ENDSELECT
+		CASEELSE
+			;汎用
+			SELECTCASE RFLAG:コマンド結果受渡し変数
+				CASE 1
+					;拒絶
+					KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 조금 불쾌한 표정을 지으며 탐색으로 돌아갔다.
+				CASE 2
+					;受入れ
+					KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 바람에 불평하며 옷매무새를 가다듬고 있다.
+				CASE 3
+					;喜び
+					KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 웃으며 %CALLNAME:PLAYER%를 놀리고 있다.
+			ENDSELECT
+	ENDSELECT
+	CALL メッセージ欄表示用関数()
+ENDIF
+
+;ソース増減部分
+SELECTCASE RFLAG:コマンド結果受渡し変数
+	CASE 1
+		;拒絶
+		CALL SOURCE_CALC_不快(対象キャラ番号, PLAYER, 50)
+		CALL SOURCE_CALC_反感(対象キャラ番号, PLAYER, 50)
+		CALL SOURCE_CALC_露出(対象キャラ番号, PLAYER, 200)
+	CASE 2
+		;受け入れ
+		CALL SOURCE_CALC_露出(対象キャラ番号, PLAYER, 100)
+		CALL SOURCE_CALC_好感度要素_恋心度UP(対象キャラ番号, PLAYER, 50)
+		CALL SOURCE_CALC_好感度要素_性愛度UP(対象キャラ番号, PLAYER, 100)
+	CASE 3
+		;喜び
+		CALL SOURCE_CALC_露出(対象キャラ番号, PLAYER, 70)
+		CALL SOURCE_CALC_歓楽(対象キャラ番号, PLAYER, 70)
+		CALL SOURCE_CALC_好感度要素_恋心度UP(対象キャラ番号, PLAYER, 100)
+		CALL SOURCE_CALC_好感度要素_性愛度UP(対象キャラ番号, PLAYER, 100)
+ENDSELECT
+
+
+
+
+
+@ダンジョンハプニング_ABLE_スカート捲れ(判定キャラ番号)
+#DIM 判定キャラ番号
+
+SIF TEQUIP:判定キャラ番号:スカートめくり可 == 0
+	RETURN 0
+
+RETURN 1

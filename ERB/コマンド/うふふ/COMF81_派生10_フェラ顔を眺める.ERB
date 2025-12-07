@@ -1,0 +1,56 @@
+
+@COMNAME_S81_10
+#FUNCTIONS
+TSTR:コマンド名受渡 = 펠라 얼굴을 바라본다
+
+;===================================================
+;コマンドタイプ
+;===================================================
+@COMTYPE_S_81_10
+#FUNCTION
+TFLAG:コマンドタイプ受渡 = COMTYPE("うふふ")
+オートコマンド許可 = 1
+連続オート許可 = 1
+
+@COM_TOOLTIP_S81_10
+LOCALS = <br>■펠라 얼굴을 바라본다<br>
+LOCALS += "펠라치오를 당하고 있을 때, 상대의 얼굴을 바라보는 커맨드."
+LOCALS += "<br>커맨드 「아무것도 하지 않는다」 호환."
+LOCALS += "<br>COM 타입: 우후후or피삽입 중<br>취득 소스: 없음"
+LOCALS += "<br>고유의 취득 경험: 없음<br>"
+TSTR:ツールチップ受渡 = %LOCALS%
+
+@COM_S81_10
+CALL COM21
+RETURN RESULT
+
+;-------------------------------------------------
+;実行判定
+;-------------------------------------------------
+@COM_ABLE_S81_10
+;実行判定
+SIF SAVESTR:ゲームフェイズ管理 != "通常モード"
+	RETURN 0
+;一括管理
+SIF GLOBAL_COMABLE_S("81_10")
+	RETURN RESULT
+;フェラチオモードじゃない時はアウト
+SIF !MODE_存在判定_完全一致("フェラチオ", TARGET, PLAYER)
+	RETURN 0
+
+RETURN 1
+
+;-------------------------------------------------
+;実行時メッセージ
+;-------------------------------------------------
+@MESSAGE_COM_S81_10
+SELECTCASE RAND:3
+	CASE 0
+		PRINTFORML %CALLNAME:PLAYER%는 %CALLNAME:TARGET%이 페니스를 물고 있는 모습을 만끽하고 있다……
+	CASE 1
+		PRINTFORML %CALLNAME:PLAYER%는 %CALLNAME:TARGET%이 페니스를 물고 있는 모습을 즐기고 있다……
+	CASE 2
+		PRINTFORML %CALLNAME:TARGET%는 %CALLNAME:PLAYER%의 페니스를 정성스럽게 빨고 있다……
+ENDSELECT
+
+

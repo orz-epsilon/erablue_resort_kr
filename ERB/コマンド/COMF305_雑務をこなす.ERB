@@ -1,0 +1,234 @@
+
+@COMNAME305
+#FUNCTIONS
+TSTR:コマンド名受渡 = 잡무를 처리한다
+
+;===================================================
+;コマンドタイプ
+;===================================================
+@COMTYPE_305
+#FUNCTION
+TFLAG:コマンドタイプ受渡 = COMTYPE("単独可能")
+
+@COM_TOOLTIP_305
+LOCALS = <br>■雑務をこなす<br>
+LOCALS += "리조트의 잡무를 처리하여 해당 장소의 잡무 게이지를 감소시키는 커맨드.<br>잡무 게이지가 쌓이면 일반 관광객의 수가 감소한다.<br>욕정 필드 전개 중, 일반 관광객에게 성희롱을 당할 수 있다."
+LOCALS += "<br>COM 타입: 단독 가능<br>획득 소스: 없음"
+LOCALS += "<br>고유 획득 경험: 없음<br>"
+TSTR:ツールチップ受渡 = %LOCALS%
+
+
+@COM305
+#DIM セクハラ部位
+#DIM セクハラ快楽量
+セクハラ快楽量 = 0
+
+雑務ゲージ:(CFLAG:PLAYER:現在位置) = MAX(雑務ゲージ:(CFLAG:PLAYER:現在位置) - 1500, 0)
+TIME += 5
+
+CALL モブセクハラ処理()
+
+RETURN 1
+
+;-------------------------------------------------
+;実行判定
+;-------------------------------------------------
+@COM_ABLE305
+;会話実行判定
+SIF SAVESTR:ゲームフェイズ管理 != "通常モード"
+	RETURN 0
+;一括管理
+SIF GLOBAL_COMABLE(305)
+	RETURN RESULT
+;リゾート内のみ
+SIF CFLAG:PLAYER:現在マップ種別 > 0
+	RETURN 0
+;雑務ゲージ１以上
+SIF 雑務ゲージ:(CFLAG:PLAYER:現在位置) < 1
+	RETURN 0
+RETURN 1
+
+;-------------------------------------------------
+;実行時メッセージ
+;-------------------------------------------------
+@MESSAGE_COM305
+#DIM セクハラ部位
+PRINTFORML %CALLNAME:PLAYER%는 리조트 관리의 잡무를 처리했다
+
+IF RFLAG:コマンド結果受渡し変数２ > 0
+	WAIT
+	PRINTFORML 잡무를 처리하고 있자, 이름 모를 관광객이 %CALLNAME:PLAYER%에게 다가온다.
+	IF RFLAG:コマンド結果受渡し変数３ == 2
+		PRINT 그는
+	ELSE
+		PRINT 그녀는
+	ENDIF
+	PRINTFORM 흥분한 모습으로 %CALLNAME:PLAYER%
+	SELECTCASE RFLAG:コマンド結果受渡し変数
+		CASE 0
+			セクハラ部位 = 0
+			PRINT 의
+			IF TEQUIP:PLAYER:下腹部前鎧あり
+				PRINT 갑옷 아래로 손을 뻗어,
+			ELSEIF TEQUIP:PLAYER:スカートめくり可
+				PRINT 옷자락 아래로 손을 집어넣어,
+				IF TEQUIP:PLAYER:下タイツあり
+					PRINT 타이츠 위에서
+				ELSEIF TEQUIP:PLAYER:下半身下着あり == 0
+					PRINT 직접
+				ELSE
+					PRINT 속옷 위에서
+				ENDIF
+			ELSEIF TEQUIP:PLAYER:ずらし可
+				PRINT 옷자락을 들추고,
+				IF TEQUIP:PLAYER:下タイツあり
+					PRINT 타이츠 위에서
+				ELSEIF TEQUIP:PLAYER:下半身下着あり == 0
+					PRINT 직접
+				ELSE
+					PRINT 속옷 위에서
+				ENDIF
+			ELSE
+				PRINT 옷 위에서,
+			ENDIF
+			IF GETBIT(TALENT:PLAYER:性別, 1)
+				IF BASE:PLAYER:勃起 < 500
+					PRINT 아직 부드러운
+				ELSEIF BASE:PLAYER:勃起 < 1000
+					PRINT 반쯤 발기한
+				ELSE
+					PRINT 완전히 단단해진
+				ENDIF
+				PRINTL 음경을 더듬어 왔다…
+			ELSE
+				PRINTL 고간에 손을 더듬어왔다…
+			ENDIF
+		CASE 1
+			セクハラ部位 = 1
+			PRINT 의
+			IF TEQUIP:PLAYER:下腹部前鎧あり
+				PRINT 갑옷 아래로 손을 뻗어,
+			ELSEIF TEQUIP:PLAYER:スカートめくり可
+				PRINT 옷자락 사이로 손을 집어넣어,
+				IF TEQUIP:PLAYER:下タイツあり
+					PRINT 타이츠 위로
+				ELSEIF TEQUIP:PLAYER:下半身下着あり == 0
+					PRINT 직접
+				ELSE
+					PRINT 속옷 위로
+				ENDIF
+			ELSEIF TEQUIP:PLAYER:ずらし可
+				PRINT 옷자락을 옆으로 밀고,
+				IF TEQUIP:PLAYER:下タイツあり
+					PRINT 타이츠 위로
+				ELSEIF TEQUIP:PLAYER:下半身下着あり == 0
+					PRINT 직접
+				ELSE
+					PRINT 속옷 위로
+				ENDIF
+			ELSE
+				PRINT 옷 위로,
+			ENDIF
+			PRINTFORML 질 입구에 손가락을 더듬어왔다…
+		CASE 2
+			セクハラ部位 = 2
+			PRINT 의
+			IF TEQUIP:PLAYER:下腹部後鎧あり
+				PRINT 갑옷 아래로 손을 뻗어,
+			ELSEIF TEQUIP:PLAYER:スカートめくり可
+				PRINT 옷자락 사이로 손을 집어넣어,
+				IF TEQUIP:PLAYER:下タイツあり
+					PRINT 타이츠 위로
+				ELSEIF TEQUIP:PLAYER:下半身下着あり == 0
+					PRINT 직접
+				ELSE
+					PRINT 속옷 위로
+				ENDIF
+			ELSE
+				PRINT 옷 위로,
+			ENDIF
+			PRINTFORML 엉덩이를 천천히 주물러왔어...
+		CASE 3
+			セクハラ部位 = 3
+			PRINT 의
+			IF TEQUIP:PLAYER:上半身鎧あり
+				PRINT 갑옷 아래로 손을 뻗어,
+			ELSEIF TEQUIP:PLAYER:手差し込み可
+				PRINT 옷자락 아래로 손을 집어넣어,
+				IF TEQUIP:PLAYER:上タイツあり
+					PRINT 타이츠 위로
+				ELSEIF TEQUIP:PLAYER:上半身下着あり < 1
+					PRINT 직접
+				ELSE
+					PRINT 속옷 위로
+				ENDIF
+			ELSE
+				PRINT 옷 위로,
+			ENDIF
+			PRINTFORML 가슴을 천천히 주물러왔어...
+		CASE 10
+			セクハラ部位 = 4
+			;キス
+			PRINTFORML 의 입술을 갑자기 빼앗고, 혀를 넣어왔어...
+		CASE 11
+			;ハグ
+			PRINTFORML 를 끌어당겨, 강하게 안아왔어...
+			PRINTFORM %CALLNAME:PLAYER%은/는 상대의
+			PRINTFORML 성희롱에, 조금 달아오르고 있어...
+			RETURN 0
+		CASE 12
+			;淫語
+			PRINTFORML 의 귓가에, 성욕을 부추기는 음란한 말을 속삭여왔어...
+			PRINTFORM %CALLNAME:PLAYER%은/는 상대의
+			PRINTFORML 성희롱에, 조금 달아오르고 있어...
+			RETURN 0
+		CASE 20
+			;Vレイプ
+			セクハラ部位 = 1
+			PRINTL 를 갑자기 후미진 곳으로 끌고 들어갔어
+			PRINTFORML 그리고 옷을 벗겨, %CALLNAME:PLAYER%의 질에 삽입하여 난폭하게 강간했어...
+			RETURN 0
+		CASE 21
+			;Aレイプ
+			セクハラ部位 = 2
+			PRINTL 를 갑자기 후미진 곳으로 끌고 들어갔어
+			PRINTFORML 그리고 옷을 벗겨, %CALLNAME:PLAYER%의 항문에 삽입하여 난폭하게 강간했어...
+			RETURN 0
+		CASE 22
+			;おくちレイプ
+			セクハラ部位 = 5
+			PRINTL 을/를 갑자기 은밀한 곳으로 데려갔다
+			PRINTFORML 그리고 입을 벌리게 해서, 억지로 %CALLNAME:PLAYER%에게 펠라를 시켰다…
+			RETURN 0
+		CASE 23
+			;V逆レイプ
+			セクハラ部位 = 0
+			PRINTL 을/를 갑자기 은밀한 곳으로 데려갔다
+			PRINTFORML 그리고 옷을 벗긴 후, 발기한 %CALLNAME:PLAYER%의 페니스를 질구로 받아들였다…
+			RETURN 0
+		CASE 24
+			;A逆レイプ
+			セクハラ部位 = 0
+			PRINTL 을/를 갑자기 은밀한 곳으로 데려갔다
+			PRINTFORML 그리고 옷을 벗긴 후, 발기한 %CALLNAME:PLAYER%의 페니스를 항문으로 받아들였다…
+			RETURN 0
+	ENDSELECT
+
+	PRINTFORM %CALLNAME:PLAYER%는 상대의
+	IF RFLAG:コマンド結果受渡し変数２ > 300
+		PRINT 능숙한 모습의
+	ENDIF
+	PRINT 성희롱에,
+	SELECTCASE PALAM:PLAYER:セクハラ部位
+		CASE IS < 1000
+			PRINTFORML 조금씩 달아오르고 있다…
+		CASE IS < 3000
+			PRINTFORML 쾌락에 살짝 소리를 내고 말았다…
+		CASE IS < 6000
+			PRINTFORML 강한 쾌감을 느끼고 있다…
+		CASEELSE
+			PRINTFORML 지금이라도 절정해 버릴 것 같다.
+	ENDSELECT
+ENDIF
+
+

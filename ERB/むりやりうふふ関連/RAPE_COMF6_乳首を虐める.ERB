@@ -1,0 +1,164 @@
+;-------------------------------------------------
+;乳首を虐める
+;愛撫系コマンド、レベル1
+;-------------------------------------------------
+@RAPE_COMNAME6
+#FUNCTIONS
+IF TALENT:陥没乳首 && !TCVAR:陥没乳首露出フラグ
+	TSTR:コマンド名受渡 = 함몰 유두를 발굴하다
+	;こっちのほうが「オモチャにしてる感」強くて征服感煽れるかなって
+ELSE
+	TSTR:コマンド名受渡 = 유두를 괴롭히다
+ENDIF
+
+
+
+;===================================================
+;コマンドタイプ
+;===================================================
+@RAPE_COMTYPE_6
+#FUNCTION
+TFLAG:コマンドタイプ受渡 = RAPE_COMTYPE("うふふ_被挿入中")
+
+
+@RAPE_COM_TOOLTIP_6
+LOCALS = <br>■유두를 괴롭히다<br>
+LOCALS += "상대의 유두를 장난감으로 삼는다. 파내거나, 꼬집거나."
+LOCALS += "<br>RAPE_COM타입: 우후후or피삽입중<br>획득 소스: 쾌B・노출・접촉・고통"
+LOCALS += "<br>고유 획득 경험: 유두 개발(TARGET)<br>"
+TSTR:ツールチップ受渡 = %LOCALS%
+
+@RAPE_COM6
+;-------------------------------------------------
+;ソース追加処理
+;-------------------------------------------------
+
+RCVAR:乳首開発フラグ = 2
+
+CALL SOURCE_CALC_快Ｂ(TARGET, PLAYER, 120)
+
+SIF TALENT:PLAYER:器用な指
+	CALL SOURCE_CALC_快Ｂ(TARGET, PLAYER, 50)
+CALL SOURCE_CALC_露出(TARGET, PLAYER, 60)
+CALL SOURCE_CALC_接触(TARGET, PLAYER, 60)
+CALL SOURCE_CALC_苦痛(TARGET, PLAYER, 50)
+;-------------------------------------------------
+;経験の処理
+;-------------------------------------------------
+;同性愛　レズなら戻り値1ゲイなら戻り値2
+IF HETEROSEX(TARGET,PLAYER)
+	EXP:同性愛経験 += 5
+	EXP:PLAYER:同性愛経験 += 5
+ENDIF
+
+RETURN 1
+
+;-------------------------------------------------
+;実行判定
+;-------------------------------------------------
+
+@RAPE_COM_ABLE6
+;乳首責め
+;一括管理
+SIF GLOBAL_RAPE_COMABLE(6)
+	RETURN RESULT
+;Bがない場合駄目
+SIF TALENT:TARGET:Ｂ感度 == -2
+	RETURN 0
+	
+;上半身着衣
+;鎧、差し込めないorはだけない服、タイツ、ブラ等があると無理
+SIF TEQUIP:上半身鎧あり
+	RETURN 0
+SIF TEQUIP:上半身服あり && (!TEQUIP:手差し込み可 && !TEQUIP:はだけ可)
+	RETURN 0
+SIF TEQUIP:上タイツあり && !TEQUIP:上タイツ破れ
+	RETURN 0
+SIF TEQUIP:上半身下着あり > 0
+	RETURN 0
+;ニプルキャップ使用中は不可
+SIF TEQUIP:16
+	RETURN 0
+;搾乳機使用中は不可
+SIF TEQUIP:17
+	RETURN 0
+;乳房電極装着中はダメ
+SIF TEQUIP:24
+	RETURN 0
+;指を何かに使ってるなら無理
+SIF TEQUIP:PLAYER:指 && MODE_確認_完全一致("授乳手コキ", TARGET, PLAYER) < 0 && MODE_確認_完全一致("乳首吸い", PLAYER, TARGET) < 0
+	RETURN 0
+;胸に届かないなら無理
+CALL MODE_部位届く判定(部位_胸, PLAYER, TARGET)
+SIF RESULT == 0
+	RETURN 0
+;寝てるときは痛み刺激系はオフに
+SIF CFLAG:TARGET:睡眠
+	RETURN 0
+
+RETURN 1
+
+;-------------------------------------------------
+;実行時メッセージ
+;-------------------------------------------------
+@RAPE_MESSAGE_COM6
+
+PRINTFORM %CALLNAME:PLAYER%은(는)
+
+
+IF MODE_確認_完全一致("Ｖ挿入系", PLAYER, TARGET) > -1 || MODE_確認_完全一致("Ａ挿入系", PLAYER, TARGET) > -1 || MODE_確認_完全一致("Ｖ挿入系", TARGET, PLAYER) > -1 || MODE_確認_完全一致("Ａ挿入系", TARGET, PLAYER) > -1
+	PRINTFORM %CALLNAME:TARGET%와 연결된 채, %OPPAI_DESCRIPTION(TARGET)%
+ELSE
+	PRINTFORM %CALLNAME:TARGET%의 %OPPAI_DESCRIPTION(TARGET)%
+ENDIF
+SELECTCASE TALENT:陥没乳首
+	CASE 0
+		;欲情のPALAMLV3以上
+		IF PALAM:欲情 >= PALAMLV:3
+			PRINTFORM 의 끝으로, 난폭하게 다뤄지고 있음에도 불구하고%TEXTR("완전히 단단해진/팽팽하게 단단해진/")%%TEXTR("돌기/유두")%를
+			IF MODE_確認_完全一致("乳首吸い", PLAYER, TARGET) > -1
+				SIF TEQUIP:上半身下着あり == -2 && RAND:2
+					PRINT 반짝이는 피어스째
+				PRINTFORML 혀로 핥으며 즐겼다…
+			ELSE
+				PRINTFORML %TEXTR("손가락 끝으로 꽉 눌러 뭉개주었다/손가락 끝으로 꼬집어주었다/손가락 끝으로 집어 짜듯이 당겨주었다", @"\@ TEQUIP:上半身下着あり == -3 ? 꿰뚫는 명찰을, 힘껏 당겨주었다/ # \@", @"\@ TEQUIP:上半身下着あり == -2 ? 장식하는 피어스를, 난폭하게 당겨주었다/ # \@")%…
+			ENDIF
+		ELSE
+			PRINTFORM 의 끝의, 아직 부드러운%TEXTR("돌기/유두")%를
+			IF MODE_確認_完全一致("乳首吸い", PLAYER, TARGET) > -1
+				PRINTFORML 혀로 핥으며 즐겼다…
+			ELSE
+				PRINTFORML %TEXTR("손가락 끝으로 꽉 눌러 뭉개주었다/손가락 끝으로 꼬집어주었다/손가락 끝으로 집어 짜듯이 당겨주었다", @"\@ TEQUIP:上半身下着あり == -3 ? 꿰뚫는 명찰을, 힘껏 당겨주었다/ # \@", @"\@ TEQUIP:上半身下着あり == -2 ? 장식된 피어스를, 난폭하게 당겨주었다/ # \@")%…
+			ENDIF
+		ENDIF
+	CASE 1
+		IF !TCVAR:陥没乳首露出フラグ
+			PRINTFORM 의 오목한 곳에
+			IF MODE_確認_完全一致("乳首吸い", PLAYER, TARGET) > -1
+				PRINTFORM 혀
+			ELSE
+				PRINTFORM 손가락
+			ENDIF
+			PRINTFORML 을 기어 다니게 하고, 숨겨진 유두를 파내고, 희롱했다…
+		ELSEIF TCVAR:陥没乳首露出フラグ == 10
+			;フラグの数値が10になるのは勃起直後のみのはず
+			PRINTFORM 의 오목한 곳을
+			IF MODE_確認_完全一致("乳首吸い", PLAYER, TARGET) > -1
+				PRINTFORM 혀
+			ELSE
+				PRINTFORM 손가락
+			ENDIF
+			PRINTFORML 으로 파내자,
+			PRINTFORML 딱딱하게 굳어진%CALLNAME:TARGET%의 유두가 밖으로 얼굴을 내밀었다…
+		ELSE
+			PRINTFORM 의 끝으로, 난폭하게 다뤄지고 있음에도 불구하고%TEXTR("완전히 굳어진/팽팽하게 굳어진/")%%TEXTR("돌기/유두")%을(를)
+			IF MODE_確認_完全一致("授乳手コキ", TARGET, PLAYER) > -1 || MODE_確認_完全一致("乳首吸い", PLAYER, TARGET) > -1
+				SIF TEQUIP:上半身下着あり == -2 && RAND:2
+					PRINT 반짝이는 피어스째로
+				PRINTFORML 혀로 핥으며 즐겼다…
+			ELSE
+				PRINTFORML %TEXTR("손가락 끝으로 꽉 눌러 뭉개주었다/손가락 끝으로 꼬집어주었다/손가락 끝으로 집어 짜듯이 당겨주었다", @"\@ TEQUIP:上半身下着あり == -3 ? 꿰뚫는 명찰을, 힘껏 당겨주었다/ # \@", @"\@ TEQUIP:上半身下着あり == -2 ? 장식된 피어스를, 난폭하게 당겨주었다/ # \@")%…
+			ENDIF
+		ENDIF
+ENDSELECT
+

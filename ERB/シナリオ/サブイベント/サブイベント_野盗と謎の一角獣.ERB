@@ -1,0 +1,158 @@
+@ZP開放時イベント解説_野盗と謎の一角獣
+
+;解説文を受け渡し
+TSTR:ツールチップ受渡 = 
+TSTR:ツールチップ受渡 += "■산적과 수수께끼의 일각수<br>"
+TSTR:ツールチップ受渡 += "<br>"
+TSTR:ツールチップ受渡 += "산중에 산적의 배가 내려왔다는 보고가 도착했다. 아무래도 산적은 뿔이 달린 말 같은 생물을 붙잡고 있는 모양이다.<br>"
+TSTR:ツールチップ受渡 += @"리조트가 황폐해지는 것은 참을 수 없다. %CALLNAME:PLAYER%은(는) 산적을 쓰러뜨리려 산중으로 향한다. <br>"
+TSTR:ツールチップ受渡 += "<br>"
+TSTR:ツールチップ受渡 += "출전：Violated Princess<br>"
+TSTR:ツールチップ受渡 += "해방 요소：캐릭터 1명 초대 해방<br>"
+
+;ZPショップに乗せるかどうかもここで判定
+SIF GETBIT(ダンジョン構造配列_人食い鳥の島:11:4, 2) == 0
+	RETURN 0
+SIF ダンジョンクリアフラグ_人食い鳥の島 == 0
+	RETURN 0
+
+;消費ZPを返す
+RETURN 50
+
+@ZP開放時イベント詳細解説_野盗と謎の一角獣
+;詳細ボタンを押した時の文章、こっちはPRINTで良い
+
+PRINTL ■해방 요소
+PRINTL ・던전 클리어로 해방
+PRINTL [그라치아 대공가의 소공녀] 세레나 초대 해방
+
+
+@イベント発生条件_サブイベント_野盗と謎の一角獣
+;開放条件を満たしたら1を返すこと
+
+SIF STRFIND(EXシナリオ解放記録, @"___野盗と謎の一角獣___") < 0
+	RETURN 0
+
+RETURN 1
+
+@イベント関数_サブイベント_野盗と謎の一角獣(ARG)
+
+#DIM 対象キャラ
+CALL 口上変数初期化
+
+対象キャラ = キャラ検索("[グラツィア大公家の小公女]セレナ")
+
+DRAWLINE
+PRINTL ［산적과 수수께끼의 일각수］
+DRAWLINE
+PRINTW
+PRINTFORMW 리조트의 개척과 시설 정비를 진행하여 방문하는 관광객도 점차 늘기 시작했지만, 여기서 새로운 문제에 직면하게 된다.
+PRINTFORMW 소문을 들은 산적들까지 리조트에 모여들게 된 것이다. 도둑질이나 자원 남획, 심할 때는 손님 유괴까지 꾀하는 지경이다.
+PRINTFORMW 지금까지는 피해가 발생하기 전, 혹은 확산되기 전에 토벌하고 있지만, 산적은 계속해서 나타난다. %CALLNAME:PLAYER%으로서는 골치 아픈 문제다.
+PRINTL
+PRINTFORMW 어느 날, 직원으로부터 산중에 배 한 척이 내려왔다는 보고가 도착했다. 아마도 산적의 것일 것이다.
+PRINTFORMW %CALLNAME:PLAYER%은(는) 한숨이 나오려는 것을 참으며, 자세한 내용을 듣지만……
+PRINTFORMW
+PRINTL
+PRINTL
+PRINTL
+PRINTL
+CALL 画像表示("顔エラ","LEFT",,,,1,)
+PRINTL 성정수 era：
+PRINTFORMW 「이마에 뿔이 난 말?」
+PRINTL
+PRINTFORMW 직원의 말로는, 산적은 이마에 1개의 훌륭한 뿔이 난 하얀 망아지를 데리고 있었다고 한다.
+PRINTFORMW %CALLNAME:PLAYER%은(는) 리조트 섬에 그러한 마물이 서식하고 있다는 이야기는 들어본 적이 없으므로, era에게 뭔가 아는 것이 없는지 질문을 던진다.
+PRINTFORMW
+PRINTL
+PRINTL
+PRINTL 성정수 era:
+PRINTFORMW 「아니, 나도 그러한 마물이 이 섬에 있다고는 들어본 적이 없다. 하지만, 뿔이 난 말……혹시, 유니콘일지도 모른다」
+PRINTL
+PRINTFORMW 유니콘……%CALLNAME:PLAYER%도 소문은 들어본 적이 있다.
+PRINTFORMW 모든 더러움을 씻어내고, 모든 병을 치유하는, 성스러운 뿔을 가진 영마.
+PRINTFORMW 전설의 환수라고 불리며, 유니콘을 기르고 있는 것은 왕후귀족이나 희대의 대상인 정도이다.
+PRINTL
+PRINTL 성정수 era:
+PRINTFORMW 「그 영마를 데리고 있다니, 꽤나 수상한 이야기로군. 순결한 처녀에게만 따를 터인데……
+PRINTFORMW 　어쨌든, 해당 산적은 조속히 쓰러뜨려야 할 것이다, 나의 계약자여」
+PRINTL
+PRINTFORMW %CALLNAME:PLAYER%은(는) 신중한 얼굴로 고개를 끄덕인다.
+PRINTFORMW 이번 산적은 뭔가 다를지도 모른다. 방심하지 않고, 제대로 준비를 하고 나서 향하자.
+PRINTL
+PRINTL
+PRINTL
+PRINTL
+PRINTL
+PRINTL
+PRINTL
+PRINTL
+PRINTL
+PRINTL
+PRINTFORMW      ――――――――――――――――――――――――――――――
+PRINTL
+PRINTL
+PRINTL
+PRINTL
+PRINTL
+PRINTL
+PRINTL
+PRINTL
+PRINTFORMW      ――――――――――――――――――――
+PRINTL
+PRINTL
+PRINTL
+PRINTL
+PRINTL
+PRINTL
+PRINTL
+PRINTL
+PRINTFORMW      ―――――――
+PRINTL
+PRINTL
+PRINTL
+PRINTL
+PRINTL
+PRINTL
+PRINTL
+PRINTL
+PRINTW
+
+CALL PRINT_STRL(@"IMAGEPATH_%CSTR:対象キャラ:画像フォルダ%/サブイベント_野盗と謎の一角獣")
+
+SETCOLOR 0xFFFF00
+PRINTFORMW 「――여기가, %リゾート名称%인가」
+RESETCOLOR
+PRINTL
+PRINTFORMW 한편 그 무렵, 공정항 에어리어에 1명의 금발 소녀가 내려서 있었다.
+PRINTFORMW 늠름하고 기품 있는 모습에, 미숙하지만 장차 큰 꽃이 필 것을 예감케 하는 뛰어난 용모.
+PRINTFORMW 그런 소녀에게 길을 가는 남자들은 눈을 빼앗겨, 몰래 시선을 보내고 있다.
+PRINTL
+PRINTL
+CALL PRINT_STRL(@"IMAGEPATH_%CSTR:対象キャラ:画像フォルダ%/サブイベント_野盗と謎の一角獣1")
+
+SETCOLOR 0xFFFF00
+PRINTFORMW 「스플렌도르…… 부디, 무사히 있어 줘……」
+RESETCOLOR
+PRINTL
+PRINTFORMW 소녀는 그렇게 중얼거리자, 강한 결의를 담은 표정으로 걷기 시작했다……
+PRINTL
+PRINTL
+
+SETCOLOR 0xFFFF00
+PRINTFORML 던전［Strayed_Princess］이(가) 해방되었습니다.
+ダンジョン出現フラグ_Strayed_Princess = 1
+RESETCOLOR
+FORCEWAIT
+
+CALL 口上変数表示(対象キャラ, 0)
+
+CALL イベント完了フラグ汎用処理("野盗と謎の一角獣")
+
+
+
+
+
+
+
+

@@ -1,0 +1,93 @@
+
+@COMNAME502
+#FUNCTIONS
+TSTR:コマンド名受渡 = 「맛있는 술」을 권하다
+
+;===================================================
+;コマンドタイプ
+;===================================================
+@COMTYPE_502
+#FUNCTION
+TFLAG:コマンドタイプ受渡 = COMTYPE("飲み会")
+
+@COM_TOOLTIP_502
+LOCALS = <br>「맛있는 술」을 권하다<br>
+LOCALS += "마시기 쉽고 도수가 높은, 통칭 「레이디 킬러」라고 불리는 술을 권한다. <br>"
+LOCALS += "<br>레이디 킬러를 소비하는 대신, 보통 술을 마시는 것보다 상대의 만취 게이지를 더 많이 증가시킬 수 있다."
+LOCALS += "<br>COM 타입: 술자리<br>취득 소스: 환락"
+LOCALS += "<br>고유 취득 경험: 음주 경험(전원)<br>"
+TSTR:ツールチップ受渡 = %LOCALS%
+
+@COM502
+
+
+	IF BASE:TARGET:酩酊 < 0
+		BASE:TARGET:酩酊 += RAND:100 + 10
+		IF TALENT:TARGET:酒に強い == 2
+			BASE:TARGET:酩酊 = 0
+		ELSEIF TALENT:TARGET:酒に強い == 1
+			BASE:TARGET:酩酊 += 40
+		ELSEIF TALENT:TARGET:酒に強い == 0
+			BASE:TARGET:酩酊 += 10
+		ENDIF
+	ELSE
+		IF !初体験日:TARGET:初飲酒
+			初体験日:TARGET:初飲酒 = DAY
+			TCVAR:TARGET:初飲酒フラグ = 1
+			CALL 履歴データベース登録(CFLAG:TARGET:人物番号, @"初めてリゾートでお酒を飲んだ","日常")
+		ENDIF
+		EXP:TARGET:飲酒経験 += RAND:5 + 1
+		BASE:TARGET:酩酊 += RAND:100 + RAND:100 + 250
+		IF TALENT:TARGET:酒に強い == 2
+			BASE:TARGET:酩酊 = MIN(700, BASE:TARGET:酩酊 - 70)
+		ELSEIF TALENT:TARGET:酒に強い == 1
+			BASE:TARGET:酩酊 -= 40
+		ELSEIF TALENT:TARGET:酒に強い == -1
+			BASE:TARGET:酩酊 += 40
+		ENDIF
+		SIF BASE:TARGET:酩酊 >= 1000
+			CFLAG:TARGET:酔いすぎ = 1
+	ENDIF
+CALL SOURCE_CALC_歓楽(TARGET, PLAYER, 500)
+CALL SOURCE_CALC_好感度要素_友情度UP(TARGET, PLAYER, 150)
+
+
+ITEM:レディキラー -= 1
+SIF TCVAR:TARGET:レディキラー != 1
+	TCVAR:TARGET:レディキラー = 1
+
+EXP:MASTER:飲酒経験 += RAND:5 + 1
+
+;酔い強度
+BASE:MASTER:酩酊 += RAND:100 + RAND:100 + 100
+SIF BASE:MASTER:酩酊 >= 1000
+	CFLAG:MASTER:酔いすぎ = 1
+
+TIME += 15
+
+
+;-------------------------------------------------
+;実行判定
+;-------------------------------------------------
+@COM_ABLE502
+;会話実行判定
+SIF SAVESTR:ゲームフェイズ管理 != "通常モード"
+	RETURN 0
+;一括管理
+SIF GLOBAL_COMABLE(502)
+	RETURN RESULT
+SIF TALENT:TARGET:飲食不可
+	RETURN 0
+SIF ITEM:レディキラー <= 0
+	RETURN 0
+
+RETURN 1
+
+;-------------------------------------------------
+;実行時メッセージ
+;-------------------------------------------------
+@MESSAGE_COM502
+PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%에게 「깔끔하고 달콤하며 맛있는 술」을 권했다…….
+PRINTL
+PRINTFORMW %TEXTR("즐거워 보이는/맛있어 보이는")% 모습으로 마시는 %CALLNAME:TARGET%의 모습에, 무심코 %CALLNAME:PLAYER%도 미소가 흘러나왔다.
+

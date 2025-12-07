@@ -1,0 +1,360 @@
+;-------------------------------------------------
+;秘貝開帳
+;愛撫系コマンド、レベル2
+;-------------------------------------------------
+@COMNAME8
+#FUNCTIONS
+TSTR:コマンド名受渡 = 보지벌리기
+SIF GETBIT(FLAG:モード管理, モードビット_同時)
+	TSTR:コマンド名受渡 = 동시에 보지벌리기
+
+
+
+;===================================================
+;コマンドタイプ
+;===================================================
+@COMTYPE_8
+#FUNCTION
+TFLAG:コマンドタイプ受渡 = COMTYPE("うふふ")
+弱点コマンドカテゴリ = C_女
+同時モード許可 = 999
+
+
+@COM_TOOLTIP_8
+LOCALS = <br>■秘貝開帳<br>
+LOCALS += "상대에게 비부를 벌리게 하는 커맨드."
+LOCALS += "<br>COM타입: 우후후<br>획득 소스: 쾌C・노출"
+LOCALS += "<br>고유 획득 경험: 자위 경험(TARGET・일정 조건 시)<br>"
+TSTR:ツールチップ受渡 = %LOCALS%
+
+@COM8
+;-------------------------------------------------
+;ソース追加処理
+;-------------------------------------------------
+;処女、貞操観念
+IF TALENT:処女 == 1
+	CALL SOURCE_CALC_露出(TARGET, PLAYER, 500)
+ELSE
+	CALL SOURCE_CALC_露出(TARGET, PLAYER, 300)
+ENDIF
+CALL SOURCE_CALC_快Ｃ(TARGET, PLAYER, 40)
+;-------------------------------------------------
+;経験の処理
+;-------------------------------------------------
+;露出癖Lv3以上で自慰経験加算
+SIF ABL:露出癖 >= 3
+	EXP:自慰経験 ++
+
+;同性愛
+SIF 同性愛性癖判定(TARGET,PLAYER)
+	EXP:TARGET:同性愛経験 += 1
+SIF 同性愛性癖判定(PLAYER,TARGET)
+	EXP:PLAYER:同性愛経験 += 1
+
+RETURN 1
+
+
+@CAN_COM8(ARG)
+#DIM CONST 必要実行値 = 18
+#DIM 実行値
+#DIM ＋表示フラグ
+
+SKIPDISP ARG
+PRINTFORML 은밀한 조개 개방(%CALLNAME:TARGET%)
+;-------------------------------------------------
+;実行できるかの判定
+;-------------------------------------------------
+実行値 = 0
+＋表示フラグ = 0
+
+;すべての命令に共通の要素を考慮
+CALL COM_ORDER
+実行値 = RESULT
+＋表示フラグ = RESULT:1
+
+;ABL:欲望
+IF ABL:欲望
+	SIF ＋表示フラグ
+		PRINT  + 
+	実行値 += ABL:欲望 * 3
+	PRINTFORM 욕망 LV{ABL:欲望}({ABL:欲望 * 3})
+	＋表示フラグ = 1
+ENDIF
+;ABL:Ｖ感覚
+IF ABL:Ｖ感覚
+	SIF ＋表示フラグ
+		PRINT  + 
+	実行値 += ABL:Ｖ感覚 * 2
+	PRINTFORM V 감각 LV{ABL:Ｖ感覚}({ABL:Ｖ感覚 * 2})
+	＋表示フラグ = 1
+ENDIF
+;ABL:奉仕精神
+IF ABL:奉仕精神
+	SIF ＋表示フラグ
+		PRINT  + 
+	実行値 += ABL:奉仕精神 * 4
+	PRINTFORM 봉사 정신 LV{ABL:奉仕精神}({ABL:奉仕精神 * 4})
+	＋表示フラグ = 1
+ENDIF
+;ABL:露出癖
+IF ABL:8
+	SIF ＋表示フラグ
+		PRINT  + 
+	実行値 += ABL:露出癖 * 3
+	PRINTFORM 노출증 LV{ABL:露出癖}({ABL:露出癖 * 3})
+	＋表示フラグ = 1
+ENDIF
+;ABL:自慰中毒
+IF ABL:自慰中毒
+	SIF ＋表示フラグ
+		PRINT  + 
+	実行値 += ABL:自慰中毒 * 3
+	PRINTFORM 자위 중독 LV{ABL:自慰中毒}({ABL:自慰中毒 * 3})
+	＋表示フラグ = 1
+ENDIF
+
+IF MARK:快楽刻印
+	SIF ＋表示フラグ
+		PRINT  + 
+	実行値 += MARK:快楽刻印 * 3
+	PRINTFORM 쾌락 각인 LV{MARK:快楽刻印}({MARK:快楽刻印 * 3})
+	＋表示フラグ = 1
+ENDIF
+
+;PALAM:潤滑（の不足）
+IF PALAM:潤滑 < PALAMLV:3
+	PRINT  - 
+	実行値 -= 5
+	PRINT 윤활 부족(5)
+	＋表示フラグ = 1
+ENDIF
+;PALAM:欲情
+IF GETPALAMLV(PALAM:欲情, 5)
+	SIF ＋表示フラグ
+		PRINT  + 
+	実行値 += GETPALAMLV(PALAM:欲情, 5) * 3
+	PRINTFORM 욕정 LV{GETPALAMLV(PALAM:欲情, 5)}({GETPALAMLV(PALAM:欲情, 5) * 3})
+	＋表示フラグ = 1
+ENDIF
+
+;恥じらい
+IF TALENT:羞恥心 > 0
+	PRINT  - 
+	実行値 -= 2
+	PRINT 수치심(2)
+	＋表示フラグ = 1
+ENDIF
+;快感の否定（淫乱、娼婦で無効）
+IF TALENT:快感応答 < 0 && !TALENT:淫乱
+	PRINT  - 
+	実行値 -= 5
+	PRINT 쾌감 부정(5)
+	＋表示フラグ = 1
+ENDIF
+;男嫌い（恋慕、親愛で無効）
+IF TALENT:性別嗜好 & 1 && !(TALENT:PLAYER:性別 & 1) && ((!TALENT:恋慕) || PLAYER != MASTER)
+	PRINT  - 
+	実行値 -= 12
+	PRINT 남성 기피(12)
+	＋表示フラグ = 1
+ENDIF
+
+;処女
+IF TALENT:処女 == 1
+	PRINT  - 
+	実行値 -= 20
+	PRINT 처녀(20)
+	＋表示フラグ = 1
+ELSEIF EXP:Ｖ経験 < EXPLV:2
+	PRINT  - 
+	実行値 -= 5
+	PRINT V 경험 부족(5)
+	＋表示フラグ = 1
+ENDIF
+
+;調教者がふたなり
+IF (TALENT:PLAYER:性別 & 3) == 3
+	PRINT  + 
+	実行値 += 4
+	PRINT 후타나리(4)
+	＋表示フラグ = 1
+ENDIF
+
+;媚薬
+IF TEQUIP:媚薬
+	SIF ＋表示フラグ
+		PRINT  + 
+	実行値 += 6
+	PRINT 최음제(6)
+	＋表示フラグ = 1
+ENDIF
+
+;言いなり
+IF TCVAR:言いなり
+	SIF ＋表示フラグ
+		PRINT  + 
+	実行値 += 999
+	PRINT 당신의 말대로(999)
+	＋表示フラグ = 1
+ENDIF
+
+;合計を表示(18以上で実行)
+PRINTFORM  = {実行値}
+
+SIF 実行値 < 必要実行値
+	PRINT  < 
+SIF 実行値 == 必要実行値
+	PRINT  = 
+SIF 実行値 > 必要実行値
+	PRINT  > 
+PRINTFORM 실행값{必要実行値}
+
+WAIT
+SKIPDISP 0
+
+;実行できない
+SIF 実行値 < 必要実行値
+	RETURN 0
+
+RETURN 1
+
+;-------------------------------------------------
+;実行判定
+;-------------------------------------------------
+@COM_ABLE8
+;秘貝開帳実行判定
+SIF SAVESTR:ゲームフェイズ管理 != "通常モード"
+	RETURN 0
+;一括管理
+SIF GLOBAL_COMABLE(8)
+	RETURN RESULT
+;Vがない場合駄目
+SIF TALENT:TARGET:Ｖ感度 == -2
+	RETURN 0
+SIF GETBIT(TALENT:TARGET:性別, 0) == 0
+	RETURN 0
+;露出癖が2未満だとダメ
+SIF ABL:露出癖< 2
+	RETURN 0
+;処女の場合、露出癖3以上ないとダメ
+SIF TALENT:処女 && ABL:露出癖 < 3
+	RETURN 0
+;縄使用中は不可
+; SIF TEQUIP:縄
+; 	RETURN 0
+
+;下半身着衣
+;前鎧、めくれない服、タイツ、下着があると無理
+SIF TEQUIP:下腹部前鎧あり
+	RETURN 0
+SIF TEQUIP:下半身服あり && (!TEQUIP:スカートめくり可 && !TEQUIP:ずらし可)
+	RETURN 0
+SIF TEQUIP:下タイツあり && !TEQUIP:下タイツ破れ
+	RETURN 0
+SIF TEQUIP:下半身下着あり > 0
+	RETURN 0
+
+;オトコだとダメ
+SIF !(TALENT:性別 & 1)
+	RETURN 0
+;お風呂場プレイ中はプレイマットが無いとダメ
+IF BATHROOM(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置)
+	SIF ITEM:20 == 0 && NOITEM == 0
+		RETURN 0
+ENDIF
+;指を何かに使ってるなら無理
+SIF TEQUIP:TARGET:指
+	RETURN 0
+;膣を何かに使ってるなら無理
+SIF TEQUIP:TARGET:膣
+	RETURN 0
+
+RETURN 1
+
+;-------------------------------------------------
+;実行時メッセージ
+;-------------------------------------------------
+@MESSAGE_COM8
+#DIM 同時キャラ番号
+PRINTFORM %CALLNAME:PLAYER%에게 명령받아,
+IF GETBIT(FLAG:モード管理, モードビット_同時)
+	FOR 同時キャラ番号, 0, 同時モード_選択数
+		SIF 同時キャラ番号 > 0
+			PRINT ,
+		PRINTFORM %CALLNAME:(同時モード_選択キャラ:同時キャラ番号)%
+	NEXT
+	PRINT 는 나란히 성기를 벌려 보였다…
+	RETURN 0
+ENDIF
+
+PRINTFORM %CALLNAME:TARGET%는
+;露出癖
+IF 知識素質:性知識 < 0 && ABL:露出癖 < 3
+	PRINTFORM 무슨 의미인지 몰라 의아한 표정을 지으며 자신의
+	;小柄体型
+	IF TALENT:種族 < 0
+		PRINT 어린 보지에
+	ELSE
+		PRINT 음렬에
+	ENDIF
+	PRINTL 손가락을 넣어 좌우로 벌려 보였다
+ELSEIF ABL:露出癖 == 0
+	PRINTFORM 눈물을 글썽이며 이쪽을 노려봤지만, 마지못한 듯 자신의
+	;小柄体型
+	IF TALENT:種族 < 0
+		PRINT 어린 보지에
+	ELSE
+		PRINT 음렬에
+	ENDIF
+	PRINTL 손가락을 넣어 좌우로 벌려 보였다
+	; SIF TCVAR:102
+	; 	PRINTFORML さらけ出された膣口からは、さきほど射精した精液が、こぽこぽとこぼれてくる…
+ELSEIF ABL:露出癖 == 1
+	PRINTFORML 얼굴을 새빨갛게 물들이면서도, 조심스럽게 성기를 또렷이 벌려 보였다
+	; SIF TCVAR:102
+	; 	PRINTFORML さらけ出された膣口からは、さきほど射精した精液が、こぽこぽとこぼれてくる…
+ELSEIF ABL:露出癖 == 2
+	PRINTFORML 하복부에 손을 얹고, 검지와 중지로 사인을 만들듯이, %CALLNAME:PLAYER%에게 자신의 은밀한 곳을 드러냈다
+	; IF TCVAR:102
+	; 	PRINTFORML さらけ出された膣口からは、さきほど射精した精液が、こぽこぽとこぼれてくる…
+	; ELSE
+		PRINTFORML 벌어진 보지 사이로 이쪽을 엿보는 질구는, 받아들여야 할 것을 애타게 기다리는 듯, 애액에 젖어 음란하게 꿈틀거린다…
+	; ENDIF
+ELSEIF ABL:露出癖 == 3
+	PRINTFORML 기쁜 표정으로, 한 손으로 음순을 벌리고, 남은 손으로 음핵을 희롱하기 시작했다
+	; IF TCVAR:102
+	; 	PRINTFORML さらけ出された膣口は、さきほど射精したばかりの精液を、淫らに垂れ流している…
+	; ELSE
+		PRINTFORML %CALLNAME:TARGET%의 손이 음핵을 자극할 때마다, 질구에서 애액을 흘리고 있다…
+	; ENDIF
+ELSEIF ABL:露出癖 == 4
+	PRINTFORML 양손의 손가락을 써서 음순뿐만 아니라, 질구도 동시에 벌렸다
+	; IF TCVAR:102
+	; 	PRINTFORML %CALLNAME:TARGET%の手が膣口をさらに左右に拡げると、さきほど射精した精液を垂れ流している…
+	; ELSE
+		PRINTFORML 질 속을 보여주는 것에 느끼는 것인지, %CALLNAME:TARGET%의 뺨은 희미하게 붉게 물들어 있다
+	; ENDIF
+ELSEIF ABL:露出癖 >= 5 && TALENT:淫乱 == 0
+	PRINTFORML 양손의 손가락을 음순에 걸어, 질구째로 %CALLNAME:PLAYER%에게 과시하듯이 크게 벌렸다
+	; IF TCVAR:102
+	; 	PRINTFORML 大きく拡げられた膣口は、さきほど射精した精液を垂れ流している…
+	; ELSE
+		PRINTFORML %CALLNAME:TARGET%의 손이 질 내부까지 벌려 보이자, 질벽이 뻐끔뻐끔 움직이며, 애액을 끊임없이 흘려보내고 있다…
+	; ENDIF
+;露出癖LV5以上＋淫乱or娼婦
+ELSEIF ABL:露出癖 >= 5 && TALENT:淫乱
+	PRINTFORML 양손 손가락을 음순에 걸어, 질 입구째 %CALLNAME:PLAYER%에게 보여주듯이 크게 벌렸다
+	; IF TCVAR:102
+	; 	PRINTFORML うごめく膣内からは、さきほど射精した精液が、どろりと、だらしなくこぼれてきた…
+	; ELSE
+		PRINTFORML 부드러워 보이는 질 안은, 점액으로 흥건히 젖어, 이쪽을 유혹하듯이 씰룩씰룩 꿈틀거리고 있다…
+	; ENDIF
+ENDIF
+;調教者が恥じらい＋調教経験200以下
+IF TALENT:PLAYER:羞恥心 > 0 && EXP:PLAYER:調教経験 < 200
+	PRINTFORML 직접 명령을 내려놓고서도 막상 %CALLNAME:TARGET%의 추태를 눈앞에서 본 %CALLNAME:PLAYER%는
+	PRINTL 희미한 죄책감과 수치심을 자극받아, 붉게 물든 얼굴을 살짝 돌려버렸다
+ENDIF
+
+SIF TCVAR:TARGET:膣内精液量
+	PRINTFORML %CALLNAME:TARGET%의 질 입구에서, 정액이 질척하게 흘러내렸다…

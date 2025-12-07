@@ -1,0 +1,62 @@
+@MORNINGEVENT_初うふふ泥酔ックス後(対象キャラ)
+#DIM 対象キャラ
+
+DRAWLINE
+TRYCCALLFORM KOJO_MORNINGEVENT_初うふふ泥酔ックス後_{NO:対象キャラ}(対象キャラ)
+CATCH
+	PRINTFORML 아침부터%CALLNAME:対象キャラ%이(가) 찾아왔다.
+	IF 告白成功判定(対象キャラ)
+		PRINTFORMW 아무래도 어제 술김에 육체관계를 가져버린 것에 대한 이야기인 것 같다.
+		PRINTL
+		PRINTFORML %CALLNAME:対象キャラ%은(는) 그런 관계가 되는 것을 싫어하지 않는 것 같다……。
+		PRINTFORMW 다만, 가능하다면 어울리는 관계가 되고 싶은 것 같다.
+		PRINTFORMW 이야기가 끝나자, 살짝 얼굴을 붉히며%CALLNAME:対象キャラ%은(는) 떠나갔다……。
+	ELSEIF TALENT:対象キャラ:酒に強い < 0
+		WAIT
+		PRINTL
+		PRINTFORML %CALLNAME:対象キャラ%은(는) 어제의 일을 아무것도 기억하지 못하는 것 같다.
+		PRINTFORML 무언가 이상한 짓을 하지 않았을까 불안해하며 물어보러 온 것 같다.
+		PRINTFORMW %CALLNAME:PLAYER%이(가) 아무 일도 없었다고 말하자, %CALLNAME:対象キャラ%은(는) 안심하고 떠나갔다……。
+	ELSEIF CFLAG:対象キャラ:好感度レベル > 関係閾値:4
+		PRINTFORMW 아무래도 어제 술김에 육체관계를 가져버린 것에 대한 이야기인 것 같다.
+		PRINTL
+		PRINTFORML %CALLNAME:対象キャラ%은(는) 어제의 일은 서로 잊자고 말했다.
+		PRINTFORML 술김에 이상한 짓을 해버려서 미안하게 생각하는 것 같다.
+		PRINTFORMW 오히려 기뻤다고%CALLNAME:PLAYER%이(가) 전하자, 얼굴을 붉히며%CALLNAME:対象キャラ%은(는) 떠나갔다……。
+	ELSE
+		PRINTFORMW 아무래도 어제 술김에 육체관계를 가져버린 것에 대한 이야기인 것 같다.
+		PRINTL
+		PRINTFORML %CALLNAME:対象キャラ%은(는) 어제의 일은 서로 잊자고 말했다.
+		PRINTFORML 한순간의 착각이었다고 하고 싶은 것 같다.
+		PRINTFORMW 살짝 얼굴을 붉히며, %CALLNAME:対象キャラ%는 서둘러 떠나갔다…….
+	ENDIF
+ENDCATCH
+
+
+@MORNINGEVENT_初うふふ気の迷いックス後(対象キャラ)
+#DIM 対象キャラ
+
+DRAWLINE
+TRYCCALLFORM KOJO_MORNINGEVENT_初うふふ気の迷いックス後_{NO:対象キャラ}(対象キャラ)
+CATCH
+	PRINTFORML 아침부터 %CALLNAME:対象キャラ%가 찾아왔다.
+	IF 告白成功判定(対象キャラ)
+		PRINTFORMW 아무래도 어제 분위기에 휩쓸려 육체관계를 가져버린 것에 대한 이야기인 것 같다.
+		PRINTL
+		PRINTFORML %CALLNAME:対象キャラ%는, 그런 관계가 되는 것을 싫어하지 않는 것 같다…….
+		PRINTFORMW 다만, 가능하다면 어울리는 관계가 되고 싶은 것 같다.
+		PRINTFORMW 이야기가 끝나자, 살짝 얼굴을 붉히며 %CALLNAME:対象キャラ%는 떠나갔다…….
+	ELSEIF CFLAG:対象キャラ:好感度レベル > 関係閾値:4
+		PRINTFORMW 아무래도 어제 분위기에 휩쓸려 육체관계를 가져버린 것에 대한 이야기인 것 같다.
+		PRINTL
+		PRINTFORML %CALLNAME:対象キャラ%는, 어제의 일은 서로 잊자고 말했다.
+		PRINTFORML 한순간의 착각으로 이상한 짓을 해버린 것에 대해 미안하게 생각하는 것 같다.
+		PRINTFORMW 오히려 기뻤다고 %CALLNAME:PLAYER%가 전하자, 얼굴을 붉히고 %CALLNAME:対象キャラ%는 떠나갔다…….
+	ELSE
+		PRINTFORMW 아무래도 어제 분위기에 휩쓸려 육체관계를 가져버린 것에 대한 이야기인 것 같다.
+		PRINTL
+		PRINTFORML %CALLNAME:対象キャラ%는, 어제의 일은 서로 잊자고 말했다.
+		PRINTFORML 몸을 허락한 것은 한순간의 착각이었다는 것 같다.
+		PRINTFORMW 살짝 얼굴을 붉히며, %CALLNAME:対象キャラ%는 서둘러 떠나갔다…….
+	ENDIF
+ENDCATCH

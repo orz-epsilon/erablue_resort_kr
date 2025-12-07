@@ -1,0 +1,113 @@
+
+;-------------------------------------------------
+;遊戯室でスロットゲーム
+;-------------------------------------------------
+
+@COMNAME_PLACE_382_0_503
+#FUNCTION
+TSTR:コマンド名受渡 = 슬롯 게임을 하다
+IF 施設改造度:5:0 == 0
+	TSTR:コマンド名受渡 = 
+	RETURNF 0
+ENDIF
+RETURNF 1
+
+;===================================================
+;コマンドタイプ
+;===================================================
+@COMTYPE_382_0_503
+#FUNCTION
+TFLAG:コマンドタイプ受渡 = COMTYPE("単独可能")
+
+@COM_TOOLTIP_382_0_503
+LOCALS = <br>■슬롯 게임을 하다<br>
+LOCALS += "슬롯 게임을 하는 커맨드. 미니 게임 『슬롯 게임』이 발생."
+LOCALS += "<br>COM 타입: 단독 가능<br>획득 소스: 없음"
+LOCALS += "<br>고유 획득 경험: 도박 경험(PLAYER)<br>"
+TSTR:ツールチップ受渡 = %LOCALS%
+
+@COM382_0_503
+RFLAG:コマンド結果受渡し変数 = 0
+RFLAG:コマンド結果受渡し変数２ = 0
+RFLAG:コマンド結果受渡し変数３ = 0
+
+SIF GETBIT(ミニゲーム初回説明フラグ, 0)
+	GOTO 初回説明スキップ
+SETBIT ミニゲーム初回説明フラグ, 0
+PRINTL 
+PRINTL 미니 게임 『슬롯 게임』
+PRINTL 
+PRINTW 
+PRINTW 회전하는 릴을 멈춰서 이미지를 완성해 주세요
+PRINTL
+PRINTW 릴을 클릭하거나, 숫자를 입력하여 각 릴을 멈출 수 있습니다
+PRINTL 
+PRINTL START를 선택하여 계속해서 플레이할 수 있습니다
+PRINTW EXIT를 선택하거나, 루피가 없어지면 게임을 종료합니다
+PRINTL 
+PRINTL 
+PRINTL 
+$INPUT
+PRINTBUTTON "[0]플레이하기 ", 0
+PRINTBUTTON "[1]플레이하지 않기 ", 1
+BINPUT
+SELECTCASE RESULT 
+CASE 0
+CASE 1
+	PRINTFORML %CALLNAME:PLAYER%은(는) 그 자리에서 떠났다...
+	RETURN -1
+ENDSELECT
+
+$初回説明スキップ
+PRINTFORM %CALLNAME:PLAYER%은(는)...
+
+IF MONEY < 100
+	PRINTL 슬롯을 플레이할 돈이 없다...
+	RETURN 1
+ENDIF
+
+RFLAG:コマンド結果受渡し変数 = 1 ;遊び始めた
+
+IF あなた特殊能力:ギャンブラー
+	PRINT 망설임 없이 판돈이 높은 슬롯을 선택했다!
+	LOCAL = 1000
+ELSEIF CFLAG:PLAYER:隠密 || !TARGET
+	PRINT 남의 시선을 신경 쓰며 판돈이 높은 슬롯을 선택했다...
+	LOCAL = 1000
+ELSE
+	PRINT 슬롯 게임을 시작했다...
+	LOCAL = 100
+ENDIF
+
+CALL スロットゲーム(LOCAL)
+RFLAG:コマンド結果受渡し変数２ = RESULT ;ルピ変動量
+
+EXP:PLAYER:ギャンブル経験 += RFLAG:コマンド結果受渡し変数３
+TIME += RFLAG:コマンド結果受渡し変数３ * 5
+
+RETURN 1
+
+;-------------------------------------------------
+;実行判定
+;-------------------------------------------------
+@COM_ABLE382_0_503
+;条件に合う場合0（不許可）を返す
+;どの条件にも引っかからないなら1（許可）を返す
+;一括管理
+SIF GLOBAL_COMABLE(382)
+	RETURN RESULT
+;睡眠中
+SIF CFLAG:睡眠
+	RETURN 0
+RETURN 1
+
+;-------------------------------------------------
+;実行時メッセージ
+;-------------------------------------------------
+@MESSAGE_COM382_0_503
+
+SIF !RFLAG:コマンド結果受渡し変数 ;遊べなかった
+	RETURN
+
+PRINTFORML %CALLNAME:PLAYER%은(는) 슬롯 게임을 즐겼다.
+

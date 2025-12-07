@@ -1,0 +1,97 @@
+;------------------------------------------------------------------------------
+;合意済みの相手
+;性欲一定以上だとこっそり乳を露出して挑発してくる
+;------------------------------------------------------------------------------
+@AUTOCOM2
+CALL SOURCE_CALC_露出_反感無し(AUTOCOM_実行番号保存, PLAYER, 100)
+TIME_胸部チラ見せ:AUTOCOM_実行番号保存:0 = TIME
+
+RETURN 1
+
+@AUTOCOM_ABLE2(キャラ番号)
+#DIM キャラ番号
+;あなたが必要
+SIF GETBIT(AUTOCOM_相手判別関数(キャラ番号), 0) == 0
+	RETURN 0
+;うふふ済み
+SIF !初体験日取得("初うふふ", キャラ番号, MASTER)
+	RETURN 0
+;露出癖１以上
+SIF ABL:キャラ番号:露出癖 < 1
+	RETURN 0
+;うふふ中ではない
+SIF CFLAG:キャラ番号:うふふ
+	RETURN 0
+;２時間に１回のみ発動
+SIF TIME - TIME_胸部チラ見せ:キャラ番号:0 < 120
+	RETURN 0
+;生意気必須
+SIF TALENT:キャラ番号:応答 < 1
+	RETURN 0
+;B必須
+SIF TALENT:キャラ番号:Ｂ感度 == -2
+	RETURN 0
+;性欲一定以上
+SIF BASE:キャラ番号:性欲 < 1500
+	RETURN 0
+;真面目、無関心、恥じらいがあるとアウト
+SIF TALENT:キャラ番号:自制心 > 0
+	RETURN 0
+SIF TALENT:キャラ番号:無関心 > 0
+	RETURN 0
+SIF TALENT:キャラ番号:羞恥心 > 0
+	RETURN 0
+;性知識0必要
+SIF 知識素質:キャラ番号:性知識 < 0
+	RETURN 0
+RETURN 1
+
+@MESSAGE_AUTOCOM2
+PRINTFORM %CALLNAME:AUTOCOM_実行番号保存%는 %CALLNAME:PLAYER%에게만 보이도록, 은밀하게
+
+IF TEQUIP:AUTOCOM_実行番号保存:上半身鎧あり
+	PRINT 갑옷을 느슨하게 풀고,
+ENDIF
+
+IF TEQUIP:AUTOCOM_実行番号保存:上半身服あり
+	IF TEQUIP:AUTOCOM_実行番号保存:はだけ可
+		PRINT 옷을 살짝 흘러내리게 한 뒤
+	ELSE
+		PRINT 옷 틈새로
+	ENDIF
+ELSEIF TEQUIP:AUTOCOM_実行番号保存:上タイツあり
+	PRINT 타이츠를 크게 벌려
+ELSE
+	PRINT
+ENDIF
+
+IF TALENT:AUTOCOM_実行番号保存:バストサイズ < 0
+	PRINT 완만한 가슴팍과
+ELSEIF TALENT:AUTOCOM_実行番号保存:バストサイズ < 2
+	PRINT 아름다운 형태의 두 언덕과
+ELSE
+	PRINT 커다란 유방이 만들어내는 깊은 계곡과
+ENDIF
+
+SELECTCASE TEQUIP:AUTOCOM_実行番号保存:上半身下着あり
+	CASE 1
+		PRINT 속옷,
+	CASE 2
+		PRINT 끝부분만을 덮는 작은 니플 커버,
+	CASE 3
+		PRINT 그것을 가리는 건강미 넘치는 사라시,
+	CASE 4
+		PRINT 비밀스러운 과실을 아래에 숨긴 리본,
+	CASE -1
+		PRINT , 정욕을 부추길 뿐인 천 조각 사이로 굴러 나온 유두,
+	CASE -2
+		PRINT 피어스가 반짝이는 유두,
+	CASE -3
+		PRINT 안전핀으로 명찰을 고정한 유두,
+	CASEELSE
+		PRINT 아름다운 색의 유두
+ENDSELECT
+PRINT 를 과시하듯 보여주었다…
+
+
+

@@ -1,0 +1,310 @@
+
+@COMNAME325
+#FUNCTIONS
+TSTR:コマンド名受渡 = 젖꼭지 맞추기 게임
+
+;===================================================
+;コマンドタイプ
+;===================================================
+@COMTYPE_325
+#FUNCTION
+TFLAG:コマンドタイプ受渡 = COMTYPE("セクハラ&飲み会")
+
+@COM_TOOLTIP_325
+LOCALS = <br>■젖꼭지 맞추기 게임<br>
+LOCALS += "옷 위에서 가슴을 찌르고, 젖꼭지의 위치를 맞추는 게임을 하는 커맨드. <br>상대의 동의가 필요하다."
+LOCALS += "<br>COM 타입: 성희롱 and 술자리<br>획득 소스: 접촉・노출・쾌B"
+LOCALS += "<br>고유 획득 경험: 젖꼭지 개발(TARGET・일정 조건 시)<br>"
+TSTR:ツールチップ受渡 = %LOCALS%
+
+
+@COM325
+
+;乳首当てゲーム
+LOCAL = 乳首当て結果判定(TARGET)
+SELECTCASE LOCAL
+	CASE 0 TO 4
+		RFLAG:コマンド結果受渡し変数４ = 1
+		TFLAG:乳首当て連続記録 += 1
+		RCVAR:乳首開発フラグ = 1
+		CALL SOURCE_CALC_快Ｂ(TARGET, PLAYER, 100)
+	CASE 5 TO 8
+		;口上のために連続記録０は後で行う
+		RFLAG:コマンド結果受渡し変数４ = -1
+	CASE 9
+		RFLAG:コマンド結果受渡し変数４ = 2
+		TFLAG:乳首当て連続記録 += 1
+		RCVAR:乳首開発フラグ = 2
+		SIF TALENT:陥没乳首
+		CALL SOURCE_CALC_快Ｂ(TARGET, PLAYER, 150)
+ENDSELECT
+
+SIF 同性愛性癖判定(TARGET,PLAYER)
+	EXP:TARGET:同性愛経験 += 1
+SIF 同性愛性癖判定(PLAYER,TARGET)
+	EXP:PLAYER:同性愛経験 += 1
+	
+;結果に関わりなく発生する快楽部分
+CALL SOURCE_CALC_接触(TARGET, PLAYER, 150)
+CALL SOURCE_CALC_露出(TARGET, PLAYER, 150)
+CALL SOURCE_CALC_快Ｂ(TARGET, PLAYER, 50)
+SIF TALENT:PLAYER:器用な指
+	CALL SOURCE_CALC_快Ｂ(TARGET, PLAYER, 50)
+
+CALL SOURCE_CALC_好感度要素_友情度UP(TARGET, PLAYER, 30)
+CALL SOURCE_CALC_好感度要素_性愛度UP(TARGET, PLAYER, 100)
+TIME += 20
+RETURN 1
+
+@CAN_COM325(ARG)
+#DIM CONST 必要実行値 = 20
+#DIM 実行値
+#DIM ＋表示フラグ
+
+SKIPDISP ARG
+PRINTFORML 젖꼭지 맞추기 게임(%CALLNAME:TARGET%)
+;-------------------------------------------------
+;実行できるかの判定
+;-------------------------------------------------
+実行値 = 0
+＋表示フラグ = 0
+
+;すべての命令に共通の要素を考慮
+CALL COM_ORDER
+実行値 = RESULT
+＋表示フラグ = RESULT:1
+
+IF ABL:欲望
+	SIF ＋表示フラグ
+		PRINT  + 
+	実行値 += ABL:欲望 * 1
+	PRINTFORM 욕망LV{ABL:欲望}({ABL:欲望 * 1})
+	＋表示フラグ = 1
+ENDIF
+
+IF MARK:快楽刻印
+	SIF ＋表示フラグ
+		PRINT  + 
+	実行値 += MARK:快楽刻印 * 2
+	PRINTFORM 쾌락 각인LV{MARK:快楽刻印}({MARK:快楽刻印 * 2})
+	＋表示フラグ = 1
+ENDIF
+
+;恥じらい
+IF TALENT:羞恥心 > 0
+	PRINT  - 
+	実行値 -= 1
+	PRINT 수줍음(1)
+	＋表示フラグ = 1
+ENDIF
+;恋慕
+IF TALENT:恋慕
+	SIF ＋表示フラグ
+		PRINT  + 
+	実行値 += 5
+	PRINT 연모(5)
+	＋表示フラグ = 1
+ENDIF
+;セフレ
+IF TALENT:セフレ
+	SIF ＋表示フラグ
+		PRINT  + 
+	実行値 += 3
+	PRINT 섹스 친구(3)
+	＋表示フラグ = 1
+ENDIF
+
+CALL セクハラ反応タイプ判定(TARGET)
+;RFLAG:コマンド結果受渡し変数
+;1:拒絶  2:受け入れ 3:喜び
+;RFLAG:コマンド結果受渡し変数２
+;1:無知  2:無反応 3:嫌悪  4:拒否  5:余裕  6:羞恥  7:愉悦  8:汎用
+
+;セクハラ強は基本的に喜び以外に入らないはず（合意条件であり、合意に入るにはそれなりに仲良くならなければならないため）
+
+SELECTCASE RFLAG:コマンド結果受渡し変数２
+	CASE 1
+		;無知
+		SIF ＋表示フラグ
+			PRINT  + 
+		実行値 += 10
+		PRINT 반응 타입: 무지(10)
+		＋表示フラグ = 1
+	CASE 2
+		;無反応
+		SIF ＋表示フラグ
+			PRINT  + 
+		実行値 += 5
+		PRINT 반응 타입: 무반응(5)
+		＋表示フラグ = 1
+	CASE 3
+		;嫌悪
+		PRINT  - 
+		実行値 -= 10
+		PRINT 반응 타입: 혐오(10)
+		＋表示フラグ = 1
+	CASE 4
+		;拒否
+		PRINT  - 
+		実行値 -= 5
+		PRINT 반응 타입: 거부(5)
+		＋表示フラグ = 1
+	CASE 5
+		;余裕
+		SIF ＋表示フラグ
+			PRINT  + 
+		実行値 += 5
+		PRINT 반응 타입: 여유(5)
+		＋表示フラグ = 1
+	CASE 6
+		;羞恥
+		PRINT  - 
+		実行値 -= 10
+		PRINT 반응 타입: 수치(10)
+		＋表示フラグ = 1
+	CASE 7
+		;愉悦
+		SIF ＋表示フラグ
+			PRINT  + 
+		実行値 += 10
+		PRINT 반응 타입: 유열(10)
+		＋表示フラグ = 1
+ENDSELECT
+
+;合計を表示(20以上で実行)
+PRINTFORM  = {実行値}
+
+SIF 実行値 < 必要実行値
+	PRINT  < 
+SIF 実行値 == 必要実行値
+	PRINT  = 
+SIF 実行値 > 必要実行値
+	PRINT  > 
+PRINTFORM 실행값{必要実行値}
+
+WAIT
+SKIPDISP 0
+
+;実行できない
+SIF 実行値 < 必要実行値
+	RETURN 0
+
+RETURN 1
+
+
+;-------------------------------------------------
+;実行判定
+;-------------------------------------------------
+@COM_ABLE325
+;実行判定
+SIF SAVESTR:ゲームフェイズ管理 != "通常モード"
+	RETURN 0
+;Bがない場合駄目
+SIF TALENT:TARGET:Ｂ感度 == -2
+	RETURN 0
+;一括管理
+SIF GLOBAL_COMABLE(325)
+	RETURN RESULT
+;睡眠中
+SIF CFLAG:睡眠
+	RETURN 0
+RETURN 1
+
+;-------------------------------------------------
+;実行時メッセージ
+;-------------------------------------------------
+@MESSAGE_COM325
+
+;乳首当てゲーム
+SELECTCASE RFLAG:コマンド結果受渡し変数２
+	CASE 1
+		;無知
+		PRINT 무엇이 시작될지 잘 모르겠다
+	CASE 2
+		;無反応
+		PRINT 아무것도 신경 쓰지 않는 듯 무표정한
+	CASE 3
+		;嫌悪
+		PRINT 질린 듯한 눈으로 당신을 본다
+	CASE 4
+		;拒否
+		PRINT 싫은 표정을 지으면서도 기다린다
+	CASE 5
+		;余裕
+		PRINT 술을 마시면서 이쪽의 상황을 보고 있다
+	CASE 6
+		;羞恥
+		PRINT 뺨을 붉게 물들이고 눈을 감고 기다린다
+	CASE 7
+		;愉悦
+		PRINT 도발적으로 웃으며 기다린다
+ENDSELECT
+
+PRINTFORMW %CALLNAME:TARGET%의 가슴에, 유두를 향해 손가락을 내밀었다.
+
+CALL 乳首当てゲーム結果メッセージ(TARGET)
+
+
+
+@乳首当てゲーム結果メッセージ(対象キャラ)
+#DIM 対象キャラ
+
+SELECTCASE RFLAG:コマンド結果受渡し変数４
+	CASE 1
+		PRINTW 【적중!】
+		IF TEQUIP:対象キャラ:上半身鎧あり
+			PRINTFORML %CALLNAME:PLAYER%은(는) 훌륭하게%CALLNAME:対象キャラ%의 유두 위치를 맞히는 데 성공했지만, 갑옷에 가로막혀 유두에 닿을 수는 없었다…
+		ELSE
+			PRINTFORM %CALLNAME:PLAYER%은(는) 훌륭하게%CALLNAME:対象キャラ%의
+			IF TEQUIP:対象キャラ:上半身下着あり == -3
+				PRINTFORM 명찰로 위치가 들통난
+			ELSEIF TEQUIP:対象キャラ:上半身下着あり == -2
+				PRINTFORM 피어스로 알기 쉽게 되어 있는
+			ELSEIF TCVAR:対象キャラ:陥没乳首露出フラグ || (!TALENT:対象キャラ:陥没乳首 && (PALAM:対象キャラ:欲情 >= PALAMLV:3 || (発情期判定(対象キャラ) && RISKY_DAY(対象キャラ) > 0)))
+				PRINTFORM 솟아오른
+			ELSEIF TALENT:対象キャラ:陥没乳首
+				PRINTFORM 함몰된
+			ENDIF
+			PRINTFORML 유두를 찌르는 데 성공했다!
+		ENDIF
+	CASE -1
+		PRINTW 【꽝…】
+		IF RAND:2 && !TEQUIP:対象キャラ:上半身鎧あり && TALENT:対象キャラ:恋慕 && (TCVAR:対象キャラ:陥没乳首露出フラグ || PALAM:対象キャラ:欲情 >= PALAMLV:3 || (発情期判定(対象キャラ) && RISKY_DAY(対象キャラ) > 0))
+			PRINTFORML 아무래도, %CALLNAME:PLAYER%은(는) 유두의 위치를 잘못 본 것 같다…
+			;男性にもできるから「乳肉」はどうかな……
+			SELECTCASE RAND:3
+				CASE 2
+				PRINTFORML 멋대로 패배를 인정하고 가슴을 내미는 %CALLNAME:対象キャラ%의 유두를 떼어내고, 유육을 즐겼다…
+				CASE 1
+				PRINTFORML 찔러주길 바라는 듯 솟아오른 유두를 떼어내자, %CALLNAME:対象キャラ%은(는) 아쉬운 목소리를 냈다…
+				CASE 0
+				PRINTFORML 부풀어 오른 유륜을 손가락으로 훑자, %CALLNAME:対象キャラ%은(는) 유두의 솟아오름을 강하게 했다…
+			ENDSELECT
+		ELSE
+			PRINTFORML %CALLNAME:PLAYER%은(는) 유두의 위치를 잘못 본 것 같다…
+		ENDIF
+	CASE 2
+		PRINTW 【적중! …하지만】
+		IF TEQUIP:対象キャラ:上半身鎧あり
+			PRINTFORML %CALLNAME:PLAYER%은(는) 훌륭하게 %CALLNAME:対象キャラ%의 유두 위치를 맞히는 데 성공했지만, 갑옷에 가로막혀 유두에 닿을 수는 없었다…
+			PRINTFORML %CALLNAME:対象キャラ%은(는) 유두에 닿지 않은 것을 빌미로, 꽝이라고 우기고 있다.
+			PRINTFORML %CALLNAME:PLAYER%은(는) 갑옷 틈새로 손가락을 넣어 억지로 유두를 맞혔다…
+		;乳首が陥没している＋その乳首が勃起している
+		ELSEIF TALENT:対象キャラ:陥没乳首 && TCVAR:対象キャラ:陥没乳首露出フラグ
+			PRINTFORML %CALLNAME:PLAYER%은(는) 훌륭하게 %CALLNAME:対象キャラ%의 발기하여 얼굴을 내민 젖꼭지를 들이댔지만, %CALLNAME:対象キャラ%는 빗나갔다고 우기고 있다.
+			PRINTFORML 그럼 이건 뭐냐며 발기한 젖꼭지를 꼬집자, %CALLNAME:対象キャラ%는 참지 못하고 패배를 인정했다.
+		;おちくびが陥没しているor通常乳首
+		ELSE
+			PRINTFORM %CALLNAME:PLAYER%은(는) 훌륭하게 %CALLNAME:対象キャラ%의
+			SIF TALENT:対象キャラ:陥没乳首
+				PRINTFORM 함몰된
+			PRINTFORML 젖꼭지에 명중시켰지만, %CALLNAME:対象キャラ%는 빗나갔다고 우기고 있다.
+			PRINTFORM 찌른 손가락을 빙글빙글 움직여
+			IF TALENT:対象キャラ:陥没乳首
+				PRINTFORM 함몰된 젖꼭지를 파헤쳐 주자,
+			ELSE
+				PRINTFORM 주자,
+			ENDIF
+			PRINTFORML %CALLNAME:対象キャラ%는 참지 못하고 패배를 인정했다.
+		ENDIF
+ENDSELECT

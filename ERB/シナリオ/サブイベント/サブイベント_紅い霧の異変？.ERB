@@ -1,0 +1,113 @@
+
+@ZP開放時イベント解説_紅い霧の異変？
+
+;解説文を受け渡し
+TSTR:ツールチップ受渡 = 
+TSTR:ツールチップ受渡 += "■붉은 안개의 이변?<br>"
+TSTR:ツールチップ受渡 += "<br>"
+TSTR:ツールチップ受渡 += "어느 날, 붉은 안개가 리조트 주변의 공역을 뒤덮게 되었다.<br>"
+TSTR:ツールチップ受渡 += @"리조트 운영에 지장이 생겨서는 안 된다며,%CALLNAME:PLAYER%는 안개를 멈추기 위해 이세계로 향한다.<br>"
+TSTR:ツールチップ受渡 += "<br>"
+TSTR:ツールチップ受渡 += "출전: 동방project<br>"
+TSTR:ツールチップ受渡 += "해방 요소: 캐릭터 10명의 초대 해방<br>"
+
+;ZPショップに乗せるかどうかもここで判定
+SIF GETBIT(ダンジョン構造配列_人食い鳥の島:11:4, 2) == 0
+	RETURN 0
+SIF ダンジョンクリアフラグ_人食い鳥の島 == 0
+	RETURN 0
+
+;消費ZPを返す
+RETURN 50
+
+@ZP開放時イベント詳細解説_紅い霧の異変？
+;詳細ボタンを押した時の文章、こっちはPRINTで良い
+
+PRINTL ■해방 요소
+PRINTL ・던전 클리어로 해방
+PRINTL [낙원의 멋진 무녀]하쿠레이 레이무 초대 해방
+PRINTL [평범한 마법사]키리사메 마리사 초대 해방
+PRINTL [화인 소저]홍 메이링 초대 해방
+PRINTL [이름 없는 작은 악마]코아쿠마 초대 해방
+PRINTL [움직이지 않는 대도서관]파츄리 널릿지 초대 해방
+PRINTL [완벽하고 고상한 종자]이자요이 사쿠야 초대 해방
+PRINTL [영원히 붉은 어린 달]레밀리아 초대 해방
+PRINTL 
+PRINTL ・특정 적과의 전투 후, 확률로 해방
+PRINTL [어둠의 요괴]루미아의 초대 해방
+PRINTL [호상의 얼음 정령]치르노의 초대 해방
+PRINTL [안개 속에서 발견되는 요정]대요정의 초대 해방
+
+@イベント発生条件_サブイベント_紅い霧の異変？
+;開放条件を満たしたら1を返すこと
+
+SIF STRFIND(EXシナリオ解放記録, @"___紅い霧の異変？___") < 0
+	RETURN 0
+
+RETURN 1
+
+@イベント関数_サブイベント_紅い霧の異変？(ARG)
+DRAWLINE
+PRINTL ［붉은 안개의 이변?］
+DRAWLINE
+PRINTW
+PRINTFORMW 최근 리조트 주변 공역에 붉은 안개가 발생하고 있다.
+PRINTFORMW 불과 며칠 전부터 일어나기 시작한 현상으로, 햇빛을 가릴 정도는 아니지만 밤에도 시인할 수 있을 정도로 짙다.
+PRINTL
+PRINTFORMW 사람에게 해는 없는 듯, 신기해서 보러 오는 손님과 기분 나쁘다고 꺼리는 손님으로, 리조트로서는 플러스마이너스 제로 정도지만…….
+PRINTFORMW 만약 이대로 안개가 계속 짙어진다면, 아무래도 손님들의 발길은 끊길 것이다.
+PRINTFORMW 적어도 원인을 특정해야 한다며 조사를 계속하고 있었는데…….
+PRINTL
+CALL 画像表示("顔エラ","LEFT",,,,1,)
+PRINTL 성정수 era:
+PRINTFORMW "그래서. 평행세계로의 문에서 안개가 나오고 있었다, 고?"
+PRINTL
+PRINTFORMW 조사 결과, 붉은 안개는 식인조가 있던 섬의, 평행세계로의 문에서 나오고 있었다.
+PRINTFORMW 원인에 짐작 가는 바가 있을까? 라고 %CALLNAME:PLAYER%은(는) era에게 묻는다.
+PRINTL
+PRINTL 성정수 era:
+PRINTFORMW "아니…… 문 자체에 그런 기능은 없고, 안개에서 유세의 힘도 느껴지지 않아.
+PRINTFORMW 　그렇다면 원인은 문 너머에. 즉, 어딘가의 세계에서 흘러들어오고 있는 것이겠지」
+PRINTL
+PRINTFORMW 원인의 세계를 차단할 수는 없을까?
+PRINTL
+PRINTL 성정수 era:
+PRINTFORMW 「이 문은 그렇게 편리한 것이 아니야.
+PRINTFORMW 　『연결』이라는 기능에 특화된 것으로, 표면상으로는 수많은 세계를 전환하는 것처럼 보여도
+PRINTFORML 　잠재적으로는 모든 세계와 동시에 연결되어 있으며, 그것은 유세가 오염을 효율적으로────」
+PRINTL
+PRINTFORMW 해설에 열중하는 era를 가로막고, 질문을 거듭한다.
+PRINTFORMW 즉, 원인을 해소하려고 한다면?
+PRINTL
+PRINTL 성정수 era:
+PRINTFORMW 「문을 통과하여 저쪽 세계로 가서, 직접 원인을 해소할 수밖에 없을 거야.
+PRINTFORMW 　다만, 그렇게 한다면 조심하도록 해.
+PRINTL
+PRINTFORMW 　어디까지나, 평행 세계를 이동하는 문은 이 하늘 세계에 있어.
+PRINTFORMW 　저쪽에서 이쪽으로 오는 것은 아무리 체류해도 문제없지만,
+PRINTFORMW 　이쪽에서 저쪽으로 가는 경우, 한계는 며칠 정도야.
+PRINTFORMW 　그 이상 체류하면 두 번 다시 돌아올 수 없을 거야」
+PRINTL
+PRINTFORMW %CALLNAME:PLAYER%은(는) 신중한 얼굴로 고개를 끄덕인다.
+PRINTFORMW 역시 연고도 없는 세계에 남겨지고 싶지는 않고, 동료를 끌어들이는 것도 피하고 싶다.
+PRINTL
+PRINTL 성정수 era:
+PRINTFORMW 「뭐, 그것만 명심하면 조금 멀리 있을 뿐, 기본은 평소의 던전 탐색과 같다.
+PRINTFORMW 목표 세계로 갈 수 있도록 문을 조정해 두겠다.
+PRINTFORMW 원하는 타이밍에 가도록 해라, 나의 계약자여」
+PRINTL
+SETCOLOR 0xFFFF00
+PRINTFORML 던전 [환상향 홍마 이변]이 해방되었습니다.
+ダンジョン出現フラグ_幻想郷紅魔異変 = 1
+RESETCOLOR
+FORCEWAIT
+
+CALL イベント完了フラグ汎用処理("紅い霧の異変？")
+
+
+
+
+
+
+
+

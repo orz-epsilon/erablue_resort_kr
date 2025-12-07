@@ -1,0 +1,49 @@
+
+@アイテム個別文章表示_土の魔石(ARGS)
+VARSET LOCALS
+CALL 口上変数初期化
+
+IF ARGS == "値段"
+	詳細文文字列受け渡し変数 = 루피
+	RETURN 2000
+ENDIF
+
+
+LOCALS += @"■흙의 마석　　　소지수:{DT_CELL_GET("所持アイテムデータベース", 0, "土の魔石")}<br>"
+;LOCALS +="－－－－－－－－－－－－－－－－－－－－－－－－－－－－<br>" 改行目安
+LOCALS += "흙의 마력을 많이 포함한 마석. <br>"
+LOCALS += "기동하면 부근의 마력에 따라 돌멩이를 분출시킨다. <br>"
+LOCALS += "효과 범위와 위력을 그럭저럭한 수준으로 양립할 수 있는 유용한 공격 도<br>"
+LOCALS += "구이다. <br>"
+LOCALS += "<br>"
+LOCALS:1 += "【효과】<br>"
+LOCALS:1 += "적 종열에게 [PT의 최대 레벨✕25]의 대미지를 준다. <br>"
+
+詳細文文字列受け渡し変数 = %LOCALS%%LOCALS:1%
+KSTR:(K++) = %LOCALS:1%
+
+@アイテム使用先表示_土の魔石
+CALL 汎用使用先表示("敵縦列")
+
+@アイテム効果処理_土の魔石(ARG)
+#DIM レベル記録
+;ARG = エネミーが何番目か、10からカウント
+CALL 口上変数初期化
+
+レベル記録 = 0
+FOR LOCAL, 0, 14
+	SIF LOCAL > 3 && LOCAL < 10
+		CONTINUE
+	SIF BATTLE_STATE:LOCAL:キャラ登録番号 < 1
+		CONTINUE
+	SIF BATTLE_STATE:LOCAL:Lv > レベル記録
+		レベル記録 = BATTLE_STATE:LOCAL:Lv
+NEXT
+
+アビ汎用変数:効果量 = レベル記録 * 25
+CALL アビテンプレート_ダメージ処理_土属性
+
+SIF アビテンプレート用_キャンセルフラグ
+	RETURN -1
+
+RETURN 1

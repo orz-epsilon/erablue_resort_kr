@@ -1,0 +1,205 @@
+;-------------------------------------------------
+;美乳オイルエステ
+;-------------------------------------------------
+@MASSAGE_COMNAME21
+#FUNCTIONS
+TSTR:コマンド名受渡 = 미유 오일 에스테
+SIF TALENT:TARGET:バストサイズ <= -1
+	TSTR:コマンド名受渡 = 풍흉 오일 에스테
+
+;===================================================
+;コマンドタイプ
+;===================================================
+@MASSAGE_COMTYPE_21
+#FUNCTION
+TFLAG:コマンドタイプ受渡 = MASSAGE_COMTYPE("エロマッサージ")
+
+@MASSAGE_COM_TOOLTIP_21
+IF TALENT:TARGET:バストサイズ <= -1
+	LOCALS = <br>■풍흉 오일 에스테<br>
+	LOCALS += "마사지 오일을 사용하여 유방을 주무르고 풀어줍니다. 겸손한 가슴으로 고민하는 당신에게."
+	LOCALS += "<br>아름다운 피부에 탄력이 생기는 것 외에, 가슴 확대에도 효과가 있다고 한다."
+	LOCALS += "<br>기분 좋아질수록 효과가 있다는 거니까요~. 목소리는 참지 않아도 괜찮으니까요~."
+	LOCALS += "<br>COM 타입: 에로 마사지<br>획득 소스: 쾌B・노출・접촉・환락・불쾌(경계하)・반감(경계하)"
+	LOCALS += "<br>고유 획득 경험: 없음<br>"
+	TSTR:ツールチップ受渡 = %LOCALS%
+ELSE
+	LOCALS = <br>■미유 오일 에스테<br>
+	LOCALS += "마사지 오일을 사용하여 유방을 주무르고 풀어줍니다."
+	LOCALS += "<br>림프의 흐름을 좋게 하여 미유・미피 효과를 얻을 수 있다고 한다."
+	LOCALS += "<br>COM 타입: 에로 마사지<br>획득 소스: 쾌B・노출・접촉・환락・불쾌(경계하)・반감(경계하)"
+	LOCALS += "<br>고유 획득 경험: 없음<br>"
+	TSTR:ツールチップ受渡 = %LOCALS%
+ENDIF
+
+@MASSAGE_COM21
+;-------------------------------------------------
+;ソース追加処理
+;-------------------------------------------------
+
+;Ｂ愛撫より全体的に強め。勿論です、プロですから。
+;性交ではなくマッサージの中での行為のため露出強め。エロマッサージなので歓楽は通常より弱め
+CALL SOURCE_CALC_露出(TARGET, PLAYER, 100)
+CALL SOURCE_CALC_接触(TARGET, PLAYER, 80)
+CALL SOURCE_CALC_快Ｂ(TARGET, PLAYER, 150)
+CALL SOURCE_CALC_歓楽(TARGET, PLAYER, 100)
+
+;胸を揉むため性欲を煽る。
+BASE:TARGET:性欲 += 80
+
+;警戒は理性の倍回復する。性欲の値で減少したりする。
+
+
+IF BASE:TARGET:理性 <= 1
+;理性がおしまいになってしまった場合、快楽に流されて警戒が下がっていく。
+	BASE:TARGET:警戒 += 警戒変動値算出(TARGET, -40)
+	CALL SOURCE_CALC_好感度要素_性愛度UP(TARGET, PLAYER, 80)
+
+ELSEIF 知識素質:TARGET:性知識 <= -1
+;性知識がない場合、そもそも警戒することができない。そういうもんかって受け入れるため理性は下がり続けるし、快感を伴うから警戒も下がり続ける。
+;……シヴァお前……
+	BASE:TARGET:理性 += 理性変動値算出(TARGET, -60)
+	BASE:TARGET:警戒 += 警戒変動値算出(TARGET, -60)
+	CALL SOURCE_CALC_好感度要素_性愛度UP(TARGET, PLAYER, 80)
+
+ELSEIF (BASE:TARGET:理性 + BASE:TARGET:警戒) < 900
+;実行に際し十分な理性・警戒削りがなされている場合。
+;警戒140で理性が70回復するも、煽られる性欲と与えられる刺激で理性が80削られて理性変動は-10。
+;……というのが平常時における挙動だが、ここまで削られていると与えられる快感に警戒心が塗りつぶされてしまう。
+;よって警戒56で理性28回復、そこから理性80低下でこの数字となる。理性と警戒の合計値はほんの少しだけ上がり、そのまま次のコマンドへ。
+	BASE:TARGET:理性 += 理性変動値算出(TARGET, -52)
+	BASE:TARGET:警戒 +=警戒変動値算出(TARGET, 56)
+	CALL SOURCE_CALC_好感度要素_性愛度UP(TARGET, PLAYER, 80)
+
+ELSEIF BASE:TARGET:理性 <= 200
+;理性がグズグズに煮詰まっちゃってると、警戒及び理性の回復は半分になる。
+	BASE:TARGET:理性 +=理性変動値算出(TARGET, 35)
+	BASE:TARGET:警戒 +=警戒変動値算出(TARGET, 70)
+	CALL SOURCE_CALC_好感度要素_性愛度UP(TARGET, PLAYER, 80)
+
+ELSEIF TALENT:TARGET:バストサイズ <= -1
+;相手が貧乳以下の場合、実行可能であるならば「おっぱい大きくするためだし……」ってしぶしぶ受け入れるイメージ。
+;育ててくれるからちょっとだけ友情も上がるし、理性と警戒の回復も抑えめになる。いっぱい揉んで育ててあげよう。
+	BASE:TARGET:理性 +=理性変動値算出(TARGET, 40)
+	BASE:TARGET:警戒 +=警戒変動値算出(TARGET, 80)
+	CALL SOURCE_CALC_好感度要素_友情度UP(TARGET, PLAYER, 40)
+	CALL SOURCE_CALC_好感度要素_性愛度UP(TARGET, PLAYER, 80)
+
+ELSEIF TALENT:TARGET:バストサイズ > -1 && (BASE:TARGET:理性 + BASE:TARGET:警戒) > 1100
+;普乳以上かつ理性と警戒の削りが足りていないと、一気に警戒度が上がり、危機感で理性も回復してしまう。不快、反感も増える。
+;理性200以下と共存しちゃうけど、この場合理性200以下のほうが優先となる。
+	BASE:TARGET:理性 +=理性変動値算出(TARGET, 150)
+	BASE:TARGET:警戒 +=警戒変動値算出(TARGET, 300)
+	CALL SOURCE_CALC_不快(TARGET, PLAYER, 200)
+	CALL SOURCE_CALC_反感(TARGET, PLAYER, 200)
+
+ELSE
+;基本値 警戒が1100～900
+;反感まではいかないが、確実に回復してくる。このまま黒閃で反転術式の出力を戻されたらふりだしまで一直線なのでもっと理性を削りましょう。
+	BASE:TARGET:理性 +=理性変動値算出(TARGET, 50)
+	BASE:TARGET:警戒 +=警戒変動値算出(TARGET, 140)
+	CALL SOURCE_CALC_好感度要素_性愛度UP(TARGET, PLAYER, 80)
+ENDIF
+
+
+;施術着を着ている場合、25%で脱がす。ここに関してはプレイヤーが選択できたほうがいいかも？
+IF TEQUIP:上半身下着あり && RAND:4 == 0
+	TEQUIP:上半身下着あり = 0
+	RFLAG:コマンド結果受渡し変数 = 1
+ENDIF
+
+IF TALENT:TARGET:バストサイズ <= -1
+	CALL バスト変動処理(TARGET, "愛撫", 1)
+ELSE
+	CALL バスト変動処理(TARGET, "愛撫", -1)
+ENDIF
+
+IF TARGET == MASTER
+	CALL ちんイラ増加処理(PLAYER, 50)
+ELSE
+	CALL ちんイラ増加処理(TARGET, 100)
+ENDIF
+;-------------------------------------------------
+;経験の処理
+;-------------------------------------------------
+
+RETURN 1
+
+;-------------------------------------------------
+;実行判定
+;-------------------------------------------------
+
+@MASSAGE_COM_ABLE21
+SIF SAVESTR:ゲームフェイズ管理 != "マッサージモード"
+	RETURN 0
+
+SIF GLOBAL_MASSAGE_COMABLE(21)
+	RETURN RESULT
+
+;Bがない場合駄目
+SIF TALENT:TARGET:Ｂ感度 == -2
+	RETURN 0
+
+;相手に胸がないならダメ
+SIF TALENT:TARGET:性別 == 2
+	RETURN 0
+
+;うつ伏せだとダメ
+SIF TCVAR:TARGET:マッサージ_うつ伏せフラグ == 1
+	RETURN 0
+
+;実行するだけならそこそこ緩い。削りが足りてないと反感食らうし警戒されるけど。
+SIF (BASE:TARGET:理性 + BASE:TARGET:警戒) > 1400
+	RETURN 0
+
+
+RETURN 1
+
+;-------------------------------------------------
+;実行時メッセージ
+;-------------------------------------------------
+@MASSAGE_MESSAGE_COM21
+PRINTFORM %CALLNAME:PLAYER%은(는)
+	IF RFLAG:コマンド結果受渡し変数 == 1
+	;施術着を脱がせたとき
+		PRINTFORM %CALLNAME:TARGET%이 입고 있는 시술복%TEXTR("의 가슴팍을 비켜 유방을 노출시키고/의 가슴팍을 걷어 올려 유방을 노출시키고/을(를) 「시술을 위해서」라고 우기며 벗겨내고")%、
+	ELSEIF GROUPMATCH(TEQUIP:TARGET:上半身下着あり, 1, 3)
+		PRINTFORM %CALLNAME:TARGET%가 입고 있는 시술복의%TEXTR("가슴팍에 손을 넣어/안으로 손을 미끄러뜨려/위에서")%、
+	ENDIF
+PRINTFORM %TEXTR("마사지 오일을 바른 손으로/마사지라는 명목으로")%、%CALLNAME:TARGET%의
+	IF TALENT:TARGET:バストサイズ == 3
+	;魔乳
+	;巨乳くらいまでは「デカパイ」とかそんな感じのワードでもいいかなと思ったんだけど、サイズ感の判別しっかりしてるほうがいいかもってことでTEXTRにはせず素質表記
+	;魔乳とか「ただのデカパイじゃないぜ？ド級のデカパイ、『ドデカパイ』だ！」にしてもよかった気はしなくもない。笑っちゃわなければだけど
+		PRINTFORM 묵직하게 무거운 마유를
+	ELSEIF TALENT:TARGET:バストサイズ == 2
+	;爆乳
+		PRINTFORM 탐스럽게 열린 폭유를
+	ELSEIF TALENT:TARGET:バストサイズ == 1
+	;巨乳
+		PRINTFORM 풍만하게 자란 거유를
+	ELSEIF TALENT:TARGET:バストサイズ == 0
+	;普乳
+		PRINTFORM 손바닥에서 살짝 넘치는 크기의%TEXTR("가슴/미유")%을(를)
+	ELSEIF TALENT:TARGET:バストサイズ == -1
+	;貧乳
+		PRINTFORM 톡 튀어나와 탄력 있는%TEXTR("작은 가슴/미유")%을(를)
+	ELSEIF TALENT:TARGET:バストサイズ == -2
+	;絶壁
+	;フォリア様に「絶壁」だの「胸板」だの言うのは不敬！没収(コンフィスケイション)！死刑(デスペナルティ)！！
+		PRINTFORM 가슴판이라고 해도 좋을 만큼 평평하면서도 여성스러운 부드러움이 있는 미유를
+	ENDIF
+PRINTFORML %TEXTR("정성스럽게 주물러 풀었다/충분히 주물러 뭉갰다/끈적하게 주물러 뭉개며 만끽했다")%.
+
+
+;削りが十分な時は追加のメッセージ
+IF (BASE:TARGET:理性 + BASE:TARGET:警戒) < 900
+	PRINTW 
+	SELECTCASE RAND:2
+	CASE 0
+		PRINTFORM %CALLNAME:TARGET%는%TEXTR("황홀하게 눈가를 녹이며/녹아내린 얼굴로 헤프게 입을 벌리고/법열에 눈가를 녹이며")%、
+	CASE 1
+		PRINTFORM %CALLNAME:TARGET%는 헤프게 풀린 입에서%TEXTR("망측한 소리/쾌락에 물든 교성/음란한 소리")%을(를)%TEXTR("내며/흘리며/흘리면서")%、
+	ENDSELECT
+	PRINTFORML %CALLNAME:PLAYER%%TEXTR("의 '마사지'/의 수기/가 주는 쾌락")%%TEXTR("에 유방을 내주고 있다/에 취해 있다/에 당하는 대로 되어 있다/을 받아들이고 있다/을 감수하고 있다")%…
+ENDIF

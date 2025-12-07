@@ -1,0 +1,56 @@
+
+@イベント発生条件_サブイベント_居住区エリア建設解禁
+
+;開放条件を満たしたら1を返すこと
+SIF 開拓エリア解放フラグ:0 == 0
+	RETURN 0
+
+RETURN 1
+
+@イベント関数_サブイベント_居住区エリア建設解禁(ARG)
+DRAWLINE
+PRINTL [주거 구역 건설 해금]
+DRAWLINE
+PRINTW
+PRINTFORMW 섬 개척을 진행하여, 일단 어느 정도 넓이의 토지를 확보할 수 있었다.
+PRINTFORMW 자, 우선 무엇을 만들어야 할까.
+PRINTFORMW 평소 시설과는 달리, 이 넓이를 개발하려면 상당한 루피가 든다.
+PRINTFORMW 후보를 신중하게 생각해야겠어…….
+PRINTL
+CALL 画像表示("顔エラ","LEFT",,,,1,)
+PRINTL 성정수 era:
+PRINTFORMW "마을이 좋지 않겠나"
+PRINTFORMW 밤만쥬를 볼에 가득 넣으며, 성정수가 제안을 해왔다.
+PRINTL
+PRINTL 성정수 era:
+PRINTFORMW "언제까지나 리조트 물자를 외부에서 수입하는 것은 비효율적일 것이다
+PRINTFORMW 　장소와 일자리를 마련하여 정착민을 모집하고, 그곳에서 생산된 물자를 리조트 운영에 사용하면 된다
+PRINTFORMW 　나머지 관리는 적당한 사람을 촌장으로 앉히면 수고 없이 비용을 절감할 수 있다. 좋은 안건이지?"
+PRINTL
+PRINTFORMW 쉽게 말하는군, 하고 %CALLNAME:PLAYER%은(는) 회의적인 눈으로 성정수 era를 본다.
+PRINTL
+PRINTL 성정수 era:
+PRINTFORMW "속는 셈 치고 해보게. 별것 아니야, 이 몸은 쾌락과 절정을 관장하는 성정수다
+PRINTFORMW 　『살기 좋다』 정도의 쾌락을 주는 것은 식은 죽 먹기야
+PRINTFORMW 　살기 좋다는 것만으로 발생하는 쾌락만으로, 폐인으로 만드는 것도 가능해」
+PRINTL
+PRINTFORMW %CALLNAME:PLAYER%은(는) 밤만쥬를 몰수하는 움직임을 보인다.
+PRINTL
+PRINTL 성정수 era:
+PRINTFORMW 「아! 잠깐만, 지금은 농담이야. 실제로 하지는 않아
+PRINTFORMW 　내 미래는 내 계약자의 노력에 달려있어. 그걸 방해하지는 않아」
+PRINTL
+PRINTFORMW 취미 나쁜 농담은 차치하고, 제안 자체는 나쁘지 않다.
+PRINTFORMW 처음에는 효과가 낮겠지만, 정착자가 늘어나면 다양한 이점이 생길 것이다.
+PRINTFORMW 시설 유지비가 절감되거나, 상점의 품목이 늘어나거나, 혹은 새로운 상점을 여는 사람도 있을지 모른다.
+PRINTFORMW 후보 중 하나로 생각해 두자.
+PRINTL
+PRINTFORML 대규모 지역 [주거 지역] 건설이 해방되었습니다.
+RESETCOLOR
+FORCEWAIT
+
+CALL イベント完了フラグ汎用処理("居住区エリア建設解禁")
+
+
+
+

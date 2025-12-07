@@ -1,0 +1,89 @@
+
+@イベント発生条件_サブイベント_風景を切り取る道具
+
+;開放条件を満たしたら1を返すこと
+SIF イベント完了フラグ確認("大拡張！空艇港") < 1
+	RETURN 0
+;もう別口でカメラ持ってる場合は出さない
+SIF 景切鏡取得フラグ
+	RETURN 0
+RETURN 1
+
+@イベント関数_サブイベント_風景を切り取る道具(ARG)
+DRAWLINE
+PRINTL ［풍경을 잘라내는 도구］
+DRAWLINE
+PRINTW
+PRINTFORMW 경절경? 하고 %CALLNAME:PLAYER%은(는) 셰로카르테에게 되물었다.
+PRINTL
+PRINTL 셰로카르테:
+PRINTFORMW 「네~. 어떤 기업이 개발한, 새로운 마도구예요~
+PRINTFORMW 　스위치를 켜면, 찰칵! 하고 풍경을 그대로 종이에 그려낸 『사진』을 만들어내는, 획기적인 상품이랍니다~」
+PRINTL
+PRINTFORMW 시험 삼아 해보세요~, 라는 말에 %CALLNAME:PLAYER%은(는) 셰로카르테를 향해 경절경의 스위치를 켠다.
+PRINTFORMW 그러자 특징적인 기계음이 울리고, 곧바로 한 장의 종이가 토해져 나왔다.
+PRINTFORMW 종이에는 마치 본 것을 그대로 찍어낸 것처럼, 정교하게 그려진 셰로카르테의 그림이 그려져 있다.
+PRINTFORMW 이건 대단하다.
+PRINTL
+PRINTL 셰로카르테:
+PRINTFORMW 「이 마도구 『경절경』. 판매를 저희가 주관하고 있어서~
+PRINTFORMW 　부디 %CALLNAME:PLAYER%님의 리조트에 놓아주실 수 없을까 해서요~」
+PRINTL
+PRINTFORMW 과연. 관광지에 이것을 놓으면, 여행지의 추억으로 사진을 찍고 싶어 하는 손님은 많을 것이다. 사용료는 꽤 벌 수 있을 것 같다.
+PRINTFORMW 또한, 부유한 손님은 경절경 그 자체를 갖고 싶어 할 수도 상상할 수 있다. 판매 수수료 수입도 될 것이다.
+PRINTFORMW 꽤 괜찮은 사업이 될 것 같다. 그런데 얼마인가요?
+PRINTL
+PRINTL 셰로카르테:
+PRINTFORMW 「가격은 말이죠~, 하나 둘 셋... 이 정도입니다~」
+PRINTL
+PRINTFORMW 으음... 생각보다 비싸다.
+PRINTFORMW 본체는 그렇게 비싸지 않지만, 유지보수 기술자를 고용하는 비용을 합치면 이익과 비용이 거의 비슷해질 것이다.
+PRINTL
+PRINTL 셰로카르테:
+PRINTFORMW 「하지만 이 마도구, 대단하죠~? 금방 유행할 거예요~
+PRINTFORMW 　만약 그렇게 되었을 때, 여기에 없다고 하면~...」
+PRINTL
+PRINTFORMW 인기가 떨어져 손님이 줄어드는 원인이 된다. 그것은 피하고 싶다.
+PRINTL
+PRINTL 셰로카르테:
+PRINTFORMW 「지금 계약하시면, 시제품으로 개인용 경절경을 선물로 드려요~
+PRINTFORMW 　자신을 위해 한 대 있으면, 여러 가지 꿈이 펼쳐지는 기분이 들지 않나요~?」
+PRINTL
+PRINTFORMW 확실히. 여러 사진을 찍는 것은 즐거울 것 같다.
+PRINTFORMW 보통 사진뿐만 아니라, 연인과 흐뭇한 일을 할 때나, 혹은 몰래 온천에 숨어 매력적인 이성의 사진을 몰래 찍는 것도...
+PRINTFORMW 어떻게 할까.
+PRINTL
+PRINTL ※구매해도 루피의 소비나 증가는 발생하지 않습니다.
+PRINTBUTTON "[0] 좋아, 바로 계약하자!", 0
+PRINTL
+PRINTBUTTON "[1] 죄송하지만, 나중에 해도 될까요?", 1
+PRINTL
+PRINTL
+BINPUT
+SELECTCASE RESULT
+	CASE 0
+		PRINTL
+		PRINTL 셰로카르테:
+		PRINTFORMW 「감사합니다~. 구매해 주셔서 감사합니다~
+		PRINTFORMW 　아, 하지만 이상한 사진을 찍어서, 잔소리 듣지 않도록 조심하세요~
+		PRINTFORMW 　경절경(케이"세츠쿄")이니까요~. 우후후후~~」
+		PRINTL
+		SETCOLOR 0xFFFF00
+		PRINTFORML 『경절경』을 손에 넣었습니다.
+		PRINTFORML 커맨드 「사진을 찍다」가 해방되었습니다.
+		RESETCOLOR
+		FORCEWAIT
+		景切鏡取得フラグ = 1
+		CALL イベント完了フラグ汎用処理("風景を切り取る道具")
+	CASE 1
+		PRINTL
+		PRINTL 셰로카르테:
+		PRINTFORMW 「알겠습니다~
+		PRINTFORMW 　마음이 정해지면, 서둘러 부탁드립니다~」
+		PRINTL
+		PRINTFORMW 셰로카르테는 그대로 방을 나섰다.
+		PRINTFORMW 경절경을 손에 넣고 싶어지면, 다시 이 이벤트를 선택하자.
+		RETURN 0
+ENDSELECT
+
+

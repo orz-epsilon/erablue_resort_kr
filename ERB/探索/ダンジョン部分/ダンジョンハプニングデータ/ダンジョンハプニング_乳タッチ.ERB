@@ -1,0 +1,141 @@
+@ダンジョンハプニング_乳タッチ(対象キャラ番号)
+#DIM 対象キャラ番号
+
+WSTR:(K++) = %CALLNAME:MASTER%은(는) 무언가에 걸려 넘어졌다!
+KSTR:(K++) = 다행히도 %CALLNAME:対象キャラ番号%이(가) 받아주었지만,
+SELECTCASE TALENT:対象キャラ番号:バストサイズ
+	CASE IS <= 0
+		KSTR:(K++) = 그 순간, 가슴 부분에 손이 닿아버렸다._PAGE
+	CASEELSE
+		KSTR:(K++) = 그 순간, 풍만한 가슴을 움켜쥐어버렸다._PAGE
+ENDSELECT
+
+CALL メッセージ欄表示用関数()
+CALL 口上変数初期化
+
+CALL セクハラ反応タイプ判定(対象キャラ番号)
+TRYCALLFORM KOJO_ハプニング_乳タッチ_{NO:対象キャラ番号}(対象キャラ番号)
+IF 口上有無確認(0, 1) == 0
+	KSTR:(K++) = %CALLNAME:MASTER%은(는) 즉시 떨어져 사과했지만,
+	SELECTCASE RFLAG:コマンド結果受渡し変数２
+		CASE 1
+			;無知
+			KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 딱히 아무것도 신경 쓰지 않는 것 같다.
+		CASE 2
+			;無反応
+			KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 아무 일도 없었다는 듯 탐색으로 돌아갔다.
+		CASE 3
+			;嫌悪
+			SELECTCASE RFLAG:コマンド結果受渡し変数
+				CASE 1
+					;拒絶
+					KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 싫은 표정을 지으며 %CALLNAME:MASTER%을(를) 노려보고 있다……
+				CASE 2
+					;受入れ
+					KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 한숨을 쉬고 탐색으로 돌아갔다.
+				CASE 3
+					;喜び
+					KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) %CALLNAME:MASTER%에게 다친 곳은 없는지 걱정해 주고 있다.
+			ENDSELECT
+		CASE 4
+			;拒否
+			SELECTCASE RFLAG:コマンド結果受渡し変数
+				CASE 1
+					;拒絶
+					KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 엄한 얼굴로 발밑을 조심하라고 주의를 주고 있다.
+				CASE 2
+					;受入れ
+					KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) %CALLNAME:MASTER%에게 다친 곳은 없는지 걱정해 주고 있다.
+				CASE 3
+					;喜び
+					KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 넘어지지 않도록 손을 잡지 않겠냐고 제안하고 있다.
+			ENDSELECT
+		CASE 5
+			;余裕
+			SELECTCASE RFLAG:コマンド結果受渡し変数
+				CASE 1
+					;拒絶
+					KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 엄한 얼굴로 발밑을 조심하라고 주의를 주고 있다.
+				CASE 2
+					;受入れ
+					KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 신경 쓰지 않아도 된다고 미소 지었다.
+				CASE 3
+					;喜び
+					KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 더 만져도 괜찮지만, 이라고 농담하고 있다.
+			ENDSELECT
+		CASE 6
+			;羞恥
+			SELECTCASE RFLAG:コマンド結果受渡し変数
+				CASE 1
+					;拒絶
+					KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 얼굴을 새빨갛게 물들이고 펄쩍 뛰어올랐다.
+				CASE 2
+					;受入れ
+					KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 새빨개진 얼굴로 가슴을 누르고 있다.
+				CASE 3
+					;喜び
+					KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 얼굴을 붉게 물들이고, 이쪽을 응시하고 있다……
+			ENDSELECT
+		CASE 7
+			;愉悦
+			SELECTCASE RFLAG:コマンド結果受渡し変数
+				CASE 1
+					;拒絶
+					KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 만지는 방법이 서툴다고 농담하고 있다.
+				CASE 2
+					;受入れ
+					KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 너무 과장되게 떨어져 있다고 웃고 있다.
+				CASE 3
+					;喜び
+					KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 만지고 싶다면 언제든지 괜찮은데, 라고 요염하게 웃고 있다.
+			ENDSELECT
+		CASE 8
+			;汎用
+			SELECTCASE RFLAG:コマンド結果受渡し変数
+				CASE 1
+					;拒絶
+					KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 조금 불쾌한 듯한 얼굴을 하고 탐색으로 돌아갔다.
+				CASE 2
+					;受入れ
+					KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 쓴웃음을 지으며 옷매무새를 가다듬고 있다.
+				CASE 3
+					;喜び
+					KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) %CALLNAME:MASTER%에게 다친 곳은 없는지 걱정해 주고 있다.
+			ENDSELECT
+	ENDSELECT
+	CALL メッセージ欄表示用関数()
+ENDIF
+
+;ソース増減部分
+SELECTCASE RFLAG:コマンド結果受渡し変数
+	CASE 1
+		;拒絶
+		CALL SOURCE_CALC_不快(対象キャラ番号, PLAYER, 50)
+		CALL SOURCE_CALC_反感(対象キャラ番号, PLAYER, 50)
+		CALL SOURCE_CALC_接触(対象キャラ番号, PLAYER, 100)
+		CALL SOURCE_CALC_露出(対象キャラ番号, PLAYER, 100)
+	CASE 2
+		;受け入れ
+		CALL SOURCE_CALC_歓楽(対象キャラ番号, PLAYER, 20)
+		CALL SOURCE_CALC_接触(対象キャラ番号, PLAYER, 100)
+		CALL SOURCE_CALC_露出(対象キャラ番号, PLAYER, 100)
+		CALL SOURCE_CALC_好感度要素_性愛度UP(対象キャラ番号, PLAYER, 50)
+		CALL SOURCE_CALC_快Ｂ(対象キャラ番号, PLAYER, 10)
+	CASE 3
+		;喜び
+		CALL SOURCE_CALC_歓楽(対象キャラ番号, PLAYER, 50)
+		CALL SOURCE_CALC_接触(対象キャラ番号, PLAYER, 100)
+		CALL SOURCE_CALC_露出(対象キャラ番号, PLAYER, 100)
+		CALL SOURCE_CALC_好感度要素_性愛度UP(対象キャラ番号, PLAYER, 100)
+		CALL SOURCE_CALC_快Ｂ(対象キャラ番号, PLAYER, 10)
+ENDSELECT
+
+
+
+@ダンジョンハプニング_ABLE_乳タッチ(判定キャラ番号)
+#DIM 判定キャラ番号
+
+SIF TALENT:判定キャラ番号:性別 == 2
+	RETURN 0
+
+RETURN 1

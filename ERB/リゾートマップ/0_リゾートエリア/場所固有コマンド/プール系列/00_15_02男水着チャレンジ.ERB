@@ -1,0 +1,238 @@
+
+
+;-------------------------------------------------
+;男水着チャレンジ
+;-------------------------------------------------
+@COMNAME_PLACE_381_0_15
+#FUNCTION
+TSTR:コマンド名受渡 = 남자 수영복 챌린지
+IF 施設改造度:15:0
+	TSTR:コマンド名受渡 = 
+	RETURNF 0
+ENDIF
+RETURNF 1
+
+;===================================================
+;コマンドタイプ
+;===================================================
+@COMTYPE_381_0_15
+#FUNCTION
+TFLAG:コマンドタイプ受渡 = COMTYPE("セクハラ強")
+
+@COM_TOOLTIP_381_0_15
+LOCALS = <br>■남자 수영복 챌린지<br>
+LOCALS += "여성, 혹은 후타나리 캐릭터에게 남자 수영복을 입혀 들키지 않는지 도전하게 하는 커맨드. <br>일정 확률로 성공, 실패로 분기."
+LOCALS += "<br>COM 타입: 성희롱<br>획득 소스: 노출"
+LOCALS += "<br>고유 획득 경험: 노출 쾌락 경험(TARGET)<br>"
+TSTR:ツールチップ受渡 = %LOCALS%
+		
+@COM381_0_15
+#DIM 成功閾値
+
+;成功度の判定
+LOCAL = RAND:100
+成功閾値 = 0
+IF TALENT:TARGET:バストサイズ == -2
+	成功閾値 += 50
+ELSEIF TALENT:TARGET:バストサイズ == -1
+	成功閾値 += 25
+ENDIF
+SIF TALENT:TARGET:度胸 > 0
+	成功閾値 += 5
+SIF TALENT:TARGET:感情乏しい > 0
+	成功閾値 += 10
+SIF TALENT:TARGET:目立ちたがり > 0
+	成功閾値 += 5
+成功閾値 -= TALENT:TARGET:羞恥心 * 5
+成功閾値 += TALENT:TARGET:豪快 * 5
+成功閾値 += ABL:TARGET:露出癖 * 3
+
+IF LOCAL >= 成功閾値
+	;失敗
+	RFLAG:コマンド結果受渡し変数 = -1
+	SIF 知識素質:TARGET:性知識 > -1
+		CALL SOURCE_CALC_露出(TARGET, PLAYER, 800)
+ELSE
+	;成功
+	RFLAG:コマンド結果受渡し変数 = 1
+	SIF 知識素質:TARGET:性知識 > -1
+		CALL SOURCE_CALC_露出(TARGET, PLAYER, 500)
+ENDIF
+
+TIME += 30
+RETURN 1
+
+
+@CAN_COM381_0_15(ARG)
+#DIM CONST 必要実行値 = 60
+#DIM 実行値
+#DIM ＋表示フラグ
+
+SIF RFLAG:指示モード対象あなたフラグ
+	RETURN 1
+
+SKIPDISP ARG
+PRINTFORML 남자 수영복 챌린지(%CALLNAME:TARGET%)
+;-------------------------------------------------
+;実行判定処理
+;-------------------------------------------------
+実行値 = 0
+＋表示フラグ = 0
+
+;すべての命令に共通の要素を考慮
+CALL COM_ORDER
+実行値 = RESULT
+＋表示フラグ = RESULT:1
+
+;ABL:露出癖
+IF ABL:露出癖
+	SIF ＋表示フラグ
+		PRINT  + 
+	実行値 += ABL:露出癖 * 10
+	PRINTFORM 노출벽LV{ABL:露出癖}({ABL:露出癖 * 10})
+	＋表示フラグ = 1
+ENDIF
+IF MARK:快楽刻印
+	SIF ＋表示フラグ
+		PRINT  + 
+	実行値 += MARK:快楽刻印 * 1
+	PRINTFORM 쾌락 각인LV{MARK:快楽刻印}({MARK:快楽刻印 * 1})
+	＋表示フラグ = 1
+ENDIF
+;PALAM:欲情
+IF GETPALAMLV(PALAM:欲情,10)
+	SIF ＋表示フラグ
+		PRINT  + 
+	実行値 += GETPALAMLV(PALAM:欲情, 10) * 5
+	PRINTFORM 욕정LV{GETPALAMLV(PALAM:欲情, 10)}({GETPALAMLV(PALAM:欲情, 10) * 5})
+	＋表示フラグ = 1
+ENDIF
+;恥じらい
+IF TALENT:羞恥心 > 0
+	PRINT  - 
+	実行値 -= 10
+	PRINT 수줍음(10)
+	＋表示フラグ = 1
+ENDIF
+;男嫌い（恋慕、親愛で無効）
+IF TALENT:性別嗜好 & 1 && !(TALENT:PLAYER:性別 & 1) && (!TALENT:恋慕 || PLAYER != MASTER)
+	PRINT  - 
+	実行値 -= 5
+	PRINT 남성 혐오(5)
+	＋表示フラグ = 1
+ENDIF
+;恋慕
+IF TALENT:恋慕
+	SIF ＋表示フラグ
+		PRINT  + 
+	実行値 += 5
+	PRINT 연모(5)
+	＋表示フラグ = 1
+ENDIF
+;セフレ
+IF TALENT:セフレ
+	SIF ＋表示フラグ
+		PRINT  + 
+	実行値 += 3
+	PRINT 섹스 프렌드(3)
+	＋表示フラグ = 1
+ENDIF
+;性知識不足
+IF 知識素質:TARGET:性知識 > -1
+	SIF ＋表示フラグ
+		PRINT  + 
+	実行値 += 15
+	PRINT 성지식 부족(15)
+	＋表示フラグ = 1
+ENDIF
+
+;言いなり
+IF TCVAR:言いなり
+	SIF ＋表示フラグ
+		PRINT  + 
+	実行値 += 999
+	PRINT 당신의 뜻대로(999)
+	＋表示フラグ = 1
+ENDIF
+
+;合計を表示(60以上で実行)
+PRINTFORM  = {実行値}
+
+SIF 実行値 < 必要実行値
+	PRINT  < 
+SIF 実行値 == 必要実行値
+	PRINT  = 
+SIF 実行値 > 必要実行値
+	PRINT  > 
+PRINTFORM 실행값{必要実行値}
+
+WAIT
+SKIPDISP 0
+
+;実行できない
+SIF 実行値 < 必要実行値
+	RETURN 0
+
+RETURN 1
+
+
+;-------------------------------------------------
+;実行判定
+;-------------------------------------------------
+@COM_ABLE381_0_15
+;条件に合う場合0（不許可）を返す
+;どの条件にも引っかからないなら1（許可）を返す
+;一括管理
+SIF GLOBAL_COMABLE(381)
+	RETURN RESULT
+;睡眠中
+SIF CFLAG:睡眠
+	RETURN 0
+;隠密中はダメ
+SIF CFLAG:PLAYER:隠密
+	RETURN 0
+;男はダメ
+SIF GETBIT(TALENT:TARGET:性別, 0) == 0
+	RETURN 0
+;貧乳以下
+SIF TALENT:TARGET:バストサイズ > -1
+	RETURN 0
+;性的陥落済み、または無知でないとダメ
+SIF !(陥落チェック_性的(TARGET) || 知識素質:TARGET:性知識 < 0)
+	RETURN 0
+RETURN 1
+
+;-------------------------------------------------
+;実行時メッセージ
+;-------------------------------------------------
+@MESSAGE_COM381_0_15
+
+PRINTFORM %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%에게 남자 수영복을 입히고, 주변을 한 바퀴 돌고 오는 플레이를 시켰다.
+
+
+@MESSAGE_COM381_0_15_非口上時
+
+SELECTCASE RFLAG:コマンド結果受渡し変数
+	CASE -1
+		;失敗時
+		PRINTL 
+		PRINTL ……주변에 있는 엑스트라 관광객들이 수상하게 여기고 있다.
+		PRINTFORML 소곤소곤, %CALLNAME:TARGET%이(가) 여자가 아니냐는 속삭임이 들려왔다……
+		IF 知識素質:TARGET:性知識 < 0
+			PRINTFORML %CALLNAME:TARGET%은(는) 그 시선을 개의치 않고, 당당하게 %CALLNAME:PLAYER%의 곁으로 돌아왔다.
+		ELSE
+			PRINTFORML %CALLNAME:TARGET%은(는) 호기와 의심의 시선에 얼굴을 붉히며 견디고, 어떻게든 %CALLNAME:PLAYER%의 곁으로 돌아왔다.
+		ENDIF
+	CASE 1
+		;成功時
+		PRINTL 
+		PRINTL 
+		PRINTL ……아무에게도 들키지 않고 돌아올 수 있었던 것 같다.
+		IF 知識素質:TARGET:性知識 < 0
+			PRINTFORML %CALLNAME:TARGET%은(는) 무슨 의미가 있었을까, 하고 고개를 갸웃거리고 있다.
+		ELSE
+			PRINTFORML %CALLNAME:TARGET%은(는) 들키지 않았을까 불안해하면서, 서둘러 원래 수영복으로 갈아입었다.
+		ENDIF
+ENDSELECT
+
+

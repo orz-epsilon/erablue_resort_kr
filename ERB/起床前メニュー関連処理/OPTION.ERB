@@ -1,0 +1,3886 @@
+;オプション設定処理
+@OPTION
+PRINTL 설정 항목을 선택해주세요
+PRINTL [1] - 커맨드 필터
+PRINTL [2] - 특정 소질 전환
+PRINTL [3] - 기능 전환
+PRINTL [4] - 기상 시각 설정
+PRINTL 
+PRINTL [100] - 회차 인계 버그 대응 버튼
+PRINTL [101] - 이력 다중 등록 버그 대응 버튼
+PRINTL [102] - 캐릭터 CSV 변경 시 갱신 버튼
+PRINTL [999] - 돌아가기
+
+
+$INPUT_LOOP
+BINPUT
+IF RESULT == 1
+	CALL OPTION_COMMAND_FILTER
+ELSEIF RESULT == 2
+	CALL OPTION_素質切り替え
+ELSEIF RESULT == 3
+	CALL OPTION_機能切り替え
+ELSEIF RESULT == 4
+	IF SAVESTR:ゲームフェイズ管理 != ""
+		PRINTW 기상 예정 시각은 기상 전에만 설정할 수 있습니다.
+	ELSE
+		PRINTL 몇 시에 기상하시겠습니까?
+		PRINTFORML 현재 기상 예정 시각은%CONVERT_HOURS(CFLAG:MASTER:起床予定時刻)%시입니다
+		IF DAY > 1 && CFLAG:MASTER:就寝時刻 % ((DAY - 1) * 1440) >= CFLAG:MASTER:起床予定時刻
+			;０時よりも前に寝た場合はその日のうちに起きないようにしておく
+			PRINTFORML 전날의 취침 시각인%CONVERT_HOURS(CFLAG:MASTER:就寝時刻 % ((DAY - 1) * 1440))%시보다 이후에는 설정할 수 없습니다.
+		ENDIF
+
+		LOCAL:1 = 0
+		FOR LOCAL, 0, 24
+			IF DAY > 1 && CFLAG:MASTER:就寝時刻 % ((DAY - 1) * 1440) >= CFLAG:MASTER:起床予定時刻
+				SIF CFLAG:MASTER:就寝時刻 % ((DAY - 1) * 1440) <= LOCAL * 60
+					CONTINUE
+			ENDIF
+			PRINTFORM [{LOCAL, 2}] 
+			LOCAL:1 ++
+			SIF LOCAL:1 % 10 == 9
+				PRINTL
+		NEXT
+		PRINTL
+		PRINTBUTTON "[변경하지 않음]", 99
+
+		$INPUT_LOOP2
+		INPUT
+		SIF RESULT == 99
+			RESTART
+		SIF RESULT < 0 || RESULT > 23
+			GOTO INPUT_LOOP2
+		CFLAG:MASTER:起床予定時刻 = RESULT * 60
+	ENDIF
+ELSEIF RESULT == 100
+	PRINTL 회차에서 캐릭터를 인계했을 때 오류가 발생하는 현상에 대처하는 버튼입니다
+	PRINTL 현재 존재하는 캐릭터의 관계성을 모두 리셋하고, 초기 상태로 되돌립니다
+	PRINTL ※막힘을 회피하기 위한 비상용 처리입니다. 통상적으로는 실행하지 마십시오.
+	PRINTL 
+	PRINTL 실행하시겠습니까?
+	PRINTL [0] 예
+	PRINTL [1] 아니오
+	BINPUT
+	IF RESULT == 0
+		FOR LOCAL, 0, CHARANUM
+			CALL INIT_RELATION(LOCAL)
+		NEXT
+		PRINTW 실행했습니다.
+	ENDIF
+ELSEIF RESULT == 101
+	PRINTL 캐릭터의 이력이 대량으로 중복 등록되는 버그에 대응하는 버튼입니다.
+	PRINTL 현재 존재하는 캐릭터의 이력을 모두 리셋하고, 초기 상태로 되돌립니다.
+	PRINTL ※삭제 시 달성하고 있는 이력에 대해서는 재등록되지 않으니 주의하십시오
+	PRINTL 
+	PRINTL 실행하시겠습니까?
+	PRINTL [0] 예
+	PRINTL [1] 아니오
+	BINPUT
+	IF RESULT == 0
+		DT_CLEAR "履歴データベース"
+		PRINTW 실행했습니다.
+	ENDIF
+ELSEIF RESULT == 102
+	PRINTL 캐릭터의 CSV가 변경되었을 때, 이미 저장된 데이터를 갱신하는 버튼입니다.
+	PRINTL 사양상, 소질이나 경험이 리셋될 수 있습니다.
+	PRINTL 사용 시에는 충분히 주의해 주세요.
+	PRINTL 
+	PRINTL [0] 갱신할 캐릭터를 선택한다
+	PRINTL [1] 게임 중 변경되지 않는 요소를 일괄 갱신
+	PRINTL [2] 돌아가기
+	BINPUT
+	IF RESULT == 0
+		CALL CSV更新処理リスト()
+	ELSEIF RESULT == 1
+		PRINTL
+		PRINTL
+		DRAWLINE
+		PRINTL 통상 게임 중에 변경되지 않는 요소의 CSV 변경을 모든 캐릭터에 일괄 적용합니다.
+		PRINTL 캐릭터에 따라서는 특수 처리로 변경되어 있을 수 있으니 주의해 주세요.
+		PRINTL ・변경을 적용할 요소
+		PRINTL 　　이름, 호칭, 이미지 폴더, 출전 작품, 선물 취향, 전투 타입
+		PRINTL 　　연령 소질, 고유 소질, 통상 복장, 오의명 설정
+		DRAWLINE
+		PRINTL 일괄 변경을 적용하시겠습니까?
+		PRINTBUTTONLC "[0] 예", 0
+		PRINTBUTTONLC "[1] 아니오", 1
+		BINPUT
+		IF RESULT == 0
+			CALL 影響低い部分まとめて適用()
+			PRINTW 변경을 적용했습니다.
+		ENDIF
+	ENDIF
+ELSEIF RESULT == 999
+	RETURN 0
+ELSE
+	GOTO INPUT_LOOP
+ENDIF
+RESTART
+
+
+;文字列変数に保存してみた
+@OPTION_COMMAND_FILTER
+#DIMS フェイズ保存
+#DIM ループ用
+#DIM 改行用
+
+TOOLTIP_CUSTOM 1
+TOOLTIP_SETFONTSIZE 12
+TOOLTIP_SETDURATION 100000
+
+VARSET LOCAL
+FOR COUNT,0,500
+	LOCALS = /{COUNT}/
+	SIF STRCOUNT(SAVESTR:0,LOCALS)
+		LOCAL:COUNT = 1
+NEXT
+SIF SAVESTR:0 == ""
+	SAVESTR:0 = /
+DRAWLINE
+フェイズ保存 = %SAVESTR:ゲームフェイズ管理%
+SAVESTR:ゲームフェイズ管理 = 通常モード
+LOCALS:1 = 
+改行用 = 0
+
+FOR COUNT,0,500
+	SIF COUNT >= 370 && COUNT <= 390
+		CONTINUE
+	LOCALS = /{COUNT}/
+	; SIF STRCOUNT(SAVESTR:0,LOCALS)
+	; 		SETCOLOR 0x666666
+	IF STRLENS(TRAIN_COMNAME(COUNT))
+		TSTR:ツールチップ受渡 = TRAIN_COMNAME(COUNT)
+		IF STRCOUNT(SAVESTR:0,LOCALS)
+			LOCALS:1 += @"<font color='#666666'><button value = '{COUNT}'"
+		ELSE
+			LOCALS:1 += @"<button value = '{COUNT}'"
+		ENDIF
+		TRYCCALLFORM COM_TOOLTIP_{COUNT}
+			IF OPTION変数:ツールチップ切り替え == 0
+				LOCALS:1 += @" title = '%TSTR:ツールチップ受渡%'>"
+			ELSE
+				LOCALS:1 += @">"
+			ENDIF
+		CATCH
+			LOCALS:1 += @">"
+		ENDCATCH
+		LOCALS:1 += @"%TRAIN_COMNAME(COUNT), 22%[{COUNT, 3}]</button>"
+		SIF STRCOUNT(SAVESTR:0,LOCALS)
+			LOCALS:1 += "</font>"
+		;PRINTFORMC %TRAIN_COMNAME(COUNT)%[{COUNT,3}]
+		改行用 += 1
+	ENDIF
+	IF 改行用 >= 4
+		改行用 = 0
+		HTML_PRINT LOCALS:1
+		LOCALS:1 = 
+	ENDIF
+NEXT
+IF LOCALS:1 != ""
+	改行用 = 0
+	HTML_PRINT LOCALS:1
+	LOCALS:1 = 
+ENDIF
+
+PRINTL 
+DRAWLINE
+PRINTL [1000] - 결정　　　　　　　　　 [1001] - 통상 커맨드 필터 리셋
+PRINTL [1002] - 명령 필터 저장 [1003] - 명령 필터 불러오기
+SETCOLOR 0x666666
+PRINTPLAIN [1010] - SM 필터 [1011] - V 필터 (미구현입니다)
+RESETCOLOR
+PRINTL
+PRINTL [1020] - 고유 명령 필터로
+PRINTL [1021] - 파생 명령 필터로
+BINPUT
+IF RESULT == 1000
+	SAVESTR:ゲームフェイズ管理 = %フェイズ保存%
+	RETURN 0
+ELSEIF RESULT == 1001
+	SAVESTR:0 = 
+	RESTART
+ELSEIF RESULT == 1002
+	$INPUT_LOOP_SAVE
+	LOADGLOBAL
+	FOR ループ用,0,3
+		PRINTFORM [{ループ用}] - 
+		IF STRLENS(GLOBALS:(ループ用 * 2 + 1))
+			PRINTFORML [%GLOBALS:(ループ用 * 2 + 1)%]
+		ELSE
+			PRINTL ----------
+		ENDIF
+	NEXT
+	PRINTL [100] - 돌아가기
+	INPUT
+	LOCAL = RESULT
+	IF RESULT == 100
+		RESTART
+	ELSEIF RESULT < 0 || RESULT > 2
+		GOTO INPUT_LOOP_SAVE
+	ENDIF
+	SIF STRLENS(GLOBALS:(RESULT * 2 + 1))
+		PRINTFORML 【%GLOBALS:(RESULT * 2 + 1)%】 이 데이터에 덮어씁니다
+	PRINTL 일반 명령 필터 이름을 등록해 주세요
+	INPUTS
+	GLOBALS:(LOCAL * 2 + 1) = %RESULTS%
+	GLOBALS:(LOCAL * 2) = %SAVESTR:0%
+	PRINTFORMW 일반 명령 필터【%GLOBALS:(LOCAL * 2 + 1)%】을(를) 등록했습니다
+	SAVEGLOBAL
+	RESTART
+ELSEIF RESULT == 1003
+	$INPUT_LOOP_LOAD
+	LOADGLOBAL
+	FOR LOCAL,0,3
+		PRINTFORM [{LOCAL}] - 
+		IF STRLENS(GLOBALS:(LOCAL * 2 + 1))
+			PRINTFORML [%GLOBALS:(LOCAL * 2 + 1)%]
+		ELSE
+			PRINTL ----------
+		ENDIF
+	NEXT
+	PRINTL [100] - 돌아가기
+	INPUT
+	IF RESULT == 100
+		RESTART
+	ELSEIF RESULT < 0 || RESULT > 2
+		GOTO INPUT_LOOP_LOAD
+	ENDIF
+	PRINTFORMW 일반 명령 필터【%GLOBALS:(RESULT * 2 + 1)%】을(를) 불러왔습니다
+	SAVESTR:0 = %GLOBALS:(RESULT * 2)%
+	RESTART
+;各種フィルタ
+;ELSEIF RESULT == 1010 || RESULT == 1011
+;	FOR COUNT,0,500
+;		;SM
+;;		IF RESULT == 1010
+;			SIF (COUNT >= 100 && COUNT < 120) || (COUNT >= 140 && COUNT < 160)
+;				LOCAL:COUNT = 1
+;		;V
+;		ELSEIF RESULT == 1011
+;			SIF COUNT == 3 || COUNT == 44 || COUNT == 60 || COUNT == 61 || COUNT == 65 || COUNT == 67 || COUNT == 68 || COUNT == 71 || COUNT == 122|| COUNT == 141 || COUNT == 143 || COUNT == 185
+;				LOCAL:COUNT = 1
+;		ENDIF
+;	NEXT
+ELSEIF RESULT == 1020
+	$固有
+	CALL OPTION_固有COMMAND_FILTER(フェイズ保存)
+	SIF RESULT == 999
+		GOTO 派生
+ELSEIF RESULT == 1021
+	$派生
+	CALL OPTION_派生COMMAND_FILTER(フェイズ保存)
+	SIF RESULT == 999
+		GOTO 固有
+ELSEIF STRLENS(TRAIN_COMNAME(RESULT))
+	LOCAL:RESULT = !LOCAL:RESULT
+ELSE
+	RESTART
+ENDIF
+SAVESTR:0 = /
+FOR COUNT,0,500
+	SIF !LOCAL:COUNT
+		CONTINUE
+	LOCALS = /{COUNT}/
+	SIF STRFIND(SAVESTR:0, LOCALS) < 0
+		SAVESTR:0 = %SAVESTR:0%{COUNT}/
+NEXT
+RESTART
+
+
+@OPTION_固有COMMAND_FILTER(フェイズ保存)
+#DIM COM番号
+#DIMS フェイズ保存
+#DIM ターゲット保存
+#DIM ターゲット保存２
+#DIM フィルタ配列, 20, 500
+#DIM 場所フィルタ配列, 10, 20, マップ部屋番号上限
+#DIMS RESULTS分割, 10
+#DIM 改行用
+#DIM 派生番号
+
+VARSET LOCAL
+VARSET フィルタ配列
+FOR COM番号, 370, 375
+	VARSET RESULTS
+	ENUMFUNCBEGINSWITH @"CHARACOMNAME{COM番号}_"
+	FOR 派生番号, 0, RESULT
+		LOCALS = /%REPLACE(RESULTS:派生番号, "CHARACOMNAME", "")%/
+		IF STRCOUNT(SAVESTR:1, LOCALS)
+			VARSET RESULTS分割
+			SPLIT RESULTS:派生番号, "_", RESULTS分割
+			フィルタ配列:(COM番号 - 370):(TOINT(RESULTS分割:1)) = 1
+		ENDIF
+	NEXT
+NEXT
+FOR COM番号, 380, 385
+	VARSET RESULTS
+	ENUMFUNCBEGINSWITH @"COMNAME_PLACE_{COM番号}_"
+	FOR 派生番号, 0, RESULT
+		LOCALS = /%REPLACE(RESULTS:派生番号, "COMNAME_PLACE_", "")%/
+		IF STRCOUNT(SAVESTR:1, LOCALS)
+			VARSET RESULTS分割
+			SPLIT RESULTS:派生番号, "_", RESULTS分割
+			場所フィルタ配列:(COM番号 - 380):(TOINT(RESULTS分割:3)):(TOINT(RESULTS分割:4)) = 1
+		ENDIF
+	NEXT
+NEXT
+;お祭りコマンドはフィルタ不可
+SIF SAVESTR:1 == ""
+	SAVESTR:1 = /
+DRAWLINE
+SAVESTR:ゲームフェイズ管理 = 通常モード
+
+
+改行用 = 0
+ターゲット保存 = TARGET
+FOR COM番号, 370, 375
+	VARSET RESULTS
+	ENUMFUNCBEGINSWITH @"CHARACOMNAME{COM番号}_"
+	FOR 派生番号, 0, RESULT
+		LOCALS = /%REPLACE(RESULTS:派生番号, "CHARACOMNAME", "")%/
+		VARSET RESULTS分割
+		SPLIT RESULTS:派生番号, "_", RESULTS分割
+		TARGET = GETCHARA(TOINT(RESULTS分割:1))
+		;固有コマンドのABLEがあれば当然COMNAMEもあるはずなのでTRYCCALLで判定
+		TRYCCALLFORM COM_ABLE{COM番号}_{NO:TARGET}
+			TSTR:ツールチップ受渡 = TRAIN_COMNAME(COM番号)
+			IF STRCOUNT(SAVESTR:1,LOCALS)
+				LOCALS:1 += @"<font color='#666666'><button value = '{COM番号}_{NO:TARGET}'"
+			ELSE
+				LOCALS:1 += @"<button value = '{COM番号}_{NO:TARGET}'"
+			ENDIF
+			TRYCCALLFORM COM_TOOLTIP_{COM番号}_{NO:TARGET}
+				IF OPTION変数:ツールチップ切り替え == 0
+					LOCALS:1 += @" title = '%TSTR:ツールチップ受渡%'>"
+				ELSE
+					LOCALS:1 += @">"
+				ENDIF
+			CATCH
+				LOCALS:1 += @">"
+			ENDCATCH
+			LOCALS:1 += @"%CALLNAME:TARGET,20,RIGHT% - %TRAIN_COMNAME(COM番号), 22%[{COM番号}_{NO:TARGET,3}]</button>"
+			SIF STRCOUNT(SAVESTR:1,LOCALS)
+				LOCALS:1 += "</font>"
+			改行用 += 1
+		CATCH
+		ENDCATCH
+		IF 改行用 >= 2
+			改行用 = 0
+			HTML_PRINT LOCALS:1
+			LOCALS:1 = 
+		ENDIF
+	NEXT
+NEXT
+IF LOCALS:1 != ""
+	改行用 = 0
+	HTML_PRINT LOCALS:1
+	LOCALS:1 = 
+ENDIF
+TARGET = ターゲット保存
+PRINTL
+DRAWLINE
+ターゲット保存 = CFLAG:MASTER:現在位置
+ターゲット保存２ = CFLAG:MASTER:現在マップ種別
+FOR COM番号, 380, 385
+	VARSET RESULTS
+	ENUMFUNCBEGINSWITH @"COMNAME_PLACE_{COM番号}_"
+	FOR 派生番号, 0, RESULT
+		LOCALS = /%REPLACE(RESULTS:派生番号, "COMNAME_PLACE_", "")%/
+		VARSET RESULTS分割
+		SPLIT RESULTS:派生番号, "_", RESULTS分割
+		CFLAG:MASTER:現在マップ種別 = TOINT(RESULTS分割:3)
+		CFLAG:MASTER:現在位置 = TOINT(RESULTS分割:4)
+		;マップ種別とりあえず入れておくだけ
+		;固有コマンドのABLEがあれば当然COMNAMEもあるはずなのでTRYCCALLで判定
+		TRYCCALLFORM COM_ABLE{COM番号}
+			IF TRAIN_COMNAME(COM番号) != ""
+				TSTR:ツールチップ受渡 = TRAIN_COMNAME(COM番号)
+				IF STRCOUNT(SAVESTR:1,LOCALS)
+					LOCALS:1 += @"<font color='#666666'><button value = '{COM番号}_{CFLAG:MASTER:現在マップ種別}_{CFLAG:MASTER:現在位置}'"
+				ELSE
+					LOCALS:1 += @"<button value = '{COM番号}_{CFLAG:MASTER:現在マップ種別}_{CFLAG:MASTER:現在位置}'"
+				ENDIF
+				TRYCCALLFORM COM_TOOLTIP_{COM番号}_{CFLAG:MASTER:現在マップ種別}_{CFLAG:MASTER:現在位置}
+					IF OPTION変数:ツールチップ切り替え == 0
+						LOCALS:1 += @" title = '%TSTR:ツールチップ受渡%'>"
+					ELSE
+						LOCALS:1 += @">"
+					ENDIF
+				CATCH
+					LOCALS:1 += @">"
+				ENDCATCH
+				LOCALS:1 += @"%GETPLACENAME(CFLAG:PLAYER:現在マップ種別, CFLAG:MASTER:現在位置),20,RIGHT% - %TRAIN_COMNAME(COM番号),18,RIGHT%[{COM番号}_{CFLAG:MASTER:現在マップ種別}_{CFLAG:MASTER:現在位置}]</button>"
+				SIF STRCOUNT(SAVESTR:1,LOCALS)
+					LOCALS:1 += "</font>"
+				改行用 += 1
+			ENDIF
+		CATCH
+		ENDCATCH
+		IF 改行用 >= 2
+			改行用 = 0
+			HTML_PRINT LOCALS:1
+			LOCALS:1 = 
+		ENDIF
+	NEXT
+NEXT
+IF LOCALS:1 != ""
+	改行用 = 0
+	HTML_PRINT LOCALS:1
+	LOCALS:1 = 
+ENDIF
+CFLAG:MASTER:現在位置 = ターゲット保存
+CFLAG:MASTER:現在マップ種別 = ターゲット保存２
+
+PRINTL 
+DRAWLINE
+
+PRINTBUTTON "[1000] - 일반 명령 필터로　　　", TOSTR(1000)
+PRINTBUTTON "[1001] - 파생 명령 필터로　　　", TOSTR(1001)
+PRINTL
+PRINTBUTTON "[1002] - 고유 커맨드 필터 리셋", TOSTR(1002)
+PRINTL
+PRINTBUTTON "[1003] - 고유 커맨드 필터 저장　", TOSTR(1003)
+PRINTBUTTON "[1004] - 고유 커맨드 필터 로드", TOSTR(1004)
+PRINTL
+
+BINPUTS
+
+SELECTCASE RESULTS
+	CASE "1000"
+		SAVESTR:ゲームフェイズ管理 = %フェイズ保存%
+		RETURN 0
+	CASE "1001"
+		RETURN 999
+	CASE "1002"
+		SAVESTR:1 = 
+		RESTART
+	CASE "1003"
+		$INPUT_LOOP_SAVE
+		LOADGLOBAL
+		FOR LOCAL, 3, 6
+			PRINTFORM [{LOCAL}] - 
+			IF STRLENS(GLOBALS:(LOCAL * 2 + 1))
+				PRINTFORML [%GLOBALS:(LOCAL * 2 + 1)%]
+			ELSE
+				PRINTL ----------
+			ENDIF
+		NEXT
+		PRINTL [100] - 돌아가기
+		INPUT
+		LOCAL = RESULT
+		IF LOCAL == 100
+			RESTART
+		ELSEIF LOCAL < 3 || LOCAL > 5
+			GOTO INPUT_LOOP_SAVE
+		ENDIF
+		SIF STRLENS(GLOBALS:(RESULT * 2 + 1))
+			PRINTFORML 【%GLOBALS:(LOCAL * 2 + 1)%】 이 데이터에 덮어씁니다
+		PRINTL 고유 커맨드 필터 이름을 등록해 주세요
+		INPUTS
+		GLOBALS:(LOCAL * 2 + 1) = %RESULTS%
+		GLOBALS:(LOCAL * 2) = %SAVESTR:1%
+		PRINTFORMW 고유 커맨드 필터【%GLOBALS:(LOCAL * 2 + 1)%】을(를) 등록했습니다
+		SAVEGLOBAL
+		RESTART
+	CASE "1004"
+		$INPUT_LOOP_LOAD
+		LOADGLOBAL
+		FOR LOCAL, 3, 6
+			PRINTFORM [{LOCAL}] - 
+			IF STRLENS(GLOBALS:(LOCAL * 2 + 1))
+				PRINTFORML [%GLOBALS:(LOCAL * 2 + 1)%]
+			ELSE
+				PRINTL ----------
+			ENDIF
+		NEXT
+		PRINTL [100] - 돌아가기
+		INPUT
+		IF RESULT == 100
+			RESTART
+		ELSEIF RESULT < 3 || RESULT > 5
+			GOTO INPUT_LOOP_LOAD
+		ENDIF
+		PRINTFORMW 고유 커맨드 필터【%GLOBALS:(RESULT * 2 + 1)%】을(를) 불러왔습니다
+		SAVESTR:1 = %GLOBALS:(RESULT * 2)%
+		RESTART
+	CASEELSE
+		LOCALS = /%RESULTS%/
+		IF !STRCOUNT(SAVESTR:1,LOCALS)
+			SAVESTR:1 = %SAVESTR:1%%RESULTS%/
+		ELSE
+			SAVESTR:1 = %REPLACE(SAVESTR:1, LOCALS, "/")%
+		ENDIF
+ENDSELECT
+
+RESTART
+
+$処理部分ラベル
+
+
+@OPTION_派生COMMAND_FILTER(フェイズ保存)
+#DIM COM番号
+#DIM ターゲット保存
+#DIMS フェイズ保存
+#DIM フィルタ配列, 500, 50
+#DIMS RESULTS分割, 10
+#DIM 改行用
+#DIM 派生番号
+
+VARSET LOCAL
+VARSET フィルタ配列
+VARSET RESULTS
+ENUMFUNCBEGINSWITH @"COMNAME_S"
+FOR 派生番号, 0, RESULT
+	LOCALS = /%REPLACE(RESULTS:派生番号, "COMNAME_S", "")%/
+	IF STRCOUNT(SAVESTR:2, LOCALS)
+		VARSET RESULTS分割
+		SPLIT RESULTS:派生番号, "_", RESULTS分割
+		フィルタ配列:(TOINT(SUBSTRING(RESULTS分割:1, 1, -1))):(TOINT(RESULTS分割:2)) = 1
+	ENDIF
+NEXT
+SIF SAVESTR:2 == ""
+	SAVESTR:2 = /
+DRAWLINE
+SAVESTR:ゲームフェイズ管理 = 通常モード
+
+改行用 = 0
+VARSET RESULTS
+ENUMFUNCBEGINSWITH @"COMNAME_S"
+FOR 派生番号, 0, RESULT
+	LOCALS = /%REPLACE(RESULTS:派生番号, "COMNAME_S", "")%/
+	VARSET RESULTS分割
+	SPLIT RESULTS:派生番号, "_", RESULTS分割
+	COM番号 = TOINT(SUBSTRING(RESULTS分割:1, 1, -1))
+	LOCALS:1 = {COM番号}_%RESULTS分割:2%
+	;派生コマンドのABLEがあれば当然COMNAMEもあるはずなのでTRYCCALLで判定
+	TRYCCALLFORM COM_ABLE_S%LOCALS:1%
+		IF TRAIN_COMNAME_S(LOCALS:1) != ""
+			TSTR:ツールチップ受渡 = TRAIN_COMNAME_S(LOCALS:1)
+			IF STRCOUNT(SAVESTR:2,LOCALS)
+				LOCALS:2 += @"<font color='#666666'><button value = '%LOCALS:1%'"
+			ELSE
+				LOCALS:2 += @"<button value = '%LOCALS:1%'"
+			ENDIF
+			TRYCCALLFORM COM_TOOLTIP_S{COM番号}_{派生番号}
+				IF OPTION変数:ツールチップ切り替え == 0
+					LOCALS:2 += @" title = '%TSTR:ツールチップ受渡%'>"
+				ELSE
+					LOCALS:2 += @">"
+				ENDIF
+			CATCH
+				LOCALS:2 += @">"
+			ENDCATCH
+			LOCALS:2 += @"%TRAIN_COMNAME(COM番号), 20, RIGHT%파생 - %TRAIN_COMNAME_S(LOCALS:1), 20, LEFT%[{COM番号}_{派生番号,2}]</button>"
+			SIF STRCOUNT(SAVESTR:2,LOCALS)
+				LOCALS:2 += "</font>"
+			改行用 += 1
+			;PRINTBUTTON @"%TRAIN_COMNAME(COM番号), 20, RIGHT%派生 - %TRAIN_COMNAME_S(LOCALS:1), 20, LEFT%[{COM番号}_{派生番号,2}]", @"%LOCALS:1%"
+		ENDIF
+	CATCH
+	ENDCATCH
+	IF 改行用 >= 2
+		改行用 = 0
+		HTML_PRINT LOCALS:2
+		LOCALS:2 = 
+	ENDIF
+NEXT
+IF LOCALS:2 != ""
+	改行用 = 0
+	HTML_PRINT LOCALS:2
+	LOCALS:2 = 
+ENDIF
+
+PRINTL 
+DRAWLINE
+
+PRINTBUTTON "[1000] - 일반 커맨드 필터로　　　", TOSTR(1000)
+PRINTBUTTON "[1001] - 고유 커맨드 필터로　　　", TOSTR(1001)
+PRINTL
+PRINTBUTTON "[1002] - 파생 커맨드 필터 리셋", TOSTR(1002)
+PRINTL
+PRINTBUTTON "[1003] - 파생 커맨드 필터 저장　", TOSTR(1003)
+PRINTBUTTON "[1004] - 파생 커맨드 필터 로드", TOSTR(1004)
+PRINTL
+
+INPUTS
+
+SELECTCASE RESULTS
+	CASE "1000"
+		SAVESTR:ゲームフェイズ管理 = %フェイズ保存%
+		RETURN 0
+	CASE "1001"
+		RETURN 999
+	CASE "1002"
+		SAVESTR:2 = 
+		RESTART
+	CASE "1003"
+		$INPUT_LOOP_SAVE
+		LOADGLOBAL
+		FOR LOCAL, 6, 9
+			PRINTFORM [{LOCAL}] - 
+			IF STRLENS(GLOBALS:(LOCAL * 2 + 1))
+				PRINTFORML [%GLOBALS:(LOCAL * 2 + 1)%]
+			ELSE
+				PRINTL ----------
+			ENDIF
+		NEXT
+		PRINTL [100] - 돌아가기
+		INPUT
+		LOCAL = RESULT
+		IF LOCAL == 100
+			RESTART
+		ELSEIF LOCAL < 6 || LOCAL > 8
+			GOTO INPUT_LOOP_SAVE
+		ENDIF
+		SIF STRLENS(GLOBALS:(LOCAL * 2 + 1))
+			PRINTFORML 【%GLOBALS:(LOCAL * 2 + 1)%】 이 데이터에 덮어씁니다
+		PRINTL 파생 커맨드 필터 이름을 등록해 주세요
+		INPUTS
+		GLOBALS:(LOCAL * 2 + 1) = %RESULTS%
+		GLOBALS:(LOCAL * 2) = %SAVESTR:2%
+		PRINTFORMW 파생 커맨드 필터【%GLOBALS:(LOCAL * 2 + 1)%】을(를) 등록했습니다
+		SAVEGLOBAL
+		RESTART
+	CASE "1004"
+		$INPUT_LOOP_LOAD
+		LOADGLOBAL
+		FOR LOCAL, 6, 9
+			PRINTFORM [{LOCAL}] - 
+			IF STRLENS(GLOBALS:(LOCAL * 2 + 1))
+				PRINTFORML [%GLOBALS:(LOCAL * 2 + 1)%]
+			ELSE
+				PRINTL ----------
+			ENDIF
+		NEXT
+		PRINTL [100] - 돌아가기
+		INPUT
+		IF RESULT == 100
+			RESTART
+		ELSEIF RESULT < 6 || RESULT > 8
+			GOTO INPUT_LOOP_LOAD
+		ENDIF
+		PRINTFORMW 파생 커맨드 필터【%GLOBALS:(RESULT * 2 + 1)%】을(를) 불러왔습니다
+		SAVESTR:2 = %GLOBALS:(RESULT * 2)%
+		RESTART
+	CASEELSE
+		SPLIT RESULTS, "_", RESULTS分割
+		IF RESULT == 2
+			フィルタ配列:(TOINT(RESULTS分割:0)):(TOINT(RESULTS分割:1)) = !フィルタ配列:(TOINT(RESULTS分割:0)):(TOINT(RESULTS分割:1))
+		ELSE
+			RESTART
+		ENDIF
+ENDSELECT
+
+SAVESTR:2 = /
+FOR COM番号, 0, 500
+	FOR COUNT, 1, 50
+		SIF !フィルタ配列:COM番号:COUNT
+			CONTINUE
+		PRINTFORML {フィルタ配列:COM番号:COUNT}
+		LOCALS = /{COM番号}_{COUNT}/
+		SIF !STRCOUNT(SAVESTR:2,LOCALS)
+			SAVESTR:2 = %SAVESTR:2%{COM番号}_{COUNT}/
+	NEXT
+NEXT
+
+RESTART
+
+$処理部分ラベル
+
+
+@OPTION_素質切り替え
+DRAWLINE
+PRINTL 모든 캐릭터 중, 특정 소질을 다른 소질로 대체합니다.
+PRINTL (※한번 대체한 후에는 되돌릴 수 없습니다)
+DRAWLINE
+IF 素質切り替えOPTION記憶:ふたなり_女性
+	PRINTBUTTON "[0][후타나리]을(를)[여성]으로 변경한다(적용됨)", 0
+ELSE
+	PRINTBUTTON "[0][후타나리]을(를)[여성]으로 변경한다", 0
+ENDIF
+PRINTL
+IF 素質切り替えOPTION記憶:陥没乳首_なし
+	PRINTBUTTON "[1][함몰 유두]을(를)[없음]으로 변경한다(적용됨)", 1
+ELSE
+	PRINTBUTTON "[1][함몰 유두]을(를)[없음]으로 변경한다", 1
+ENDIF
+PRINTL
+IF 素質切り替えOPTION記憶:母乳体質_なし && 素質切り替えOPTION記憶:母乳体質_発情期_なし
+	PRINTBUTTON "[2][모유 체질]을(를)[없음]으로 변경한다(적용됨)", 2
+ELSE
+	PRINTBUTTON "[2][모유 체질]을(를)[없음]으로 변경한다", 2
+ENDIF
+PRINTL
+PRINTBUTTON "[999] 결정", 999
+PRINTL
+
+$INPUT_LOOP
+BINPUT
+
+SELECTCASE RESULT
+	CASE 0
+		IF 素質切り替えOPTION記憶:ふたなり_女性
+			REUSELASTLINE 
+			GOTO INPUT_LOOP
+		ENDIF
+		PRINTL [후타나리]를 [여성]으로 변경합니다. 변경 후에는 되돌릴 수 없습니다.
+		PRINTL 괜찮습니까?
+		PRINTBUTTON "[0]향후 추가될 캐릭터를 포함하여 변경한다", 0
+		PRINTL
+		PRINTBUTTON "[1]지금 존재하는 캐릭터만 변경한다", 1
+		PRINTL
+		PRINTBUTTON "[2]관련 경험(사정 경험)을 지금 있는 캐릭터에서 지운다", 2
+		PRINTL
+		PRINTBUTTON "[10]변경하지 않는다", 10
+		PRINTL
+		$INPUT_LOOP2
+		INPUT
+		SELECTCASE RESULT
+			CASE 0
+				FOR LOCAL, 1, CHARANUM
+					IF TALENT:LOCAL:性別 == 3
+						TALENT:LOCAL:性別 = 1
+					ENDIF
+				NEXT
+				素質切り替えOPTION記憶:ふたなり_女性 = 1
+				PRINTW 변경이 완료되었습니다.
+				RESTART
+			CASE 1
+				FOR LOCAL, 1, CHARANUM
+					IF TALENT:LOCAL:性別 == 3
+						TALENT:LOCAL:性別 = 1
+					ENDIF
+				NEXT
+				PRINTW 변경이 완료되었습니다.
+				RESTART
+			CASE 2
+				FOR LOCAL, 1, CHARANUM
+					IF EXP:LOCAL:射精経験
+						EXP:LOCAL:射精経験 = 0
+					ENDIF
+				NEXT
+				PRINTW 삭제가 완료되었습니다.
+				RESTART
+			CASE 10
+				RESTART
+			CASEELSE
+				REUSELASTLINE 
+				GOTO INPUT_LOOP2
+		ENDSELECT
+	CASE 1
+		IF 素質切り替えOPTION記憶:陥没乳首_なし
+			REUSELASTLINE 
+			GOTO INPUT_LOOP
+		ENDIF
+		PRINTL [함몰유두]를 [없음]으로 변경합니다. 변경 후에는 되돌릴 수 없습니다.
+		PRINTL 괜찮습니까?
+		PRINTBUTTON "[0]향후 추가될 캐릭터를 포함하여 변경한다", 0
+		PRINTL
+		PRINTBUTTON "[1]지금 존재하는 캐릭터만 변경한다", 1
+		PRINTL
+		PRINTBUTTON "[10]변경하지 않는다", 10
+		PRINTL
+		$INPUT_LOOP3
+		INPUT
+		SELECTCASE RESULT
+			CASE 0
+				FOR LOCAL, 1, CHARANUM
+					IF TALENT:LOCAL:陥没乳首
+						TALENT:LOCAL:陥没乳首 = 0
+					ENDIF
+				NEXT
+				素質切り替えOPTION記憶:陥没乳首_なし = 1
+				PRINTW 변경이 종료되었습니다.
+				RESTART
+			CASE 1
+				FOR LOCAL, 1, CHARANUM
+					IF TALENT:LOCAL:陥没乳首
+						TALENT:LOCAL:陥没乳首 = 0
+					ENDIF
+				NEXT
+				PRINTW 변경이 종료되었습니다.
+				RESTART
+			CASE 10
+				RESTART
+			CASEELSE
+				REUSELASTLINE 
+				GOTO INPUT_LOOP3
+		ENDSELECT
+	CASE 2
+		IF 素質切り替えOPTION記憶:母乳体質_なし && 素質切り替えOPTION記憶:母乳体質_発情期_なし
+			REUSELASTLINE 
+			GOTO INPUT_LOOP
+		ENDIF
+		PRINTL [모유 체질]을 [없음]으로 변경합니다. 변경 후에는 되돌릴 수 없습니다.
+		PRINTL 괜찮으시겠습니까?
+		IF 素質切り替えOPTION記憶:母乳体質_なし
+			SETCOLOR 0x666666
+			PRINTPLAIN [0]앞으로 추가될 캐릭터도 포함하여 변경한다 (적용 완료)
+			PRINTL
+			PRINTPLAIN [1]지금 존재하는 캐릭터만 변경한다 (적용 완료)
+			PRINTL
+			RESETCOLOR
+		ELSE
+			PRINTBUTTON "[0]앞으로 추가될 캐릭터도 포함하여 변경한다", 0
+			PRINTL
+			PRINTBUTTON "[1]지금 존재하는 캐릭터만 변경한다", 1
+			PRINTL
+		ENDIF
+		IF 素質切り替えOPTION記憶:母乳体質_発情期_なし
+			SETCOLOR 0x666666
+			PRINTPLAIN [2]드라프의 [모유 체질(발정기)]을 지운다 (적용 완료)
+			PRINTL
+			RESETCOLOR
+		ELSE
+			PRINTBUTTON "[2]드라프의 [모유 체질(발정기)]을 지운다", 2
+			PRINTL
+		ENDIF
+		PRINTBUTTON "[3]관련 경험(분유 경험)을 지금 있는 캐릭터에서 지운다", 3
+		PRINTL
+		PRINTBUTTON "[10]변경하지 않는다", 10
+		PRINTL
+		$INPUT_LOOP4
+		INPUT
+		SELECTCASE RESULT
+			CASE 0
+				IF 素質切り替えOPTION記憶:母乳体質_なし
+					REUSELASTLINE 
+					GOTO INPUT_LOOP4
+				ENDIF
+				FOR LOCAL, 1, CHARANUM
+					IF TALENT:LOCAL:母乳体質 == 1
+						TALENT:LOCAL:母乳体質 = 0
+					ENDIF
+				NEXT
+				素質切り替えOPTION記憶:母乳体質_なし = 1
+				PRINTW 변경이 종료되었습니다.
+				RESTART
+			CASE 1
+				IF 素質切り替えOPTION記憶:母乳体質_なし
+					REUSELASTLINE 
+					GOTO INPUT_LOOP4
+				ENDIF
+				FOR LOCAL, 1, CHARANUM
+					IF TALENT:LOCAL:母乳体質
+						TALENT:LOCAL:母乳体質 = 0
+					ENDIF
+				NEXT
+				PRINTW 변경이 종료되었습니다.
+				RESTART
+			CASE 2
+				IF 素質切り替えOPTION記憶:母乳体質_発情期_なし
+					REUSELASTLINE 
+					GOTO INPUT_LOOP4
+				ENDIF
+				FOR LOCAL, 1, CHARANUM
+					IF TALENT:LOCAL:母乳体質 == 2
+						TALENT:LOCAL:母乳体質 = 0
+					ENDIF
+				NEXT
+				素質切り替えOPTION記憶:母乳体質_発情期_なし = 1
+				PRINTW 변경이 종료되었습니다.
+				RESTART
+			CASE 3
+				FOR LOCAL, 1, CHARANUM
+					IF EXP:LOCAL:噴乳経験
+						EXP:LOCAL:噴乳経験 = 0
+					ENDIF
+				NEXT
+PRINTW 삭제가 완료되었습니다.
+				RESTART
+			CASE 10
+				RESTART
+			CASEELSE
+				REUSELASTLINE 
+				GOTO INPUT_LOOP4
+		ENDSELECT
+	CASE 999
+		RETURN
+ENDSELECT
+
+
+
+@OPTION_機能切り替え(初期表示 = 0)
+#DIM カテゴリ切り替え変数
+#DIM 画面表示用変数
+#DIM 対象キャラ
+#DIM 初期表示
+
+IF 初期表示
+	画面表示用変数 = 初期表示 % 10000
+	カテゴリ切り替え変数 = 初期表示 / 10000
+	初期表示 = 0
+ENDIF
+
+DRAWLINE
+PRINTL 기능 관련 옵션 화면입니다
+PRINTL ※개발 중이므로, 올바르게 작동하지 않을 수 있습니다.
+DRAWLINE
+LOCALS = <div rect='81,50,5969,250' padding='50,25,50' border='31' bcolor='#C0C0C0'>
+IF カテゴリ切り替え変数 == 0
+	LOCALS += @"<nonbutton><font color='#%カラーパレット_HTML("黄")%'>[0] 시스템</font></nonbutton>"
+ELSE
+	LOCALS += "<button value='0'>[0] 시스템</button>"
+ENDIF
+LOCALS += "　/　"
+IF カテゴリ切り替え変数 == 1
+	LOCALS += @"<nonbutton><font color='#%カラーパレット_HTML("黄")%'>[1] 시스템 2</font></nonbutton>"
+ELSE
+	LOCALS += "<button value='1'>[1] 시스템 2</button>"
+ENDIF
+LOCALS += "　/　"
+IF カテゴリ切り替え変数 == 2
+	LOCALS += @"<nonbutton><font color='#%カラーパレット_HTML("黄")%'>[2] 우후후</font></nonbutton>"
+ELSE
+	LOCALS += "<button value='2'>[2] 우후후</button>"
+ENDIF
+LOCALS += "　/　"
+IF カテゴリ切り替え変数 == 3
+	LOCALS += @"<nonbutton><font color='#%カラーパレット_HTML("黄")%'>[3] 이미지 관련</font></nonbutton>"
+ELSE
+	LOCALS += "<button value='3'>[3] 이미지 관련</button>"
+ENDIF
+LOCALS += "　/　"
+IF カテゴリ切り替え変数 == 4
+	LOCALS += @"<nonbutton><font color='#%カラーパレット_HTML("黄")%'>[4] 탐색・전투</font></nonbutton>"
+ELSE
+	LOCALS += "<button value='4'>[4] 탐색・전투</button>"
+ENDIF
+LOCALS += "</div>"
+LOCALS += "<div rect='81,331,1937,3312' border='31' bcolor='#C0C0C0'></div><div rect='2050,331,4000,3312' border='31' bcolor='#C0C0C0'></div>"
+LOCALS += "<div rect='156,456,1937,3312'>"
+
+VARSET RESULTS
+CALLFORM 機能オプション左枠_{カテゴリ切り替え変数}(画面表示用変数)
+LOCALS += RESULTS
+LOCALS += "</div>"
+
+LOCALS += "<div rect='2125,456,3875,3312'>"
+CALLFORM 機能オプション右枠_{カテゴリ切り替え変数}(画面表示用変数)
+LOCALS += RESULTS
+LOCALS += "</div>"
+
+HTML_PRINT LOCALS
+FOR LOCAL, 0, 33
+	PRINTL
+NEXT
+DRAWLINE
+
+BINPUT
+LOCAL = RESULT
+SELECTCASE LOCAL
+	CASE 0 TO 4
+		カテゴリ切り替え変数 = LOCAL
+		画面表示用変数 = 100
+	CASE 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400
+		画面表示用変数 = LOCAL
+	CASE 999
+		画面表示用変数 = 0
+		カテゴリ切り替え変数 = 0
+		RETURN 0
+	CASEELSE
+		CALLFORM 機能オプション実行処理_{カテゴリ切り替え変数}(LOCAL)
+ENDSELECT
+
+RESTART
+
+@機能オプション左枠_0(画面表示用変数)
+#DIM 画面表示用変数
+;システム全般機能
+LOCALS = 
+IF 画面表示用変数 == 100
+	LOCALS += @"<nonbutton><font color='#%カラーパレット_HTML("黄")%'>[100] 구상 텍스트 설정</font></nonbutton>"
+ELSE
+	LOCALS += "<button value='100'>[100] 구상 텍스트 설정</button>"
+ENDIF
+LOCALS += "<br>"
+IF 画面表示用変数 == 200
+	LOCALS += @"<nonbutton><font color='#%カラーパレット_HTML("黄")%'>[200] 신체 항목 표시 전환</font></nonbutton>"
+ELSE
+	LOCALS += "<button value='200'>[200] 신체 항목 표시 전환</button>"
+ENDIF
+LOCALS += "<br>"
+IF 画面表示用変数 == 300
+	LOCALS += @"<nonbutton><font color='#%カラーパレット_HTML("黄")%'>[300] 캐릭터 초대 설정</font></nonbutton>"
+ELSE
+	LOCALS += "<button value='300'>[300] 캐릭터 초대 설정</button>"
+ENDIF
+LOCALS += "<br>"
+IF 画面表示用変数 == 400
+	LOCALS += @"<nonbutton><font color='#%カラーパレット_HTML("黄")%'>[400] 자동 커맨드 가부 전환</font></nonbutton>"
+ELSE
+	LOCALS += "<button value='400'>[400] 자동 커맨드 가부 전환</button>"
+ENDIF
+LOCALS += "<br>"
+IF 画面表示用変数 == 500
+	LOCALS += @"<nonbutton><font color='#%カラーパレット_HTML("黄")%'>[500] 툴팁 전환</font></nonbutton>"
+ELSE
+	LOCALS += "<button value='500'>[500] 툴팁 전환</button>"
+ENDIF
+LOCALS += "<br>"
+IF 画面表示用変数 == 600
+	LOCALS += @"<nonbutton><font color='#%カラーパレット_HTML("黄")%'>[600] 사이드 영역 표시 전환</font></nonbutton>"
+ELSE
+	LOCALS += "<button value='600'>[600] 사이드 영역 표시 전환</button>"
+ENDIF
+LOCALS += "<br>"
+IF 画面表示用変数 == 700
+	LOCALS += @"<nonbutton><font color='#%カラーパレット_HTML("黄")%'>[700] 인연 맺기: 동성애, 처녀동정</font></nonbutton>"
+ELSE
+	LOCALS += "<button value='700'>[700] 인연 맺기: 동성애, 처녀동정</button>"
+ENDIF
+LOCALS += "<br>"
+IF 画面表示用変数 == 800
+	LOCALS += @"<nonbutton><font color='#%カラーパレット_HTML("黄")%'>[800] 캐릭터 이주 설정</font></nonbutton>"
+ELSE
+	LOCALS += "<button value='800'>[800] 캐릭터 이주 설정</button>"
+ENDIF
+LOCALS += "<br>"
+IF 画面表示用変数 == 900
+	LOCALS += @"<nonbutton><font color='#%カラーパレット_HTML("黄")%'>[900] 자동 인연 맺기 설정</font></nonbutton>"
+ELSE
+	LOCALS += "<button value='900'>[900] 자동 인연 맺기 설정</button>"
+ENDIF
+LOCALS += "<br>"
+IF 画面表示用変数 == 1000
+	LOCALS += @"<nonbutton><font color='#%カラーパレット_HTML("黄")%'>[1000] 성지식 성장 관련</font></nonbutton>"
+ELSE
+	LOCALS += "<button value='1000'>[1000] 성지식 성장 관련</button>"
+ENDIF
+LOCALS += "<br>"
+IF 画面表示用変数 == 1100
+	LOCALS += @"<nonbutton><font color='#%カラーパレット_HTML("黄")%'>[1100] 밤일 상대 제어</font></nonbutton>"
+ELSE
+	LOCALS += "<button value='1100'>[1100] 밤일 상대 제어</button>"
+ENDIF
+LOCALS += "<br>"
+IF 画面表示用変数 == 1200
+	LOCALS += @"<nonbutton><font color='#%カラーパレット_HTML("黄")%'>[1200] 캐릭터로부터 고백</font></nonbutton>"
+ELSE
+	LOCALS += "<button value='1200'>[1200] 캐릭터로부터 고백</button>"
+ENDIF
+LOCALS += "<br>"
+IF 画面表示用変数 == 1300
+	LOCALS += @"<nonbutton><font color='#%カラーパレット_HTML("黄")%'>[1300] 이름 짓기 관련</font></nonbutton>"
+ELSE
+	LOCALS += "<button value='1300'>[1300] 이름 짓기 관련</button>"
+ENDIF
+LOCALS += "<br>"
+IF 画面表示用変数 == 1400
+	LOCALS += @"<nonbutton><font color='#%カラーパレット_HTML("黄")%'>[1400] 캐릭터 목록 정렬</font></nonbutton>"
+ELSE
+	LOCALS += "<button value='1400'>[1400] 캐릭터 목록 정렬</button>"
+ENDIF
+LOCALS += "<br>"
+LOCALS += "<br>"
+LOCALS += "<button value='999'>[999] 돌아가기</button>"
+LOCALS += "<br>"
+
+RESULTS '= LOCALS
+
+@機能オプション右枠_0(画面表示用変数)
+#DIM 画面表示用変数
+#DIMS CONST 並び替えリスト = "好感度レベル", "恋慕レベル", "コマンドタゲ回数", "バストサイズ", "性欲"
+;システム全般機能
+
+LOCALS = 
+SELECTCASE 画面表示用変数
+	CASE 100
+		LOCALS += "・구상 텍스트 설정<br>"
+		LOCALS += "명령 실행 시 텍스트 표시 설정을 전환합니다.<br>"
+		LOCALS += "<br>"
+		LOCALS += "현재 설정:"
+		IF FLAG:汎用文章表示切り替えオプション == 1 && FLAG:口上表示切り替えオプション == 2
+			LOCALS += "【구상 텍스트 (항상 표시) + 정경 텍스트】<br>"
+			LOCALS += "<br>"
+			LOCALS += "<button value='102'>[102] 【정경 텍스트만】으로 설정</button><br>"
+			LOCALS += "<button value='103'>[103] 【텍스트를 표시하지 않음】으로 설정</button><br>"
+		ELSEIF FLAG:汎用文章表示切り替えオプション == 1 && FLAG:口上表示切り替えオプション == -1
+			LOCALS += "【정경 텍스트만】<br>"
+			LOCALS += "<br>"
+			LOCALS += "<button value='101'>[101] 【구상 텍스트 (항상 표시) + 정경 텍스트】으로 설정</button><br>"
+			LOCALS += "<button value='103'>[103] 【텍스트를 표시하지 않음】으로 설정</button><br>"
+		ELSEIF FLAG:汎用文章表示切り替えオプション == 0 && FLAG:口上表示切り替えオプション == -1
+			LOCALS += "【텍스트를 표시하지 않음】<br>"
+			LOCALS += "<br>"
+			LOCALS += "<button value='101'>[101] 【구상 텍스트 (항상 표시) + 정경 텍스트】으로 설정</button><br>"
+			LOCALS += "<button value='102'>[102] 【정경 텍스트만】으로 설정</button><br>"
+		ENDIF
+		LOCALS += "<br>"
+		LOCALS += "・명령 실행 시 수치 변동 표시<br>"
+		LOCALS += "EXP나 소스 등, 수치 변동 표시를 전환합니다.<br>"
+		IF OPTION変数:数値変動省略
+			LOCALS += @"<button value='104'><font color='#%カラーパレット_HTML("グレーアウト")%'>[표시한다]</font> / [표시하지 않는다]</button><br>"
+		ELSE
+			LOCALS += @"<button value='104'>[표시한다] / <font color='#%カラーパレット_HTML("グレーアウト")%'>[표시하지 않는다]</font></button><br>"
+		ENDIF
+	CASE 200
+		LOCALS += "・신체 항목 표시 전환<br>"
+		LOCALS += "신장, 가슴 사이즈, 체형 등의 표시를 전환합니다.<br>"
+		LOCALS += "<br>"
+		LOCALS += @"　나이 수치　　（현재:\@ GETBIT(OPTION変数:身体項目表示切り替え, 5)? 표시한다　# 추상적 표현\@ / <font color='#666666'><button value='206'>[206] \@ GETBIT(OPTION変数:身体項目表示切り替え, 5)? 추상적 표현# 표시한다　\@</button></font>）<br>"
+		LOCALS += @"　신장 수치　　（현재:\@ GETBIT(OPTION変数:身体項目表示切り替え, 0)? 표시한다　# 추상적 표현\@ / <font color='#666666'><button value='201'>[201] \@ GETBIT(OPTION変数:身体項目表示切り替え, 0)? 추상적 표현# 표시한다　\@</button></font>）<br>"
+		LOCALS += @"　가슴 수치　（현재:\@ GETBIT(OPTION変数:身体項目表示切り替え, 1)? 표시한다　# 추상적 표현\@ / <font color='#666666'><button value='202'>[202] \@ GETBIT(OPTION変数:身体項目表示切り替え, 1)? 추상적 표현# 표시한다　\@</button></font>）<br>"
+		LOCALS += @"　허리 수치（현재:\@ GETBIT(OPTION変数:身体項目表示切り替え, 2)? 표시한다　# 추상적 표현\@ / <font color='#666666'><button value='203'>[203] \@ GETBIT(OPTION変数:身体項目表示切り替え, 2)? 추상적 표현# 표시한다　\@</button></font>）<br>"
+		LOCALS += @"　엉덩이 수치　（현재:\@ GETBIT(OPTION変数:身体項目表示切り替え, 3)? 표시한다　# 추상적 표현\@ / <font color='#666666'><button value='204'>[204] \@ GETBIT(OPTION変数:身体項目表示切り替え, 3)? 추상적 표현# 표시한다　\@</button></font>）<br>"
+		LOCALS += @"　남성 수치　　（현재:\@ GETBIT(OPTION変数:身体項目表示切り替え, 4)? 표시한다　# 표시하지 않는다\@ / <font color='#666666'><button value='205'>[205] \@ GETBIT(OPTION変数:身体項目表示切り替え, 4)? 표시하지 않는다# 표시한다　\@</button></font>）<br>"
+	CASE 300
+		LOCALS += "・캐릭터 초대 설정<br>"
+		LOCALS += "리조트에 방문하는 캐릭터 설정을 합니다.<br>"
+		LOCALS += "※광고에 의한 초대, 단골 자질에 의한 방문에 영향을 줍니다<br>"
+		LOCALS += "　ZP 상점에 의한 해방, 이벤트 등에서의 방문은 설정과 관계없이 실행됩니다.<br>"
+		LOCALS += "<br>"
+		LOCALS += "・성별에 따른 설정<br>"
+		LOCALS += "　　여성："
+		IF GETBIT(OPTION変数:性別招待制御, 0)
+			LOCALS += @"<button value='301'>[301] <font color='#%カラーパレット_HTML("グレーアウト")%'>리조트를 방문한다</font> / 리조트를 방문하지 않는다</button>"
+		ELSE
+			LOCALS += @"<button value='301'>[301] 리조트를 방문한다 / <font color='#%カラーパレット_HTML("グレーアウト")%'>리조트를 방문하지 않는다</font></button>"
+		ENDIF
+		LOCALS += "<br>"
+		LOCALS += "　　남성："
+		IF GETBIT(OPTION変数:性別招待制御, 1)
+			LOCALS += @"<button value='302'>[302] <font color='#%カラーパレット_HTML("グレーアウト")%'>리조트를 방문한다</font> / 리조트를 방문하지 않는다</button>"
+		ELSE
+			LOCALS += @"<button value='302'>[302] 리조트를 방문한다 / <font color='#%カラーパレット_HTML("グレーアウト")%'>리조트를 방문하지 않는다</font></button>"
+		ENDIF
+		LOCALS += "<br>"
+		LOCALS += "후타나리："
+		IF GETBIT(OPTION変数:性別招待制御, 2)
+			LOCALS += @"<button value='303'>[303] <font color='#%カラーパレット_HTML("グレーアウト")%'>리조트를 방문한다</font> / 리조트를 방문하지 않는다</button>"
+		ELSE
+			LOCALS += @"<button value='303'>[303] 리조트를 방문한다 / <font color='#%カラーパレット_HTML("グレーアウト")%'>리조트를 방문하지 않는다</font></button>"
+		ENDIF
+		LOCALS += "<br>"
+		LOCALS += "　그 외："
+		IF GETBIT(OPTION変数:性別招待制御, 3)
+			LOCALS += @"<button value='304'>[304] <font color='#%カラーパレット_HTML("グレーアウト")%'>리조트를 방문한다</font> / 리조트를 방문하지 않는다</button>"
+		ELSE
+			LOCALS += @"<button value='304'>[304] 리조트를 방문한다 / <font color='#%カラーパレット_HTML("グレーアウト")%'>리조트를 방문하지 않는다</font></button>"
+		ENDIF
+		LOCALS += "<br>"
+		LOCALS += "<br>"
+		LOCALS += "・고유 처리 폴더・이미지 폴더에 의한 설정<br>"
+		LOCALS += "　※이 설정은 구상 파일・이미지 파일의 존재만을 보고 있으며, 충실도를 보증하는 것은 아닙니다。<br>"
+		LOCALS += "　　성질상, 랜덤 캐릭터나 아이에게는 기능하지 않습니다。<br>"
+		LOCALS += "　　구상 있음："
+		IF GETBIT(OPTION変数:口上招待制御, 0)
+			LOCALS += @"<button value='310'>[310] <font color='#%カラーパレット_HTML("グレーアウト")%'>리조트를 방문한다</font> / 리조트를 방문하지 않는다</button>"
+		ELSE
+			LOCALS += @"<button value='310'>[310] 리조트를 방문한다 / <font color='#%カラーパレット_HTML("グレーアウト")%'>리조트를 방문하지 않는다</font></button>"
+		ENDIF
+		LOCALS += "<br>"
+		LOCALS += "　　구상 없음："
+		IF GETBIT(OPTION変数:口上招待制御, 1)
+			LOCALS += @"<button value='311'>[311] <font color='#%カラーパレット_HTML("グレーアウト")%'>리조트를 방문한다</font> / 리조트를 방문하지 않는다</button>"
+		ELSE
+			LOCALS += @"<button value='311'>[311] 리조트를 방문한다 / <font color='#%カラーパレット_HTML("グレーアウト")%'>리조트를 방문하지 않는다</font></button>"
+		ENDIF
+		LOCALS += "<br>"
+		LOCALS += @"　　이미지{OPTION変数:招待画像枚数閾値}장 이상："
+		IF GETBIT(OPTION変数:口上招待制御, 2)
+			LOCALS += @"<button value='312'>[312] <font color='#%カラーパレット_HTML("グレーアウト")%'>리조트를 방문한다</font> / 리조트를 방문하지 않는다</button>"
+		ELSE
+			LOCALS += @"<button value='312'>[312] 리조트를 방문한다 / <font color='#%カラーパレット_HTML("グレーアウト")%'>리조트를 방문하지 않는다</font></button>"
+		ENDIF
+		LOCALS += "<br>"
+		LOCALS += @"　　이미지{OPTION変数:招待画像枚数閾値}장 미만："
+		IF GETBIT(OPTION変数:口上招待制御, 3)
+			LOCALS += @"<button value='313'>[313] <font color='#%カラーパレット_HTML("グレーアウト")%'>리조트를 방문한다</font> / 리조트를 방문하지 않는다</button>"
+		ELSE
+			LOCALS += @"<button value='313'>[313] 리조트를 방문한다 / <font color='#%カラーパレット_HTML("グレーアウト")%'>리조트를 방문하지 않는다</font></button>"
+		ENDIF
+		LOCALS += "<br>"
+		LOCALS += @"　　　└이미지 임계값 지정：{OPTION変数:招待画像枚数閾値}　　<button value='314'>[변경한다]</button><br>"
+		LOCALS += "<br>"
+		LOCALS += "・예외 캐릭터 설정<br>"
+		LOCALS += "　임의의 캐릭터를 위 OPTION 설정을 무시하고 초대 가능하게 하는 설정입니다.<br>"
+		LOCALS += "　<button value='320'>[320] 예외 캐릭터 설정을 시작합니다</button><br>"
+		IF OPTION変数:ZPキャラ自動例外追加
+			LOCALS += @"　　└<button value='321'>[321] ZP에서 해방한 캐릭터를 자동으로 예외 캐릭터에 추가합니다　　<font color='#%カラーパレット_HTML("グレーアウト")%'>ON</font> / OFF</button><br>"
+		ELSE
+			LOCALS += @"　　└<button value='321'>[321] ZP에서 해방한 캐릭터를 자동으로 예외 캐릭터에 추가합니다　　ON / <font color='#%カラーパレット_HTML("グレーアウト")%'>OFF</font></button><br>"
+		ENDIF
+	CASE 400
+		LOCALS += "・오토 커맨드 허용 여부 전환<br>"
+		LOCALS += "캐릭터가 자동으로 행동하는 기능을 전환합니다。<br>"
+		LOCALS += "※허가계란, 발동 시 당신에게 허가를 받는 커맨드를 말합니다. 핸드잡, 삽입계 등<br>"
+		LOCALS += "<br>"
+		IF GETBIT(FLAG:オートコマンド切り替えオプション, 0)
+			LOCALS += "<button value='401'>[401] 오토 전용 커맨드를 허가한다 (현재: 금지)</button>"
+		ELSE
+			LOCALS += "<button value='401'>[401] 오토 전용 커맨드를 금지한다 (현재: 허가)</button>"
+		ENDIF
+		LOCALS += "<br>"
+		IF GETBIT(FLAG:オートコマンド切り替えオプション, 1)
+			LOCALS += "<button value='402'>[402] 일반 커맨드의 오토 사용을 허가한다 (현재: 금지)</button>"
+		ELSE
+			LOCALS += "<button value='402'>[402] 일반 커맨드의 오토 사용을 금지한다 (현재: 허가)</button>"
+		ENDIF
+		LOCALS += "<br>"
+		IF GETBIT(FLAG:オートコマンド切り替えオプション, 2)
+			LOCALS += "<button value='403'>[403] 자위계 커맨드의 오토 사용을 허가한다 (현재: 금지)</button>"
+		ELSE
+			LOCALS += "<button value='403'>[403] 자위계 커맨드의 오토 사용을 금지한다 (현재: 허가)</button>"
+		ENDIF
+		LOCALS += "<br>"
+		IF GETBIT(FLAG:オートコマンド切り替えオプション, 3)
+			LOCALS += "<button value='404'>[404] 허가계 커맨드의 오토 사용을 허가한다 (현재: 금지)</button>"
+		ELSE
+			LOCALS += "<button value='404'>[404] 허가계 커맨드의 오토 사용을 금지한다 (현재: 허가)</button>"
+		ENDIF
+		LOCALS += "<br>"
+		IF OPTION変数:キャラ同士オートコマンド禁止
+			LOCALS += "<button value='405'>[405] 캐릭터에서 캐릭터로의 오토 커맨드를 허가한다 (현재: 금지)</button>"
+		ELSE
+			LOCALS += "<button value='405'>[405] 캐릭터에서 캐릭터로의 자동 명령을 금지한다 (현재: 허가)</button>"
+		ENDIF
+		LOCALS += "<br>"
+	CASE 500
+		LOCALS += "・툴팁 전환<br>"
+		LOCALS += "특정 위치에 마우스 커서를 맞췄을 때 팝업 표시되는 툴팁의 표시를 전환합니다.<br>"
+		LOCALS += "(※본래 얻어야 할 정보를 얻을 수 없게 되므로, 평상시에는 ON을 강력히 권장)<br>"
+		LOCALS += "<br>"
+		IF OPTION変数:ツールチップ切り替え == 0
+			LOCALS += "　<button value='501'>[501] 툴팁을 OFF로 한다 (현재 ON)</button>"
+		ELSEIF OPTION変数:ツールチップ切り替え
+			LOCALS += "　<button value='501'>[501] 툴팁을 ON으로 한다 (현재 OFF)</button>"
+		ENDIF
+	CASE 600
+		LOCALS += "・사이드 영역 표시 전환<br>"
+		LOCALS += "게임 화면 오른쪽에 있는 사이드 영역의 표시/비표시를 전환합니다.<br>"
+		LOCALS += "<br>"
+		IF OPTION変数:サイド領域非表示 == 0
+			LOCALS += "　<button value='601'>[601] 사이드 영역을 비표시로 한다 (현재: 표시)</button>"
+		ELSEIF OPTION変数:サイド領域非表示
+			LOCALS += "　<button value='601'>[601] 사이드 영역을 표시한다 (현재: 비표시)</button>"
+		ENDIF
+	CASE 700
+		LOCALS += "・OPTION 변수: 인연 맺기 동성애<br>"
+		LOCALS += "인연 맺기를 설정할 때, 연애 대상 외의 성별을 상대로 할 경우 [동성애](이성애) 소질이 필요한지 여부를 전환합니다.<br>"
+		LOCALS += "기본값: 설정 캐릭터에게 [동성애](이성애)가 없을 경우, 해당 성별을 대상으로 할 수 없음.<br>"
+		LOCALS += "　　　　　　대상 캐릭터에게 [동성애](이성애)가 없을 경우, 진행도가 상승하지 않는다.<br>"
+		LOCALS += "　자동 취득: 설정 캐릭터에게 [동성애](이성애)가 없어도 해당 성별을 대상으로 할 수 있음.<br>"
+		LOCALS += "　　　　　　진행도가 일정 값에 도달했을 때, 설정 캐릭터와 대상 캐릭터가 자동으로 [동성애(이성애): 흥미]를 획득한다.<br>"
+		LOCALS += "<br>"
+		IF OPTION変数:縁結び同性愛 == 0
+			LOCALS += "　<button value='701'>[701] 자동 획득 설정으로 한다 (현재: 기본 설정)</button>"
+		ELSEIF OPTION変数:縁結び同性愛
+			LOCALS += "　<button value='701'>[701] 기본 설정으로 한다 (현재: 자동 획득 설정)</button>"
+		ENDIF
+		LOCALS += "<br>"
+		LOCALS += "----------------------------------------------------------------------------<br>"
+		LOCALS += "・처녀·동정 옵션<br>"
+		LOCALS += "밤에 찾아가거나 캐릭터끼리 우후후가 발생했을 때, 처녀·동정을 잃게 할지 설정합니다.<br>"
+		LOCALS += "기본 설정: 조건을 만족하는 경우, 처녀·동정을 잃게 한다.<br>"
+		LOCALS += "　순결 유지 설정: 처녀·동정이 있는 경우 섹스 처리를 하지 않고, 애무 처리만 실행.<br>"
+		LOCALS += "<br>"
+		LOCALS += "・남녀 커플·후타나리 포함 시<br>"
+		IF OPTION変数:夜這い処女・童貞 == 0
+			LOCALS += "　<button value='702'>[702] 순결 유지 설정으로 한다 (현재: 기본 설정)</button>"
+		ELSEIF OPTION変数:夜這い処女・童貞
+			LOCALS += "　<button value='702'>[702] 기본 설정으로 한다 (현재: 순결 유지 설정)</button>"
+		ENDIF
+		LOCALS += "<br>"
+		LOCALS += "<br>"
+		LOCALS += "・남남, 여여 커플 시<br>"
+		IF OPTION変数:同性愛処女・童貞 == 0
+			LOCALS += "　<button value='703'>[703] 순결 유지 설정으로 한다 (현재: 기본 설정)</button>"
+		ELSEIF OPTION変数:同性愛処女・童貞
+			LOCALS += "　<button value='703'>[703] 기본 설정으로 한다 (현재: 순결 유지 설정)</button>"
+		ENDIF
+		LOCALS += "<br>"
+	CASE 800
+		LOCALS += "・캐릭터 이주 설정<br>"
+		LOCALS += "아침에 캐릭터 측에서 이주를 제안해 오는 처리의 ON/OFF를 설정합니다<br>"
+		LOCALS += "<br>"
+		FOR LOCAL, 0, 5
+			IF OPTION変数:キャラ自動移住 == LOCAL
+				LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'>"
+			ELSE
+				LOCALS += @"<button value='{LOCAL + 801}'>"
+			ENDIF
+			SELECTCASE LOCAL
+				CASE 0
+					LOCALS += "[801] 모두 신청해 온다"
+				CASE 1
+					LOCALS += "[802] 함락된 캐릭터만 신청해 온다"
+				CASE 2
+					LOCALS += "[803] 모두 신청해 오지 않는다"
+				CASE 3
+					LOCALS += "[804] 신청을 건너뛰고, 빈자리가 있는 한 자동으로 이주를 허가한다"
+			ENDSELECT
+			IF OPTION変数:キャラ自動移住 == LOCAL
+				LOCALS += @"</font><br>"
+			ELSE
+				LOCALS += @"</button><br>"
+			ENDIF
+		NEXT
+	CASE 900
+		LOCALS += "・자동 인연 맺기 설정<br>"
+		LOCALS += "하루의 마지막에 자동으로 인연 맺기가 설정되는 기능의 제어를 합니다.<br>"
+		LOCALS += "연모나 섹스 프렌드를 둘 다 허가하지 않는 경우, 발동함을 선택했더라도 발생하지 않으니 주의해 주십시오.<br>"
+		LOCALS += "<br>"
+		IF OPTION変数:オート縁結び == 0
+			LOCALS += @"　<button value='901'>[901] 자동 인연 맺기　<font color='#%カラーパレット_HTML("グレーアウト")%'>발동한다</font> / 발동하지 않는다</button><br>"
+		ELSE
+			LOCALS += @"　<button value='901'>[901] 자동 인연 맺기　발동한다 / <font color='#%カラーパレット_HTML("グレーアウト")%'>발동하지 않는다</font></button><br>"
+			IF GETBIT(OPTION変数:オート縁結び詳細, 0) == 0
+				LOCALS += @"　├<button value='902'>[902] 연모　　　　<font color='#%カラーパレット_HTML("グレーアウト")%'>허가한다</font> / 허가하지 않는다</button><br>"
+			ELSE
+				LOCALS += @"　├<button value='902'>[902] 연모　　　　허가한다 / <font color='#%カラーパレット_HTML("グレーアウト")%'>허가하지 않는다</font></button><br>"
+			ENDIF
+			IF GETBIT(OPTION変数:オート縁結び詳細, 1) == 0
+				LOCALS += @"　├<button value='903'>[903] 섹스 프렌드　　　<font color='#%カラーパレット_HTML("グレーアウト")%'>허가한다</font> / 허가하지 않는다</button><br>"
+			ELSE
+				LOCALS += @"　├<button value='903'>[903] 섹스 프렌드　　　허가한다 / <font color='#%カラーパレット_HTML("グレーアウト")%'>허가하지 않는다</font></button><br>"
+			ENDIF
+			IF GETBIT(OPTION変数:オート縁結び詳細, 2) == 0
+				LOCALS += @"　└<button value='904'>[904] 별도 출전 작품　<font color='#%カラーパレット_HTML("グレーアウト")%'>허가한다</font> / 허가하지 않는다</button><br>"
+			ELSE
+				LOCALS += @"　└<button value='904'>[904] 별도 출전 작품　허가한다 / <font color='#%カラーパレット_HTML("グレーアウト")%'>허가하지 않는다</font></button><br>"
+			ENDIF
+			LOCALS += "　　　　※「허가하지 않는다」로 설정하면, 출처가 같은 작품의 캐릭터만이 상대로 설정됩니다. <br>"
+		ENDIF
+	CASE 1000
+		LOCALS += "・성지식 성장 관련<br>"
+		LOCALS += "성지식의 성장에 대해 제어합니다. <br>"
+		LOCALS += "여기 설정에 의해 성장을 저해했을 경우, 실행할 수 있는 명령이 적어지는 경우가 있습니다. <br>"
+		LOCALS += "또한, 캐릭터 개별 이벤트 등에 의한 변동에는 적용되지 않으므로 주의해 주십시오. <br>"
+		LOCALS += "<br>"
+		IF GETBIT(OPTION変数:性知識成長制御, 0) == 0
+			LOCALS += @"　<button value='1001'>[1001] 경험 완료 커맨드 수에 따른 자동 성장 ON / <font color='#%カラーパレット_HTML("グレーアウト")%'>OFF</font></button>"
+		ELSEIF GETBIT(OPTION変数:性知識成長制御, 0)
+			LOCALS += @"　<button value='1001'>[1001] 경험 완료 커맨드 수에 따른 자동 성장 <font color='#%カラーパレット_HTML("グレーアウト")%'>ON</font> / OFF</button>"
+		ENDIF
+		LOCALS += "<br>"
+		IF GETBIT(OPTION変数:性知識成長制御, 1) == 0
+			LOCALS += @"　<button value='1002'>[1002] 임신에 따른 자동 성장 ON / <font color='#%カラーパレット_HTML("グレーアウト")%'>OFF</font></button>"
+		ELSEIF GETBIT(OPTION変数:性知識成長制御, 1)
+			LOCALS += @"　<button value='1002'>[1002] 임신에 따른 자동 성장 <font color='#%カラーパレット_HTML("グレーアウト")%'>ON</font> / OFF</button>"
+		ENDIF
+		LOCALS += "<br>"
+	CASE 1100
+		LOCALS += "・밤일 상대 제어<br>"
+		LOCALS += "밤일 실행 상대에 대해 제어하는 옵션입니다. <br>"
+		LOCALS += "<br>"
+		IF OPTION変数:夜這い全部禁止
+			LOCALS += @"　<button value='1101'>[1101] 밤일 기능을　<font color='#%カラーパレット_HTML("グレーアウト")%'>허가한다</font> / 허가하지 않는다</button><br>"
+		ELSE
+			LOCALS += @"　<button value='1101'>[1101] 밤일 기능을　허가한다 / <font color='#%カラーパレット_HTML("グレーアウト")%'>허가하지 않는다</font></button><br>"
+		ENDIF
+		LOCALS += "<br>"
+		IF OPTION変数:恋慕時セフレ夜這い禁止
+			LOCALS += @"　<button value='1102'>[1102] 연모 소지 시, 섹스 파트너 상대와의 밤일을　<font color='#%カラーパレット_HTML("グレーアウト")%'>허가한다</font> / 허가하지 않는다</button><br>"
+		ELSE
+			LOCALS += @"　<button value='1102'>[1102] 연모 소지 시, 섹스 파트너 상대와의 밤일을　허가한다 / <font color='#%カラーパレット_HTML("グレーアウト")%'>허가하지 않는다</font></button><br>"
+		ENDIF
+		LOCALS += "<br>"
+	CASE 1200
+		LOCALS += "・캐릭터에게서 고백<br>"
+		LOCALS += "일정 조건 시, 캐릭터가 고백해오는 처리의 ON/OFF를 설정합니다.<br>"
+		LOCALS += "<br>"
+		LOCALS += "　・기상 시 고백<br>"
+		IF OPTION変数:起床時告白禁止 == 0
+			LOCALS += "　　<button value='1201'>[1201] 기상 시 고백을 OFF로 한다 (현재 ON)</button>"
+		ELSEIF OPTION変数:起床時告白禁止
+			LOCALS += "　　<button value='1201'>[1201] 기상 시 고백을 ON으로 한다 (현재 OFF)</button>"
+		ENDIF
+		LOCALS += "<br>"
+		LOCALS += "<br>"
+		LOCALS += "　・데이트 후 고백<br>"
+		IF OPTION変数:デート後告白禁止 == 0
+			LOCALS += "　　<button value='1202'>[1202] 데이트 후 고백을 OFF로 한다 (현재 ON)</button>"
+		ELSEIF OPTION変数:デート後告白禁止
+			LOCALS += "　　<button value='1202'>[1202] 데이트 후 고백을 ON으로 한다 (현재 OFF)</button>"
+		ENDIF
+	CASE 1300
+		LOCALS += "・이름 짓기 관련<br>"
+		LOCALS += "아이의 이름을 지을 때의 동작을 설정합니다.<br>"
+		LOCALS += "<br>"
+		LOCALS += "　・자동 선택<br>"
+		IF OPTION変数:オート名付け関連 != 0
+			LOCALS += @"　　<font color='#%カラーパレット_HTML("グレーアウト")%'><button value='1301'>[1301] 자동 선택을 하지 않는다</button></font><br>"
+		ELSE
+			LOCALS += "　　<nonbutton>[1301] 자동 선택을 하지 않는다</nonbutton><br>"
+		ENDIF
+		IF OPTION変数:オート名付け関連 != 1
+			LOCALS += @"　　<font color='#%カラーパレット_HTML("グレーアウト")%'><button value='1302'>[1302] 항상 직접 이름을 짓는다 (가능할 때만)</button></font><br>"
+		ELSE
+			LOCALS += "　　<nonbutton>[1302] 항상 직접 이름을 짓는다 (가능할 때만)</nonbutton><br>"
+		ENDIF
+		IF OPTION変数:オート名付け関連 != 2
+			LOCALS += @"　　<font color='#%カラーパレット_HTML("グレーアウト")%'><button value='1303'>[1303] 항상 캐릭터가 이름을 짓는다</button></font><br>"
+		ELSE
+			LOCALS += "　　<nonbutton>[1303] 항상 캐릭터가 이름을 짓는다</nonbutton><br>"
+		ENDIF
+	CASE 1400
+		LOCALS += "・캐릭터 목록 정렬<br>"
+		LOCALS += "같은 방에 있는 캐릭터 중, 타겟이 아닌 캐릭터의 목록 표시에서<br>"
+		LOCALS += "어떤 수치를 기준으로 정렬할지 설정합니다.<br>"
+		LOCALS += "<br>　　"
+		FOR LOCAL, 0, 5
+			SIF 並び替えリスト:LOCAL == ""
+				BREAK
+			IF OPTION変数:キャラリスト並び替え == LOCAL
+				LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'>[%並び替えリスト:LOCAL%]</font>"
+			ELSE
+				LOCALS += @"<button value='{1401 + LOCAL}'>[%並び替えリスト:LOCAL%]</button>"
+			ENDIF
+			IF (LOCAL + 1) % 4 == 0
+				LOCALS += "<br>　　"
+			ELSE
+				LOCALS += " / "
+			ENDIF
+		NEXT
+ENDSELECT
+
+RESULTS '= LOCALS
+
+@機能オプション実行処理_0(入力値)
+#DIM 入力値
+;システム全般機能
+
+SELECTCASE 入力値
+	CASE 101
+		FLAG:汎用文章表示切り替えオプション = 1
+		FLAG:口上表示切り替えオプション = 2
+	CASE 102
+		FLAG:汎用文章表示切り替えオプション = 1
+		FLAG:口上表示切り替えオプション = -1
+	CASE 103
+		FLAG:汎用文章表示切り替えオプション = 0
+		FLAG:口上表示切り替えオプション = -1
+	CASE 104
+		INVERTBIT OPTION変数:数値変動省略, 0
+	CASE 201 TO 206
+		INVERTBIT OPTION変数:身体項目表示切り替え, (入力値 - 201)
+	CASE 301 TO 304
+		INVERTBIT OPTION変数:性別招待制御, (入力値 - 301)
+	CASE 310 TO 313
+		INVERTBIT OPTION変数:口上招待制御, (入力値 - 310)
+	CASE 314
+		DRAWLINE
+		PRINTL 초대 설정에 사용할, 이미지 조건의 매수를 지정해 주세요.
+		PRINTL
+		INPUT
+		OPTION変数:招待画像枚数閾値 = RESULT
+		PRINTL
+		PRINTFORMW {OPTION変数:招待画像枚数閾値}장 이상/미만을 조건으로 설정합니다.
+	CASE 320
+		CALL OPTION_招待制御例外規定()
+	CASE 321
+		INVERTBIT OPTION変数:ZPキャラ自動例外追加, 0
+	CASE 401 TO 404
+		INVERTBIT FLAG:オートコマンド切り替えオプション, 入力値 - 401
+	CASE 405
+		INVERTBIT OPTION変数:キャラ同士オートコマンド禁止, 0
+	CASE 501
+		INVERTBIT OPTION変数:ツールチップ切り替え, 0
+	CASE 601
+		INVERTBIT OPTION変数:サイド領域非表示, 0
+	CASE 701
+		INVERTBIT OPTION変数:縁結び同性愛, 0
+	CASE 702
+		INVERTBIT OPTION変数:夜這い処女・童貞, 0
+	CASE 703
+		INVERTBIT OPTION変数:同性愛処女・童貞, 0
+	CASE 801 TO 804
+		OPTION変数:キャラ自動移住 = 入力値 - 801
+	CASE 901
+		INVERTBIT OPTION変数:オート縁結び, 0
+	CASE 902 TO 904
+		INVERTBIT OPTION変数:オート縁結び詳細, 入力値 - 902
+	CASE 1001 TO 1002
+		INVERTBIT OPTION変数:性知識成長制御, 入力値 - 1001
+	CASE 1101
+		INVERTBIT OPTION変数:夜這い全部禁止, 0
+	CASE 1102
+		INVERTBIT OPTION変数:恋慕時セフレ夜這い禁止, 0
+	CASE 1201
+		INVERTBIT OPTION変数:起床時告白禁止, 0
+	CASE 1202
+		INVERTBIT OPTION変数:デート後告白禁止, 0
+	CASE 1301 TO 1303
+		OPTION変数:オート名付け関連 = 入力値 - 1301
+	CASE 1401 TO 1411
+		OPTION変数:キャラリスト並び替え = 入力値 - 1401
+ENDSELECT
+
+@機能オプション左枠_1(画面表示用変数)
+#DIM 画面表示用変数
+;システム全般機能
+LOCALS = 
+IF 画面表示用変数 == 100
+	LOCALS += @"<nonbutton><font color='#%カラーパレット_HTML("黄")%'>[100] 쓰리 사이즈 성장</font></nonbutton>"
+ELSE
+	LOCALS += "<button value='100'>[100] 쓰리 사이즈 성장</button>"
+ENDIF
+LOCALS += "<br>"
+LOCALS += "<br>"
+LOCALS += "<button value='999'>[999] 돌아가기</button>"
+LOCALS += "<br>"
+
+RESULTS '= LOCALS
+
+@機能オプション右枠_1(画面表示用変数)
+#DIM 画面表示用変数
+;システム全般機能
+
+LOCALS = 
+SELECTCASE 画面表示用変数
+	CASE 100
+		LOCALS += "・쓰리 사이즈 성장<br>"
+		LOCALS += "캐릭터의 쓰리 사이즈 성장의 허가/불허가를 설정합니다.<br>"
+		LOCALS += "쓰리 사이즈는 원래 수치보다 감소하는 일은 없습니다.<br>증가분은 무제한으로 증가합니다.<br>"
+		LOCALS += "성장이 유효한 항목은 흰색으로, 무효한 항목은 회색으로 표시됩니다.<br>"
+		LOCALS += "<br>"
+		LOCALS += "　　・임신·출산 후의 스리사이즈 변화　　<button value='110'>[해설]</button><br>"
+		LOCALS += "　　　　"
+		IF GETBIT(OPTION変数:妊娠スリーサイズ成長, 0)
+			LOCALS += @"<button value='101'>[B 증가]</button>"
+		ELSE
+			LOCALS += @"<button value='101'><font color='#%カラーパレット_HTML("グレーアウト")%'>[B 증가]</font></button>"
+		ENDIF
+		LOCALS += "　　　　"
+		LOCALS += " / "
+		IF GETBIT(OPTION変数:妊娠スリーサイズ成長, 2)
+			LOCALS += @"<button value='103'>[W 증가]</button>"
+		ELSE
+			LOCALS += @"<button value='103'><font color='#%カラーパレット_HTML("グレーアウト")%'>[W 증가]</font></button>"
+		ENDIF
+		LOCALS += "　　　　"
+		LOCALS += " / "
+		IF GETBIT(OPTION変数:妊娠スリーサイズ成長, 4)
+			LOCALS += @"<button value='105'>[H 증가]</button>"
+		ELSE
+			LOCALS += @"<button value='105'><font color='#%カラーパレット_HTML("グレーアウト")%'>[H 증가]</font></button>"
+		ENDIF
+		LOCALS += "<br>"
+		LOCALS += "<br>"
+		LOCALS += "　　・커맨드 선택에 의한 스리사이즈 변화　　<button value='120'>[해설]</button><br>"
+		LOCALS += "　　　　"
+		IF GETBIT(OPTION変数:愛撫スリーサイズ成長, 0)
+			LOCALS += @"<button value='111'>[B 증가]</button>"
+		ELSE
+			LOCALS += @"<button value='111'><font color='#%カラーパレット_HTML("グレーアウト")%'>[B 증가]</font></button>"
+		ENDIF
+		IF GETBIT(OPTION変数:愛撫スリーサイズ成長, 1)
+			LOCALS += @"<button value='112'>[Ｂ감소]</button>"
+		ELSE
+			LOCALS += @"<button value='112'><font color='#%カラーパレット_HTML("グレーアウト")%'>[Ｂ감소]</font></button>"
+		ENDIF
+		LOCALS += " / "
+		IF GETBIT(OPTION変数:愛撫スリーサイズ成長, 2)
+			LOCALS += @"<button value='113'>[Ｗ증가]</button>"
+		ELSE
+			LOCALS += @"<button value='113'><font color='#%カラーパレット_HTML("グレーアウト")%'>[Ｗ증가]</font></button>"
+		ENDIF
+		IF GETBIT(OPTION変数:愛撫スリーサイズ成長, 3)
+			LOCALS += @"<button value='114'>[Ｗ감소]</button>"
+		ELSE
+			LOCALS += @"<button value='114'><font color='#%カラーパレット_HTML("グレーアウト")%'>[Ｗ감소]</font></button>"
+		ENDIF
+		LOCALS += " / "
+		IF GETBIT(OPTION変数:愛撫スリーサイズ成長, 4)
+			LOCALS += @"<button value='115'>[Ｈ증가]</button>"
+		ELSE
+			LOCALS += @"<button value='115'><font color='#%カラーパレット_HTML("グレーアウト")%'>[Ｈ증가]</font></button>"
+		ENDIF
+		IF GETBIT(OPTION変数:愛撫スリーサイズ成長, 5)
+			LOCALS += @"<button value='116'>[Ｈ감소]</button>"
+		ELSE
+			LOCALS += @"<button value='116'><font color='#%カラーパレット_HTML("グレーアウト")%'>[Ｈ감소]</font></button>"
+		ENDIF
+		LOCALS += "<br>"
+		LOCALS += "<br>"
+		LOCALS += "　　・음식에 의한 스리사이즈 성장　　<button value='130'>[해설]</button><br>"
+		LOCALS += "　　　　"
+		IF GETBIT(OPTION変数:食事スリーサイズ成長, 0)
+			LOCALS += @"<button value='121'>[Ｂ증가]</button>"
+		ELSE
+			LOCALS += @"<button value='121'><font color='#%カラーパレット_HTML("グレーアウト")%'>[Ｂ증가]</font></button>"
+		ENDIF
+		IF GETBIT(OPTION変数:食事スリーサイズ成長, 1)
+			LOCALS += @"<button value='122'>[Ｂ감소]</button>"
+		ELSE
+			LOCALS += @"<button value='122'><font color='#%カラーパレット_HTML("グレーアウト")%'>[B 감소]</font></button>"
+		ENDIF
+		LOCALS += " / "
+		IF GETBIT(OPTION変数:食事スリーサイズ成長, 2)
+			LOCALS += @"<button value='123'>[W 증가]</button>"
+		ELSE
+			LOCALS += @"<button value='123'><font color='#%カラーパレット_HTML("グレーアウト")%'>[W 증가]</font></button>"
+		ENDIF
+		IF GETBIT(OPTION変数:食事スリーサイズ成長, 3)
+			LOCALS += @"<button value='124'>[W 감소]</button>"
+		ELSE
+			LOCALS += @"<button value='124'><font color='#%カラーパレット_HTML("グレーアウト")%'>[W 감소]</font></button>"
+		ENDIF
+		LOCALS += " / "
+		IF GETBIT(OPTION変数:食事スリーサイズ成長, 4)
+			LOCALS += @"<button value='125'>[H 증가]</button>"
+		ELSE
+			LOCALS += @"<button value='125'><font color='#%カラーパレット_HTML("グレーアウト")%'>[H 증가]</font></button>"
+		ENDIF
+		IF GETBIT(OPTION変数:食事スリーサイズ成長, 5)
+			LOCALS += @"<button value='126'>[H 감소]</button>"
+		ELSE
+			LOCALS += @"<button value='126'><font color='#%カラーパレット_HTML("グレーアウト")%'>[H 감소]</font></button>"
+		ENDIF
+		LOCALS += "<br>"
+		LOCALS += "<br>"
+		LOCALS += "<button value='109'>[캐릭터 개별 성장 설정 열기]</button><br>"
+ENDSELECT
+
+RESULTS '= LOCALS
+
+@機能オプション実行処理_1(入力値)
+#DIM 入力値
+;システム全般機能
+
+SELECTCASE 入力値
+	CASE 101 TO 106
+		INVERTBIT OPTION変数:妊娠スリーサイズ成長, 入力値 - 101
+	CASE 111 TO 116
+		INVERTBIT OPTION変数:愛撫スリーサイズ成長, 入力値 - 111
+	CASE 121 TO 126
+		INVERTBIT OPTION変数:食事スリーサイズ成長, 入力値 - 121
+	CASE 109
+		PRINTL 
+		CALL スリーサイズ個別設定()
+	CASE 110
+		DRAWLINE
+		PRINTL 출산 후, B와 H가 증가하고 W가 미미하게 증가합니다. 불허한 항목은 증가하지 않습니다.
+		PRINTL 임신 중의 가슴 확대가 출산 후 원래대로 돌아올 때 B의 기초값이 재계산되므로,
+		PRINTL 결과적으로 가슴이 임신 전보다 처질 수 있습니다.
+	CASE 120
+		DRAWLINE
+		PRINTL 특정 명령을 실행했을 때, 각각의 스리 사이즈가 증감합니다.
+		PRINTL 해당하는 명령은 다음과 같습니다.
+		PRINTL
+		PRINTL ・B 증가 커맨드
+		PRINTL 　　가슴 애무・착유기(장착 시・장착 중 양쪽)・가슴을 주무르다・어깨동무 가슴 주무르기(실행 시・모드 지속 중 양쪽)・가슴 확대 오일 에스테・가슴을 주무르다
+		PRINTL
+		PRINTL ・B 감소 커맨드
+		PRINTL 　　미유 오일 에스테
+		PRINTL
+		PRINTL ・W 감소 커맨드
+		PRINTL 　　기승위(모드 지속 중)・A 기승위(모드 지속 중)・아름다운 피부와 잘록한 허리 오일 스파・복직근 오일 에스테
+		PRINTL
+		PRINTL ・H 증가 커맨드
+		PRINTL 　　스팽킹・엉덩이를 주무르다(실행 시・모드 지속 중 양쪽)
+		PRINTL
+		PRINTL ・H 감소 커맨드
+		PRINTL 　　대둔근 골반 마사지
+		PRINTL
+		PRINTL ・식사 취급 커맨드
+		PRINTL 　(실행함으로써 스리 사이즈가 증가하지만, 커맨드 선택에 의한 스리 사이즈 변화가 아니라 음식에 의한 스리 사이즈 성장으로 취급한다)
+		PRINTL 　　술을 마시다・BBQ를 하다
+	CASE 130
+		DRAWLINE
+		PRINTL 특정 아이템을 선물했을 때, 혹은 사용했을 때 각각의 스리 사이즈가 증감합니다.
+		PRINTL 해당 아이템에는 칼로리가 표기되어 있습니다.
+		PRINTL
+PRINTL 하루에 1000kcal까지는 섭취해도 살찌지 않습니다.
+PRINTL 1000kcal를 초과한 양을 기준으로, 하루의 마지막에 스리 사이즈의 변동이 발생합니다.
+		PRINTL 
+PRINTL 또한, 전투나 운동 등으로 인해 섭취 칼로리가 감산될 수 있습니다.
+PRINTL 하루에 섭취한 칼로리가 마이너스가 된 경우, 마이너스분이 그대로 스리 사이즈의 변동으로 계산됩니다.
+ENDSELECT
+
+
+@機能オプション左枠_2(画面表示用変数)
+#DIM 画面表示用変数
+;うふふ機能
+LOCALS = 
+IF 画面表示用変数 == 100
+	LOCALS += @"<nonbutton><font color='#%カラーパレット_HTML("黄")%'>[100] 발정기 전환</font></nonbutton>"
+ELSE
+	LOCALS += "<button value='100'>[100] 발정기 전환</button>"
+ENDIF
+LOCALS += "<br>"
+IF 画面表示用変数 == 200
+	LOCALS += @"<nonbutton><font color='#%カラーパレット_HTML("黄")%'>[200] 임신 전환</font></nonbutton>"
+ELSE
+	LOCALS += "<button value='200'>[200] 임신 전환</button>"
+ENDIF
+LOCALS += "<br>"
+IF 画面表示用変数 == 300
+	LOCALS += @"<nonbutton><font color='#%カラーパレット_HTML("黄")%'>[900] 범용 신음 설정</font></nonbutton>"
+ELSE
+	LOCALS += "<button value='300'>[300] 범용 신음 설정</button>"
+ENDIF
+LOCALS += "<br>"
+IF 画面表示用変数 == 400
+	LOCALS += @"<nonbutton><font color='#%カラーパレット_HTML("黄")%'>[400] 하루 종료 시 자위 관련</font></nonbutton>"
+ELSE
+	LOCALS += "<button value='400'>[400] 하루 종료 시 자위 관련</button>"
+ENDIF
+LOCALS += "<br>"
+IF 画面表示用変数 == 500
+	LOCALS += @"<nonbutton><font color='#%カラーパレット_HTML("黄")%'>[500] 자동 사정 설정</font></nonbutton>"
+ELSE
+	LOCALS += "<button value='500'>[500] 자동 사정 설정</button>"
+ENDIF
+LOCALS += "<br>"
+IF 画面表示用変数 == 600
+	LOCALS += @"<nonbutton><font color='#%カラーパレット_HTML("黄")%'>[600] 자궁구 관련 설정</font></nonbutton>"
+ELSE
+	LOCALS += "<button value='600'>[600] 자궁구 관련 설정</button>"
+ENDIF
+LOCALS += "<br>"
+IF 画面表示用変数 == 700
+	LOCALS += @"<nonbutton><font color='#%カラーパレット_HTML("黄")%'>[700] 끌어들이기 금지 설정</font></nonbutton>"
+ELSE
+	LOCALS += "<button value='700'>[700] 끌어들이기 금지 설정</button>"
+ENDIF
+LOCALS += "<br>"
+IF 画面表示用変数 == 800
+	LOCALS += @"<nonbutton><font color='#%カラーパレット_HTML("黄")%'>[800] 당신 사정 참기 설정</font></nonbutton>"
+ELSE
+	LOCALS += "<button value='800'>[800] 당신 사정 참기 설정</button>"
+ENDIF
+LOCALS += "<br>"
+IF 画面表示用変数 == 900
+	LOCALS += @"<nonbutton><font color='#%カラーパレット_HTML("黄")%'>[900] 욕정 필드 설정</font></nonbutton>"
+ELSE
+	LOCALS += "<button value='900'>[900] 욕정 필드 설정</button>"
+ENDIF
+LOCALS += "<br>"
+IF 画面表示用変数 == 1000
+	LOCALS += @"<nonbutton><font color='#%カラーパレット_HTML("黄")%'>[1000] 모드 초기값 설정</font></nonbutton>"
+ELSE
+	LOCALS += "<button value='1000'>[1000] 모드 초기값 설정</button>"
+ENDIF
+LOCALS += "<br>"
+IF 素質切り替えOPTION記憶:ふたなり_女性 == 0
+	IF 画面表示用変数 == 1100
+		LOCALS += @"<nonbutton><font color='#%カラーパレット_HTML("黄")%'>[1100] 후타나리 구슬 설정</font></nonbutton>"
+	ELSE
+		LOCALS += "<button value='1100'>[1100] 후타나리 구슬 설정</button>"
+	ENDIF
+	LOCALS += "<br>"
+ENDIF
+IF 画面表示用変数 == 1200
+	LOCALS += @"<nonbutton><font color='#%カラーパレット_HTML("黄")%'>[1200] 남성 받기 금지 설정</font></nonbutton>"
+ELSE
+	LOCALS += "<button value='1200'>[1200] 남성 받기 금지 설정</button>"
+ENDIF
+LOCALS += "<br>"
+IF 画面表示用変数 == 1300
+	LOCALS += @"<nonbutton><font color='#%カラーパレット_HTML("黄")%'>[1300] 장난감 계열 자동 커맨드 금지 설정</font></nonbutton>"
+ELSE
+	LOCALS += "<button value='1300'>[1300] 장난감 계열 자동 커맨드 금지 설정</button>"
+ENDIF
+LOCALS += "<br>"
+IF 画面表示用変数 == 1400
+	LOCALS += @"<nonbutton><font color='#%カラーパレット_HTML("黄")%'>[1400] 목 물기 확장 설정</font></nonbutton>"
+ELSE
+	LOCALS += "<button value='1400'>[1400] 목 물기 확장 설정</button>"
+ENDIF
+
+
+LOCALS += "<br>"
+LOCALS += "<button value='999'>[999] 돌아가기</button>"
+LOCALS += "<br>"
+
+RESULTS '= LOCALS
+
+@機能オプション右枠_2(画面表示用変数)
+#DIM 画面表示用変数
+;うふふ機能
+
+LOCALS = 
+SELECTCASE 画面表示用変数
+	CASE 100
+		LOCALS += "・발정기 전환<br>"
+		LOCALS += "엘룬이나 드라프, 혹은 특정 캐릭터에게 찾아오는 발정기의 ON/OFF를 전환합니다.<br>"
+		LOCALS += "<br>"
+		;OPTION変数:発情期切り替え BIT管理 0:エルーン女性 1:エルーン男性 2:ドラフ女性 3:ドラフ男性 4:発情あり女性 5:発情あり男性
+		LOCALS += "　<button value='101'>[101] 전체의 발정기를 ON으로 설정</button><br>"
+		LOCALS += "　<button value='102'>[102] 전체의 발정기를 OFF로 설정</button><br><br>"
+		LOCALS += "　<button value='103'>[103] 엘룬 여성(후타나리)의 발정기를 전환: 현재"
+		IF GETBIT(OPTION変数:発情期切り替え, 0) == 0
+			LOCALS += "ON</button><br>"
+		ELSE
+			LOCALS += "OFF</button><br>"
+		ENDIF
+		LOCALS += "　<button value='104'>[104] 엘룬 남성의 발정기를 전환: 현재"
+		IF GETBIT(OPTION変数:発情期切り替え, 1) == 0
+			LOCALS += "ON</button><br>"
+		ELSE
+			LOCALS += "OFF</button><br>"
+		ENDIF
+		LOCALS += "　<button value='105'>[105] 드라프 여성(후타나리)의 발정기를 전환: 현재"
+		IF GETBIT(OPTION変数:発情期切り替え, 2) == 0
+			LOCALS += "ON</button><br>"
+		ELSE
+			LOCALS += "OFF</button><br>"
+		ENDIF
+		LOCALS += "　<button value='106'>[106] 드라프 남성의 발정기를 전환: 현재"
+		IF GETBIT(OPTION変数:発情期切り替え, 3) == 0
+			LOCALS += "ON</button><br>"
+		ELSE
+			LOCALS += "OFF</button><br>"
+		ENDIF
+		LOCALS += "　<button value='107'>[107] 발정 있음 소질을 가진 여성(후타나리)의 발정기를 전환: 현재"
+		IF GETBIT(OPTION変数:発情期切り替え, 4) == 0
+			LOCALS += "ON</button><br>"
+		ELSE
+			LOCALS += "OFF</button><br>"
+		ENDIF
+		LOCALS += "　<button value='108'>[108] 발정 있음 소질을 가진 남성의 발정기를 전환: 현재"
+		IF GETBIT(OPTION変数:発情期切り替え, 5) == 0
+			LOCALS += "ON</button><br>"
+		ELSE
+			LOCALS += "OFF</button><br>"
+		ENDIF
+		LOCALS += "----------------------------------------------------------------------------<br>"
+		LOCALS += "・남성 드라프 발정기 시・체질 전환<br>"
+		LOCALS += "남성 드라프가 발정기가 되었을 때, 모유 체질을 적용할지 여부를 전환합니다.<br>"
+		LOCALS += "<br>"
+		IF OPTION変数:男ドラフ母乳
+			LOCALS += "　<button value='110'>[110] 모유 체질을 적용한다 / <font color='#666666'>적용하지 않는다</font></button><br>"
+		ELSE
+			LOCALS += "　<button value='110'>[110] <font color='#666666'>모유 체질을 적용한다</font> / 적용하지 않는다</button><br>"
+		ENDIF
+	CASE 200
+		LOCALS += "・임신 전환<br>"
+		LOCALS += "섹스에 의해 임신하는 기능의 ON/OFF를 전환합니다. <br>"
+		LOCALS += "특정 캐릭터의 ON/OFF를 전환하는 경우는 능력 표시 화면에서 설정해 주세요. <br>"
+		LOCALS += "<br>"
+		LOCALS += "・전체 제어 (아래 옵션을 무시하고 임신을 발생시키지 않는다)<br>"
+		IF OPTION変数:妊娠切り替え == 0
+			LOCALS += "　<button value='201'>[201] 임신 기능을 OFF로 한다 (현재 ON)</button>"
+		ELSEIF OPTION変数:妊娠切り替え
+			LOCALS += "　<button value='201'>[201] 임신 기능을 ON으로 한다 (현재 OFF)</button>"
+		ENDIF
+		LOCALS += "<br>"
+		LOCALS += "<br>"
+		LOCALS += "・당신이 관여하지 않을 때의 아이<br>"
+		IF OPTION変数:他人妊娠 == 0
+			LOCALS += "　<button value='202'>[202] 당신이 관여하지 않을 때의 임신을 금지한다 (현재 허가)</button>"
+		ELSEIF OPTION変数:他人妊娠
+			LOCALS += "　<button value='202'>[202] 당신이 관여하지 않을 때의 임신을 허가한다 (현재 금지)</button>"
+		ENDIF
+		LOCALS += "<br>"
+		LOCALS += "<br>"
+		LOCALS += "・야습 시의 임신<br>"
+		; IF OPTION変数:夜這い時妊娠 == 0
+		; 	LOCALS += "　<button value='203'>[203] 夜這い時の妊娠を禁止する（現在許可）</button>"
+		; ELSEIF OPTION変数:夜這い時妊娠
+		; 	LOCALS += "　<button value='203'>[203] 夜這い時の妊娠を許可する（現在禁止）</button>"
+		; ENDIF
+		IF OPTION変数:夜這い時妊娠 == 0
+			LOCALS += "　[전체 허가]"
+		ELSE
+			LOCALS += "　<font color='#666666'><button value='203'>[전원 허가]</button></font>"
+		ENDIF
+		LOCALS += " / "
+		IF OPTION変数:夜這い時妊娠 == 1
+			LOCALS += "[캐릭터 공격 시 금지]"
+		ELSE
+			LOCALS += "<font color='#666666'><button value='204'>[캐릭터 공격 시 금지]</button></font>"
+		ENDIF
+		LOCALS += " / "
+		IF OPTION変数:夜這い時妊娠 == 2
+			LOCALS += "[당신 공격 시 금지]"
+		ELSE
+			LOCALS += "<font color='#666666'><button value='205'>[당신 공격 시 금지]</button></font>"
+		ENDIF
+		LOCALS += " / "
+		IF OPTION変数:夜這い時妊娠 == 3
+			LOCALS += "[전체 금지]"
+		ELSE
+			LOCALS += "<font color='#666666'><button value='206'>[전원 금지]</button></font>"
+		ENDIF
+	CASE 300
+		LOCALS += "・범용 신음 전환<br>"
+		LOCALS += "쾌락을 얻었을 때 표시되는 범용 신음 설정을 변경합니다.<br>"
+		LOCALS += "표시되는 타이밍은 커맨드 본문 뒤, 고상 앞입니다.<br>"
+		LOCALS += "<br>"
+		LOCALS += "※능력 표시 화면에서 설정할 수 있는, 캐릭터 개별 범용 신음 사용 가능/불가능 설정이 우선됩니다.<br>"
+		LOCALS += "<br>"
+		LOCALS += "・여성(후타나리・기타) 캐릭터 범용 신음 (현재: "
+		SELECTCASE OPTION変数:汎用喘ぎ使用
+			CASE 0
+				LOCALS += "사용 안 함)<br>"
+				LOCALS += "　　　[사용 안 함] / <font color='#666666'><button value='302'>[고상 없는 캐릭터만 사용]</button></font> / <font color='#666666'><button value='303'>[모든 캐릭터에게 사용]</button></font><br>"
+			CASE 1
+				LOCALS += "고상이 없는 캐릭터만 사용)<br>"
+				LOCALS += "　　　<font color='#666666'><button value='301'>[사용 안 함]</button></font> / [고상 없는 캐릭터만 사용] / <font color='#666666'><button value='303'>[모든 캐릭터에게 사용]</button></font><br>"
+			CASE 3
+				LOCALS += "모든 캐릭터에게 사용)<br>"
+				LOCALS += "　　　<font color='#666666'><button value='301'>[사용 안 함]</button></font> / <font color='#666666'><button value='302'>[구상 없는 캐릭터만 사용]</button></font> / [모든 캐릭터에 사용]<br>"
+		ENDSELECT
+		LOCALS += "<br>"
+		LOCALS += "・남성 캐릭터 범용 신음 (현재:"
+		SELECTCASE OPTION変数:汎用喘ぎ使用_男
+			CASE 0
+				LOCALS += "사용 안 함)<br>"
+				LOCALS += "　　　[사용 안 함] / <font color='#666666'><button value='305'>[구상 없는 캐릭터만 사용]</button></font> / <font color='#666666'><button value='306'>[모든 캐릭터에 사용]</button></font><br>"
+			CASE 1
+				LOCALS += "구상이 없는 캐릭터만 사용)<br>"
+				LOCALS += "　　　<font color='#666666'><button value='304'>[사용 안 함]</button></font> / [구상 없는 캐릭터만 사용] / <font color='#666666'><button value='306'>[모든 캐릭터에 사용]</button></font><br>"
+			CASE 3
+				LOCALS += "모든 캐릭터에 사용)<br>"
+				LOCALS += "　　　<font color='#666666'><button value='304'>[사용 안 함]</button></font> / <font color='#666666'><button value='305'>[구상 없는 캐릭터만 사용]</button></font> / [모든 캐릭터에 사용]<br>"
+		ENDSELECT
+	CASE 400
+		LOCALS += "・하루 종료 시 자위 관련<br>"
+		LOCALS += "성별마다 하루 종료 시 자위에 대해 설정합니다. <br>"
+		LOCALS += "자위 자체를 금지한 경우, 절정이나 경험 증가는 이루어지지 않지만 성욕은 감소합니다. <br>"
+		LOCALS += "<br>"
+		SELECTCASE 一日終了時オナニーOPTION:1
+			CASE 0
+				LOCALS += "여성　　:[일반 실행] / <font color='#666666'><button value='412'>[실행하지만 보고서 숨김]</button></font> / <font color='#666666'><button value='413'>[실행 안 함]</button></font><br>"
+			CASE 1
+				LOCALS += "여성　　:<font color='#666666'><button value='411'>[일반 실행]</button></font> / [실행하지만 보고서 숨김] / <font color='#666666'><button value='413'>[실행 안 함]</button></font><br>"
+			CASE 2
+				LOCALS += "여성　　:<font color='#666666'><button value='411'>[일반 실행]</button></font> / <font color='#666666'><button value='412'>[실행하지만 보고서 숨김]</button></font> / [실행 안 함]<br>"
+		ENDSELECT
+		SELECTCASE 一日終了時オナニーOPTION:2
+			CASE 0
+				LOCALS += "남성　　:[일반 실행] / <font color='#666666'><button value='422'>[실행하지만 보고서 숨김]</button></font> / <font color='#666666'><button value='423'>[실행 안 함]</button></font><br>"
+			CASE 1
+				LOCALS += "남성　　：<font color='#666666'><button value='421'>[일반 실행]</button></font> / [실행하지만 보고서 숨김] / <font color='#666666'><button value='423'>[실행 안 함]</button></font><br>"
+			CASE 2
+				LOCALS += "남성　　：<font color='#666666'><button value='421'>[일반 실행]</button></font> / <font color='#666666'><button value='422'>[실행하지만 보고서 숨김]</button></font> / [실행 안 함]<br>"
+		ENDSELECT
+		SELECTCASE 一日終了時オナニーOPTION:3
+			CASE 0
+				LOCALS += "후타나리：[일반 실행] / <font color='#666666'><button value='432'>[실행하지만 보고서 숨김]</button></font> / <font color='#666666'><button value='433'>[실행 안 함]</button></font><br>"
+			CASE 1
+				LOCALS += "후타나리：<font color='#666666'><button value='431'>[일반 실행]</button></font> / [실행하지만 보고서 숨김] / <font color='#666666'><button value='433'>[실행 안 함]</button></font><br>"
+			CASE 2
+				LOCALS += "후타나리：<font color='#666666'><button value='431'>[일반 실행]</button></font> / <font color='#666666'><button value='432'>[실행하지만 보고서 숨김]</button></font> / [실행 안 함]<br>"
+		ENDSELECT
+		SELECTCASE 一日終了時オナニーOPTION:0
+			CASE 0
+				LOCALS += "무성　　：[일반 실행] / <font color='#666666'><button value='402'>[실행하지만 보고서 숨김]</button></font> / <font color='#666666'><button value='403'>[실행 안 함]</button></font><br>"
+			CASE 1
+				LOCALS += "무성　　：<font color='#666666'><button value='401'>[일반 실행]</button></font> / [실행하지만 보고서 숨김] / <font color='#666666'><button value='403'>[실행 안 함]</button></font><br>"
+			CASE 2
+				LOCALS += "무성　　：<font color='#666666'><button value='401'>[일반 실행]</button></font> / <font color='#666666'><button value='402'>[실행하지만 보고서 숨김]</button></font> / [실행 안 함]<br>"
+		ENDSELECT
+	CASE 500
+		LOCALS += "・자동 사정 설정<br>"
+		LOCALS += "사정 시, 자동으로 사정 대상을 결정하기 위한 설정을 합니다.<br>"
+		LOCALS += "<br>"
+		LOCALS += "　<button value='501'>[501] 자동 사정 대상 설정 화면 열기</button>"
+		LOCALS += "<br>"
+		LOCALS += "<br>"
+	CASE 600
+		LOCALS += "・자궁구 삽입 설정<br>"
+		LOCALS += "자궁구 삽입 커맨드 및 커맨드 해방 이벤트가 나올지 여부를 설정합니다.<br>"
+		LOCALS += "<br>"
+		IF OPTION変数:子宮口挿入_封印 == 0
+			LOCALS += "　<button value='601'>[601] 자궁구 삽입 관련 기능을 금지합니다 (현재: 허가)</button>"
+		ELSEIF OPTION変数:子宮口挿入_封印
+			LOCALS += "　<button value='601'>[601] 자궁구 삽입 관련 기능을 허가합니다 (현재: 금지)</button>"
+		ENDIF
+		LOCALS += "<br>"
+		LOCALS += "<br>"
+	CASE 700
+		LOCALS += "・동반 금지 설정<br>"
+		LOCALS += "캐릭터가 자동으로 은밀한 곳으로 데려갈지 여부를 설정합니다.<br>"
+		LOCALS += "<br>"
+		IF OPTION変数:連れ込み制御 == 0
+			LOCALS += "　<button value='701'>[701] 캐릭터의 동반을 금지한다 (현재: 허가)</button>"
+		ELSEIF OPTION変数:連れ込み制御
+			LOCALS += "　<button value='701'>[701] 캐릭터의 동반을 허가한다 (현재: 금지)</button>"
+		ENDIF
+	CASE 800
+		LOCALS += "・당신 절정 참기 설정<br>"
+		LOCALS += "당신이 절정할 때, 그것을 무효화하고 쾌락값을 9999로 변경합니다.<br>"
+		LOCALS += "이것은 기상 후 게임 화면에서도 변경 가능합니다.<br>"
+		LOCALS += "이 옵션은 저장되지 않으며, 게임 종료 시 허가 설정으로 돌아갑니다.<br>"
+		LOCALS += "<br>"
+		IF あなた射精我慢フラグ == 0
+			LOCALS += "　<button value='801'>[801] 당신의 절정을 금지한다 (현재: 허가)</button>"
+		ELSEIF あなた射精我慢フラグ
+			LOCALS += "　<button value='801'>[801] 당신의 절정을 허가한다 (현재: 금지)</button>"
+		ENDIF
+	CASE 900
+		LOCALS += "・욕정 필드 설정<br>"
+		LOCALS += "욕정 필드의 기능을 변경합니다.<br>"
+		LOCALS += "<br>"
+		LOCALS += "・『RAPE ME!!』 설정<br>"
+		LOCALS += "욕정 필드 전개 중에 당신이 받는 성희롱에 강간을 추가합니다.<br>"
+		LOCALS += "A 경험이 50 이하일 때는 A로 강간당하지 않습니다.<br>"
+		LOCALS += "可能なパターンが無い時、レイプは発生しません。<br>"
+		LOCALS += "<br>"
+		IF OPTION変数:RAPE制御
+			LOCALS += "　<button value='901'>[901] 『RAPE ME!!』を禁止する（現在：許可）</button>"
+		ELSEIF OPTION変数:RAPE制御 == 0
+			LOCALS += "　<button value='901'>[901] 『RAPE ME!!』を許可する（現在：禁止）</button>"
+		ENDIF
+		LOCALS += "<br>"
+		IF OPTION変数:RAPE制御
+			LOCALS += "・『RAPE ME!!』処女童貞設定<br>"
+			LOCALS += "処女・童貞時にそれらを失うレイプを許可するかどうかを設定します。<br>"
+			LOCALS += "<br>"
+			IF OPTION変数:処女童貞RAPE制御
+				LOCALS += "　<button value='902'>[902] 処女・童貞を失うレイプを禁止する（現在：許可）</button>"
+			ELSEIF OPTION変数:処女童貞RAPE制御 == 0
+				LOCALS += "　<button value='902'>[902] 処女・童貞を失うレイプを許可する（現在：禁止）</button>"
+			ENDIF
+		ENDIF
+	CASE 1000
+		LOCALS += "・モード初期値設定<br>"
+		LOCALS += "強さや速さの設定を持つモードのコマンドを実行した時、初期値を設定します。<br>"
+		LOCALS += "V挿入・A挿入系は体位選択時に設定可能なためここでは設定しません。<br>"
+		LOCALS += "<br>"
+		LOCALS += "・クリキャップ　："
+		IF OPTION変数:クリキャップ強さ初期値 == -1
+			LOCALS += "使用時に都度指定　　　"
+			LOCALS += "<button value='1009'>[1009] 初期値を指定する</button>"
+		ELSE
+			FOR LOCAL, 0, 6
+				IF OPTION変数:クリキャップ強さ初期値 >= LOCAL
+					LOCALS += @"<button value='{LOCAL + 1010}'>■</button>"
+				ELSE
+					LOCALS += @"<button value='{LOCAL + 1010}'>□</button>"
+				ENDIF
+			NEXT
+			LOCALS += "　　　<button value='1009'>[1009] 使用時に都度指定する</button>"
+		ENDIF
+		LOCALS += "<br>"
+		LOCALS += "・オナホール　　："
+		IF OPTION変数:オナホール強さ初期値 == -1
+			LOCALS += "사용 시 매번 지정　　　"
+			LOCALS += "<button value='1019'>[1019] 초기값을 지정한다</button>"
+		ELSE
+			FOR LOCAL, 0, 6
+				IF OPTION変数:オナホール強さ初期値 >= LOCAL
+					LOCALS += @"<button value='{LOCAL + 1020}'>■</button>"
+				ELSE
+					LOCALS += @"<button value='{LOCAL + 1020}'>□</button>"
+				ENDIF
+			NEXT
+			LOCALS += "　　　<button value='1019'>[1019] 사용 시 매번 지정한다</button>"
+		ENDIF
+		LOCALS += "<br>"
+		LOCALS += "・바이브　　　　："
+		IF OPTION変数:バイブ強さ初期値 == -1
+			LOCALS += "사용 시 매번 지정　　　"
+			LOCALS += "<button value='1029'>[1029] 초기값을 지정한다</button>"
+		ELSE
+			FOR LOCAL, 0, 6
+				IF OPTION変数:バイブ強さ初期値 >= LOCAL
+					LOCALS += @"<button value='{LOCAL + 1030}'>■</button>"
+				ELSE
+					LOCALS += @"<button value='{LOCAL + 1030}'>□</button>"
+				ENDIF
+			NEXT
+			LOCALS += "　　　<button value='1029'>[1029] 사용 시 매번 지정한다</button>"
+		ENDIF
+		LOCALS += "<br>"
+		LOCALS += "・애널 바이브　："
+		IF OPTION変数:アナルバイブ強さ初期値 == -1
+			LOCALS += "사용 시 매번 지정　　　"
+			LOCALS += "<button value='1039'>[1039] 초기값을 지정한다</button>"
+		ELSE
+			FOR LOCAL, 0, 6
+				IF OPTION変数:アナルバイブ強さ初期値 >= LOCAL
+					LOCALS += @"<button value='{LOCAL + 1040}'>■</button>"
+				ELSE
+					LOCALS += @"<button value='{LOCAL + 1040}'>□</button>"
+				ENDIF
+			NEXT
+			LOCALS += "　　　<button value='1039'>[1039] 사용 시 매번 지정한다</button>"
+		ENDIF
+		LOCALS += "<br>"
+		LOCALS += "・니플 캡："
+		IF OPTION変数:ニプルキャップ強さ初期値 == -1
+			LOCALS += "사용 시 매번 지정　　　"
+			LOCALS += "<button value='1049'>[1049] 초기값을 지정한다</button>"
+		ELSE
+			FOR LOCAL, 0, 6
+				IF OPTION変数:ニプルキャップ強さ初期値 >= LOCAL
+					LOCALS += @"<button value='{LOCAL + 1050}'>■</button>"
+				ELSE
+					LOCALS += @"<button value='{LOCAL + 1050}'>□</button>"
+				ENDIF
+			NEXT
+			LOCALS += "　　　<button value='1049'>[1049] 사용 시 매번 지정한다</button>"
+		ENDIF
+		LOCALS += "<br>"
+		LOCALS += "・착유기　　　　："
+		IF OPTION変数:搾乳機強さ初期値 == -1
+			LOCALS += "사용 시 매번 지정　　　"
+			LOCALS += "<button value='1059'>[1059] 초기값을 지정한다</button>"
+		ELSE
+			FOR LOCAL, 0, 6
+				IF OPTION変数:搾乳機強さ初期値 >= LOCAL
+					LOCALS += @"<button value='{LOCAL + 1060}'>■</button>"
+				ELSE
+					LOCALS += @"<button value='{LOCAL + 1060}'>□</button>"
+				ENDIF
+			NEXT
+			LOCALS += "　　　<button value='1059'>[1059] 사용 시 매번 지정한다</button>"
+		ENDIF
+	CASE 1100
+		LOCALS += "・후타나리 구슬 설정<br>"
+		LOCALS += "후타나리 캐릭터의 고환 설정을 합니다.<br>"
+		LOCALS += "이 설정은 일부 명령어의 사용 조건에 영향을 줄 수 있습니다.<br>"
+		LOCALS += "설정이 「플레이버 소질에 준함」이고 플레이버 소질 측에서 구슬 유무를 설정하지 않은 경우, 구슬은 없는 것으로 취급합니다.<br>"
+		LOCALS += "<br>"
+		IF OPTION変数:ふたなり玉設定 == 0
+			LOCALS += @"　<font color='#%カラーパレット_HTML("黄")%'>[1110] 플레이버 소질에 준함</font><br>　<button value='1111'>[1111] 모든 캐릭터 구슬 없음 취급</button><br>　<button value='1112'>[1112] 모든 캐릭터 구슬 있음 취급</button>"
+		ELSEIF OPTION変数:ふたなり玉設定 == 1
+			LOCALS += @"　<button value='1110'>[1110] 플레이버 소질에 준함</button><br>　<font color='#%カラーパレット_HTML("黄")%'>[1111] 모든 캐릭터 구슬 없음 취급</font><br>　<button value='1112'>[1112] 모든 캐릭터 구슬 있음 취급</button>"
+		ELSEIF OPTION変数:ふたなり玉設定 == 2
+			LOCALS += @"　<button value='1110'>[1110] 플레이버 소질에 준함</button><br>　<button value='1111'>[1111] 모든 캐릭터 구슬 없음 취급</button><br>　<font color='#%カラーパレット_HTML("黄")%'>[1112] 모든 캐릭터 구슬 있음 취급</font>"
+		ENDIF
+	CASE 1200
+		LOCALS += "・남성 접대 금지 설정<br>"
+		LOCALS += "남성 접대 관련 설정을 합니다.<br>"
+		LOCALS += "남성의 감도 상승에 대해서나 자동 명령어, 캐릭터끼리의 우후후에서의 남성에 대한 애무에 대해 설정합니다.<br>"
+		LOCALS += "그에 따라 남성의 부위 감도를 0으로 되돌리는 버튼도<br>"
+		LOCALS += "<br>"
+		IF OPTION変数:男性への愛撫禁止
+			LOCALS += "　<button value='1201'>[1201] 남성에게 애무를 허가한다 (현재: 금지)</button>"
+		ELSEIF OPTION変数:男性への愛撫禁止 == 0
+			LOCALS += "　<button value='1201'>[1201] 남성에게 애무를 금지한다 (현재: 허가)</button>"
+		ENDIF
+		LOCALS += "<br>"
+		IF OPTION変数:男性感度上昇低下
+			LOCALS += "　<button value='1202'>[1202] 남성의 감도 상승률 저하를 해제합니다 (현재: on)</button>"
+		ELSEIF OPTION変数:男性感度上昇低下 == 0
+			LOCALS += "　<button value='1202'>[1202] 남성의 감도 상승률을 낮춥니다 (현재: off)</button>"
+		ENDIF
+		LOCALS += "<br>"
+		IF OPTION変数:男性感度上昇低下
+			LOCALS += "<br>"
+			LOCALS += "　<button value='1203'>[1203] 남성의 C 이외의 감도를 0으로 만듭니다 (일괄)</button>"
+			LOCALS += "<br>"
+			LOCALS += "　<button value='1204'>[1204] 남성의 C와 S 이외의 감도를 0으로 만듭니다 (일괄)</button>"
+			LOCALS += "<br>"
+			LOCALS += "　<button value='1205'>[1205] 남성의 C와 감도를 1/2, S의 감도를 1/4로 하고 그 외를 0으로 만듭니다 (일괄)</button>"
+			LOCALS += "<br>"
+			LOCALS += "　<button value='1206'>[1206] 남성의 모든 감도를 0으로 만듭니다 (일괄)</button>"
+		ENDIF
+	CASE 1300
+		LOCALS += "・장난감 계열 자동 커맨드 금지 설정<br>"
+		LOCALS += "장난감 계열 자동 커맨드 금지 설정을 합니다.<br>"
+		LOCALS += "장난감을 사용하는 자동 커맨드나 캐릭터끼리의 우후후에서의 장난감 사용에 대해 설정합니다.<br>"
+		LOCALS += "<br>"
+		IF OPTION変数:玩具プレイ禁止
+			LOCALS += "　<button value='1301'>[1301] 장난감 사용을 허가한다 (현재: 금지)</button>"
+		ELSEIF OPTION変数:玩具プレイ禁止 == 0
+			LOCALS += "　<button value='1301'>[1301] 장난감 사용을 금지한다 (현재: 허가)</button>"
+		ENDIF
+	CASE 1400
+		LOCALS += "・목 물기 확장 설정<br>"
+		LOCALS += "목 물기 계열 커맨드의 대상을 확장합니다.<br>"
+		LOCALS += "엘룬이나 드라프, 성정수 외에도, 조건을 만족한 캐릭터(EX 포함)를 목 물기로 『이해시킬』 수 있게 됩니다. <br>"
+		LOCALS += "<br>"
+		IF OPTION変数:首噛み拡張
+			LOCALS += "　<button value='1401'>[1401] 목 물기 확장 설정을 끄기 (현재: 켜짐)</button>"
+		ELSEIF OPTION変数:首噛み拡張 == 0
+			LOCALS += "　<button value='1401'>[1401] 목 물기 확장 설정을 켜기 (현재: 꺼짐)</button>"
+		ENDIF
+ENDSELECT
+
+RESULTS '= LOCALS
+
+@機能オプション実行処理_2(入力値)
+#DIM 入力値
+;システム全般機能
+
+SELECTCASE 入力値
+	CASE 101
+		OPTION変数:発情期切り替え = 0
+	CASE 102
+		SETBIT OPTION変数:発情期切り替え, 0
+		SETBIT OPTION変数:発情期切り替え, 1
+		SETBIT OPTION変数:発情期切り替え, 2
+		SETBIT OPTION変数:発情期切り替え, 3
+		SETBIT OPTION変数:発情期切り替え, 4
+		SETBIT OPTION変数:発情期切り替え, 5
+	CASE 103 TO 108
+		INVERTBIT OPTION変数:発情期切り替え, 入力値 - 103
+	CASE 110
+		INVERTBIT OPTION変数:男ドラフ母乳, 0
+	CASE 201
+		INVERTBIT OPTION変数:妊娠切り替え, 0
+	CASE 202
+		INVERTBIT OPTION変数:他人妊娠, 0
+	CASE 203 TO 206
+		OPTION変数:夜這い時妊娠 = 入力値 - 203
+	CASE 301
+		OPTION変数:汎用喘ぎ使用 = 0
+	CASE 302
+		OPTION変数:汎用喘ぎ使用 = 1
+	CASE 303
+		OPTION変数:汎用喘ぎ使用 = 3
+	CASE 304
+		OPTION変数:汎用喘ぎ使用_男 = 0
+	CASE 305
+		OPTION変数:汎用喘ぎ使用_男 = 1
+	CASE 306
+		OPTION変数:汎用喘ぎ使用_男 = 3
+	CASE 401 TO 440
+		一日終了時オナニーOPTION:((入力値 - 400) / 10) = (入力値 % 10) - 1
+	CASE 501
+		CALL オート射精先設定
+	CASE 601
+		INVERTBIT OPTION変数:子宮口挿入_封印, 0
+	CASE 701
+		INVERTBIT OPTION変数:連れ込み制御, 0
+	CASE 801
+		INVERTBIT あなた射精我慢フラグ, 0
+	CASE 901
+		INVERTBIT OPTION変数:RAPE制御, 0
+	CASE 902
+		INVERTBIT OPTION変数:処女童貞RAPE制御, 0
+	CASE 1009
+		IF OPTION変数:クリキャップ強さ初期値 == -1
+			OPTION変数:クリキャップ強さ初期値 = 0
+		ELSE
+			OPTION変数:クリキャップ強さ初期値 = -1
+		ENDIF
+	CASE 1010 TO 1015
+		OPTION変数:クリキャップ強さ初期値 = 入力値 - 1010
+	CASE 1019
+		IF OPTION変数:オナホール強さ初期値 == -1
+			OPTION変数:オナホール強さ初期値 = 0
+		ELSE
+			OPTION変数:オナホール強さ初期値 = -1
+		ENDIF
+	CASE 1020 TO 1025
+		OPTION変数:オナホール強さ初期値 = 入力値 - 1020
+	CASE 1029
+		IF OPTION変数:バイブ強さ初期値 == -1
+			OPTION変数:バイブ強さ初期値 = 0
+		ELSE
+			OPTION変数:バイブ強さ初期値 = -1
+		ENDIF
+	CASE 1030 TO 1035
+		OPTION変数:バイブ強さ初期値 = 入力値 - 1030
+	CASE 1039
+		IF OPTION変数:アナルバイブ強さ初期値 == -1
+			OPTION変数:アナルバイブ強さ初期値 = 0
+		ELSE
+			OPTION変数:アナルバイブ強さ初期値 = -1
+		ENDIF
+	CASE 1040 TO 1045
+		OPTION変数:アナルバイブ強さ初期値 = 入力値 - 1040
+	CASE 1049
+		IF OPTION変数:ニプルキャップ強さ初期値 == -1
+			OPTION変数:ニプルキャップ強さ初期値 = 0
+		ELSE
+			OPTION変数:ニプルキャップ強さ初期値 = -1
+		ENDIF
+	CASE 1050 TO 1055
+		OPTION変数:ニプルキャップ強さ初期値 = 入力値 - 1050
+	CASE 1059
+		IF OPTION変数:搾乳機強さ初期値 == -1
+			OPTION変数:搾乳機強さ初期値 = 0
+		ELSE
+			OPTION変数:搾乳機強さ初期値 = -1
+		ENDIF
+	CASE 1060 TO 1065
+		OPTION変数:搾乳機強さ初期値 = 入力値 - 1060
+	CASE 1110 TO 1112
+		OPTION変数:ふたなり玉設定 = 入力値 - 1110
+	CASE 1201
+		INVERTBIT OPTION変数:男性への愛撫禁止, 0
+	CASE 1202
+		INVERTBIT OPTION変数:男性感度上昇低下, 0
+	CASE 1203
+		FOR LOCAL, 0, CHARANUM
+			IF TALENT:LOCAL:性別 == 2 
+				ABL:LOCAL:Ｂ感覚 = 0
+				ABL:LOCAL:Ａ感覚 = 0
+				ABL:LOCAL:Ｓ感覚 = 0
+				ABL:LOCAL:露出癖 = 0
+				EXP:LOCAL:Ｂ経験 = 0
+				EXP:LOCAL:Ａ経験 = 0
+				EXP:LOCAL:Ａ絶頂経験 = 0
+				EXP:LOCAL:Ｂ絶頂経験 = 0
+				EXP:LOCAL:Ｓ絶頂経験 = 0
+				EXP:LOCAL:露出絶頂経験 = 0
+				EXP:LOCAL:露出快楽経験 = 0
+				EXP:LOCAL:乳首開発 = 0
+				JUEL:LOCAL:快Ｂ = 0
+				JUEL:LOCAL:快Ｓ = 0
+				JUEL:LOCAL:快Ａ = 0
+				JUEL:LOCAL:恥情 = 0
+				JUEL:LOCAL:屈服 = 0
+				JUEL:LOCAL:苦痛 = 0
+			ENDIF
+		NEXT
+		PRINTW C 이외의 감도를 0으로 설정했습니다.
+	CASE 1204
+		FOR LOCAL, 0, CHARANUM
+			IF TALENT:LOCAL:性別 == 2 
+				ABL:LOCAL:Ｂ感覚 = 0
+				ABL:LOCAL:Ａ感覚 = 0
+				ABL:LOCAL:露出癖 = 0
+				EXP:LOCAL:Ｂ経験 = 0
+				EXP:LOCAL:Ｂ絶頂経験 = 0
+				EXP:LOCAL:Ａ経験 = 0
+				EXP:LOCAL:Ａ絶頂経験 = 0
+				EXP:LOCAL:露出絶頂経験 = 0
+				EXP:LOCAL:露出快楽経験 = 0
+				EXP:LOCAL:乳首開発 = 0
+				JUEL:LOCAL:快Ｂ = 0
+				JUEL:LOCAL:快Ａ = 0
+				JUEL:LOCAL:恥情 = 0
+				JUEL:LOCAL:屈服 = 0
+				JUEL:LOCAL:苦痛 = 0
+			ENDIF
+		NEXT
+		PRINTW C와 S 이외의 감도를 0으로 설정했습니다.
+	CASE 1205
+		FOR LOCAL, 0, CHARANUM
+			IF TALENT:LOCAL:性別 == 2 
+				ABL:LOCAL:Ｂ感覚 = 0
+				ABL:LOCAL:Ｓ感覚 = ABL:LOCAL:Ｓ感覚/2
+				ABL:LOCAL:Ｃ感覚 = ABL:LOCAL:Ｃ感覚/2
+				ABL:LOCAL:Ａ感覚 = 0
+				ABL:LOCAL:露出癖 = 0
+				EXP:LOCAL:Ｂ経験 = 0
+				EXP:LOCAL:Ｂ絶頂経験 = 0
+				EXP:LOCAL:Ｓ絶頂経験 = 0
+				EXP:LOCAL:Ａ経験 = 0
+				EXP:LOCAL:Ａ絶頂経験 = 0
+				EXP:LOCAL:露出絶頂経験 = 0
+				EXP:LOCAL:露出快楽経験 = 0
+				EXP:LOCAL:乳首開発 = 0
+				JUEL:LOCAL:快Ｃ = 0
+				JUEL:LOCAL:快Ｂ = 0
+				JUEL:LOCAL:快Ｓ = 0
+				JUEL:LOCAL:快Ａ = 0
+				JUEL:LOCAL:恥情 = 0
+				JUEL:LOCAL:屈服 = 0
+				JUEL:LOCAL:苦痛 = 0
+			ENDIF
+		NEXT
+		PRINTW C의 감도를 1/2, S의 감도를 1/4로 하고 그 외의 감도를 0으로 설정했습니다.
+	CASE 1206
+		FOR LOCAL, 0, CHARANUM
+			IF TALENT:LOCAL:性別 == 2 
+				ABL:LOCAL:Ｂ感覚 = 0
+				ABL:LOCAL:Ｓ感覚 = 0
+				ABL:LOCAL:Ｃ感覚 = 0
+				ABL:LOCAL:Ａ感覚 = 0
+				ABL:LOCAL:露出癖 = 0
+				EXP:LOCAL:Ｂ経験 = 0
+				EXP:LOCAL:Ｂ絶頂経験 = 0
+				EXP:LOCAL:Ａ経験 = 0
+				EXP:LOCAL:Ａ絶頂経験 = 0
+				EXP:LOCAL:Ｓ絶頂経験 = 0
+				EXP:LOCAL:露出絶頂経験 = 0
+				EXP:LOCAL:露出快楽経験 = 0
+				EXP:LOCAL:乳首開発 = 0
+				JUEL:LOCAL:快Ｃ = 0
+				JUEL:LOCAL:快Ｂ = 0
+				JUEL:LOCAL:快Ｓ = 0
+				JUEL:LOCAL:快Ａ = 0
+				JUEL:LOCAL:恥情 = 0
+				JUEL:LOCAL:屈服 = 0
+				JUEL:LOCAL:苦痛 = 0
+			ENDIF
+		NEXT	
+		PRINTW 모든 감도를 0으로 설정했습니다.
+	CASE 1301
+		INVERTBIT OPTION変数:玩具プレイ禁止, 0
+	CASE 1401
+		INVERTBIT OPTION変数:首噛み拡張, 0
+ENDSELECT
+
+@機能オプション左枠_3(画面表示用変数)
+#DIM 画面表示用変数
+;画像関連機能
+LOCALS = 
+IF 画面表示用変数 == 100
+	LOCALS += @"<nonbutton><font color='#%カラーパレット_HTML("黄")%'>[100] 이미지 크기 전환</font></nonbutton>"
+ELSE
+	LOCALS += "<button value='100'>[100] 이미지 크기 전환</button>"
+ENDIF
+LOCALS += "<br>"
+IF 画面表示用変数 == 200
+	LOCALS += @"<nonbutton><font color='#%カラーパレット_HTML("黄")%'>[200] 가로세로비가 부적절한 이미지 처리</font></nonbutton>"
+ELSE
+	LOCALS += "<button value='200'>[200] 가로세로비가 부적절한 이미지 처리</button>"
+ENDIF
+LOCALS += "<br>"
+IF 画面表示用変数 == 300
+	LOCALS += @"<nonbutton><font color='#%カラーパレット_HTML("黄")%'>[300] 성행위 삽화/애니메이션</font></nonbutton>"
+ELSE
+	LOCALS += "<button value='300'>[300] 성행위 삽화/애니메이션</button>"
+ENDIF
+LOCALS += "<br>"
+IF 画面表示用変数 == 400
+	LOCALS += @"<nonbutton><font color='#%カラーパレット_HTML("黄")%'>[400] 랜덤 캐릭터 스탠딩 CG 설정</font></nonbutton>"
+ELSE
+	LOCALS += "<button value='400'>[400] 랜덤 캐릭터 스탠딩 CG 설정</button>"
+ENDIF
+LOCALS += "<br>"
+IF 画面表示用変数 == 500
+	LOCALS += @"<nonbutton><font color='#%カラーパレット_HTML("黄")%'>[500] 오버레이 설정</font></nonbutton>"
+ELSE
+	LOCALS += "<button value='500'>[500] 오버레이 설정</button>"
+ENDIF
+LOCALS += "<br>"
+IF 画面表示用変数 == 600
+	LOCALS += @"<nonbutton><font color='#%カラーパレット_HTML("黄")%'>[600] 사정 후 스탠딩 CG 설정</font></nonbutton>"
+ELSE
+	LOCALS += "<button value='600'>[600] 사정 후 스탠딩 CG 설정</button>"
+ENDIF
+LOCALS += "<br>"
+IF 画面表示用変数 == 700
+	LOCALS += @"<nonbutton><font color='#%カラーパレット_HTML("黄")%'>[700] PLAYER 캐릭터 스탠딩 CG 설정</font></nonbutton>"
+ELSE
+	LOCALS += "<button value='700'>[700] PLAYER 캐릭터 스탠딩 CG 설정</button>"
+ENDIF
+
+
+LOCALS += "<br>"
+LOCALS += "<br>"
+LOCALS += "<button value='999'>[999] 돌아가기</button>"
+LOCALS += "<br>"
+
+RESULTS '= LOCALS
+
+@機能オプション右枠_3(画面表示用変数)
+#DIM 画面表示用変数
+;画像機能
+
+LOCALS = 
+SELECTCASE 画面表示用変数
+	CASE 100
+		LOCALS += "・이미지 크기 전환<br>"
+		LOCALS += "능력 표시 화면 및 통상 시에 표시되는 캐릭터의 이미지 크기를 전환합니다.<br>"
+		LOCALS += "표시 위치마다 정사각형 크기 또는 단책 크기(세로 2, 가로 1) 중 하나로 설정할 수 있습니다.<br>"
+		LOCALS += "<br>"
+;		LOCALS += "　コマンドリスト画面（現在："
+;		IF GETBIT(画像サイズ切り替えOPTION記憶, 0)
+;			LOCALS += "短冊）<br>"
+;			LOCALS += "　　　[短冊にする] / <font color='#666666'><button value='102'>[正方形（3P時縦）にする]</button></font> / <font color='#666666'><button value='103'>[正方形にする]</button></font><br>"
+;		ELSEIF GETBIT(画像サイズ切り替えOPTION記憶, 4)
+;			LOCALS += "正方形（3P時に縦に並べる））<br>"
+;			LOCALS += "　　　<font color='#666666'><button value='101'>[短冊にする]</button></font> / [正方形（3P時縦）にする] / <font color='#666666'><button value='103'>[正方形にする]</button></font><br>"
+;		ELSE
+;			LOCALS += "正方形）<br>"
+;			LOCALS += "　　　<font color='#666666'><button value='101'>[短冊にする]</button></font> / <font color='#666666'><button value='102'>[正方形（3P時縦）にする]</button></font> / [正方形にする]<br>"
+;		ENDIF
+		LOCALS += @"　<button value='103'>[103] 커맨드 화면　（현재:\@ GETBIT(画像サイズ切り替えOPTION記憶, 0)? 단책　# 정사각형\@）</button><br>"
+		LOCALS += @"　<button value='104'>[104] 통상 능력 표시　（현재:\@ GETBIT(画像サイズ切り替えOPTION記憶, 1)? 단책　# 정사각형\@）</button><br>"
+		LOCALS += @"　<button value='105'>[105] 성적 능력 표시　（현재:\@ GETBIT(画像サイズ切り替えOPTION記憶, 2)? 단책　# 정사각형\@）</button><br>"
+		LOCALS += @"　<button value='106'>[106] 전투 능력 표시　（현재:\@ GETBIT(画像サイズ切り替えOPTION記憶, 3)? 단책　# 정사각형\@）</button><br>"
+		LOCALS += @"　<button value='107'>[107] 일괄 변경</button><br>"
+	CASE 200
+		LOCALS += "・종횡비 부적합 이미지 처리 전환<br>"
+		LOCALS += "규정과 다른 종횡비 이미지 처리를 전환합니다. <br>"
+		LOCALS += "규정 종횡비는 정사각형은 세로 1:가로 1, 단책은 세로 2:가로 1입니다. <br>"
+		LOCALS += "<br>"
+		IF 画像サイズ切り替えOPTION記憶:1 == 0
+			LOCALS += "　<button value='201'>[201]  이미지 전체를 표시하도록 확대 축소 (현재: 잘라내기 처리)</button><br>"
+		ELSE
+			LOCALS += "　<button value='201'>[201]  표시 영역에 맞춰 이미지를 잘라냄 (현재: 확대 축소 처리)</button><br>"
+		ENDIF
+	CASE 300
+		LOCALS += "・성행위 삽화/애니메이션 설정<br>"
+		LOCALS += "성행위 시 표시되는 삽화나 애니메이션 설정을 변경합니다. <br>"
+		LOCALS += "<br>"
+		LOCALS += @"　<button value='301'>[301] 성행위 삽화를 표시 (현재:\@ FLAG_挿絵表示 ? ON # OFF \@)</button><br>"
+		IF FLAG_挿絵表示
+			LOCALS += "---------------------------------------------------------------------<br>"
+			LOCALS += "　사정 이미지 종류 (현재:"
+			SELECTCASE FLAG_射精画像種類
+				CASE 0
+					LOCALS += "[단면+효과음])<br>"
+					LOCALS += "　　　[단면+효과음으로] / <font color='#666666'><button value='303'>[단면만으로]</button></font> / <font color='#666666'><button value='304'>[효과음만으로]</button></font><br>"
+				CASE 1
+					LOCALS += "[단면만])<br>"
+					LOCALS += "　　　<font color='#666666'><button value='302'>[단면+효과음으로]</button></font> / [단면만으로] / <font color='#666666'><button value='304'>[효과음만으로]</button></font><br>"
+				CASE 2
+					LOCALS += "[효과음만])<br>"
+					LOCALS += "　　　<font color='#666666'><button value='302'>[단면+효과음으로]</button></font> / <font color='#666666'><button value='303'>[단면만으로]</button></font> / [효과음만으로]<br>"
+			ENDSELECT
+			LOCALS += "<br>"
+			LOCALS += @"　애니메이션 반복 설정<br> （현재：\@ FLAG_アニメーション > 0 ? 반복 횟수 {FLAG_アニメーション}회 # 애니메이션 OFF \@）<br>"
+			SELECTCASE FLAG_アニメーション
+				CASE 0
+					LOCALS += "　　　[애니메이션 OFF로 하기]"
+					FOR LOCAL, 1, 6
+						LOCALS += @" / <font color='#666666'><button value='{305 + LOCAL}'>[{LOCAL}회]</button></font>"
+					NEXT
+					LOCALS += "<br>"
+				CASE 1 TO 5
+					LOCALS += "　　　<font color='#666666'><button value='305'>[애니메이션 OFF로 하기]</button></font>"
+					FOR LOCAL, 1, 6
+						IF FLAG_アニメーション == LOCAL
+							LOCALS += @" / [{LOCAL}회]"
+						ELSE
+							LOCALS += @" / <font color='#666666'><button value='{305 + LOCAL}'>[{LOCAL}회]</button></font>"
+						ENDIF
+					NEXT
+					LOCALS += "<br>"
+			ENDSELECT
+			IF FLAG_アニメーション
+				LOCALS += "<br>"
+				LOCALS += @"　　　<button value='311'>[311] 삽입 중에는 매 턴 애니메이션 표시 （현재：\@FLAG_挿入アニメフィルタ ? OFF# ON\@）</button>"
+			ENDIF
+		ENDIF
+	CASE 400
+		LOCALS += "・랜덤 캐릭터 스탠딩 CG 설정<br>"
+		LOCALS += "랜덤 캐릭터의 이미지를 표시할지 여부를 설정합니다.<br>"
+		LOCALS += "OFF로 설정한 경우, 랜덤 캐릭터의 이미지는 Noimage가 됩니다.<br>"
+		LOCALS += "<br>"
+		IF OPTION変数:汎用立ち絵制御 == 1
+			LOCALS += "　<button value='401'>[401]  랜덤 캐릭터의 이미지를 표시하지 않음（현재 ON）</button><br>"
+			LOCALS += "<br>"
+			LOCALS += "・기타 종족: 워울프 스탠딩 CG 설정<br>"
+			LOCALS += "랜덤 캐릭터의 종족이 「기타（워울프）」일 때 표시되는 스탠딩 CG의 경향을 설정합니다。<br>"
+			LOCALS += @"　<button value='402'>[402]  워울프의 스탠딩 CG를 「\@ OPTION変数:ワーウルフ画像ケモ度? 짐승 귀 인간# 수인\@」쪽으로 설정（현재：\@ !OPTION変数:ワーウルフ画像ケモ度? 짐승 귀 인간# 수인\@쪽）</button><br>"
+		ELSE
+			LOCALS += "　<button value='401'>[401]  랜덤 캐릭터의 이미지를 표시함（현재 OFF）</button><br>"
+		ENDIF
+	CASE 500
+		LOCALS += "・임신 시 오버레이 설정<br>"
+		LOCALS += "임신한 캐릭터에게 임신 시용 이미지 파일이 없는 경우, 기존 이미지 파일에<br>덮어씌워 표시할 이미지를 선택합니다.<br>"
+		LOCALS += "<br>"
+		LOCALS += "　임신 시 오버레이 종류 (현재:"
+		SELECTCASE FLAG_妊娠エフェクトフィルタ
+			CASE 0
+				LOCALS += "[표시 안 함])<br>"
+				LOCALS += "　　　[표시 안 함] / <font color='#666666'><button value='502'>[임산부 마크]</button></font><font color='#666666'><button value='503'>[「아기가」]</button></font> / <font color='#666666'><button value='504'>[단면도]</button></font><br>"
+			CASE 1
+				LOCALS += "[임산부 마크])<br>"
+				LOCALS += "　　　<font color='#666666'><button value='501'>[표시 안 함]</button></font> / [임산부 마크]<font color='#666666'><button value='503'>[「아기가」]</button></font> / <font color='#666666'><button value='504'>[단면도]</button></font><br>"
+				LOCALS += "<br>　샘플<br><img src='エフェクト_顔_妊娠1' height='1000' ypos='-600'><br>"
+			CASE 2
+				LOCALS += "[「아기가 들어있습니다」])<br>"
+				LOCALS += "　　　<font color='#666666'><button value='501'>[표시 안 함]</button></font> / <font color='#666666'><button value='502'>[임산부 마크]</button></font>[「아기가」] / <font color='#666666'><button value='504'>[단면도]</button></font><br>"
+				LOCALS += "<br>　샘플<br><img src='エフェクト_顔_妊娠2' height='1000' ypos='-600'><br>"
+			CASE 3
+				LOCALS += "[단면도])<br>"
+				LOCALS += "　　　<font color='#666666'><button value='501'>[표시 안 함]</button></font> / <font color='#666666'><button value='502'>[임산부 마크]</button></font><font color='#666666'><button value='503'>[「아기가」]</button></font> / [단면도]<br>"
+				LOCALS += "<br>　샘플<br><img src='エフェクト_顔_妊娠3_5' height='1000' ypos='-600'><br>"
+		ENDSELECT
+		LOCALS += "<br>"
+		LOCALS += "<br>"
+		LOCALS += "<br>"
+		LOCALS += "----------------------------------------------------------------------------<br>"
+		LOCALS += "・특정 상황 시 발정 및 절정 효과 표시<br>"
+		LOCALS += "욕정 시나 절정 시에, 커맨드에 대응하는 이미지가 표시되는 경우에도 욕정, 절정의<br>이펙트를 덮어씌워 표시할지 선택합니다. <br>"
+		LOCALS += "<br>"
+		IF OPTION変数:欲情絶頂エフェクト制御
+			LOCALS += "　<button value='505'>[505]  욕정과 절정 이펙트 표시를 ON으로 한다 (현재 OFF)</button><br>"
+		ELSE
+			LOCALS += "　<button value='505'>[505]  욕정과 절정 이펙트 표시를 OFF로 한다 (현재 ON)</button><br>"
+		ENDIF
+	CASE 600
+		LOCALS += "・사정 후의 스탠딩 CG 설정<br>"
+		LOCALS += "사정 후의 스탠딩 CG를 「◯내 사정」의 스탠딩 CG로 할지, <br>"
+		LOCALS += "「◯내 사정」과 특정 상황 스탠딩 CG를 랜덤으로 표시할지 선택합니다. <br>"
+		LOCALS += "(게임이 진행되면 당신이 사정하기 쉬워지고, 삽입계 스탠딩 CG의 표시 빈도가 낮아지는 것에 대한 대응)<br>"
+		LOCALS += "<br>"
+		LOCALS += "　・삽입 시 스탠딩 CG 표시<br>"
+		IF OPTION変数:射精後の挿入系立ち絵制御 == 0
+			LOCALS += "　<button value='601'>[601]  랜덤으로 표시를 ON으로 한다 (현재 OFF)</button><br>"
+		ELSE
+			LOCALS += "　<button value='601'>[601]  랜덤으로 표시를 OFF로 한다 (현재 ON)</button><br>"
+		ENDIF
+		LOCALS += "<br>"
+		LOCALS += "　・그 외 모드 시 스탠딩 CG 표시<br>"
+		IF OPTION変数:射精後のモード時立ち絵制御 == 0
+			LOCALS += "　<button value='602'>[602]  랜덤으로 표시를 ON으로 한다 (현재 OFF)</button><br>"
+		ELSE
+			LOCALS += "　<button value='602'>[602]  랜덤으로 표시를 OFF로 한다 (현재 ON)</button><br>"
+		ENDIF
+		LOCALS += "<br>"
+		LOCALS += "　・특정 상황 스탠딩 시 사정 이펙트 표시<br>"
+		IF OPTION変数:射精エフェクト制御
+			LOCALS += "　<button value='603'>[603]  사정 이펙트 표시를 ON으로 한다 (현재 OFF)</button><br>"
+		ELSE
+			LOCALS += "　<button value='603'>[603]  사정 이펙트 표시를 OFF로 한다 (현재 ON)</button><br>"
+		ENDIF
+	CASE 700
+		LOCALS += "・PLAYER 캐릭터의 스탠딩 CG 설정<br>"
+		LOCALS += "현재 PLAYER로 설정된 캐릭터(당신 포함)의 스탠딩 CG를 표시할지 여부를 선택합니다.<br>"
+		LOCALS += "해당 이미지가 없는 경우, Noimage 이미지가 아닌 자동으로 비표시됩니다.<br>"
+		LOCALS += "<br>"
+		IF OPTION変数:PLAYER画像オフ
+			LOCALS += "　<button value='701'>[701]  PLAYER 캐릭터의 스탠딩 CG 설정을 ON으로 한다 (현재 OFF)</button><br>"
+		ELSE
+			LOCALS += "　<button value='701'>[701]  PLAYER 캐릭터의 스탠딩 CG 설정을 OFF로 한다 (현재 ON)</button><br>"
+		ENDIF
+ENDSELECT
+
+RESULTS '= LOCALS
+
+@機能オプション実行処理_3(入力値)
+#DIM 入力値
+;画像機能
+
+SELECTCASE 入力値
+;	CASE 101
+;		SETBIT 画像サイズ切り替えOPTION記憶, 0
+;		CLEARBIT 画像サイズ切り替えOPTION記憶, 4
+;	CASE 102
+;		SETBIT 画像サイズ切り替えOPTION記憶, 4
+;		CLEARBIT 画像サイズ切り替えOPTION記憶, 0
+;	CASE 103
+;		CLEARBIT 画像サイズ切り替えOPTION記憶, 0
+;		CLEARBIT 画像サイズ切り替えOPTION記憶, 4
+	CASE 103 TO 106
+		INVERTBIT 画像サイズ切り替えOPTION記憶, (入力値 - 103)
+	CASE 107
+		INVERTBIT 画像サイズ切り替えOPTION記憶, 5
+		IF GETBIT(画像サイズ切り替えOPTION記憶, 5)
+			SETBIT 画像サイズ切り替えOPTION記憶, 0
+			SETBIT 画像サイズ切り替えOPTION記憶, 1
+			SETBIT 画像サイズ切り替えOPTION記憶, 2
+			SETBIT 画像サイズ切り替えOPTION記憶, 3
+			CLEARBIT 画像サイズ切り替えOPTION記憶, 4
+		ELSE
+			画像サイズ切り替えOPTION記憶 = 0
+		ENDIF
+	CASE 201
+		INVERTBIT 画像サイズ切り替えOPTION記憶:1, 0
+	CASE 301
+		INVERTBIT FLAG_挿絵表示, 0
+	CASE 302 TO 304
+		FLAG_射精画像種類 = 入力値 - 302
+	CASE 305 TO 310
+		FLAG_アニメーション = 入力値 - 305
+	CASE 311
+		INVERTBIT FLAG_挿入アニメフィルタ, 0
+	CASE 401
+		INVERTBIT OPTION変数:汎用立ち絵制御, 0
+	CASE 402
+		INVERTBIT OPTION変数:ワーウルフ画像ケモ度, 0
+	CASE 501 TO 504
+		FLAG_妊娠エフェクトフィルタ = 入力値 - 501
+	CASE 505
+		INVERTBIT OPTION変数:欲情絶頂エフェクト制御, 0
+	CASE 601
+		INVERTBIT OPTION変数:射精後の挿入系立ち絵制御, 0
+	CASE 602
+		INVERTBIT OPTION変数:射精後のモード時立ち絵制御, 0
+	CASE 603
+		INVERTBIT OPTION変数:射精エフェクト制御, 0
+	CASE 701
+		INVERTBIT OPTION変数:PLAYER画像オフ, 0
+ENDSELECT
+
+@機能オプション左枠_4(画面表示用変数)
+#DIM 画面表示用変数
+;探索・戦闘関連機能
+LOCALS = 
+IF 画面表示用変数 == 100
+	LOCALS += @"<nonbutton><font color='#%カラーパレット_HTML("黄")%'>[100] 컷인 표시 전환</font></nonbutton>"
+ELSE
+	LOCALS += "<button value='100'>[100] 컷인 표시 전환</button>"
+ENDIF
+LOCALS += "<br>"
+IF 画面表示用変数 == 200
+	LOCALS += @"<nonbutton><font color='#%カラーパレット_HTML("黄")%'>[200] 전투 중 편의 기능</font></nonbutton>"
+ELSE
+	LOCALS += "<button value='200'>[200] 전투 중 편의 기능</button>"
+ENDIF
+LOCALS += "<br>"
+IF 画面表示用変数 == 300
+	LOCALS += @"<nonbutton><font color='#%カラーパレット_HTML("黄")%'>[300] 던전 탐색 중 연출</font></nonbutton>"
+ELSE
+	LOCALS += "<button value='300'>[300] 던전 탐색 중 연출</button>"
+ENDIF
+LOCALS += "<br>"
+LOCALS += "<br>"
+LOCALS += "<button value='999'>[999] 돌아가기</button>"
+LOCALS += "<br>"
+
+RESULTS '= LOCALS
+
+@機能オプション右枠_4(画面表示用変数)
+#DIM 画面表示用変数
+;探索・戦闘機能
+
+LOCALS = 
+SELECTCASE 画面表示用変数
+	CASE 100
+		LOCALS += "・컷인 표시 전환<br>"
+		LOCALS += "컷인 애니메이션 표시 기능을 전환합니다.<br>"
+		LOCALS += "컷인 이미지 설정에 대해서는, 오의 시 컷인의 이미지 우선도를 전환할 수 있습니다.<br>"
+		LOCALS += "<br>"
+		LOCALS += "컷인 표시 설정:"
+		SELECTCASE カットイン演出一括表示フラグ
+			CASE 0
+				LOCALS += "　[표시] / <font color='#666666'><button value='102'>[숨기기]</button></font> / <font color='#666666'><button value='103'>[하루 한 번]</button></font><br>"
+			CASE 1
+				LOCALS += "　<font color='#666666'><button value='101'>[표시]</button></font> / [숨기기] / <font color='#666666'><button value='103'>[하루 한 번]</button></font><br>"
+			CASE 2
+				LOCALS += "　<font color='#666666'><button value='101'>[표시]</button></font> / <font color='#666666'><button value='102'>[숨기기]</button></font> / [하루 한 번]<br>"
+		ENDSELECT
+		LOCALS += "컷인 이미지 설정:"
+		SELECTCASE カットイン画像一括表示フラグ
+			CASE 0
+				LOCALS += "　[세로 컷인 우선] / <font color='#666666'><button value='105'>[가로 컷인 우선]</button></font><br>　　　　　　　　　　　<font color='#666666'><button value='106'>[기본 얼굴 그래픽 우선]</button></font> / <font color='#666666'><button value='107'>[세로 가로 랜덤]</button></font><br>"
+			CASE 1
+				LOCALS += "　<font color='#666666'><button value='104'>[세로 컷인 우선]</button></font> / [가로 컷인 우선]<br>　　　　　　　　　　　<font color='#666666'><button value='106'>[기본 얼굴 그래픽 우선]</button></font> / <font color='#666666'><button value='107'>[세로 가로 랜덤]</button></font><br>"
+			CASE 2
+				LOCALS += "　<font color='#666666'><button value='104'>[세로 컷인 우선]</button></font> / <font color='#666666'><button value='105'>[가로 컷인 우선]</button></font><br>　　　　　　　　　　　[기본 얼굴 그래픽 우선] / <font color='#666666'><button value='107'>[세로 가로 랜덤]</button></font><br>"
+			CASE 3
+				LOCALS += "　<font color='#666666'><button value='104'>[세로 컷인 우선]</button></font> / <font color='#666666'><button value='105'>[가로 컷인 우선]</button></font><br>　　　　　　　　　　　<font color='#666666'><button value='106'>[기본 얼굴 그래픽 우선]</button></font> / [세로 가로 랜덤]<br>"
+		ENDSELECT
+		LOCALS += "----------------------------------------------------------------------------<br>"
+		LOCALS += "・개별 오의 컷인 설정<br>"
+		LOCALS += "［능력 표시］화면에서 캐릭터 개별 오의 컷인 설정을 할 수 있습니다.<br>"
+		LOCALS += "여기서는 모든 캐릭터의 컷인 설정을 일괄적으로 설정할 수 있습니다.<br>"
+		LOCALS += "<br>"
+		LOCALS += "・컷인의 개별 표시 설정 (전체 설정보다 우선)<br>"
+		LOCALS += "　　<button value='110'>전원［전체 설정 따르기］로 설정</button> / <button value='111'>전원［숨기기］로 설정</button> / <button value='112'>전원［표시］로 설정</button><br>　　<button value='113'>전원［하루 한 번만］으로 설정</button>"
+		LOCALS += "<br>"
+		LOCALS += "・컷인 이미지 표시 설정 (전체 설정보다 우선)<br>"
+		LOCALS += "　　<button value='114'>모두 [전체 설정에 따르기]로 설정</button> / <button value='115'>모두 [세로 컷인 우선]으로 설정</button><br>　　<button value='116'>모두 [가로 컷인 우선]으로 설정</button> / <button value='117'>모두 [기본 얼굴 그래픽 우선]으로 설정</button><br>　　<button value='118'>모두 [세로 가로 랜덤]으로 설정</button>"
+	CASE 200
+		LOCALS += "・전투 중 편의 기능<br>"
+		LOCALS += "전투 중 조작 단축 및 확인 생략 기능 설정을 합니다.<br>"
+		LOCALS += "<br>"
+		LOCALS += "・퀵 일반 공격 설정<br>"
+		LOCALS += "행동 결정 시 적을 클릭하는 것만으로 일반 공격을 할 수 있도록 합니다.<br>"
+		LOCALS += "ON일 때, 적의 버프/디버프 상세를 확인할 수 없게 됩니다.<br>"
+		IF クイック行動フラグ == 0
+			LOCALS += "　<button value='201'>[201] <font color='#666666'>ON</font> / OFF</button><br>"
+		ELSE
+			LOCALS += "　<button value='201'>[201] ON / <font color='#666666'>OFF</font></button><br>"
+		ENDIF
+		LOCALS += "----------------------------------------------------------------------------<br>"
+		LOCALS += "・어빌리티 사용 확인 스킵 설정<br>"
+		LOCALS += "어빌리티를 사용할지 여부 확인을 스킵합니다.<br>"
+		LOCALS += "ON일 때, 어빌리티의 상세 설명을 확인할 수 없게 됩니다.<br>"
+		IF アビ使用確認スキップフラグ == 0
+			LOCALS += "　<button value='202'>[202] <font color='#666666'>ON</font> / OFF</button><br>"
+		ELSE
+			LOCALS += "　<button value='202'>[202] ON / <font color='#666666'>OFF</font></button><br>"
+		ENDIF
+		LOCALS += "----------------------------------------------------------------------------<br>"
+		LOCALS += "・오의 사용 확인 스킵 설정<br>"
+		LOCALS += "오의 사용 여부 확인을 건너뜁니다. <br>"
+		LOCALS += "ON일 때, 오의의 상세 설명을 확인할 수 없게 됩니다. <br>"
+		IF 奥義使用確認スキップフラグ == 0
+			LOCALS += "　<button value='203'>[203] <font color='#666666'>ON</font> / OFF</button><br>"
+		ELSE
+			LOCALS += "　<button value='203'>[203] ON / <font color='#666666'>OFF</font></button><br>"
+		ENDIF
+		LOCALS += "----------------------------------------------------------------------------<br>"
+		LOCALS += "・적 탐색 시, 확인 건너뛰기 설정<br>"
+		LOCALS += "이미 탐색 완료된 적 타일을 클릭 시, 탐색 여부 확인을 건너뜁니다. <br>"
+		IF OPTION変数:敵探索SKIP == 0
+			LOCALS += "　<button value='204'>[204] <font color='#666666'>ON</font> / OFF</button><br>"
+		ELSE
+			LOCALS += "　<button value='204'>[204] ON / <font color='#666666'>OFF</font></button><br>"
+		ENDIF
+		LOCALS += "<br>"
+		LOCALS += "<br>"
+	CASE 300
+		LOCALS += "・던전 탐색 중 연출<br>"
+		LOCALS += "던전 탐색 중에 발생하는 애니메이션 연출을 전환합니다. <br>"
+		LOCALS += "<br>"
+		LOCALS += "・돌입 시 애니메이션<br>"
+		LOCALS += "던전을 시작할 때 발생하는 애니메이션 연출 전환<br>"
+		IF 突入時アニメーション封印フラグ
+			LOCALS += "　<button value='301'>[301] <font color='#666666'>표시한다</font> / 표시하지 않는다</button><br>"
+		ELSE
+			LOCALS += "　<button value='301'>[301] 표시한다 / <font color='#666666'>표시하지 않는다</font></button><br>"
+		ENDIF
+		LOCALS += "<br>"
+		LOCALS += "・종료 시 애니메이션<br>"
+		LOCALS += "던전에서 귀환할 때 발생하는 애니메이션 연출 전환<br>"
+		IF 帰還時アニメーション封印フラグ
+			LOCALS += "　<button value='302'>[302] <font color='#666666'>표시</font> / 표시 안 함</button><br>"
+		ELSE
+			LOCALS += "　<button value='302'>[302] 표시 / <font color='#666666'>표시 안 함</font></button><br>"
+		ENDIF
+		LOCALS += "<br>"
+		LOCALS += "・데미지 애니메이션<br>"
+		LOCALS += "데미지 또는 회복 시 발생하는 숫자 애니메이션 연출 전환<br>"
+		IF ダメージアニメーション封印フラグ
+			LOCALS += "　<button value='303'>[303] <font color='#666666'>표시</font> / 표시 안 함</button><br>"
+		ELSE
+			LOCALS += "　<button value='303'>[303] 표시 / <font color='#666666'>표시 안 함</font></button><br>"
+		ENDIF
+ENDSELECT
+
+RESULTS '= LOCALS
+
+@機能オプション実行処理_4(入力値)
+#DIM 入力値
+#DIM 対象キャラ
+;探索・戦闘機能
+
+SELECTCASE 入力値
+	CASE 101 TO 103
+		カットイン演出一括表示フラグ = 入力値 - 101
+	CASE 104 TO 107
+		カットイン画像一括表示フラグ = 入力値 - 104
+	CASE 110
+		FOR 対象キャラ, 0, CHARANUM
+			CSTR:対象キャラ:カットイン個別選択オプション = 
+		NEXT
+		PRINTW 모든 캐릭터 설정을 [전체 설정 따르기]로 변경했습니다.
+	CASE 111
+		FOR 対象キャラ, 0, CHARANUM
+			CSTR:対象キャラ:カットイン個別選択オプション = 숨김
+		NEXT
+		PRINTW 모든 캐릭터 설정을 [숨김]으로 변경했습니다.
+	CASE 112
+		FOR 対象キャラ, 0, CHARANUM
+			CSTR:対象キャラ:カットイン個別選択オプション = 표시
+		NEXT
+		PRINTW 모든 캐릭터 설정을 [표시]로 변경했습니다.
+	CASE 113
+		FOR 対象キャラ, 0, CHARANUM
+			CSTR:対象キャラ:カットイン個別選択オプション = 하루 한 번만
+		NEXT
+		PRINTW 모든 캐릭터 설정을 [하루 한 번만]으로 변경했습니다.
+	CASE 114
+		FOR 対象キャラ, 0, CHARANUM
+			CSTR:対象キャラ:カットイン画像選択オプション = 
+		NEXT
+		PRINTW 모든 캐릭터 설정을 [전체 설정 따르기]로 변경했습니다.
+	CASE 115
+		FOR 対象キャラ, 0, CHARANUM
+			CSTR:対象キャラ:カットイン画像選択オプション = 세로 컷인
+		NEXT
+		PRINTW 모든 캐릭터의 설정을 [세로 컷인 우선 표시]로 변경했습니다.
+	CASE 116
+		FOR 対象キャラ, 0, CHARANUM
+			CSTR:対象キャラ:カットイン画像選択オプション = 가로 컷인
+		NEXT
+		PRINTW 모든 캐릭터의 설정을 [가로 컷인 우선 표시]로 변경했습니다.
+	CASE 117
+		FOR 対象キャラ, 0, CHARANUM
+			CSTR:対象キャラ:カットイン画像選択オプション = 기본
+		NEXT
+		PRINTW 모든 캐릭터의 설정을 [기본 얼굴 그래픽 우선 표시]로 변경했습니다.
+	CASE 118
+		FOR 対象キャラ, 0, CHARANUM
+			CSTR:対象キャラ:カットイン画像選択オプション = 세로 가로 랜덤
+		NEXT
+		PRINTW 모든 캐릭터의 설정을 [세로 가로 랜덤 표시]로 변경했습니다.
+	CASE 201
+		INVERTBIT クイック行動フラグ, 0
+	CASE 202
+		INVERTBIT アビ使用確認スキップフラグ, 0
+	CASE 203
+		INVERTBIT 奥義使用確認スキップフラグ, 0
+	CASE 204
+		INVERTBIT OPTION変数:敵探索SKIP, 0
+	CASE 301
+		INVERTBIT 突入時アニメーション封印フラグ, 0
+	CASE 302
+		INVERTBIT 帰還時アニメーション封印フラグ, 0
+	CASE 303
+		INVERTBIT ダメージアニメーション封印フラグ, 0
+ENDSELECT
+
+@汎用喘ぎ個別設定(対象キャラ)
+#DIM 対象キャラ
+
+DRAWLINE
+PRINTL 범용 신음을 사용할지 여부를 개별적으로 설정할 수 있습니다.
+PRINTL
+PRINTL ・현재 전체 설정
+PRINT ・여성(후타나리・기타) 캐릭터:
+SELECTCASE OPTION変数:汎用喘ぎ使用
+	CASE 0
+		PRINTL 사용하지 않음
+	CASE 1
+		PRINTL 대사가 없는 캐릭터만 사용
+	CASE 3
+		PRINTL 모든 캐릭터에 사용
+ENDSELECT
+PRINT ・남성 캐릭터:
+SELECTCASE OPTION変数:汎用喘ぎ使用_男
+	CASE 0
+		PRINTL 사용하지 않는다
+	CASE 1
+		PRINTL 대사가 없는 캐릭터만 사용
+	CASE 3
+		PRINTL 모든 캐릭터에게 사용
+ENDSELECT
+
+PRINTFORM 현재의 %NAME表示(対象キャラ)% 개별 설정：
+IF CFLAG:対象キャラ:汎用喘ぎ禁止フラグ == 1
+	PRINTL 전체 설정과 관계없이 사용하지 않는다
+ELSEIF CFLAG:対象キャラ:汎用喘ぎ禁止フラグ == 0
+	PRINTL 전체 설정을 따른다
+ELSEIF CFLAG:対象キャラ:汎用喘ぎ禁止フラグ == -1
+	PRINTL 전체 설정과 관계없이 사용한다
+ENDIF
+DRAWLINE
+
+PRINTBUTTON "[0] 전체 설정을 따른다", 0
+PRINTL
+PRINTBUTTON "[1] 전체 설정과 관계없이 사용하지 않는다", 1
+PRINTL
+PRINTBUTTON "[-1] 전체 설정과 관계없이 사용한다", -1
+PRINTL
+PRINTL
+PRINTBUTTON "[999] 돌아가기", 999
+PRINTL
+
+BINPUT
+SELECTCASE RESULT
+	CASE 999
+		RETURN 0
+	CASEELSE
+		CFLAG:対象キャラ:汎用喘ぎ禁止フラグ = RESULT
+		RESTART
+ENDSELECT
+
+
+@妊娠個別設定(対象キャラ)
+#DIM 対象キャラ
+
+DRAWLINE
+PRINTL 임신 여부를 개별적으로 설정할 수 있습니다.
+PRINTL
+PRINTL ・현재 전체 설정
+IF OPTION変数:妊娠切り替え == 0
+	PRINTL 임신시키다
+	IF OPTION変数:他人妊娠
+		PRINTL (당신이 관련되지 않을 때의 임신을 금지)
+	ENDIF
+	SELECTCASE OPTION変数:夜這い時妊娠
+		CASE 1
+			PRINTL (캐릭터 공격 시, 요바이를 할 때 임신을 금지)
+		CASE 2
+			PRINTL (당신 공격 시, 요바이를 할 때 임신을 금지)
+		CASE 3
+			PRINTL (요바이의 임신을 금지)
+	ENDSELECT
+ELSEIF OPTION変数:妊娠切り替え
+	PRINTL 임신하지 않음
+ENDIF
+DRAWLINE
+PRINTFORML ・현재의 %NAME表示(対象キャラ)% 개별설정：
+IF GETBIT(CFLAG:対象キャラ:妊娠個別設定フラグ, 0) == 0
+	PRINTL 전체 설정에 따라
+	DRAWLINE
+
+	PRINTL
+	PRINTBUTTON "[0] 개별 설정으로", 0
+	PRINTL
+ELSE
+	IF GETBIT(CFLAG:対象キャラ:妊娠個別設定フラグ, 1)
+		PRINTL 임신하지 않음
+	ELSE
+		PRINTL 임신시키다
+		IF GETBIT(CFLAG:対象キャラ:妊娠個別設定フラグ, 2)
+			PRINTL (당신이 관련되지 않을 때의 임신을 금지)
+		ELSE
+			PRINTL (당신이 관련되지 않을 때의 임신을 허가)
+		ENDIF
+		IF GETBIT(CFLAG:対象キャラ:妊娠個別設定フラグ, 3)
+			PRINTL (요바이를 할 때 임신을 금지)
+		ELSE
+			PRINTL (요바이를 할 때 임신을 허가)
+		ENDIF
+	ENDIF
+	DRAWLINE
+	PRINTL
+	PRINTBUTTON "[0] 전체 설정에 따라", 0
+	PRINTL
+	IF GETBIT(CFLAG:対象キャラ:妊娠個別設定フラグ, 1)
+		PRINTBUTTON "[1] 전체 설정에 관계없이 임신시키다", 1
+		PRINTL
+	ELSE
+		PRINTBUTTON "[1] 전체 설정에 관계없이 임신하지 않음", 1
+		PRINTL
+		IF GETBIT(CFLAG:対象キャラ:妊娠個別設定フラグ, 2)
+			PRINTBUTTON "[2] 당신이 관련되지 않을 때의 임신을 허가", 2
+			PRINTL
+		ELSE
+			PRINTBUTTON "[2] 당신이 관련되지 않을 때의 임신을 허가하지 않음", 2
+			PRINTL
+		ENDIF
+		IF GETBIT(CFLAG:対象キャラ:妊娠個別設定フラグ, 3)
+			PRINTBUTTON "[3] 요바이를 할 때 임신을 허가", 3
+			PRINTL
+		ELSE
+			PRINTBUTTON "[3] 요바이를 할 때 임신을 허가하지 않음", 3
+			PRINTL
+		ENDIF
+	ENDIF
+ENDIF
+PRINTL
+PRINTBUTTON "[999] 돌아가다", 999
+PRINTL
+
+BINPUT
+SELECTCASE RESULT
+	CASE 999
+		RETURN 0
+	CASEELSE
+		INVERTBIT CFLAG:対象キャラ:妊娠個別設定フラグ, RESULT
+		SIF GETBIT(CFLAG:対象キャラ:妊娠個別設定フラグ, 0) == 0
+			CFLAG:対象キャラ:妊娠個別設定フラグ = 0
+		RESTART
+ENDSELECT
+
+@OPTION_招待切り替え
+
+DRAWLINE
+PRINTL 리조트에 방문하는 캐릭터의 성별 설정을 합니다.
+PRINTL ※광고에 의한 초대・단골 자질에 의한 방문에 영향을 줍니다
+PRINTL 　ZP 상점에 의한 해방・이벤트 등에서의 방문은 설정에 관계없이 실행됩니다.
+DRAWLINE
+PRINTL
+PRINTL ・현재 설정
+PRINT 　　여성:
+IF GETBIT(OPTION変数:性別招待制御, 0)
+	HTML_PRINT @"<button value='0'>[0] <font color='#%カラーパレット_HTML("グレーアウト")%'>리조트를 방문한다</font> / 리조트를 방문하지 않는다</button>"
+	PRINTL
+ELSE
+	HTML_PRINT @"<button value='0'>[0] 리조트를 방문한다 / <font color='#%カラーパレット_HTML("グレーアウト")%'>리조트를 방문하지 않는다</font></button>"
+	PRINTL
+ENDIF
+PRINT 　　남성:
+IF GETBIT(OPTION変数:性別招待制御, 1)
+	HTML_PRINT @"<button value='1'>[1] <font color='#%カラーパレット_HTML("グレーアウト")%'>리조트를 방문한다</font> / 리조트를 방문하지 않는다</button>"
+	PRINTL
+ELSE
+	HTML_PRINT @"<button value='1'>[1] 리조트를 방문한다 / <font color='#%カラーパレット_HTML("グレーアウト")%'>리조트를 방문하지 않는다</font></button>"
+	PRINTL
+ENDIF
+PRINT 　　후타나리:
+IF GETBIT(OPTION変数:性別招待制御, 2)
+	HTML_PRINT @"<button value='2'>[2] <font color='#%カラーパレット_HTML("グレーアウト")%'>리조트를 방문한다</font> / 리조트를 방문하지 않는다</button>"
+	PRINTL
+ELSE
+	HTML_PRINT @"<button value='2'>[2] 리조트를 방문한다 / <font color='#%カラーパレット_HTML("グレーアウト")%'>리조트를 방문하지 않는다</font></button>"
+	PRINTL
+ENDIF
+PRINT 　　기타:
+IF GETBIT(OPTION変数:性別招待制御, 3)
+	HTML_PRINT @"<button value='3'>[3] <font color='#%カラーパレット_HTML("グレーアウト")%'>리조트를 방문한다</font> / 리조트를 방문하지 않는다</button>"
+	PRINTL
+ELSE
+	HTML_PRINT @"<button value='3'>[3] 리조트를 방문한다 / <font color='#%カラーパレット_HTML("グレーアウト")%'>리조트를 방문하지 않는다</font></button>"
+	PRINTL
+ENDIF
+
+PRINTL
+PRINTL
+PRINTBUTTON "[999] 결정", 999
+PRINTL
+
+BINPUT
+SELECTCASE RESULT
+	CASE 999
+		RETURN 0
+	CASEELSE
+		INVERTBIT OPTION変数:性別招待制御, RESULT
+		RESTART
+ENDSELECT
+
+@OPTION_キャラ制限初期切り替え
+
+DRAWLINE
+PRINTL 등장이 제한된 캐릭터의 초기 등장 설정을 변경합니다.
+PRINTL ※이 설정은 게임이 시작된 후에는 변경할 수 없습니다.
+PRINTL ※초기 개방 시, 이벤트 시나리오와 모순이 발생할 수 있습니다.
+PRINTL ※가입 캐릭터에는 남성도 포함됩니다. 불필요한 경우 이 설정 후에 열리는 리조트 초대 설정 변경을 이용해 주십시오.
+DRAWLINE
+PRINTL
+PRINTL ・현재 설정
+
+PRINT ZP 상점 가입 캐릭터:
+IF GETBIT(OPTION変数:キャラ制限初期, 0)
+	PRINT 전체 개방　　　　　
+	PRINTBUTTON "[0] 전환", 0
+	PRINTL
+	PRINTL 　(초기부터 리조트를 방문)
+	PRINTL
+ELSE
+	PRINT 기본　　　
+	PRINTBUTTON "[0] 전환", 0
+	PRINTL
+	PRINTL 　(가입에 던전 공략・이벤트 시청이 필수)
+	PRINTL 　(가입에 ZP 소비가 필수)
+ENDIF
+PRINTL
+PRINT 이벤트 가입 캐릭터:
+IF GETBIT(OPTION変数:キャラ制限初期, 1)
+	PRINT 전부 개방　　　　　　
+	PRINTBUTTON "[1] 전환", 1
+	PRINTL
+	PRINTL 　(초기부터 리조트를 방문)
+ELSE
+	PRINT 기본　　　　
+	PRINTBUTTON "[1] 전환", 1
+	PRINTL
+	PRINTL 　(캐릭터에 따라 다른 특정 조건이 필수)
+ENDIF
+PRINTL
+PRINTL
+PRINTBUTTON "[999] 이걸로 결정", 999
+PRINTL
+
+BINPUT
+SELECTCASE RESULT
+	CASE 999
+		;解放処理
+		FOR LOCAL, 1, CHARANUM
+			IF (CFLAG:LOCAL:招待不可フラグ == 1 || CFLAG:LOCAL:招待不可フラグ == 3) && GETBIT(OPTION変数:キャラ制限初期, 0)
+				CFLAG:LOCAL:招待不可フラグ = 0
+			ENDIF
+			IF CFLAG:LOCAL:招待不可フラグ == 2 && GETBIT(OPTION変数:キャラ制限初期, 1)
+				CFLAG:LOCAL:招待不可フラグ = 0
+			ENDIF
+		NEXT
+		RETURN 0
+	CASEELSE
+		INVERTBIT OPTION変数:キャラ制限初期, RESULT
+		RESTART
+ENDSELECT
+
+@OPTION_命のリンク初期切り替え
+#DIM 命のリンクOPTION
+DRAWLINE
+PRINTL 루리아가 누구와 생명의 링크를 하고 있는지를 설정합니다.
+PRINTL ※이 설정은 게임이 시작된 후에는 변경할 수 없습니다.
+DRAWLINE
+PRINTL
+
+PRINTL 루리아와 생명의 링크를 하고 있는 것은
+IF 命のリンクOPTION == 0
+	SETCOLOR カラーパレット("黄")
+	PRINT [지타]
+	RESETCOLOR
+ELSE
+	PRINTBUTTON "[지타]", 0
+ENDIF
+PRINT  / 
+IF 命のリンクOPTION == 1
+	SETCOLOR カラーパレット("黄")
+	PRINT [그랑]
+	RESETCOLOR
+ELSE
+	PRINTBUTTON "[그랑]", 1
+ENDIF
+PRINT  / 
+IF 命のリンクOPTION == 2
+	SETCOLOR カラーパレット("黄")
+	PRINT [지타와 그랑]
+	RESETCOLOR
+ELSE
+	PRINTBUTTON "[지타와 그랑]", 2
+ENDIF
+PRINTL
+PRINTL
+PRINTBUTTON "[999] 이걸로 결정한다", 999
+PRINTL
+
+BINPUT
+SELECTCASE RESULT
+	CASE 999
+		LOCAL = キャラ検索("[푸르고 아름다운 십천의 휘성]지타")
+		LOCAL:1 = キャラ検索("[꿈꾸는 자]그랑")
+		SELECTCASE 命のリンクOPTION
+			CASE 0
+				TALENT:LOCAL:命のリンク = 1
+				TALENT:(LOCAL:1):命のリンク = 0
+			CASE 1
+				TALENT:LOCAL:命のリンク = 0
+				TALENT:(LOCAL:1):命のリンク = 1
+			CASE 2
+				TALENT:LOCAL:命のリンク = 1
+				TALENT:(LOCAL:1):命のリンク = 1
+		ENDSELECT
+	CASEELSE
+		命のリンクOPTION = RESULT
+		RESTART
+ENDSELECT
+
+
+
+@OPTION_招待制御例外規定()
+#DIM 表示候補, キャラクタ数上限
+#DIM 表示数
+#DIM キャラカウント
+#DIM 対象キャラ
+#DIM 現在ページ
+#DIM フラグ保存
+#DIMS ソート情報
+#DIM 入力値
+#DIMS 外部ファイル情報
+#DIMS 外部ファイル配列, キャラクタ数上限
+#DIMS 一時文字列, 2
+#DIM 分割数
+#DIM 配列番号
+
+VARSET 表示候補, -1
+現在ページ = 0
+
+;表示キャラを登録
+表示数 = 0
+FOR 対象キャラ, 1, CHARANUM
+	;招待不可キャラは排除
+	SIF CFLAG:対象キャラ:招待不可フラグ
+		CONTINUE
+
+	;オプションでオフになってるキャラのみ
+	SWAP CFLAG:対象キャラ:例外招待, フラグ保存
+	CFLAG:対象キャラ:例外招待 = 0
+	SIF 性別招待制御_実処理(対象キャラ) == 0
+		CONTINUE
+	SWAP CFLAG:対象キャラ:例外招待, フラグ保存
+
+	表示候補:表示数 = 対象キャラ
+	表示数 += 1
+NEXT
+CALL キャラ配列フィルタ処理(表示候補, -1)
+
+$表示_LOOP
+;広告対象の表示
+DRAWLINE
+PRINTL 초대 캐릭터의 OPTION 제어에서 예외로 설정할 캐릭터를 선택할 수 있습니다.
+PRINTL 현재 OPTION 제어에서 초대 금지 대상이 된 캐릭터만 표시됩니다.
+PRINTL 이 OPTION은 초대 시 제어만 할 뿐, 이미 리조트에 있는 캐릭터에게는 영향을 주지 않습니다.
+DRAWLINE
+LOCAL:1 = 0
+;キャラの表示（15人まで）
+FOR LOCAL, (現在ページ * 項目表示数), ((現在ページ * 項目表示数) + 項目表示数)
+	;登録が終わったら表示終了
+	IF 表示候補:LOCAL == -1
+		BREAK
+	ENDIF
+	IF 文字色グループ取得(表示候補:LOCAL) >= 0
+		SETCOLOR 同室時_グループ文字色:(文字色グループ取得(表示候補:LOCAL))
+	ELSEIF CFLAG:(表示候補:LOCAL):同室文字色
+		SETCOLOR CFLAG:(表示候補:LOCAL):同室文字色
+	ENDIF
+	IF CFLAG:(表示候補:LOCAL):例外招待
+		SETCOLOR カラーパレット("黄")
+		PRINTBUTTON @"[{LOCAL,3,RIGHT}]%GET_NAME(表示候補:LOCAL, 1)%", LOCAL
+		ソート情報 '= ソート情報表示(表示候補:LOCAL, 1)
+		SIF ソート情報 != ""
+			PRINTFORM 　%ソート情報%
+		PRINT 　예외 설정 완료　
+		RESETCOLOR
+	ELSE
+		PRINTBUTTON @"[{LOCAL,3,RIGHT}]%GET_NAME(表示候補:LOCAL, 1)%", LOCAL
+		ソート情報 '= ソート情報表示(表示候補:LOCAL, 1)
+		SIF ソート情報 != ""
+			PRINTFORM 　%ソート情報%
+		PRINT 　　　　　　　
+	ENDIF
+	RESETCOLOR
+	SIF LOCAL % 2 != 0 && LOCAL
+		PRINTL 
+NEXT
+
+PRINTL 
+DRAWLINE
+
+;;ページめくり表示
+;IF 現在ページ > 0
+;	PRINTBUTTONLC "[9000]前ページへ", 9000
+;ELSE
+;	PRINTLC 　
+;ENDIF
+;PRINTFORM - {現在ページ + 1} -
+;IF 表示候補:((現在ページ * 30) + 30) > 0
+;	PRINTBUTTONC "[9001]次ページへ", 9001
+;ENDIF
+;PRINTL
+;ページめくり表示
+CALL ページ送り共通表示(現在ページ, 項目表示数, 最大表示数, 9000, 9003)
+DRAWLINE
+CALL フィルタソートボタンセット表示(9020, 9030, 9031, 9040)
+DRAWLINE
+PRINTBUTTON "[9990] 표시 캐릭터 전원을 예외로 설정한다", 9990
+PRINT 　　　　　
+PRINTBUTTON "[9991] 표시 캐릭터 전원의 예외 설정을 해제한다", 9991
+PRINTL 
+PRINTBUTTON "[9992] 표시 대상 외 캐릭터 전원을 예외로 설정한다", 9992
+PRINT 　　
+PRINTBUTTON "[9993] 표시 대상 외 캐릭터 전원의 예외 설정을 해제한다", 9993
+PRINTL 
+PRINTL ※필터 기능과 함께 사용하면 세부 설정을 할 수 있습니다
+PRINTL ※「표시 대상 외 캐릭터」란, 초대 금지 대상이 된 캐릭터 중 필터로 비표시된 캐릭터를 말합니다
+DRAWLINE
+PRINTBUTTONLC "[9999] 돌아가기", 9999
+PRINTBUTTONLC "[9998] 작품별 예외 설정으로", 9998
+PRINT 　　
+PRINTBUTTONLC "[9997] 예외 설정의 SAVE/LOAD", 9997
+
+$INPUT_LOOP
+BINPUT
+
+;広告対象のINPUT
+入力値 = RESULT
+SELECTCASE 入力値
+	CASE 9020, 9030, 9031, 9040
+		CALL フィルタソートボタンセット実行部(入力値, 9020, 9030, 9031, 9040)
+		現在ページ = 0
+		RESTART
+	CASE 9000 TO 9007
+		CALL ページ送り共通実行(入力値, 現在ページ, 項目表示数, 最大表示数, 9000, 9003)
+		GOTO 表示_LOOP
+;	CASE 9000
+;		現在ページ = MAX(現在ページ - 1, 0)
+;		GOTO 表示_LOOP
+;	CASE 9001
+;		SIF LOCAL:1 == 0
+;			現在ページ += 1
+;		GOTO 表示_LOOP
+	CASE 9990, 9991
+		FOR LOCAL, 0, VARSIZE("表示候補")
+			;登録キャラが終わったら処理終了
+			IF 表示候補:LOCAL == -1
+				BREAK
+			ENDIF
+			CFLAG:(表示候補:LOCAL):例外招待 = 9991 - 入力値
+		NEXT
+		GOTO 表示_LOOP
+	CASE 9992, 9993
+		FOR 対象キャラ, 1, CHARANUM
+			;招待不可キャラは排除
+			SIF CFLAG:対象キャラ:招待不可フラグ
+				CONTINUE
+
+			;オプションでオフになってるキャラのみ
+			SWAP CFLAG:対象キャラ:例外招待, フラグ保存
+			CFLAG:対象キャラ:例外招待 = 0
+			SIF 性別招待制御_実処理(対象キャラ) == 0
+				CONTINUE
+			SWAP CFLAG:対象キャラ:例外招待, フラグ保存
+
+			IF MATCH(表示候補, 対象キャラ) == 0
+				;表示候補にないなら例外招待を操作
+				CFLAG:対象キャラ:例外招待 = 9993 - 入力値
+			ENDIF
+		NEXT
+		GOTO 表示_LOOP
+	CASE 9999
+		RETURN -1
+	CASE 9998
+		CALL OPTION_招待制御例外規定_作品別()
+		GOTO 表示_LOOP
+	CASE 9997
+		$セーブループ
+		PRINTL
+		DRAWLINE
+		PRINTL 예외 설정을 저장하고 불러올 수 있습니다.
+		PRINTL 원하는 작업을 선택하십시오.
+		PRINTL
+		PRINT ・세이브1 예외 설정 캐릭터:
+		キャラカウント = 0
+		FOR 対象キャラ, 1, CHARANUM
+			SIF CFLAG:対象キャラ:例外招待_セーブ1
+				キャラカウント++
+		NEXT
+		PRINTFORML {キャラカウント}명
+		PRINT 　　
+		IF SAVESTR:例外設定セーブコメント1 == ""
+			PRINTL 코멘트: 없음
+		ELSE
+			PRINTFORML 코멘트: %SAVESTR:例外設定セーブコメント1%
+		ENDIF
+		PRINT 　　
+		PRINTBUTTONLC "[0] 여기에 설정을 저장한다", 0
+		PRINT 　　
+		PRINTBUTTONLC "[1] 여기 설정을 불러온다", 1
+		PRINT 　　
+		PRINTBUTTONLC "[2] 코멘트를 추가한다", 2
+		PRINTL
+		PRINTL
+
+		PRINT ・세이브２　예외 설정 캐릭터：
+		キャラカウント = 0
+		FOR 対象キャラ, 1, CHARANUM
+			SIF CFLAG:対象キャラ:例外招待_セーブ2
+				キャラカウント++
+		NEXT
+		PRINTFORML {キャラカウント}명
+		PRINT 　　
+		IF SAVESTR:例外設定セーブコメント2 == ""
+			PRINTL 코멘트: 없음
+		ELSE
+			PRINTFORML 코멘트: %SAVESTR:例外設定セーブコメント2%
+		ENDIF
+		PRINT 　　
+		PRINTBUTTONLC "[10] 여기에 설정을 세이브한다", 10
+		PRINT 　　
+		PRINTBUTTONLC "[11] 여기 설정을 로드한다", 11
+		PRINT 　　
+		PRINTBUTTONLC "[12] 코멘트를 단다", 12
+		PRINTL
+		PRINTL
+
+		PRINT ・세이브３　예외 설정 캐릭터：
+		キャラカウント = 0
+		FOR 対象キャラ, 1, CHARANUM
+			SIF CFLAG:対象キャラ:例外招待_セーブ3
+				キャラカウント++
+		NEXT
+		PRINTFORML {キャラカウント}명
+		PRINT 　　
+		IF SAVESTR:例外設定セーブコメント3 == ""
+			PRINTL 코멘트: 없음
+		ELSE
+			PRINTFORML コメント：%SAVESTR:例外設定セーブコメント3%
+		ENDIF
+		PRINT 　　
+		PRINTBUTTONLC "[20] 여기에 설정을 세이브한다", 20
+		PRINT 　　
+		PRINTBUTTONLC "[21] 여기 설정을 로드한다", 21
+		PRINT 　　
+		PRINTBUTTONLC "[22] 코멘트를 단다", 22
+		PRINTL
+		PRINTL
+		PRINTL 
+		PRINTBUTTONLC "[997] 현재 설정을 외부 파일로 내보낸다", 997
+		PRINTL 
+		PRINTBUTTONLC "[998] 외부 파일에서 설정을 불러오기", 998
+		PRINTL 
+		PRINTL 
+		PRINTBUTTONLC "[999] 돌아가기", 999
+		PRINTL
+		BINPUT
+		フラグ保存 = RESULT
+		SELECTCASE フラグ保存
+			CASE 0, 10, 20
+				FOR 対象キャラ, 1, CHARANUM
+					SETVAR @"CFLAG:対象キャラ:例外招待_セーブ{フラグ保存 / 10 + 1}", CFLAG:対象キャラ:例外招待
+				NEXT
+				PRINTFORMW 세이브{フラグ保存 / 10 + 1}에 예외 설정을 저장했습니다.
+			CASE 1, 11, 21
+				FOR 対象キャラ, 1, CHARANUM
+					CFLAG:対象キャラ:例外招待 = GETVAR(@"CFLAG:対象キャラ:例外招待_セーブ{フラグ保存 / 10 + 1}")
+				NEXT
+				PRINTFORMW 세이브{フラグ保存 / 10 + 1}에서 예외 설정을 불러왔습니다.
+			CASE 2, 12, 22
+				PRINTL 임의의 코멘트를 입력해 주세요.
+				PRINTL
+				INPUTS
+				SETVAR @"SAVESTR:例外設定セーブコメント{フラグ保存 / 10 + 1}", RESULTS
+				PRINTFORMW 세이브{フラグ保存 / 10 + 1}에 코멘트를 설정했습니다.
+			CASE 997
+				DRAWLINE
+				PRINTL 현재 캐릭터 개별의 예외 초대 설정을 텍스트 파일로 내보냅니다.
+				PRINTL 파일 이름을 입력해 주세요.(공백 시에는 「초대 제어_(날짜 시간).txt」로 출력됩니다)
+				PRINTL 사양상, 랜덤 캐릭터(아이 또는 범용 종업원)에 대해서는 저장되지 않으므로 주의해 주세요.
+				PRINTL
+				INPUTS
+				IF RESULTS == ""
+					RESULTS = 招待制御_{GETTIME() / 1000}.txt
+				ENDIF
+				外部ファイル情報 = 
+				FOR 対象キャラ, 1, CHARANUM
+					SIF NO:対象キャラ == 999
+						CONTINUE
+					外部ファイル情報 += @"{NO:対象キャラ}_{CFLAG:対象キャラ:例外招待}+++"
+				NEXT
+				SAVETEXT 外部ファイル情報, @"sav/%RESULTS%"
+				PRINTW sav 폴더에 텍스트 파일을 출력했습니다.
+			CASE 998
+				DRAWLINE
+				PRINTL sav 폴더에 존재하는 텍스트 파일에서 캐릭터 개별의 예외 초대 설정을 불러옵니다.
+				PRINTL 불러올 파일 이름을 입력해 주세요.
+				PRINTL
+				INPUTS
+				IF STRFIND(RESULTS, ".txt") < 0
+					RESULTS = %RESULTS%.txt
+				ENDIF
+				外部ファイル情報 '= LOADTEXT(@"sav/%RESULTS%")
+				IF 外部ファイル情報 == ""
+					PRINTW 불러오기에 실패했습니다. 올바른 파일을 불러오고 있는지 확인해 주세요.
+					GOTO セーブループ
+				ENDIF
+				VARSET 外部ファイル配列
+				SPLIT 外部ファイル情報, "+++", 外部ファイル配列
+				分割数 = RESULT
+				IF 分割数 < 2
+					PRINTW 불러오기에 실패했습니다. 올바른 파일을 불러오고 있는지 확인해 주세요.
+					GOTO セーブループ
+				ENDIF
+				FOR 配列番号, 0, 分割数
+					SPLIT 外部ファイル配列:配列番号, "_", 一時文字列
+					SIF ISNUMERIC(一時文字列:0) == 0
+						CONTINUE
+					SIF ISNUMERIC(一時文字列:1) == 0
+						CONTINUE
+					SIF GETCHARA(TOINT(一時文字列:0)) == 999
+						CONTINUE
+					対象キャラ = GETCHARA(TOINT(一時文字列:0))
+					CFLAG:対象キャラ:例外招待 = GETCHARA(TOINT(一時文字列:1))
+				NEXT
+				PRINTW 텍스트 파일에서 설정을 불러왔습니다.
+			CASE 999
+				GOTO 表示_LOOP
+		ENDSELECT
+		GOTO セーブループ
+	CASE IS >= CHARANUM, IS < 0
+		REUSELASTLINE 
+		GOTO INPUT_LOOP
+	CASEELSE
+		IF 表示候補:入力値 < 0
+			REUSELASTLINE 
+			GOTO INPUT_LOOP
+		ENDIF
+		INVERTBIT CFLAG:(表示候補:入力値):例外招待, 0
+		PRINTL 
+		PRINTL 
+		PRINTL 
+		GOTO 表示_LOOP
+ENDSELECT
+
+@OPTION_招待制御例外規定_作品別()
+#LOCALSIZE 1
+#LOCALSSIZE 1
+#DIM 表示候補, キャラクタ数上限
+#DIM 現在ページ
+#DIM 入力番号
+#DIM 描画開始行
+#DIM 対象キャラ
+#DIM START_NO
+#DIM END_NO
+#DIM REDRAW_TEMP
+#DIM リスタートフラグ
+#DIMS BUTTON_TEXT
+#DIM DYNAMIC 初回実行フラグ = 1
+#DIM CONST 表示人数 = 15
+#DIMS 判定作品名
+#DIMS 出典作品配列, 500
+#DIM 出典情報配列, 500
+#DIM 出典例外表示フラグ, 500
+#DIM 出典番号
+#DIM 配列番号
+#DIM 動作モード
+#DIM シリーズモード
+#DIM リスト更新判定
+#DIM ソートモード
+#DIM ソートモード前回値
+#DIMS 招待後作品保存
+#DIMS ソートキー, 3
+#DIM BTN_NUM
+#DIMS BTN_TEXT
+#DIM CONST LINE_LEN  = 80
+#DIM CONST SPACE_LEN = 56
+#DIMS ページ番号文字列
+#DIM ページ番号文字列長
+#DIM 最大ページ
+#DIMS ソート情報
+
+; RESTART時に現在ページをリセットしない
+IF 初回実行フラグ
+	初回実行フラグ = 0
+	リスト更新判定 = 1
+	動作モード = 1
+	現在ページ = 0
+	描画開始行 = LINECOUNT
+	ソートモード = 0
+	ソートモード前回値 = -1
+	;描画設定を変更
+	REDRAW_TEMP = CURRENTREDRAW()
+	REDRAW 1
+ENDIF
+
+;表示キャラを登録
+;・フィルタ処理の追加でリスト処理が重くなったので必要なタイミングでのみ更新するようにする
+IF リスト更新判定
+	リスト更新判定 = 0
+	
+	VARSET 表示候補, -1
+	VARSET 出典作品配列
+	VARSET 出典情報配列
+	ソートキー:0 = 出典情報配列
+	ソートキー:1 = 出典作品配列
+	ソートキー:2 = 出典例外表示フラグ
+	; リスト更新後にソートを実行するように前回値をリセット
+	ソートモード前回値 = -1
+	出典番号 = 1
+	出典作品配列:0 = グランブルーファンタジー
+	出典例外表示フラグ:0 = 1
+	
+	;-リスト表示対象の出典作品を記録
+	FOR 対象キャラ, 1, CHARANUM
+		IF CSVCSTR(NO:対象キャラ, GETNUM(CSTR, "出演作品")) == ""
+			;出典なし＝グラブルキャラとしてカウント
+			出典情報配列:0 ++
+			IF CFLAG:対象キャラ:例外招待 == 0
+				;例外設定されてないキャラがいるなら表示フラグOFF
+				出典例外表示フラグ:0 = 0
+			ENDIF
+		ELSEIF シリーズモード && MAP_HAS("シリーズ出典", CSVCSTR(NO:対象キャラ, GETNUM(CSTR, "出演作品")))
+			IF MATCH(出典作品配列, MAP_GET("シリーズ出典", CSVCSTR(NO:対象キャラ, GETNUM(CSTR, "出演作品"))))
+				;出典あり＆リストに登録済みの場合は人数をカウント
+				配列番号 = FINDELEMENT(出典作品配列, MAP_GET("シリーズ出典", CSVCSTR(NO:対象キャラ, GETNUM(CSTR, "出演作品"))), , , 1)
+				出典情報配列:配列番号 ++
+				IF CFLAG:対象キャラ:例外招待 == 0
+					;例外設定されてないキャラがいるなら表示フラグOFF
+					出典例外表示フラグ:配列番号 = 0
+				ENDIF
+			ELSE
+				;出典あり＆リストに未登録の場合は新規登録
+				出典作品配列:出典番号 = %MAP_GET("シリーズ出典", CSVCSTR(NO:対象キャラ, GETNUM(CSTR, "出演作品")))%
+				出典情報配列:出典番号 ++
+				出典例外表示フラグ:出典番号 = 1
+				IF CFLAG:対象キャラ:例外招待 == 0
+					;例外設定されてないキャラがいるなら表示フラグOFF
+					出典例外表示フラグ:出典番号 = 0
+				ENDIF
+				出典番号 ++
+			ENDIF
+		ELSEIF MATCH(出典作品配列, CSVCSTR(NO:対象キャラ, GETNUM(CSTR, "出演作品")))
+			;出典あり＆リストに登録済みの場合は人数をカウント
+			配列番号 = FINDELEMENT(出典作品配列, CSVCSTR(NO:対象キャラ, GETNUM(CSTR, "出演作品")), , , 1)
+			出典情報配列:配列番号 ++
+			IF CFLAG:対象キャラ:例外招待 == 0
+				;例外設定されてないキャラがいるなら表示フラグOFF
+				出典例外表示フラグ:配列番号 = 0
+			ENDIF
+		ELSE
+			;出典あり＆リストに未登録の場合は新規登録
+			出典作品配列:出典番号 = %CSVCSTR(NO:対象キャラ, GETNUM(CSTR, "出演作品"))%
+			出典情報配列:出典番号 ++
+			出典例外表示フラグ:出典番号 = 1
+			IF CFLAG:対象キャラ:例外招待 == 0
+				;例外設定されてないキャラがいるなら表示フラグOFF
+				出典例外表示フラグ:出典番号 = 0
+			ENDIF
+			出典番号 ++
+		ENDIF
+	NEXT
+ENDIF
+
+;ソートモードが切り替わった場合はソートする
+;・ARRAYMSORTEXが安定ソートではないようで、モード切替、リスト更新時のみソートを実行
+;　(制限しないと人数順ソートでリストを表示するごとに人数が同じの作品の順番が変わる)
+IF ソートモード != ソートモード前回値
+	ソートモード前回値 = ソートモード
+	SELECTCASE ソートモード
+		CASE 0
+			;人数順
+			ARRAYMSORTEX "出典情報配列", ソートキー, 0, 出典番号
+		CASE 1
+			;シリーズ名順
+			ARRAYMSORT 出典作品配列, 出典情報配列, 出典例外表示フラグ
+	ENDSELECT
+ENDIF
+
+;広告対象の表示
+PRINTL
+DRAWLINE
+PRINTL 초대 캐릭터의 OPTION 제어에서 예외로 설정할 시리즈를 선택할 수 있습니다.
+PRINTL 사용 예시로는 「모든 성별을 「리조트를 방문하지 않는다」로 한다」→「특정 작품만 예외 설정한다」는 것으로
+PRINTL 그 작품의 캐릭터만을 초대하는 것이 가능합니다.
+PRINTL 이 OPTION은 초대 시의 제어만을 수행하며, 이미 리조트에 있는 캐릭터에게는 영향을 주지 않습니다.
+DRAWLINE
+; 動作モード
+IF 動作モード
+	PRINTPLAIN [예외를 설정하는 모드]
+	PRINT  / 
+	SETCOLOR カラーパレット("グレーアウト")
+	PRINTBUTTON "[예외를 해제하는 모드]", 9998
+	RESETCOLOR
+	PRINTL 
+ELSE
+	SETCOLOR カラーパレット("グレーアウト")
+	PRINTBUTTON "[예외를 설정하는 모드]", 9998
+	RESETCOLOR
+	PRINT  / 
+	PRINTPLAIN [예외를 해제하는 모드]
+	PRINTL 
+ENDIF
+DRAWLINE
+; シリーズ選択/シリーズ表示
+最大ページ = MAX((出典番号 + 表示人数 - 1) / 表示人数, 1) - 1
+;シリーズの表示（15作品まで）
+START_NO = (現在ページ * 表示人数)
+END_NO   = (現在ページ * 表示人数) + 表示人数 - 1
+FOR LOCAL, START_NO, END_NO + 1
+	IF 出典作品配列:LOCAL == ""
+		PRINTL
+		CONTINUE
+		;登録が終わったら表示終了
+		BREAK
+	ENDIF
+	PRINTBUTTON @"[{LOCAL, 3}] %出典作品配列:LOCAL, 41, LEFT%: 총 {出典情報配列:LOCAL, 3}명", LOCAL
+	IF 出典例外表示フラグ:LOCAL
+		SETCOLOR カラーパレット("黄")
+		PRINT 　　전원 예외 설정 완료
+		RESETCOLOR
+	ENDIF
+	PRINTL 
+NEXT
+SKIPDISP 0
+
+;- ページ操作ボタン
+PRINTSL "-" * LINE_LEN
+
+;ページめくり表示
+BTN_NUM   = 9001
+BTN_TEXT '= @"[前ページへ]"
+IF 現在ページ > 0
+	PRINTBUTTON BTN_TEXT, BTN_NUM
+ELSE
+	SETCOLOR カラーパレット("グレーアウト")
+	PRINTPLAINFORM %BTN_TEXT%
+	RESETCOLOR
+ENDIF
+; ページ数
+ページ番号文字列  '= @"- {現在ページ + 1, LOG10(MAX(最大ページ +1, 1)) + 1}/{最大ページ + 1, LOG10(MAX(最大ページ +1, 1)) + 1} -"
+ページ番号文字列長 = SPACE_LEN - STRLENS(ページ番号文字列)
+PRINTS " " * (페이지번호문자열길이 / 2)
+PRINTFORM %ページ番号文字列%
+; 割り切れなかった分のスペースは後半に足す
+PRINTS " " * (페이지번호문자열길이 / 2 + (페이지번호문자열길이 % 2))
+
+; 1ページ次へ
+BTN_NUM   = 9011
+BTN_TEXT '= @"[次ページへ]"
+IF 現在ページ < 最大ページ
+	PRINTBUTTON BTN_TEXT, BTN_NUM
+ELSE
+	SETCOLOR カラーパレット("グレーアウト")
+	PRINTPLAINFORM %BTN_TEXT%
+	RESETCOLOR
+ENDIF
+PRINTL
+
+; 最初のページへ
+BTN_NUM   = 9009
+BTN_TEXT '= "[|≪]"
+IF 現在ページ > 0
+	PRINTBUTTON BTN_TEXT, BTN_NUM
+ELSE
+	SETCOLOR カラーパレット("グレーアウト")
+	PRINTPLAINFORM %BTN_TEXT%
+	RESETCOLOR
+ENDIF
+PRINTS " " * 1
+; 5ページ前へ
+BTN_NUM   = 9005
+BTN_TEXT '= "[－５]"
+IF 現在ページ > 0
+	PRINTBUTTON BTN_TEXT, BTN_NUM
+ELSE
+	SETCOLOR カラーパレット("グレーアウト")
+	PRINTPLAINFORM %BTN_TEXT%
+	RESETCOLOR
+ENDIF
+; 余白
+PRINTS " " * SPACE_LEN
+
+; 5ページ次へ
+BTN_NUM   = 9015
+BTN_TEXT '= "[＋５]"
+IF 現在ページ < 最大ページ
+	PRINTBUTTON BTN_TEXT, BTN_NUM
+ELSE
+	SETCOLOR カラーパレット("グレーアウト")
+	PRINTPLAINFORM %BTN_TEXT%
+	RESETCOLOR
+ENDIF
+PRINTS " " * 1
+; 最後のページへ
+BTN_NUM   = 9019
+BTN_TEXT '= "[≫|]"
+IF 現在ページ < 最大ページ
+	PRINTBUTTON BTN_TEXT, BTN_NUM
+ELSE
+	SETCOLOR カラーパレット("グレーアウト")
+	PRINTPLAINFORM %BTN_TEXT%
+	RESETCOLOR
+ENDIF
+PRINTL
+
+;- その他ボタン
+PRINTBUTTONLC "[9999]돌아가기", 9999
+SELECTCASE ソートモード
+	CASE 0
+		PRINTBUTTON "[9996]시리즈명 순으로", 9996
+	CASE 1
+		PRINTBUTTON "[9996]등록 캐릭터 수 순으로", 9996
+ENDSELECT
+REDRAW 0
+
+;入力処理
+WHILE 1
+	BINPUT
+	入力番号 = RESULT
+	SELECTCASE 入力番号
+		CASE 9101
+			;- [シリーズをまとめる]
+			INVERTBIT シリーズモード, 0
+			現在ページ = 0
+			リスト更新判定 = 1
+			リスタートフラグ = 1
+			BREAK
+		CASE 9001, 9005
+			;- 前ページへ
+			; ページ番号を更新後、リスタートしてリスト表示へ戻る
+			現在ページ = MAX(現在ページ - (入力番号 - 9000), 0)
+			リスタートフラグ = 1
+			BREAK
+		CASE 9011, 9015
+			;- 次ページへ
+			現在ページ = MIN(現在ページ + (入力番号 - 9010), 最大ページ)
+			リスタートフラグ = 1
+			BREAK
+		CASE 9009
+			; 最初のページ
+			現在ページ = 0
+			リスタートフラグ = 1
+			BREAK
+		CASE 9019
+			; 最後のページ
+			現在ページ = 最大ページ
+			リスタートフラグ = 1
+			BREAK
+		CASE 9998
+			INVERTBIT 動作モード, 0
+			リスタートフラグ = 1
+			BREAK
+		CASE 9999
+			;- 戻る
+			; リスタートせずにZPショップメニューへ戻る
+			リスタートフラグ = 0
+			BREAK
+		CASE 9996
+			;- 作品ソートモード切替処理
+			INVERTBIT ソートモード, 0
+			現在ページ = 0
+			リスタートフラグ = 1
+			BREAK
+		CASEELSE
+			;- シリーズ選択時処理
+			判定作品名 '= 出典作品配列:入力番号
+			FOR 対象キャラ, 1, CHARANUM
+				IF 判定作品名 == "グランブルーファンタジー" && CSVCSTR(NO:対象キャラ, GETNUM(CSTR, "出演作品")) == ""
+					CFLAG:対象キャラ:例外招待 = 動作モード
+				ELSEIF CSVCSTR(NO:対象キャラ, GETNUM(CSTR, "出演作品")) == 判定作品名
+					CFLAG:対象キャラ:例外招待 = 動作モード
+				ENDIF
+			NEXT
+			リスト更新判定 = 1
+			リスタートフラグ = 1
+			BREAK
+	ENDSELECT
+WEND
+IF リスタートフラグ
+	CLEARLINE LINECOUNT - 描画開始行
+	RESTART
+ENDIF
+;描画設定を戻す
+REDRAW REDRAW_TEMP
+RETURN -1
+
+
+
+
+

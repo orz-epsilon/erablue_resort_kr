@@ -1,0 +1,78 @@
+@ダンジョンハプニング_あなたポロリ発生(対象キャラ番号)
+#DIM 対象キャラ番号
+
+WSTR:(K++) = 마물의 기습이다!
+KSTR:(K++) = 어떻게든 격퇴했지만, 기습을 받은 %CALLNAME:PLAYER%의 복장이 흐트러져
+SELECTCASE TALENT:PLAYER:バストサイズ
+	CASE IS <= 0
+		KSTR:(K++) = 가슴 부분이 노출되어 버렸다._PAGE
+	CASEELSE
+		KSTR:(K++) = 풍만한 가슴이 옷에서 흘러넘치고 있다._PAGE
+ENDSELECT
+
+CALL メッセージ欄表示用関数()
+CALL 口上変数初期化
+
+CALL セクハラ反応タイプ判定(対象キャラ番号)
+TRYCALLFORM KOJO_ハプニング_あなたポロリ発生_{NO:対象キャラ番号}(対象キャラ番号)
+IF 口上有無確認(0, 1) == 0
+	SELECTCASE RFLAG:コマンド結果受渡し変数２
+		CASE 1
+			;無知
+			KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 특별히 신경 쓰지 않고 탐색으로 돌아갔다.
+		CASE 2
+			;無反応
+			KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 특별히 신경 쓰지 않고 탐색으로 돌아갔다.
+		CASEELSE
+			;汎用
+			IF TALENT:対象キャラ番号:性別 == TALENT:PLAYER:性別 || TALENT:PLAYER:性別 == 0
+				;同性、あるいは無性なら大した反応はしない
+				KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 조심하라고 %CALLNAME:PLAYER%에게 주의를 주고 있다.
+			ELSE
+				SELECTCASE RFLAG:コマンド結果受渡し変数
+					CASE 1
+						;拒絶
+						KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 순간적으로 외면하며, %CALLNAME:PLAYER%에게 한마디 사과했다.
+					CASE 2
+						;受入れ
+						KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 다른 시선으로부터 가드하듯이, %CALLNAME:PLAYER%의 앞으로 이동했다.
+					CASE 3
+						;喜び
+						KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 다른 시선으로부터 가드하듯이 %CALLNAME:PLAYER%의 앞으로 이동하여, 조심하라고 주의를 주고 있다.
+				ENDSELECT
+			ENDIF
+	ENDSELECT
+	CALL メッセージ欄表示用関数()
+ENDIF
+
+;ソース増減部分
+SELECTCASE RFLAG:コマンド結果受渡し変数
+	CASE 1
+		;拒絶
+		CALL SOURCE_CALC_反感(対象キャラ番号, PLAYER, 40)
+		CALL SOURCE_CALC_露出(PLAYER, 対象キャラ番号, 120)
+	CASE 2
+		;受け入れ
+		CALL SOURCE_CALC_歓楽(対象キャラ番号, PLAYER, 50)
+		CALL SOURCE_CALC_露出(PLAYER, 対象キャラ番号, 120)
+		CALL SOURCE_CALC_好感度要素_性愛度UP(対象キャラ番号, PLAYER, 30)
+	CASE 3
+		;喜び
+		CALL SOURCE_CALC_歓楽(対象キャラ番号, PLAYER, 100)
+		CALL SOURCE_CALC_露出(PLAYER, 対象キャラ番号, 120)
+		CALL SOURCE_CALC_好感度要素_性愛度UP(対象キャラ番号, PLAYER, 60)
+ENDSELECT
+
+
+
+@ダンジョンハプニング_ABLE_あなたポロリ発生(判定キャラ番号)
+#DIM 判定キャラ番号
+
+SIF TALENT:PLAYER:性別 == 2
+	RETURN 0
+;すでに上半身裸だと発生しない
+SIF !TEQUIP:PLAYER:上半身服あり && !TEQUIP:PLAYER:上半身鎧あり && !TEQUIP:PLAYER:上タイツあり && !TEQUIP:PLAYER:上半身下着あり
+	RETURN 0
+
+
+RETURN 1

@@ -1,0 +1,168 @@
+;-------------------------------------------------
+;勃起おしゃぶりエステ
+;-------------------------------------------------
+@MASSAGE_COMNAME32
+#FUNCTIONS
+TSTR:コマンド名受渡 = 정액 부글부글 고환 마사지
+
+
+;===================================================
+;コマンドタイプ
+;===================================================
+@MASSAGE_COMTYPE_32
+#FUNCTION
+TFLAG:コマンドタイプ受渡 = MASSAGE_COMTYPE("エロマッサージ")
+
+@MASSAGE_COM_TOOLTIP_32
+LOCALS = <br>■정액 부글부글 고환 마사지<br>
+LOCALS += "고환을 손으로 부드럽게 주물러 마사지해 준다."
+LOCALS += "<br>마사지 후에는 일시적으로 건강한 정자를 생산할 수 있게 되어 임신율이 올라간다고 한다."
+LOCALS += "<br>COM 타입: 에로 마사지<br>취득 소스: 쾌C・노출・접촉・봉사(PLAYER)・불결(PLAYER)"
+LOCALS += "<br>고유 취득 경험: 없음<br>"
+TSTR:ツールチップ受渡 = %LOCALS%
+
+@MASSAGE_COM32
+;-------------------------------------------------
+;ソース追加処理
+;-------------------------------------------------
+
+;基盤ができたあとで理性を削る処理を入れる
+
+;快感はフェラの6割くらいにしとく
+CALL SOURCE_CALC_快Ｃ(TARGET, PLAYER, 120)
+CALL SOURCE_CALC_露出(TARGET, PLAYER, 30)
+CALL SOURCE_CALC_接触(TARGET, PLAYER, 120)
+
+;舌使いによって、快感のソース増加
+IF TALENT:PLAYER:舌使い
+	CALL SOURCE_CALC_快Ｃ(TARGET, PLAYER, 150)
+ENDIF
+
+;猫舌では苦痛ちょいある
+SIF TALENT:PLAYER:猫舌
+	CALL SOURCE_CALC_苦痛(TARGET, PLAYER, 20)
+
+CALL SOURCE_CALC_奉仕(PLAYER, TARGET, 300)
+CALL SOURCE_CALC_不潔(PLAYER, TARGET, 250)
+
+;精力を少しだけ回復する。連打可能なコマンドなので気持ち少なめ
+BASE:TARGET:精力 += 50
+;妊娠率……もとい孕ませパワーが10%上昇する
+RCVAR:TARGET:妊娠率補正_加算値 += 10
+
+;下半身下着がある場合は脱がす。
+IF TEQUIP:下半身下着あり == 1
+	TEQUIP:下半身下着あり = 0
+	TEQUIP:下半身服あり = 0
+	SIF TEQUIP:上下一体服
+		TEQUIP:上半身服あり = 0
+	RFLAG:コマンド結果受渡し変数 = 1
+ENDIF
+
+;理性削りはおしゃぶりエステ
+IF BASE:TARGET:理性 <= 1
+;理性がおしまいになってしまった場合、快楽に流されて警戒が下がっていく。
+	BASE:TARGET:性欲 += 300
+	BASE:TARGET:警戒 += 警戒変動値算出(TARGET, -80)
+	CALL SOURCE_CALC_好感度要素_性愛度UP(TARGET, PLAYER, 100)
+ELSEIF 知識素質:TARGET:性知識 <= -1
+;性知識がない場合、ギリマッサージと言えなくもないので丸め込まれる
+	BASE:TARGET:理性 += 理性変動値算出(TARGET, -300)
+	BASE:TARGET:性欲 += 300
+	BASE:TARGET:警戒 +=警戒変動値算出(TARGET, 20)
+	CALL SOURCE_CALC_好感度要素_性愛度UP(TARGET, PLAYER, 100)
+ELSE
+;実行に際し十分な理性・警戒削りがなされている場合。
+;警戒300で理性が150回復するも、煽られる性欲と与えられる刺激で理性が300削られて理性変動は-150。
+;……というのが平常時における挙動だが、ちんぽをしゃぶられる快感に警戒心が塗りつぶされてしまう。
+;フェラを許しちゃった時点で『終わり』。ここまで来ちゃったらそらそうよ。
+	BASE:TARGET:理性 += 理性変動値算出(TARGET, -240)
+	BASE:TARGET:性欲 += 300
+	BASE:TARGET:警戒 +=警戒変動値算出(TARGET, 10)
+	CALL SOURCE_CALC_好感度要素_性愛度UP(TARGET, PLAYER, 150)
+ENDIF
+
+
+IF TARGET == MASTER
+	CALL ちんイラ増加処理(PLAYER, 150)
+ELSE
+	CALL ちんイラ増加処理(TARGET, 300)
+ENDIF
+;-------------------------------------------------
+;経験の処理
+;-------------------------------------------------
+
+RETURN 1
+
+;-------------------------------------------------
+;実行判定
+;-------------------------------------------------
+
+@MASSAGE_COM_ABLE32
+SIF SAVESTR:ゲームフェイズ管理 != "マッサージモード"
+	RETURN 0
+
+SIF GLOBAL_MASSAGE_COMABLE(32)
+	RETURN RESULT
+
+;相手がオトコか玉ありふたなりじゃなきゃダメ。
+SIF TALENT:TARGET:性別 <= 1 || (TALENT:TARGET:性別 == 3 && (フレーバー素質:TARGET:ふたなり時_玉ありなし != 2 && OPTION変数:ふたなり玉設定 != 2))
+	RETURN 0
+;相手にちんこがない場合駄目
+SIF TALENT:TARGET:Ｃ感度 == -2
+	RETURN 0
+
+;うつ伏せだとダメ
+SIF TCVAR:TARGET:マッサージ_うつ伏せフラグ == 1
+	RETURN 0
+
+;理性警戒の合計が600以下じゃないとダメ
+;実行できる時点で、十分な理性・警戒削りがなされている状態。
+SIF (BASE:TARGET:理性 + BASE:TARGET:警戒) > 600
+	RETURN 0
+
+RETURN 1
+
+
+;-------------------------------------------------
+;実行時メッセージ
+;-------------------------------------------------
+@MASSAGE_MESSAGE_COM32
+
+PRINTFORM %CALLNAME:PLAYER%은(는),
+
+	IF RFLAG:コマンド結果受渡し変数 == 1
+		SIF BASE:TARGET:勃起 < 1000
+			PRINTFORM 발기된 자지로 텐트를 쳤다
+		PRINTFORM %CALLNAME:TARGET%의 시술복을 벗기고,
+	ENDIF
+	
+PRINTFORML %CALLNAME:TARGET%의 %TEXTR("음낭/고환")%을(를) 손바닥으로 감싸고,
+
+CALL PRINT_STR(@"「がんばれ_H_ がんばれ_H_」")
+PRINTFORM 라고 격려의 말을 건네며 부드럽게 마사지했다……。
+PRINTL
+PRINTFORM %CALLNAME:TARGET%은(는)
+IF BASE:TARGET:勃起 < 1000
+	;巨根以上
+	IF TALENT:TARGET:男性器サイズ >= 1
+		PRINTFORML %TEXTR("큰 자지/거근")%을(를) 꼿꼿하게 발기시키고,
+	ELSEIF TALENT:TARGET:男性器サイズ <= -1
+		;短小以下
+		PRINTFORML 엄지손가락 크기의 %TEXTR("자지/고추/페니스")%를 굳건히 단단하게 하여,
+	ELSE
+	;普通サイズ
+		PRINTFORML %TEXTR("육봉/자지")%를 꼿꼿하게 발기시키고,
+	ENDIF
+ENDIF
+
+	SELECTCASE RAND:2
+	CASE 0
+		PRINTFORM %TEXTR("황홀하게 눈가를 녹이며/녹아내린 얼굴로 헤프게 입을 벌리고/법열에 눈가를 녹이며")%,
+	CASE 1
+		PRINTFORM %CALLNAME:TARGET%은(는) 헤프게 풀린 입에서 %TEXTR("아름다운 목소리/헤픈 목소리/여자아이 같은 귀여운 목소리")%를 %TEXTR("내며/흘리며/흘리면서")%,
+	ENDSELECT
+	PRINTFORML %CALLNAME:PLAYER%%TEXTR("의 『마사지』/의 손기술")%%TEXTR("에 취해 있다/에 당하는 대로 되어 있다/를 받아들이고 있다/를 감수하고 있다")%…
+
+PRINTW 
+PRINTFORML %CALLNAME:TARGET%의 고환은 %CALLNAME:PLAYER%의 마사지에 의해 활성화되어, %TEXTR("건강한/싱싱한/힘찬")% 정자를 만들어내는 %TEXTR("기력/활력/정력")%이 넘쳐흘렀다!

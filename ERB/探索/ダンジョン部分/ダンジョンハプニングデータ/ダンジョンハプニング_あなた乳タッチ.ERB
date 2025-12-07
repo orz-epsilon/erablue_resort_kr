@@ -1,0 +1,101 @@
+@ダンジョンハプニング_あなた乳タッチ(対象キャラ番号)
+#DIM 対象キャラ番号
+
+WSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 무언가에 걸려 넘어졌다!
+KSTR:(K++) = 다행히도%CALLNAME:PLAYER%이(가) 받아주었지만,
+SELECTCASE TALENT:PLAYER:バストサイズ
+	CASE IS <= 0
+		KSTR:(K++) = 그 순간, 가슴 부분에 손이 닿아버렸다._PAGE
+	CASEELSE
+		KSTR:(K++) = 그 순간, 풍만한 가슴을 움켜쥐어 버렸다._PAGE
+ENDSELECT
+
+CALL メッセージ欄表示用関数()
+CALL 口上変数初期化
+
+CALL セクハラ反応タイプ判定(対象キャラ番号)
+TRYCALLFORM KOJO_ハプニング_あなた乳タッチ_{NO:対象キャラ番号}(対象キャラ番号)
+IF 口上有無確認(0, 1) == 0
+	SELECTCASE RFLAG:コマンド結果受渡し変数２
+		CASE 1
+			;無知
+			KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 도와준 것에 대해 감사 인사를 하고, 그대로 신경 쓰지 않고 탐색으로 돌아갔다.
+		CASE 2
+			;無反応
+			KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 아무 일도 없었던 것처럼 탐색으로 돌아갔다.
+		CASE 6
+			;羞恥
+			IF TALENT:対象キャラ番号:性別 == TALENT:PLAYER:性別 || TALENT:PLAYER:性別 == 0
+				;同性、あるいは無性なら大した反応はしない
+				KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 도와준 것에 대해 감사와 사과를 하고, 탐색으로 돌아갔다.
+			ELSE
+				SELECTCASE RFLAG:コマンド結果受渡し変数
+					CASE 1
+						;拒絶
+						KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 황급히 떨어져, 얼굴을 새빨갛게 물들이며 사과를 반복하고 있다…
+					CASE 2
+						;受入れ
+						KSTR:(K++) = %CALLNAME:PLAYER%은(는)%CALLNAME:対象キャラ番号%에게 다친 곳은 없는지 걱정하자,
+						KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 얼굴을 새빨갛게 물들이며 과장되게 사과했다
+					CASE 3
+						;喜び
+						KSTR:(K++) = %CALLNAME:PLAYER%은(는)%CALLNAME:対象キャラ番号%에게 다친 곳은 없는지 걱정하자,
+						KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 얼굴을 새빨갛게 물들이며 사과와 도와준 것에 대한 감사를 표했다.
+				ENDSELECT
+			ENDIF
+		CASE 8
+			;汎用
+			IF TALENT:対象キャラ番号:性別 == TALENT:PLAYER:性別 || TALENT:PLAYER:性別 == 0
+				;同性、あるいは無性なら大した反応はしない
+				KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 도와준 것에 대해 감사 인사를 하고, 그대로 신경 쓰지 않고 탐색으로 돌아갔다.
+			ELSE
+				SELECTCASE RFLAG:コマンド結果受渡し変数
+					CASE 1
+						;拒絶
+						KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 황급히 떨어져, %CALLNAME:PLAYER%에게 사과와 도와준 것에 대한 감사를 표했다
+					CASE 2
+						;受入れ
+						KSTR:(K++) = %CALLNAME:PLAYER%은(는)%CALLNAME:対象キャラ番号%에게 다친 곳은 없는지 걱정하자,
+						KSTR:(K++) = %CALLNAME:対象キャラ番号%는 괜찮다고 말하면서 사과와 도와준 것에 대한 감사를 표했다.
+					CASE 3
+						;喜び
+						KSTR:(K++) = %CALLNAME:PLAYER%는 %CALLNAME:対象キャラ番号%에게 다친 곳은 없는지 걱정하자,
+						KSTR:(K++) = %CALLNAME:対象キャラ番号%는 괜찮다고 말하면서 사과와 도와준 것에 대한 감사를 표했다
+				ENDSELECT
+			ENDIF
+	ENDSELECT
+	CALL メッセージ欄表示用関数()
+ENDIF
+
+;ソース増減部分
+SELECTCASE RFLAG:コマンド結果受渡し変数
+	CASE 1
+		;拒絶
+		CALL SOURCE_CALC_反感(対象キャラ番号, PLAYER, 50)
+		CALL SOURCE_CALC_接触(対象キャラ番号, PLAYER, 100)
+		CALL SOURCE_CALC_露出(PLAYER, 対象キャラ番号, 100)
+	CASE 2
+		;受け入れ
+		CALL SOURCE_CALC_歓楽(対象キャラ番号, PLAYER, 20)
+		CALL SOURCE_CALC_接触(対象キャラ番号, PLAYER, 100)
+		CALL SOURCE_CALC_露出(PLAYER, 対象キャラ番号, 100)
+		CALL SOURCE_CALC_好感度要素_性愛度UP(対象キャラ番号, PLAYER, 50)
+		CALL SOURCE_CALC_快Ｂ(PLAYER, 対象キャラ番号, 10)
+	CASE 3
+		;喜び
+		CALL SOURCE_CALC_歓楽(対象キャラ番号, PLAYER, 50)
+		CALL SOURCE_CALC_接触(対象キャラ番号, PLAYER, 100)
+		CALL SOURCE_CALC_露出(PLAYER, 対象キャラ番号, 100)
+		CALL SOURCE_CALC_好感度要素_性愛度UP(対象キャラ番号, PLAYER, 100)
+		CALL SOURCE_CALC_快Ｂ(PLAYER, 対象キャラ番号, 10)
+ENDSELECT
+
+
+
+@ダンジョンハプニング_ABLE_あなた乳タッチ(判定キャラ番号)
+#DIM 判定キャラ番号
+
+SIF TALENT:PLAYER:性別 == 2
+	RETURN 0
+
+RETURN 1

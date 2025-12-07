@@ -1,0 +1,106 @@
+
+@RAPE_COMNAME_S13_1
+#FUNCTIONS
+TSTR:コマンド名受渡 = 목구멍 깊숙이 쑤셔 넣다
+SIF TALENT:TARGET:角あり
+	TSTR:コマンド名受渡 = 뿔 손잡이 이라마
+
+
+;===================================================
+;コマンドタイプ
+;===================================================
+@RAPE_COMTYPE_S_13_1
+#FUNCTION
+TFLAG:コマンドタイプ受渡 = RAPE_COMTYPE("うふふ")
+
+;ランダム弱点の候補にするかを設定。敏感素質を考慮に入れるため、CVABSを入れること
+;また特定部位が必要な場合、「_ちんこ」や「_角」などのように追加で表記する
+;弱点コマンドカテゴリ = 
+
+;キャラが自動で使用しても良い場合に入れる
+;オートコマンド許可 = 1
+
+@RAPE_COM_TOOLTIP_S13_1
+LOCALS = <br>■목구멍 깊숙이 쑤셔 넣다<br>
+LOCALS += "상대의 목구멍 깊숙이 페니스를 넣는 커맨드. <br>대상에게 뿔이 있을 때, 「뿔 손잡이 이라마」로 변화하며, 효과가 상승한다."
+LOCALS += "<br>RAPE_COM 타입: 우후후<br>획득 소스: 쾌S・노출・접촉・고통"
+LOCALS += "<br>고유 획득 경험: 구강성교 경험(TARGET)<br>"
+TSTR:ツールチップ受渡 = %LOCALS%
+
+@RAPE_COM_S13_1
+
+CALL MODE_CHANGE("イラマチオ", TARGET, PLAYER)
+
+;-------------------------------------------------
+;ソース追加処理
+;-------------------------------------------------
+CALL SOURCE_CALC_快Ｃ(PLAYER, TARGET, 150)
+CALL SOURCE_CALC_快Ｓ(TARGET, PLAYER, 100)
+CALL SOURCE_CALC_露出(TARGET, PLAYER, 30)
+CALL SOURCE_CALC_接触(TARGET, PLAYER, 120)
+CALL SOURCE_CALC_奉仕(TARGET, PLAYER, 350)
+CALL SOURCE_CALC_苦痛(TARGET, PLAYER, 100)
+IF ABL:TARGET:技巧 < 3
+	;技巧がないとめっちゃ苦しい
+	CALL SOURCE_CALC_苦痛(TARGET, PLAYER, 500)
+ELSE
+	CALL SOURCE_CALC_苦痛(TARGET, PLAYER, 200)
+ENDIF
+IF TALENT:TARGET:角あり
+	CALL SOURCE_CALC_快Ｓ(TARGET, PLAYER, 50)
+	CALL SOURCE_CALC_奉仕(TARGET, PLAYER, 100)
+ENDIF
+
+CALL SOURCE_CALC_不潔(TARGET, PLAYER, 250)
+
+;奉仕快楽
+RCVAR:TARGET:奉仕コマンドフラグ = 1
+RCVAR:TARGET:苦痛コマンドフラグ = 1
+RCVAR:TARGET:汎用喘ぎ_文節低減フラグ = 1
+;-------------------------------------------------
+;経験の処理
+;-------------------------------------------------
+;フェラ経験
+EXP:口淫経験 += 1
+
+;同性愛　レズなら戻り値1ゲイなら戻り値2
+IF HETEROSEX(TARGET,PLAYER)
+	EXP:同性愛経験 += 4
+	EXP:PLAYER:同性愛経験 += 4
+ENDIF
+
+SIF PLAYER != MASTER
+	EXP:PLAYER:嗜虐快楽経験 += 1
+
+RETURN 1
+
+
+
+;-------------------------------------------------
+;実行判定
+;-------------------------------------------------
+@RAPE_COM_ABLE_S13_1
+;イラマチオ実行判定
+;一括管理
+SIF GLOBAL_RAPE_COMABLE_S("13_1")
+	RETURN RESULT
+;フェラチオモードじゃない時はアウト
+SIF MODE_確認_完全一致("フェラチオ", TARGET, PLAYER) < 0
+	RETURN 0
+;寝てるときは苦痛刺激系はオフに
+SIF CFLAG:TARGET:睡眠
+	RETURN 0
+
+RETURN 1
+
+;-------------------------------------------------
+;実行時メッセージ
+;-------------------------------------------------
+@RAPE_MESSAGE_COM_S13_1
+IF TALENT:TARGET:角あり
+	PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%의 뿔을 난폭하게 붙잡고, %TEXTR("목구멍 깊숙이 페니스를 삼키게 했다/목구멍 깊숙이 귀두에 키스하게 했다")%…
+ELSEIF TALENT:髪の毛なし == 1 || TALENT:髪の毛なし == -1
+	PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%의 머리를 난폭하게 붙잡고, %TEXTR("목구멍 깊숙이 페니스를 삼키게 했다/목구멍 깊숙이 귀두에 키스하게 했다")%…
+ELSE
+	PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%의 %TEXTR("머리/머리카락")%을(를) 난폭하게 붙잡고, %TEXTR("목구멍 깊숙이 페니스를 삼키게 했다/목구멍 깊숙이 귀두에 키스하게 했다")%…
+ENDIF

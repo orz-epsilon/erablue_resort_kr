@@ -1,0 +1,65 @@
+
+@アイテム個別文章表示_解毒薬(ARGS)
+;解毒薬
+IF ARGS == "値段"
+	詳細文文字列受け渡し変数 = 루피
+	RETURN 400
+ENDIF
+
+LOCALS = 
+LOCALS += @"■해독약　　　소지 수:{DT_CELL_GET("所持アイテムデータベース", 0, "解毒薬")}<br>"
+LOCALS += "하늘 세계에서 널리 사용되는 일반적인 독에 효과적인 해독제<br>"
+LOCALS += "약초를 간단한 절차로 가공하면 완성되므로, 초보자의<br>"
+LOCALS += "연금술사가 용돈벌이로 자주 정제하고 있다.<br>"
+LOCALS += "<br>"
+LOCALS += "【효과】<br>"
+LOCALS += "아군 단일의 [독] 디버프를 해제한다.<br>"
+
+詳細文文字列受け渡し変数 = %LOCALS%
+
+@アイテム使用先表示_解毒薬
+CALL 汎用使用先表示("味方単体")
+
+@アイテム効果処理_解毒薬(ARG)
+#DIMS 効果種類
+#DIM データベース行数
+;ARG = 隊列の何番目か
+
+IF !BATTLE_STATE:ARG:キャラ登録番号
+	RETURN 0
+ENDIF
+
+IF DT_CELL_GET("所持アイテムデータベース", 0, "解毒薬") < 1
+	PRINTW 아이템이 없습니다
+	RETURN 0
+ENDIF
+
+LOCAL:1 = デバフ番号取得("毒", ARG)
+IF LOCAL:1 == -1
+	PRINTW 독 디버프가 없습니다
+	RETURN 0
+ENDIF
+
+FOR LOCAL, 0, DT_ROW_LENGTH("戦闘効果データベース")
+	SIF DT_CELL_GETS("戦闘効果データベース", LOCAL, "バフ・デバフフラグ") != "デバフ"
+		CONTINUE
+	SIF DT_CELL_GETS("戦闘効果データベース", LOCAL, "適用範囲") != @"{ARG}"
+		CONTINUE
+	SIF DT_CELL_GET("戦闘効果データベース", LOCAL, "特殊表示オプション") == -1
+		CONTINUE
+	SIF DT_CELL_GETS("戦闘効果データベース", LOCAL, "対象能力") != "毒"
+		CONTINUE
+	DT_ROW_REMOVE "戦闘効果データベース", DT_CELL_GET("戦闘効果データベース", LOCAL, "id")
+	LOCAL:1 = 1
+	LOCAL --
+NEXT
+
+IF LOCAL:1 == 0
+	PRINTW 독 디버프가 없습니다
+	RETURN 0
+ELSE
+	PRINTFORMW %CALLNAME:(BATTLE_STATE:ARG:キャラ登録番号)%의 독 디버프를 해제했습니다
+ENDIF
+
+
+RETURN 1

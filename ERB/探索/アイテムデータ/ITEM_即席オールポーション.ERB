@@ -1,0 +1,57 @@
+
+@アイテム個別文章表示_即席オールポーション(ARGS)
+;ポーション
+IF ARGS == "値段"
+	詳細文文字列受け渡し変数 = 루피
+	RETURN 800
+ENDIF
+
+LOCALS = 
+LOCALS += @"■즉석 올 포션　　　소지 수:{DT_CELL_GET("所持アイテムデータベース", 0, "即席オールポーション")}<br>"
+LOCALS += "그 자리에 있는 재료로 조제한 올 포션. <br>"
+LOCALS += "오래 보관할 수 없으므로 탐색이 끝났을 때 모두 사라집니다. <br>"
+LOCALS += "그 대신 효과는 꽤 큰 편입니다. <br>"
+LOCALS += "<br>"
+LOCALS += "【효과】<br>"
+LOCALS += "아군 전체의 HP를 [800] 회복합니다. <br>"
+
+詳細文文字列受け渡し変数 = %LOCALS%
+
+@アイテム使用先表示_即席オールポーション
+CALL 汎用使用先表示("味方全体")
+
+@アイテム効果処理_即席オールポーション(ARG)
+;ARG = 隊列の何番目か
+
+IF DT_CELL_GET("所持アイテムデータベース", 0, "即席オールポーション") < 1
+	PRINTW 아이템이 없습니다
+	RETURN 0
+ENDIF
+
+LOCAL:1 = 0
+FOR LOCAL, 0, 14
+	SIF LOCAL > 3 && LOCAL < 10
+		CONTINUE
+	SIF !BATTLE_STATE:LOCAL:キャラ登録番号
+		CONTINUE
+	SIF BATTLE_STATE:LOCAL:ＨＰ < 1
+		CONTINUE
+	SIF BATTLE_STATE:LOCAL:最大ＨＰ == BATTLE_STATE:LOCAL:ＨＰ
+		CONTINUE
+	IF BATTLE_STATE:LOCAL:最大ＨＰ - BATTLE_STATE:LOCAL:ＨＰ < 800
+		PRINTFORML %CALLNAME:(BATTLE_STATE:LOCAL:キャラ登録番号)%의 HP를{BATTLE_STATE:LOCAL:最大ＨＰ - BATTLE_STATE:LOCAL:ＨＰ}회복했습니다
+	ELSE
+		PRINTFORML %CALLNAME:(BATTLE_STATE:LOCAL:キャラ登録番号)%의 HP를 800 회복했습니다
+	ENDIF
+	BATTLE_STATE:LOCAL:ＨＰ = MIN(BATTLE_STATE:LOCAL:ＨＰ + 800, BATTLE_STATE:LOCAL:最大ＨＰ)
+	LOCAL:1 += 1
+NEXT
+
+IF LOCAL:1 > 0
+	WAIT
+ELSE
+	PRINTW 회복 가능한 대상이 없습니다.
+	RETURN 0
+ENDIF
+
+RETURN 1

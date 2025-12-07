@@ -1,0 +1,105 @@
+;-------------------------------------------------
+;尻を叩く
+;-------------------------------------------------
+@RAPE_COMNAME11
+#FUNCTIONS
+TSTR:コマンド名受渡 = 엉덩이를 때리다
+
+;===================================================
+;コマンドタイプ
+;===================================================
+@RAPE_COMTYPE_11
+#FUNCTION
+TFLAG:コマンドタイプ受渡 = RAPE_COMTYPE("うふふ")
+
+@RAPE_COM_TOOLTIP_11
+LOCALS = <br>■엉덩이를 때리다<br>
+LOCALS += "상대의 엉덩이를 때려, 고통과 쾌락을 주는 커맨드."
+LOCALS += "<br>RAPE_COM 타입: 우후후<br>획득 소스: 쾌S・고통・반감(일정 조건 시)・환락(일정 조건 시)"
+LOCALS += "<br>고유 획득 경험: 없음<br>"
+TSTR:ツールチップ受渡 = %LOCALS%
+
+@RAPE_COM11
+;-------------------------------------------------
+;ソース追加処理
+;-------------------------------------------------
+
+
+CALL SOURCE_CALC_征服(PLAYER, TARGET, 150)
+CALL SOURCE_CALC_快Ｓ(TARGET, PLAYER, 100)
+CALL SOURCE_CALC_苦痛(TARGET, PLAYER, 100)
+IF ABL:TARGET:マゾ性感 > 2
+	CALL SOURCE_CALC_快Ｓ(TARGET, PLAYER, 100)
+	CALL SOURCE_CALC_歓楽(TARGET, PLAYER, 150)
+ELSE
+	CALL SOURCE_CALC_反感(TARGET, PLAYER, 60)
+ENDIF
+RCVAR:TARGET:苦痛コマンドフラグ = 1
+RCVAR:PLAYER:嗜虐コマンドフラグ = 1
+
+;サドは嗜虐快楽
+SIF ABL:サド性感
+	EXP:嗜虐快楽経験 ++
+
+;-------------------------------------------------
+;経験の処理
+;-------------------------------------------------
+
+RETURN 1
+
+;-------------------------------------------------
+;実行判定
+;-------------------------------------------------
+
+@RAPE_COM_ABLE11
+;一括管理
+SIF GLOBAL_RAPE_COMABLE(11)
+	RETURN RESULT
+;指を何かに使ってるなら無理
+SIF TEQUIP:PLAYER:指
+	RETURN 0
+;挿入中は一部を除きダメ
+IF MODE_確認_完全一致("Ｖ挿入系", PLAYER, TARGET) > -1
+	SIF MODE_確認_完全一致("後背位", PLAYER, TARGET) < 0 && MODE_確認_完全一致("立ちバック", PLAYER, TARGET) < 0
+		RETURN 0
+ENDIF
+IF MODE_確認_完全一致("Ａ挿入系", PLAYER, TARGET) > -1
+	SIF MODE_確認_完全一致("Ａ後背位", PLAYER, TARGET) < 0 && MODE_確認_完全一致("Ａ立ちバック", PLAYER, TARGET) < 0
+		RETURN 0
+ENDIF
+;寝てるときは痛み刺激系はオフに
+SIF CFLAG:TARGET:睡眠
+	RETURN 0
+
+RETURN 1
+
+;-------------------------------------------------
+;実行時メッセージ
+;-------------------------------------------------
+@RAPE_MESSAGE_COM11
+PRINTFORM %CALLNAME:PLAYER%은(는)
+
+IF MODE_確認_完全一致("Ｖ挿入系", PLAYER, TARGET) > -1 || MODE_確認_完全一致("Ａ挿入系", PLAYER, TARGET) > -1
+	PRINTFORM %CALLNAME:TARGET%%TEXTR("과 이어진 채/의 엉덩이에 허리를 부딪치면서/을(를) 뒤에서 범하면서")%,
+ELSE
+	PRINTFORM %CALLNAME:TARGET%의
+ENDIF
+IF TALENT:TARGET:体型 >= 1
+	;肉感的以上
+	PRINTFORM %TEXTR("탱탱한/말랑말랑한/탱탱하게 살이 붙은/말랑말랑하고 육감적인")%
+ELSEIF TALENT:TARGET:体型 <= -2
+	;細身以下
+	PRINTFORM 살집이 얇고 가녀린
+ENDIF
+PRINTFORML %TEXTR("엉덩이/엉덩이살/엉덩이살")%을(를) %TEXTR("손바닥/손바닥")%으로 강하게 몇 번이고 때려, 날카로운 고통과 지배의 증거를 새겨 넣었다.
+
+
+SIF MODE_確認_完全一致("Ｖ挿入系", PLAYER, TARGET) > -1 || MODE_確認_完全一致("Ａ挿入系", PLAYER, TARGET) > -1
+	PRINTFORML 때릴 때마다 고통으로 수축하며 페니스를 조이는 질벽이, %CALLNAME:PLAYER%에게 참을 수 없는 정복감과 쾌락을 가져다주었다…
+	
+@RAPE_MESSAGE_COM22_非口上時
+
+SIF ABL:TARGET:マゾ性感 > 2
+	PRINTFORML 피학 취미가 몸에 밴%CALLNAME:TARGET%은(는), 맞는 고통과 피지배의 어두운 쾌락에 몸을 떨며, 교성을 지르고 있다…
+
+

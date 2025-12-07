@@ -1,0 +1,151 @@
+
+@COMNAME300
+#FUNCTIONS
+TSTR:コマンド名受渡 = 대화
+
+;===================================================
+;コマンドタイプ
+;===================================================
+@COMTYPE_300
+#FUNCTION
+TFLAG:コマンドタイプ受渡 = COMTYPE("日常_飲み会")
+
+@COM_TOOLTIP_300
+LOCALS = <br>■대화<br>
+LOCALS += "평범한 일상 대화를 나누는 커맨드. 일정 확률로 대성공, 성공, 실패로 분기. <br>단시간에 너무 많이 실행하면 대화 소재가 고갈되어 실패한다. <br>소질: 연모를 소지하고 있는 상대의 경우, 혹은 술자리 시, 이 제한은 무효가 된다."
+LOCALS += "<br>COM 타입: 일상<br>획득 소스: 환락・정복"
+LOCALS += "<br>고유 획득 경험: 대화 경험(MASTER)<br>"
+TSTR:ツールチップ受渡 = %LOCALS%
+
+
+@COM300
+;会話
+
+;会話累積値が閾値を超えると失敗
+IF TCVAR:話題無しフラグ && !TALENT:恋慕 && TFLAG:調教モード != 3
+	PRINTFORML %CALLNAME:TARGET%에게 말을 걸려고 했지만 말이 떠오르지 않는다
+	PRINTW 주변에 어색한 공기가 흘렀다…
+	TIME += 10
+	;口上分岐としてはここは大失敗扱いがいいんじゃないかな
+	RFLAG:コマンド結果受渡し変数 = -2
+	RETURN 0
+ENDIF
+
+LOCAL = RAND:100
+LOCAL:1 = 90 + GET_SUCCESS_RATE() / 5
+SIF LOCAL:1 > 99
+	LOCAL:1 = 99
+IF LOCAL <= 9
+	;10％で大成功
+	RFLAG:コマンド結果受渡し変数 = 1
+	EXP:MASTER:会話経験 ++
+ELSEIF LOCAL >= LOCAL:1
+	;10～1％で失敗
+	RFLAG:コマンド結果受渡し変数 = -1
+ELSE
+	;残りは成功
+	RFLAG:コマンド結果受渡し変数 = 0
+ENDIF
+
+
+;歓楽強度
+LOCAL:0 = 300
+;征服強度
+LOCAL:1 = 50
+
+IF RFLAG:コマンド結果受渡し変数 == -1
+	TIMES LOCAL:0 , 0.10
+	TIMES LOCAL:1 , 0.50
+ELSEIF RFLAG:コマンド結果受渡し変数 == 0
+	TIMES LOCAL:0 , 1.00
+	TIMES LOCAL:1 , 1.00
+ELSE
+	TIMES LOCAL:0 , 2.00
+	TIMES LOCAL:1 , 2.00
+ENDIF
+SELECTCASE ABL:MASTER:話術技能
+	CASE 0
+		TIMES LOCAL:0 , 0.20
+		TIMES LOCAL:1 , 0.20
+	CASE 1
+		TIMES LOCAL:0 , 0.40
+		TIMES LOCAL:1 , 0.40
+	CASE 2
+		TIMES LOCAL:0 , 0.70
+		TIMES LOCAL:1 , 0.70
+	CASE 3
+		TIMES LOCAL:0 , 1.00
+		TIMES LOCAL:1 , 1.00
+	CASE 4
+		TIMES LOCAL:0 , 1.50
+		TIMES LOCAL:1 , 1.50
+	CASEELSE
+		TIMES LOCAL:0 , 2.00
+		TIMES LOCAL:1 , 2.00
+ENDSELECT
+
+
+CALL SOURCE_CALC_歓楽(TARGET, PLAYER, LOCAL:0)
+CALL SOURCE_CALC_征服(TARGET, PLAYER, LOCAL:1)
+CALL SOURCE_CALC_好感度要素_友情度UP(TARGET, PLAYER, LOCAL:0 / 2)
+
+;会話累積値
+LOCAL = 200 - (TALENT:TARGET:会話資質 * 50) - (TALENT:PLAYER:会話資質 * 50)
+TCVAR:会話累積値 += LOCAL / (3 + ABL:MASTER:話術技能 + TALENT:TARGET:陽気／陰気)
+
+TIME += 15
+EXP:MASTER:会話経験 ++
+RETURN 1
+
+;-------------------------------------------------
+;実行判定
+;-------------------------------------------------
+@COM_ABLE300
+;会話実行判定
+SIF SAVESTR:ゲームフェイズ管理 != "通常モード"
+	RETURN 0
+;一括管理
+SIF GLOBAL_COMABLE(300)
+	RETURN RESULT
+;睡眠中
+SIF CFLAG:睡眠
+	RETURN 0
+;口を何かに使ってるなら無理
+SIF TEQUIP:PLAYER:口
+	RETURN 0
+SIF TEQUIP:TARGET:口
+	RETURN 0
+RETURN 1
+
+;-------------------------------------------------
+;実行時メッセージ
+;-------------------------------------------------
+@MESSAGE_COM300
+PRINTFORM %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%와(과)
+IF TALENT:恋慕
+	PRINTDATA
+		DATAFORM 손가락을 얽히게 하면서
+		DATAFORM 나란히 앉아
+		DATAFORM 조금 부끄러워하며
+		DATAFORM \@ TIME >= 360 && TIME <= 1080 ? 낮의 빛 속에서 # 밤의 고요함 속에서 \@
+		DATAFORM 장난치면서
+		DATAFORM 미소를 주고받으며
+	ENDDATA
+ELSE
+	PRINTDATA
+		DATAFORM 세상
+		DATAFORM 두서 없는
+		DATAFORM 시시한
+		DATAFORM 시시한
+		DATAFORM 하찮은
+		DATAFORM 조금
+	ENDDATA
+ENDIF
+PRINTFORML 이야기를 했다
+IF RFLAG:コマンド結果受渡し変数 == 1
+	PRINTFORML 즐거운 시간이 흘렀다…
+ELSEIF RFLAG:コマンド結果受渡し変数 == -1
+	PRINTFORML 대화가 끊기자 어색한 공기가 흘렀다…
+ENDIF
+
+

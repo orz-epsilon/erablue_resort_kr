@@ -1,0 +1,63 @@
+
+
+@COMNAME354
+#FUNCTIONS
+TSTR:コマンド名受渡 = 용서를 빌다
+
+;===================================================
+;コマンドタイプ
+;===================================================
+@COMTYPE_354
+#FUNCTION
+TFLAG:コマンドタイプ受渡 = COMTYPE("いつでも")
+
+@COM_TOOLTIP_354
+LOCALS = <br>■許しを乞う<br>
+LOCALS += "분노 상태의 상대의 분노 게이지를 감소시키는 커맨드.<br>감소하는 양은 호감도 레벨에 비례한다."
+LOCALS += "<br>COM 타입: 언제든지<br>획득 소스: 없음"
+LOCALS += "<br>고유 획득 경험: 없음<br>"
+TSTR:ツールチップ受渡 = %LOCALS%
+
+
+;許しを乞う
+@COM354
+
+BASE:怒り -= CFLAG:好感度レベル * 5
+
+RETURN 1
+
+;-------------------------------------------------
+;実行判定
+;-------------------------------------------------
+@COM_ABLE354
+;告白する実行判定
+SIF SAVESTR:ゲームフェイズ管理 != "通常モード"
+	RETURN 0
+;一括管理
+SIF GLOBAL_COMABLE(354)
+	RETURN RESULT
+;いつでもだが相手がいないとダメ
+SIF !TARGET
+	RETURN 0
+;二人きりでないとだめ
+SIF GET_TARGETNUM() > 1
+	RETURN 0
+;相手が怒っている必要あり
+SIF !CFLAG:怒り
+	RETURN 0
+;睡眠中
+SIF CFLAG:睡眠
+	RETURN 0
+RETURN 1
+
+;-------------------------------------------------
+;実行時メッセージ
+;-------------------------------------------------
+
+@MESSAGE_COM354
+PRINTFORML %CALLNAME:PLAYER%은/는 진심으로 %CALLNAME:TARGET%에게 사과했다
+IF BASE:TARGET:怒り > 0
+	PRINTL 하지만, 아직 용서받지 못한 모양이다…
+ELSE
+	PRINTL 어떻게든 용서받을 수 있었다. 다음번엔 조심해야겠다…
+ENDIF

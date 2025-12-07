@@ -1,0 +1,48 @@
+
+@アイテム個別文章表示_胆力の薬(ARGS)
+IF ARGS == "値段"
+	詳細文文字列受け渡し変数 = 루피
+	RETURN 500
+ENDIF
+
+LOCALS = 
+LOCALS += @"■담력의 약　　　소지 수:{DT_CELL_GET("所持アイテムデータベース", 0, "胆力の薬")}<br>"
+LOCALS += "마력을 높이는 보조 효과를 가진 아이템의 총칭<br>"
+LOCALS += "오의를 사용하는 보조로는 간편하게 사용할 수 있다.<br>"
+LOCALS += "<br>"
+LOCALS += "【효과】<br>"
+LOCALS += "아군 전체의 오의 게이지를 [３０％] 회복한다.<br>"
+
+詳細文文字列受け渡し変数 = %LOCALS%
+
+@アイテム使用先表示_胆力の薬
+IF 戦闘行動内容 != 1000
+	LOCALS = <br><br>전투 중 외에는 사용할 수 없습니다.
+	詳細文文字列受け渡し変数 += @"%LOCALS%"
+	RETURN 0
+ENDIF
+CALL 汎用使用先表示("味方全体")
+
+@アイテム効果処理_胆力の薬(ARG)
+;ARG = 隊列の何番目か
+
+IF 戦闘行動内容 != 1000
+	PRINTW 전투 중 외에는 사용할 수 없습니다
+	RETURN 0
+ENDIF
+
+IF DT_CELL_GET("所持アイテムデータベース", 0, "胆力の薬") < 1
+	PRINTW 아이템이 없습니다
+	RETURN 0
+ENDIF
+
+FOR LOCAL, 0, 4
+	SIF !BATTLE_STATE:LOCAL:キャラ登録番号
+		CONTINUE
+	LOCAL:1 = MIN(BATTLE_STATE:LOCAL:ゲージ最大値 - BATTLE_STATE:LOCAL:奥義ゲージ, 30)
+	BATTLE_STATE:LOCAL:奥義ゲージ = MIN(BATTLE_STATE:LOCAL:奥義ゲージ + 30, BATTLE_STATE:LOCAL:ゲージ最大値)
+	PRINTFORMW %CALLNAME:(BATTLE_STATE:LOCAL:キャラ登録番号)%의 오의 게이지가{LOCAL:1}증가했습니다
+NEXT
+
+
+RETURN 1

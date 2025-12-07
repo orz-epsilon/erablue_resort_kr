@@ -1,0 +1,153 @@
+
+@COMNAME350
+#FUNCTIONS
+#DIM 隠密数
+
+隠密数 = 0
+FOR LOCAL, 1, CHARANUM
+	SIF TARGET:LOCAL < 1 || !CFLAG:PLAYER:隠密
+		BREAK
+	SIF CFLAG:(TARGET:LOCAL):隠密
+		隠密数 ++
+NEXT
+
+TSTR:コマンド名受渡 = 밀어 넘어뜨리다
+SIF !BEDROOM(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置)
+	TSTR:コマンド名受渡 = 끌어안다
+
+IF GET_TARGETNUM() > 1 && !CFLAG:PLAYER:隠密 && フィールド展開:うふふ目撃スルー == 0
+	TSTR:コマンド名受渡 = 모아서%TSTR:コマンド名受渡%
+ELSEIF CFLAG:PLAYER:隠密 && 隠密数 > 1
+	TSTR:コマンド名受渡 = 모아서%TSTR:コマンド名受渡%
+ENDIF
+
+;===================================================
+;コマンドタイプ
+;===================================================
+@COMTYPE_350
+#FUNCTION
+TFLAG:コマンドタイプ受渡 = COMTYPE("セクハラ")
+
+@COM_TOOLTIP_350
+LOCALS = <br>■밀어 넘어뜨리다<br>
+LOCALS += "혹은 끌어안는다. 이미 합의를 얻은 상대와 성교를 하는 커맨드. <br>같은 방에 있는 사람이 모두 함락되었을 때만 가능하지만, 함께 은밀 시, 혹은 강화 노출 필드 전개 시에는 같은 장소에 비함락 캐릭터가 있어도 가능."
+LOCALS += "<br>COM 타입: 성희롱<br>획득 소스: 없음"
+LOCALS += "<br>고유 획득 경험: 없음<br>"
+TSTR:ツールチップ受渡 = %LOCALS%
+
+@COM350
+;押し倒す
+IF フィールド展開:うふふ目撃スルー
+	CALL うふふ開始キャラ処理(TARGET, "押し倒す")
+ELSE
+	FOR LOCAL,1,CHARANUM
+		SIF TARGET:LOCAL <= 0
+			BREAK
+		SIF CFLAG:PLAYER:隠密 && !CFLAG:(TARGET:LOCAL):隠密
+			CONTINUE
+		CALL うふふ開始キャラ処理(TARGET:LOCAL, "押し倒す")
+	NEXT
+ENDIF
+
+CFLAG:PLAYER:うふふ = 1
+
+
+;3Pモード管理フラグを初期化
+FLAG:モード管理 = 0
+
+TIME += 5
+
+RETURN 1
+
+;-------------------------------------------------
+;実行判定
+;-------------------------------------------------
+@COM_ABLE350
+;押し倒す実行判定
+SIF SAVESTR:ゲームフェイズ管理 != "通常モード"
+	RETURN 0
+;一括管理
+SIF GLOBAL_COMABLE(350)
+	RETURN RESULT
+;飲み会時はだめ
+SIF TFLAG:調教モード == 3
+	RETURN 0
+;ハーヴィンオナホ中はだめ
+SIF MODE_存在判定_プレイヤー側("ハーヴィンオナホ系", PLAYER)
+	RETURN 0
+;全裸散歩中はだめ
+SIF MODE_存在判定_プレイヤー側("全裸散歩", PLAYER)
+	RETURN 0
+;他人とデート中はダメ
+SIF CFLAG:TARGET:デート && CFLAG:TARGET:デート != PLAYER + 100 && TCVAR:TARGET:デートちょっかい値 < 1
+	RETURN 0
+;馴れ合い強度2
+SIF TCVAR:PLAYER:馴れ合い強度 < 2
+	RETURN 0
+;隠密中は一緒に隠密してるキャラを見る
+IF フィールド展開:うふふ目撃スルー == 0
+	IF CFLAG:PLAYER:隠密
+		FOR LOCAL, 1, CHARANUM
+			SIF TARGET:LOCAL < 1
+				BREAK
+			SIF CFLAG:(TARGET:LOCAL):隠密 && 陥落チェック_性的＋疑似恋慕(TARGET:LOCAL) == 0
+				RETURN 0
+		NEXT
+	ELSE
+		;非隠密時は全員陥落済みでないとだめ
+		FOR LOCAL,1,CHARANUM
+			SIF TARGET:LOCAL < 1
+				BREAK
+			SIF 陥落チェック_性的＋疑似恋慕(TARGET:LOCAL) == 0
+				RETURN 0
+		NEXT
+	ENDIF
+ELSE
+	SIF 陥落チェック_性的＋疑似恋慕(TARGET) == 0
+		RETURN 0
+ENDIF
+;睡眠中
+SIF CFLAG:睡眠
+	RETURN 0
+RETURN 1
+;-------------------------------------------------
+;実行時メッセージ
+;-------------------------------------------------
+@MESSAGE_COM350
+#DIM 隠密数
+
+
+IF CFLAG:TARGET:隠密 && CFLAG:PLAYER:隠密
+	PRINTFORM %CALLNAME:PLAYER%은(는) 능숙하게 그림자에 숨어 있는 것을 확인하자
+	隠密数 = 0
+	FOR LOCAL, 1, CHARANUM
+		SIF TARGET:LOCAL < 1
+			BREAK
+		SIF CFLAG:(TARGET:LOCAL):隠密
+			隠密数 ++
+	NEXT
+	IF 隠密数 > 1
+		PRINTFORML %CALLNAME:TARGET%들을 끌어안았다…
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%을(를) 끌어안았다…
+	ENDIF
+ELSEIF GET_TARGETNUM() > 1 && フィールド展開:うふふ目撃スルー == 0
+	PRINTFORM %CALLNAME:PLAYER%은(는)
+	IF BEDROOM(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置) == 0
+		PRINT 주변에 사람이 없는 것을 확인하자
+	ENDIF
+	PRINTFORML %CALLNAME:TARGET%들을 끌어안았다…
+ELSE
+	PRINTFORM %CALLNAME:PLAYER%은(는)
+	IF BEDROOM(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置) == 0 && フィールド展開:うふふ目撃スルー == 0
+		PRINT 주변에 사람이 없는 것을 확인하자
+	ENDIF
+	PRINTFORML %CALLNAME:TARGET%을(를) 끌어안았다…
+ENDIF
+IF TCVAR:TARGET:初うふふフラグ
+	IF 知識素質:TARGET:性知識 < 0
+		PRINTFORML %CALLNAME:TARGET%은(는) 의아한 얼굴로 %CALLNAME:PLAYER%을(를) 바라보고 있다…
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%은(는) 각오를 다진 듯한 눈으로 %CALLNAME:PLAYER%을(를) 바라보고 있다…
+	ENDIF
+ENDIF

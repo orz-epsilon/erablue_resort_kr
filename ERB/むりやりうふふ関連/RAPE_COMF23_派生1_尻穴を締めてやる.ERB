@@ -1,0 +1,66 @@
+
+@RAPE_COMNAME_S23_1
+#FUNCTIONS
+TSTR:コマンド名受渡 = 항문을 조여준다
+
+;===================================================
+;コマンドタイプ
+;===================================================
+@RAPE_COMTYPE_S_23_1
+#FUNCTION
+TFLAG:コマンドタイプ受渡 = RAPE_COMTYPE("Ａ系_被挿入中")
+
+@RAPE_COM_TOOLTIP_S23_1
+LOCALS = <br>■항문을 조여준다<br>
+LOCALS += "괄약근을 조여, 삽입되어 있는 음경에 강한 자극을 주는 커맨드."
+LOCALS += "<br>RAPE_COM 타입: A계or피삽입중<br>획득 소스: 쾌C・노출・접촉"
+LOCALS += "<br>고유 획득 경험: C성교경험_A삽입(TARGET)<br>"
+TSTR:ツールチップ受渡 = %LOCALS%
+
+@RAPE_COM_S23_1
+;-------------------------------------------------
+;ソース追加処理
+;-------------------------------------------------
+
+CALL SOURCE_CALC_快Ａ(PLAYER, TARGET, 600)
+CALL SOURCE_CALC_露出(TARGET, PLAYER, 50)
+CALL SOURCE_CALC_接触(TARGET, PLAYER, 150)
+CALL SOURCE_CALC_快Ｃ(TARGET, PLAYER, 600)
+
+;-------------------------------------------------
+;経験の処理
+;-------------------------------------------------
+EXP:Ｃ性交経験_Ａ挿入 ++
+EXP:PLAYER:Ａ性交経験 ++
+;同性愛　レズなら戻り値1ゲイなら戻り値2
+IF HETEROSEX(TARGET,PLAYER)
+	EXP:同性愛経験 += 4
+	EXP:PLAYER:同性愛経験 += 4
+ENDIF
+
+EXP:愛情経験 += TALENT:恋慕 * 2
+
+RETURN 1
+
+;-------------------------------------------------
+;実行判定
+;-------------------------------------------------
+@RAPE_COM_ABLE_S23_1
+;腸内を締める実行判定
+;一括管理
+SIF GLOBAL_RAPE_COMABLE_S("23_1")
+	RETURN RESULT
+;挿入系モードじゃない時はアウト
+SIF MODE_確認_完全一致("Ａ挿入系", TARGET, PLAYER) < 0
+	RETURN 0
+RETURN 1
+
+;-------------------------------------------------
+;実行時メッセージ
+;-------------------------------------------------
+@RAPE_MESSAGE_COM_S23_1
+
+PRINTFORML %CALLNAME:PLAYER%은(는) 배에 힘을 주어, %CALLNAME:TARGET%의 음경을 %TEXTR("장벽/괄약근")%으로 %TEXTR("꽉/꾸욱")%
+CALL PRINT_STR(@"_H_")
+PRINTFORML 하고 조여주었다…
+

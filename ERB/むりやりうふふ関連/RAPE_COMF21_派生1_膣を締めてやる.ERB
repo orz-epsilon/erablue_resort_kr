@@ -1,0 +1,68 @@
+
+@RAPE_COMNAME_S21_1
+#FUNCTIONS
+TSTR:コマンド名受渡 = 질을 조여준다
+
+;===================================================
+;コマンドタイプ
+;===================================================
+@RAPE_COMTYPE_S_21_1
+#FUNCTION
+TFLAG:コマンドタイプ受渡 = RAPE_COMTYPE("Ｖ系_被挿入中")
+
+
+@RAPE_COM_TOOLTIP_S21_1
+LOCALS = <br>■질을 조여준다<br>
+LOCALS += "질 안을 조여, 삽입되어 있는 음경에 강한 자극을 주는 커맨드."
+LOCALS += "<br>RAPE_COM타입：Ｖ계or피삽입중<br>획득 소스：쾌Ｃ・노출・접촉"
+LOCALS += "<br>고유 획득 경험：Ｃ성교 경험_Ｖ삽입(TARGET)<br>"
+TSTR:ツールチップ受渡 = %LOCALS%
+
+@RAPE_COM_S21_1
+;-------------------------------------------------
+;ソース追加処理
+;-------------------------------------------------
+
+CALL SOURCE_CALC_快Ｖ(PLAYER, TARGET, 600)
+CALL SOURCE_CALC_露出(TARGET, PLAYER, 50)
+CALL SOURCE_CALC_接触(TARGET, PLAYER, 150)
+CALL SOURCE_CALC_快Ｃ(TARGET, PLAYER, 600)
+
+;-------------------------------------------------
+;経験の処理
+;-------------------------------------------------
+EXP:Ｃ性交経験_Ｖ挿入 ++
+EXP:PLAYER:Ｖ性交経験 ++
+;同性愛　レズなら戻り値1ゲイなら戻り値2
+IF HETEROSEX(TARGET,PLAYER)
+	EXP:同性愛経験 += 4
+	EXP:PLAYER:同性愛経験 += 4
+ENDIF
+
+EXP:愛情経験 += TALENT:恋慕 * 2
+
+RETURN 1
+
+;-------------------------------------------------
+;実行判定
+;-------------------------------------------------
+@RAPE_COM_ABLE_S21_1
+;腸内を締める実行判定
+;一括管理
+SIF GLOBAL_RAPE_COMABLE_S("21_1")
+	RETURN RESULT
+;挿入系モードじゃない時はアウト
+SIF MODE_確認_完全一致("Ｖ挿入系", TARGET, PLAYER) < 0
+	RETURN 0
+RETURN 1
+
+;-------------------------------------------------
+;実行時メッセージ
+;-------------------------------------------------
+@RAPE_MESSAGE_COM_S21_1
+
+PRINTFORM %CALLNAME:PLAYER%은(는) 배에 힘을 주어, %CALLNAME:TARGET%의 음경을%TEXTR("질/질벽/질살/만살")%으로%TEXTR("꽉/꾸욱")%
+CALL PRINT_STR(@"_H_")
+PRINTFORML 하고 조여주었다…
+
+

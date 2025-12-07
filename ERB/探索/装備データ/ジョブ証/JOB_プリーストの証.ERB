@@ -1,0 +1,214 @@
+@証関数_プリーストの証(処理モード, 対象キャラ)
+#DIM 対象キャラ
+#DIMS 処理モード
+
+SELECTCASE 処理モード
+	CASE "ジョブ証種別"
+		証関連文字列受け渡し = 일반 직업
+	CASE "証名"
+		TSTR:コマンド名受渡 = 프리스트의 증표
+	CASE "クラス名"
+		SIF 対象キャラ <= 0
+			RETURN 0
+		SELECTCASE GET_JOBSKILL_LEVEL(対象キャラ)
+			CASE IS >= 3
+				RESULTS = ビショップ
+				RESULTS:1 = Class.III
+				RETURN 1
+			CASE 2
+				RESULTS = クレリック
+				RESULTS:1 = Class.II
+				RETURN 1
+			CASEELSE
+				RESULTS = プリースト
+				RESULTS:1 = Class.I
+				RETURN 1
+		ENDSELECT
+	CASE "フレーバー"
+		詳細文文字列受け渡し変数 '= "치유와 파사를 다루는 성직자의 증표.<br>"
+		詳細文文字列受け渡し変数 += "효과는 미미하지만 전체 회복을 가지고 있으며, 버프나 디버프를 지울 수 있다.<br>"
+		詳細文文字列受け渡し変数 += "장비하면 왠지 모르게 마음이 다잡아지는 기분이 든다.<br>"
+ENDSELECT
+
+;ランダム抽選では出現しない（入手法：ダンジョン「人食い鳥の島」のイベントで入手）
+;@証出現率_プリーストの証(入手タイプ, 装備ランク)
+
+@証アビ関数_プリーストの証_1(処理モード, 対象キャラ)
+#DIM 対象キャラ
+#DIMS 処理モード
+#DIM LEVEL
+#DIM 効果数値, 1
+#DIMS CONST アビ名 = "ヒールオール"
+#DIM CONST 消費ＭＰ = 50
+IF 対象キャラ > 0
+	LEVEL = GET_JOBSKILL_LEVEL(対象キャラ)
+ELSE
+	LEVEL = 1
+ENDIF
+SELECTCASE LEVEL
+	CASE IS >= 3
+		効果数値:0 = 70
+	CASE 2
+		効果数値:0 = 60
+	CASEELSE
+		効果数値:0 = 50
+ENDSELECT
+
+SELECTCASE 処理モード
+	CASE "アビ名"
+		TSTR:コマンド名受渡 '= アビ名
+	CASE "アビ説明文"
+		詳細文文字列受け渡し変数 '= @"■%アビ名%<br>"
+		詳細文文字列受け渡し変数 += @"　소비 MP:{消費ＭＰ}<br>"
+		詳細文文字列受け渡し変数 += @"　효과: 아군 전체의 HP를 [회복력✕{効果数値:0}%] 회복시킨다."
+		RETURN 消費ＭＰ
+	CASE "アビ効果"
+		CALL アビ対象選択テンプレート_味方全体_生者のみ
+		アビ汎用変数:効果割合 = 効果数値:0
+		CALL アビテンプレート_回復処理
+ENDSELECT
+
+@証アビ関数_プリーストの証_2(処理モード, 対象キャラ)
+#DIM 対象キャラ
+#DIMS 処理モード
+#DIM LEVEL
+#DIM 全体フラグ
+#DIM 消費ＭＰ
+#DIMS CONST アビ名 = "クリア", "クリアオール"
+#DIMS CONST 範囲テキスト = "味方単体", "味方全体"
+IF 対象キャラ > 0
+	LEVEL = GET_JOBSKILL_LEVEL(対象キャラ)
+	IF 得意武器判定(対象キャラ, "杖")
+	ELSEIF 基礎BATTLE_STATE:対象キャラ:ステータスタイプ保存 == タイプ文字列数値変換("回復")
+	ELSE
+		LEVEL --
+	ENDIF
+ELSE
+	LEVEL = 1
+ENDIF
+SELECTCASE LEVEL
+	CASE IS >= 3
+		全体フラグ = 1
+		消費ＭＰ = 15
+	CASE 2
+		全体フラグ = 1
+		消費ＭＰ = 20
+	CASEELSE
+		全体フラグ = 0
+		消費ＭＰ = 5
+ENDSELECT
+
+SELECTCASE 処理モード
+	CASE "アビ名"
+		SIF LEVEL > 0
+			TSTR:コマンド名受渡 '= アビ名:전체 플래그
+	CASE "アビ説明文"
+		IF 対象キャラ <= 0
+			詳細文文字列受け渡し変数 '= @"■%アビ名:全体フラグ%(장비자가 지팡이 특기or회복 타입일 때)<br>"
+		ELSE
+			詳細文文字列受け渡し変数 '= @"■%アビ名:全体フラグ%<br>"
+		ENDIF
+		詳細文文字列受け渡し変数 += @"　소비 MP:{消費ＭＰ}<br>"
+		詳細文文字列受け渡し変数 += @"　효과:%範囲テキスト:全体フラグ%의 디버프 효과를 1개 제거한다."
+		RETURN 消費ＭＰ
+	CASE "アビ効果"
+		IF 全体フラグ
+			CALL アビ対象選択テンプレート_味方全体_生者のみ
+		ELSE
+			CALL アビ対象選択テンプレート_味方単体_生者のみ
+		ENDIF
+		CALL アビテンプレート_有利効果_デバフ消去
+ENDSELECT
+
+@証アビ関数_プリーストの証_3(処理モード, 対象キャラ)
+#DIM 対象キャラ
+#DIMS 処理モード
+#DIM LEVEL
+#DIMS CONST アビ名 = "ディスペル"
+#DIM CONST 消費ＭＰ = 10
+IF 対象キャラ > 0
+	LEVEL = GET_JOBSKILL_LEVEL(対象キャラ)
+	IF 得意武器判定(対象キャラ, "槍")
+	ELSEIF 基礎BATTLE_STATE:対象キャラ:ステータスタイプ保存 == タイプ文字列数値変換("回復")
+	ELSE
+		LEVEL --
+	ENDIF
+ELSE
+	LEVEL = 1
+ENDIF
+
+SELECTCASE 処理モード
+	CASE "アビ名"
+		SIF LEVEL > 0
+			TSTR:コマンド名受渡 '= アビ名
+	CASE "アビ説明文"
+		IF 対象キャラ <= 0 && LEVEL <= 1
+			詳細文文字列受け渡し変数 '= @"■%アビ名%(장비자가 창 특기or회복 타입일 때)<br>"
+		ELSE
+			詳細文文字列受け渡し変数 '= @"■%アビ名%<br>"
+		ENDIF
+		詳細文文字列受け渡し変数 += @"　소비 MP:{消費ＭＰ}<br>"
+		詳細文文字列受け渡し変数 += "　효과: 적 단일 대상의 버프 효과를 1개 제거한다."
+		RETURN 消費ＭＰ
+	CASE "アビ効果"
+		CALL アビ対象選択テンプレート_敵単体
+		CALL アビテンプレート_不利効果_バフ消去
+ENDSELECT
+
+@証アビ関数_プリーストの証_4(処理モード, 対象キャラ)
+#DIM 対象キャラ
+#DIMS 処理モード
+#DIM LEVEL
+#DIM 消費ＭＰ
+#DIM 効果数値, 1
+#DIMS CONST アビ名 = "リヴァイヴ"
+IF 対象キャラ > 0
+	LEVEL = GET_JOBSKILL_LEVEL(対象キャラ) - 1
+ELSE
+	LEVEL = 0
+ENDIF
+SELECTCASE LEVEL
+	CASE IS >= 2
+		消費ＭＰ = 16
+		効果数値:0 = 45
+	CASEELSE
+		消費ＭＰ = 20
+		効果数値:0 = 30
+ENDSELECT
+
+SELECTCASE 処理モード
+	CASE "アビ名"
+		SIF LEVEL > 0
+			TSTR:コマンド名受渡 '= アビ名
+	CASE "アビ説明文"
+		詳細文文字列受け渡し変数 '= @"■%アビ名%<br>"
+		詳細文文字列受け渡し変数 += @"　소비 MP: 최대 MP의 {消費ＭＰ}%<br>"
+		詳細文文字列受け渡し変数 += @"　효과: 전투 불능 아군 단일 대상의 HP를 [회복력✕{効果数値:0}%] 회복시킨다."
+		RETURN (基礎BATTLE_STATE:対象キャラ:最大ＭＰ * 消費ＭＰ + 99) / 100
+	CASE "アビ効果"
+		CALL アビ対象選択テンプレート_味方単体_死者のみ
+		アビ汎用変数:効果割合 = 効果数値:0
+		アビ汎用変数:蘇生可能オプション = 1
+		CALL アビテンプレート_回復処理
+ENDSELECT
+
+@証アビ関数_プリーストの証_10(処理モード, 対象キャラ)
+#DIM 対象キャラ
+#DIMS 処理モード
+#DIMS CONST アビ名 = "退魔の祈り"
+#DIM CONST 消費ＭＰ = 0
+
+SELECTCASE 処理モード
+	CASE "アビ名"
+		TSTR:コマンド名受渡 '= アビ名
+	CASE "アビ説明文"
+		詳細文文字列受け渡し変数 '= @"■%アビ名%<br>"
+		詳細文文字列受け渡し変数 += @"　소비 MP: {消費ＭＰ}<br>"
+		詳細文文字列受け渡し変数 += "　효과: 적 단일 대상에게 자신 속성의 [회복력✕100%] 대미지를 준다."
+		RETURN 消費ＭＰ
+	CASE "アビ効果"
+		CALL アビ対象選択テンプレート_敵単体
+		アビ汎用変数:効果割合 = 100
+		アビ汎用文字列:攻撃側使用能力値 = 회복력
+		CALL アビテンプレート_ダメージ処理_自属性
+ENDSELECT

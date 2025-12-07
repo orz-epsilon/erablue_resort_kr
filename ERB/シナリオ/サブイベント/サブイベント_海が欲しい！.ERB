@@ -1,0 +1,87 @@
+
+@イベント発生条件_サブイベント_海が欲しい！
+
+;開放条件を満たしたら1を返すこと
+SIF イベント完了フラグ確認("大拡張！空艇港") < 1
+	RETURN 0
+SIF 施設改造度:15:0 == 0
+	RETURN 0
+
+RETURN 1
+
+@イベント関数_サブイベント_海が欲しい！(ARG)
+DRAWLINE
+PRINTL ［바다가 갖고 싶어!］
+DRAWLINE
+PRINTW
+PRINTFORMW 예상보다 훨씬 빨리 항로가 열려, 리조트를 찾는 손님도 서서히 늘고 있다.
+PRINTFORMW 그러나 그에 비해, 아직 리조트의 시설·설비는 분명히 부족했다.
+PRINTFORMW 본래는 항로 구축과 병행하여 시설 확충을 진행할 예정이었으니 어쩔 수 없지만.
+PRINTL
+PRINTFORMW 지금 관광객의 수요를 보면…… 만들어야 할 것은 '바다'일까.
+PRINTFORMW 수영장도 평판이 나쁜 것은 아니지만, 관광의 목적이 될 정도는 아니다.
+PRINTFORMW 전공에서도 손에 꼽을 정도로밖에 없는 바다라는 지형을 만들 수 있다면, 평판도 크게 오를 것이다.
+PRINTL
+PRINTFORMW 그런 이유로 ZP로 바다를 만들어 주었으면 하는데.
+PRINTL
+CALL 画像表示("顔エラ","LEFT",,,,1,)
+PRINTL 성정수 era:
+PRINTFORMW 「뭐, 불가능하다고는 말하지 않겠지만…… 내가 관장하는 것은 쾌락과 절정
+PRINTFORMW 　무턱대고 ZP를 쏟아붓는 것보다, 비슷한 권능을 가진 성정수를 데려오는 편이 저렴하고 빨리 실현할 수 있을 거야
+PRINTFORMW 　누구라도 좋아. 물의 속성을 가지고 태어난 성정수와 인연을 맺으면, ZP와 성정수의 힘을 사용해 소규모의 바다를 만들어낼 수 있을 거야」
+PRINTL
+PRINTFORMW 인연이라고 하면 [연모], 혹은 [섹스 프렌드] 정도까지 관계를 진전시키라는 것이겠지.
+IF 水の星晶獣_陥落チェック()
+	PRINTFORMW 그렇다면 이미 달성했다. 당장이라도 착수하자.
+	PRINTL
+	PRINTL 성정수 era:
+	PRINTFORMW 「오호, 알고 있었던 건가 우연인 건가. 어느 쪽이든 이야기가 빠른 건 좋은 일이다
+	PRINTFORMW 　바다 생성을 위한 권능을 추가해 두지. 나머지는 시설을 정비하면 된다」
+	PRINTL
+	PRINTL 성정수 era:
+	PRINTFORMW 「덤이다. 바다가 있고, 그곳을 보금자리로 삼는 성정수가 있는 섬의 좌표도 알려주지
+	PRINTFORMW 　지형을 정비하는 참고라도 될 테니 말이야. 공부하고 오도록 해」
+	PRINTL
+	SETCOLOR 0xFFFF00
+	PRINTFORML 대규모 에리어 건축 메뉴에 「해수욕 에리어 작성」이 추가되었습니다.
+	PRINTFORML 도구점에 「물의 마석」이 추가되었습니다.
+	海作成許可フラグ = 1
+ELSE
+	PRINTFORMW 짐작 가는 곳은 있지만, 바로 그런 관계가 될 리도 없다.
+	PRINTFORMW 좀 더 다른 방법은 없는지, era에게 묻는다.
+	PRINTL
+	PRINTL 성정수 era:
+	PRINTFORMW 「그렇군…… 그렇다면, 물의 성정수가 있는 섬의 좌표를 알려주지
+	PRINTFORMW 　그 성정수는 해저를 보금자리로 삼고, 바다와 강하게 연결된 성질을 가지고 있다
+	PRINTFORMW 　그녀라면 인연을 맺지 않아도, 분신을 리조트에 데려오는 것만으로도 대용이 될 것이다
+	PRINTFORMW 　잘 유혹할 수 있을지는 너에게 달렸지만 말이야. 나의 계약자여」
+	PRINTL
+ENDIF
+SETCOLOR 0xFFFF00
+PRINTFORML 고전장 섬 무리의 좌표를 손에 넣었습니다.
+PRINTFORML 던전［심해의 고전장］이 해방되었습니다.
+ダンジョン出現フラグ_深海の古戦場跡 = 1
+RESETCOLOR
+FORCEWAIT
+
+CALL イベント完了フラグ汎用処理("海が欲しい！")
+
+
+@水の星晶獣_陥落チェック()
+#FUNCTION
+#DIM キャラ番号
+
+FOR キャラ番号, 1, CHARANUM
+	SIF TALENT:キャラ番号:種族 != 5
+		CONTINUE
+	SIF 基礎BATTLE_STATE:キャラ番号:属性 != 1
+		CONTINUE
+	SIF 陥落チェック_性的(キャラ番号)
+		RETURNF 1
+NEXT
+
+RETURNF 0
+
+
+
+

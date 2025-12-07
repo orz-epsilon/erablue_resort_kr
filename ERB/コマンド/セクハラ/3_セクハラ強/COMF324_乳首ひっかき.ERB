@@ -1,0 +1,191 @@
+
+
+@COMNAME324
+#FUNCTIONS
+TSTR:コマンド名受渡 = 젖꼭지 긁기
+
+;===================================================
+;コマンドタイプ
+;===================================================
+@COMTYPE_324
+#FUNCTION
+TFLAG:コマンドタイプ受渡 = COMTYPE("セクハラ強")
+弱点コマンドカテゴリ = B
+睡眠中許可 = 1
+
+@COM_TOOLTIP_324
+LOCALS = <br>■젖꼭지 긁기<br>
+LOCALS += "옷 위에서 상대의 젖꼭지를 손톱으로 긁어 자극하는 커맨드. <br>대상이 상반신에 갑옷을 입고 있는 경우 실행 불가."
+LOCALS += "<br>COM 타입: 성희롱<br>획득 소스: 접촉・노출・쾌B"
+LOCALS += "<br>고유 획득 경험: 젖꼭지 개발(TARGET)<br>"
+TSTR:ツールチップ受渡 = %LOCALS%
+
+@COM324
+;乳首ひっかき
+SIF 同性愛性癖判定(PLAYER,TARGET)
+	EXP:PLAYER:同性愛経験 += 1
+
+RCVAR:乳首開発フラグ = 1
+;発生する快楽は受け手の状態に依存しない
+CALL SOURCE_CALC_快Ｂ(TARGET, PLAYER, 150)
+SIF TALENT:PLAYER:器用な指
+	CALL SOURCE_CALC_快Ｂ(TARGET, PLAYER, 50)
+
+
+TIME += 10
+SIF CFLAG:TARGET:睡眠
+	RETURN 1
+
+SIF 同性愛性癖判定(TARGET,PLAYER)
+	EXP:TARGET:同性愛経験 += 1
+
+
+CALL セクハラ反応タイプ判定(TARGET)
+;RFLAG:コマンド結果受渡し変数
+;1:拒絶  2:受け入れ 3:喜び
+;RFLAG:コマンド結果受渡し変数２
+;1:無知  2:無反応 3:嫌悪  4:拒否  5:余裕  6:羞恥  7:愉悦  8:汎用
+
+;セクハラ強は基本的に喜び以外に入らないはず（合意条件であり、合意に入るにはそれなりに仲良くならなければならないため）
+
+SELECTCASE RFLAG:コマンド結果受渡し変数２
+	CASE 1
+		;無知
+		CALL SOURCE_CALC_接触(TARGET, PLAYER, 200)
+		CALL SOURCE_CALC_露出(TARGET, PLAYER, 250)
+		CALL SOURCE_CALC_好感度要素_性愛度UP(TARGET, PLAYER, 50)
+	CASE 2
+		;無反応
+		CALL SOURCE_CALC_接触(TARGET, PLAYER, 200)
+		CALL SOURCE_CALC_露出(TARGET, PLAYER, 250)
+		CALL SOURCE_CALC_好感度要素_性愛度UP(TARGET, PLAYER, 50)
+	CASE 3
+		;嫌悪
+		CALL SOURCE_CALC_接触(TARGET, PLAYER, 200)
+		CALL SOURCE_CALC_露出(TARGET, PLAYER, 250)
+		CALL SOURCE_CALC_好感度要素_性愛度UP(TARGET, PLAYER, 80)
+	CASE 4
+		;拒否
+		CALL SOURCE_CALC_接触(TARGET, PLAYER, 200)
+		CALL SOURCE_CALC_露出(TARGET, PLAYER, 250)
+		CALL SOURCE_CALC_好感度要素_性愛度UP(TARGET, PLAYER, 100)
+	CASE 5
+		;余裕
+		CALL SOURCE_CALC_接触(TARGET, PLAYER, 200)
+		CALL SOURCE_CALC_露出(TARGET, PLAYER, 250)
+		CALL SOURCE_CALC_好感度要素_性愛度UP(TARGET, PLAYER, 120)
+	CASE 6
+		;羞恥
+		CALL SOURCE_CALC_接触(TARGET, PLAYER, 300)
+		CALL SOURCE_CALC_露出(TARGET, PLAYER, 350)
+		CALL SOURCE_CALC_好感度要素_性愛度UP(TARGET, PLAYER, 150)
+	CASE 7
+		;愉悦
+		CALL SOURCE_CALC_接触(TARGET, PLAYER, 200)
+		CALL SOURCE_CALC_露出(TARGET, PLAYER, 250)
+		CALL SOURCE_CALC_好感度要素_性愛度UP(TARGET, PLAYER, 130)
+	CASE 8
+		;汎用
+		CALL SOURCE_CALC_接触(TARGET, PLAYER, 200)
+		CALL SOURCE_CALC_露出(TARGET, PLAYER, 250)
+		CALL SOURCE_CALC_好感度要素_性愛度UP(TARGET, PLAYER, 100)
+ENDSELECT
+RETURN 1
+
+;-------------------------------------------------
+;実行判定
+;-------------------------------------------------
+@COM_ABLE324
+;乳首ひっかき実行判定
+SIF SAVESTR:ゲームフェイズ管理 != "通常モード"
+	RETURN 0
+;Bがない場合駄目
+SIF TALENT:TARGET:Ｂ感度 == -2
+	RETURN 0
+;一括管理
+SIF GLOBAL_COMABLE(324) && !RFLAG:罰ゲーム中
+	RETURN RESULT
+SIF TEQUIP:上半身鎧あり
+	RETURN 0
+RETURN 1
+
+;-------------------------------------------------
+;実行時メッセージ
+;-------------------------------------------------
+@MESSAGE_COM324
+
+PRINTFORM %CALLNAME:PLAYER%은(는)
+SIF 体格差計算(PLAYER, TARGET) <= -3 && !CFLAG:睡眠
+	PRINT 웅크리고
+PRINTFORM %CALLNAME:TARGET%의
+SELECTCASE TALENT:TARGET:バストサイズ
+	CASE -2
+		PRINT 거의 부풀어 오르지 않은 평평한 가슴에 손을 뻗어
+	CASE -1
+		PRINT 작게 부풀어 오른 가슴에 손을 뻗어,
+	CASE 0
+		PRINT 가슴에 손을 뻗어,
+	CASE 1 TO 2
+		PRINT 크고 부드러운 가슴에 손을 뻗어,
+	CASE 3
+		PRINT 두 손으로 다 감싸기 힘들 정도로 풍만한 가슴에 손을 뻗어,
+ENDSELECT
+IF TEQUIP:上半身下着あり == -3 && !RAND:3
+	PRINTL 안전핀째로 튕기듯이 젖꼭지를 긁었다
+ELSEIF TEQUIP:上半身下着あり == -2 && !RAND:3
+	PRINTL 피어스가 흔들리듯이 젖꼭지를 긁었다
+ELSE
+	PRINTL 옷 위로 유두를 긁적긁적 긁었다
+ENDIF
+
+IF CUP:TARGET:快Ｂ > 3000
+	IF CFLAG:TARGET:睡眠
+		PRINTFORML %CALLNAME:TARGET%은(는) 잠든 채로도, 분명히 유두로 강하게 느끼는 것 같다…
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%은(는) 교성을 흘리며, 유두로부터의 쾌락에 농락당하고 있다…
+	ENDIF
+	PRINTL
+ELSEIF CUP:TARGET:快Ｂ > 1000
+	;一定以上の快楽が発生した時にちょっと声が出る
+	IF CFLAG:TARGET:睡眠
+		PRINTFORML 뜻밖의 쾌락에, %CALLNAME:TARGET%은(는) 잠든 채 작게 신음했다…
+	ELSE
+		PRINTFORML 뜻밖의 쾌락에, %CALLNAME:TARGET%은(는) 무심코 작은 소리를 흘리고 말았다…
+	ENDIF
+	PRINTL
+ENDIF
+
+@MESSAGE_COM324_非口上時
+
+IF CFLAG:TARGET:睡眠
+	PRINTFORML %CALLNAME:TARGET%은(는) 새근새근 잠들어 있다……
+	RETURN 0
+ENDIF
+
+IF CUP:TARGET:快Ｂ <= 3000
+	SELECTCASE RFLAG:コマンド結果受渡し変数２
+		CASE 1
+			;無知
+			PRINTFORML %CALLNAME:TARGET%은(는) 잘 모르겠지만, %CALLNAME:PLAYER%이(가) 즐겁다면 좋다고 기뻐하고 있다
+		CASE 2
+			;無反応
+			PRINTFORML %CALLNAME:TARGET%은(는) 태연하지만, 조금 얼굴을 붉히고 %CALLNAME:PLAYER%에게 몸을 비벼왔다…
+		CASE 3
+			;嫌悪
+			PRINTFORML %CALLNAME:TARGET%은(는) 어쩔 수 없는 사람이네, 라는 얼굴로 %CALLNAME:PLAYER%이(가) 하고 싶은 대로 내버려 두고 있다…
+		CASE 4
+			;拒否
+			PRINTFORML %CALLNAME:TARGET%은(는) 나쁘지 않은 기분인 듯, %CALLNAME:PLAYER%이(가) 하고 싶은 대로 내버려 두고 있다…
+		CASE 5
+			;余裕
+			PRINTFORML %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%에게, 주위에 들키지 않도록 몰래 만지라고 말했다…
+		CASE 6
+			;羞恥
+			PRINTFORML %CALLNAME:TARGET%은(는) 붉어진 얼굴로 %CALLNAME:PLAYER%을(를) 바라보며, 살며시 몸을 기대왔다…
+		CASE 7
+			;愉悦
+			PRINTFORML %CALLNAME:TARGET%은(는) 다른 곳도 만질 거냐며, 요염한 표정으로 %CALLNAME:PLAYER%을(를) 도발하고 있다…
+		CASE 8
+			PRINTFORML %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%에게 만져지는 것을 조금 기쁘게 생각하는 것 같다…
+	ENDSELECT
+ENDIF

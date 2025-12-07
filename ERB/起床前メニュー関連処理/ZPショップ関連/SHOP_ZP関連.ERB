@@ -1,0 +1,569 @@
+
+
+@ZP_取得処理(キャラ番号, 取得基礎値, 表示するか = 0)
+#DIM キャラ番号
+#DIM 取得基礎値
+#DIM ZP取得値
+#DIM 表示するか
+
+;あなたはZP算出しない
+SIF キャラ番号 < 1
+	RETURN 0
+;eraはZP算出しない
+SIF NO:キャラ番号 == 998
+	RETURN 0
+
+;キャラの素質などにより補正予定
+ZP取得値 = 取得基礎値
+
+SIF ZP取得値 < 0
+	RETURN 0
+
+SIF 表示するか
+	PRINTFORML ZP: {FLAG:ZP所持量} + {ZP取得値}（%CALLNAME:キャラ番号%）= {FLAG:ZP所持量 + ZP取得値}
+
+;ZP加算
+RCVAR:キャラ番号:ZP取得量 += ZP取得値
+RFLAG:ZP取得量 += ZP取得値
+FLAG:ZP所持量 += ZP取得値
+
+RETURN ZP取得値
+
+
+@ZP_SHOP
+PRINTL
+DRAWLINE
+PRINTL ■ZP 상점에 오신 것을 환영합니다
+PRINTFORML 보유 ZP:{FLAG:ZP所持量}.{(ZP小数点以下所持量 % 1000) / 100}{(ZP小数点以下所持量 % 100) / 10}{(ZP小数点以下所持量 % 10)}
+DRAWLINE
+PRINTBUTTON "[0]특별한 능력을 얻다", 0
+PRINTL 
+PRINTBUTTON "[1]특별한 아이템을 얻다", 1
+PRINTL 
+PRINTL 
+PRINTBUTTON "[10]특별한 캐릭터를 초대 후보에 추가하다", 10
+PRINTL 
+PRINTBUTTON "[11]특별한 시나리오를 해방하다", 11
+PRINTL 
+PRINTL 
+PRINTBUTTON "[20]캐릭터의 소질을 변화시키다", 20
+PRINTL 
+PRINTBUTTON "[21]리조트 전체의 환경을 변화시키다", 21
+PRINTL 
+PRINTL 
+IF MATCH(開拓エリア開発番号, 大規模番号_居住区エリア) > 0 && 居住区初来訪イベントフラグ
+	PRINTBUTTON "[22]보육원의 아이를 성장시키다", 22
+	PRINTL 
+	PRINTL
+ENDIF
+PRINTBUTTONLC "[998]시스템 설명", 998
+PRINTL 
+PRINTBUTTONLC "[999]돌아가기", 999
+PRINTL 
+$INPUT_LOOP
+IF チュートリアルフラグ:ZPショップ == 0
+	RESULT = 998
+ELSE
+	BINPUT
+ENDIF
+
+SELECTCASE RESULT
+	CASE 0
+		CALL ZP_SHOP_能力
+		RESTART
+	CASE 1
+		CALL ZP_SHOP_アイテム
+		RESTART
+	CASE 10
+		CALL ZP_SHOP_EXキャラ
+		RESTART
+	CASE 11
+		CALL ZP_SHOP_EXシナリオ
+		RESTART
+	CASE 20
+		CALL ZP_SHOP_素質変化
+		RESTART
+	CASE 21
+		CALL ZP_SHOP_環境変化
+		RESTART
+	CASE 22
+		IF MATCH(開拓エリア開発番号, 大規模番号_居住区エリア) == 0 || !居住区初来訪イベントフラグ
+			REUSELASTLINE 
+			GOTO INPUT_LOOP
+		ENDIF
+		CALL ZP_SHOP_子供成長
+		RESTART
+	CASE 999
+		RETURN 0
+	CASE 998
+		CALL ZPショップチュートリアル()
+		RESTART
+ENDSELECT
+
+REUSELASTLINE 
+GOTO INPUT_LOOP
+
+
+
+@ZP_SHOP_アイテム
+#DIM 危険日変動薬購入数
+#DIM 鬼灯の香購入数
+#DIM レディキラー購入数
+#DIM 婚姻アイテムカッコカリ購入数
+#DIM CONST 価格_危険日変動薬 = 5
+#DIM CONST 価格_鬼灯の香     = 100
+#DIM CONST 価格_レディキラー     = 10
+#DIM DYNAMIC 初回実行フラグ = 1
+#DIM 開始行数
+#DIM REDRAW退避
+#DIM 購入限界
+
+IF 初回実行フラグ
+	初回実行フラグ = 0
+	開始行数 = LINECOUNT
+	REDRAW退避 = CURRENTREDRAW()
+	REDRAW 0
+ELSE
+	CLEARLINE LINECOUNT - 開始行数
+ENDIF
+
+;上下限処理
+購入限界 = FLAG:ZP所持量 / 価格_危険日変動薬
+危険日変動薬購入数 = LIMIT(危険日変動薬購入数, 1, MAX(購入限界, 1))
+購入限界 = FLAG:ZP所持量 / 価格_鬼灯の香
+鬼灯の香購入数 = LIMIT(鬼灯の香購入数, 1, MAX(購入限界, 1))
+購入限界 = FLAG:ZP所持量 / 価格_レディキラー
+レディキラー購入数 = LIMIT(レディキラー購入数, 1, MAX(購入限界, 1))
+購入限界 = FLAG:ZP所持量 / 100
+婚姻アイテムカッコカリ購入数 = LIMIT(婚姻アイテムカッコカリ購入数, 1, MAX(購入限界, 1))
+
+PRINTL
+DRAWLINE
+PRINTL ZP를 소비하여, 특별한 아이템을 입수할 수 있습니다.
+PRINTL 어떤 아이템을 구매하시겠습니까?
+PRINTFORML 보유 ZP:%TOSTR(FLAG:ZP所持量, "#,##0")%
+; PRINTBUTTON "[0]サプチケを購入する", 0
+; PRINTL 　　　　　値段：20ZP
+; PRINTL 　　　　　…任意のキャラを必ず招待するチケット。開発中Ver専用の特売品です。
+; PRINTL 　　　　　　開発が進み、正規の入手手段が実装された段階でこの項目は削除されます。
+; PRINTL
+; PRINTBUTTON "[1]発情誘発剤を購入する", 1
+; PRINTL 　　　　　値段：5ZP
+; PRINTL 　　　　　…陥落済みのキャラに対して、即座に発情期を開始させる薬。消耗品。
+; PRINTL 　　　　　　発情期が存在しないキャラに対しては使用出来ません。
+; PRINTL
+PRINTSL "-" * 90
+PRINTFORML 　위험일 변동약　가격: 1개{価格_危険日変動薬}ZP　소지 수:{ITEM:危険日変動薬}
+PRINTL 　　　　　…위험일을 약을 복용한 날로 변화시키는 약. 소모품.
+PRINTL 　　　　　　함락된 캐릭터에게만 사용 가능.
+PRINTL 　　　　　　발정기가 존재하는 캐릭터의 경우, 발정기도 변동한다.
+PRINTL
+PRINT 　
+PRINTBUTTON "[-10]", 1
+PRINTBUTTON "[-1]", 2
+PRINT 　　
+IF 危険日変動薬購入数 * 価格_危険日変動薬 > FLAG:ZP所持量
+	SETCOLOR カラーパレット("グレーアウト")
+	PRINTPLAINFORM [0]{危険日変動薬購入数}개 구입한다(%TOSTR(危険日変動薬購入数 * 価格_危険日変動薬, "#,##0")%ZP)
+	RESETCOLOR
+ELSE
+	PRINTBUTTON @"[0]{危険日変動薬購入数}개 구입한다(%TOSTR(危険日変動薬購入数 * 価格_危険日変動薬, "#,##0")%ZP)", 0
+ENDIF
+PRINT 　　
+PRINTBUTTON "[+1]", 3
+PRINTBUTTON "[+10]", 4
+PRINTL
+
+PRINTSL "-" * 90
+PRINTFORML 　꽈리 향　가격: 1개{価格_鬼灯の香}ZP　소지 수:{ITEM:鬼灯の香}
+PRINTL 　　　　　…상대의 인식을 속이는 향을 내뿜는 향. 소모품.
+PRINTL 　　　　　　마사지 중에 사용해두면, 이성의 자동 회복이 무효가 된다.
+PRINTL 　　　　　　또한 효과가 충분히 침투했을 때, 강하게 거부당할 만한 행위를 실행할 수 있게 된다.
+PRINTL
+PRINT 　
+PRINTBUTTON "[-10]", 11
+PRINTBUTTON "[-1]", 12
+PRINT 　　
+IF 鬼灯の香購入数 * 価格_鬼灯の香 > FLAG:ZP所持量
+	SETCOLOR カラーパレット("グレーアウト")
+	PRINTPLAINFORM [10]{鬼灯の香購入数}개 구입한다(%TOSTR(鬼灯の香購入数 * 価格_鬼灯の香, "#,##0")%ZP)
+	RESETCOLOR
+ELSE
+	PRINTBUTTON @"[10]{鬼灯の香購入数}개 구입한다(%TOSTR(鬼灯の香購入数 * 価格_鬼灯の香, "#,##0")%ZP)", 10
+ENDIF
+PRINT 　　
+PRINTBUTTON "[+1]", 13
+PRINTBUTTON "[+10]", 14
+PRINTL
+
+PRINTSL "-" * 90
+PRINTFORML 　혼인 아이템 (가칭)　가격: 1개100ZP　소지 수:{ITEM:婚姻アイテムカッコカリ}
+PRINTL 　　　　　…혼인 함락을 위한 아이템. 한 명당 한 개 필요.
+PRINTL 　　　　　　혼인 아이템 생성 관련 처리를 만들기 전까지의 잠정 조치.
+PRINTL 　　　　　　장래적으로 폐지될 아이템이므로, 너무 많이 구매하지 않도록 주의.
+PRINTL
+PRINT 　
+PRINTBUTTON "[-10]", 21
+PRINTBUTTON "[-1]", 22
+PRINT 　　
+IF 婚姻アイテムカッコカリ購入数 * 100 > FLAG:ZP所持量
+	SETCOLOR カラーパレット("グレーアウト")
+	PRINTPLAINFORM [20]{婚姻アイテムカッコカリ購入数}개 구입한다(%TOSTR(婚姻アイテムカッコカリ購入数 * 100, "#,##0")%ZP)
+	RESETCOLOR
+ELSE
+	PRINTBUTTON @"[20]{婚姻アイテムカッコカリ購入数}개 구입한다(%TOSTR(婚姻アイテムカッコカリ購入数 * 100, "#,##0")%ZP)", 20
+ENDIF
+PRINT 　　
+PRINTBUTTON "[+1]", 23
+PRINTBUTTON "[+10]", 24
+PRINTL
+
+PRINTSL "-" * 90
+PRINTFORML 　레이디 킬러　가격: 1개{価格_レディキラー}ZP　소지 수:{ITEM:レディキラー}
+PRINTL 　　　　　…깔끔하고 달콤하며 마시기 쉽지만 도수가 높은 각종 술. 레이디 킬러는 어디까지나 통칭. 소모품.
+PRINTL 　　　　　　ZP를 사용해 약간의 가공을 해두었으며, 이 술에 취하면 정신을 잃기 쉽다.
+PRINTL
+PRINT 　
+PRINTBUTTON "[-10]", 31
+PRINTBUTTON "[-1]", 32
+PRINT 　　
+IF レディキラー購入数 * 価格_レディキラー > FLAG:ZP所持量
+	SETCOLOR カラーパレット("グレーアウト")
+	PRINTPLAINFORM [30]{レディキラー購入数}개 구입한다(%TOSTR(レディキラー購入数 * 価格_レディキラー, "#,##0")%ZP)
+	RESETCOLOR
+ELSE
+	PRINTBUTTON @"[30]{レディキラー購入数}개 구입한다(%TOSTR(レディキラー購入数 * 価格_レディキラー, "#,##0")%ZP)", 30
+ENDIF
+PRINT 　　
+PRINTBUTTON "[+1]", 33
+PRINTBUTTON "[+10]", 34
+PRINTL
+
+PRINTSL "-" * 90
+PRINTBUTTON "[999]돌아가기", 999
+$INPUT_LOOP
+BINPUT
+
+SELECTCASE RESULT
+	; CASE 0
+	; 	IF FLAG:ZP所持量 < 20
+	; 		PRINTW ZPが足りません
+	; 		RESTART
+	; 	ENDIF
+	; 	PRINTL 20ZPを支払い、サプチケを一枚取得しますか？
+	; 	PRINTBUTTONLC "[0]はい", 0
+	; 	PRINTBUTTONLC "[1]いいえ", 1
+	; 	$INPUT_LOOP2
+	; 	INPUT
+	; 	SELECTCASE RESULT
+	; 		CASE 0
+	; 			FLAG:ZP所持量 -= 20
+	; 			ITEM:サプチケ += 1
+	; 			PRINTW サプチケを一枚購入しました。
+	; 		CASE 1
+	; 			RESTART
+	; 		CASEELSE
+	; 			REUSELASTLINE 
+	; 			GOTO INPUT_LOOP2
+	; 	ENDSELECT
+	; CASE 1
+	; 	IF FLAG:ZP所持量 < 5
+	; 		PRINTW ZPが足りません
+	; 		RESTART
+	; 	ENDIF
+	; 	PRINTL 5ZPを支払い、発情誘発剤を取得しますか？
+	; 	PRINTBUTTONLC "[0]はい", 0
+	; 	PRINTBUTTONLC "[1]いいえ", 1
+	; 	INPUT
+	; 	IF RESULT == 0
+	; 		FLAG:ZP所持量 -= 5
+	; 		ITEM:発情誘発剤 += 1
+	; 		PRINTW 発情誘発剤を一回分購入しました。
+	; 	ENDIF
+	; 	RESTART
+	CASE 1
+		危険日変動薬購入数 -= 10
+		RESTART
+	CASE 2
+		危険日変動薬購入数 -= 1
+		RESTART
+	CASE 0
+		PRINTFORML {危険日変動薬購入数 * 価格_危険日変動薬}ZP를 지불하고, 위험일 변동약을{危険日変動薬購入数}개 획득하시겠습니까?
+		PRINTBUTTONLC "[0]예", 0
+		PRINTBUTTONLC "[1]아니오", 1
+		INPUT
+		IF RESULT == 0
+			FLAG:ZP所持量 -= 危険日変動薬購入数 * 価格_危険日変動薬
+			ITEM:危険日変動薬 += 危険日変動薬購入数
+			PRINTFORMW 위험일 변동약을{危険日変動薬購入数}개 구입했습니다.
+		ENDIF
+		危険日変動薬購入数 = 1
+		RESTART
+	CASE 3
+		危険日変動薬購入数 += 1
+		RESTART
+	CASE 4
+		危険日変動薬購入数 += 10
+		RESTART
+	CASE 11
+		鬼灯の香購入数 -= 10
+		RESTART
+	CASE 12
+		鬼灯の香購入数 -= 1
+		RESTART
+	CASE 10
+		PRINTFORML {鬼灯の香購入数 * 価格_鬼灯の香}ZP를 지불하고, 호오즈키 향을{鬼灯の香購入数}개 획득하시겠습니까?
+		PRINTBUTTONLC "[0]예", 0
+		PRINTBUTTONLC "[1]아니요", 1
+		INPUT
+		IF RESULT == 0
+			FLAG:ZP所持量 -= 鬼灯の香購入数 * 価格_鬼灯の香
+			ITEM:鬼灯の香 += 鬼灯の香購入数
+			PRINTFORMW 꽈리 향을{鬼灯の香購入数}개 구입했습니다.
+		ENDIF
+		鬼灯の香購入数 = 1
+		RESTART
+	CASE 13
+		鬼灯の香購入数 += 1
+		RESTART
+	CASE 14
+		鬼灯の香購入数 += 10
+		RESTART
+	CASE 21
+		婚姻アイテムカッコカリ購入数 -= 10
+		RESTART
+	CASE 22
+		婚姻アイテムカッコカリ購入数 -= 1
+		RESTART
+	CASE 20
+		PRINTFORML {婚姻アイテムカッコカリ購入数 * 100}ZP를 지불하고, 혼인 아이템(가칭)을{婚姻アイテムカッコカリ購入数}개 취득하시겠습니까?
+		PRINTBUTTONLC "[0]예", 0
+		PRINTBUTTONLC "[1]아니요", 1
+		INPUT
+		IF RESULT == 0
+			FLAG:ZP所持量 -= 婚姻アイテムカッコカリ購入数 * 100
+			ITEM:婚姻アイテムカッコカリ += 婚姻アイテムカッコカリ購入数
+			PRINTFORMW 혼인 아이템(가칭)을{婚姻アイテムカッコカリ購入数}개 구입했습니다.
+		ENDIF
+		婚姻アイテムカッコカリ購入数 = 1
+		RESTART
+	CASE 23
+		婚姻アイテムカッコカリ購入数 += 1
+		RESTART
+	CASE 24
+		婚姻アイテムカッコカリ購入数 += 10
+		RESTART
+	CASE 31
+		レディキラー購入数 -= 10
+		RESTART
+	CASE 32
+		レディキラー購入数 -= 1
+		RESTART
+	CASE 30
+		PRINTFORML {レディキラー購入数 * 価格_レディキラー}ZP를 지불하고, 레이디 킬러를{レディキラー購入数}개 취득하시겠습니까?
+		PRINTBUTTONLC "[0]예", 0
+		PRINTBUTTONLC "[1]아니요", 1
+		INPUT
+		IF RESULT == 0
+			FLAG:ZP所持量 -= レディキラー購入数 * 価格_レディキラー
+			ITEM:レディキラー += レディキラー購入数
+			PRINTFORMW 레이디 킬러를{レディキラー購入数}개 구입했습니다.
+		ENDIF
+		レディキラー購入数 = 1
+		RESTART
+	CASE 33
+		レディキラー購入数 += 1
+		RESTART
+	CASE 34
+		レディキラー購入数 += 10
+		RESTART
+	CASE 999
+		REDRAW REDRAW退避
+		RETURN 0
+ENDSELECT
+
+@ZP_SHOP_環境変化
+#DIM 妊娠期間変化値
+#DIM フィールド期間変化値
+#DIM 消費ZP
+
+フィールド期間変化値 = 0
+妊娠期間変化値 = 妊娠期間
+
+PRINTL
+DRAWLINE
+PRINTL ZP를 소비하여, 리조트 내의 체류자 전원에게 특수한 영향을 줄 수 있습니다.
+PRINTL 어떤 기능을 도입하시겠습니까?
+PRINTFORML 소지ZP:%TOSTR(FLAG:ZP所持量, "#,##0")%
+DRAWLINE
+IF !OPTION変数:妊娠切り替え
+	PRINTBUTTON "[0]임신 기간을 변동시킨다", 0
+ELSE
+	SETCOLOR 0x666666
+	PRINTPLAINFORM [0]임신 기간을 변동시킨다
+ENDIF
+PRINTL 　　　　　가격: (변동시키는 일수 ×1)ZP
+PRINTL 　　　　　…리조트 내에서, 아이를 출산하기까지 걸리는 시간을 변동시킵니다.
+PRINTL
+RESETCOLOR
+
+;フィールド効果のONOFFを並べて表示
+DRAWLINE
+PRINTL 필드 효과 일람:
+LOCALS =
+消費ZP = 0
+FOR LOCAL, 0, 50
+	SIF ERDNAME(フィールド展開, LOCAL) == ""
+		BREAK
+	CALLFORM フィールド効果解説_%ERDNAME(フィールド展開, LOCAL)%
+	LOCAL:1 = RESULT
+	IF フィールド展開:LOCAL <= 0
+		LOCALS += @"<button value='{LOCAL + 10}'>[{LOCAL + 10}] %ERDNAME(フィールド展開, LOCAL), 30, LEFT%:"
+		LOCALS += @"<font color='#%カラーパレット_HTML("グレーアウト")%'>ON</font> / OFF"
+	ELSE
+		LOCALS += @"<font color='#%カラーパレット_HTML("えっちな色")%'>"
+		LOCALS += @"<button value='{LOCAL + 10}'>[{LOCAL + 10}] %ERDNAME(フィールド展開, LOCAL), 30, LEFT%</font>:"
+		LOCALS += @"ON / <font color='#%カラーパレット_HTML("グレーアウト")%'>OFF</font>"
+		消費ZP += LOCAL:1
+	ENDIF
+	LOCALS += @"　　　하루당 소비ZP: {LOCAL:1, 2} ZP<br>"
+	LOCALS += @"　　　%REPLACE(TSTR:ツールチップ受渡, "<br>", "<br>　　　")%<br><br>"
+	LOCALS += "</button>"
+NEXT
+HTML_PRINT LOCALS
+PRINTFORML 現在の消費ZP / 1日 = {消費ZP, 3}ZP
+PRINTL
+PRINTL 
+PRINTBUTTON "[999]돌아가기", 999
+$INPUT_LOOP
+BINPUT
+
+SELECTCASE RESULT
+	CASE 0
+		$INPUT_BEFORE2
+		PRINTL
+		DRAWLINE
+		PRINTFORML 임신 기간으로 적용하고 싶은 수치를 입력해 주세요. (현재 임신 기간: {妊娠期間}일)
+		PRINTFORML 소지ZP:%TOSTR(FLAG:ZP所持量, "#,##0")%
+		PRINTBUTTON "[<< -10] ",-999
+		PRINTBUTTON "[< -1] ",-998
+		PRINTFORM  [{妊娠期間変化値, 3}]결정({ABS(妊娠期間 - 妊娠期間変化値), 3}ZP)  
+		PRINTBUTTON "[+1 >] ",-997
+		PRINTBUTTON "[+10 >>] " ,-996
+		PRINTL
+		PRINTSL "-" * 80
+		PRINTBUTTON "[0]돌아가기", 0
+		PRINTL
+		REDRAW 0
+		$INPUT_LOOP2
+		INPUT
+		消費ZP = ABS(RESULT - 妊娠期間)
+		IF RESULT == 0
+			REDRAW 1
+			RESTART
+		ELSEIF INRANGE(RESULT,-999,-996)
+			SELECTCASE RESULT
+				CASE -996
+					妊娠期間変化値 += 10
+				CASE -997
+					妊娠期間変化値 += 1
+				CASE -998
+					妊娠期間変化値 -= 1
+				CASE -999
+					妊娠期間変化値 -= 10
+			ENDSELECT
+			;上限下限処理
+			妊娠期間変化値 = LIMIT(妊娠期間変化値, MAX(妊娠期間 - FLAG:ZP所持量, 1), 妊娠期間 + FLAG:ZP所持量)
+			CLEARLINE 8
+			REUSELASTLINE 
+			GOTO INPUT_BEFORE2
+		ELSEIF RESULT < 0
+			CLEARLINE 1
+			REUSELASTLINE 0以下の値は指定できません
+			GOTO INPUT_LOOP2
+		ELSEIF 消費ZP > FLAG:ZP所持量
+			CLEARLINE 1
+			REUSELASTLINE ZPが足りません
+			GOTO INPUT_LOOP2
+		ELSEIF RESULT == 妊娠期間
+			CLEARLINE 1
+			REUSELASTLINE 今の妊娠期間と同じ値です
+			GOTO INPUT_LOOP2
+		ELSE
+			妊娠期間変化値 = RESULT
+			REDRAW 1
+			PRINTL
+			PRINTFORML {消費ZP}ZP를 지불하고, 출산까지 걸리는 기간을 {妊娠期間}일에서 {妊娠期間変化値}일로 변동시키겠습니까?
+			PRINTL (현 상황의 캐릭터별 임신 진행도는 재계산되어 계승되지만, 다소 오차가 발생할 수 있습니다)
+PRINTBUTTONLC "[0]예", 0
+PRINTBUTTONLC "[1]아니요", 1
+			REDRAW 0
+			$INPUT_LOOP2_2
+			INPUT
+			SELECTCASE RESULT
+				CASE 0
+					FLAG:ZP所持量 -= 消費ZP
+					FOR LOCAL,0,CHARANUM
+						SIF CFLAG:LOCAL:妊娠経過日
+							CFLAG:LOCAL:妊娠経過日 = CFLAG:LOCAL:妊娠経過日 * 妊娠期間変化値 / 妊娠期間
+					NEXT
+					妊娠期間 = 妊娠期間変化値
+					REDRAW 1
+					PRINTFORMW 출산까지 걸리는 기간을 {妊娠期間}일로 변동시켰습니다.
+					RESTART
+				CASE 1
+					GOTO INPUT_BEFORE2
+				CASEELSE
+					REUSELASTLINE 
+					GOTO INPUT_LOOP2_2
+			ENDSELECT
+		ENDIF
+	CASE 999
+		SIF フィールド展開:エロ制服許可 == 0
+			CALL 露出フィールド停止処理
+		RETURN 0
+	CASEELSE
+		INVERTBIT フィールド展開:(RESULT - 10), 0
+		RESTART
+ENDSELECT
+
+@露出フィールド停止処理
+#DIMS 分割文字列配列, 2
+#DIMS 制服一時配列, 100
+#DIM エロ改造制服記録, 10
+#DIM 配列番号
+#DIM 記録番号
+
+;エロ改造されてる服をデフォルトに戻す
+VARSET エロ改造制服記録, -1
+記録番号 = 0
+FOR LOCAL, 0, VARSIZE("制服改造", 1)
+	IF 制服改造:LOCAL:エロ改造フラグ
+		CALLFORM 制服改造初期化_%ERDNAME(制服改造, LOCAL, 1)%()
+		エロ改造制服記録:記録番号 = LOCAL
+		記録番号 ++
+	ENDIF
+NEXT
+
+;エロ制服を配列に登録
+SPLIT 所持エロ衣装文字列, "_", 制服一時配列
+FOR LOCAL, 0, 100
+	SPLIT 制服一時配列:LOCAL, "/", 分割文字列配列
+	RESULTS:LOCAL = %分割文字列配列:1%
+NEXT
+
+;従業員かつエロ制服だとなしにする
+FOR LOCAL, 1, CHARANUM
+	SIF TALENT:LOCAL:従業員 == 0
+		CONTINUE
+	IF MATCH(RESULTS, 現在制服:LOCAL:0)
+		現在制服:LOCAL:0 = 
+	ENDIF
+	;改造制服を着てる場合はリセットしておく
+	FOR 配列番号, 0, 記録番号
+		IF 現在制服:LOCAL:0 == ERDNAME(制服改造, エロ改造制服記録:配列番号, 1)
+			CALL CLOTHES_RESET_TRAIN(LOCAL)
+			BREAK
+		ENDIF
+	NEXT
+NEXT

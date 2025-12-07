@@ -1,0 +1,173 @@
+
+@COMNAME303
+#FUNCTIONS
+TSTR:コマンド名受渡 = 유혹하다
+
+;===================================================
+;コマンドタイプ
+;===================================================
+@COMTYPE_303
+#FUNCTION
+TFLAG:コマンドタイプ受渡 = COMTYPE("日常")
+
+@COM_TOOLTIP_303
+LOCALS = <br>■유혹하다<br>
+LOCALS += "상대방을 칭찬하거나 호의적인 말을 걸어 친해지려고 하는 커맨드. 일정 확률로 대성공, 성공, 실패로 분기. <br>단시간에 너무 많이 실행하면 대화 소재가 없어 실패한다. 소질: 연모를 소지하고 있는 상대의 경우, 이 제한은 무효가 된다. <br>상대방의 성지식이 0 이하인 경우, 효과가 낮아진다."
+LOCALS += "<br>COM 타입: 일상<br>획득 소스: 애정・정복"
+LOCALS += "<br>고유 획득 경험: 대화 경험(MASTER)<br>"
+TSTR:ツールチップ受渡 = %LOCALS%
+
+
+@COM303
+#DIM トランス判定フラグ
+;会話
+
+;会話累積値が閾値を超えると失敗
+IF TCVAR:話題無しフラグ && !TALENT:恋慕
+	PRINTFORML %CALLNAME:TARGET%에게 말을 걸려고 했지만 말이 떠오르지 않는다
+	PRINTW 주변에 어색한 공기가 흘렀다…
+	TIME += 10
+	;口上分岐としてはここは大失敗扱いがいいんじゃないかな
+	RFLAG:コマンド結果受渡し変数 = -2
+	RETURN 0
+ENDIF
+
+LOCAL = RAND:100
+LOCAL:1 = 90 + GET_SUCCESS_RATE() / 5
+SIF LOCAL:1 > 99
+	LOCAL:1 = 99
+IF LOCAL <= 9
+	;10％で大成功
+	RFLAG:コマンド結果受渡し変数 = 1
+	トランス判定フラグ = 1
+	EXP:MASTER:会話経験 ++
+ELSEIF LOCAL >= LOCAL:1
+	;10～1％で失敗
+	RFLAG:コマンド結果受渡し変数 = -1
+	トランス判定フラグ = 0
+ELSE
+	;残りは成功
+	RFLAG:コマンド結果受渡し変数 = 0
+	;1/2～2/2（会話技能による）の確率でトランス状態が発生
+	トランス判定フラグ = (LOCAL <= LOCAL:1 * (10 + ABL:MASTER:話術技能) / 20)
+ENDIF
+
+;愛情強度
+LOCAL:0 = 300
+;征服強度
+LOCAL:1 = 100
+
+IF RFLAG:コマンド結果受渡し変数 == -1
+	TIMES LOCAL:0 , 0.10
+	TIMES LOCAL:1 , 0.50
+ELSEIF RFLAG:コマンド結果受渡し変数 == 0
+	TIMES LOCAL:0 , 1.00
+	TIMES LOCAL:1 , 1.00
+ELSE
+	TIMES LOCAL:0 , 2.00
+	TIMES LOCAL:1 , 2.00
+ENDIF
+SELECTCASE ABL:MASTER:話術技能
+	CASE 0
+		TIMES LOCAL:0 , 0.20
+		TIMES LOCAL:1 , 0.20
+	CASE 1
+		TIMES LOCAL:0 , 0.40
+		TIMES LOCAL:1 , 0.40
+	CASE 2
+		TIMES LOCAL:0 , 0.70
+		TIMES LOCAL:1 , 0.70
+	CASE 3
+		TIMES LOCAL:0 , 1.00
+		TIMES LOCAL:1 , 1.00
+	CASE 4
+		TIMES LOCAL:0 , 1.50
+		TIMES LOCAL:1 , 1.50
+	CASEELSE
+		TIMES LOCAL:0 , 2.00
+		TIMES LOCAL:1 , 2.00
+ENDSELECT
+
+
+CALL SOURCE_CALC_愛情(TARGET, PLAYER, LOCAL:0)
+CALL SOURCE_CALC_征服(TARGET, PLAYER, LOCAL:1)
+CALL SOURCE_CALC_好感度要素_恋心度UP(TARGET, PLAYER, LOCAL:1)
+
+
+;会話累積値
+LOCAL = 200 - (TALENT:TARGET:会話資質 * 50) - (TALENT:PLAYER:会話資質 * 50)
+TCVAR:会話累積値 += LOCAL / (3 + ABL:MASTER:話術技能 + TALENT:TARGET:陽気／陰気)
+
+;トランス状態の追加
+IF トランス判定フラグ && あなた特殊能力:遊び人 >= 5 && !CFLAG:怒り && !TALENT:恋慕
+	RFLAG:コマンド結果受渡し変数 = 2
+	TCVAR:トランス残り時間 += 45
+ENDIF
+
+TIME += 15
+EXP:MASTER:会話経験 ++
+RETURN 1
+
+;-------------------------------------------------
+;実行判定
+;-------------------------------------------------
+@COM_ABLE303
+;会話実行判定
+SIF SAVESTR:ゲームフェイズ管理 != "通常モード"
+	RETURN 0
+;一括管理
+SIF GLOBAL_COMABLE(303)
+	RETURN RESULT
+;睡眠中
+SIF CFLAG:睡眠
+	RETURN 0
+;口を何かに使ってるなら無理
+SIF TEQUIP:PLAYER:口
+	RETURN 0
+SIF TEQUIP:TARGET:口
+	RETURN 0
+RETURN 1
+
+;-------------------------------------------------
+;実行時メッセージ
+;-------------------------------------------------
+@MESSAGE_COM303
+PRINTFORM %CALLNAME:PLAYER%은(는)%CALLNAME:TARGET%
+IF TALENT:恋慕
+	PRINTDATA
+		DATA 에게, 사랑을 전하는 말을 속삭였다
+		DATA 에게, 녹아내릴 듯한 달콤한 말을 보냈다
+	ENDDATA
+ELSE
+	PRINTDATA
+		DATA 의 아름다움을 칭찬했다
+		DATA 의 마음이 맑다고 칭찬했다
+		DATA 가 매우 섹시하다고 속삭였다
+		DATA 와 더 친해지고 싶다고 거리를 좁혔다
+	ENDDATA
+ENDIF
+PRINTL 
+IF RFLAG:コマンド結果受渡し変数 == 2
+	PRINTFORM 요염하고 정열적인%CALLNAME:PLAYER%의 유혹하는 말에, %CALLNAME:TARGET%은(는)
+	SIF 知識素質:性知識 < 1
+		PRINT 의미는 알 수 없지만
+	PRINTL 완전히 취한 것 같다…
+ELSEIF 知識素質:性知識 < 1
+	PRINTFORML %CALLNAME:TARGET%은(는) 잘 의미를 이해하지 못하는 것 같다…
+ELSEIF RFLAG:コマンド結果受渡し変数 == 1
+	IF TALENT:恋慕
+		PRINTFORML %CALLNAME:TARGET%은(는) 기뻐하며, 똑같이 사랑의 말을 돌려주었다
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%은(는) 싫지 않은 모양이다
+	ENDIF
+ELSEIF RFLAG:コマンド結果受渡し変数 == 0
+	IF TALENT:恋慕
+		PRINTFORML %CALLNAME:TARGET%은(는) 웃으며 기뻐하고 있다
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%은(는) 웃으며 말을 흘려보내고 있다
+	ENDIF
+ELSEIF RFLAG:コマンド結果受渡し変数 == -1
+	PRINTFORML %CALLNAME:TARGET%에게는 별로 와닿지 않은 것 같다…
+ENDIF
+
+

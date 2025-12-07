@@ -1,0 +1,89 @@
+
+
+;-------------------------------------------------------------------------------------------
+;リアル時間で一日一回限定の処理
+;ロード時に発生
+;-------------------------------------------------------------------------------------------
+
+@ログインボーナス処理
+
+CUSTOMDRAWLINE ＊
+PRINTL 
+PRINTL 로그인 보너스!
+PRINTL 
+CUSTOMDRAWLINE ＊
+PRINTL 
+PRINTL 
+WAIT
+ログイン累計日数 += 1
+
+CALL 特殊ログボ処理
+
+;以下通常ログボ
+PRINTL 【일반 로그인 보너스】
+PRINTFORM {ログイン累計日数}일째 로그인으로,
+SELECTCASE ログイン累計日数 % 7
+	CASE 1
+		PRINTL 「5ZP」를 손에 넣었다!
+		FLAG:ZP所持量 += 5
+	CASE 2
+		PRINTL 「1만 루피」를 손에 넣었다!
+		MONEY += 10000
+	CASE 3
+		SELECTCASE RAND:4
+			CASE 0
+				PRINTL 「era의 우정 아니마」 3개를 손에 넣었다!
+				ITEM:eraの友情アニマ += 3
+			CASE 1
+				PRINTL 「era의 신뢰 아니마」 3개를 손에 넣었다!
+				ITEM:eraの信頼アニマ += 3
+			CASE 2
+				PRINTL 「era의 연심 아니마」 3개를 손에 넣었다!
+				ITEM:eraの恋心アニマ += 3
+			CASE 3
+				PRINTL 「era의 성애 아니마」 3개를 손에 넣었다!
+				ITEM:eraの性愛アニマ += 3
+		ENDSELECT
+	CASE 4
+		PRINTL 「수입품 리롤 티켓」 1장을 손에 넣었다!
+		ITEM:輸入品リロールチケット += 1
+	CASE 5
+		PRINTL 「era의 연모 아니마」 3개를 손에 넣었다!
+		ITEM:eraの恋慕アニマ += 3
+	CASE 6
+		PRINTL 「3만 루피」를 손에 넣었다!
+		MONEY += 30000
+	CASE 0
+		PRINTL 「30ZP」를 손에 넣었다!
+		FLAG:ZP所持量 += 30
+ENDSELECT
+
+FORCEWAIT
+
+
+
+@特殊ログボ処理
+
+IF ログイン累計日数 == 1
+	PRINTL 가챠◯◯:
+	PRINTW 「안녕하세ー요! 가챠◯◯입니다!
+	PRINTW 　erablue_resort를 플레이해주셔서 감사합니다!
+	PRINTW 　이 로그인 보너스는 로드 시 다양한 아이템을 받을 수 있는 유용한 시스템이야.
+	PRINTW 　하루에 한 번 받을 수 있으니 잊지 말고 로그인해 줘!」
+	PRINTL 
+	PRINTL ※로그인 보너스는 세이브 데이터별로 별도 관리됩니다.
+	PRINTW ※하루의 전환 시간은 오전 5시입니다.
+	PRINTL 
+	PRINTL 가챠◯◯:
+	PRINTW 「오늘은 첫날이니까 특별히, 「era의 우정 아니마」를 추가로 3개 선물할게!
+	PRINTW 　사용한 상대의 호감도를 많이 올려주는 대단한 아이템이니까, 꼭 사용해 봐!
+	PRINTW 　그럼, erablue_resort를 즐겨 줘! 바이바이!」
+	PRINTL 
+	PRINTW 「era의 우정 아니마」를 3개 얻었다!
+	PRINTL 
+	PRINTL 
+	ITEM:eraの友情アニマ += 3
+ENDIF
+
+
+

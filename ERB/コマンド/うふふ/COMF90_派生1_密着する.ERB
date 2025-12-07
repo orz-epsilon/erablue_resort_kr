@@ -1,0 +1,153 @@
+;===================================================
+;密着する
+;===================================================
+@COMNAME_S90_1
+#FUNCTIONS
+TSTR:コマンド名受渡 = 밀착한다
+SIF PLAYER == MASTER && あなた特殊能力:サキュバスボディ > 0
+	TSTR:コマンド名受渡 = 에이스 오브 스페이드
+
+
+;===================================================
+;コマンドタイプ
+;===================================================
+@COMTYPE_S_90_1
+#FUNCTION
+TFLAG:コマンドタイプ受渡 = COMTYPE("うふふ")
+弱点コマンドカテゴリ = C_女_同性
+オートコマンド許可 = 1
+
+
+;===================================================
+;ツールチップ文章
+;===================================================
+@COM_TOOLTIP_S90_1
+CALLF COMNAME_S90_1()
+TSTR:ツールチップ受渡 '= @"<br>■%TSTR:コマンド名受渡%<br>"
+TSTR:ツールチップ受渡 += "조개 맞대기를 한 채, 서로의 몸을 밀착시켜 전신을 하나로 만드는 커맨드."
+TSTR:ツールチップ受渡 += "<br>COM타입：우후후<br>취득 소스：쾌C・쾌B・쾌S・노출・접촉・불결"
+TSTR:ツールチップ受渡 += "<br>고유 취득 경험：젖꼭지 개발(PLAYER＆TARGET・일정 조건 시)<br>"
+
+
+;===================================================
+;コマンド実行処理
+;===================================================
+@COM_S90_1
+#DIM 乳首合わせ
+#DIM 快楽補正力
+;-------------------------------------------------
+;COM別FLAGの設定
+;-------------------------------------------------
+IF ABS(体格差計算(PLAYER, TARGET)) >= 2
+	;口や手より距離が近いので2サイズでも届かない
+	乳首合わせ = 0
+ELSEIF (!TALENT:TARGET:陥没乳首 || TCVAR:TARGET:陥没乳首露出フラグ) && (!TALENT:PLAYER:陥没乳首 || TCVAR:PLAYER:陥没乳首露出フラグ)
+	RCVAR:PLAYER:乳首開発フラグ = 1
+	RCVAR:TARGET:乳首開発フラグ = 1
+	乳首合わせ = 1
+ELSE
+	乳首合わせ = 0
+ENDIF
+
+;-------------------------------------------------
+;ソース追加処理
+;-------------------------------------------------
+IF PLAYER == MASTER && あなた特殊能力:サキュバスボディ > 0
+	快楽補正力 = POWER(あなた特殊能力:サキュバスボディ, 2) * 10
+ELSE
+	快楽補正力 = 0
+ENDIF
+
+CALL SOURCE_CALC_快Ｃ(PLAYER, TARGET, 500)
+CALL SOURCE_CALC_快Ｃ(TARGET, PLAYER, 600 + 快楽補正力 * 10)
+IF 乳首合わせ
+	CALL SOURCE_CALC_快Ｂ(PLAYER, TARGET, 160)
+	CALL SOURCE_CALC_快Ｂ(TARGET, PLAYER, 200 + 快楽補正力 * 4)
+ELSE
+	CALL SOURCE_CALC_快Ｂ(PLAYER, TARGET, 80)
+	CALL SOURCE_CALC_快Ｂ(TARGET, PLAYER, 80 + 快楽補正力)
+ENDIF
+CALL SOURCE_CALC_快Ｓ(PLAYER, TARGET, 20)
+CALL SOURCE_CALC_快Ｓ(TARGET, PLAYER, 20 + 快楽補正力)
+CALL SOURCE_CALC_露出(TARGET, PLAYER, 60)
+CALL SOURCE_CALC_接触(TARGET, PLAYER, 250)
+
+CALL SOURCE_CALC_不潔(TARGET, PLAYER, 150)
+
+;-------------------------------------------------
+;経験の処理
+;-------------------------------------------------
+;同性愛
+SIF 同性愛性癖判定(TARGET, PLAYER)
+	EXP:TARGET:同性愛経験 += 10
+SIF 同性愛性癖判定(PLAYER, TARGET)
+	EXP:PLAYER:同性愛経験 += 10
+
+RETURN 1
+
+
+;===================================================
+;実行可能判定
+;===================================================
+@COM_ABLE_S90_1
+;密着する実行判定
+SIF SAVESTR:ゲームフェイズ管理 != "通常モード"
+	RETURN 0
+;一括管理
+SIF GLOBAL_COMABLE_S("90_1")
+	RETURN RESULT
+;貝合わせモードじゃない時はアウト
+SIF !MODE_存在判定_順不同("貝合わせ", PLAYER, TARGET)
+	RETURN 0
+
+;PLAYER側の判定
+;上半身着衣
+;鎧、はだけない服、タイツ、ブラ等があると無理
+SIF TEQUIP:PLAYER:上半身鎧あり
+	RETURN 0
+SIF TEQUIP:PLAYER:上半身服あり && !TEQUIP:PLAYER:はだけ可
+	RETURN 0
+SIF TEQUIP:PLAYER:上タイツあり && !TEQUIP:PLAYER:上タイツ破れ
+	RETURN 0
+SIF TEQUIP:PLAYER:上半身下着あり > 0
+	RETURN 0
+
+;TARGET側の判定
+;上半身着衣
+;鎧、はだけない服、タイツ、ブラ等があると無理
+SIF TEQUIP:TARGET:上半身鎧あり
+	RETURN 0
+SIF TEQUIP:TARGET:上半身服あり && !TEQUIP:TARGET:はだけ可
+	RETURN 0
+SIF TEQUIP:TARGET:上タイツあり && !TEQUIP:TARGET:上タイツ破れ
+	RETURN 0
+SIF TEQUIP:TARGET:上半身下着あり > 0
+	RETURN 0
+
+RETURN 1
+
+
+;===================================================
+;実行時メッセージ
+;===================================================
+@MESSAGE_COM_S90_1
+PRINTFORM %CALLNAME:PLAYER%는 %CALLNAME:TARGET% 위에 덮쳐 올라, 온몸을 밀착시키고
+IF ABS(体格差計算(PLAYER, TARGET)) >= 2
+ELSEIF (!TALENT:TARGET:陥没乳首 || TCVAR:TARGET:陥没乳首露出フラグ) && (!TALENT:PLAYER:陥没乳首 || TCVAR:PLAYER:陥没乳首露出フラグ)
+	SIF PALAM:PLAYER:欲情 >= PALAMLV:3 || PALAM:TARGET:欲情 >= PALAMLV:3
+		PRINT 완전히 단단해진
+	PRINT 젖꼭지와 젖꼭지,
+ENDIF
+SIF PALAM:PLAYER:潤滑 >= PALAMLV:4 || PALAM:TARGET:潤滑 >= PALAMLV:4
+	PRINT 축축하게 젖은
+PRINTL 음순과 음순을 빈틈없이 포개었다
+SELECTCASE RAND:4
+	CASE 0
+		PRINTFORML 마치 하나의 생명체였던 것처럼 %CALLNAME:TARGET%와 섞여 하나가 된 %CALLNAME:PLAYER%는, 그대로 허리를 흔들어 서로의 몸을 탐하기 시작했다…
+	CASE 1
+		PRINTFORML 무겁고 끈적한 소리와 함께 찾아오는 쾌감에, %CALLNAME:PLAYER%와 %CALLNAME:TARGET%의 허리 움직임은 점차 격렬해져 간다…
+	CASE 2
+		PRINTFORML 녹아내려 경계가 사라질 듯한 쾌락에, %CALLNAME:PLAYER%와 %CALLNAME:TARGET%는 정신없이 서로를 애무하고 있다…
+	CASE 3
+		PRINTFORML 그대로 %CALLNAME:PLAYER%가 허리를 움직이기 시작하자, 밀어붙인 음순은 끈적하게 형태를 바꾸며, %CALLNAME:TARGET%의 여성기를 구석구석 자극했다…
+ENDSELECT

@@ -1,0 +1,103 @@
+;-------------------------------------------------
+;胸を揉みしだく
+;愛撫系コマンド、レベル2
+;-------------------------------------------------
+@RAPE_COMNAME5
+#FUNCTIONS
+TSTR:コマンド名受渡 = 가슴을 주무르다
+
+
+
+;===================================================
+;コマンドタイプ
+;===================================================
+@RAPE_COMTYPE_5
+#FUNCTION
+TFLAG:コマンドタイプ受渡 = RAPE_COMTYPE("うふふ_被挿入中")
+
+
+@RAPE_COM_TOOLTIP_5
+LOCALS = <br>■가슴을 주무르다<br>
+LOCALS += "상대의 가슴을 주무른다. 마음대로 주무르기 때문에 꽤 아프다."
+LOCALS += "<br>RAPE_COM 타입: 우후후or피삽입중<br>획득 소스: 쾌B・노출・접촉・고통"
+LOCALS += "<br>고유 획득 경험: 없음<br>"
+TSTR:ツールチップ受渡 = %LOCALS%
+
+@RAPE_COM5
+;-------------------------------------------------
+;ソース追加処理
+;-------------------------------------------------
+
+CALL SOURCE_CALC_露出(TARGET, PLAYER, 50)
+CALL SOURCE_CALC_接触(TARGET, PLAYER, 80)
+CALL SOURCE_CALC_快Ｂ(TARGET, PLAYER, 100)
+SIF TALENT:PLAYER:器用な指
+	CALL SOURCE_CALC_快Ｂ(TARGET, PLAYER, 50)
+
+;スパンキングが100ならまぁこのくらいでしょ
+CALL SOURCE_CALC_苦痛(TARGET, PLAYER, 60)
+
+
+;-------------------------------------------------
+;経験の処理
+;-------------------------------------------------
+;同性愛　レズなら戻り値1ゲイなら戻り値2
+IF HETEROSEX(TARGET,PLAYER)
+	EXP:同性愛経験 += 5
+	EXP:PLAYER:同性愛経験 += 5
+ENDIF
+
+RETURN 1
+
+;-------------------------------------------------
+;実行判定
+;-------------------------------------------------
+@RAPE_COM_ABLE5
+;胸愛撫実行判定
+;一括管理
+SIF GLOBAL_RAPE_COMABLE(5)
+	RETURN RESULT
+;Bがない場合駄目
+SIF TALENT:TARGET:Ｂ感度 == -2
+	RETURN 0
+SIF GETBIT(TALENT:TARGET:性別, 0) == 0
+	RETURN 0
+
+;鎧があると無理
+SIF TEQUIP:上半身鎧あり
+	RETURN 0
+;指を何かに使ってる・届かないなら無理
+SIF TEQUIP:PLAYER:指
+	RETURN 0
+;胸を何かに使ってる・届かないなら無理
+SIF TEQUIP:TARGET:胸
+	RETURN 0
+RETURN 1
+
+;-------------------------------------------------
+;実行時メッセージ
+;-------------------------------------------------
+@RAPE_MESSAGE_COM5
+
+PRINTFORM %CALLNAME:PLAYER%은(는)
+
+IF CFLAG:TARGET:睡眠
+	IF TCVAR:TARGET:泥酔眠姦
+		PRINTFORM 취해 쓰러진
+	ELSE
+		PRINTFORM 잠든
+	ENDIF
+ENDIF
+
+IF MODE_確認_完全一致("Ｖ挿入系", PLAYER, TARGET) > -1 || MODE_確認_完全一致("Ａ挿入系", PLAYER, TARGET) > -1 || MODE_確認_完全一致("Ｖ挿入系", TARGET, PLAYER) > -1 || MODE_確認_完全一致("Ａ挿入系", TARGET, PLAYER) > -1
+	PRINTFORM %CALLNAME:TARGET%와 이어진 채, %OPPAI_DESCRIPTION(TARGET)%
+ELSE
+	PRINTFORM %CALLNAME:TARGET%의 %OPPAI_DESCRIPTION(TARGET)%
+ENDIF
+;欲望のPALAMLV3以上＋
+IF PALAM:欲情 >= PALAMLV:3
+	PRINTFORML %TEXTR("의 끝에 있는, 완전히 단단해진 돌기를 집어 올렸다/을(를) 주무르고, 단단해진 젖꼭지를 손바닥으로 굴리며 희롱했다/을(를) 난폭하게 주물러 뭉갰다")%…
+ELSE
+	PRINTFORML 을(를)%TEXTR("마음껏 주물렀다/난폭하게 주물러 뭉갰다/장난감처럼 희롱했다")%…
+ENDIF
+

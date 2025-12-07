@@ -1,0 +1,114 @@
+;-------------------------------------------------
+;長期雇用の依頼
+;-------------------------------------------------
+@COMNAME602
+#FUNCTIONS
+TSTR:コマンド名受渡 = 장기 고용 의뢰
+SIF CFLAG:TARGET:長期雇用
+	TSTR:コマンド名受渡 = 장기 고용 취소
+
+;===================================================
+;コマンドタイプ
+;===================================================
+@COMTYPE_602
+#FUNCTION
+TFLAG:コマンドタイプ受渡 = COMTYPE("探索")
+
+@COM_TOOLTIP_602
+LOCALS = <br>■장기 고용 의뢰<br>
+LOCALS += "상대를 고용하여 리조트에 머무르면서 탐색을 돕는 계약을 맺는다. <br>"
+LOCALS += "이 계약이 계속되는 동안은, 상대는 리조트에 계속 머무른다. <br>"
+LOCALS += "<br>COM 타입: 탐색<br>획득 소스: 없음"
+LOCALS += "<br>고유 획득 경험: 없음<br>"
+TSTR:ツールチップ受渡 = %LOCALS%
+
+
+@COM602
+CALL ユニーク客人数チェック()
+DRAWLINE
+IF CFLAG:TARGET:長期雇用
+	PRINTL ※이미 장기 고용 중입니다
+	PRINTFORML %CALLNAME:TARGET%의 장기 고용을 취소하시겠습니까?　(현재 소비 중인 루피: 1일 / 1000루피)
+ELSEIF CFLAG:TARGET:スイートルーム滞在フラグ && 滞在キャラ数 >= 滞在キャラ上限
+	PRINTL ※장기 고용하면 스위트룸에서 일반 객실로 이동합니다.
+	PRINTW ※일반 객실에 빈방이 없으므로 장기 고용할 수 없습니다.
+	RETURN -1
+ELSE
+	PRINTL 탐색 지원을 장기간 의뢰함으로써, 매일 루피를 소비하는 대신 캐릭터가 귀가하지 않게 됩니다.
+	PRINTL ※탐색 파티에서 제외하는 것은 가능합니다.
+	SIF CFLAG:TARGET:スイートルーム滞在フラグ
+		PRINTL ※장기 고용하면 스위트룸에서 일반 객실로 이동합니다.
+	PRINTFORML %CALLNAME:TARGET%을(를) 장기 고용하시겠습니까?　(필요 루피: 1일 / 1000루피)
+ENDIF
+
+
+PRINTBUTTON "[0]예", 0
+PRINTL
+PRINTBUTTON "[1]아니요", 1
+PRINTL
+$INPUT_LOOP
+INPUT
+
+SELECTCASE RESULT
+	CASE 0
+		CFLAG:TARGET:長期雇用 = !CFLAG:TARGET:長期雇用
+		CFLAG:TARGET:探索参加許可フラグ = 1
+		;長期雇用するとスイートから抜ける
+		IF CFLAG:TARGET:スイートルーム滞在フラグ
+			CALL 滞在者部屋割り配列削除処理(TARGET)
+			FOR LOCAL, 0, 滞在キャラ上限
+				IF 滞在者部屋割り配列:LOCAL < 1
+					滞在者部屋割り配列:LOCAL = TARGET
+					BREAK
+				ENDIF
+			NEXT
+		ENDIF
+	CASE 1
+		RETURN -1
+	CASEELSE
+		REUSELASTLINE 
+		GOTO INPUT_LOOP
+ENDSELECT
+
+RETURN 1
+
+;-------------------------------------------------
+;実行判定
+;-------------------------------------------------
+@COM_ABLE602
+#DIM ループ用
+;移動実行判定
+SIF SAVESTR:ゲームフェイズ管理 != "通常モード"
+	RETURN 0
+;一括管理
+SIF GLOBAL_COMABLE(602)
+	RETURN RESULT
+;睡眠中
+SIF CFLAG:睡眠
+	RETURN 0
+;好感度レベル11以上(探索パーティ勧誘と同条件)
+SIF CFLAG:TARGET:好感度レベル < 11
+	RETURN 0
+;従業員はだめ
+SIF TALENT:TARGET:従業員
+	RETURN 0
+;定住してるとだめ
+SIF TALENT:TARGET:定住者
+	RETURN 0
+;eraは見ない
+SIF NO:TARGET == 998
+	RETURN 0
+RETURN 1
+
+;-------------------------------------------------
+;メッセージ
+;-------------------------------------------------
+
+@MESSAGE_COM602
+
+IF CFLAG:TARGET:長期雇用
+	PRINTFORML %CALLNAME:TARGET%을(를) 장기 고용했습니다.
+	PRINTL (하루 종료 시 루피 1000이 소비됩니다)
+ELSE
+	PRINTFORML %CALLNAME:TARGET%의 장기 고용을 취소했습니다.
+ENDIF

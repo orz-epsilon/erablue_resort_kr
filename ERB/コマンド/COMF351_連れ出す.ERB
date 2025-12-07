@@ -1,0 +1,114 @@
+
+@COMNAME351
+#FUNCTIONS
+TSTR:コマンド名受渡 = 데리고 나가기
+IF CFLAG:TARGET:同行
+	IF TALENT:TARGET:恋慕
+		TSTR:コマンド名受渡 = 연인 잡기
+	ELSE
+		TSTR:コマンド名受渡 = 손을 잡다
+	ENDIF
+ENDIF
+
+;===================================================
+;コマンドタイプ
+;===================================================
+@COMTYPE_351
+#FUNCTION
+TFLAG:コマンドタイプ受渡 = COMTYPE("日常")
+
+@COM_TOOLTIP_351
+LOCALS = <br>■連れ出す<br>
+LOCALS += "일정치 이상의 호감도 레벨을 가진 상대를, 자신에게 동행시키는 커맨드.<br>동시에 데리고 다닐 수 있는 것은 두 명까지.<br>동행해 주는 시간은 60분. 단, 함께 은밀 중·우후후 중에는 동행이 해제되지 않는다.<br>동행 중에는 [손을 잡다], 더욱이 [연모]를 가지고 있는 경우 [연인 잡기]로 변화."
+LOCALS += "<br>COM 타입: 일상<br>획득 소스: 없음"
+LOCALS += "<br>고유 획득 경험: 없음<br>"
+TSTR:ツールチップ受渡 = %LOCALS%
+
+@COM351
+#DIM 同行者保存
+#DIM 同行数値記録
+#DIM 連れ出し時間
+同行者保存 = 0
+同行数値記録 = 0
+
+CALLFORMF COMNAME351
+SELECTCOM_NAME '= TSTR:コマンド名受渡
+
+IF CFLAG:TARGET:デート && CFLAG:TARGET:デート != MASTER + 100 && TCVAR:TARGET:デートちょっかい値 <= 0
+	PRINTFORMW %CALLNAME:TARGET%는 오늘 하루 종일 %CALLNAME:(ABS(CFLAG:TARGET:デート) - 100)%와 데이트하고 있어서 데려갈 수 없습니다
+	RETURN -1
+ENDIF
+
+IF CFLAG:TARGET:同行
+	RFLAG:コマンド結果受渡し変数 = 1
+	IF TALENT:TARGET:恋慕
+		PRINTFORMW %CALLNAME:TARGET%와 깍지 껴서 손을 잡습니다.
+	ELSE
+		PRINTFORMW %CALLNAME:TARGET%와 손을 잡습니다.
+	ENDIF
+ELSE
+	PRINTFORMW %CALLNAME:TARGET%를 데리고 나갑니다.
+ENDIF
+;一度に連れ歩けるのは二人まで,八面六臂があれば無視
+IF !あなた特殊能力:八面六臂
+	FOR LOCAL,1,CHARANUM
+		SIF TARGET:LOCAL < 1
+			BREAK
+		;TARGETに関してカウントする必要なし
+		SIF TARGET:LOCAL == TARGET
+			CONTINUE
+		IF CFLAG:(TARGET:LOCAL):同行
+			IF 同行数値記録
+				;既に同行者が2人いるパターン
+				IF 同行数値記録 > CFLAG:(TARGET:LOCAL):同行
+					CALL 同行解除処理(TARGET:LOCAL)
+					CFLAG:(TARGET:LOCAL):デート = 0
+				ELSE
+					CALL 同行解除処理(同行者保存)
+					CFLAG:同行者保存:デート = 0
+					同行数値記録 = CFLAG:(TARGET:LOCAL):同行
+					同行者保存 = TARGET:LOCAL
+				ENDIF
+			ELSE
+				同行数値記録 = CFLAG:(TARGET:LOCAL):同行
+				同行者保存 = TARGET:LOCAL
+			ENDIF
+		ENDIF
+	NEXT
+ENDIF
+連れ出し時間 = 60 + (CFLAG:好感度レベル - 関係閾値:2) * 5
+SIF CFLAG:TARGET:同行 < 連れ出し時間
+	CFLAG:TARGET:同行 = 連れ出し時間
+TFLAG:TARGET変更用 = TARGET
+TIME += 1
+
+;SOURCEまで回さないのでここで口上を表示させる
+RESULT = 0
+RESULTS =
+IF FLAG:口上表示切り替えオプション > 0
+	TRYCALLFORM KOJO_COM_{NO:TARGET}_351(TARGET)
+ENDIF
+
+RETURN 1
+
+;-------------------------------------------------
+;実行判定
+;-------------------------------------------------
+@COM_ABLE351
+;連れ出す実行判定
+SIF SAVESTR:ゲームフェイズ管理 != "通常モード"
+	RETURN 0
+;一括管理
+SIF GLOBAL_COMABLE(351)
+	RETURN RESULT
+;TARGETの好感度レベル
+SIF CFLAG:好感度レベル < 1 + 関係閾値:2
+	RETURN 0
+;デート中はダメ
+SIF CFLAG:PLAYER:デート
+	RETURN 0
+RETURN 1
+
+;-------------------------------------------------
+;実行時メッセージ
+;-------------------------------------------------

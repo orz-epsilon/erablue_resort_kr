@@ -1,0 +1,296 @@
+
+;-------------------------------------------------
+;卓球勝負処理関連
+;-------------------------------------------------
+;簡単なミニゲームで勝敗を決定する
+;-------------------------------------------------
+@卓球勝負(キャラ番号)
+#DIM キャラ番号
+#DIM 画像ID
+#DIM カード種類, 10
+#DIM カード数値, 10
+#DIM 勝利数, 2
+#DIM 選択カード, 2
+#DIM ポロリ済
+VARSET 勝利数
+ポロリ済 = 0
+
+;画像初期化
+CALL 画像描画終了
+FOR LOCAL, 0, 10
+	SPRITEDISPOSE @"手札{LOCAL}"
+	GDISPOSE LOCAL + 1
+NEXT
+画像ID = 1
+
+;カードの配布・カード画像の生成
+;0～4が自分手札、5～9が相手手札
+;卓球経験があればあるほど強くなるが、最大値は９
+
+FOR LOCAL, 0, 5
+	カード種類:LOCAL = RAND:3 + 1
+	カード数値:LOCAL = RAND:5 + 1 + (EXP:MASTER:卓球経験 / 100)
+	カード数値:LOCAL = MIN(カード数値:LOCAL, 9)
+	;一種類ずつは保証
+	SIF LOCAL == 0
+		カード種類:LOCAL = 1
+	SIF LOCAL == 1
+		カード種類:LOCAL = 2
+	SIF LOCAL == 2
+		カード種類:LOCAL = 3
+	SELECTCASE カード数値:LOCAL
+		CASE 1
+			LOCALS = 1
+		CASE 2
+			LOCALS = 2
+		CASE 3
+			LOCALS = 3
+		CASE 4
+			LOCALS = 4
+		CASE 5
+			LOCALS = 5
+		CASE 6
+			LOCALS = 6
+		CASE 7
+			LOCALS = 7
+		CASE 8
+			LOCALS = 8
+		CASE 9
+			LOCALS = 9
+	ENDSELECT
+	GCREATE 画像ID, 50, 50
+	SELECTCASE カード種類:LOCAL
+		CASE 1
+			CALL 画像合成(画像ID, "ダメアビ")
+		CASE 2
+			CALL 画像合成(画像ID, "回復アビ")
+		CASE 3
+			CALL 画像合成(画像ID, "バフアビ")
+	ENDSELECT
+	CALL 画像合成(画像ID, LOCALS, 25, 25)
+	CALL リソース登録(@"手札{LOCAL}", 画像ID)
+	画像ID += 1
+NEXT
+
+
+FOR LOCAL, 5, 10
+	カード種類:LOCAL = RAND:3 + 1
+	カード数値:LOCAL = RAND:5 + 1 + (EXP:キャラ番号:卓球経験 / 100)
+	カード数値:LOCAL = MIN(カード数値:LOCAL, 9)
+	;一種類ずつは保証
+	SIF LOCAL == 5
+		カード種類:LOCAL = 1
+	SIF LOCAL == 6
+		カード種類:LOCAL = 2
+	SIF LOCAL == 7
+		カード種類:LOCAL = 3
+	SELECTCASE カード数値:LOCAL
+		CASE 1
+			LOCALS = 1
+		CASE 2
+			LOCALS = 2
+		CASE 3
+			LOCALS = 3
+		CASE 4
+			LOCALS = 4
+		CASE 5
+			LOCALS = 5
+		CASE 6
+			LOCALS = 6
+		CASE 7
+LOCALS = 7
+		CASE 8
+LOCALS = 8
+		CASE 9
+LOCALS = 9
+	ENDSELECT
+	GCREATE 画像ID, 50, 50
+	SELECTCASE カード種類:LOCAL
+		CASE 1
+			CALL 画像合成(画像ID, "ダメアビ")
+		CASE 2
+			CALL 画像合成(画像ID, "回復アビ")
+		CASE 3
+			CALL 画像合成(画像ID, "バフアビ")
+	ENDSELECT
+	CALL 画像合成(画像ID, LOCALS, 25, 25)
+	CALL リソース登録(@"手札{LOCAL}", 画像ID)
+	PRINTFORML {画像ID}
+	画像ID += 1
+NEXT
+
+;カード表示
+$卓球_LOOP
+DRAWLINE
+PRINTFORML %CALLNAME:キャラ番号%의 패 (승리 포인트:{勝利数:1})
+
+FOR LOCAL, 5, 10
+	IF カード種類:LOCAL == -1
+		CALL ダミーセット(0, 5, 75)
+	ELSE
+		CALL 画像セット(@"手札{LOCAL}", 0, 5, 300)
+	ENDIF
+NEXT
+CALL 画像一斉表示("left", 0, 1)
+PRINTL
+PRINTL
+PRINTFORML %CALLNAME:MASTER%의 패 (승리 포인트:{勝利数:0})
+
+FOR LOCAL, 0, 5
+	IF カード種類:LOCAL == -1
+		CALL ダミーセット(0, 5, 75)
+	ELSE
+		CALL 画像セット(@"手札{LOCAL}", 0, 5, 300, 1, TOSTR(LOCAL))
+	ENDIF
+NEXT
+CALL 画像一斉表示("left", 0, 1)
+PRINTL
+PRINTBUTTON "[설명]", 998
+INPUT
+
+SELECTCASE RESULT
+	CASE 0 TO 4
+		;手札選択なので下の処理に進む
+		選択カード:0 = RESULT
+	CASE 998
+		PRINTL 탁구 미니게임입니다.
+		PRINTL 게임 시작 시 각각 5장의 패가 배부됩니다.
+		PRINTL 서로 카드를 한 장씩 선택하여 필드에 내고, 그 파워를 비교하여 이긴 쪽이 '승리 포인트'를 얻습니다.
+		PRINTFORML (동일한 값일 경우, %CALLNAME:MASTER%의 승리가 됩니다)
+		PRINTW 승리 포인트를 먼저 3개 모은 쪽의 승리입니다.
+		PRINTL
+		PRINTL 카드에는 색상과 문양으로 표현되는 '전술'과 숫자로 표현되는 '파워'가 기재되어 있습니다.
+		PRINTL 전술은 다음과 같습니다.
+		PRINT_IMG "ダメアビ"
+		PRINTL …공격형 전술입니다. 상대가 페인트형 전술이었을 경우, 자신의 파워에 +3합니다.
+		PRINT_IMG "回復アビ"
+		PRINTL …내구형 전술입니다. 상대가 공격형 전술이었을 경우, 자신의 파워에 +3합니다.
+		PRINT_IMG "バフアビ"
+		PRINTL …페인트형 전술입니다. 상대가 내구형 전술이었을 경우, 자신의 파워에 +1합니다.
+		PRINTW 　　이 카드로 승리 포인트를 얻었을 때, '노출 찬스'가 발생합니다.
+		PRINTL
+		PRINTL '노출 찬스'
+		PRINTL 노출 찬스가 발생했을 때, 상대 캐릭터의 옷이 흐트러져 가슴이 노출될 수 있습니다.
+		PRINTL 기본 확률은 30%이며, 가슴이 클수록 확률은 상승합니다. (작아도 감소하지는 않습니다)
+		PRINTW 노출이 성공했을 경우, 그 승부 중에는 노출 찬스는 발생하지 않습니다.
+		GOTO 卓球_LOOP
+	CASEELSE
+		GOTO 卓球_LOOP
+ENDSELECT
+
+;相手のカード選択、ランダムでいいかな……
+LOCAL:1 = RAND:(5 - 勝利数:0 -勝利数:1) + 1
+LOCAL:2 = 0
+FOR LOCAL, 5, 10
+	;残ってるカードをカウント
+	SIF カード種類:LOCAL > 0
+		LOCAL:2 += 1
+	;ランダムで選んだ○番目のカードが見つかったら抜ける
+	SIF LOCAL:2 == LOCAL:1
+		BREAK
+NEXT
+選択カード:1 = LOCAL - 1
+
+DRAWLINE
+PRINTFORMLC %CALLNAME:MASTER%의 카드
+PRINTFORMLC %CALLNAME:キャラ番号%의 카드
+PRINTL 
+CALL 画像セット(@"手札{選択カード:0}", 0, 158, 30)
+CALL 画像セット(@"手札{選択カード:1}", 0, 158, 30)
+CALL 画像一斉表示("left", 0, 1)
+LOCALS = 파워:{カード数値:(選択カード:0)}
+LOCALS:1 = 파워:{カード数値:(選択カード:1)}
+IF カード種類:(選択カード:0) != カード種類:(選択カード:1)
+	IF カード種類:(選択カード:0) == 1
+		IF カード種類:(選択カード:1) == 2
+			LOCALS:1 += "+3"
+			カード数値:(選択カード:1) += 3
+		ELSEIF カード種類:(選択カード:1) == 3
+			LOCALS += "+3"
+			カード数値:(選択カード:0) += 3
+		ENDIF
+	ELSEIF カード種類:(選択カード:0) == 2
+		IF カード種類:(選択カード:1) == 1
+			LOCALS += "+3"
+			カード数値:(選択カード:0) += 3
+		ELSEIF カード種類:(選択カード:1) == 3
+			LOCALS:1 += "+1"
+			カード数値:(選択カード:1) += 1
+		ENDIF
+	ELSEIF カード種類:(選択カード:0) == 3
+		IF カード種類:(選択カード:1) == 1
+			LOCALS:1 += "+3"
+			カード数値:(選択カード:1) += 3
+		ELSEIF カード種類:(選択カード:1) == 2
+			LOCALS += "+1"
+			カード数値:(選択カード:0) += 1
+		ENDIF
+	ENDIF
+ENDIF
+TOFULL @"%LOCALS%"
+PRINTFORM %RESULTS, 19, LEFT%
+PRINT VS　 
+TOFULL @"%LOCALS:1%"
+PRINTFORMW %RESULTS%
+
+IF カード数値:(選択カード:0) < カード数値:(選択カード:1)
+	PRINTFORMW %CALLNAME:キャラ番号%의 승리 포인트:{勝利数:1}＞{勝利数:1 + 1}
+	勝利数:1 += 1
+	TRYCALLFORM KOJO_EVENT_卓球勝負中_{NO:キャラ番号}(キャラ番号, "TARGET勝利")
+ELSE
+	PRINTFORML %CALLNAME:MASTER%의 승리 포인트:{勝利数:0}＞{勝利数:0 + 1}
+	勝利数:0 += 1
+	IF カード種類:(選択カード:0) == 3 && ポロリ済 == 0 && TEQUIP:キャラ番号:はだけ可
+		SETCOLOR 0xFFD400
+		PRINTW 노출 찬스 발생!
+		RESETCOLOR
+		LOCAL = 3
+		SIF TALENT:キャラ番号:バストサイズ > 0
+			LOCAL += TALENT:キャラ番号:バストサイズ
+		PRINTFORML %CALLNAME:キャラ番号%은(는) %CALLNAME:MASTER%의 페인트로, 좌우로 크게 움직이고 있다!
+		PRINTFORMW %CALLNAME:キャラ番号%의 옷이, 조금 흐트러지기 시작했다……!
+		PRINTW ………!
+		IF RAND:10 < LOCAL
+			PRINTFORML 격렬한 움직임으로 %CALLNAME:キャラ番号%의 옷이 흐트러져, 가슴이 노출되어 버렸다!
+			SETCOLOR 0xFFD400
+			PRINTW 노출 찬스 성공!
+			RESETCOLOR
+			PRINTFORMW %CALLNAME:キャラ番号%은(는) 황급히 옷매무새를 고쳤다. 얼굴이 조금 붉어져 있다.
+			CALL SOURCE_CALC_露出(キャラ番号, PLAYER, 100)
+			ポロリ済 = 1
+			TRYCALLFORM KOJO_EVENT_卓球勝負中_{NO:キャラ番号}(キャラ番号, "あなた勝利_ポロリ成功")
+			;履歴登録
+			履歴用実績:キャラ番号:卓球ポロリ回数 += 1
+			CALL 履歴登録チェック(キャラ番号, "ポロリ回数")
+		ELSE
+			PRINTFORML ……하지만, 옷매무새가 흐트러진 것을 알아차린 %CALLNAME:キャラ番号%이(가) 고쳐 버렸다.
+			PRINTW 노출 찬스 실패…
+			TRYCALLFORM KOJO_EVENT_卓球勝負中_{NO:キャラ番号}(キャラ番号, "あなた勝利_ポロリ失敗")
+		ENDIF
+	ELSE
+		TRYCALLFORM KOJO_EVENT_卓球勝負中_{NO:キャラ番号}(キャラ番号, "あなた勝利_ポロリ無し")
+	ENDIF
+ENDIF
+
+カード種類:(選択カード:0) = -1
+カード種類:(選択カード:1) = -1
+
+IF 勝利数:0 == 3
+	PRINTFORMW %CALLNAME:MASTER%의 승리!!
+	履歴用実績:MASTER:卓球勝利回数 += 1
+	CALL 履歴登録チェック(MASTER, "卓球勝利回数")
+	RETURN 1
+ELSEIF 勝利数:1 == 3
+	PRINTFORMW %CALLNAME:キャラ番号%의 승리!!
+	履歴用実績:キャラ番号:卓球勝利回数 += 1
+	CALL 履歴登録チェック(キャラ番号, "卓球勝利回数")
+	RETURN -1
+ENDIF
+
+GOTO 卓球_LOOP
+
+
+
+
+
+

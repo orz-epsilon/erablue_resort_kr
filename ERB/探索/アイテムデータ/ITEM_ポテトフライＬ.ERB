@@ -1,0 +1,91 @@
+
+@アイテム個別文章表示_ポテトフライＬ(ARGS)
+;ポテトフライＬ
+IF ARGS == "値段"
+	詳細文文字列受け渡し変数 = 루피
+	RETURN 3980
+ENDIF
+
+LOCALS = 
+LOCALS += @"■포테이토 프라이 L　　　소지 수:{DT_CELL_GET("所持アイテムデータベース", 0, "ポテトフライＬ")}<br>"
+LOCALS += "감자를 기름에 튀긴 죄 많은 음식의 L 사이즈. <br>"
+LOCALS += "기본적으로 공유를 권장하는 일품. <br>"
+LOCALS += "먹으면 기운이 솟아나 체력과 마력이 회복된다. <br>"
+LOCALS += "전투 중에는 사용할 수 없다. <br>"
+LOCALS += "섭취 칼로리:515kcal<br>"
+LOCALS += "<br>"
+LOCALS += "【효과】<br>"
+LOCALS += "아군 전체의 HP를 [2000÷인원수], <br>"
+LOCALS += "MP를 [200÷인원수] 회복한다. <br>"
+
+詳細文文字列受け渡し変数 = %LOCALS%
+
+@アイテム使用先表示_ポテトフライＬ
+;戦闘時使用不可
+CALL 汎用使用先表示("味方全体", -1)
+
+@アイテム効果処理_ポテトフライＬ(隊列番号)
+#DIM CONST 基礎HP回復量 = 2000
+#DIM CONST 基礎MP回復量 = 200
+#DIM 人数
+#DIM 隊列番号
+#DIM HP回復量
+#DIM MP回復量
+;ARG = 隊列の何番目か
+
+IF DT_CELL_GET("所持アイテムデータベース", 0, "ポテトフライＬ") < 1
+	PRINTW 아이템이 없습니다
+	RETURN 0
+ENDIF
+
+人数 = 0
+;人数取得
+FOR 隊列番号, 0, 14
+	SIF 隊列番号 > 3 && 隊列番号 < 10
+		CONTINUE
+	SIF !BATTLE_STATE:隊列番号:キャラ登録番号
+		CONTINUE
+	SIF BATTLE_STATE:隊列番号:ＨＰ < 1
+		CONTINUE
+	人数 ++
+NEXT
+
+HP回復量 = 基礎HP回復量 / 人数
+MP回復量 = 基礎MP回復量 / 人数
+
+人数 = 0
+FOR 隊列番号, 0, 14
+	SIF 隊列番号 > 3 && 隊列番号 < 10
+		CONTINUE
+	SIF !BATTLE_STATE:隊列番号:キャラ登録番号
+		CONTINUE
+	SIF BATTLE_STATE:隊列番号:最大ＨＰ == BATTLE_STATE:隊列番号:ＨＰ && BATTLE_STATE:隊列番号:最大ＭＰ == BATTLE_STATE:隊列番号:ＭＰ
+		CONTINUE
+	SIF BATTLE_STATE:隊列番号:ＨＰ < 1
+		CONTINUE
+
+	IF BATTLE_STATE:隊列番号:最大ＨＰ - BATTLE_STATE:隊列番号:ＨＰ < HP回復量
+		PRINTFORMW %CALLNAME:(BATTLE_STATE:隊列番号:キャラ登録番号)%의 HP를 {BATTLE_STATE:隊列番号:最大ＨＰ - BATTLE_STATE:隊列番号:ＨＰ}회복했습니다
+	ELSE
+		PRINTFORMW %CALLNAME:(BATTLE_STATE:隊列番号:キャラ登録番号)%의 HP를 {HP回復量}회복했습니다
+	ENDIF
+	IF BATTLE_STATE:隊列番号:最大ＭＰ - BATTLE_STATE:隊列番号:ＭＰ < MP回復量
+		PRINTFORMW %CALLNAME:(BATTLE_STATE:隊列番号:キャラ登録番号)%의 MP를 {BATTLE_STATE:隊列番号:最大ＭＰ - BATTLE_STATE:隊列番号:ＭＰ}회복했습니다
+	ELSE
+		PRINTFORMW %CALLNAME:(BATTLE_STATE:隊列番号:キャラ登録番号)%의 MP를 {MP回復量}회복했습니다
+	ENDIF
+
+	BATTLE_STATE:隊列番号:ＨＰ = MIN(BATTLE_STATE:隊列番号:ＨＰ + HP回復量, BATTLE_STATE:隊列番号:最大ＨＰ)
+	BATTLE_STATE:隊列番号:ＭＰ = MIN(BATTLE_STATE:隊列番号:ＭＰ + MP回復量, BATTLE_STATE:隊列番号:最大ＭＰ)
+	TCVAR:(BATTLE_STATE:隊列番号:キャラ登録番号):摂取カロリー += 515
+	人数 ++
+NEXT
+
+IF 人数 > 0
+	WAIT
+ELSE
+	PRINTW 회복 가능한 대상이 없습니다.
+	RETURN 0
+ENDIF
+
+RETURN 1

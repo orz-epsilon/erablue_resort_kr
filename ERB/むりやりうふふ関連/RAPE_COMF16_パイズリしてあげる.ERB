@@ -1,0 +1,157 @@
+;-------------------------------------------------
+;パイズリしてあげる
+;奉仕系コマンド、レベル3
+;-------------------------------------------------
+@RAPE_COMNAME16
+#FUNCTIONS
+IF MODE_確認_完全一致("フェラチオ", TARGET, PLAYER) > -1
+	TSTR:コマンド名受渡 = 가슴으로 펠라하다
+ELSE
+	TSTR:コマンド名受渡 = 가슴으로 펠라해 주다
+ENDIF
+
+
+;===================================================
+;コマンドタイプ
+;===================================================
+@RAPE_COMTYPE_16
+#FUNCTION
+TFLAG:コマンドタイプ受渡 = RAPE_COMTYPE("うふふ")
+
+
+
+@RAPE_COM_TOOLTIP_16
+LOCALS = <br>■가슴으로 펠라해 주다<br>
+LOCALS += "가슴으로 상대의 페니스를 애무해 주는 커맨드. <br>가슴 펠라 모드가 되어, 모드를 변경하거나 성행위를 종료할 때까지 지속적으로 특정 소스가 발생한다. <br>펠라치오 모드 시, [가슴 펠라]로 변화."
+LOCALS += "<br>RAPE_COM 타입: 우후후<br>획득 소스: 쾌B・노출・접촉・봉사・불결"
+LOCALS += "<br>고유 획득 경험: 가슴 펠라 경험(TARGET)<br>"
+TSTR:ツールチップ受渡 = %LOCALS%
+
+@RAPE_COM16
+;-------------------------------------------------
+;モードの設定
+;-------------------------------------------------
+IF MODE_確認_完全一致("フェラチオ", PLAYER, TARGET) < 0
+	CALL MODE_CHANGE("パイズリ", PLAYER, TARGET)
+ELSE
+	CALL MODE_DELETE_プレイヤー側("フェラチオ", PLAYER)
+	CALL MODE_CHANGE("パイズリフェラ", PLAYER, TARGET)
+ENDIF
+;-------------------------------------------------
+;RAPE_COM別FLAGの設定
+;-------------------------------------------------
+
+;奉仕快楽
+RCVAR:PLAYER:奉仕コマンドフラグ = 1
+RCVAR:TARGET:汎用喘ぎ_文節低減フラグ = 1
+;-------------------------------------------------
+;ソース追加処理
+;-------------------------------------------------
+
+
+
+
+CALL SOURCE_CALC_快Ｂ(PLAYER, TARGET, 80)
+CALL SOURCE_CALC_露出(PLAYER, TARGET, 50)
+CALL SOURCE_CALC_接触(PLAYER, TARGET, 150)
+CALL SOURCE_CALC_奉仕(PLAYER, TARGET, 400)
+
+CALL SOURCE_CALC_不潔(PLAYER, TARGET, 200)
+
+;-------------------------------------------------
+;経験の処理
+;-------------------------------------------------
+EXP:PLAYER:パイズリ経験 ++
+
+;同性愛　レズなら戻り値1ゲイなら戻り値2
+IF HETEROSEX(TARGET,PLAYER)
+	EXP:同性愛経験 += 7
+	EXP:PLAYER:同性愛経験 += 7
+ENDIF
+
+;愛情経験
+SIF TALENT:恋慕
+	EXP:愛情経験 ++
+
+RETURN 1
+
+;-------------------------------------------------
+;実行判定
+;-------------------------------------------------
+
+@RAPE_COM_ABLE16
+;パイズリ実行判定
+SIF GLOBAL_RAPE_COMABLE(16)
+	RETURN RESULT
+;ちんこがない場合駄目
+SIF TALENT:TARGET:Ｃ感度 == -2
+	RETURN 0
+;調教者がオトコか半人半妖かふたなりじゃないとダメ
+SIF !(TALENT:TARGET:性別 & 2)
+	RETURN 0
+;相手に胸がないならダメ
+SIF TALENT:PLAYER:性別 == 2
+	RETURN 0
+;縄使用中は不可
+; SIF TEQUIP:縄
+; 	RETURN 0
+;上半身着衣
+;鎧、差し込めないorはだけない服、タイツがあると無理
+SIF TEQUIP:PLAYER:上半身鎧あり
+	RETURN 0
+SIF TEQUIP:PLAYER:上半身服あり && (!TEQUIP:PLAYER:はだけ可 && !TEQUIP:PLAYER:パイズリ可)
+	RETURN 0
+SIF TEQUIP:PLAYER:上タイツあり && !TEQUIP:PLAYER:上タイツ破れ
+	RETURN 0
+;胸、ペニスを何かに使ってる・届かないなら無理
+IF MODE_確認_完全一致("フェラチオ", TARGET, PLAYER) < 0
+	SIF TEQUIP:TARGET:ペニス
+		RETURN 0
+	SIF TEQUIP:PLAYER:胸
+		RETURN 0
+ENDIF
+RETURN 1
+
+;-------------------------------------------------
+;実行時メッセージ
+;-------------------------------------------------
+@RAPE_MESSAGE_COM16
+
+PRINTFORM %CALLNAME:PLAYER%은(는)%CALLNAME:TARGET%의
+	SIF CFLAG:TARGET:発情期フラグ < 0
+		PRINTFORM 발정
+	
+	;GETBITのほうがいいんだろうけど結局のところよくわかってないのでTALENTで
+	IF TALENT:非童貞 == 0
+		PRINTFORM 동정
+	ELSEIF TALENT:イキやすさ == 1
+		PRINTFORM %TEXTR("하찮은/흐느적거리는")%
+	ELSEIF TALENT:Ｃ感度 == 1
+		PRINTFORM 민감
+	ENDIF
+	
+	IF TALENT:男性器サイズ <= -1
+		PRINTFORM %TEXTR("자지/고추/작은 자지")%
+	ELSEIF TALENT:男性器サイズ == 0
+		PRINTFORM %TEXTR("자지/고추/페니스")%
+	ELSEIF TALENT:男性器サイズ == 1
+		PRINTFORM %TEXTR("큰 자지/큰 자지")%
+	ELSEIF TALENT:男性器サイズ == 2
+		PRINTFORM %TEXTR("큰 자지/큰 자지")%
+	ENDIF
+PRINTFORM 을(를)
+SIF MODE_確認_完全一致("パイズリフェラ", PLAYER, TARGET) > -1
+PRINTFORM 물고 있는 채로,
+IF TALENT:PLAYER:バストサイズ <= -1
+PRINTFORM 얇은 가슴으로
+;巨乳
+ELSEIF TALENT:PLAYER:バストサイズ == 1
+PRINTFORM 크게 자란 가슴으로 페니스를 감싸 안고
+;爆乳以上
+ELSEIF TALENT:PLAYER:バストサイズ >= 2
+PRINTFORM 너무나 풍만하게 자란 가슴으로 페니스를 감추듯이 끼워
+ELSE
+PRINTFORM 가슴으로 페니스를 끼워
+ENDIF
+PRINTFORML 문질러 올려주었다…
+

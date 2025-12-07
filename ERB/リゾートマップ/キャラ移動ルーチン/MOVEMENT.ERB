@@ -1,0 +1,805 @@
+;時間経過処理
+@CHARA_MOVEMENT(追従モード = 0)
+#DIM DYNAMIC 追従モード
+#DIM 追い出し先
+#DIM モード実行中フラグ
+#DIM モード番号
+#DIM あなた追従中
+
+FOR LOCAL,0,CHARANUM
+	;滞在してないキャラはスルー
+	SIF CFLAG:LOCAL:滞在期間 == -1
+		CONTINUE
+	;追従モード時、追従じゃないキャラはスルー
+	SIF 追従モード && RCVAR:LOCAL:追従ルーチン中 == 0
+		CONTINUE
+	;マップ間移動処理
+	CALL マップ遷移判定処理(CFLAG:LOCAL:現在マップ種別, CFLAG:LOCAL:現在位置)
+	IF RESULT
+		CFLAG:LOCAL:現在位置 = RESULT
+	ENDIF
+	; SIF LOCAL == MASTER
+	; 	CALL マップ種別変更(LOCAL)
+	
+;	;睡眠中、MASTERと同室なら追い出す
+;	IF LOCAL > 0 && CFLAG:LOCAL:睡眠 && CFLAG:LOCAL:現在位置 == CFLAG:MASTER:現在位置 && !TALENT:LOCAL:恋慕 && FLAG:(300 + CFLAG:MASTER:現在位置)
+;		IF CFLAG:LOCAL:衰弱
+;			PRINTFORML %CALLNAME:LOCAL%は疲れて眠ってしまった…
+;		ELSE
+;			PRINTFORML %CALLNAME:LOCAL%に追い出された…
+;		ENDIF
+;		;追い出し先
+;		FOR 追い出し先,0,20
+;			;移動可能な部屋が見つかるとそこに移動
+;			IF CAN_MOVE_1(CFLAG:MASTER:現在位置, 追い出し先) & 1
+;				CFLAG:MASTER:現在位置 = 追い出し先
+;				BREAK
+;			ENDIF
+;		NEXT
+;		;うふふリセット
+;		CVARSET CFLAG, 317
+;		TARGET = 0
+;	ENDIF
+	
+	;BASEの自然変動
+	;精力剤
+	IF TCVAR:LOCAL:精力剤フラグ
+		TCVAR:LOCAL:精液濃縮 = MIN(10, TCVAR:LOCAL:精液濃縮)
+	ENDIF
+	;MASTERと同じ場所にいないとき
+	IF CFLAG:LOCAL:現在位置 != CFLAG:MASTER:現在位置 || CFLAG:LOCAL:現在マップ種別 != CFLAG:PLAYER:現在マップ種別
+		BASE:LOCAL:ムード = 0
+		BASE:LOCAL:理性 = BASE:LOCAL:理性 + TIME_PROGRESS(TFLAG:行動前時刻) * (MAXBASE:LOCAL:理性 + 1000) / ((BASE:LOCAL:理性 + 1000) * 2)
+		BASE:LOCAL:理性 = MIN(理性キャップ算出(LOCAL), BASE:LOCAL:理性)
+	ENDIF
+	;怒りは常に減少する
+	BASE:LOCAL:怒り = BASE:LOCAL:怒り - TIME_PROGRESS(TFLAG:行動前時刻) * 5 / (CFLAG:LOCAL:怒り + 1)
+	SIF BASE:LOCAL:怒り <= 0
+		CFLAG:LOCAL:怒り = 0
+	BASE:LOCAL:怒り = MAX(0,BASE:LOCAL:怒り)
+	;不機嫌
+	SIF CFLAG:LOCAL:不機嫌
+		BASE:LOCAL:怒り = MAXBASE:LOCAL:怒り
+	;勃起度の自然減少・増加
+	CALL 勃起度自然変動(LOCAL)
+	;陥没乳首勃起の自然減少
+	SIF TCVAR:LOCAL:陥没乳首露出フラグ && !CFLAG:LOCAL:うふふ
+		TCVAR:LOCAL:陥没乳首露出フラグ = MAX(0, TCVAR:LOCAL:陥没乳首露出フラグ - TIME_PROGRESS(TFLAG:行動前時刻))
+	;常時勃起時、0未満なら入れ直す
+	IF (素質切り替えOPTION記憶:陥没乳首_なし == 0 && GETBIT(TALENT:LOCAL:発情期あり, 7) && CFLAG:LOCAL:発情期フラグ < 0) ||  TEQUIP:LOCAL:上半身下着あり < -1
+		SIF TCVAR:LOCAL:陥没乳首露出フラグ < 1
+			TCVAR:LOCAL:陥没乳首露出フラグ = 150
+	ENDIF
+	;酩酊の処理
+	IF BASE:LOCAL:酩酊 > 0
+		BASE:LOCAL:酩酊 = BASE:LOCAL:酩酊 - TIME_PROGRESS(TFLAG:行動前時刻)
+		BASE:LOCAL:酩酊 = MAX(0, BASE:LOCAL:酩酊)
+	ELSEIF BASE:LOCAL:酩酊 < 0
+		BASE:LOCAL:酩酊 = BASE:LOCAL:酩酊 + TIME_PROGRESS(TFLAG:行動前時刻)
+		BASE:LOCAL:酩酊 = MIN(0, BASE:LOCAL:酩酊)
+	ENDIF
+	SIF BASE:LOCAL:酩酊 == 0
+		CFLAG:LOCAL:酔いすぎ = 0
+	IF TALENT:LOCAL:飲酒拒否 < 0 && INRANGE(BASE:LOCAL:酩酊, 0, 100)
+		BASE:LOCAL:酩酊 = 100
+	ENDIF
+	IF TALENT:LOCAL:飲食不可
+		BASE:LOCAL:酩酊 = 0
+		CFLAG:LOCAL:酔いすぎ = 0
+	ENDIF
+	;トランスの処理
+	SIF TCVAR:LOCAL:トランス残り時間 > 0
+		TCVAR:LOCAL:トランス残り時間 = MAX(0, TCVAR:LOCAL:トランス残り時間 - TIME_PROGRESS(TFLAG:行動前時刻))
+
+	;移動インターバルの減少
+	TCVAR:LOCAL:移動インターバル時間 = MAX(TCVAR:LOCAL:移動インターバル時間 - TIME_PROGRESS(TFLAG:行動前時刻), 0)
+
+	;ショッピングインターバルの減少
+	TCVAR:LOCAL:移動ルーチンインターバル時間 = MAX(TCVAR:LOCAL:移動ルーチンインターバル時間 - TIME_PROGRESS(TFLAG:行動前時刻), 0)
+
+	;会話累積値　100を超えると会話不能フラグ
+	SIF TCVAR:LOCAL:会話累積値 > 100
+		TCVAR:LOCAL:話題無しフラグ = 1
+	;減衰
+	TCVAR:LOCAL:会話累積値 = MAX(TCVAR:LOCAL:会話累積値 - TIME_PROGRESS(TFLAG:行動前時刻) , 0)
+	;0になると会話不能解除
+	SIF TCVAR:LOCAL:会話累積値 == 0
+		TCVAR:LOCAL:話題無しフラグ = 0
+
+	;デートちょっかいの時間経過
+	IF TCVAR:LOCAL:デートちょっかい値 > 0
+		TCVAR:LOCAL:ちょっかい経過時間 += TIME_PROGRESS(TFLAG:行動前時刻)
+		IF TCVAR:LOCAL:ちょっかい経過時間 >= 120 && TCVAR:LOCAL:デートちょっかい値 >= 120
+			;ちょっかい時間が2時間を過ぎたらデート中止
+			TCVAR:LOCAL:ちょっかい経過時間 = -2
+		ELSEIF TCVAR:LOCAL:ちょっかい経過時間 >= TCVAR:LOCAL:デートちょっかい値
+			;ちょっかい時間が基準値を過ぎたらデート再開
+			TCVAR:LOCAL:ちょっかい経過時間 = -1
+		ENDIF
+	ENDIF
+	
+	;身体の清潔度
+	LOCAL:1 = CFLAG:LOCAL:風呂
+	CFLAG:LOCAL:風呂 += TIME_PROGRESS(TFLAG:行動前時刻)
+	IF BATHROOM(CFLAG:LOCAL:現在マップ種別, CFLAG:LOCAL:現在位置)
+		SIF LOCAL == 0 && LOCAL:1
+			PRINTFORMW %CALLNAME:MASTER%은(는) 목욕탕에 몸을 담갔다
+		CFLAG:LOCAL:風呂 = 0
+	ENDIF
+
+	IF LOCAL == MASTER
+		CALL 精力ゲージ_日中回復処理()
+		CONTINUE
+	ELSEIF TCVAR:LOCAL:精力剤フラグ
+		;精力剤中は精力回復
+		BASE:LOCAL:精力 = MAX(BASE:LOCAL:精力 + 100, MAXBASE:LOCAL:精力)
+	ENDIF
+
+	;同行フラグ（1時間持続）
+	;うふふ中・隠密中・マッサージモードは同行フラグ消えない
+	IF CFLAG:LOCAL:うふふ || (CFLAG:LOCAL:隠密 && CFLAG:LOCAL:同行 && CFLAG:MASTER:隠密) || (SAVESTR:ゲームフェイズ管理 == "マッサージモード" && MATCH(TARGET, LOCAL))
+		CFLAG:LOCAL:同行 = MAX(CFLAG:LOCAL:同行 - TIME_PROGRESS(TFLAG:行動前時刻),0)
+		SIF !CFLAG:LOCAL:同行
+			CFLAG:LOCAL:同行 = 1
+	ELSE
+		CFLAG:LOCAL:同行 = MAX(CFLAG:LOCAL:同行 - TIME_PROGRESS(TFLAG:行動前時刻),0)
+	ENDIF
+	;デート残り時間は関係なく時間経過
+	IF CFLAG:LOCAL:デート残り時間 > 0
+		CFLAG:LOCAL:デート残り時間 = MAX(CFLAG:LOCAL:デート残り時間 - TIME_PROGRESS(TFLAG:行動前時刻),0)
+		IF !CFLAG:LOCAL:デート残り時間 || TIME >= 1260
+			;デート採点処理
+			CALL デート採点処理(LOCAL)
+			;うふふなどの途中の場合、同行をセット
+			SIF CFLAG:LOCAL:うふふ || (CFLAG:LOCAL:隠密 && CFLAG:LOCAL:同行 && CFLAG:MASTER:隠密) || (SAVESTR:ゲームフェイズ管理 == "マッサージモード" && MATCH(TARGET, LOCAL))
+				CFLAG:LOCAL:同行 = 1
+		ENDIF
+	ENDIF
+
+	あなた追従中 = 0
+	IF 追従中キャラ(LOCAL)
+		CFLAG:LOCAL:現在位置 = CFLAG:MASTER:現在位置
+		CFLAG:LOCAL:現在マップ種別 = CFLAG:PLAYER:現在マップ種別
+		あなた追従中 = 1
+	ENDIF
+
+	;うふふ中ではない、かつ同行終わったら隠密消去
+	SIF !CFLAG:LOCAL:同行 && !CFLAG:LOCAL:うふふ && LOCAL > 0 && 連れ込みパターン == ""
+		CFLAG:LOCAL:隠密 = 0
+
+	;性欲
+	SIF !CFLAG:LOCAL:睡眠
+		CALL 性欲ゲージ増加(LOCAL)
+
+	;現在何らかのモードに入っているか
+	モード実行中フラグ = 0
+	FOR モード番号, 0, DT_ROW_LENGTH("体位モードデータベース")
+		SIF 系統リスト_アイテム系(DT_CELL_GETS("体位モードデータベース", モード番号, "モード名"))
+			CONTINUE
+		IF DT_CELL_GET("体位モードデータベース", モード番号, "実行キャラ") == LOCAL || DT_CELL_GET("体位モードデータベース", モード番号, "対象キャラ") == LOCAL
+			モード実行中フラグ = 1
+			BREAK
+		ENDIF
+	NEXT
+
+	;遊びに誘ったフラグ（１時間持続）
+	IF CFLAG:LOCAL:一緒に遊ぶ
+		CFLAG:LOCAL:一緒に遊ぶ = MAX(CFLAG:LOCAL:一緒に遊ぶ - TIME_PROGRESS(TFLAG:行動前時刻),0)
+		SIF CFLAG:LOCAL:うふふ || モード実行中フラグ
+			;うふふ中、あるいは何らかのモード実行中は遊ぶが途切れない
+			CFLAG:LOCAL:一緒に遊ぶ = MAX(CFLAG:LOCAL:一緒に遊ぶ, 1)
+		IF !CFLAG:LOCAL:一緒に遊ぶ
+			PRINTFORML %CALLNAME:LOCAL%은(는) 놀이에 만족한 것 같다.
+		ENDIF
+	ENDIF
+
+	;Add ahyanosia
+	;ゆきずりセックス処理
+	IF 性癖素質:LOCAL:ゆきずりセックス > 0 && !CFLAG:LOCAL:うふふ
+		CALL ゆきずりセックス判定(LOCAL)
+		;性行為中は移動しない
+		SIF IS_ゆきずりセックス中(LOCAL)
+			CONTINUE
+	ENDIF
+
+	;野外オナニー処理
+	IF 性癖素質:LOCAL:野外オナニー > 0 && !CFLAG:LOCAL:うふふ
+		CALL 野外オナニー判定(LOCAL)
+		;オナニー中は移動しない
+		SIF IS_野外オナニー中(LOCAL)
+			CONTINUE
+	ENDIF
+
+	IF CFLAG:LOCAL:酔いすぎ == 1 && !CFLAG:LOCAL:睡眠 && !TCVAR:LOCAL:泥酔眠姦
+		;泥酔時は該当処理に飛ばすため分岐
+		CALL CHARA_MOVEMENT_T(LOCAL, 追従モード)
+		CONTINUE
+	ENDIF
+	SIF あなた追従中
+		CONTINUE
+	SIF CFLAG:LOCAL:うふふ
+		CONTINUE
+	SIF CFLAG:LOCAL:飲み会
+		CONTINUE
+	SIF CFLAG:LOCAL:一緒に遊ぶ
+		CONTINUE
+	SIF モード実行中フラグ && !CFLAG:LOCAL:睡眠
+		CONTINUE
+	SIF CFLAG:LOCAL:添い寝フラグ
+		CONTINUE
+	SIF FLAG:イベントうふふ中フラグ
+		CONTINUE
+	SIF TCVAR:LOCAL:デートちょっかい値 > 0
+		CONTINUE
+	;部屋移動
+	CALL CHARA_MOVEMENT_T(LOCAL, 追従モード)
+NEXT
+
+;追従キャラを動かす
+IF 追従モード == 0
+	CALL CHARA_MOVEMENT(1)
+ELSE
+	RETURN 0
+ENDIF
+
+;ここでキャラ同士うふふの判定を行う
+;これ汎用化したほうがいいんだけどとりあえずキャラ同士うふふでしか使わないのでベタ打ち
+FOR LOCAL,1,CHARANUM
+	IF 移動スケジュール文字列:LOCAL:(スケジュール状態:LOCAL:現在スケジュール):スケジュール == "自室でうふふ"
+		IF CFLAG:LOCAL:デート
+			IF CFLAG:LOCAL:現在位置 == CFLAG:(ABS(CFLAG:LOCAL:デート) - 100):現在位置 && CFLAG:LOCAL:現在マップ種別 == CFLAG:(ABS(CFLAG:LOCAL:デート) - 100):現在マップ種別
+				CFLAG:LOCAL:キャラ同士うふふ = 1
+				CALL CLOTHES_CHANGE(LOCAL, "全裸")
+			ENDIF
+		ENDIF
+	ENDIF
+NEXT
+
+LOCAL:1 = 滞在キャラ数算出関数(2)
+
+FOR LOCAL, 1, マップ部屋番号上限
+	SIF LOCAL == 20
+		CONTINUE
+	SIF LOCAL > 2000
+		CONTINUE
+	IF 存在しない移動先(0, LOCAL) == 0
+		雑務ゲージ:LOCAL = MIN(雑務ゲージ:LOCAL + (TIME_PROGRESS(TFLAG:行動前時刻) * LOCAL:1 / 120), 10000)
+	ENDIF
+NEXT
+
+@CHARA_MOVEMENT_ACTIVETIME(ARG)
+#DIM 寝る
+#DIM 起きる
+
+CALL CHARA_ROUTINE_STATUS(ARG, "就寝時刻")
+寝る = RESULT
+CALL CHARA_ROUTINE_STATUS(ARG, "起床時刻")
+起きる = RESULT
+
+;時間設定ない場合は22時寝の8時起き
+SIF !寝る
+	寝る = 1320 + TCVAR:ARG:行動時間ゆらぎ
+SIF !起きる
+	起きる = 480 + TCVAR:ARG:行動時間ゆらぎ
+
+;泥酔時は常時寝る
+SIF CFLAG:ARG:酔いすぎ == 1
+	寝る = 0
+;体力限界時は眠る
+SIF CFLAG:ARG:体力限界 == 1
+	寝る = 0
+;泥酔眠姦とかに使う分岐
+SIF TCVAR:ARG:言いなり == 1
+	寝る = 0
+
+
+;PLAYERがうふふ、同じ部屋にいる、隠密状態が同じ場合は寝ない
+SIF CFLAG:MASTER:うふふ && CFLAG:MASTER:隠密 == CFLAG:ARG:隠密 && CFLAG:MASTER:現在位置 == CFLAG:ARG:現在位置 && CFLAG:MASTER:現在マップ種別 == CFLAG:ARG:現在マップ種別
+	RETURN 0
+
+RETURN TIME < 起きる || TIME > 寝る
+
+
+;@CHARA_MOVEMENT_MOVERATE(ARG)
+;;キャラごとの移動率補正呼び出し
+;RETURN 90 + CFLAG:ARG:移動率補正
+
+
+@CHARA_MOVEMENT_KOUHO(ARG,ARG:1)
+#DIM 移動先候補
+#DIM 移動キャラ
+
+移動先候補 = ARG
+移動キャラ = ARG:1
+
+;よく行く場所はあらゆる条件を無視して確率上昇
+
+SIF CFLAG:移動キャラ:よく行く場所 == 移動先候補
+	RETURN 200
+
+SELECTCASE 移動先候補
+	CASE 7,9,10,13
+		;男利用なら通す
+		IF 施設利用性別(移動キャラ) == 性別_男性
+			RETURN 100
+		ELSE
+			RETURN 0
+		ENDIF
+	CASE 8,11,12,14
+		;女利用なら通す
+		IF 施設利用性別(移動キャラ) == 性別_女性
+			RETURN 100
+		ELSE
+			RETURN 0
+		ENDIF
+	CASE 20, 2000 TO 2020
+		;基本自室には来ない（後々恋慕状態だと来るように再設定すること）
+		RETURN 0
+	;ほかはまんべんなく移動する
+	CASEELSE
+		RETURN 100
+ENDSELECT
+
+;ゲーム内現在時刻をゲーム開始時からの経過した分で返す
+@NOW()
+#FUNCTION
+RETURNF TIME + DAY * 24 * 60
+
+@TIME_PROGRESS(ARG)
+#FUNCTION
+RETURNF TIME + DAY * 1440 - ARG
+
+@CHARA_SLEEP, ARG
+#DIM 睡眠場所指定
+#DIM 睡眠マップ
+#DIM 睡眠場所
+#DIM 部屋割
+#DIM TARGET保存
+#DIM COM保存
+#DIM 泥酔勘違い
+#DIM 送り狼成否
+VARSET LOCAL
+
+泥酔勘違い = 0
+
+;現在、キャラごとの個室がないのでまるごとオミット、寝る時にどっか行くだけ
+
+;IF (CAN_MOVE_1(CFLAG:MASTER:現在位置, CFLAG:ARG:現在位置) == 2 || CFLAG:MASTER:現在位置 == CFLAG:ARG:現在位置) && !CFLAG:MASTER:睡眠
+;	IF CFLAG:ARG:現在位置 == CFLAG:ARG:311
+;		IF TALENT:ARG:恋慕 == 1
+;			PRINTFORMW %CALLNAME:ARG%は眠っ\@CFLAG:ARG:睡眠 ? ている # た\@
+;			LOCAL = 2
+;		ELSE
+;			PRINTFORMW %CALLNAME:ARG%は眠そうにしている
+;			LOCAL = 1
+;		ENDIF
+;	ELSE
+;		IF CFLAG:ARG:衰弱 && TALENT:ARG:恋慕 && CFLAG:MASTER:現在位置 == CFLAG:ARG:現在位置
+;			PRINTFORMW %CALLNAME:ARG%を%GETPLACENAME(CFLAG:ARG:現在位置)%から%GETPLACENAME(CFLAG:ARG:311)%へ運びました
+;			LOCAL = 3
+;		ELSE
+;			PRINTFORMW %CALLNAME:ARG%は%GETPLACENAME(CFLAG:ARG:現在位置)%から%GETPLACENAME(CFLAG:ARG:311)%に戻りました
+;			LOCAL = 0
+;		ENDIF
+;	ENDIF
+;ENDIF
+
+IF !CFLAG:ARG:睡眠
+	CALL CHARA_ROUTINE_STATUS(ARG, "就寝場所")
+	睡眠場所指定 = RESULT
+	IF 睡眠場所指定
+		睡眠マップ = RESULT:1
+		睡眠場所 = RESULT:2
+	ENDIF
+	CFLAG:ARG:同行 = 0
+	CFLAG:ARG:睡眠 = 1
+	CFLAG:ARG:うふふ = 0
+	CALL 性欲ゲージ減少処理(ARG)
+	TCVAR:ARG:初うふふフラグ = 0
+
+	IF CFLAG:ARG:デート == MASTER + 100
+		CALL デート採点処理(ARG)
+	ENDIF
+
+	IF CFLAG:ARG:酔いすぎ == 1
+		LOCAL = キャラクター部屋検索(ARG)
+		IF CFLAG:MASTER:酔いすぎ != 1 && CFLAG:MASTER:現在位置 == CFLAG:ARG:現在位置
+			;あなたがいる場合は部屋へと運ぶ
+			IF 自由利用BEDROOM(CFLAG:ARG:現在マップ種別, CFLAG:ARG:現在位置)
+				PRINTFORMW %CALLNAME:MASTER%은(는) 지쳐버린 %CALLNAME:ARG%을(를) 침대에 눕히고 이불을 덮어주었다.
+			ELSEIF CFLAG:ARG:現在位置 == LOCAL && CFLAG:ARG:現在マップ種別 == 部屋検索_マップ種別
+				PRINTFORMW %CALLNAME:MASTER%은(는) 술에 취해 쓰러진 %CALLNAME:ARG%을(를) 침대에 눕히고 이불을 덮어주었다.
+			ELSEIF GETBIT(TALENT:ARG:性別, 0) && TCVAR:ARG:レディキラー >= 1
+				;書いた人は男あなたで男が酔いつぶれた時にも選択肢が出てしまうのが嫌で女に限定した。あなたの性別嗜好が取れる手段があるならそれで。
+				;女前提なら地の文でも女性的な表現使えて楽！
+				;部屋に誰かいるかチェック
+				送り狼成否 = -1
+				WHILE 1
+					送り狼成否 = FINDCHARA(CFLAG:現在位置, LOCAL, 送り狼成否 + 1)
+					SIF 送り狼成否 < 0
+						BREAK
+					SIF CFLAG:送り狼成否:現在マップ種別 == 部屋検索_マップ種別 && !CFLAG:送り狼成否:睡眠
+						BREAK
+					PRINTFORML %NAME:送り狼成否%
+				WEND
+				CFLAG:ARG:現在位置 = LOCAL
+				CFLAG:ARG:現在マップ種別 = 部屋検索_マップ種別
+				PRINTFORMW %CALLNAME:ARG%은(는) 술에 취해 쓰러진 것 같다…… .
+				PRINTL
+				PRINTBUTTONLC "[0] 신사적으로 방까지 바래다준다", 0
+				PRINTBUTTONLC "[1] 이리 늑대가 된다", 1
+				BINPUT
+				IF RESULT == 0
+					PRINTL
+					PRINTFORMW %CALLNAME:MASTER%은(는) 술에 취해 쓰러진 %CALLNAME:ARG%을(를) 방으로 바래다주었다…… .
+				ELSE
+					;泥酔レイプ！野獣と化したオーナー
+					PRINTL
+					PRINTFORMW %CALLNAME:MASTER%은(는) 술에 취해 쓰러진 %CALLNAME:ARG%에게 어깨를 빌려주어, 방까지 바래다주기로 했다.
+					PRINTL
+					PRINTFORMW 술에 달아오른 몸에 팔을 두르고, 반신에 %CALLNAME:ARG%의 부드러움을 느끼며 천천히 방으로 발걸음을 옮긴다…… .
+					PRINTL
+					IF 送り狼成否 < CHARANUM && 送り狼成否 > 0
+						;がっ‥！駄目っ‥！
+						PRINTFORMW 하지만, 방에는 %CALLNAME:送り狼成否%이(가) 있었으므로 %CALLNAME:ARG%을(를) 맡기고, %CALLNAME:MASTER%은(는) 풀이 죽어 돌아갔다…… .
+					ELSE
+						CALL 飲み会終了処理()
+						IF TALENT:ARG:恋慕 >= 1
+							PRINTFORML %CALLNAME:PLAYER% 앞에서 완전히 방심하고, 만취할 때까지 술에 취해 쓰러진 %CALLNAME:ARG%은(는), %CALLNAME:PLAYER%이(가) 몸을 안자 기쁜 듯 몸을 비벼온다.
+						ELSEIF TALENT:ARG:恋人持ち == -1 || TALENT:ARG:恋人持ち ==1 ||TALENT:ARG:恋人持ち == 2
+							IF TALENT:ARG:恋人持ち == -1
+								PRINTFORM 마음속의 사람
+							ELSEIF TALENT:ARG:恋人持ち == 1
+								PRINTFORM 연인
+							ELSEIF TALENT:ARG:恋人持ち == 2
+								PRINTFORM 반려
+							ENDIF
+							PRINTFORML 이 있는데도, %CALLNAME:MASTER% 앞에서 취해 쓰러지다니 다소 부주의하다.
+						ELSEIF 知識素質:高貴 > 0
+							PRINTFORML 고귀한 신분임에도 불구하고, %CALLNAME:MASTER% 앞에서 취해 쓰러지다니 다소 부주의하다.
+						ELSEIF TALENT:ARG:性別嗜好 == 1 && TALENT:MASTER:性別 == 2
+							PRINTFORML %CALLNAME:ARG%가 남자를 싫어한다고 해도, 이렇게 취해 쓰러져 버리면 귀여운 법이다.
+						ELSEIF TALENT:ARG:年齢層 == 10 || (BASE:ARG:年齢 <= 15 && BASE:ARG:年齢 != 0)
+							PRINTFORML 나이 때문에 안 된다는 것을 알고 있을 텐데, 권하는 대로 술을 마셔 버리다니……%TEXTR("나쁜/안 좋은")% 아이다.
+						ELSE
+							PRINTFORML 취기에 들떠, %CALLNAME:PLAYER%에게 몸을 맡기고 꿈결 같은 %CALLNAME:ARG%은(는),
+						ENDIF
+						PRINTFORMW 「넘어지지 않도록」이라는 핑계를 대고 %CALLNAME:MASTER%이(가)%TEXTR("위험한 부분을 만지/끌어안는 팔로 몰래 가슴을 주무르/허리에 두른 손으로 몰래 엉덩이를 만지")%더라도%TEXTR(", 무엇을 당하고 있는지조차 모르는 모양이다/싫어하는 기색은 없다")%.
+						PRINTL
+						IF (TALENT:ARG:恋人持ち == -1 || TALENT:ARG:恋人持ち ==1 || TALENT:ARG:恋人持ち == 2 || TALENT:ARG:恋人持ち == 3) && TALENT:ARG:恋慕 < 1 && RAND:3 == 0
+							PRINTFORML 손바닥으로 간호의 특권을 즐기며 열쇠를 열고 어두컴컴한 방으로 들어가, %CALLNAME:ARG%을(를) 침대 위로 눕히자,
+							PRINTFORMW %CALLNAME:ARG%은(는) 멍한 눈으로 %CALLNAME:MASTER%에게 어리광을 부린다.
+							PRINTL
+							PRINTFORML 아무래도 눈앞의 상대가 누구인지도 모를 정도로 취해 쓰러진 %CALLNAME:ARG%은(는),
+							PRINTFORM 간호하고 있는 %CALLNAME:MASTER%을(를)
+							IF TALENT:ARG:恋人持ち == -1
+								PRINTFORM 마음에 둔 상대
+							ELSEIF TALENT:ARG:恋人持ち == 1
+								PRINTFORM 연인
+							ELSEIF TALENT:ARG:恋人持ち == 2
+								PRINTFORM 배우자
+							ELSEIF TALENT:ARG:恋人持ち == 3
+								PRINTFORM 이미 없을 터인 옛 배우자
+							ENDIF
+							PRINTFORMW 라고 착각하고 있는 모양이다……。
+							PRINTL
+PRINTFORMW 정신없이 취해 쓰러진 데다, 착각으로 경계가 허술해진%CALLNAME:ARG%의 모습에 무심코 %CALLNAME:MASTER%의 입꼬리가 올라간다.
+							PRINTL
+PRINTFORMW ──다시는 없을 기회다. 이용해 주마.
+							PRINTL
+PRINTFORM %CALLNAME:MASTER%는 %CALLNAME:ARG%의, 잠꼬대와도 같은 미심쩍은 말에
+							IF TALENT:ARG:恋人持ち == -1
+	PRINTFORM 마음에 둔 상대인 척하며
+							ELSEIF TALENT:ARG:恋人持ち == 1
+	PRINTFORM 연인인 척하며
+							ELSEIF TALENT:ARG:恋人持ち == 2
+	PRINTFORM 반려인 척하며
+							ENDIF
+PRINTFORML 적당히 맞장구를 치면서,
+PRINTFORMW 잠시 동안의 러브러브%TEXTR("기분/교미/섹스")%를 즐기기 위해%CALLNAME:ARG%를 살며시 밀어 넘어뜨렸다……。
+							CFLAG:MASTER:現在位置 = LOCAL
+							CFLAG:MASTER:現在マップ種別 = 部屋検索_マップ種別
+							CFLAG:ARG:現在位置 = LOCAL
+							CFLAG:ARG:現在マップ種別 = 部屋検索_マップ種別
+							CALL TARGET_SET()
+							;EVENTCOMENDからそのままもってきた。正直よくわかってない。
+LOCALS '= CSTR:ARG:코스프레 전의 옷
+LOCALS:1 '= CSTR:ARG:갈아입을 옷
+							CSTR:ARG:コスプレ前の服 '= LOCALS
+							CALL CLOTHES_CHANGE(ARG, LOCALS:1)
+							;うふふに移行
+							CFLAG:ARG:泥酔ックス回数 += 1
+							泥酔勘違い = 1
+							TCVAR:ARG:泥酔眠姦 = 1
+							TCVAR:ARG:言いなり = 1
+							CFLAG:MASTER:うふふ = 1
+							CALL うふふ開始キャラ処理(ARG, "泥酔姦")
+	;						TSTR:むりやりごっこ時シチュ保存 '= CSTR:TARGET:うふふシチュ記録
+							CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>酔いつぶれた%CALLNAME:ARG%の勘違いに付け込み、想い人のふりをしてその体をこっそり楽しませてもらった</font><img src='えっちハート'>","うふふ")
+							CALL 履歴データベース登録(CFLAG:ARG:人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>酔いつぶれて%CALLNAME:MASTER%を想い人と勘違いし、体を許してしまった</font><img src='えっちハート'>","うふふ")
+							TIME += 10
+						ELSE
+PRINTFORML 손바닥으로 간호의 특권을 즐기며 열쇠를 열고 방에 들어가, %CALLNAME:ARG%를 침대 위로 눕힌다.
+							IF 知識素質:高貴 > 0
+								PRINTW
+	PRINTFORML 알코올 냄새를 풍기며 시트 위에 힘없이 뒹구는, 본래의 신분으로는 만지는 것조차 허락되지 않을, %TEXTR("고귀한/귀한")% 혈통을 잇는%CALLNAME:ARG%의 옥체.
+							ELSEIF アイドル判定(ARG)
+								PRINTW
+	PRINTFORML 알코올 냄새를 풍기며 시트 위에 힘없이 뒹구는, 아이돌로서 수많은 팬을 매료시키기 위해 갈고닦았지만, 그러나 그 누구도 만지는 것조차 불가능한%CALLNAME:ARG%의 몸.
+							ELSEIF TALENT:ARG:恋人持ち == -1 || TALENT:ARG:恋人持ち ==1 || TALENT:ARG:恋人持ち == 2 || TALENT:ARG:恋人持ち == 3
+	PRINTFORM 알코올 냄새를 풍기며 시트 위에 힘없이 뒹구는,
+								IF TALENT:ARG:恋人持ち == -1
+		PRINTFORML 마음에 둔 상대에게 바치고 싶었을%CALLNAME:ARG%의 몸.
+								ELSEIF TALENT:ARG:恋人持ち == 1
+									PRINTFORML 본래 연인%TEXTR("만이 맛볼 수 있는/에게만 허락할 생각은 없는/만이 즐길 수 있는")%일 터인%CALLNAME:ARG%의 몸.
+								ELSEIF TALENT:ARG:恋人持ち == 2 && TALENT:ARG:恋慕 != 2
+									PRINTFORML 반려에게만 바치기로 맹세했을 터인 유부녀의 몸.
+								ELSEIF TALENT:ARG:恋人持ち == 3
+								;未亡人なら熟れとるやろ(適当)
+									PRINTFORML 남자 가뭄이었을 미망인의 농익은 몸.
+								ENDIF
+							ELSEIF 十天衆判定(ARG)
+								PRINTW
+								PRINTFORML 알코올 냄새를 풍기며 시트 위에 힘없이 털썩 구르는, 십천중의 한 명으로 꼽히는%CALLNAME:ARG%의, 전공 최강의 힘을 간직한 몸.
+							ENDIF
+							PRINTFORMW 눕자마자 기분 좋은 듯 새근새근 잠꼬대를 시작한%CALLNAME:ARG%의 무방비한 모습은, 마치%CALLNAME:MASTER%을(를) 유혹하는 것 같다……。
+							PRINTL
+							SELECTCASE RAND:4
+							CASE 0
+								PRINTFORMW 술에 취해 당분간은 깨어나지 않을 지금이라면, 이 무방비한 몸을%TEXTR("조금/몰래")%%TEXTR("즐기게/몰래 맛보게")%받는다 해도 분명 들키지 않을 것이다.
+								PRINTL
+								PRINTFORMW %CALLNAME:MASTER%은(는) 잠든 상대를 덮치는 스릴에 가슴을 설레게 하며, 잠꼬대를 방해하지 않도록 조용히%CALLNAME:ARG%에게 덮쳐들었다……。
+							CASE 1
+								PRINTFORMW %CALLNAME:MASTER%앞에서 술에 취해 쓰러진%CALLNAME:ARG%이 나쁜 것이다. 이래서는 무슨 일을 당해도 불평은 못 할 것이다.
+								PRINTL
+								PRINTFORMW 뇌리에서 제멋대로 욕망을 정당화하며%CALLNAME:MASTER%은(는) 득의양양하게 웃으며, 방심하고 술에 취해 쓰러지면 어떻게 되는지, 그 몸에 실컷%TEXTR("가르쳐/새겨")%주기 위해%CALLNAME:ARG%에게 덮쳐들었다……。
+							CASE 2
+								PRINTFORMW ──분명 이대로는 잠들기 힘들 것이다. 옷을 벗겨주는 것은, 어디까지나 선의의 「간호」다.
+								;卑猥は一切ない。いいね？
+								PRINTL
+								PRINTFORMW 뇌리에서 일부러 이유를 붙이며%CALLNAME:MASTER%은(는) 살며시%CALLNAME:ARG%의 옷에 손을 대고, 그 아래에 있는 부드러운 몸으로 끓어오르는 욕망을 향했다……。
+							CASE 3
+								PRINTFORMW ──아니, 이건 이미 유혹하고 있는 게 틀림없다. 그렇다면 이 차려진 밥상에, 손을 대지 않는 것이 오히려 실례일 것이다.
+								PRINTL
+								PRINTFORMW 뇌리에서 제멋대로 해석을 붙인%CALLNAME:MASTER%은(는) 득의양양하게 웃으며, 잠꼬대를 방해하지 않도록 조용히%CALLNAME:ARG%에게 덮쳐들었다……。
+							ENDSELECT
+							CFLAG:MASTER:現在位置 = LOCAL
+							CFLAG:MASTER:現在マップ種別 = 部屋検索_マップ種別
+							CFLAG:ARG:現在位置 = LOCAL
+							CFLAG:ARG:現在マップ種別 = 部屋検索_マップ種別
+							CALL TARGET_SET()
+							;EVENTCOMENDからそのままもってきた。正直よくわかってない。
+							;むりやりうふふごっこのとこ
+							LOCALS '= CSTR:ARG:코스프레 전의 옷
+							LOCALS:1 '= CSTR:ARG:갈아입을 옷
+							CALL ゲームフェイズ変更("むりやりうふふモード")
+							CSTR:ARG:コスプレ前の服 '= LOCALS
+							CALL CLOTHES_CHANGE(ARG, LOCALS:1)
+							;うふふに移行
+							CFLAG:ARG:泥酔ックス回数 += 1
+							TCVAR:ARG:泥酔眠姦 = 1
+							TCVAR:ARG:言いなり = 1
+							CFLAG:ARG:睡眠 = 1
+							CALL うふふ開始キャラ処理(ARG, "泥酔眠姦")
+	;						TSTR:むりやりごっこ時シチュ保存 '= CSTR:TARGET:うふふシチュ記録
+							CFLAG:MASTER:うふふ = 1
+							CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>酔いつぶれた%CALLNAME:ARG%を部屋に送り、無防備に眠るその体をこっそり楽しんだ</font><img src='えっちハート'>","うふふ")
+							CALL 履歴データベース登録(CFLAG:ARG:人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>酔いつぶれて寝ているあいだに%CALLNAME:MASTER%に襲われてしまった</font><img src='えっちハート'>","うふふ")
+							TIME += 10
+						ENDIF
+						;同行者は解除
+						FOR LOCAL,1,CHARANUM
+							SIF CFLAG:LOCAL:同行
+								CFLAG:LOCAL:同行 = 0
+						NEXT
+					ENDIF
+				ENDIF
+			ELSE
+				CFLAG:ARG:現在位置 = LOCAL
+				CFLAG:ARG:現在マップ種別 = 部屋検索_マップ種別
+				PRINTFORMW %CALLNAME:MASTER%은(는) 취해버린%CALLNAME:ARG%을(를) 방으로 보냈습니다.
+			ENDIF
+		ELSE
+			;同室じゃない(既に送り狼になってる)場合は誰か(era様？)が戻してくれる
+			CFLAG:ARG:現在位置 = LOCAL
+			CFLAG:ARG:現在マップ種別 = 部屋検索_マップ種別
+		ENDIF
+	ELSEIF CFLAG:ARG:体力限界 && TALENT:ARG:分身 == 0
+		;部屋へ戻る、分身は移動しない
+		IF CFLAG:MASTER:酔いすぎ != 1 && CFLAG:MASTER:現在位置 == CFLAG:ARG:現在位置
+			;あなたがいる場合は部屋へと運ぶ
+			LOCAL = キャラクター部屋検索(ARG)
+			IF 自由利用BEDROOM(CFLAG:ARG:現在マップ種別, CFLAG:ARG:現在位置)
+				PRINTFORMW %CALLNAME:MASTER%은(는) 지쳐버린%CALLNAME:ARG%을(를) 침대에 눕히고, 이불을 덮어주었다.
+			ELSEIF CFLAG:ARG:現在位置 == LOCAL && CFLAG:ARG:現在マップ種別 == 部屋検索_マップ種別
+				PRINTFORMW %CALLNAME:MASTER%은(는) 지쳐버린%CALLNAME:ARG%을(를) 침대에 눕히고, 이불을 덮어주었다.
+			ELSE
+				CFLAG:ARG:現在位置 = LOCAL
+				CFLAG:ARG:現在マップ種別 = 部屋検索_マップ種別
+				PRINTFORMW %CALLNAME:MASTER%은(는) 지쳐버린%CALLNAME:ARG%을(를) 방으로 옮겼습니다.
+			ENDIF
+		ELSE
+			;同室じゃない場合は勝手に戻る
+			CFLAG:ARG:現在位置 = キャラクター部屋検索(ARG)
+			CFLAG:ARG:現在マップ種別 = 部屋検索_マップ種別
+		ENDIF
+	ELSEIF CFLAG:MASTER:現在位置 == CFLAG:ARG:現在位置 && CFLAG:MASTER:現在マップ種別 == CFLAG:ARG:現在マップ種別
+		IF 睡眠場所指定
+			IF CFLAG:MASTER:現在位置 == 睡眠場所 && CFLAG:MASTER:現在マップ種別 == 睡眠マップ
+				PRINTFORMW %CALLNAME:ARG%은(는) 이대로%GETPLACENAME(睡眠マップ, 睡眠場所)%에서 잠들 것 같다.
+				TRYCALLFORM KOJO_EVENT_この場おやすみ_{NO:ARG}(ARG)
+			ELSE
+				PRINTFORMW %CALLNAME:ARG%은(는) %GETPLACENAME(睡眠マップ, 睡眠場所)%에서 잠들 것 같다.
+				TRYCALLFORM KOJO_EVENT_移動おやすみ_{NO:ARG}(ARG)
+			ENDIF
+		ELSE
+			部屋割 = キャラクター部屋検索(ARG)
+			IF CFLAG:MASTER:現在位置 == 部屋割 && CFLAG:MASTER:現在マップ種別 == 部屋検索_マップ種別
+				PRINTFORMW %CALLNAME:ARG%은(는) 이대로 방에서 잠들 것 같다.
+				TRYCALLFORM KOJO_EVENT_この場おやすみ_{NO:ARG}(ARG)
+			ELSE
+				PRINTFORMW %CALLNAME:ARG%은(는) 방으로 돌아가 잠들 것 같다.
+				TRYCALLFORM KOJO_EVENT_移動おやすみ_{NO:ARG}(ARG)
+			ENDIF
+		ENDIF
+	ENDIF
+	
+	IF CFLAG:ARG:酔いすぎ == 1 || CFLAG:ARG:体力限界
+		;泥酔時は基本そのまま
+		;体力限界時はあなたが同じ部屋にいるはずなので運んだ後のはず
+		GOTO リセット位置
+	ELSEIF 睡眠場所指定
+		;寝る場所指定がある場合はそこへ
+		CFLAG:ARG:現在位置 = 睡眠場所
+		CFLAG:ARG:現在マップ種別 = 睡眠マップ
+		GOTO リセット位置
+	ELSE
+		;指定なしの場合、場所を宿泊エリアの個室に設定する
+		CFLAG:ARG:現在位置 = キャラクター部屋検索(ARG)
+		CFLAG:ARG:現在マップ種別 = 部屋検索_マップ種別
+	ENDIF
+
+	IF CFLAG:MASTER:現在位置 == CFLAG:ARG:現在位置 && CFLAG:MASTER:現在マップ種別 == CFLAG:ARG:現在マップ種別
+		;もし同じ部屋にあなたがいるなら追い出される
+		IF 陥落チェック(ARG) == 0
+			PRINTFORMW %CALLNAME:MASTER%은(는) 쫓겨나 버렸다……
+			;モードもリセット
+			CALL 特定キャラモードリセット(MASTER)
+			IF CFLAG:ARG:現在位置 == 303
+				CFLAG:MASTER:現在位置 = 307
+			ELSEIF 部屋検索_マップ種別 == 999
+				CFLAG:PLAYER:現在マップ種別 = 0
+				IF 施設改造度:20:0
+					CFLAG:MASTER:現在位置 = 2001
+				ELSE
+					CFLAG:MASTER:現在位置 = 20
+				ENDIF
+				宿泊エリア表示種別 = 0
+				CALL 宿泊エリア処理
+			ELSEIF 部屋検索_マップ種別 == 2
+				CFLAG:PLAYER:現在マップ種別 = 2
+				CFLAG:MASTER:現在位置 = 1
+				宿泊エリア表示種別 = 2
+				CALL 宿泊エリア処理
+			ENDIF
+		ENDIF
+	ENDIF
+
+	$リセット位置
+	;服をリセット
+	IF !CFLAG:ARG:体力限界
+		CALL CLOTHES_RESET(ARG)
+		CALL CLOTHES_RESET_TRAIN(ARG)
+	ENDIF
+	;二日酔い処理のため、酩酊が残ってたら絶対値を負に
+	BASE:ARG:酩酊 = BASE:ARG:酩酊 * -1
+	CALL 特定キャラモードリセット(ARG)
+ENDIF
+
+CFLAG:ARG:同行 = 0
+IF 泥酔勘違い == 1
+	CFLAG:ARG:睡眠 = 0
+ELSEIF TCVAR:ARG:泥酔眠姦 == 1
+	CFLAG:ARG:睡眠 = 1
+ELSE
+	CFLAG:ARG:睡眠 = 1
+	CFLAG:ARG:うふふ = 0
+	TCVAR:ARG:初うふふフラグ = 0
+ENDIF
+CFLAG:ARG:飲み会 = 0
+CALL 性欲ゲージ減少処理(ARG)
+
+
+;SIF LOCAL == 3
+;	CFLAG:MASTER:現在位置 = CFLAG:ARG:311
+;施錠
+;FLAG:(300 + CFLAG:ARG:現在位置) = 1
+
+@CHARA_AWAKE, ARG
+
+
+IF CFLAG:ARG:睡眠 && CFLAG:ARG:現在位置 == CFLAG:MASTER:現在位置 && CFLAG:ARG:現在マップ種別 == CFLAG:MASTER:現在マップ種別
+	IF ARG > 0
+		IF MODE_存在判定_完全一致("ＶＡ挿入系", PLAYER, ARG)
+			;挿入時に目覚めたらうふふへ派生
+			DRAWLINE
+			PRINTFORML 삽입 중에%CALLNAME:ARG%이(가) 눈을 떠버렸다……！
+			PRINTFORML %CALLNAME:PLAYER%은(는) 잠에서 깨어나 혼란스러워하는%CALLNAME:ARG%상대에게 허리를 움직여, 흐지부지 섹스로 이끌었다…
+			CFLAG:ARG:睡眠 = 0
+			IF GET_TARGETNUM() > 1
+				CFLAG:PLAYER:隠密 = 1
+				CFLAG:ARG:隠密 = 1
+			ENDIF
+			CFLAG:PLAYER:うふふ = 1
+			TCVAR:ARG:挨拶フラグ = 1
+			CALL うふふ開始キャラ処理(ARG, "睡姦からなし崩し")
+			FLAG:モード管理 = 0
+			DRAWLINE
+			FORCEWAIT
+			RETURN 0
+		ELSEIF MODE_存在判定_ターゲット側("ALL", ARG)
+			PRINTFORML %CALLNAME:ARG%이(가) 눈을 뜰 것 같다……！
+			PRINTFORML %CALLNAME:PLAYER%은(는) 황급히%CALLNAME:ARG%에게서 떨어졌다……
+			FORCEWAIT
+		ENDIF
+		PRINTFORML %CALLNAME:ARG%이(가) 눈을 떴다
+		WAIT
+	ENDIF
+	;同じ場所で起きた時は３分のインターバル
+	TCVAR:ARG:移動インターバル時間 = 3
+	;おはよう口上
+	TRYCALLFORM KOJO_EVENT_おはよう_{NO:ARG}(ARG)
+	CALL 特定キャラモードリセット(ARG)
+ENDIF
+
+IF CFLAG:ARG:睡眠
+	CALL CHARA_MOVEMENT_ACTIVETIME(ARG)
+	;睡眠時間
+	IF RESULT
+		CALL CHARA_SLEEP, ARG
+		RETURN 0
+	ENDIF
+	IF CFLAG:ARG:現在位置 != CFLAG:MASTER:現在位置 || CFLAG:ARG:現在マップ種別 != CFLAG:MASTER:現在マップ種別
+		PRINTFORML %CALLNAME:ARG%이(가) 눈을 뜬 것 같다.
+		CALL CHARA_ROUTINE_STATUS(ARG, "初期位置")
+	ENDIF
+	;起きても酩酊が残ってるなら二日酔い
+	SIF BASE:ARG:酩酊
+		CFLAG:ARG:酔いすぎ = 2
+	CALL 特定キャラモードリセット(ARG)
+ENDIF
+CFLAG:ARG:睡眠 = 0
+RETURN 1
+
+
+
+;ARG 移動させるキャラ番号
+@CHARA_MOVEMENT_T(ARG, 追従モード = 0)
+#DIM 追従モード
+;活動時間　睡眠時間ならRESULTに真、活動時間ならRESULTに偽を代入
+CALL CHARA_MOVEMENT_ACTIVETIME(ARG)
+
+;睡眠時間
+IF RESULT
+	CALL CHARA_SLEEP, ARG
+	RETURN 0
+;活動時間、CFLAG:睡眠が立っていれば起床処理
+ELSE
+	;日中睡眠フラグが立ってると覚醒時間でも寝てる
+	SIF TCVAR:ARG:日中睡眠 || !BASE:ARG:体力
+		RETURN 0
+	CALL CHARA_AWAKE, ARG
+	SIF RESULT == 0
+		RETURN 0
+ENDIF
+
+;スケジュールに基づいた移動処理
+IF TCVAR:ARG:移動インターバル時間 == 0 || 追従モード
+	CALL MOVE_ON_SCHEDULE(ARG, 追従モード)
+	IF RESULT > 0
+		;RETURNが１＝移動したという意味なので3分のインターバル
+		TCVAR:ARG:移動インターバル時間 = 3
+	ENDIF
+ENDIF
+
+RETURN 1

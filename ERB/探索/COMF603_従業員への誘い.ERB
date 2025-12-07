@@ -1,0 +1,148 @@
+;-------------------------------------------------
+;従業員への誘い
+;-------------------------------------------------
+@COMNAME603
+#FUNCTIONS
+TSTR:コマンド名受渡 = 직원 초대
+IF TALENT:TARGET:店持ち
+	TSTR:コマンド名受渡 = 공식 점포 초대
+ENDIF
+
+;===================================================
+;コマンドタイプ
+;===================================================
+@COMTYPE_603
+#FUNCTION
+TFLAG:コマンドタイプ受渡 = COMTYPE("探索")
+
+@COM_TOOLTIP_603
+LOCALS = <br>■직원 초대<br>
+LOCALS += "상대를 고용하여, 본격적으로 리조트에서 일하게 하는 계약을 맺는다. <br>"
+LOCALS += "상대는 리조트의 정식 직원이 된다. <br>"
+LOCALS += "상대가 점포를 가지고 있는 경우, 열려 있는 점포는 리조트 공식 점포가 되어, 제복을 설정할 수 있게 된다. <br>"
+LOCALS += "<br>COM 타입: 탐색<br>획득 소스: 없음"
+LOCALS += "<br>고유 획득 경험: 없음<br>"
+TSTR:ツールチップ受渡 = %LOCALS%
+
+
+@COM603
+#DIM 初期登録
+#DIMS 制服記録
+
+IF TALENT:TARGET:定住者 < 1
+	LOCAL:2 = 0
+	FOR LOCAL, 0, 従業員部屋数
+		IF 従業員部屋割り配列:LOCAL < 1
+			LOCAL:2 = 1
+			BREAK
+		ENDIF
+	NEXT
+	IF LOCAL:2 == 0
+		PRINTW 직원 방이 가득 찼습니다.
+		RETURN -1
+	ENDIF
+ENDIF
+
+DRAWLINE
+IF TALENT:TARGET:店持ち
+	PRINTFORML %CALLNAME:TARGET%의 가게 「%商業区店割り配列:(店持ちキャラ店検索(TARGET)):店舗名%」을(를) 리조트의 공식 점포로 하시겠습니까?
+	PRINTL ※공식 점포로 하면, 그 가게에 소속된 캐릭터의 제복을 설정할 수 있게 됩니다. (필요 루피: 1일 / 2000루피)
+ELSE
+	PRINTFORML %CALLNAME:TARGET%을(를) 정식 직원으로 고용하시겠습니까? (필요 루피: 1일 / 2000루피)
+ENDIF
+
+
+
+PRINTBUTTON "[0]예", 0
+PRINTL
+PRINTBUTTON "[1]아니요", 1
+PRINTL
+$INPUT_LOOP
+INPUT
+
+SELECTCASE RESULT
+	CASE 0
+		TALENT:TARGET:従業員 = 1
+		CFLAG:TARGET:滞在期間 = 999
+		CFLAG:TARGET:長期雇用 = 0
+		CFLAG:TARGET:探索参加許可フラグ = 1
+		IF STRFIND(NAME:TARGET, "[一般人]") > -1
+			NAME:TARGET = [従業員]%CALLNAME:TARGET%
+		ENDIF
+		IF TALENT:TARGET:定住者 < 1
+			CALL 滞在者部屋割り配列削除処理(TARGET)
+			FOR LOCAL, 0, 従業員部屋数
+				IF 従業員部屋割り配列:LOCAL < 1
+					従業員部屋割り配列:LOCAL = TARGET
+					BREAK
+				ENDIF
+			NEXT
+		ELSEIF TALENT:TARGET:店持ち
+			現在仕事:TARGET:0 = -1
+		ENDIF
+		;制服チェック
+		初期登録 = 0
+		制服記録 = 
+		FOR LOCAL, 1, CHARANUM
+			SIF LOCAL == TARGET
+				CONTINUE
+			IF TALENT:LOCAL:従業員
+				IF 初期登録 == 0
+					初期登録 = 1
+					制服記録 '= 現在制服:LOCAL:0
+				ELSE
+					IF 制服記録 != 現在制服:LOCAL:0
+						;違う制服があるならフラグを置き換えてBREAK
+						初期登録 = -1
+						BREAK
+					ENDIF
+				ENDIF
+			ENDIF
+		NEXT
+		IF 初期登録 > 0
+			現在制服:TARGET:0 '= 制服記録
+			CALL CLOTHES_RESET_TRAIN(TARGET)
+		ENDIF
+		CALL 従業員人数チェック()
+	CASE 1
+		RETURN -1
+	CASEELSE
+		REUSELASTLINE 
+		GOTO INPUT_LOOP
+ENDSELECT
+
+RETURN 1
+
+;-------------------------------------------------
+;実行判定
+;-------------------------------------------------
+@COM_ABLE603
+#DIM ループ用
+;移動実行判定
+SIF SAVESTR:ゲームフェイズ管理 != "通常モード"
+	RETURN 0
+;一括管理
+SIF GLOBAL_COMABLE(602)
+	RETURN RESULT
+;睡眠中
+SIF CFLAG:睡眠
+	RETURN 0
+;既に従業員だと無し
+SIF TALENT:TARGET:従業員
+	RETURN 0
+;好感度レベル50以上
+SIF CFLAG:TARGET:好感度レベル < 50
+	RETURN 0
+;eraは見ない
+SIF NO:TARGET == 998
+	RETURN 0
+RETURN 1
+
+;-------------------------------------------------
+;メッセージ
+;-------------------------------------------------
+
+@MESSAGE_COM603
+
+PRINTFORML %CALLNAME:TARGET%을(를) 직원으로 정식 고용했습니다.
+

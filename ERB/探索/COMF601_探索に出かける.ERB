@@ -1,0 +1,360 @@
+;-------------------------------------------------
+;探索に出かける
+;-------------------------------------------------
+@COMNAME601
+#FUNCTIONS
+TSTR:コマンド名受渡 = 탐색을 나가다
+
+;===================================================
+;コマンドタイプ
+;===================================================
+@COMTYPE_601
+#FUNCTION
+TFLAG:コマンドタイプ受渡 = COMTYPE("単独可能_探索")
+
+@COM601
+#DIM ループ用
+;-------------------------------------------------
+;ソース追加処理
+;-------------------------------------------------
+;現状はお金がちょっと上がって好感度UP用の仮アイテムが手に入る
+
+
+DRAWLINE
+PRINTL 탐색 형식을 선택해 주세요.
+PRINTL 일반 탐색에서는 전투 1회당 50kcal, 간이 탐색에서는 200kcal를 소비합니다.
+DRAWLINE
+IF 探索フラグ
+	PRINTL 탐색은 하루에 한 번까지
+	SETCOLOR カラーパレット("グレーアウト")
+	PRINTPLAIN [0] 간이 탐색
+	PRINTL 
+	PRINTL 　　　: 주변의 안전한 지대를 탐색하여, 루피나 소재 등을 손에 넣는다
+	PRINTL 
+	IF BATTLE_STATE:0:キャラ登録番号
+		PRINTPLAIN [1] 던전 탐색
+	ELSE
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTPLAIN [1] 던전 탐색 (파티 멤버가 한 명 이상 필요합니다)
+	ENDIF
+	PRINTL 
+	PRINTL 　　　: 해방된 던전을 공략한다
+	RESETCOLOR
+	PRINT 　　　　…
+	IF 突入時アニメーション封印フラグ
+		PRINTBUTTON "[10] 던전 돌입 시 애니메이션을 전환한다 [현재: OFF]", 10
+	ELSE
+		PRINTBUTTON "[10] 던전 돌입 시 애니메이션을 전환한다 [현재: ON]", 10
+	ENDIF
+	PRINTL
+ELSE
+	PRINTBUTTONLC "[0] 간이 탐색", 0
+	PRINTL 
+	PRINTL 　　　: 주변의 안전한 지대를 탐색하여, 루피나 소재 등을 손에 넣는다
+	PRINTL 
+	IF BATTLE_STATE:0:キャラ登録番号
+		PRINTBUTTONLC "[1] 던전 탐색", 1
+	ELSE
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTPLAIN [1] 던전 탐색 (파티 멤버가 한 명 이상 필요합니다)
+	ENDIF
+	PRINTL 
+	PRINTL 　　　：해방된 던전을 공략한다
+	RESETCOLOR
+	PRINT 　　　　…
+	IF 突入時アニメーション封印フラグ
+		PRINTBUTTON "[10] 던전 돌입 시 애니메이션을 전환한다 [현재: OFF]", 10
+	ELSE
+		PRINTBUTTON "[10] 던전 돌입 시 애니메이션을 전환한다 [현재: ON]", 10
+	ENDIF
+	PRINTL
+	PRINT 　　　　…
+	IF ダメージアニメーション封印フラグ
+		PRINTBUTTON "[11] 대미지 애니메이션을 전환한다 [현재: OFF]", 11
+	ELSE
+		PRINTBUTTON "[11] 대미지 애니메이션을 전환한다 [현재: ON]", 11
+	ENDIF
+	PRINTL
+ENDIF
+PRINTL 
+PRINTBUTTONLC "[2] 자동 탐색 편성", 2
+PRINTL 
+PRINTL 　　　：업무 [자동 탐색]으로 설정한 캐릭터가 가는 던전을 설정합니다
+PRINTL 
+PRINTL
+PRINTBUTTONLC "[998] 시스템 설명", 998
+PRINTL
+PRINTBUTTONLC "[999] 돌아가기", 999
+PRINTL
+
+IF チュートリアルフラグ:探索へ出かける == 0
+	RESULT = 998
+ELSE
+	BINPUT
+ENDIF
+
+SELECTCASE RESULT
+	CASE 0
+		CALL 最大レベル算出保存
+		LOCAL = 最大レベル保存 * 1000 * RAND(95, 105) / 100
+		PRINTL 밖을 탐색하여 마물을 토벌했습니다.
+		PRINTFORML 돈을 {LOCAL}루피 얻었습니다
+		MONEY += LOCAL
+
+		EXP:MASTER:探索経験 ++
+		FOR ループ用, 0, 14
+			SIF ループ用 > 3 && ループ用 < 10
+				CONTINUE
+			SIF BATTLE_STATE:ループ用:キャラ登録番号 < 1
+				CONTINUE
+			IF BATTLE_STATE:ループ用:キャラ登録番号
+				EXP:(BATTLE_STATE:ループ用:キャラ登録番号):探索経験 ++
+				CALL SOURCE_CALC_好感度要素_信頼度UP(BATTLE_STATE:ループ用:キャラ登録番号, PLAYER, 100)
+				TCVAR:(BATTLE_STATE:ループ用:キャラ登録番号):摂取カロリー -= 200
+			ENDIF
+		NEXT
+		PRINTW 당신과 파티 멤버의 탐색 경험이 증가했습니다
+		TIME += 120
+		探索フラグ ++
+	CASE 1
+		IF BATTLE_STATE:0:キャラ登録番号 < 1
+			RESTART
+		ENDIF
+		CALL ダンジョンリスト描画
+		SIF RESULT == -1
+			RETURN -1
+		TIME += 120
+		探索フラグ ++
+	CASE 2
+		CALL ダンジョン自動探索編成処理
+		SIF RESULT == -1
+			RESTART
+		RETURN -1
+	CASE 10
+		INVERTBIT 突入時アニメーション封印フラグ, 0
+		RESTART
+	CASE 11
+		INVERTBIT ダメージアニメーション封印フラグ, 0
+		RESTART
+	CASE 998
+		CALL 探索へ出かけるチュートリアル()
+		RESTART
+	CASE 999
+		RETURN -1
+ENDSELECT
+
+CALL 特定キャラモードリセット(PLAYER)
+
+RETURN 1
+
+;-------------------------------------------------
+;実行判定
+;-------------------------------------------------
+@COM_ABLE601
+;移動実行判定
+SIF SAVESTR:ゲームフェイズ管理 != "通常モード"
+	RETURN 0
+;一括管理
+SIF GLOBAL_COMABLE(601)
+	RETURN RESULT
+;宿泊エリアからはダメ
+SIF CFLAG:PLAYER:現在マップ種別 == 999
+	RETURN 0
+;玄関
+CALLFORM エリア情報登録_{CFLAG:PLAYER:現在マップ種別}("エリア移動可能場所")
+SIF CFLAG:PLAYER:現在位置 != RESULT
+	RETURN 0
+;ハーヴィンオナホ時禁止
+SIF MODE_存在判定_プレイヤー側("ハーヴィンオナホ系", PLAYER)
+	RETURN 0
+
+RETURN 1
+
+
+@ダンジョンリスト描画
+#DIMS 表示用リスト_未クリア, 50
+#DIMS 表示用リスト_クリア済み, 100
+#DIMS 表示用リスト_ランダムD, 50
+#DIM レベルソート_未クリア, 50
+#DIM レベルソート_クリア済み, 100
+#DIM レベルソート_ランダムD, 50
+#DIMS ダンジョン名保存
+#DIMS 未クリアリスト表示文
+#DIMS クリア済みリスト表示文
+#DIMS ランダムDリスト表示文
+#DIM 表示候補数
+#DIM ページ数_未クリア
+#DIM ページ数_クリア済み
+
+VARSET LOCAL
+VARSET LOCALS
+VARSET 表示用リスト_未クリア
+VARSET 表示用リスト_クリア済み
+VARSET 表示用リスト_ランダムD
+VARSET レベルソート_未クリア
+VARSET レベルソート_クリア済み
+VARSET レベルソート_ランダムD
+
+表示候補数 = ENUMFUNCBEGINSWITH("ダンジョン初期処理_")
+
+DRAWLINE
+PRINTL 침입할 던전을 선택해 주세요.
+DRAWLINE
+
+
+VARSET LOCAL
+FOR LOCAL, 0, 表示候補数
+	ダンジョン名保存 = %SUBSTRING(RESULTS:LOCAL, 19)%
+	IF GETVAR(@"ダンジョン出現フラグ_%ダンジョン名保存%")
+		IF GETVAR(@"ダンジョンクリアフラグ_%ダンジョン名保存%") == 1
+			ランダムダンジョンフラグ = 0
+			CALLFORM ダンジョン解説文_%ダンジョン名保存%
+			IF ランダムダンジョンフラグ
+				;降順ソートするためマイナス数値
+				レベルソート_ランダムD:(LOCAL:3) = RESULT * -1
+				表示用リスト_ランダムD:(LOCAL:3) = %ダンジョン名保存%
+				LOCAL:3 += 1
+			ELSE
+				;降順ソートするためマイナス数値
+				レベルソート_クリア済み:(LOCAL:2) = RESULT * -1
+				表示用リスト_クリア済み:(LOCAL:2) = %ダンジョン名保存%
+				LOCAL:2 += 1
+			ENDIF
+		ELSE
+			表示用リスト_未クリア:(LOCAL:1) = %ダンジョン名保存%
+			CALLFORM ダンジョン解説文_%ダンジョン名保存%
+			;降順ソートするためマイナス数値
+			レベルソート_未クリア:(LOCAL:1) = RESULT * -1
+			LOCAL:1 += 1
+		ENDIF
+	ENDIF
+NEXT
+
+;推奨レベルでソート
+ARRAYMSORT レベルソート_クリア済み, 表示用リスト_クリア済み
+ARRAYMSORT レベルソート_未クリア, 表示用リスト_未クリア
+ARRAYMSORT レベルソート_ランダムD, 表示用リスト_ランダムD
+
+VARSET LOCAL
+VARSET LOCALS
+未クリアリスト表示文 = 
+クリア済みリスト表示文 = 
+ランダムDリスト表示文 = 
+FOR LOCAL, 0, 表示候補数
+	IF 表示用リスト_未クリア:LOCAL == ""
+		BREAK
+	ENDIF
+	CALLFORM ダンジョン解説文_%表示用リスト_未クリア:LOCAL%
+	未クリアリスト表示文 += @"<button value='{LOCAL}'>[{LOCAL}]%表示用リスト_未クリア:LOCAL, 34, LEFT%</button>권장 Lv：{RESULT, 3}<br>"
+NEXT
+
+FOR LOCAL, 0, 表示候補数
+	IF 表示用リスト_クリア済み:LOCAL == ""
+		BREAK
+	ENDIF
+	CALLFORM ダンジョン解説文_%表示用リスト_クリア済み:LOCAL%
+	LOCALS:2 = <button value='{LOCAL + 50}'>[{LOCAL + 50}]%表示用リスト_クリア済み:LOCAL, 34, LEFT%</button>권장 Lv：{RESULT, 3}<br>
+	クリア済みリスト表示文 += @"%LOCALS:2%"
+NEXT
+
+FOR LOCAL, 0, 表示候補数
+	IF 表示用リスト_ランダムD:LOCAL == ""
+		BREAK
+	ENDIF
+	CALLFORM ダンジョン解説文_%表示用リスト_ランダムD:LOCAL%
+	LOCALS:2 = <button value='{LOCAL + 150}'>[{LOCAL + 150}]%表示用リスト_ランダムD:LOCAL, 34, LEFT%</button>권장 Lv：{RESULT, 3}<br>
+	ランダムDリスト表示文 += @"%LOCALS:2%"
+NEXT
+
+LOCALS = <div rect='81,31,2875,1812' border='31' bcolor='#C0C0C0'></div>
+LOCALS += "<div rect='3000,31,2875,2812' border='31' bcolor='#C0C0C0'></div>"
+LOCALS += "<div rect='81,1881,2875,950' border='31' bcolor='#C0C0C0'></div>"
+LOCALS += "<div width='950' height='125' xpos='337' ypos='0' color='#101010'>미클리어 던전</div>"
+LOCALS += "<div width='950' height='125' xpos='3256' ypos='0' color='#101010'>클리어 던전</div>"
+LOCALS += "<div width='950' height='125' xpos='337' ypos='1850' color='#101010'>랜덤 던전</div>"
+LOCALS += @"<div rect='156,156,2875,1812'>%未クリアリスト表示文%</div>"
+LOCALS += @"<div rect='3075,156,2875,2812'>%クリア済みリスト表示文%</div>"
+LOCALS += @"<div rect='156,1975,2875,950'>%ランダムDリスト表示文%</div>"
+HTML_PRINT LOCALS
+
+FOR LOCAL, 0, 25
+	PRINTL
+NEXT
+PRINTBUTTON "[999]돌아가기", 999
+PRINTL
+$INPUT_LOOP
+BINPUT
+
+LOCAL = RESULT
+SELECTCASE LOCAL
+	CASE IS < 50
+		TRYCCALLFORM ダンジョン突入時特殊処理_%表示用リスト_未クリア:LOCAL%
+			SIF RESULT == -1
+				RESTART
+		CATCH
+			CALLFORM ダンジョン解説文_%表示用リスト_未クリア:LOCAL%
+			PRINTFORML ■%表示用リスト_未クリア:LOCAL%　　권장 Lv：{RESULT,3}
+			PRINTL
+			HTML_PRINT 詳細文文字列受け渡し変数
+			PRINTL
+			PRINTL 이 던전에 입장하시겠습니까?
+			PRINTBUTTONLC "[0] 예", 0
+			PRINTBUTTONLC "[1] 아니요", 1
+			PRINTL
+			BINPUT
+			IF RESULT == 0
+				ランダムダンジョン中加護 = 
+				CALL DUNGEON_MAIN_LOOP(表示用リスト_未クリア:LOCAL)
+			ELSE
+				RESTART
+			ENDIF
+		ENDCATCH
+	CASE IS < 150
+		TRYCCALLFORM ダンジョン突入時特殊処理_%表示用リスト_クリア済み:(LOCAL - 50)%
+			SIF RESULT == -1
+				RESTART
+		CATCH
+			CALLFORM ダンジョン解説文_%表示用リスト_クリア済み:(LOCAL - 50)%
+			PRINTFORML ■%表示用リスト_クリア済み:(LOCAL - 50)%　　권장 Lv：{RESULT,3}
+			PRINTL
+			HTML_PRINT 詳細文文字列受け渡し変数
+			PRINTL
+			PRINTL 이 던전에 입장하시겠습니까?
+			PRINTBUTTONLC "[0] 예", 0
+			PRINTBUTTONLC "[1] 아니요", 1
+			PRINTL
+			BINPUT
+			IF RESULT == 0
+				CALL DUNGEON_MAIN_LOOP(表示用リスト_クリア済み:(LOCAL - 50))
+			ELSE
+				RESTART
+			ENDIF
+		ENDCATCH
+	CASE IS < 200
+		TRYCCALLFORM ダンジョン突入時特殊処理_%表示用リスト_ランダムD:(LOCAL - 150)%
+			SIF RESULT == -1
+				RESTART
+		CATCH
+			CALLFORM ダンジョン解説文_%表示用リスト_ランダムD:(LOCAL - 150)%
+			PRINTFORML ■%表示用リスト_ランダムD:(LOCAL - 150)%　　권장 Lv：{RESULT,3}
+			PRINTL
+			HTML_PRINT 詳細文文字列受け渡し変数
+			PRINTL
+			PRINTL 이 던전에 입장하시겠습니까?
+			PRINTBUTTONLC "[0] 예", 0
+			PRINTBUTTONLC "[1] 아니요", 1
+			PRINTL
+			BINPUT
+			IF RESULT == 0
+				CALL DUNGEON_MAIN_LOOP(表示用リスト_ランダムD:(LOCAL - 150))
+			ELSE
+				RESTART
+			ENDIF
+		ENDCATCH
+	CASE 999
+		ページ数_未クリア = 0
+		ページ数_クリア済み = 0
+		RETURN -1
+ENDSELECT
+
+

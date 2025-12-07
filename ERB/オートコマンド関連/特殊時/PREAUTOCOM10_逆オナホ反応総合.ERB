@@ -1,0 +1,41 @@
+;------------------------------------------------------------------------------
+;
+;------------------------------------------------------------------------------
+@PRE_AUTOCOM10
+;基本的に快楽発生はモードで呼ぶので、処理は何もしない
+;TIMEを加算するだけ
+
+TIME += 15
+
+RETURN 1
+
+@PRE_AUTOCOM_ABLE10(キャラ番号)
+#DIM キャラ番号
+;特殊モードで直接呼ぶのでABLEは0
+RETURN 0
+
+@MESSAGE_PRE_AUTOCOM10
+PRINTFORM %CALLNAME:AUTOCOM_実行番号保存%는
+
+;他のキャラが必要な時のためにランダムで滞在中キャラを見る
+
+
+SELECTCASE RAND:5
+	CASE 4
+		PRINTFORML 유희실에서 %CALLNAME:滞在キャラランダム選出(AUTOCOM_実行番号保存)%와 게임을 즐기고 있다…
+	CASE 3
+		PRINTFORML 로비에서 %CALLNAME:滞在キャラランダム選出(AUTOCOM_実行番号保存)%와 담소를 나누고 있다…
+	CASE 2
+		IF 施設改造度:3:0
+			PRINTL 캠프장을 산책하고 있다…
+		ELSE
+			PRINTL 정원을 산책하고 있다…
+		ENDIF
+		PRINTFORML %CALLNAME:滞在キャラランダム選出(AUTOCOM_実行番号保存)%와 스쳐 지나가며 가볍게 인사를 나누었다
+	CASE 1
+		PRINTL 식당에서 간단한 요기를 하고 있다…
+	CASE 0
+		PRINTFORML %CALLNAME:MASTER%가 있는 곳 주변을 부드럽게 쓰다듬었다…
+ENDSELECT
+
+

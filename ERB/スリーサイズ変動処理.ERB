@@ -1,0 +1,1373 @@
+@バスト変動処理(対象キャラ, 変動理由, 変動数値)
+#DIMS 変動理由
+#DIM 変動数値
+#DIM 対象キャラ
+
+;キャラ個別設定
+SELECTCASE 変動理由
+	CASE "妊娠"
+		IF 変動数値 > 0
+			IF CFLAG:対象キャラ:妊娠スリーサイズ成長_Ｂ増加 > 0
+				GOTO 条件クリア
+			ELSEIF CFLAG:対象キャラ:妊娠スリーサイズ成長_Ｂ増加 < 0
+				RETURN 0
+			ENDIF
+		ELSE
+			IF CFLAG:対象キャラ:妊娠スリーサイズ成長_Ｂ減少 > 0
+				GOTO 条件クリア
+			ELSEIF CFLAG:対象キャラ:妊娠スリーサイズ成長_Ｂ減少 < 0
+				RETURN 0
+			ENDIF
+		ENDIF
+	CASE "愛撫"
+		IF 変動数値 > 0
+			IF CFLAG:対象キャラ:愛撫スリーサイズ成長_Ｂ増加 > 0
+				GOTO 条件クリア
+			ELSEIF CFLAG:対象キャラ:愛撫スリーサイズ成長_Ｂ増加 < 0
+				RETURN 0
+			ENDIF
+		ELSE
+			IF CFLAG:対象キャラ:愛撫スリーサイズ成長_Ｂ減少 > 0
+				GOTO 条件クリア
+			ELSEIF CFLAG:対象キャラ:愛撫スリーサイズ成長_Ｂ減少 < 0
+				RETURN 0
+			ENDIF
+		ENDIF
+	CASE "食事"
+		IF 変動数値 > 0
+			IF CFLAG:対象キャラ:食事スリーサイズ成長_Ｂ増加 > 0
+				GOTO 条件クリア
+			ELSEIF CFLAG:対象キャラ:食事スリーサイズ成長_Ｂ増加 < 0
+				RETURN 0
+			ENDIF
+		ELSE
+			IF CFLAG:対象キャラ:食事スリーサイズ成長_Ｂ減少 > 0
+				GOTO 条件クリア
+			ELSEIF CFLAG:対象キャラ:食事スリーサイズ成長_Ｂ減少 < 0
+				RETURN 0
+			ENDIF
+		ENDIF
+ENDSELECT
+
+SIF 変動数値 > 0 && !GETBIT(OPTION変数:愛撫スリーサイズ成長, 0)
+	RETURN 0
+SIF 変動数値 < 0 && !GETBIT(OPTION変数:愛撫スリーサイズ成長, 1)
+	RETURN 0
+
+$条件クリア
+
+RESULT = 0
+TRYCALLFORM バスト変動固有処理_{NO:対象キャラ}(対象キャラ, 変動理由, 変動数値)
+;RESULTが0なら通常処理へ、非0ならここで返す
+SIF RESULT
+	RETURN 0
+
+SIF TALENT:対象キャラ:体型固定
+	RETURN 0
+
+IF あなた特殊能力:肉体改造術 > 0
+	IF 変動数値 > 0
+		変動数値 = 変動数値 + 10
+	ELSEIF 変動数値 < 0
+		変動数値 = 変動数値 - 10
+	ENDIF
+ENDIF
+
+SELECTCASE 変動理由
+	CASE "妊娠"
+		BASE:対象キャラ:変動バスト += 変動数値
+	CASE "愛撫"
+		BASE:対象キャラ:変動バスト += 変動数値
+	CASE "食事"
+		IF TALENT:対象キャラ:太りやすい == -2
+			;太らない
+			SIF 変動数値 > 0
+				変動数値 = 変動数値 * 2 / 5
+		ENDIF
+		BASE:対象キャラ:変動バスト += 変動数値
+	CASEELSE
+		BASE:対象キャラ:変動バスト += 変動数値
+ENDSELECT
+
+@ウエスト変動処理(対象キャラ, 変動理由, 変動数値)
+#DIMS 変動理由
+#DIM 変動数値
+#DIM 対象キャラ
+
+;キャラ個別設定
+SELECTCASE 変動理由
+	CASE "妊娠"
+		IF 変動数値 > 0
+			IF CFLAG:対象キャラ:妊娠スリーサイズ成長_Ｗ増加 > 0
+				GOTO 条件クリア
+			ELSEIF CFLAG:対象キャラ:妊娠スリーサイズ成長_Ｗ増加 < 0
+				RETURN 0
+			ENDIF
+		ELSE
+			IF CFLAG:対象キャラ:妊娠スリーサイズ成長_Ｗ減少 > 0
+				GOTO 条件クリア
+			ELSEIF CFLAG:対象キャラ:妊娠スリーサイズ成長_Ｗ減少 < 0
+				RETURN 0
+			ENDIF
+		ENDIF
+	CASE "愛撫"
+		IF 変動数値 > 0
+			IF CFLAG:対象キャラ:愛撫スリーサイズ成長_Ｗ増加 > 0
+				GOTO 条件クリア
+			ELSEIF CFLAG:対象キャラ:愛撫スリーサイズ成長_Ｗ増加 < 0
+				RETURN 0
+			ENDIF
+		ELSE
+			IF CFLAG:対象キャラ:愛撫スリーサイズ成長_Ｗ減少 > 0
+				GOTO 条件クリア
+			ELSEIF CFLAG:対象キャラ:愛撫スリーサイズ成長_Ｗ減少 < 0
+				RETURN 0
+			ENDIF
+		ENDIF
+	CASE "食事"
+		IF 変動数値 > 0
+			IF CFLAG:対象キャラ:食事スリーサイズ成長_Ｗ増加 > 0
+				GOTO 条件クリア
+			ELSEIF CFLAG:対象キャラ:食事スリーサイズ成長_Ｗ増加 < 0
+				RETURN 0
+			ENDIF
+		ELSE
+			IF CFLAG:対象キャラ:食事スリーサイズ成長_Ｗ減少 > 0
+				GOTO 条件クリア
+			ELSEIF CFLAG:対象キャラ:食事スリーサイズ成長_Ｗ減少 < 0
+				RETURN 0
+			ENDIF
+		ENDIF
+ENDSELECT
+
+
+SIF 変動数値 > 0 && !GETBIT(OPTION変数:愛撫スリーサイズ成長, 2)
+	RETURN 0
+SIF 変動数値 < 0 && !GETBIT(OPTION変数:愛撫スリーサイズ成長, 3)
+	RETURN 0
+
+$条件クリア
+
+RESULT = 0
+TRYCALLFORM ウエスト変動固有処理_{NO:対象キャラ}(対象キャラ, 変動理由, 変動数値)
+;RESULTが0なら通常処理へ、非0ならここで返す
+SIF RESULT
+	RETURN 0
+
+SIF TALENT:対象キャラ:体型固定
+	RETURN 0
+
+IF あなた特殊能力:肉体改造術 > 0
+	IF 変動数値 > 0
+		変動数値 = 変動数値 + 10
+	ELSEIF 変動数値 < 0
+		変動数値 = 変動数値 - 10
+	ENDIF
+ENDIF
+
+SELECTCASE 変動理由
+	CASE "妊娠"
+		BASE:対象キャラ:変動ウエスト += 変動数値
+	CASE "愛撫"
+		BASE:対象キャラ:変動ウエスト += 変動数値
+	CASE "食事"
+		SELECTCASE TALENT:対象キャラ:太りやすい
+			CASE 1
+				;太りやすい
+				IF 変動数値 > 0
+					変動数値 = 変動数値 * 3 / 2
+				ELSE
+					変動数値 = 変動数値 / 2
+				ENDIF
+			CASE -1
+				;太りにくい
+				IF 変動数値 > 0
+					変動数値 = 変動数値 / 2
+				ELSE
+					変動数値 = 変動数値 * 3 / 2
+				ENDIF
+			CASE -2
+				;太らない
+				SIF 変動数値 > 0
+					RETURN 0 
+		ENDSELECT
+		BASE:対象キャラ:変動ウエスト += 変動数値
+	CASEELSE
+		BASE:対象キャラ:変動ウエスト += 変動数値
+ENDSELECT
+
+@ヒップ変動処理(対象キャラ, 変動理由, 変動数値)
+#DIMS 変動理由
+#DIM 変動数値
+#DIM 対象キャラ
+
+;キャラ個別設定
+SELECTCASE 変動理由
+	CASE "妊娠"
+		IF 変動数値 > 0
+			IF CFLAG:対象キャラ:妊娠スリーサイズ成長_Ｈ増加 > 0
+				GOTO 条件クリア
+			ELSEIF CFLAG:対象キャラ:妊娠スリーサイズ成長_Ｈ増加 < 0
+				RETURN 0
+			ENDIF
+		ELSE
+			IF CFLAG:対象キャラ:妊娠スリーサイズ成長_Ｈ減少 > 0
+				GOTO 条件クリア
+			ELSEIF CFLAG:対象キャラ:妊娠スリーサイズ成長_Ｈ減少 < 0
+				RETURN 0
+			ENDIF
+		ENDIF
+	CASE "愛撫"
+		IF 変動数値 > 0
+			IF CFLAG:対象キャラ:愛撫スリーサイズ成長_Ｈ増加 > 0
+				GOTO 条件クリア
+			ELSEIF CFLAG:対象キャラ:愛撫スリーサイズ成長_Ｈ増加 < 0
+				RETURN 0
+			ENDIF
+		ELSE
+			IF CFLAG:対象キャラ:愛撫スリーサイズ成長_Ｈ減少 > 0
+				GOTO 条件クリア
+			ELSEIF CFLAG:対象キャラ:愛撫スリーサイズ成長_Ｈ減少 < 0
+				RETURN 0
+			ENDIF
+		ENDIF
+	CASE "食事"
+		IF 変動数値 > 0
+			IF CFLAG:対象キャラ:食事スリーサイズ成長_Ｈ増加 > 0
+				GOTO 条件クリア
+			ELSEIF CFLAG:対象キャラ:食事スリーサイズ成長_Ｈ増加 < 0
+				RETURN 0
+			ENDIF
+		ELSE
+			IF CFLAG:対象キャラ:食事スリーサイズ成長_Ｈ減少 > 0
+				GOTO 条件クリア
+			ELSEIF CFLAG:対象キャラ:食事スリーサイズ成長_Ｈ減少 < 0
+				RETURN 0
+			ENDIF
+		ENDIF
+ENDSELECT
+
+
+SIF 変動数値 > 0 && !GETBIT(OPTION変数:愛撫スリーサイズ成長, 4)
+	RETURN 0
+SIF 変動数値 < 0 && !GETBIT(OPTION変数:愛撫スリーサイズ成長, 5)
+	RETURN 0
+
+$条件クリア
+
+RESULT = 0
+TRYCALLFORM ヒップ変動固有処理_{NO:対象キャラ}(対象キャラ, 変動理由, 変動数値)
+;RESULTが0なら通常処理へ、非0ならここで返す
+SIF RESULT
+	RETURN 0
+
+SIF TALENT:対象キャラ:体型固定
+	RETURN 0
+
+IF あなた特殊能力:肉体改造術 > 0
+	IF 変動数値 > 0
+		変動数値 = 変動数値 + 10
+	ELSEIF 変動数値 < 0
+		変動数値 = 変動数値 - 10
+	ENDIF
+ENDIF
+
+SELECTCASE 変動理由
+	CASE "妊娠"
+		BASE:対象キャラ:変動ヒップ += 変動数値
+	CASE "愛撫"
+		BASE:対象キャラ:変動ヒップ += 変動数値
+	CASE "食事"
+		SELECTCASE TALENT:対象キャラ:太りやすい
+			CASE 1
+				;太りやすい
+				IF 変動数値 > 0
+					変動数値 = 変動数値 * 4 / 3
+				ELSE
+					変動数値 = 変動数値 * 2 / 3
+				ENDIF
+			CASE -1
+				;太りにくい
+				IF 変動数値 > 0
+					変動数値 = 変動数値 * 2 / 3
+				ELSE
+					変動数値 = 変動数値 * 4 / 3
+				ENDIF
+			CASE -2
+				;太らない
+				SIF 変動数値 > 0
+					変動数値 = 変動数値 * 2 / 5
+		ENDSELECT
+		BASE:対象キャラ:変動ヒップ += 変動数値
+	CASEELSE
+		BASE:対象キャラ:変動ヒップ += 変動数値
+ENDSELECT
+
+@補正込みバストサイズ(対象キャラ)
+#FUNCTION
+#DIM 対象キャラ
+#DIM 補正後数値
+
+補正後数値 = BASE:対象キャラ:バスト + MAX(0, BASE:対象キャラ:変動バスト / 10)
+
+RETURNF 補正後数値
+
+@補正込みウエストサイズ(対象キャラ)
+#FUNCTION
+#DIM 対象キャラ
+#DIM 補正後数値
+
+補正後数値 = BASE:対象キャラ:ウエスト
+
+SELECTCASE PREGNANCY_SIZE(対象キャラ)
+	CASE 2
+		補正後数値 = (補正後数値 * 105 / 100) * (102 - (CFLAG:対象キャラ:人物番号 % 5)) / 100
+	CASE 3
+		補正後数値 = (補正後数値 * 115 / 100) * (102 - (CFLAG:対象キャラ:人物番号 % 5)) / 100
+	CASE 4
+		補正後数値 = (補正後数値 * 140 / 100) * (102 - (CFLAG:対象キャラ:人物番号 % 5)) / 100
+	CASE 5
+		補正後数値 = (補正後数値 * 165 / 100) * (102 - (CFLAG:対象キャラ:人物番号 % 5)) / 100
+	CASE 6
+		補正後数値 = (補正後数値 * 180 / 100) * (102 - (CFLAG:対象キャラ:人物番号 % 5)) / 100
+ENDSELECT
+
+補正後数値 = 補正後数値 + MAX(0, BASE:対象キャラ:変動ウエスト / 10)
+
+RETURNF 補正後数値
+
+@補正込みヒップサイズ(対象キャラ)
+#FUNCTION
+#DIM 対象キャラ
+#DIM 補正後数値
+
+補正後数値 = BASE:対象キャラ:ヒップ + MAX(0, BASE:対象キャラ:変動ヒップ / 10)
+
+RETURNF 補正後数値
+
+@スリーサイズ変動適用(対象キャラ)
+#DIM 対象キャラ
+
+;成長したスリーサイズでTALENTをセットしなおす作業
+CALL RESET_BUSTSIZE(対象キャラ)
+CALL RESET_WAISTSIZE(対象キャラ)
+CALL RESET_HIPSIZE(対象キャラ)
+
+
+@スリーサイズ個別設定()
+#DIM 表示候補, キャラクタ数上限
+#DIM 表示数
+#DIM キャラカウント
+#DIM 対象キャラ
+#DIM 現在ページ
+#DIM フラグ保存
+#DIMS ソート情報
+#DIM 入力値
+#DIMS 外部ファイル情報
+#DIMS 外部ファイル配列, キャラクタ数上限
+#DIMS 一時文字列, 2
+#DIM 分割数
+#DIM 配列番号
+#DIM 最初から詳細
+
+VARSET 表示候補, -1
+現在ページ = 0
+
+;表示キャラを登録
+表示数 = 0
+FOR 対象キャラ, 1, CHARANUM
+	;招待不可キャラは排除
+	SIF CFLAG:対象キャラ:招待不可フラグ
+		CONTINUE
+
+	表示候補:表示数 = 対象キャラ
+	表示数 += 1
+NEXT
+CALL キャラ配列フィルタ処理(表示候補, -1)
+
+$表示_LOOP
+;広告対象の表示
+DRAWLINE
+PRINTL 스리사이즈 변동의 OPTION 제어로 캐릭터마다 개별적으로 설정할 수 있습니다.
+PRINTL 기본 설정은 모든 항목 '전체 설정에 따름'입니다.
+DRAWLINE
+LOCAL:1 = 0
+;キャラの表示（15人まで）
+FOR LOCAL, (現在ページ * 項目表示数), ((現在ページ * 項目表示数) + 項目表示数)
+	;登録が終わったら表示終了
+	IF 表示候補:LOCAL == -1
+		BREAK
+	ENDIF
+	IF 文字色グループ取得(表示候補:LOCAL) >= 0
+		SETCOLOR 同室時_グループ文字色:(文字色グループ取得(表示候補:LOCAL))
+	ELSEIF CFLAG:(表示候補:LOCAL):同室文字色
+		SETCOLOR CFLAG:(表示候補:LOCAL):同室文字色
+	ENDIF
+	PRINTBUTTON @"[{LOCAL,3,RIGHT}]%GET_NAME(表示候補:LOCAL, 1)%", LOCAL
+	ソート情報 '= ソート情報表示(表示候補:LOCAL, 1)
+	SIF ソート情報 != ""
+		PRINTFORM 　%ソート情報%
+	PRINT 　　　　　　　
+	RESETCOLOR
+	SIF LOCAL % 2 != 0 && LOCAL
+		PRINTL 
+NEXT
+
+PRINTL 
+DRAWLINE
+
+;ページめくり表示
+;IF 現在ページ > 0
+;	PRINTBUTTONLC "[9000]前ページへ", 9000
+;ELSE
+;	PRINTLC 　
+;ENDIF
+;PRINTFORM - {現在ページ + 1} -
+;IF 表示候補:((現在ページ * 30) + 30) > 0
+;	PRINTBUTTONC "[9001]次ページへ", 9001
+;ENDIF
+;PRINTL
+CALL ページ送り共通表示(現在ページ, 項目表示数, 最大表示数, 9000, 9003)
+DRAWLINE
+CALL フィルタソートボタンセット表示(9020, 9030, 9031, 9040)
+DRAWLINE
+PRINTBUTTON "[9990] 표시 캐릭터 전원을 '전체 설정에 따름'으로 변경한다", 9990
+PRINTL 
+DRAWLINE
+PRINTBUTTONLC "[9999] 돌아가기", 9999
+PRINTL 
+
+
+$INPUT_LOOP
+BINPUT
+
+;広告対象のINPUT
+入力値 = RESULT
+SELECTCASE 入力値
+	CASE 9020, 9030, 9031, 9040
+		CALL フィルタソートボタンセット実行部(入力値, 9020, 9030, 9031, 9040)
+		現在ページ = 0
+		RESTART
+	CASE 9000 TO 9007
+		CALL ページ送り共通実行(RESULT, 現在ページ, 項目表示数, 最大表示数, 9000, 9003)
+		GOTO 表示_LOOP
+	CASE 9000
+		現在ページ = MAX(現在ページ - 1, 0)
+		GOTO 表示_LOOP
+	CASE 9001
+		SIF LOCAL:1 == 0
+			現在ページ += 1
+		GOTO 表示_LOOP
+	CASE 9990
+		FOR LOCAL, 0, VARSIZE("表示候補")
+			;登録キャラが終わったら処理終了
+			IF 表示候補:LOCAL == -1
+				BREAK
+			ENDIF
+			CFLAG:(表示候補:LOCAL):妊娠スリーサイズ成長_Ｂ増加 = 0
+			CFLAG:(表示候補:LOCAL):妊娠スリーサイズ成長_Ｗ増加 = 0
+			CFLAG:(表示候補:LOCAL):妊娠スリーサイズ成長_Ｈ増加 = 0
+			CFLAG:(表示候補:LOCAL):妊娠スリーサイズ成長_Ｂ減少 = 0
+			CFLAG:(表示候補:LOCAL):妊娠スリーサイズ成長_Ｗ減少 = 0
+			CFLAG:(表示候補:LOCAL):妊娠スリーサイズ成長_Ｈ減少 = 0
+			CFLAG:(表示候補:LOCAL):愛撫スリーサイズ成長_Ｂ増加 = 0
+			CFLAG:(表示候補:LOCAL):愛撫スリーサイズ成長_Ｗ増加 = 0
+			CFLAG:(表示候補:LOCAL):愛撫スリーサイズ成長_Ｈ増加 = 0
+			CFLAG:(表示候補:LOCAL):愛撫スリーサイズ成長_Ｂ減少 = 0
+			CFLAG:(表示候補:LOCAL):愛撫スリーサイズ成長_Ｗ減少 = 0
+			CFLAG:(表示候補:LOCAL):愛撫スリーサイズ成長_Ｈ減少 = 0
+			CFLAG:(表示候補:LOCAL):食事スリーサイズ成長_Ｂ増加 = 0
+			CFLAG:(表示候補:LOCAL):食事スリーサイズ成長_Ｗ増加 = 0
+			CFLAG:(表示候補:LOCAL):食事スリーサイズ成長_Ｈ増加 = 0
+			CFLAG:(表示候補:LOCAL):食事スリーサイズ成長_Ｂ減少 = 0
+			CFLAG:(表示候補:LOCAL):食事スリーサイズ成長_Ｗ減少 = 0
+			CFLAG:(表示候補:LOCAL):食事スリーサイズ成長_Ｈ減少 = 0
+		NEXT
+		GOTO 表示_LOOP
+	CASE 9999
+		RETURN -1
+	CASE IS >= CHARANUM, IS < 0
+		REUSELASTLINE 
+		GOTO INPUT_LOOP
+	CASEELSE
+		IF 表示候補:入力値 < 0
+			REUSELASTLINE 
+			GOTO INPUT_LOOP
+		ENDIF
+		$キャラ画面LOOP
+		CALL スリーサイズ個別設定_キャラ設定(表示候補:入力値, 最初から詳細)
+		最初から詳細 = 0
+		SELECTCASE RESULT
+			CASE -1
+				;- キャンセル
+				; リスタートしてリスト表示へ戻る
+			CASE 2
+				;- 前のキャラ
+				; 候補番号を更新、ループして前のキャラを表示
+				入力値 -=  1
+				SIF 入力値 < 0
+					入力値 = 表示数 - 1
+				GOTO キャラ画面LOOP
+			CASE 3
+				;- 次のキャラ
+				; 候補番号を更新、ループして次のキャラを表示
+				入力値 +=  1
+				SIF 入力値 >= 表示数
+					入力値 = 0
+				GOTO キャラ画面LOOP
+			CASE 12
+				;- 前のキャラ
+				; 候補番号を更新、ループして前のキャラを表示
+				最初から詳細 = 1
+				入力値 -=  1
+				SIF 入力値 < 0
+					入力値 = 表示数 - 1
+				GOTO キャラ画面LOOP
+			CASE 13
+				;- 次のキャラ
+				; 候補番号を更新、ループして次のキャラを表示
+				最初から詳細 = 1
+				入力値 +=  1
+				SIF 入力値 >= 表示数
+					入力値 = 0
+				GOTO キャラ画面LOOP
+		ENDSELECT
+		PRINTL 
+		PRINTL 
+		PRINTL 
+		GOTO 表示_LOOP
+ENDSELECT
+
+@スリーサイズ個別設定_キャラ設定(対象キャラ, 最初から詳細)
+#LOCALSIZE 1
+#LOCALSSIZE 1
+#DIM 対象キャラ
+#DIM 入力番号
+#DIM 描画開始行
+#DIM 対象画像数
+#DIM 最初から詳細
+#DIM リロールボタン有効
+#DIM 実行結果
+#DIM TFLAG保存
+#DIM リスタートフラグ
+#DIM DYNAMIC 初回フラグ = 1
+
+IF 初回フラグ
+	初回フラグ = 0
+	; 番号の範囲チェック
+	SIF !INRANGE(対象キャラ, 0, CHARANUM - 1)
+		RETURN -1
+	; 所持ZPチェック
+	; ・ZPが足りなくても簡易紹介を表示したいのでZPの確認は後に移動
+;	IF CFLAG:対象キャラ:ZPショップ値段 > FLAG:ZP所持量
+;		PRINTW ZPが足りません
+;		RETURN
+;	ENDIF
+	描画開始行 = LINECOUNT
+ENDIF
+
+SIF 最初から詳細
+	GOTO 最初から詳細ラベル
+
+PRINTL
+; キャラ確認用の簡易紹介
+CALL キャラ簡易紹介(対象キャラ)
+対象画像数 = RESULT
+リロールボタン有効 = 対象画像数 > 5
+PRINTL
+; 確認メッセージ
+PRINTL 캐릭터의 스리사이즈 성장의 허가/불허가를 개별적으로 설정합니다.
+PRINTL 스리사이즈는 원래 수치보다 감소하는 일은 없습니다. 증가분은 무제한으로 증가합니다.
+PRINTL 
+PRINT 　　・임신・출산 후의 스리사이즈 변화　　
+PRINTBUTTON @"[해설]", 100
+PRINTL 
+PRINT 　　　　B 증가　　
+SELECTCASE CFLAG:対象キャラ:妊娠スリーサイズ成長_Ｂ増加
+	CASE -1
+		;不許可
+		PRINTPLAIN [불허가] / 
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[전체 설정에 따름]", 102
+		PRINT  / 
+		PRINTBUTTON "[허가]", 103
+		RESETCOLOR
+	CASE 0
+		;全体設定
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[불허]", 101
+		RESETCOLOR
+		PRINT  / 
+		PRINTPLAIN [전체 설정에 따름] / 
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[허가]", 103
+		RESETCOLOR
+	CASE 1
+		;許可
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[불허]", 101
+		RESETCOLOR
+		PRINT  / 
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[전체 설정에 따름]", 102
+		RESETCOLOR
+		PRINT  / 
+		PRINTPLAIN [허가]
+ENDSELECT
+PRINTL 
+PRINT 　　　　B 감소　　
+SELECTCASE CFLAG:対象キャラ:妊娠スリーサイズ成長_Ｂ減少
+	CASE -1
+		;不許可
+		PRINTPLAIN [불허] / 
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[전체 설정에 따름]", 112
+		PRINT  / 
+		PRINTBUTTON "[허가]", 113
+		RESETCOLOR
+	CASE 0
+		;全体設定
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[불허]", 111
+		RESETCOLOR
+		PRINT  / 
+		PRINTPLAIN [전체 설정에 따름] / 
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[허가]", 113
+		RESETCOLOR
+	CASE 1
+		;許可
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[불허]", 111
+		RESETCOLOR
+		PRINT  / 
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[전체 설정에 따름]", 112
+		RESETCOLOR
+		PRINT  / 
+		PRINTPLAIN [허가]
+ENDSELECT
+PRINTL 
+PRINT 　　　　W 증가　　
+SELECTCASE CFLAG:対象キャラ:妊娠スリーサイズ成長_Ｗ増加
+	CASE -1
+		;不許可
+		PRINTPLAIN [불허가] / 
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[전체 설정 따르기]", 122
+		PRINT  / 
+		PRINTBUTTON "[허가]", 123
+		RESETCOLOR
+	CASE 0
+		;全体設定
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[불허가]", 121
+		RESETCOLOR
+		PRINT  / 
+		PRINTPLAIN [전체 설정 따르기] / 
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[허가]", 123
+		RESETCOLOR
+	CASE 1
+		;許可
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[불허가]", 121
+		RESETCOLOR
+		PRINT  / 
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[전체 설정 따르기]", 122
+		RESETCOLOR
+		PRINT  / 
+		PRINTPLAIN [허가]
+ENDSELECT
+PRINTL 
+PRINT 　　　　W 감소　　
+SELECTCASE CFLAG:対象キャラ:妊娠スリーサイズ成長_Ｗ減少
+	CASE -1
+		;不許可
+		PRINTPLAIN [불허가] / 
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[전체 설정 따르기]", 132
+		PRINT  / 
+		PRINTBUTTON "[허가]", 133
+		RESETCOLOR
+	CASE 0
+		;全体設定
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[불허]", 131
+		RESETCOLOR
+		PRINT  / 
+		PRINTPLAIN [전체 설정 따름] / 
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[허가]", 133
+		RESETCOLOR
+	CASE 1
+		;許可
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[불허]", 131
+		RESETCOLOR
+		PRINT  / 
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[전체 설정 따름]", 132
+		RESETCOLOR
+		PRINT  / 
+		PRINTPLAIN [허가]
+ENDSELECT
+PRINTL 
+PRINT 　　　　H 증가　　
+SELECTCASE CFLAG:対象キャラ:妊娠スリーサイズ成長_Ｈ増加
+	CASE -1
+		;不許可
+		PRINTPLAIN [불허] / 
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[전체 설정 따름]", 142
+		PRINT  / 
+		PRINTBUTTON "[허가]", 143
+		RESETCOLOR
+	CASE 0
+		;全体設定
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[불허]", 141
+		RESETCOLOR
+		PRINT  / 
+		PRINTPLAIN [전체 설정 따름] / 
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[허가]", 143
+		RESETCOLOR
+	CASE 1
+		;許可
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[불허]", 141
+		RESETCOLOR
+		PRINT  / 
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[전체 설정 따름]", 142
+		RESETCOLOR
+		PRINT  / 
+		PRINTPLAIN [허가]
+ENDSELECT
+PRINTL 
+PRINT 　　　　H 감소　　
+SELECTCASE CFLAG:対象キャラ:妊娠スリーサイズ成長_Ｈ減少
+	CASE -1
+		;不許可
+		PRINTPLAIN [불허가] / 
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[전체 설정에 따름]", 152
+		PRINT  / 
+		PRINTBUTTON "[허가]", 153
+		RESETCOLOR
+	CASE 0
+		;全体設定
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[불허가]", 151
+		RESETCOLOR
+		PRINT  / 
+		PRINTPLAIN [전체 설정에 따름] / 
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[허가]", 153
+		RESETCOLOR
+	CASE 1
+		;許可
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[불허가]", 151
+		RESETCOLOR
+		PRINT  / 
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[전체 설정에 따름]", 152
+		RESETCOLOR
+		PRINT  / 
+		PRINTPLAIN [허가]
+ENDSELECT
+PRINTL 
+PRINTL 
+PRINT 　　・명령 선택에 따른 스리사이즈 변화　　
+PRINTBUTTON @"[해설]", 200
+PRINTL 
+PRINT 　　　　B 증가　　
+SELECTCASE CFLAG:対象キャラ:愛撫スリーサイズ成長_Ｂ増加
+	CASE -1
+		;不許可
+		PRINTPLAIN [불허가] / 
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[전체 설정에 따름]", 202
+		PRINT  / 
+		PRINTBUTTON "[허가]", 203
+		RESETCOLOR
+	CASE 0
+		;全体設定
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[불허]", 201
+		RESETCOLOR
+		PRINT  / 
+		PRINTPLAIN [전체 설정에 따름] / 
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[허가]", 203
+		RESETCOLOR
+	CASE 1
+		;許可
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[불허]", 201
+		RESETCOLOR
+		PRINT  / 
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[전체 설정에 따름]", 202
+		RESETCOLOR
+		PRINT  / 
+		PRINTPLAIN [허가]
+ENDSELECT
+PRINTL 
+PRINT 　　　　B 감소　　
+SELECTCASE CFLAG:対象キャラ:愛撫スリーサイズ成長_Ｂ減少
+	CASE -1
+		;不許可
+		PRINTPLAIN [불허] / 
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[전체 설정에 따름]", 212
+		PRINT  / 
+		PRINTBUTTON "[허가]", 213
+		RESETCOLOR
+	CASE 0
+		;全体設定
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[불허]", 211
+		RESETCOLOR
+		PRINT  / 
+		PRINTPLAIN [전체 설정에 따름] / 
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[허가]", 213
+		RESETCOLOR
+	CASE 1
+		;許可
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[불허]", 211
+		RESETCOLOR
+		PRINT  / 
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[전체 설정 따름]", 212
+		RESETCOLOR
+		PRINT  / 
+		PRINTPLAIN [허용]
+ENDSELECT
+PRINTL 
+PRINT 　　　　W 증가　　
+SELECTCASE CFLAG:対象キャラ:愛撫スリーサイズ成長_Ｗ増加
+	CASE -1
+		;不許可
+		PRINTPLAIN [불허] / 
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[전체 설정 따름]", 222
+		PRINT  / 
+		PRINTBUTTON "[허용]", 223
+		RESETCOLOR
+	CASE 0
+		;全体設定
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[불허]", 221
+		RESETCOLOR
+		PRINT  / 
+		PRINTPLAIN [전체 설정 따름] / 
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[허용]", 223
+		RESETCOLOR
+	CASE 1
+		;許可
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[불허]", 221
+		RESETCOLOR
+		PRINT  / 
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[전체 설정 따름]", 222
+		RESETCOLOR
+		PRINT  / 
+		PRINTPLAIN [허용]
+ENDSELECT
+PRINTL 
+PRINT 　　　　W 감소　　
+SELECTCASE CFLAG:対象キャラ:愛撫スリーサイズ成長_Ｗ減少
+	CASE -1
+		;不許可
+		PRINTPLAIN [불허] / 
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[전체 설정에 따름]", 232
+		PRINT  / 
+		PRINTBUTTON "[허가]", 233
+		RESETCOLOR
+	CASE 0
+		;全体設定
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[불허가]", 231
+		RESETCOLOR
+		PRINT  / 
+		PRINTPLAIN [전체 설정에 따름] / 
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[허가]", 233
+		RESETCOLOR
+	CASE 1
+		;許可
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[불허가]", 231
+		RESETCOLOR
+		PRINT  / 
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[전체 설정에 따름]", 232
+		RESETCOLOR
+		PRINT  / 
+		PRINTPLAIN [허가]
+ENDSELECT
+PRINTL 
+PRINT 　　　　H 증가　　
+SELECTCASE CFLAG:対象キャラ:愛撫スリーサイズ成長_Ｈ増加
+	CASE -1
+		;不許可
+		PRINTPLAIN [불허가] / 
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[전체 설정에 따름]", 242
+		PRINT  / 
+		PRINTBUTTON "[허가]", 243
+		RESETCOLOR
+	CASE 0
+		;全体設定
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[불허가]", 241
+		RESETCOLOR
+		PRINT  / 
+		PRINTPLAIN [전체 설정에 따름] / 
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[허가]", 243
+		RESETCOLOR
+	CASE 1
+		;許可
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[불허]", 241
+		RESETCOLOR
+		PRINT  / 
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[전체 설정 따르기]", 242
+		RESETCOLOR
+		PRINT  / 
+		PRINTPLAIN [허가]
+ENDSELECT
+PRINTL 
+PRINT 　　　　H 감소　　
+SELECTCASE CFLAG:対象キャラ:愛撫スリーサイズ成長_Ｈ減少
+	CASE -1
+		;不許可
+		PRINTPLAIN [불허] / 
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[전체 설정 따르기]", 252
+		PRINT  / 
+		PRINTBUTTON "[허가]", 253
+		RESETCOLOR
+	CASE 0
+		;全体設定
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[불허]", 251
+		RESETCOLOR
+		PRINT  / 
+		PRINTPLAIN [전체 설정 따르기] / 
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[허가]", 253
+		RESETCOLOR
+	CASE 1
+		;許可
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[불허]", 251
+		RESETCOLOR
+		PRINT  / 
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[전체 설정 따르기]", 252
+		RESETCOLOR
+		PRINT  / 
+		PRINTPLAIN [허가]
+ENDSELECT
+PRINTL 
+PRINTL 
+PRINT 　　・음식에 의한 스리사이즈 성장　　
+PRINTBUTTON @"[해설]", 300
+PRINTL 
+PRINT 　　　　B 증가　　
+SELECTCASE CFLAG:対象キャラ:食事スリーサイズ成長_Ｂ増加
+	CASE -1
+		;不許可
+		PRINTPLAIN [불허] / 
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[전체 설정 따르기]", 302
+		PRINT  / 
+		PRINTBUTTON "[허용]", 303
+		RESETCOLOR
+	CASE 0
+		;全体設定
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[불허]", 301
+		RESETCOLOR
+		PRINT  / 
+		PRINTPLAIN [전체 설정 따르기] / 
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[허용]", 303
+		RESETCOLOR
+	CASE 1
+		;許可
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[불허]", 301
+		RESETCOLOR
+		PRINT  / 
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[전체 설정 따르기]", 302
+		RESETCOLOR
+		PRINT  / 
+		PRINTPLAIN [허용]
+ENDSELECT
+PRINTL 
+PRINT 　　　　B 감소　　
+SELECTCASE CFLAG:対象キャラ:食事スリーサイズ成長_Ｂ減少
+	CASE -1
+		;不許可
+		PRINTPLAIN [불허] / 
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[전체 설정 따르기]", 312
+		PRINT  / 
+		PRINTBUTTON "[허용]", 313
+		RESETCOLOR
+	CASE 0
+		;全体設定
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[불허]", 311
+		RESETCOLOR
+		PRINT  / 
+		PRINTPLAIN [전체 설정에 따름] / 
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[허가]", 313
+		RESETCOLOR
+	CASE 1
+		;許可
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[불허가]", 311
+		RESETCOLOR
+		PRINT  / 
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[전체 설정에 따름]", 312
+		RESETCOLOR
+		PRINT  / 
+		PRINTPLAIN [허가]
+ENDSELECT
+PRINTL 
+PRINT 　　　　W 증가　　
+SELECTCASE CFLAG:対象キャラ:食事スリーサイズ成長_Ｗ増加
+	CASE -1
+		;不許可
+		PRINTPLAIN [불허가] / 
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[전체 설정에 따름]", 322
+		PRINT  / 
+		PRINTBUTTON "[허가]", 323
+		RESETCOLOR
+	CASE 0
+		;全体設定
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[불허가]", 321
+		RESETCOLOR
+		PRINT  / 
+		PRINTPLAIN [전체 설정에 따름] / 
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[허가]", 323
+		RESETCOLOR
+	CASE 1
+		;許可
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[불허가]", 321
+		RESETCOLOR
+		PRINT  / 
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[전체 설정에 따름]", 322
+		RESETCOLOR
+		PRINT  / 
+		PRINTPLAIN [허가]
+ENDSELECT
+PRINTL 
+PRINT 　　　　W감소　　
+SELECTCASE CFLAG:対象キャラ:食事スリーサイズ成長_Ｗ減少
+	CASE -1
+		;不許可
+		PRINTPLAIN [불허] / 
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[전체 설정 따르기]", 332
+		PRINT  / 
+		PRINTBUTTON "[허용]", 333
+		RESETCOLOR
+	CASE 0
+		;全体設定
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[불허]", 331
+		RESETCOLOR
+		PRINT  / 
+		PRINTPLAIN [전체 설정 따르기] / 
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[허용]", 333
+		RESETCOLOR
+	CASE 1
+		;許可
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[불허]", 331
+		RESETCOLOR
+		PRINT  / 
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[전체 설정 따르기]", 332
+		RESETCOLOR
+		PRINT  / 
+		PRINTPLAIN [허용]
+ENDSELECT
+PRINTL 
+PRINT 　　　　H증가　　
+SELECTCASE CFLAG:対象キャラ:食事スリーサイズ成長_Ｈ増加
+	CASE -1
+		;不許可
+		PRINTPLAIN [불허] / 
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[전체 설정 따르기]", 342
+		PRINT  / 
+		PRINTBUTTON "[허용]", 343
+		RESETCOLOR
+	CASE 0
+		;全体設定
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[불허]", 341
+		RESETCOLOR
+		PRINT  / 
+		PRINTPLAIN [전체 설정에 따름] / 
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[허가]", 343
+		RESETCOLOR
+	CASE 1
+		;許可
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[불허]", 341
+		RESETCOLOR
+		PRINT  / 
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[전체 설정에 따름]", 342
+		RESETCOLOR
+		PRINT  / 
+		PRINTPLAIN [허가]
+ENDSELECT
+PRINTL 
+PRINT 　　　　H 감소　　
+SELECTCASE CFLAG:対象キャラ:食事スリーサイズ成長_Ｈ減少
+	CASE -1
+		;不許可
+		PRINTPLAIN [불허] / 
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[전체 설정에 따름]", 352
+		PRINT  / 
+		PRINTBUTTON "[허가]", 353
+		RESETCOLOR
+	CASE 0
+		;全体設定
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[불허]", 351
+		RESETCOLOR
+		PRINT  / 
+		PRINTPLAIN [전체 설정에 따름] / 
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[허가]", 353
+		RESETCOLOR
+	CASE 1
+		;許可
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[불허]", 351
+		RESETCOLOR
+		PRINT  / 
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[전체 설정에 따름]", 352
+		RESETCOLOR
+		PRINT  / 
+		PRINTPLAIN [허가]
+ENDSELECT
+PRINTL 
+PRINTL 
+PRINTL
+PRINTBUTTONLC "[1]돌아가기", 1
+PRINTBUTTONLC "[10]상세 능력", 10
+SIF リロールボタン有効
+	PRINTBUTTONLC "[4]이미지 랜덤 표시를 리롤", 4
+PRINTL
+PRINTBUTTONLC "[2]이전 캐릭터", 2
+PRINTBUTTONLC "[3]다음 캐릭터", 3
+PRINTL
+
+; 入力ループ
+WHILE 1
+	BINPUT
+	入力番号 = RESULT
+	SELECTCASE 入力番号
+		CASE 0
+			;- [0]はい
+			; ZPが足りるかチェックしてキャラ開放
+			IF ZPキャラ無料回数 || FLAG:ZP所持量 >= CFLAG:対象キャラ:ZPショップ値段
+				; キャラ開放して処理終了
+				CALL EXキャラ開放(対象キャラ)
+				実行結果 = 1
+				リスタートフラグ = 0
+			ELSE
+				; エラー表示
+				PRINTW ZP가 부족합니다
+			ENDIF
+			BREAK
+		CASE 1
+			;- [1]いいえ
+			; 何もせず処理終了
+			実行結果 = -1
+			リスタートフラグ = 0
+			BREAK
+		CASE 4
+			;- [4]画像のランダム表示をリロール
+			; リスタートして再表示
+			IF リロールボタン有効
+				実行結果 = 0
+				リスタートフラグ = 1
+				BREAK
+			ENDIF
+		CASE 2
+			;- [2]前のキャラ
+			; 何もせず処理終了(キャラ変更処理は関数外で実行)
+			実行結果 = 2
+			リスタートフラグ = 0
+			BREAK
+		CASE 3
+			;- [3]次のキャラ
+			; 何もせず処理終了(キャラ変更処理は関数外で実行)
+			実行結果 = 3
+			リスタートフラグ = 0
+			BREAK
+		CASE 10
+			;- [10]詳細能力
+			; 詳細画面を読んでからリスタートして再表示
+			$最初から詳細ラベル
+			リスタートフラグ = 1
+			CALL PRINT_STATE(対象キャラ, 3)
+			SELECTCASE RESULT
+				CASE 100
+					;前のキャラへ
+					; 何もせず処理終了(キャラ変更処理は関数外で実行)
+					実行結果 = 12
+					リスタートフラグ = 0
+				CASE 101
+					;次のキャラへ
+					; 何もせず処理終了(キャラ変更処理は関数外で実行)
+					実行結果 = 13
+					リスタートフラグ = 0
+			ENDSELECT
+			BREAK
+		CASE 101 TO 199
+			リスタートフラグ = 1
+			SELECTCASE 入力番号 / 10
+				CASE 10
+					CFLAG:対象キャラ:妊娠スリーサイズ成長_Ｂ増加 = 入力番号 % 10 - 2
+				CASE 11
+					CFLAG:対象キャラ:妊娠スリーサイズ成長_Ｂ減少 = 入力番号 % 10 - 2
+				CASE 12
+					CFLAG:対象キャラ:妊娠スリーサイズ成長_Ｗ増加 = 入力番号 % 10 - 2
+				CASE 13
+					CFLAG:対象キャラ:妊娠スリーサイズ成長_Ｗ減少 = 入力番号 % 10 - 2
+				CASE 14
+					CFLAG:対象キャラ:妊娠スリーサイズ成長_Ｈ増加 = 入力番号 % 10 - 2
+				CASE 15
+					CFLAG:対象キャラ:妊娠スリーサイズ成長_Ｈ減少 = 入力番号 % 10 - 2
+			ENDSELECT
+			BREAK
+		CASE 201 TO 299
+			リスタートフラグ = 1
+			SELECTCASE 入力番号 / 10
+				CASE 20
+					CFLAG:対象キャラ:愛撫スリーサイズ成長_Ｂ増加 = 入力番号 % 10 - 2
+				CASE 21
+					CFLAG:対象キャラ:愛撫スリーサイズ成長_Ｂ減少 = 入力番号 % 10 - 2
+				CASE 22
+					CFLAG:対象キャラ:愛撫スリーサイズ成長_Ｗ増加 = 入力番号 % 10 - 2
+				CASE 23
+					CFLAG:対象キャラ:愛撫スリーサイズ成長_Ｗ減少 = 入力番号 % 10 - 2
+				CASE 24
+					CFLAG:対象キャラ:愛撫スリーサイズ成長_Ｈ増加 = 入力番号 % 10 - 2
+				CASE 25
+					CFLAG:対象キャラ:愛撫スリーサイズ成長_Ｈ減少 = 入力番号 % 10 - 2
+			ENDSELECT
+			BREAK
+		CASE 301 TO 399
+			リスタートフラグ = 1
+			SELECTCASE 入力番号 / 10
+				CASE 30
+					CFLAG:対象キャラ:食事スリーサイズ成長_Ｂ増加 = 入力番号 % 10 - 2
+				CASE 31
+					CFLAG:対象キャラ:食事スリーサイズ成長_Ｂ減少 = 入力番号 % 10 - 2
+				CASE 32
+					CFLAG:対象キャラ:食事スリーサイズ成長_Ｗ増加 = 入力番号 % 10 - 2
+				CASE 33
+					CFLAG:対象キャラ:食事スリーサイズ成長_Ｗ減少 = 入力番号 % 10 - 2
+				CASE 34
+					CFLAG:対象キャラ:食事スリーサイズ成長_Ｈ増加 = 入力番号 % 10 - 2
+				CASE 35
+					CFLAG:対象キャラ:食事スリーサイズ成長_Ｈ減少 = 入力番号 % 10 - 2
+			ENDSELECT
+			BREAK
+		CASE 100
+			リスタートフラグ = 1
+			DRAWLINE
+			PRINTL 출산 후, B와 H가 증가하고 W가 미세하게 증가합니다. 불허가한 항목은 증가하지 않습니다.
+			PRINTL 임신 중의 가슴 확대가 산후에 원래대로 돌아올 때 B의 기초값이 재계산되므로,
+			PRINTL 결과적으로 가슴이 임신 전보다 처질 수 있습니다.
+			WAIT
+			BREAK
+		CASE 200
+			リスタートフラグ = 1
+			DRAWLINE
+			PRINTL 특정 명령을 실행했을 때, 각 스리사이즈가 증감합니다.
+			PRINTL 해당 명령은 다음과 같습니다.
+			PRINTL
+			PRINTL ・B 증가 명령
+			PRINTL 　　가슴 애무・착유기(장착 시・장착 중 모두)・가슴 주무르기・어깨동무 가슴 주무르기(실행 시・모드 지속 중 모두)・가슴 확대 오일 에스테・가슴을 주무르다
+			PRINTL
+			PRINTL ・B 감소 명령
+			PRINTL 　　미유 오일 에스테
+			PRINTL
+			PRINTL ・W 감소 커맨드
+			PRINTL 　　기승위 (모드 지속 중)・A 기승위 (모드 지속 중)・미용 피부와 잘록한 허리 오일 스파・복직근 오일 에스테
+			PRINTL
+			PRINTL ・H 증가 커맨드
+			PRINTL 　　스팽킹・엉덩이를 주무르기 (실행 시・모드 지속 중 양쪽)
+			PRINTL
+			PRINTL ・H 감소 커맨드
+			PRINTL 　　대둔근 골반 마사지
+			PRINTL
+			PRINTL ・식사 취급 커맨드
+			PRINTL 　(실행함으로써 쓰리 사이즈가 증가하지만, 커맨드 선택에 의한 쓰리 사이즈 변화가 아닌 음식에 의한 쓰리 사이즈 성장으로 취급)
+			PRINTL 　　술을 마시다・BBQ를 하다
+			WAIT
+			BREAK
+		CASE 300
+			リスタートフラグ = 1
+			DRAWLINE
+			PRINTL 특정 아이템을 선물했을 때, 혹은 사용했을 때 각각의 쓰리 사이즈가 증감합니다.
+			PRINTL 해당 아이템에는 칼로리가 표기되어 있습니다.
+			PRINTL
+			PRINTL 하루에 1000kcal까지는 섭취해도 살찌지 않습니다.
+			PRINTL 1000kcal를 초과한 부분을 기준으로, 하루의 마지막에 쓰리 사이즈 변동이 발생합니다.
+			PRINTL 
+			PRINTL 또한, 전투나 운동 등에 의해 섭취 칼로리가 감산될 수 있습니다.
+			PRINTL 하루에 섭취한 칼로리가 마이너스가 된 경우, 마이너스 부분이 그대로 쓰리 사이즈 변동으로 계산됩니다.
+			WAIT
+			BREAK
+	ENDSELECT
+WEND
+
+; 表示した内容を消去
+CLEARLINE LINECOUNT - 描画開始行
+
+; リスタート or 終了
+SIF リスタートフラグ
+	RESTART
+
+; 簡易紹介で使用したリソースを解放
+CALL ランダム画像表示_リソース解放(1)
+RETURN 実行結果
+
+

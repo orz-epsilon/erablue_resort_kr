@@ -1,0 +1,165 @@
+;-------------------------------------------------
+;体の感触を味わう
+;愛撫系コマンド　レベル2
+;-------------------------------------------------
+@RAPE_COMNAME0
+#FUNCTIONS
+TSTR:コマンド名受渡 = 몸을 더듬다
+
+
+
+;===================================================
+;コマンドタイプ
+;===================================================
+@RAPE_COMTYPE_0
+#FUNCTION
+TFLAG:コマンドタイプ受渡 = RAPE_COMTYPE("うふふ")
+
+
+@RAPE_COM_TOOLTIP_0
+LOCALS = <br>■몸을 더듬다<br>
+LOCALS += "상대의 몸을 마음껏 더듬으며 감촉을 만끽한다."
+LOCALS += "<br>실행자가[혀놀림][능숙한 손가락][고양이 혀]를 가지고 있을 경우, 효과가 증감한다."
+LOCALS += "<br>RAPE_COM 타입：우후후<br>획득 소스：쾌C・쾌B・쾌S・노출・접촉"
+LOCALS += "<br>고유 획득 경험：키스 경험(당신・TARGET)<br>"
+TSTR:ツールチップ受渡 = %LOCALS%
+
+@RAPE_COM0
+;-------------------------------------------------
+;ソース追加処理
+;-------------------------------------------------
+
+;舌を使う調教では、舌使い,猫舌によって、快感のソース増減
+LOCAL = 80
+SIF TALENT:PLAYER:舌使い
+	TIMES LOCAL , 1.50
+SIF TALENT:PLAYER:器用な指
+	TIMES LOCAL , 1.50
+SIF TALENT:PLAYER:猫舌
+	TIMES LOCAL , 0.75
+
+CALL SOURCE_CALC_快Ｃ(TARGET, PLAYER, LOCAL)
+CALL SOURCE_CALC_快Ｂ(TARGET, PLAYER, LOCAL)
+CALL SOURCE_CALC_快Ｓ(TARGET, PLAYER, LOCAL / 2)
+CALL SOURCE_CALC_露出(TARGET, PLAYER, 100)
+
+;IF TEQUIP:20
+; ;ボールギャグ使用中もなし
+; 	CALL SOURCE_CALC_接触(TARGET, PLAYER, 40)
+; ELSE
+	CALL SOURCE_CALC_接触(TARGET, PLAYER, 80)
+; ENDIF
+
+
+;-------------------------------------------------
+;経験の処理
+;-------------------------------------------------
+;同性愛　レズなら戻り値1ゲイなら戻り値2
+IF HETEROSEX(TARGET,PLAYER)
+	EXP:同性愛経験 += 5
+	EXP:PLAYER:同性愛経験 += 5
+ENDIF
+
+;調教者が猫舌持ちの場合は、調教者に嗜虐快楽経験を追加
+SIF TALENT:PLAYER:猫舌
+	EXP:PLAYER:嗜虐快楽経験 += 1
+
+RETURN 1
+
+;-------------------------------------------------
+;愛撫実行判定
+;-------------------------------------------------
+@RAPE_COM_ABLE0
+
+;上か下に鎧があると無理
+SIF TEQUIP:TARGET:上半身鎧あり
+	RETURN 0
+SIF TEQUIP:TARGET:下腹部前鎧あり
+	RETURN 0
+
+;一括管理
+SIF GLOBAL_RAPE_COMABLE(0)
+	RETURN RESULT
+;指を何かに使ってる・届かないなら無理
+SIF TEQUIP:PLAYER:指
+	RETURN 0
+;パイズリ、フェラ系は体勢的に無理
+SIF MODE_確認_完全一致("フェラチオ系", TARGET, PLAYER) > -1
+	RETURN 0
+SIF MODE_確認_完全一致("パイズリ系", TARGET, PLAYER)> -1
+	RETURN 0
+RETURN 1
+
+
+
+
+;-------------------------------------------------
+;愛撫時メッセージ
+;-------------------------------------------------
+@RAPE_MESSAGE_COM0
+
+PRINTFORM %CALLNAME:PLAYER%은(는)
+
+;膣とアナルに入れてるのがあれば持ち主を特定
+SIF MODE_確認_完全一致("Ｖ挿入系", PLAYER, TARGET) > -1 || MODE_確認_完全一致("Ａ挿入系", PLAYER, TARGET) > -1 || MODE_確認_完全一致("Ｖ挿入系", TARGET, PLAYER) > -1 || MODE_確認_完全一致("Ａ挿入系", TARGET, PLAYER) > -1
+	PRINTFORM %CALLNAME:TARGET%와 이어진 채,
+
+IF CFLAG:TARGET:睡眠
+	IF TCVAR:TARGET:泥酔眠姦
+		PRINTFORM 취해 쓰러진
+	ELSE
+		PRINTFORM 푹 잠든
+	ENDIF
+ELSEIF CFLAG:TARGET:発情期フラグ < 0
+	PRINTFORM %TEXTR("발정해 버린/발정으로 달아오른")%
+ELSEIF BASE:性欲 > 1000
+	PRINTFORM %TEXTR("욕정해 버린/욕정으로 달아오른")%
+ENDIF
+PRINTFORM %CALLNAME:TARGET%의
+
+IF 知識素質:TARGET:高貴 >= 1
+	PRINTFORM %TEXTR("고귀한/고상한")% 옥체
+ELSE
+	;小柄体型
+	IF TALENT:体格 <= -1
+		PRINTFORM %TEXTR("작은 몸/부드러운 왜구")%
+	ELSE
+		PRINTFORM %TEXTR("몸/몸")%
+	ENDIF
+ENDIF
+PRINTFORM 을 더듬어, %TEXTR("손바닥 가득/")%
+IF アイドル判定(TARGET)
+	PRINTFORM 아이돌의 %TEXTR("안는/만지는")% 감촉을
+ELSE
+	PRINTFORM 감촉을
+ENDIF
+PRINTFORML %TEXTR("만끽했다/즐겼다")%…
+
+PRINTL
+
+SIF MODE_確認_完全一致("Ｖ挿入系", PLAYER, TARGET) > -1 || MODE_確認_完全一致("Ａ挿入系", PLAYER, TARGET) > -1
+	PRINTFORM %TEXTR("물고 있는/박아 넣어진")% 페니스를 꽉꽉 조이면서,
+
+IF CFLAG:TARGET:睡眠
+	SELECTCASE MAX(CUP:TARGET:快Ｃ, CUP:TARGET:快Ｂ)
+	;各部位の累積が10000で絶頂、場合分けの数値は参考数値なのでイメージで変えてもらってOK
+	CASE IS > 10000
+	;絶頂
+		PRINTFORML %CALLNAME:TARGET%의 몸은 잠든 채로도 주어지는 쾌락에 민감하게 반응하며, 달콤한 절정 쾌락에 떨고 있다…
+	CASEELSE
+		PRINTFORML 잠든 %CALLNAME:TARGET%은 몸을 비틀지만, 그 몸은 주어지는 쾌락에 반응하고 있다…
+	ENDSELECT
+ELSE
+	SELECTCASE MAX(CUP:TARGET:快Ｃ, CUP:TARGET:快Ｂ)
+	;各部位の累積が10000で絶頂、場合分けの数値は参考数値なのでイメージで変えてもらってOK
+	CASE IS > 10000
+	;絶頂
+		PRINTFORML %CALLNAME:TARGET%의 몸은 주어지는 쾌락에 민감하게 반응하며, 달콤한 절정 쾌락에 떨고 있다…
+	CASE IS > 4000
+	;感じている
+		PRINTFORML %CALLNAME:TARGET%은 싫어하며 벗어나려 몸을 비틀지만, 그 몸은 주어지는 쾌락에 반응하고 있다…
+	CASEELSE
+		;あまり感じていない
+		PRINTFORML 싫어하는 %CALLNAME:TARGET%은 %CALLNAME:PLAYER%의 팔 안에서 몸부림치고 있지만, 무력한 저항은 오히려 %CALLNAME:PLAYER%의 %TEXTR("정복욕/가학심")%을 부추길 뿐이다…
+	ENDSELECT
+ENDIF

@@ -1,0 +1,138 @@
+
+@イベント発生条件_突発イベント_魔物襲撃
+;開放条件を満たしたら1を返すこと
+
+イベント消滅日数渡し = 3
+イベント消滅確率渡し = 30
+イベント再発生日数渡し = 3
+イベント再発生確率渡し = 30
+
+IF ダンジョンクリアフラグ_沿岸部の森 == 0
+	RETURN 0
+ENDIF
+IF BATTLE_STATE:0:キャラ登録番号 == 0
+	RETURN 0
+ENDIF
+RETURN 1
+
+@イベント関数_突発イベント_魔物襲撃(ARG)
+#DIM 最大レベル
+
+LOCAL = DT_CELL_GET("各イベント用変数配列", ARG, "イベント再発生CT")
+IF LOCAL == 0
+	;初回
+	DRAWLINE
+	PRINTL ［마물 습격］
+	DRAWLINE
+	PRINTW
+	PRINTFORMW 아무래도 근처 산이나 숲에서 마물이 내려온 것 같다.
+	PRINTFORMW 인명 피해가 나올 정도의 상대는 아니지만, 방치하면 시설 파손이나 부상자 등이 나올 것이다.
+	PRINTFORMW 그렇게 되면 리조트의 인기가 급감할 것은 상상하기 어렵지 않다.
+	PRINTFORMW 피해가 발생하기 전에 빨리 쓰러뜨리자.
+	PRINTL
+	PRINTL 리조트에 내려온 마물과 싸웁니다. 준비는 되셨습니까?
+	PRINTBUTTON "[0]예", 0
+	PRINTL
+	PRINTBUTTON "[1]아니요", 1
+	PRINTL
+	BINPUT
+	SELECTCASE RESULT
+		CASE 0
+			PRINTFORMW %CALLNAME:PLAYER%들은 리조트에 습격해 온 마물을 맞이한다!
+
+			CALL イベント戦闘初期処理()
+			;最大レベル取得
+			最大レベル = 0
+			VARSET LOCAL
+			FOR LOCAL, 0, 14
+				SIF LOCAL > 3 && LOCAL < 10
+					CONTINUE
+				SIF BATTLE_STATE:LOCAL:キャラ登録番号 < 1
+					CONTINUE
+				SIF BATTLE_STATE:LOCAL:Lv > 最大レベル
+					最大レベル = BATTLE_STATE:LOCAL:Lv
+				;キャラ数もカウント
+				LOCAL:1 ++
+			NEXT
+			CALL ランダムエネミーセット関数(LOCAL:1, 最大レベル - 2)
+			CALL 雑魚敵遭遇汎用処理
+			IF RESULT == 0
+				;勝利
+				PRINTFORMW %CALLNAME:PLAYER%들은 무사히 마물을 소탕했다.
+				CALL イベント完了フラグ汎用処理("魔物襲撃")
+			ELSEIF RESULT == 1
+				;全滅
+				PRINTW 불찰을 저질렀다. 여기는 일단 철수하자.
+			ELSEIF RESULT == -1
+				;逃走
+				PRINTW 생각보다 강한 것 같다. 여기는 일단 철수하자.
+			ENDIF
+			CALL ダンジョン終了時処理
+		CASE 1
+			PRINTW 아니, 방심은 좋지 않다. 여기는 제대로 준비를 하고 나서 하자.
+	ENDSELECT
+ELSE
+	;二回目以降
+	DRAWLINE
+	PRINTL ［마물 습격］
+	DRAWLINE
+	PRINTW
+	PRINTFORMW 또 마물이 리조트까지 내려왔다.
+	PRINTFORMW 피해가 발생하기 전에 빨리 쓰러뜨리자.
+	PRINTL
+	PRINTL 리조트에 내려온 마물과 싸웁니다. 준비는 되셨습니까?
+	PRINTBUTTON "[0]예", 0
+	PRINTL
+	PRINTBUTTON "[1]아니요", 1
+	PRINTL
+	BINPUT
+	SELECTCASE RESULT
+		CASE 0
+			PRINTFORMW %CALLNAME:PLAYER%들은 리조트에 습격해 온 마물을 맞서 싸운다!
+
+			CALL イベント戦闘初期処理()
+			;最大レベル取得
+			最大レベル = 0
+			VARSET LOCAL
+			FOR LOCAL, 0, 14
+				SIF LOCAL > 3 && LOCAL < 10
+					CONTINUE
+				SIF BATTLE_STATE:LOCAL:キャラ登録番号 < 1
+					CONTINUE
+				SIF BATTLE_STATE:LOCAL:Lv > 最大レベル
+					最大レベル = BATTLE_STATE:LOCAL:Lv
+				;キャラ数もカウント
+				LOCAL:1 ++
+			NEXT
+			CALL ランダムエネミーセット関数(LOCAL:1, 最大レベル - 2)
+			CALL イベント中戦闘用処理()
+			IF RESULT == 0
+				;勝利
+				PRINTL 
+				PRINTL 
+				PRINTFORMW %CALLNAME:PLAYER%들은 무사히 마물을 소탕했다.
+				CALL イベント完了フラグ汎用処理("魔物襲撃")
+			ELSEIF RESULT == 1
+				;全滅
+				PRINTL 
+				PRINTL 
+				PRINTW 불찰을 저질렀다. 여기는 일단 철수하자.
+			ELSEIF RESULT == -1
+				;逃走
+				PRINTL 
+				PRINTL 
+				PRINTW 생각보다 강한 것 같다. 여기는 일단 철수하자.
+			ENDIF
+			CALL ダンジョン終了時処理
+		CASE 1
+			PRINTW 아니, 방심은 좋지 않다. 여기는 제대로 준비를 하고 나서 하자.
+	ENDSELECT
+ENDIF
+
+
+
+
+
+
+
+

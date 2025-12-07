@@ -1,0 +1,179 @@
+@マッサージ来店処理
+#DIM 来店候補者, キャラクタ数上限
+#DIM キャラ番号
+#DIM 候補番号
+#DIM 候補数
+#DIM モブ客
+;マッサージ客待ち時、キャラがマッサージを受けに来る処理
+
+
+;客待ち時に誰か来るのは2/3の確率。ただしモブとネームドで半々。
+;敏腕マッサージ師になったら、客待ちすれば必ず誰か来るように。
+モブ客 = 0
+IF ABL:MASTER:マッサージ技能 >= 4
+	SELECTCASE RAND:2
+	CASE 0
+		モブ客 = 1
+	ENDSELECT	
+ELSE
+	SELECTCASE RAND:3
+	CASE 0
+		RETURN -1
+	CASE 1
+		モブ客 = 1
+	ENDSELECT
+ENDIF
+
+;候補者リスト作成
+候補番号 = 0
+FOR キャラ番号, 1, CHARANUM
+	;もう今日は遊びに来た
+	SIF TCVAR:キャラ番号:マッサージ来店フラグ
+		CONTINUE
+	;島にいる
+	SIF CFLAG:キャラ番号:滞在期間 < 1
+		CONTINUE
+	;寝てる
+	SIF CFLAG:キャラ番号:睡眠
+		CONTINUE
+	;何らかの原因で隠密
+	SIF CFLAG:キャラ番号:隠密
+		CONTINUE
+	;デート中
+	SIF CFLAG:キャラ番号:デート
+		CONTINUE
+	;体力限界
+	SIF CFLAG:キャラ番号:体力限界
+		CONTINUE
+	;男湯側にいるときに性別が女
+	SIF CFLAG:MASTER:現在位置 == 711 && TALENT:キャラ番号:性別 != 2
+		CONTINUE
+	;女湯側にいるときに性別が男
+	SIF CFLAG:MASTER:現在位置 == 811 && TALENT:キャラ番号:性別 == 2
+		CONTINUE
+	来店候補者:候補番号 = キャラ番号
+	候補番号 += 1
+	IF TALENT:キャラ番号:恋慕
+		;恋慕は確率３倍
+		来店候補者:候補番号 = キャラ番号
+		候補番号 += 1
+		来店候補者:候補番号 = キャラ番号
+		候補番号 += 1
+	ELSEIF TALENT:キャラ番号:セフレ
+		;セフレは確率２倍
+		来店候補者:候補番号 = キャラ番号
+		候補番号 += 1
+	ENDIF
+NEXT
+
+;一人も候補がいないなら戻る
+;-1を返すことで口上などの処理をスキップ
+SIF 候補番号 == 0
+	RETURN -1
+
+;来店キャラ決定
+AUTOCOM_実行番号保存 = 来店候補者:(RAND:候補番号)
+TCVAR:AUTOCOM_実行番号保存:マッサージ来店フラグ = 1
+
+
+;来店処理
+$来店ラベル
+IF モブ客 == 1
+	DRAWLINE
+		PRINTFORM %CALLNAME:PLAYER%이/가 손님을 기다리자, 시술복으로 갈아입은
+		IF CFLAG:MASTER:現在位置 == 811
+			PRINTFORM %TEXTR("젊은/")%%TEXTR("휴먼/엘룬/드라프/하빈")% 여성 손님
+		ELSE
+			PRINTFORM %TEXTR("젊은//중년의/나이 든")%%TEXTR("휴먼/엘룬/드라프/하빈")% 남성 손님
+		ENDIF
+		PRINTFORMW 이/가 마사지실로 들어왔다.
+		PRINTL
+		PRINTFORML %CALLNAME:PLAYER%이/가 %TEXTR("평소대로 마사지를 해 주자/어깨와 허리 결림 해소 코스를 시술해 주자/골반을 중심으로 골격 교정 지압 마사지를 시술해 주자/피부 관리 오일 에스테틱을 해 주자")% 그러자,
+		PRINTFORML 만족한 손님은 미소를 지으며, %CALLNAME:PLAYER%에게 고맙다고 말하고 리조트로 돌아갔다…
+		PRINTFORMW 요금으로 1000루피를 얻었다!
+		MONEY += 1000
+		EXP:PLAYER:マッサージ施術経験 += 10
+ELSE
+	DRAWLINE
+		PRINTFORML %CALLNAME:PLAYER%이/가 손님을 기다리고 있는데 시술복으로 갈아입은 %CALLNAME:AUTOCOM_実行番号保存%이/가 마사지실로 들어왔다.
+		PRINTFORML %CALLNAME:AUTOCOM_実行番号保存%을/를 시술대로 안내하며 %CALLNAME:PLAYER%은/는 마사지 방침을 생각한다…
+		DRAWLINE
+		PRINTBUTTON "[0] 꼼꼼하게 마사지한다", 0
+		PRINTL
+		PRINTBUTTON "[1] 평소대로 마사지한다 (간이판)", 1
+		PRINTL
+		PRINTBUTTON "[100] 선택지에 대해 설명", 100
+	BINPUT
+	;口上用に選択肢を記録
+	RFLAG:コマンド結果受渡し変数２ = RESULT
+
+	SELECTCASE RFLAG:コマンド結果受渡し変数２
+			CASE 0
+				CFLAG:PLAYER:現在マップ種別 = 0
+				CFLAG:AUTOCOM_実行番号保存:現在マップ種別 = 0
+				CFLAG:AUTOCOM_実行番号保存:同室 = 1
+				CFLAG:AUTOCOM_実行番号保存:現在位置 = CFLAG:PLAYER:現在位置
+				PRINTFORML %CALLNAME:PLAYER%은/는 %CALLNAME:AUTOCOM_実行番号保存%에게 마사지를 시작했다…
+				;処理のためTARGET配列をセット
+				CALL TARGET_SET()
+
+				;マッサージ開始処理(07_711_01マッサージを始める.ERBよりコピー)
+				IF チュートリアルフラグ:マッサージモード == 0
+					CALL マッサージチュートリアル
+				ENDIF
+					
+				;移動しないように同行セット
+				SIF CFLAG:AUTOCOM_実行番号保存:同行 < 1
+					CFLAG:AUTOCOM_実行番号保存:同行 = 1
+				
+				あなた追跡キャラ = 0
+				
+				;ターンエンドまでいかないのでメッセージはここで処理
+				;SELECTCOM = 382
+				CALL KOJO_MESSAGE_COM_通常モード
+				
+				;マッサージモードに移行
+				LOCAL = AUTOCOM_実行番号保存
+				サイド描画表示種類 = 能力表示
+				CALL ゲームフェイズ変更("マッサージモード")
+				CALL 警戒度初期値セット(LOCAL)
+				;服着替え
+				;コスプレと同時に行うことはないのでコスプレ前の服位置を再利用
+				SIF CSTR:LOCAL:コスプレ前の服 == "" && CSTR:LOCAL:表示グラフィックカテゴリ != ""
+					CSTR:LOCAL:コスプレ前の服 '= CSTR:LOCAL:表示グラフィックカテゴリ
+			
+				TRYCALLFORM マッサージ時固有着替え処理_{NO:LOCAL}(LOCAL)
+				IF RSTR:服装名受け渡し != ""
+					CALL CLOTHES_CHANGE(LOCAL, RSTR:服装名受け渡し)
+				ELSE
+					IF フィールド展開:水泳時全裸化
+						CALL CLOTHES_CHANGE(LOCAL, "全裸")
+					ELSEIF EXIST画像FILE("resources/" + CSTR:LOCAL:画像フォルダ + "/短冊_マッサージ着")
+						CALL CLOTHES_CHANGE(LOCAL, "マッサージ着")
+					ELSE
+						CALL CLOTHES_CHANGE(LOCAL, "水着")
+					ENDIF
+				ENDIF
+				RETURN -1
+			CASE 1
+				TIME += 30
+				TARGET = AUTOCOM_実行番号保存
+				PRINTFORML %CALLNAME:PLAYER%은/는 %CALLNAME:AUTOCOM_実行番号保存%에게 %TEXTR("평소대로 마사지를 해 주었다/어깨와 허리 결림 해소 코스를 시술해 주었다/골반을 중심으로 골격 교정 지압 마사지를 시술해 주었다/피부 관리 오일 에스테틱을 해 주었다")%.
+				PRINTFORML 만족한 %CALLNAME:AUTOCOM_実行番号保存%은/는 리조트로 돌아갔다.
+				PRINTFORMW 요금으로 1000루피를 얻었다!
+				MONEY += 1000
+				CALL SOURCE_CALC_歓楽(AUTOCOM_実行番号保存, PLAYER, 500)
+				CALL SOURCE_CALC_好感度要素_友情度UP(AUTOCOM_実行番号保存, PLAYER, 250)
+				EXP:PLAYER:マッサージ施術経験 += 10
+			CASE 100
+				DRAWLINE
+				PRINTL 꼼꼼하게 마사지한다: 마사지 모드로 전환됩니다
+				PRINTL 　　　　　　그 후의 행동에 대해서는 제한이 없습니다.
+				PRINTL
+				PRINT 평소대로 마사지한다 (간이판):
+				PRINTL 간단한 묘사와 일정한 호감도 변화가 실행됩니다. (미조정)
+				PRINTL 
+				WAIT
+				GOTO 来店ラベル
+	ENDSELECT
+ENDIF

@@ -1,0 +1,147 @@
+
+@イベント発生条件_メインシナリオ_夢に呼ばれて、秘密を求めて
+
+;開放条件を満たしたら1を返すこと
+SIF リゾートランク < 2
+	RETURN 0
+
+RETURN 1
+
+@イベント関数_メインシナリオ_夢に呼ばれて、秘密を求めて(ARG)
+
+;使用する顔グラの登録
+CALLF 任意顔グラ表示用文字列関数(キャラ検索("[隠遁する星の民]タピィラ"),"顔_デフォルト",100,,,"暗闇掛け")
+LOCALS = %立ち絵リソース記録%
+
+DRAWLINE
+PRINTL ［꿈에 불려, 비밀을 찾아］
+DRAWLINE
+PRINTW
+PRINTL
+PRINTFORMW 리조트 경영이 순조롭게 진행되어 궤도에 올랐을 무렵.
+PRINTFORMW %CALLNAME:PLAYER%은(는) 최근 며칠간, 이상한 꿈을 꾸고 있었다.
+PRINTFORMW 어딘가 멀고 먼 곳에서, 누군가가 부르고 있는 듯한 꿈.
+PRINTFORMW 평소에는 흐릿한 채로 꿈이 끝나버리곤 했는데……오늘은 조금, 또렷하게 목소리가 들려오는 듯한 기분이 든다.
+$選択肢ループ
+PRINTL
+IF LOCALS != "顔ノーイメ"
+	PRINT_IMG LOCALS, 1125, 1125
+	PRINTL 
+	PRINTL 
+	PRINTL 
+	PRINTL 
+	PRINTL 
+	PRINTL 
+	PRINTL 
+	PRINTL 
+	PRINTL 
+	PRINTL 
+ENDIF
+PRINTL
+PRINTL ？？？：
+PRINTFORMW 「…………들리십니까………%CALLNAME:PLAYER%……
+PRINTFORMW 　이 목소리가, 들리십니까…………」
+PRINTL
+PRINTBUTTON "[0] 예", 0
+PRINTL
+PRINTBUTTON "[1] 아니요", 1
+PRINTL
+BINPUT
+IF RESULT
+	PRINTL
+	PRINTL ？？？：
+	PRINTFORMW 「………곤란하네요…………시기는, 틀림없을 텐데 말이죠……
+	PRINTFORMW 　다시 한번, 불러보죠…………」
+	PRINTL
+	GOTO 選択肢ループ
+ENDIF
+PRINTL
+PRINTL ？？？：
+PRINTFORMW 「…………아아,……드디어, 연결된 것 같네요.
+PRINTFORMW 　안녕하세요. 저는 지금, 당신의 꿈에 말을 걸고 있습니다」
+PRINTL
+PRINTFORMW 처음에는 그저 꿈인 줄 알았지만……그렇다고 하기에는 너무 현실감이 넘친다.
+PRINTFORMW 조금 잠이 덜 깬%CALLNAME:PLAYER%은(는), 점차 이 묘한 상황을 인식하기 시작했다.
+PRINTL
+PRINTBUTTON "[0] 당신은 누구냐고 묻는다", 0
+PRINTL
+PRINTBUTTON "[1] 졸리니 내일 해도 되냐고 묻는다", 1
+PRINTL
+BINPUT
+IF RESULT
+	PRINTL
+	PRINTL ？？？：
+	PRINTFORMW 「아니요, 저기……곤란합니다……부디, 조금만이라도 좋으니 이야기를 들어주세요.
+	PRINTFORMW 　당신이 계약한 성정수. era에 대한 이야기입니다」
+	PRINTL 
+	PRINTFORMW 성정수 era는%CALLNAME:PLAYER%이 리조트를 경영하는 데 있어서 힘의 원천.
+	PRINTFORMW 무슨 이야기인지는 모르겠지만, 들어두는 편이 좋을 것 같다…….`
+ENDIF
+PRINTL
+PRINTL ？？？：
+PRINTFORM 「저는──
+CALL CALLPRINT_用語解説("星の民")
+PRINTFORMW 의 타피라라고 합니다.
+PRINTFORMW 　성정수 era를 제조한 사람 중 한 명입니다」
+PRINTL
+PRINTFORMW %CALLNAME:PLAYER%은(는) 놀랐지만, 조금 납득한다.
+PRINTFORMW 별의 백성이란 아주 먼 옛날, 이 하늘 세계와 전쟁을 했던 민족.
+PRINTFORMW 매우 높은 기술력을 소유하고 있으며, 성정수를 생산한 것도 그들이다.
+PRINTFORMW 그 기술을 사용한다면, 꿈속에서 말을 거는 재주도 가능할 것이다.
+PRINTL
+PRINTFORMW 그리고, 눈앞의 여성은 성정수 era를 만든 본인이라고 하는데…….
+PRINTFORMW 이제 와서 무슨 용건이 있는 걸까. 라고 %CALLNAME:PLAYER%은(는) 의문을 품는다.
+PRINTFORMW %CALLNAME:PLAYER%이(가) era의 계약자가 되고, 상당한 시간이 지났는데도.
+PRINTL
+PRINTL 타피라:
+PRINTFORMW 「네. 당신이 era의 계약자가 된 것은, 관측하고 있었습니다.
+PRINTFORMW 　더 정확히는, 지금까지의 계약자 5명 전원을──입니다만」
+PRINTL
+PRINTL 타피라:
+PRINTFORMW 「숭배하는 자. 격리한 자. 편애한 자. 도구로 본 자.
+PRINTFORMW 　그리고, 당신만이 유일하게. era를 대등한 존재로 대하고 있다.
+PRINTFORMW 　그렇기에…… 당신이라면 era를 구해줄 것이라고」
+PRINTL
+PRINTFORMW 구한다? 라고 %CALLNAME:PLAYER%은(는) 더욱 의문을 깊게 한다.
+PRINTFORMW era에게 무슨 위기가 닥쳐오고 있는 걸까. 그런 이야기는 era에게서 들은 적이 없지만.
+PRINTL
+PRINTL 타피라:
+PRINTFORMW 「자세한 내용은…… 직접, 설명………해드리………겠………습니다………
+PRINTFORMW 　…이제………통신이……끊………」
+PRINTL
+PRINTFORMW 타피라의 목소리가 멀어지고, 노이즈가 섞이기 시작한다.
+PRINTL
+PRINTL 타피라:
+PRINTFORMW 「이, 크리스탈을…… 그리고, …………
+PRINTFORMW 　…경계의 세계……로……………」
+PRINTL
+PRINTFORMW %CALLNAME:PLAYER%도 상대에게 말을 걸지만, 타피라의 목소리는 멀리 사라져간다.
+PRINTFORMW 그리고 완전히 목소리가 들리지 않게 됨과 동시에, %CALLNAME:PLAYER%의 의식도 꿈속으로 잠겨들었다.
+PRINTL
+PRINTFORMW ………
+PRINTFORMW ……
+PRINTFORMW …
+PRINTL
+PRINTFORMW ──부드러운 아침 햇살과 함께, %CALLNAME:PLAYER%가 눈을 뜬다.
+PRINTFORMW 꿈속의 일은 이미 조금 희미해져 있었고, 이상한 꿈을 꾸었군. 하고 침대에서 일어난다.
+PRINTFORMW 그러자, %CALLNAME:PLAYER%는 어느새 오른손에 판 모양의 크리스탈을 쥐고 있다는 것을 깨달았다.
+PRINTL
+PRINTFORMW 크리스탈 안에는 화살표가 떠올라, 나침반처럼 항상 어딘가를 가리키고 있다…….
+PRINTL
+PRINTFORMW 아무래도, 그것은 단순한 꿈이 아니었던 것 같다.
+PRINTFORMW 조만간 타피라가 말했던, 「경계의 세계」를 찾아보기로 하자.
+PRINTL
+SETCOLOR 0xFFFF00
+PRINTFORML 던전 [경계로의 인도]가 해방되었습니다.
+RESETCOLOR
+ダンジョン出現フラグ_境界への導き = 1
+CALL イベント完了フラグ汎用処理("夢に呼ばれて、秘密を求めて")
+
+FORCEWAIT
+
+
+
+
+
+
+

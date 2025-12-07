@@ -1,0 +1,589 @@
+;-------------------------------------------------
+;肉棒でおまんこマッサージ♡
+;-------------------------------------------------
+@MASSAGE_COMNAME53
+#FUNCTIONS
+
+TSTR:コマンド名受渡 = 보지로 육봉 디톡스_H_
+TSTR:コマンドカラー受渡 = FFD900
+
+;===================================================
+;コマンドタイプ
+;===================================================
+@MASSAGE_COMTYPE_53
+#FUNCTION
+TFLAG:コマンドタイプ受渡 = MASSAGE_COMTYPE("エロマッサージ")
+
+@MASSAGE_COM_TOOLTIP_53
+LOCALS = <br>■보지로 육봉 디톡스<br>
+LOCALS += "딱딱하게 굳어 괴로워 보이는 자지를, 전용 『시술 도구』를 사용해 마사지한다."
+LOCALS += "<br>삽입하기 전까지는 억만 보 양보해서 에스테틱이었을지도 모르지만, 삽입해 버렸다면 그건 이미 섹스이므로, 우후후 모드에 돌입한다."
+LOCALS += "<br>COM 타입: 에로 마사지<br>획득 소스: 쾌C・노출・접촉・고통・불결(일정 조건 시)"
+LOCALS += "<br>고유 획득 경험: ・C 성교 경험_V 삽입(TARGET)・V 성교 경험(PLAYER)<br>"
+TSTR:ツールチップ受渡 = %LOCALS%
+
+
+@MASSAGE_COM53
+#DIM CONST 必要実行値 = 20
+#DIM 実行値
+#DIM ＋表示フラグ
+;まずキャラの状態によって３つに分岐する
+
+;肉棒マッサージを流用
+CALL MASSAGE_分岐_COM51(TARGET)
+RFLAG:コマンド結果受渡し変数 = RESULT
+;RFLAG:コマンド結果受渡し変数に結果を入れる
+; 1:通常許可
+; 2:なし崩し許可
+; 3:レイプ
+;失敗はそもそもコマンドを出さないので分岐しない
+
+;ここでレイプ時の記憶喪失手段使うよ～とか
+;レイプするけどOK～？　みたいな確認分岐を入れる
+IF RFLAG:コマンド結果受渡し変数 == 2
+	PRINTFORML %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%이(가) 무엇을 하려는지 알아차리고, 그만두라고 말한다.
+	PRINTW 하지만 그 거부는 나약하고, 강하게 밀어붙이면 결국 허락해 줄 것 같다……
+	PRINTL 이대로 실행하시겠습니까?
+	PRINTL
+	PRINTBUTTONLC "[0] 예", 0
+	PRINTBUTTONLC "[1] 아니요", 1
+	BINPUT
+	IF RESULT == 1
+		PRINTFORMW %CALLNAME:PLAYER%은(는) 다시 생각하기로 했다.
+		RETURN -1
+	ENDIF
+	;履歴セット
+	CFLAG:TARGET:泥酔ックス回数 += 1
+	CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>マッサージ中に快楽でとろとろにした%CALLNAME:TARGET%を手籠めにした</font><img src='えっちハート'>","うふふ")
+	CALL 履歴データベース登録(CFLAG:TARGET:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>マッサージ中に快楽に負け、%CALLNAME:PLAYER%と一線を越えてしまった</font><img src='えっちハート'>","うふふ")
+	
+
+	IF ((CFLAG:TARGET:お願いックス回数 + CFLAG:TARGET:泥酔ックス回数 / 3) >= 4 || TALENT:淫乱) && 性癖素質:ゆきずりセックス < 1
+		SETBIT CFLAG:1 , 0
+		TALENT:セフレ = 1
+		初体験日:セフレ = DAY
+		RFLAG:コマンド結果受渡し変数３ = 1
+		RFLAG:コマンド結果受渡し変数４ = TALENT:陥落不可
+		CLEARBIT TALENT:陥落不可, 1
+		CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"<img src='えっちハート'><font color='#%カラーパレット_HTML("赤ピンク")%'>%CALLNAME:TARGET%を[セフレ]陥落させた</font><img src='えっちハート'>","うふふ")
+		CALL 履歴データベース登録(CFLAG:TARGET:人物番号, @"<img src='えっちハート'><font color='#%カラーパレット_HTML("赤ピンク")%'>陥落素質[セフレ]を得た</font><img src='えっちハート'>","うふふ")
+	ENDIF
+ELSEIF RFLAG:コマンド結果受渡し変数 == 3
+	;レイプしないを選んだ時はキャンセル扱いでコマンド選択に戻す
+	PRINTFORM 『마사지』를 핑계 삼아 하반신 옷을 벗고
+	PRINTFORM %TEXTR("끈적하게 젖은/준비가 갖춰진")%%TEXTR("보지/비부/질구")%를 보여주었다
+	PRINTFORML %CALLNAME:PLAYER%%TEXTR("이(가), 지금부터 무엇을 하려는지/에게, 앞으로 무엇을 당하게 될지")%을(를) 알아차린%CALLNAME:TARGET%은(는)
+	IF TFLAG:マッサージ_鬼灯の香使用時間 + 20 < DAY * 1440 + TIME
+		PRINTFORM 꿈결처럼 몽롱한 상태에서도
+		IF TALENT:TARGET:度胸 == -1 || TALENT:TARGET:応答 == -1 || TALENT:TARGET:プライド == -1 || TALENT:TARGET:陽気／陰気 == -1
+		;臆病、大人しい、プライド低い、陰気
+			PRINTFORML 그만두라고 간청한다.
+		ELSE
+			PRINTFORML 필사적으로, 그만%TEXTR("두라고 말한다/두라고 입에 담는다")%.
+		ENDIF
+		PRINTFORMW 억지로 일을 치르려 한다면, 분명 평소의%CALLNAME:TARGET%라면 %TEXTR("강하게/격렬하게")% 저항했을 것이다…….
+	ELSE
+		PRINTFORML 그만두라고 말한다.
+		PRINTFORMW 억지로 일을 치르려 한다면, 분명 %CALLNAME:TARGET%는 강하게 저항할 것이다…….
+	ENDIF
+	PRINTL
+	;香使用から20分以上経ってると許可
+	IF TFLAG:マッサージ_鬼灯の香使用時間 > 0 && TFLAG:マッサージ_鬼灯の香使用時間 + 20 < DAY * 1440 + TIME
+		;ここで記憶を曖昧にする薬の所持分岐
+		PRINTFORML 하지만 「호오즈키 향」이 충분히 효과를 발휘하는 지금이라면, 쾌락과 약효로 몽롱해진 %CALLNAME:TARGET%에게는 더 이상 아기 정도의 저항력밖에 남아있지 않다.
+		PRINTFORML 게다가 향의 효과로 행위 중의 기억은 모호해져, 「잘 기억나지 않지만 기분 좋았다」 정도로밖에 남지 않는다…….
+		PRINTFORM 이 정도라면 %CALLNAME:PLAYER%의 힘으로도 쉽게 저항을 봉쇄하고,
+		SELECTCASE RAND:5
+			CASE 0
+				IF TALENT:TARGET:恋人持ち == 1 || TALENT:TARGET:恋人持ち == 2
+					PRINTFORM %CALLNAME:TARGET%의 가장 깊은 곳에 억지로 %TEXTR("부정의/외도의/외도 섹스의/연모하는 사람 외에게 범해지는")% 쾌락을 %TEXTR("기억시키다/가르쳐주다/새겨주다")%
+				ELSE
+					PRINTFORM 억지로 %TEXTR("관계를 가지다/범하다")%
+				ENDIF
+			CASE 1
+				IF アイドル判定(TARGET)
+					PRINTFORM %TEXTR("범해져/몽롱 역강간/섹스/원치 않는")% 스캔들로 팬을 배신하게 하다
+				ELSE
+					PRINTFORM 합의 없이 %CALLNAME:TARGET%의 몸을 탐하다
+				ENDIF
+			CASE 2
+				PRINTFORM 남자로서의 『사용감』을 마음껏 즐기다
+			CASE 3
+				PRINTFORM 마사지로 %CALLNAME:TARGET%의 몸에 닿은 탓에 실컷 흥분했던 %TEXTR("짐승 같은 욕망/욕망")%%TEXTR("을 마음껏 그 육봉에 부딪치다/의 책임을 지게 하다")%
+			CASE 4
+				PRINTFORM 위험 부담 없이 역강간을 즐기다
+		ENDSELECT
+		PRINTFORMW 수 있을 것이다.
+		PRINTL
+		PRINTL 이대로 실행하시겠습니까?
+		PRINTL
+		PRINTBUTTONLC "[0] 예", 0
+		PRINTBUTTONLC "[1] 아니요", 1
+		BINPUT
+		IF RESULT == 1
+			PRINTFORMW %CALLNAME:PLAYER%은(는) 단념하기로 했다.
+			RETURN -1
+		ENDIF
+		CFLAG:TARGET:泥酔ックス回数 += 1
+		CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>マッサージ中、快楽とお香で抵抗力を奪った%CALLNAME:TARGET%を無理やり手籠めにした</font><img src='えっちハート'>","うふふ")
+		CALL 履歴データベース登録(CFLAG:TARGET:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>マッサージ中、快楽とお香で朦朧とする中で抵抗むなしく%CALLNAME:PLAYER%に逆レイプされてしまった</font><img src='えっちハート'>","うふふ")
+		IF GETBIT(TALENT:TARGET:非童貞, 0) == 0
+			IF 知識素質:TARGET:高貴 >= 1
+				CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>%CALLNAME:TARGET%のロイヤル童貞を無理やり奪ってやった</font><img src='えっちハート'>","うふふ")
+				CALL 履歴データベース登録(CFLAG:TARGET:人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>快楽とお香で朦朧とする意識の中、%CALLNAME:PLAYER%に無理やり犯され、高貴な身でありながら童貞を%TEXTR("奪われ/散らされ")%てしまった</font><img src='えっちハート'>","うふふ")
+			ELSE
+				CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>%CALLNAME:TARGET%の童貞を無理やり奪ってやった</font><img src='えっちハート'>","うふふ")
+				CALL 履歴データベース登録(CFLAG:TARGET:人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>快楽とお香で朦朧とする意識の中、%CALLNAME:PLAYER%に無理やり犯され童貞を%TEXTR("奪われ/散らされ")%てしまった</font><img src='えっちハート'>","うふふ")
+			ENDIF
+		ENDIF
+		;うわべだけ実行判定
+		;騎乗位のみ
+		PRINTL 기승위
+
+		実行値 = 0
+		＋表示フラグ = 0
+
+		;すべての命令に共通の要素を考慮
+		CALL COM_ORDER
+		実行値 = RESULT
+		＋表示フラグ = RESULT:1
+
+		;ABL:欲望
+		IF ABL:欲望
+			SIF ＋表示フラグ
+				PRINT  + 
+			実行値 += ABL:欲望 * 3
+			PRINTFORM 욕망LV{ABL:欲望}({ABL:欲望 * 3})
+			＋表示フラグ = 1
+		ENDIF
+		;ABL:Ｃ感覚
+		IF ABL:Ｃ感覚
+			SIF ＋表示フラグ
+				PRINT  + 
+			実行値 += ABL:Ｃ感覚 * 3
+			PRINTFORM C감각LV{ABL:Ｃ感覚}({ABL:Ｃ感覚 * 3})
+			＋表示フラグ = 1
+		ENDIF
+		;快楽刻印
+		IF MARK:快楽刻印
+			SIF ＋表示フラグ
+				PRINT  + 
+			実行値 += MARK:快楽刻印 * 3
+			PRINTFORM 쾌락 각인LV{MARK:快楽刻印}({MARK:快楽刻印 * 3})
+			＋表示フラグ = 1
+		ENDIF
+		;PALAM:欲情
+		IF GETPALAMLV(PALAM:欲情, 5)
+			SIF ＋表示フラグ
+				PRINT  + 
+			実行値 += GETPALAMLV(PALAM:欲情, 5) * 3
+			PRINTFORM 욕정LV{GETPALAMLV(PALAM:欲情, 5)}({GETPALAMLV(PALAM:欲情, 5) * 3})
+			＋表示フラグ = 1
+		ENDIF
+		;恥じらい
+		IF TALENT:羞恥心 > 0
+			PRINT  - 
+			実行値 -= 2
+			PRINT 수치심(2)
+			＋表示フラグ = 1
+		ENDIF
+		;快感の否定
+		IF TALENT:快感応答 < 0 && !TALENT:恋慕
+			PRINT  - 
+			実行値 -= 5
+			PRINT 쾌감의 부정(5)
+			＋表示フラグ = 1
+		ENDIF
+		;恋慕
+		IF TALENT:恋慕
+			SIF ＋表示フラグ
+				PRINT  + 
+			実行値 += 15
+			PRINT 연모(15)
+			＋表示フラグ = 1
+		ELSE
+			;男嫌い（恋慕で無効）
+			IF TALENT:性別嗜好 & 1 && TALENT:PLAYER:性別 == 2
+				PRINT  - 
+				実行値 -= 12
+				PRINT 남성 혐오(12)
+				＋表示フラグ = 1
+			ENDIF
+			;女嫌い（恋慕で無効）
+			IF TALENT:性別嗜好 & 2 && TALENT:PLAYER:性別 == 1
+				PRINT  - 
+				実行値 -= 12
+				PRINT 여성 혐오(12)
+				＋表示フラグ = 1
+			ENDIF
+		ENDIF
+		;セフレ
+		IF TALENT:セフレ
+			SIF ＋表示フラグ
+				PRINT  + 
+			実行値 += 10
+			PRINT 섹스 친구(10)
+			＋表示フラグ = 1
+		ENDIF
+		;未陥落
+		IF 陥落チェック_性的(TARGET) == 0
+			PRINT  - 
+			実行値 -= 10
+			PRINT 미함락(10)
+			＋表示フラグ = 1
+		ENDIF
+		;童貞
+		IF GETBIT(TALENT:非童貞, 0) == 0
+			PRINT  - 
+			実行値 -= 10
+			PRINTFORM 동정({LOCAL})
+			＋表示フラグ = 1
+		ENDIF
+		;C経験
+		IF EXP:Ｃ経験 < EXPLV:2
+			PRINT  - 
+			実行値 -= 5
+			PRINT C 경험 부족(5)
+			＋表示フラグ = 1
+		ENDIF
+		;媚薬
+		IF TEQUIP:媚薬
+			SIF ＋表示フラグ
+				PRINT  + 
+			実行値 += 6
+			PRINT 최음제(6)
+			＋表示フラグ = 1
+		ENDIF
+		;発情期
+		IF CFLAG:発情期フラグ < 0
+			SIF ＋表示フラグ
+				PRINT  + 
+			実行値 += 6
+			PRINT 발정 중(6)
+			＋表示フラグ = 1
+		ENDIF
+
+		;合計を表示(20以上で実行…？)
+		PRINTFORM  = {実行値}
+		SIF 実行値 < 必要実行値
+			PRINT  < 
+		SIF 実行値 == 必要実行値
+			PRINT  = 
+		SIF 実行値 > 必要実行値
+			PRINT  > 
+		PRINTFORM 실행값{必要実行値}
+		WAIT
+		PRINTL
+
+		;ここまでの実行値
+		PRINTFORM %CALLNAME:TARGET%의 존엄({実行値})
+
+		;鬼灯の香
+		PRINT  + 
+		実行値 += 999
+		SETCOLOR カラーパレット("赤")
+		PRINTFORM 꽈리 향(999)
+		RESETCOLOR
+
+		;再度合計を表示()
+		PRINT  = 
+		SETCOLOR カラーパレット("赤")
+		PRINTFORM {実行値}
+		RESETCOLOR
+		PRINT  >>>> 
+		PRINTFORM 실행값{必要実行値}
+		WAIT
+		PRINTL
+
+		CALL PRINT_STR(@"_FS_4_騎乗位_")
+		SETCOLOR カラーパレット("赤")
+		PRINTFORML 　역강간 성공
+		RESETCOLOR
+	ELSEIF TFLAG:マッサージ_鬼灯の香使用時間
+		PRINTL 꽈리 향이 효과를 발휘하기까지는 아직 조금 더 시간이 필요할 것이다.
+		PRINTFORMW %CALLNAME:PLAYER%은(는) 아직 기다리기로 했다.
+		RETURN -1
+	ELSE
+		PRINTL 이대로는 실행할 수 없다. 뭔가 저항을 봉쇄하기 위한 도구가 필요할 것이다.
+		PRINTFORMW %CALLNAME:PLAYER%은(는) 다시 생각하기로 했다.
+		RETURN -1
+	ENDIF
+	
+
+ENDIF
+
+;通常モードに移行はターンエンド時に行う
+;騎乗位
+;引数は前から快楽量、露出量、接触量
+PALAM:PLAYER:潤滑 += 5000
+CALL MASSAGE_逆体位COM(500, 120, 150)
+CALL SOURCE_CALC_奉仕(PLAYER, TARGET, 250)
+RETURN RESULT
+
+
+@MASSAGE_逆体位COM(ARG, ARG:1, ARG:2)
+;-------------------------------------------------
+;ソース追加処理
+;-------------------------------------------------
+
+;基盤ができたあとで理性を削る処理を入れる
+
+;Ｖ挿入から持ってきた
+CALL SOURCE_CALC_快Ｖ(PLAYER, TARGET, ARG)
+CALL SOURCE_CALC_露出(PLAYER, TARGET, ARG:1)
+CALL SOURCE_CALC_接触(PLAYER, TARGET, ARG:2)
+
+CALL SOURCE_CALC_快Ｃ(TARGET, PLAYER, ARG)
+
+
+;苦痛
+LOCAL = 200 * PAIN_CHECK_V(PLAYER) / 1000
+CALL SOURCE_CALC_苦痛(PLAYER, TARGET, LOCAL)
+
+;貞操観念
+IF !TALENT:恋慕
+	IF TALENT:貞操 == 1
+		CALL SOURCE_CALC_不潔(TARGET, PLAYER, 300)
+	ELSEIF TALENT:貞操 == 0
+		CALL SOURCE_CALC_不潔(TARGET, PLAYER, 150)
+	ENDIF
+ENDIF
+;処女喪失
+CALL LOST_VIRGIN(PLAYER, TARGET, 1)
+CALL LOST_MAN_VIRGIN(TARGET, PLAYER)
+
+;-------------------------------------------------
+;経験の処理
+;-------------------------------------------------
+
+EXP:PLAYER:Ｖ性交経験 ++
+EXP:Ｃ性交経験_Ｖ挿入 ++
+
+;同性愛
+SIF 同性愛性癖判定(PLAYER,TARGET)
+	EXP:PLAYER:同性愛経験 += 4
+SIF 同性愛性癖判定(TARGET,PLAYER)
+	EXP:TARGET:同性愛経験 += 4
+
+	EXP:愛情経験 += TALENT:恋慕 * 2
+
+RETURN 1
+
+
+;-------------------------------------------------
+;実行判定
+;-------------------------------------------------
+
+@MASSAGE_COM_ABLE53
+SIF SAVESTR:ゲームフェイズ管理 != "マッサージモード"
+	RETURN 0
+
+SIF GLOBAL_MASSAGE_COMABLE(53)
+	RETURN RESULT
+
+;あなた以外PLAYERだととりあえず封印
+SIF PLAYER != MASTER
+	RETURN 0
+
+;Vがない場合駄目
+SIF TALENT:PLAYER:Ｖ感度 == -2
+	RETURN 0
+;オトコだとダメ
+SIF !(TALENT:PLAYER:性別 & 1)
+	RETURN 0
+;二人きりのみ
+SIF GET_TARGETNUM() > 1
+	RETURN 0
+
+;勃起必須
+SIF BASE:TARGET:勃起 < 1000
+	RETURN 0
+
+;調教者がオトコ、半人半妖、ふたなりがないとダメ
+SIF GETBIT(TALENT:TARGET:性別, 1) == 0
+	RETURN 0
+
+;理性警戒の合計が1以下じゃないとダメ
+;エロマッサージの終着点ポジションなのに、香さえ回れば他のエロマッサージより先に解禁されるのは風情に欠けるため
+SIF (BASE:TARGET:理性 + BASE:TARGET:警戒) > 1
+	RETURN 0
+
+RETURN 1
+
+;-------------------------------------------------
+;実行時メッセージ
+;-------------------------------------------------
+@MASSAGE_MESSAGE_COM53
+#DIM 対象キャラ
+#DIM 対象キャラ２
+;RFLAG:コマンド結果受渡し変数に結果を入れる
+; 1:通常許可
+; 2:なし崩し許可
+; 3:レイプ
+
+;下着がある場合はRFLAG:コマンド結果受渡し変数２に1が入り、下着を剥ぎ取っている
+
+PRINTL
+SELECTCASE RFLAG:コマンド結果受渡し変数
+	CASE 1
+		PRINTFORM %CALLNAME:PLAYER%은(는)
+		IF RFLAG:コマンド結果受渡し変数２
+			PRINTFORM %CALLNAME:TARGET%의 시술복을 벗기고,
+		ENDIF
+		PRINT 질척하게 젖은 자신의 보지에,
+		PRINTFORM %CALLNAME:TARGET%의 육봉
+		PRINTL 을(를) 천천히 삽입했다……。
+	CASE 2
+		PRINTFORML %CALLNAME:PLAYER%이(가) 아무래도 안 되겠다고 부탁하자, %CALLNAME:TARGET%은(는) 망설이면서도 '마사지'가 아니게 되는 것에 고개를 끄덕였다.
+		PRINTFORM %CALLNAME:PLAYER%은(는)
+		IF RFLAG:コマンド結果受渡し変数２
+			PRINTFORM %CALLNAME:TARGET%의 시술복을 벗기고,
+		ENDIF
+		PRINT 질척하게 젖은 자신의 보지에,
+		PRINTFORM %CALLNAME:TARGET%의 육봉
+		PRINTL 을(를) 천천히 삽입했다……。
+
+		IF RFLAG:コマンド結果受渡し変数３
+			SIF !TALENT:TARGET:淫乱
+				PRINTFORML %CALLNAME:TARGET%은(는)%CALLNAME:PLAYER%와(과) 몇 번인가 몸을 겹쳐, 저항감이 옅어진 것 같다…
+			PRINTFORML %CALLNAME:TARGET%은(는)[세프레]을(를) 얻었다
+			IF GETBIT(RFLAG:コマンド結果受渡し変数４, 1)
+				IF GETBIT(TALENT:TARGET:陥落不可, 0)
+					PRINTFORML %CALLNAME:TARGET%의 [함락 불가]이(가) [연모 불가]으로(로) 변화했습니다.
+				ELSE
+PRINTFORML %CALLNAME:TARGET%의[섹스 파트너 불가]가 소멸했습니다.
+				ENDIF
+			ENDIF
+		ENDIF
+	CASE 3
+	;むりやり犯すコマンドから持ってきた
+		PRINTFORM %CALLNAME:PLAYER%은(는)
+		IF RFLAG:コマンド結果受渡し変数２
+			PRINTFORM %CALLNAME:TARGET%의 시술복을 벗기고,
+		ENDIF
+
+		;仰向けだと正常位
+		PRINTFORM 앙와위인 채%TEXTR("가냘픈 힘으로 저항하는/미약한 힘으로 발버둥 치며 저항하려 하는/멍한 머리로 싫다고 고개를 젓는/변변한 저항조차 제대로 못 하는/저항력을 빼앗겨 시키는 대로 하는 몸이 된")%
+		PRINTFORML %CALLNAME:TARGET%의%TEXTR("위에 올라타/위에 덮쳐/남근을 바라보며")%、
+
+		IF TALENT:TARGET:恋人持ち == 1
+			;恋人持ち
+			IF GETBIT(TALENT:TARGET:非童貞, 0) == 0
+				PRINTFORM %TEXTR("아직 연인에게도 손대지 않은/연인에게 바쳤어야 할/연인을 위해 소중히 간직했을")%
+			ELSE
+				PRINTFORM 연인에게만 허락했어야 할
+			ENDIF
+		ELSEIF TALENT:TARGET:恋人持ち == 2
+			;人妻
+				IF GETBIT(TALENT:TARGET:非童貞, 0) == 0
+				PRINTFORM 결혼했으면서도, 아직 순결한 몸이었던
+			ELSE
+				PRINTFORM 아내에게만 허락했어야 할
+			ENDIF
+		ELSEIF TALENT:TARGET:恋人持ち == 3
+		;未亡人
+			IF GETBIT(TALENT:TARGET:非童貞, 0) == 0
+				PRINTFORM 옛 아내에게%TEXTR("바치는 것조차 이루지 못했던/정조를 지켰을")% 홀아비의
+			ELSE
+				PRINTFORM 아내를 잃고%TEXTR("주체하지 못했던/욕구불만이었을")% 것 같은
+			ENDIF
+		ELSEIF TALENT:TARGET:恋人持ち == -1
+		;想い人あり
+			IF GETBIT(TALENT:TARGET:非童貞, 0) == 0
+				PRINTFORM %TEXTR("아직 누구에게도 손대지 않은/짝사랑 상대에게 바쳤어야 할/짝사랑 상대를 위해 남겨두었을")%
+			ELSE
+				PRINTFORM 짝사랑 상대에게만 허락했어야 할
+			ENDIF
+		ELSEIF キャラ一致チェック(TARGET, "[蒼天の剣閃]モニカ") || キャラ一致チェック(TARGET, "[スカイセイバー]リーシャ")
+			IF GETBIT(TALENT:TARGET:非童貞, 0) == 0
+				PRINTFORM 질서처럼 굳게 지켜왔을
+			ELSE
+				PRINTFORM 질서처럼 흐트러지지 않았을
+			ENDIF
+		ELSEIF TALENT:TARGET:種族 == 5 && GETBIT(TALENT:TARGET:非童貞, 0) == 0
+		;星晶獣かつ処女
+			PRINTFORM %TEXTR("불로/장명")%의 존재이면서 순결을 지킨 채
+		ELSEIF GETBIT(TALENT:TARGET:非童貞, 0) == 0
+			IF RAND:3 == 0
+				PRINTFORM %CALLNAME:PLAYER%에게 범해지기 위해 지금까지 순결을 지켜주었던
+			ELSE
+				PRINTFORM %TEXTR("순결을 지키고 있던/아직 더러움을 몰랐던")%
+			ENDIF
+		ELSE
+		;その他　犯す側の、自分勝手であまりにも都合の良い解釈
+			PRINTFORM %CALLNAME:PLAYER%%TEXTR("의 가랑이를 흥분시키는/의 수욕을 흥분시켜 마지않는/에게 먹히기 위한 맛있는")%
+		ENDIF
+
+		PRINTFORM %CALLNAME:TARGET%의
+
+		;おまんこ冠詞群
+		;範囲が狭くシコリティの高そうなものから順につけていく
+		IF 知識素質:TARGET:高貴 >= 1
+		;高貴持ち
+			PRINTFORM %TEXTR("고귀한/로열")%
+		ELSEIF アイドル判定(TARGET)
+		;アイドル勢
+			PRINTFORM 아이돌
+		ELSEIF 固有素質チェック(TARGET, "女子高生")
+			PRINTFORM 여고생
+		ELSEIF 固有素質チェック(TARGET, "中学生")
+			PRINTFORM 중학생
+		ELSEIF 固有素質チェック(TARGET, "小学生")
+			PRINTFORM 초등학생
+		ELSEIF 固有素質チェック(TARGET, "サーヴァント")
+		;包括して英霊という表現を使っていいものかは……まぁ文句来たら変えればヨシ
+			PRINTFORM %TEXTR("영령/서번트")%
+		ELSEIF TALENT:TARGET:ギャル
+		;ギャル
+			PRINTFORM 갸루
+		ELSEIF TALENT:TARGET:経験豊富
+		;経験豊富
+			PRINTFORM %TEXTR("경험이 풍부한/닳고 닳은")%
+		ELSEIF TALENT:TARGET:性別嗜好 == 2
+		;女嫌い
+			PRINTFORM 여자를 싫어하는
+		ELSEIF TALENT:TARGET:種族 == 5
+		;星晶獣
+			PRINTFORM 강대한 성정수의
+		ELSEIF TALENT:TARGET:男性器サイズ <= -1
+		;短小以下
+			PRINTFORM %TEXTR("작고 사랑스러운/작고 귀여운")%
+		ELSEIF TALENT:TARGET:男性器サイズ >= 1
+		;巨根以上
+			PRINTFORM 턱이 벌어진 훌륭한
+		ENDIF
+		IF RISKY_DAY(TARGET) >= 1
+			IF CFLAG:TARGET:発情期フラグ < 0
+				PRINTFORM 발정
+			ENDIF
+		ENDIF
+	
+		SIF TALENT:TARGET:恋人持ち == 3
+			PRINTFORM 독신
+		SIF TALENT:TARGET:恋人持ち == 2
+			PRINTFORM 기혼자
+
+		SIF TALENT:TARGET:処女
+			PRINTFORM %TEXTR("신품/미사용")%
+		SIF TALENT:TARGET:年齢層 == 10 || (BASE:TARGET:年齢 <= 13 && BASE:TARGET:年齢 != 0)
+			PRINTFORM %TEXTR("쇼타/아이/애송이")%
+	
+		PRINTFORM 자지를,
+
+		PRINTFORM 질척하게 젖은 자신의 보지에
+		PRINTFORML %TEXTR("천천히/느릿느릿")% %TEXTR("삽입해 나갔다/삼키고, 맛보았다/삽입하여 '남자'를 만끽했다/삼키고, '남자'로서의 존엄을 무참히 짓밟아 주었다/밀어 넣었다/삼켜 나갔다/묻어 나갔다")%…
+		PRINTL
+
+		;おまけ
+		IF TALENT:TARGET:恋人持ち == 2
+			PRINTW 
+			PRINTFORM %CALLNAME:TARGET%은(는) 몽롱한 의식 속에서, 헛소리처럼 반려자에게 사죄를 반복하고 있
+			IF PALAM:欲情 >= PALAMLV:3
+				PRINTFORML 었지만,
+				PRINTFORML %CALLNAME:PLAYER%이 질내를 조여주자 점차 그 목소리는 쾌락에 녹아 교성 속에 묻혀갔다…
+			ELSE
+				PRINTFORML 다…
+			ENDIF
+		ENDIF
+ENDSELECT
+

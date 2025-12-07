@@ -1,0 +1,166 @@
+;-------------------------------------------------
+;乳腺吸引リップカッピング
+;-------------------------------------------------
+@MASSAGE_COMNAME33
+#FUNCTIONS
+TSTR:コマンド名受渡 = 유선 흡입 립 커핑
+
+
+;===================================================
+;コマンドタイプ
+;===================================================
+@MASSAGE_COMTYPE_33
+#FUNCTION
+TFLAG:コマンドタイプ受渡 = MASSAGE_COMTYPE("エロマッサージ")
+
+@MASSAGE_COM_TOOLTIP_33
+LOCALS = <br>■유선 흡입 립 커핑<br>
+LOCALS += "젖꼭지 빨기 모드에는 돌입하지 않는 단발 커맨드."
+LOCALS += "<br>손님의 젖꼭지 안쪽――유선에 쌓여버린 노폐물을, 당신의 입술로 '빨아내' 준다."
+LOCALS += "<br>덧붙여, 커핑이란 착유기 같은 컵(부항)을 배 등에 흡착시켜,"
+LOCALS += "<br>혈관 내에 정체되어 있는 피(어혈)를 체표 가까이까지 빨아내는, 실재하는 마사지이다."
+LOCALS += "<br>당연히 입 같은 건 사용하지 않지만 사소한 것은 신경 쓰지 말아야 한다."
+LOCALS += "<br>COM 타입: 에로 마사지<br>획득 소스: 쾌B・노출・접촉・환락"
+LOCALS += "<br>고유 획득 경험: 없음<br>"
+TSTR:ツールチップ受渡 = %LOCALS%
+
+@MASSAGE_COM33
+;-------------------------------------------------
+;ソース追加処理
+;-------------------------------------------------
+
+RCVAR:乳首開発フラグ = 1
+;基盤ができたあとで理性を削る処理を入れる
+;強く吸うと乳首コリほぐしを参考に調整
+
+CALL SOURCE_CALC_露出(TARGET, PLAYER, 100)
+CALL SOURCE_CALC_接触(TARGET, PLAYER, 80)
+CALL SOURCE_CALC_快Ｂ(TARGET, PLAYER, 250)
+CALL SOURCE_CALC_歓楽(TARGET, PLAYER, 50)
+
+;せっかくだから男性相手にはさらに効果が増すように。
+;男への性感マッサージコマンドは数が少なめだから……
+SIF TALENT:TARGET:性別 == 2
+	CALL SOURCE_CALC_快Ｂ(TARGET, PLAYER, 50)
+
+;母乳体質ならさらに快感アップ
+IF TALENT:TARGET:母乳体質
+	CALL SOURCE_CALC_快Ｂ(TARGET, PLAYER, 50)
+	CALL SOURCE_CALC_歓楽(TARGET, PLAYER, 50)
+ENDIF
+
+;上半身下着を脱がす。
+IF TEQUIP:上半身下着あり
+	TEQUIP:上半身下着あり = 0
+	TEQUIP:上半身服あり = 0
+	SIF TEQUIP:上下一体服
+		TEQUIP:下半身服あり = 0
+	RFLAG:コマンド結果受渡し変数 = 1
+ENDIF
+
+;乳首をいじるため性欲を煽る。
+BASE:TARGET:性欲 += 100
+
+;警戒は理性の倍回復する。
+
+IF BASE:TARGET:理性 <= 1
+;理性がおしまいになってしまった場合、快楽に流されて警戒が下がっていく。
+	BASE:TARGET:警戒 += 警戒変動値算出(TARGET, -40)
+	CALL SOURCE_CALC_好感度要素_性愛度UP(TARGET, PLAYER, 80)
+
+ELSEIF 知識素質:TARGET:性知識 <= -1
+;性知識がない場合、そもそも警戒することができない。そういうもんかって受け入れるため理性は下がり続けるし、快感を伴うから警戒も下がり続ける。
+;コリほぐしより理性は削るが警戒削りはやや低くなる
+	BASE:TARGET:理性 += 理性変動値算出(TARGET, -60)
+	BASE:TARGET:警戒 += 警戒変動値算出(TARGET, -40)
+	CALL SOURCE_CALC_好感度要素_性愛度UP(TARGET, PLAYER, 80)
+
+ELSEIF (BASE:TARGET:理性 + BASE:TARGET:警戒) < 700
+;実行に際し十分な理性・警戒削りがなされている場合。
+;警戒140で理性が70回復するも、煽られる性欲と与えられる刺激で理性が100削られて理性変動は-30。
+;……というのが平常時における挙動だが、ここまで削られていると与えられる快感に警戒心が塗りつぶされてしまう。
+;よって警戒56で理性28回復、そこから理性80低下でこの数字となる。理性と警戒の合計値はほんの少しだけ上がり、そのまま次のコマンドへ。
+	BASE:TARGET:理性 += 理性変動値算出(TARGET, -72)
+	BASE:TARGET:警戒 +=警戒変動値算出(TARGET, 56)
+	CALL SOURCE_CALC_好感度要素_性愛度UP(TARGET, PLAYER, 100)
+
+ELSEIF BASE:TARGET:理性 <= 200
+;理性がグズグズに煮詰まっちゃってると、警戒及び理性の回復は半分になる。理性200警戒800とかの場合これ。
+	BASE:TARGET:理性 +=理性変動値算出(TARGET, 35)
+	BASE:TARGET:警戒 +=警戒変動値算出(TARGET, 70)
+	CALL SOURCE_CALC_好感度要素_性愛度UP(TARGET, PLAYER, 100)
+
+ELSEIF TALENT:TARGET:バストサイズ <= -1
+;相手が貧乳以下の場合、実行可能であるならば「これもおっぱい大きくするため……？」ってしぶしぶ受け入れるイメージ。
+	BASE:TARGET:理性 +=理性変動値算出(TARGET, 50)
+	BASE:TARGET:警戒 +=警戒変動値算出(TARGET, 100)
+	CALL SOURCE_CALC_好感度要素_友情度UP(TARGET, PLAYER, 40)
+	CALL SOURCE_CALC_好感度要素_性愛度UP(TARGET, PLAYER, 100)
+
+ELSE
+;基本値
+	BASE:TARGET:理性 +=理性変動値算出(TARGET, 70)
+	BASE:TARGET:警戒 +=警戒変動値算出(TARGET, 140)
+	CALL SOURCE_CALC_好感度要素_性愛度UP(TARGET, PLAYER, 100)
+ENDIF
+
+BASE:TARGET:ちんイラ = MAX(0, BASE:TARGET:ちんイラ - 100)
+;-------------------------------------------------
+;経験の処理
+;-------------------------------------------------
+
+RETURN 1
+
+;-------------------------------------------------
+;実行判定
+;-------------------------------------------------
+
+@MASSAGE_COM_ABLE33
+SIF SAVESTR:ゲームフェイズ管理 != "マッサージモード"
+	RETURN 0
+
+SIF GLOBAL_MASSAGE_COMABLE(33)
+	RETURN RESULT
+
+;Bがない場合駄目
+SIF TALENT:TARGET:Ｂ感度 == -2
+	RETURN 0
+
+;乳首が勃起するくらいの欲情が必要
+SIF PALAM:欲情 <= PALAMLV:3
+	RETURN 0
+
+;うつ伏せだとダメ
+SIF TCVAR:TARGET:マッサージ_うつ伏せフラグ == 1
+	RETURN 0
+
+;陥没乳首なら露出させてからでないとダメ
+SIF TALENT:TARGET:陥没乳首 && !TCVAR:TARGET:陥没乳首露出フラグ
+	RETURN 0
+
+;理性警戒の合計が1000以下じゃないとダメ
+SIF (BASE:TARGET:理性 + BASE:TARGET:警戒) > 1000
+	RETURN 0
+
+RETURN 1
+
+;-------------------------------------------------
+;実行時メッセージ
+;-------------------------------------------------
+@MASSAGE_MESSAGE_COM33
+PRINTFORM %CALLNAME:PLAYER%은(는), %CALLNAME:TARGET%의
+SIF RFLAG:コマンド結果受渡し変数 == 1
+	PRINTFORM 가슴의 시술복을 벗기고,
+PRINTFORML %TEXTR("팽팽하게 솟아오른/단단하게 뭉친")%%CALLNAME:TARGET%의 젖꼭지를 %TEXTR("입에 머금고/입에 물고/입술로 감싸고/혀로 집어 올리자")%, %TEXTR("고무가 삐걱거리는 듯한 소리를 내며/뺨과 혀를 꿈틀거리며/입술로 유륜에서 짜내듯이/유선에 막혀있는 것까지")%정성껏 빨아 올렸다.
+
+;削りが十分な時は追加のメッセージ
+IF (BASE:TARGET:理性 + BASE:TARGET:警戒) < 700
+	PRINTW 
+	SELECTCASE RAND:2
+	CASE 0
+		PRINTFORM %CALLNAME:TARGET%은(는) %TEXTR("눈가를 흐물흐물 녹이며/녹아내린 얼굴로 헤벌쭉 입을 벌리고/법열에 눈가를 녹이며")%,
+	CASE 1
+		PRINTFORM %CALLNAME:TARGET%은(는) 헤벌쭉 풀린 입에서 %TEXTR("아무렇지도 않은 소리/쾌락에 물든 교성/음란한 소리")%를 %TEXTR("내며/흘리며/흘리면서")%,
+	ENDSELECT
+	PRINTFORML %CALLNAME:PLAYER%%TEXTR("의 '마사지'/의 구강 기술/가 주는 쾌락")%%TEXTR("에 젖꼭지를 내주고 있다/에 취해 있다/에 당하는 대로 있다/을 받아들이고 있다/을 감수하고 있다")%…
+ENDIF

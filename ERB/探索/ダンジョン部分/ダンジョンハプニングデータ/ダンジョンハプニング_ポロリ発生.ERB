@@ -1,0 +1,129 @@
+@ダンジョンハプニング_ポロリ発生(対象キャラ番号)
+#DIM 対象キャラ番号
+
+WSTR:(K++) = 마물의 기습이다!
+KSTR:(K++) = 어떻게든 격퇴했지만, 기습을 받은%CALLNAME:対象キャラ番号%의 복장이 흐트러져
+SELECTCASE TALENT:対象キャラ番号:バストサイズ
+	CASE IS <= 0
+		KSTR:(K++) = 가슴 부분이 노출되어 버렸다._PAGE
+	CASEELSE
+		KSTR:(K++) = 풍만한 가슴이 옷 밖으로 흘러넘치고 있다._PAGE
+ENDSELECT
+
+CALL メッセージ欄表示用関数()
+CALL 口上変数初期化
+
+CALL セクハラ反応タイプ判定(対象キャラ番号)
+TRYCALLFORM KOJO_ハプニング_ポロリ発生_{NO:対象キャラ番号}(対象キャラ番号)
+IF 口上有無確認(0, 1) == 0
+	SELECTCASE RFLAG:コマンド結果受渡し変数２
+		CASE 1
+			;無知
+			KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 딱히 신경 쓰지 않고, 흐트러진 옷을 고치고 탐색으로 돌아갔다.
+		CASE 2
+			;無反応
+			KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 딱히 신경 쓰지 않고, 흐트러진 옷을 고치고 탐색으로 돌아갔다.
+		CASE 3
+			;嫌悪
+			SELECTCASE RFLAG:コマンド結果受渡し変数
+				CASE 1
+					;拒絶
+					KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 싫은 표정을 지으며 옷을 고치고, %CALLNAME:MASTER%을(를) 노려보고 있다……
+				CASE 2
+					;受入れ
+					KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 한숨을 쉬며 옷을 고치고, 탐색으로 돌아갔다.
+				CASE 3
+					;喜び
+					KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 복장도 고치지 않고%CALLNAME:MASTER%에게 다친 곳은 없는지 걱정해 주고 있다.
+			ENDSELECT
+		CASE 4 TO 5
+			;拒否,余裕
+			SELECTCASE RFLAG:コマンド結果受渡し変数
+				CASE 1
+					;拒絶
+					KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 복장을 고치고, 기습에 대한 경계를 새롭게 하고 있다.
+				CASE 2
+					;受入れ
+					KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 복장을 고치면서 모두에게 다친 곳은 없는지 걱정해 주고 있다.
+				CASE 3
+					;喜び
+					KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 재빨리 옷을 고치고, %CALLNAME:MASTER%에게 다친 곳은 없는지 걱정해 주고 있다.
+			ENDSELECT
+		CASE 6
+			;羞恥
+			SELECTCASE RFLAG:コマンド結果受渡し変数
+				CASE 1
+					;拒絶
+					KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 얼굴을 새빨갛게 물들이고, 서둘러 옷을 고쳤다.
+				CASE 2
+					;受入れ
+					KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 새빨간 얼굴로 가슴을 가리고, 시선에서 벗어나려는 듯 옷을 고쳤다.
+				CASE 3
+					;喜び
+					KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 얼굴을 붉게 물들이고 옷을 고치며, 이쪽을 바라보고 있다……
+			ENDSELECT
+		CASE 7
+			;愉悦
+			SELECTCASE RFLAG:コマンド結果受渡し変数
+				CASE 1
+					;拒絶
+KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 구경값을 받으려고 농담하고 있다.
+				CASE 2
+					;受入れ
+KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 서비스 장면이라고 농담하고 있다.
+				CASE 3
+					;喜び
+KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) %CALLNAME:PLAYER%이(가) 입혀줄 거야? 라고 요염하게 웃고 있다.
+			ENDSELECT
+		CASE 8
+			;汎用
+			SELECTCASE RFLAG:コマンド結果受渡し変数
+				CASE 1
+					;拒絶
+KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 조금 불쾌한 표정을 지으며 옷을 되돌리고, 탐색으로 돌아갔다.
+				CASE 2
+					;受入れ
+KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 쓴웃음을 지으며 옷매무새를 가다듬고 있다.
+				CASE 3
+					;喜び
+KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 옷매무새를 가다듬으며, %CALLNAME:PLAYER%을(를) 향해 살짝 미소 지었다.
+			ENDSELECT
+	ENDSELECT
+	CALL メッセージ欄表示用関数()
+ENDIF
+
+;ソース増減部分
+SELECTCASE RFLAG:コマンド結果受渡し変数
+	CASE 1
+		;拒絶
+		CALL SOURCE_CALC_不快(対象キャラ番号, PLAYER, 40)
+		CALL SOURCE_CALC_反感(対象キャラ番号, PLAYER, 40)
+		CALL SOURCE_CALC_接触(対象キャラ番号, PLAYER, 60)
+		CALL SOURCE_CALC_露出(対象キャラ番号, PLAYER, 120)
+	CASE 2
+		;受け入れ
+		CALL SOURCE_CALC_歓楽(対象キャラ番号, PLAYER, 20)
+		CALL SOURCE_CALC_接触(対象キャラ番号, PLAYER, 70)
+		CALL SOURCE_CALC_露出(対象キャラ番号, PLAYER, 120)
+		CALL SOURCE_CALC_好感度要素_性愛度UP(対象キャラ番号, PLAYER, 30)
+	CASE 3
+		;喜び
+		CALL SOURCE_CALC_歓楽(対象キャラ番号, PLAYER, 50)
+		CALL SOURCE_CALC_接触(対象キャラ番号, PLAYER, 80)
+		CALL SOURCE_CALC_露出(対象キャラ番号, PLAYER, 120)
+		CALL SOURCE_CALC_好感度要素_性愛度UP(対象キャラ番号, PLAYER, 60)
+ENDSELECT
+
+
+
+@ダンジョンハプニング_ABLE_ポロリ発生(判定キャラ番号)
+#DIM 判定キャラ番号
+
+SIF TALENT:判定キャラ番号:性別 == 2
+	RETURN 0
+;すでに上半身裸だと発生しない
+SIF !TEQUIP:判定キャラ番号:上半身服あり && !TEQUIP:判定キャラ番号:上半身鎧あり && !TEQUIP:判定キャラ番号:上タイツあり && !TEQUIP:判定キャラ番号:上半身下着あり
+	RETURN 0
+
+
+RETURN 1

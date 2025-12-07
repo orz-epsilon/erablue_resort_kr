@@ -1,0 +1,108 @@
+
+
+
+@起床時告白キャラ判定()
+#FUNCTION
+#DIM キャラ番号
+#DIM 候補配列, 2000
+#DIM 候補数
+
+;まずオプション
+IF OPTION変数:起床時告白禁止
+	RETURNF 0
+;自室にいなかったらダメ
+ELSEIF CFLAG:MASTER:自室位置 != CFLAG:MASTER:現在位置 || CFLAG:MASTER:現在マップ種別
+	RETURNF 0
+ENDIF
+
+候補数 = 0
+;恋慕候補で恋慕条件を満たしてるが恋慕でないキャラを探す
+FOR キャラ番号, 1, CHARANUM
+	SIF CFLAG:キャラ番号:滞在期間 < 1
+		CONTINUE
+	SIF CFLAG:キャラ番号:ゲージ起動分類 != 1
+		CONTINUE
+	SIF 陥落チェック_恋慕系(キャラ番号)
+		CONTINUE
+	SIF DT_SELECT("関係性データベース", @"(対象キャラ１ = {CFLAG:キャラ番号:人物番号} Or 対象キャラ２ = {CFLAG:キャラ番号:人物番号}) And 関係性種別 = '恋慕'")
+		CONTINUE
+	;本来恋慕50が告白条件だが、あっちから言ってくるのは勇気がいるので70制限
+	SIF CFLAG:キャラ番号:恋慕レベル <= 70
+		CONTINUE
+	SIF GETBIT(TALENT:キャラ番号:陥落不可, 0)
+		CONTINUE
+	SIF 恋愛対象外チェック(キャラ番号, MASTER)
+		CONTINUE
+	;人妻系はあっちからは来ない
+	SIF TALENT:キャラ番号:恋人持ち
+		CONTINUE
+	;一回したらもう来ない
+	SIF CFLAG:キャラ番号:起床時告白済み
+		CONTINUE
+	候補配列:候補数 = キャラ番号
+	候補数 ++
+NEXT
+
+IF 候補数 > 0
+	RETURNF 候補配列:(RAND:候補数)
+ELSE
+	RETURNF 0
+ENDIF
+
+
+@起床時告白処理(告白キャラ)
+#DIM 告白キャラ
+DRAWLINE
+;あっちから告白してくる処理
+
+;口上があるならそっちを表示
+TRYCCALLFORM KOJO_EVENT_起床時告白_開始時_{NO:告白キャラ}(告白キャラ)
+CATCH
+	;汎用告白処理
+	PRINTFORMW %CALLNAME:MASTER%이 일어나 아침 준비를 하고 있는데, 자기 방에 손님이 찾아왔다.
+	PRINTFORMW 찾아온 %CALLNAME:告白キャラ%을(를) 맞이하고, 차를 내어 대접한다. 아무래도 할 이야기가 있는 것 같다.
+	PRINTL
+	PRINTFORMW %CALLNAME:告白キャラ%은(는) 붉어진 얼굴로 조금 망설이며, %CALLNAME:MASTER%에게 사랑의 말을 고한다.
+	PRINTFORMW 연인 사이가 되고 싶어서, 고백을 하러 %CALLNAME:MASTER%의 방을 찾아온 것 같다.
+ENDCATCH
+
+PRINTFORML %CALLNAME:告白キャラ%의 마음에, %CALLNAME:MASTER%은(는)…
+PRINTBUTTONLC "[0] 마음에 응하다", 0
+PRINTBUTTONLC "[1] 조금 생각하게 해달라고 말하다", 1
+PRINTL
+
+BINPUT
+IF RESULT == 0
+	TARGET = 告白キャラ
+	TRYCCALLFORM KOJO_EVENT_起床時告白_成功_{NO:TARGET}(TARGET)
+	CATCH
+		PRINTFORMW %CALLNAME:MASTER%이 승낙의 답장을 하자, %CALLNAME%은(는) 미소를 지으며 기뻐했다.
+	ENDCATCH
+	SETCOLOR カラーパレット("えっちな色")
+	PRINTFORMW %CALLNAME%은(는) [연모]를 얻었다.
+	RESETCOLOR
+	CALL 履歴データベース登録(CFLAG:MASTER:人物番号, @"<img src='えっちハート'><font color='#%カラーパレット_HTML("赤ピンク")%'>%CALLNAME%を[恋慕]陥落させた</font><img src='えっちハート'>","うふふ実績")
+	CALL 履歴データベース登録(CFLAG:人物番号, @"<img src='えっちハート'><font color='#%カラーパレット_HTML("赤ピンク")%'>陥落素質[恋慕]を得た</font><img src='えっちハート'>","うふふ実績")
+	TALENT:恋慕 = 1
+	CFLAG:現在位置 = CFLAG:MASTER:現在位置
+	CFLAG:現在マップ種別 = CFLAG:MASTER:現在マップ種別
+	CFLAG:睡眠 = 0
+	SIF BASE:酩酊
+		CFLAG:酔いすぎ = 2
+	;野外オナニー時に備えて隠密を消す
+	CALL 野外オナニー途中終了(TARGET)
+	CFLAG:隠密 = 0
+	;先に同室フラグを建てることで発覚口上をスキップする
+	CFLAG:同室 = 1
+	CALL 特定キャラモードリセット(TARGET)
+	CFLAG:同行 = 60 + (CFLAG:好感度レベル - 関係閾値:2) * 5
+	BASE:ムード = MAXBASE:ムード
+
+ELSE
+	TRYCCALLFORM KOJO_EVENT_起床時告白_保留_{NO:告白キャラ}(告白キャラ)
+	CATCH
+		PRINTFORMW %CALLNAME:MASTER%이 조금 생각하게 해달라고 답하자, %CALLNAME:告白キャラ%은(는) 답은 서두르지 않아도 된다며 돌아갔다……
+	ENDCATCH
+	CFLAG:告白キャラ:起床時告白済み = 1
+ENDIF
+

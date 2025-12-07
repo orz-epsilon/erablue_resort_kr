@@ -1,0 +1,190 @@
+;-------------------------------------------------
+;膣内リンパマッサージ
+;-------------------------------------------------
+@MASSAGE_COMNAME27
+#FUNCTIONS
+TSTR:コマンド名受渡 = 질내 림프 마사지
+
+
+;===================================================
+;コマンドタイプ
+;===================================================
+@MASSAGE_COMTYPE_27
+#FUNCTION
+TFLAG:コマンドタイプ受渡 = MASSAGE_COMTYPE("エロマッサージ")
+
+@MASSAGE_COM_TOOLTIP_27
+LOCALS = <br>■질내 림프 마사지<br>
+LOCALS += "질 입구에 손가락을 넣어, 체내에서 림프절을 자극하는 마사지…라는 명목으로 되어 있다."
+LOCALS += "<br>질의 내벽이나 처녀막을 손상시키지 않도록, 시술자에게는 기량이 요구된다."
+LOCALS += "<br>COM 타입: 에로 마사지<br>획득 소스: 쾌V・쾌C・노출・접촉・환락・액체・고통(대상이 처녀인 경우)"
+LOCALS += "<br>고유 획득 경험: 없음<br>"
+TSTR:ツールチップ受渡 = %LOCALS%
+
+@MASSAGE_COM27
+;-------------------------------------------------
+;ソース追加処理
+;-------------------------------------------------
+
+;基盤ができたあとで理性を削る処理を入れる
+IF !TALENT:処女
+	CALL SOURCE_CALC_快Ｖ(TARGET, PLAYER, 170)
+;処女膜を傷つけない浅い範囲(膣口からおよそ2センチ弱まで)なので快Ｖ自体は弱め
+ELSE
+	CALL SOURCE_CALC_快Ｖ(TARGET, PLAYER, 60)
+ENDIF
+;微量の快Ｃ
+CALL SOURCE_CALC_快Ｃ(TARGET, PLAYER, 40)
+CALL SOURCE_CALC_露出(TARGET, PLAYER, 120)
+CALL SOURCE_CALC_接触(TARGET, PLAYER, 120)
+CALL SOURCE_CALC_歓楽(TARGET, PLAYER, 100)
+
+;ローションは別のコマンドになるっぽいので気持ち程度
+CALL SOURCE_CALC_液体(TARGET, PLAYER, 1000)
+
+
+;処女だとどうしてもちょっと痛い。でもマッサージだから指挿し入れよりだいぶマイルド
+SIF TALENT:処女
+	CALL SOURCE_CALC_苦痛(TARGET, PLAYER, 50)
+
+;下半身下着がある場合は脱がす。
+IF TEQUIP:下半身下着あり > 0
+	TEQUIP:下半身下着あり = 0
+	TEQUIP:下半身服あり = 0
+	SIF TEQUIP:上下一体服
+		TEQUIP:上半身服あり = 0
+	RFLAG:コマンド結果受渡し変数 = 1
+ENDIF
+IF BASE:TARGET:理性 <= 1
+;理性がおしまいになってしまった場合、快楽に流されて警戒が下がっていく。
+	BASE:TARGET:性欲 += 150
+	BASE:TARGET:警戒 += 警戒変動値算出(TARGET, -40)
+	CALL SOURCE_CALC_好感度要素_性愛度UP(TARGET, PLAYER, 100)
+ELSEIF 知識素質:TARGET:性知識 <= -1
+;性知識がない場合でも「流石にこれはダメなやつなのでは？」と思いはじめる。が、時既に遅し。
+;警戒90で理性が45上がり、そこから理性が200下がるイメージでこの数値。ここにきて未だに警戒90なのが無知シチュの『味』。
+	BASE:TARGET:理性 += 理性変動値算出(TARGET, -155)
+	BASE:TARGET:性欲 += 200
+	BASE:TARGET:警戒 +=警戒変動値算出(TARGET, 90)
+	CALL SOURCE_CALC_好感度要素_性愛度UP(TARGET, PLAYER, 100)
+ELSEIF BASE:TARGET:理性 <= 1
+;理性がおしまいになってしまった場合、快楽に流されて警戒が下がっていく。
+	BASE:TARGET:性欲 += 200
+	BASE:TARGET:警戒 += 警戒変動値算出(TARGET, -80)
+	CALL SOURCE_CALC_好感度要素_性愛度UP(TARGET, PLAYER, 100)
+ELSEIF (BASE:TARGET:理性 + BASE:TARGET:警戒) < 400
+;実行に際し十分な理性・警戒削りがなされている場合。
+;警戒250で理性が125回復するも、煽られる性欲と与えられる刺激で理性が200削られて理性変動は-75。
+;……というのが平常時における挙動だが、ここまで削られていると与えられる快感に警戒心が塗りつぶされてしまう。
+;よって警戒100で理性50回復、そこから理性200低下でこの数字となる。理性と警戒の合計値は少しだけ下がり、そのまま次のコマンドへ。
+	BASE:TARGET:理性 += 理性変動値算出(TARGET, -150)
+	BASE:TARGET:性欲 += 200
+	BASE:TARGET:警戒 +=警戒変動値算出(TARGET, 100)
+	CALL SOURCE_CALC_好感度要素_性愛度UP(TARGET, PLAYER, 100)
+
+ELSE
+;実行に際し十分な理性・警戒削りがなされていない場合。
+;性欲は煽れるが、警戒と理性が跳ねる。警戒心がビンっ！ってなるので、煽られる性欲の理性低下を撥ね退けてしまう。
+	BASE:TARGET:理性 +=理性変動値算出(TARGET, 125)
+	BASE:TARGET:性欲 += 150
+	BASE:TARGET:警戒 +=警戒変動値算出(TARGET, 250)
+	CALL SOURCE_CALC_好感度要素_性愛度UP(TARGET, PLAYER, 50)
+ENDIF
+
+BASE:TARGET:ちんイラ = MAX(0, BASE:TARGET:ちんイラ - 200)
+;-------------------------------------------------
+;経験の処理
+;-------------------------------------------------
+
+RETURN 1
+
+;-------------------------------------------------
+;実行判定
+;-------------------------------------------------
+
+@MASSAGE_COM_ABLE27
+SIF SAVESTR:ゲームフェイズ管理 != "マッサージモード"
+	RETURN 0
+
+SIF GLOBAL_MASSAGE_COMABLE(27)
+	RETURN RESULT
+
+;Vがない場合駄目
+SIF TALENT:TARGET:Ｖ感度 == -2
+	RETURN 0
+SIF GETBIT(TALENT:TARGET:性別, 0) == 0
+	RETURN 0
+
+;理性警戒の合計が800以下じゃないとダメ
+;実行自体はできるが、この時点だと警戒と理性が跳ねる。されるがままになっちゃうのは合計値400以下くらいを想定。
+SIF (BASE:TARGET:理性 + BASE:TARGET:警戒) > 800
+	RETURN 0
+
+RETURN 1
+
+;-------------------------------------------------
+;実行時メッセージ
+;-------------------------------------------------
+@MASSAGE_MESSAGE_COM27
+
+PRINTFORM %CALLNAME:PLAYER%은(는),
+
+	IF RFLAG:コマンド結果受渡し変数 == 1
+		PRINTFORM %CALLNAME:TARGET%의
+			;Ｖがあり欲情している場合
+			SIF TALENT:TARGET:Ｖ感度 >= -1 && PALAM:欲情  >= PALAMLV:3
+				PRINTFORM 흠뻑 애액을 빨아들인
+		PRINTFORM 시술복을 벗기고,
+	ENDIF
+	
+PRINTFORM 오일을 듬뿍 바른 손가락을%CALLNAME:TARGET%의
+	IF TALENT:TARGET:処女
+		;処女を復活させた場合は齟齬が出るだろうけどそこまで指定してられん
+		IF TALENT:TARGET:恋人持ち == 1
+		;恋人持ち
+			PRINTFORM 아직%TEXTR("연인의 침입도 허락하지 않은/연인에게 손대지 않은")%
+		ELSEIF TALENT:TARGET:恋人持ち == 2
+		;人妻
+			PRINTFORM 결혼했으면서도 아직 남편의 침입도 허락하지 않은 유부녀의
+		ELSEIF TALENT:TARGET:恋人持ち == 3
+		;未亡人 初夜を迎える前に夫に先立たれたキャラを想定。だがそんなものはいない。
+			PRINTFORM 남편에게 바치는 것조차 이루지 못했던 미망인의
+		ELSEIF TALENT:TARGET:恋人持ち == -1
+		;想い人あり
+			PRINTFORM 아직 짝사랑 상대에게 바치지 않은
+		ELSE
+			PRINTFORM 아직 누구의 침입도 허락하지 않았다
+		ENDIF
+		SIF CFLAG:TARGET:発情期フラグ < 0
+			PRINTFORM %TEXTR("발정기/발정/발정으로 녹아내린")%
+		PRINTFORML %TEXTR("미통 보지/처녀 보지/새로운 처녀 질")%에 삽입하고,
+		PRINTFORML %TEXTR("처녀막을 손상시키지 않도록 부드럽게 마사지했다/손가락으로 섹스의 예행연습을 시켜주었다/언제든지 흩뿌려줄 수 있도록, 부드럽게 풀어 '준비'했다")%.
+	ELSE
+		IF TALENT:TARGET:恋人持ち == 2 && CFLAG:TARGET:処女相手番号 != CFLAG:PLAYER:人物番号
+		;人妻
+			PRINTFORM 남편에게 정조를 바쳤을%TEXTR("익숙해진 질/중고 보지")%
+		ELSEIF TALENT:TARGET:恋人持ち == 3 && CFLAG:TARGET:処女相手番号 != CFLAG:PLAYER:人物番号
+		;未亡人
+			PRINTFORM 지금은 고인이 된 남편에게 정조를 바쳤을%TEXTR("외로움을 타는 질/독신 보지")%
+		ELSEIF EXP:TARGET:出産経験 >= 1
+		;出産経験者 素質の子持ちのほう使うか迷った
+			PRINTFORM 출산을 거쳐 완전히 풀어진 경산부 보지
+		ELSE
+			PRINTFORM %TEXTR("질/보지")%
+		ENDIF
+		PRINTFORML 에 삽입하고,
+		PRINTFORML 
+		PRINTFORML %TEXTR("손가락으로 끈적하게 질육을 주물러주었다/「림프」를 핑계로 G스팟을 실컷 지압해주었다/물소리를 내며 오일을 듬뿍 질육에 문질러 넣었다")%.
+	ENDIF
+	
+;削りが十分な時は追加のメッセージ
+IF (BASE:TARGET:理性 + BASE:TARGET:警戒) < 400
+	PRINTW 
+	SELECTCASE RAND:2
+	CASE 0
+		PRINTFORM %CALLNAME:TARGET%은(는)%TEXTR("황홀하게 눈가를 녹이며/녹아내린 얼굴로 헤프게 입을 벌리고/법열에 눈가를 녹이며")%,
+	CASE 1
+		PRINTFORM %CALLNAME:TARGET%은(는) 헤프게 풀린 입에서%TEXTR("부끄러운 목소리/쾌락에 물든 교성/음란한 목소리")%를%TEXTR("내며/흘리며/흘리면서")%,
+	ENDSELECT
+	PRINTFORML %CALLNAME:PLAYER%%TEXTR("의 '마사지'/의 손기술/가 주는 쾌락")%%TEXTR("에 보지를 내주고 있다/에 취해 있다/에 당하는 대로 되어 있다/를 받아들이고 있다/를 감수하고 있다")%…
+ENDIF

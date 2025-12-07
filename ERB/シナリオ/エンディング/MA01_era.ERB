@@ -1,0 +1,122 @@
+@イベント関数_エンディングイベント_era(動作モード, イベント行id)
+#DIMS 動作モード
+#DIM イベント行id
+#DIM era番号
+
+era番号 = GETCHARA(998)
+SELECTCASE 動作モード
+	CASE "設定取得"
+		;MA:MAIN Endingの略。メインシナリオエンドの意
+		TSTR:コマンド名受渡 = MA01
+
+		;解説文もここで取得
+		TSTR:ツールチップ受渡 = 
+		TSTR:ツールチップ受渡 += "■엔딩No.MA01『era』<br>"
+		TSTR:ツールチップ受渡 += "<br>"
+		TSTR:ツールチップ受渡 += "성정수 era와의 관계를 깊게 하고, 미래를 맹세하는 메인 시나리오 엔딩.<br>"
+		TSTR:ツールチップ受渡 += "별의 짐승은 하늘을 거처로 삼고, 가장 사랑하는 사람이나 자식들과 함께 평생을 보낸다.<br>"
+		TSTR:ツールチップ受渡 += "<br>"
+		TSTR:ツールチップ受渡 += "실행 조건: 캐릭터 「era」의 연모도 최대<br>"
+		TSTR:ツールチップ受渡 += @"　　　　　%CALLNAME:MASTER%에게 남성기가 있을 때, 캐릭터 「era」를<br>"
+		TSTR:ツールチップ受渡 += @"　　　　　한 번 이상 임신시킨 적이 있을 것.<br>"
+		TSTR:ツールチップ受渡 += "해방 요소: 게임 시작 직후부터 캐릭터 「era」가 해방된다.<br>"
+		TSTR:ツールチップ受渡 += "엔딩 시청 후: 회차로 이행<br>"
+	CASE "発生条件"
+		;リストに表示するための条件
+		;一回表示したらその後条件を満たさなくなっても表示したままなので注意
+		SIF リゾートランク < 2
+			RETURN 0
+		SIF CFLAG:era番号:恋慕度 < 経験値テーブル:(関係閾値:3)
+			RETURN 0
+		RETURN 1
+	CASE "実行条件"
+		;リストから実行するための条件
+		;満たしてない間は実行ボタンが灰色で表示され、クリック不可
+		SIF CFLAG:era番号:恋慕度 < 経験値テーブル:99
+			RETURN 0
+		IF GETBIT(TALENT:MASTER:性別, 1)
+			SIF EXP:era番号:妊娠経験 < 1
+				RETURN 0
+		ENDIF
+		RETURN 1
+	CASE "実処理"
+
+		;文章部分はここに記載するよりも別関数に分ける方が見やすいし書きやすいので推奨
+		CALL エンディングイベント_シナリオ_era()
+		;周回に移行するので１を返す
+		RETURN 1
+ENDSELECT
+
+@エンディングイベント_シナリオ_era()
+#DIM era番号
+
+era番号 = GETCHARA(998)
+DRAWLINE
+PRINTL 
+PRINTL 
+PRINTFORMW 쾌청한 길일, 오전 햇살 속.
+PRINTFORMW 결혼식장 문이 열리자, 하얀 드레스를 입은 소녀가 부드러운 빛 속을 걷기 시작했다.
+PRINTL 
+CALL PRINT_STRL(@"IMAGEPATH_%CSTR:era番号:画像フォルダ%/短冊_ウエディングドレス")
+PRINTL
+PRINTFORMW 평소의 일본 옷에서 웨딩드레스로 갈아입은 성정수 era이다.
+PRINTFORMW 제단에서 기다리는 %CALLNAME:MASTER%에게, 천천히. 행복을 음미하듯이 한 걸음씩 나아간다.
+PRINTFORMW 주변에는 리조트 직원이나 단골 등, 지금까지 친해진 사람들이 축복의 박수를 보내주고 있다.
+IF TALENT:era番号:子持ち
+	PRINTFORMW era와 %CALLNAME:MASTER%의 아이도 정장을 하고, 내빈석에 얌전히 앉아 있는 듯하다.
+ENDIF
+PRINTL 
+PRINTFORMW 오르간의 장엄한 음색과 함께 제단까지 도착한 era는, %CALLNAME:MASTER%와 마주 보듯이 나란히 섰다.
+PRINTFORMW %CALLNAME:MASTER%의 얼굴을 보고, era가 얼굴을 활짝 편다.
+PRINTL 
+PRINTL 성정수 era:
+PRINTFORMW 「후후, 긴장하고 있니? 나의 계약자여.
+PRINTFORMW 　……나도 그래. 설마 내가 이런 곳에 서게 될 줄은 생각지도 못했어」
+PRINTL 
+PRINTFORMW 아름답다. 잘 어울린다. 라고%CALLNAME:MASTER%는 era의 드레스 차림을 칭찬한다.
+PRINTL 
+PRINTL 성정수 era:
+PRINTFORMW 「고마워. 너도, 꽤 잘 어울리잖아.
+PRINTFORMW 　성정수의 반려로서 부끄럽지 않은 모습이라고?」
+PRINTL 
+PRINTFORMW 히죽히죽 era와%CALLNAME:MASTER%가 서로 웃었다.
+PRINTFORMW 평소의 농담도, 오늘만큼은 어딘가 쑥스러워진다.
+PRINTL 
+PRINTFORMW 식은 진행되고, 목사의 온화한 목소리가 맹세의 말을 이끌어 두 사람의 사랑을 축복한다.
+PRINTFORMW 하늘의 백성과 별의 짐승. 먼 옛날 서로 죽고 죽이던 종족이, 지금 이렇게 맺어지는 것.
+PRINTFORMW 넓은 하늘에서도 유례없는 일이지만, 틀림없는 경사스러운 일이라는 것.
+PRINTFORMW 그런 축복의 말을 받으며, era와%CALLNAME:MASTER%는 반지 교환에 들어간다.
+PRINTL 
+PRINTFORMW 히히이로카네로 만든 특별한 한 쌍의 반지.
+PRINTFORMW 녹슬지 않고 썩지 않으며, 영원히 빛나는 이 금속처럼 두 사람의 사랑도 또한 영원히 계속되기를 바라는 것.
+PRINTL 
+PRINTL 성정수 era:
+PRINTFORMW 「……그래서, 그 위에 다시 ZP로 불괴의 효과까지 붙였던가? 걱정쟁이 같으니라고」
+PRINTL 
+PRINTFORMW 걱정이라는 건 아니라고, %CALLNAME:MASTER%은(는) 부정한다.
+PRINTFORMW 그저 그 정도 단단하지 않으면, 두 사람의 사랑에 뒤떨어져 버리니까.
+PRINTL 
+PRINTL 성정수 era:
+PRINTFORMW 「하하하! 말을 잘 하는군.
+PRINTFORMW 　그 말, 잊지 마라」
+PRINTL 
+PRINTL 성정수 era:
+PRINTFORMW 「건강할 때도, 병들 때도
+PRINTFORMW 　기쁠 때도, 슬플 때도
+PRINTFORMW 　부유할 때도, 가난할 때도, 나를 계속 사랑해라.
+PRINTFORMW 　나도 너를 계속 사랑하겠다.──설령, 죽음이 두 사람을 갈라놓아도, 말이다」
+PRINTL 
+PRINTFORMW 반지를 교환하고, era와 %CALLNAME:MASTER%이(가) 맹세의 키스를 나눈다.
+PRINTFORMW 하늘의 백성과 성정수는 수명이 다르다. 분명 먼 미래에, %CALLNAME:MASTER%은(는) era에게 외로운 마음을 느끼게 할 것이다.
+PRINTL 
+PRINTFORMW 하지만 지금 이 순간은.
+PRINTFORMW 옆에 선 era를 위해, 사랑하는 이와 맺어진 행복에 잠겨있자.
+PRINTL 
+PRINTFORMW 꽃잎이 흩날리고 종소리가 울려 퍼지는 가운데, 두 사람은 모두의 축복에 둘러싸여 행복하게 웃는다.
+PRINTFORMW era와 %CALLNAME:MASTER%은(는), 영원히 행복한 미래를 만들어갈 것이다────。
+PRINTL 
+PRINTW 
+PRINTW 엔딩 No.MA01 『era』
+PRINTW 
+
+

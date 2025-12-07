@@ -1,0 +1,65 @@
+
+@アイテム個別文章表示_ダブルバーガー(ARGS)
+;ダブルバーガー
+IF ARGS == "値段"
+	詳細文文字列受け渡し変数 = 루피
+	RETURN 700
+ENDIF
+
+LOCALS = 
+LOCALS += @"■더블 버거　　　소지 수:{DT_CELL_GET("所持アイテムデータベース", 0, "ダブルバーガー")}<br>"
+LOCALS += "고기를 두 장이나 빵으로 끼운 맛있는 버거. <br>"
+LOCALS += "운송비 사정으로, 원래 세계의 것보다 비싼 가격. <br>"
+LOCALS += "먹으면 기운이 솟아나, 체력과 마력이 조금 회복된다. <br>"
+LOCALS += "전투 중에 사용할 수 없다. <br>"
+LOCALS += "섭취 칼로리：401kcal<br>"
+LOCALS += "<br>"
+LOCALS += "【효과】<br>"
+LOCALS += "아군 단일의 HP를 [300], MP를 [100] 회복한다. <br>"
+
+詳細文文字列受け渡し変数 = %LOCALS%
+
+@アイテム使用先表示_ダブルバーガー
+;戦闘時使用不可
+CALL 汎用使用先表示("味方単体", -1)
+
+@アイテム効果処理_ダブルバーガー(ARG)
+#DIM CONST HP回復量 = 300
+#DIM CONST MP回復量 = 100
+;ARG = 隊列の何番目か
+
+IF !BATTLE_STATE:ARG:キャラ登録番号
+	RETURN 0
+ENDIF
+
+IF DT_CELL_GET("所持アイテムデータベース", 0, "ダブルバーガー") < 1
+	PRINTW 아이템이 없습니다
+	RETURN 0
+ENDIF
+
+IF BATTLE_STATE:ARG:最大ＨＰ == BATTLE_STATE:ARG:ＨＰ && BATTLE_STATE:ARG:最大ＭＰ == BATTLE_STATE:ARG:ＭＰ
+	PRINTW HP와 MP가 최대입니다
+	RETURN 0
+ENDIF
+
+IF BATTLE_STATE:ARG:ＨＰ < 1
+	PRINTW 전투 불능은 치료할 수 없습니다
+	RETURN 0
+ENDIF
+
+IF BATTLE_STATE:ARG:最大ＨＰ - BATTLE_STATE:ARG:ＨＰ < HP回復量
+	PRINTFORMW %CALLNAME:(BATTLE_STATE:ARG:キャラ登録番号)%의 HP를 {BATTLE_STATE:ARG:最大ＨＰ - BATTLE_STATE:ARG:ＨＰ} 회복했습니다
+ELSE
+	PRINTFORMW %CALLNAME:(BATTLE_STATE:ARG:キャラ登録番号)%의 HP를 {HP回復量} 회복했습니다
+ENDIF
+IF BATTLE_STATE:ARG:最大ＭＰ - BATTLE_STATE:ARG:ＭＰ < MP回復量
+	PRINTFORMW %CALLNAME:(BATTLE_STATE:ARG:キャラ登録番号)%의 MP를 {BATTLE_STATE:ARG:最大ＭＰ - BATTLE_STATE:ARG:ＭＰ} 회복했습니다
+ELSE
+	PRINTFORMW %CALLNAME:(BATTLE_STATE:ARG:キャラ登録番号)%의 MP를 {MP回復量}회복했습니다
+ENDIF
+
+BATTLE_STATE:ARG:ＨＰ = MIN(BATTLE_STATE:ARG:ＨＰ + HP回復量, BATTLE_STATE:ARG:最大ＨＰ)
+BATTLE_STATE:ARG:ＭＰ = MIN(BATTLE_STATE:ARG:ＭＰ + MP回復量, BATTLE_STATE:ARG:最大ＭＰ)
+TCVAR:(BATTLE_STATE:ARG:キャラ登録番号):摂取カロリー += 401
+
+RETURN 1

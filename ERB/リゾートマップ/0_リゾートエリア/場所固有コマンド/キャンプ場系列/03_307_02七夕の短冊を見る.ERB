@@ -1,0 +1,80 @@
+
+;-------------------------------------------------
+;03_307_02短冊を見る
+;-------------------------------------------------
+@COMNAME_PLACE_381_0_307
+#FUNCTION
+
+IF 施設改造度:3:0 == 0
+	TSTR:コマンド名受渡 = 
+	RETURNF 0
+ENDIF
+TSTR:コマンド名受渡 = 단자쿠를 본다
+RETURNF 1
+
+;===================================================
+;コマンドタイプ
+;===================================================
+@COMTYPE_381_0_307
+#FUNCTION
+TFLAG:コマンドタイプ受渡 = COMTYPE("単独可能")
+		
+@COM381_0_307
+;ランダムで滞在キャラを選び、ランダムで短冊を生成するだけ
+VARSET RESULT
+LOCAL:1 = 0
+FOR LOCAL, 1, CHARANUM
+	SIF CFLAG:LOCAL:滞在期間 < 0
+		CONTINUE
+	RESULT:(LOCAL:1) = LOCAL
+	LOCAL:1 += 1
+NEXT
+RFLAG:コマンド結果受渡し変数 = RESULT:(RAND:(LOCAL:1))
+
+;TARGETがいるなら優先して見る
+SIF TARGET > 0
+	RFLAG:コマンド結果受渡し変数 = TARGET
+
+TIME += 5
+RETURN 1
+
+;-------------------------------------------------
+;実行判定
+;-------------------------------------------------
+@COM_ABLE381_0_307
+;条件に合う場合0（不許可）を返す
+;どの条件にも引っかからないなら1（許可）を返す
+;一括管理
+SIF GLOBAL_COMABLE(380)
+	RETURN RESULT
+;隠密中はダメ
+SIF CFLAG:PLAYER:隠密
+	RETURN 0
+RETURN 1
+
+;-------------------------------------------------
+;実行時メッセージ
+;-------------------------------------------------
+@MESSAGE_COM381_0_307
+
+PRINTFORML %CALLNAME:PLAYER%은(는) 사사 장식의 단자쿠를 보았다
+PRINTFORML %CALLNAME:(RFLAG:コマンド結果受渡し変数)%의 단자쿠가 있다…
+
+@MESSAGE_COM381_0_307_非口上時
+IF TALENT:(RFLAG:コマンド結果受渡し変数):恋慕
+	PRINTDATA
+		DATAFORM %CALLNAME:PLAYER%와 매일 알콩달콩하고 싶다고 쓰여 있다…
+		DATAFORM %CALLNAME:PLAYER%와 더 많이 접촉하고 싶다고 쓰여 있다…
+		DATA 사랑하는 사람이 생겨서 행복하기 때문에 소원은 없다고 쓰여 있다…
+		DATA 연인을 위해서 더 매력적이 되고 싶다고 쓰여 있다
+		DATAFORM %CALLNAME:PLAYER%와 계속 함께할 수 있기를, 이라고 쓰여 있다…
+	ENDDATA
+ELSE
+	PRINTDATA
+		DATA 자신의 장래에 대한 소원인 것 같다
+		DATA 지금 원하는 것에 대한 소원인 것 같다
+		DATA 인간관계에 대한 소원인 것 같다
+		DATA 세계 평화에 대한 소원인 것 같다
+		DATA 돈에 대한 소원인 것 같다
+	ENDDATA
+ENDIF

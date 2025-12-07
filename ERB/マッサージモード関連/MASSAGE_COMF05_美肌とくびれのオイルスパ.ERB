@@ -1,0 +1,87 @@
+;-------------------------------------------------
+;美肌とくびれのオイルスパ
+;-------------------------------------------------
+@MASSAGE_COMNAME5
+#FUNCTIONS
+TSTR:コマンド名受渡 = 미용 피부와 잘록한 허리의 오일 스파
+SIF TALENT:TARGET:性別 == 2
+	TSTR:コマンド名受渡 = 복직근 오일 에스테
+
+;===================================================
+;コマンドタイプ
+;===================================================
+@MASSAGE_COMTYPE_5
+#FUNCTION
+TFLAG:コマンドタイプ受渡 = MASSAGE_COMTYPE("通常マッサージ")
+
+@MASSAGE_COM_TOOLTIP_5
+IF TALENT:TARGET:性別 == 2
+	LOCALS = <br>■복직근 오일 에스테<br>
+	LOCALS += "남성의 배 주위를 오일 마사지한다."
+	LOCALS += "<br>COM 타입: 일반 마사지<br>획득 소스: 쾌S・접촉・환락・노출"
+	LOCALS += "<br>고유 획득 경험: 없음<br>"
+	TSTR:ツールチップ受渡 = %LOCALS%
+ELSE
+	LOCALS = <br>■미용 피부와 잘록한 허리의 오일 스파<br>
+	LOCALS += "복근 주변을 오일 마사지한다. 보습, 미용 피부 효과가 있다."
+	LOCALS += "<br>시술 후에는 배 주위가 개운해지고, 허리 라인도 선명해져 날씬해 보인다고 평판이 좋다."
+	LOCALS += "<br>COM 타입: 일반 마사지<br>획득 소스: 쾌S・접촉・환락・노출"
+	LOCALS += "<br>고유 획득 경험: 없음<br>"
+	TSTR:ツールチップ受渡 = %LOCALS%
+ENDIF
+@MASSAGE_COM5
+;-------------------------------------------------
+;ソース追加処理
+;-------------------------------------------------
+
+;お腹に触れるので警戒削りは弱め。理性削りは……普通？
+CALL SOURCE_CALC_好感度要素_友情度UP(TARGET, PLAYER, 60)
+CALL SOURCE_CALC_好感度要素_恋心度UP(TARGET, PLAYER, 20)
+CALL SOURCE_CALC_好感度要素_性愛度UP(TARGET, PLAYER, 40)
+BASE:TARGET:理性 += 理性変動値算出(TARGET, -40)
+BASE:TARGET:警戒 += 警戒変動値算出(TARGET, -30)
+
+;男女ともに数値は同じ
+CALL SOURCE_CALC_快Ｓ(TARGET, PLAYER, 100)
+CALL SOURCE_CALC_接触(TARGET, PLAYER, 100)
+CALL SOURCE_CALC_歓楽(TARGET, PLAYER, 200)
+;露出に関しては……わかんない。基本衣装がへそ出しかどうかで分けるべきかもだけど、とりあえず面倒だから一律
+CALL SOURCE_CALC_露出(TARGET, PLAYER, 50)
+
+CALL ウエスト変動処理(TARGET, "愛撫", -1)
+
+
+;-------------------------------------------------
+;経験の処理
+;-------------------------------------------------
+
+RETURN 1
+
+;-------------------------------------------------
+;実行判定
+;-------------------------------------------------
+
+@MASSAGE_COM_ABLE5
+SIF SAVESTR:ゲームフェイズ管理 != "マッサージモード"
+	RETURN 0
+
+SIF GLOBAL_MASSAGE_COMABLE(5)
+	RETURN RESULT
+
+;うつ伏せだとダメ
+SIF TCVAR:TARGET:マッサージ_うつ伏せフラグ == 1
+	RETURN 0
+
+
+RETURN 1
+
+;-------------------------------------------------
+;実行時メッセージ
+;-------------------------------------------------
+@MASSAGE_MESSAGE_COM5
+PRINTFORM %CALLNAME:PLAYER%은(는)
+	;今後浴衣とかバスローブみたいな施術着を着ないとも限らないため
+	SIF TEQUIP:TARGET:上半身服あり == 1 && TEQUIP:TARGET:はだけ可 == 1
+		PRINTFORM %CALLNAME:TARGET%이(가) 입고 있는 시술복 앞을 풀어헤치고,
+PRINTFORML 에센셜 오일을%CALLNAME:TARGET%의 배에 떨어뜨려, 손바닥으로 주무르듯이 정성껏 마사지했다.
+

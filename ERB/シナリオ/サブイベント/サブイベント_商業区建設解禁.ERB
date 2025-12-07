@@ -1,0 +1,76 @@
+
+@イベント発生条件_サブイベント_商業区建設解禁
+
+;開放条件を満たしたら1を返すこと
+;居住区必要
+SIF MATCH(開拓エリア開発番号, 大規模番号_居住区エリア) < 1
+	RETURN 0
+;定住者１０枠以上
+LOCAL:1 = 0
+FOR LOCAL, 0, 住宅街広さ()
+	SIF 定住者部屋割り配列:LOCAL != ""
+		LOCAL:1 ++
+NEXT
+SIF LOCAL:1 < 10
+	RETURN 0
+
+RETURN 1
+
+@イベント関数_サブイベント_商業区建設解禁(ARG)
+DRAWLINE
+PRINTL [상업 지구 건설 해금]
+DRAWLINE
+PRINTW
+PRINTFORMW 주거 지구가 생기고, 섬에 정착하는 사람들도 꽤 늘었다.
+PRINTFORMW 그들은 다양한 직업을 가지고 생계를 꾸려나가고 있다.
+PRINTFORMW 비행선에 타고 돈을 벌러 가거나, 섬에서 농업을 시작하거나, 리조트 직원이 되거나……
+PRINTFORMW 하지만, 거기에 한 가지 문제가 발생했다.
+PRINTL
+PRINTL 셰로카르테:
+PRINTFORMW "가게가 부족하다, 인가요~"
+PRINTL
+PRINTFORMW 일단 상점이나 진료소, 우체국 등 생활에 필요한 시설은 주거 지구에 마련되어 있지만.
+PRINTFORMW 정착자가 늘어남에 따라, 더 다양한 가게를 원한다는 요구가 증가하고 있다.
+PRINTFORMW 하지만 가게를 유치할 연줄 등은 가지고 있지 않기 때문에, 셰로카르테에게 상담하고 있었다.
+PRINTL
+PRINTL 셰로카르테:
+PRINTFORMW "음~, 그렇네요~.
+PRINTFORMW 　밖에서 사람을 데려오는 건 간단하지만~…….
+PRINTFORMW 　모처럼이니, '상업 지구'를 만들어 보는 건 어떠세요~?"
+PRINTL
+PRINTFORMW 상업 지구? 라고 %CALLNAME:MASTER%은(는) 고개를 갸웃거린다.
+PRINTL
+PRINTL 셰로카르테:
+PRINTFORMW 「네~. 먼저 토지와 간소한 건물을 만들어 두고, 가게를 하고 싶은 사람에게 빌려주는 거예요~.
+PRINTFORMW 　빌린 사람은 건물을 개조해서 하고 싶은 가게를 경영하는 형태죠~.
+PRINTFORMW 　%CALLNAME:MASTER%님의 리조트는 여러 곳에서 사람들이 오고 있으니까,
+PRINTFORMW 　보통으로 가게를 만드는 것보다 다채로운 상점들이 생겨나지 않을까요~」
+PRINTL
+PRINTFORMW 과연. 주민의 수입원이 늘어나는 것은 편리하고, 충분히 성장하면 관광 자원도 될 것이다.
+PRINTFORMW 요구를 하나하나 듣고 짓는 것보다 수고도 덜 수 있을 것이다.
+PRINTL
+PRINTL 셰로카르테:
+PRINTFORMW 「그・리・고~……한꺼번에 지으면, 가격도 더 저렴해요~?」
+PRINTL
+PRINTFORMW 쭈쭈 문어인가, 하고 셰로카르테가 예산을 대략적으로 계산한다.
+PRINTFORMW 꽤 큰 금액이지만……규모를 생각하면 확실히 싸고, 지불할 수 없는 금액은 아니다.
+PRINTFORMW 리조트도 앞으로 더 커질 것이고, 꽤 좋은 안처럼 느껴지기 시작했다.
+PRINTL
+PRINTL 셰로카르테:
+PRINTFORMW 「우후후~, 의욕이 생기셨나요~?
+PRINTFORMW 　건설업자분을 알려드릴 테니, 의욕이 생기시면 연락해 보세요~.
+PRINTFORMW 　주옥(珠玉)의 건물을 만들어 줄 거라고 생각해요~. 상업구(商業區)에만~」
+PRINTL
+PRINTL 셰로카르테:
+PRINTFORMW 「……방금 건 좀 힘들었을까요~? 그럼 그럼~」
+PRINTL
+SETCOLOR 0xFFFF00
+PRINTFORML 시설 개조 시스템의 [비행정 항구 지역을 발전시킨다]에 [상업구 건설]이 추가되었습니다.
+RESETCOLOR
+FORCEWAIT
+
+CALL イベント完了フラグ汎用処理("商業区建設解禁")
+
+
+
+

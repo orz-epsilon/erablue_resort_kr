@@ -1,0 +1,105 @@
+
+;-------------------------------------------
+;触手の射精時のテキスト
+;-------------------------------------------
+@PALAM_MESSAGE_E
+
+;RESULT = 0
+;TRYCALL PALAM_MESSAGE_E_MOD
+;SIF RESULT > 0
+	;RETURN 0
+
+; ;触手が射精
+; SIF TFLAG:15 == 1
+; 	PRINTFORML %CALLNAME:TARGET%に絡みついた触手が粘つく体液を吐き出した…
+; ;触手が大量射精
+; SIF TFLAG:15 == 2
+; 	PRINTFORML %CALLNAME:TARGET%の全身に絡みついた触手が一斉に粘つく体液を吐き出した…
+; ;テキストを読むためのウエイト
+; ;表示があるときのみ
+; SIF TFLAG:15
+; 	WAIT
+
+;-------------------------------------------
+;奴隷の絶頂時のテキスト
+;-------------------------------------------
+@PALAM_MESSAGE_通常絶頂(対象キャラ)
+#DIM 対象キャラ
+LOCAL =  NOWEX:対象キャラ:Ｃ絶頂 + NOWEX:対象キャラ:Ｖ絶頂 + NOWEX:対象キャラ:Ａ絶頂 + NOWEX:対象キャラ:Ｂ絶頂 + NOWEX:対象キャラ:Ｓ絶頂 + NOWEX:対象キャラ:噴乳 + NOWEX:対象キャラ:射精
+SIF !(LOCAL + NOWEX:対象キャラ:放尿)
+	RETURN 0
+
+RESULT = 0
+TRYCALL PALAM_MESSAGE_通常絶頂_MOD(対象キャラ)
+SIF RESULT > 0
+	RETURN 0
+
+;絶頂
+PRINTFORM %CALLNAME:対象キャラ%는
+IF CFLAG:対象キャラ:睡眠 && ダンジョン表示モード == ""
+	PRINT 잠든 채
+ELSEIF GETBIT(TALENT:対象キャラ:性別, 0)
+	IF NOWEX:対象キャラ:噴乳 >= 2
+		PRINT 가슴 끝에서 모유를 대량으로 뿜어내며,
+	ELSEIF NOWEX:対象キャラ:噴乳
+		PRINT 가슴 끝에서 모유를 흘리며,
+	ENDIF
+	SIF LOCAL >= 5
+		PRINT 음순에서 투명한 즙을 뿜어내면서
+ENDIF
+SIF NOWEX:対象キャラ:射精
+	PRINT 페니스에서 정액을 뿜어내고,
+SIF LOCAL >= 5
+	PRINT 등을 크게 젖히면서
+PRINTL 절정에 달했다
+
+IF CFLAG:対象キャラ:睡眠
+	WAIT
+	RETURN 0
+ENDIF
+
+;絶頂
+SIF LOCAL >= 3
+	PRINTS CALLNAME:対象キャラ
+IF GETBIT(TALENT:対象キャラ:性別, 0)
+	IF LOCAL >= 5 && MODE_存在判定_順不同("ALL", 対象キャラ, PLAYER)
+		PRINTL 의 육주름은 끈적이는 액체를 흘리며, 헐떡이듯 개폐를 반복하고 있다…
+	ELSEIF LOCAL >= 5
+		PRINTL 은 단속적으로 절정을 반복하며, 축 늘어져 탈력하고 있다…
+	ELSEIF LOCAL >= 3
+		PRINTL 은 거친 숨을 내쉬며 절정의 여운에 잠겨 있다…
+	ENDIF
+ELSEIF LOCAL >= 3
+	PRINTL 은 거친 숨을 내쉬며 절정의 여운에 잠겨 있다…
+ENDIF
+
+;絶頂とおもらし
+IF LOCAL >= 7 && TEQUIP:対象キャラ:利尿剤 && TALENT:対象キャラ:おもらし癖
+	PRINTFORML %CALLNAME:対象キャラ%는 덜덜 몸을 경련시키며 끊임없이 소변을 흘려보냈다
+	PRINTFORML 아무래도 배뇨 행위 그 자체에서 쾌락을 느끼는 모양이다…
+ELSEIF LOCAL >= 7 && TEQUIP:対象キャラ:利尿剤
+	PRINTFORML 경련하는 %CALLNAME:対象キャラ%의 요도구에서 분수처럼 소변이 뿜어져 나왔다…
+ELSEIF LOCAL >= 7 && TALENT:対象キャラ:おもらし癖
+	PRINTFORML 경련하는 %CALLNAME:対象キャラ%의 요도구에서 세차게 물줄기가 솟구치며, 활을 그렸다…
+ELSEIF LOCAL >= 5 && TEQUIP:対象キャラ:利尿剤 && TALENT:対象キャラ:おもらし癖
+	PRINTFORML 축 늘어진 %CALLNAME:対象キャラ%의 요도구에서 분수처럼 소변이 뿜어져 나왔다…
+ELSEIF LOCAL >= 5 && TEQUIP:対象キャラ:利尿剤
+	PRINTFORML 축 늘어진 %CALLNAME:対象キャラ%의 요도구에서 세차게 물줄기가 솟구치며, 활을 그렸다…
+ELSEIF LOCAL >= 5 && TALENT:対象キャラ:おもらし癖
+	PRINTFORML 축 늘어진 %CALLNAME:対象キャラ%의 요도구에서 물줄기가 흘러내려, 물웅덩이를 만들었다…
+ELSEIF LOCAL >= 3 && TEQUIP:対象キャラ:利尿剤 && TALENT:対象キャラ:おもらし癖
+	PRINTFORML 떨리는 %CALLNAME:対象キャラ%의 요도구에서 물줄기가 세차게 뿜어져 나와 호를 그렸다…
+ELSEIF LOCAL >= 3 && TEQUIP:対象キャラ:利尿剤
+	PRINTFORML 떨리는 %CALLNAME:対象キャラ%의 요도구에서 물줄기가 떨어져 물웅덩이를 만들었다…
+ELSEIF LOCAL >= 3 && TALENT:対象キャラ:おもらし癖
+	PRINTFORML 떨리는 %CALLNAME:対象キャラ%의 요도에서 소변이 졸졸졸 새어 나오고 있다…
+ELSEIF LOCAL >= 1 && TEQUIP:対象キャラ:利尿剤 && TALENT:対象キャラ:おもらし癖
+	PRINTFORML %CALLNAME:対象キャラ%의 요도구에서 물줄기가 떨어져 물웅덩이를 만들었다…
+ELSEIF LOCAL >= 1 && TEQUIP:対象キャラ:利尿剤
+	PRINTFORML %CALLNAME:対象キャラ%의 요도에서 소변이 졸졸졸 새어 나오고 있다…
+ENDIF
+
+;テキストを読むためのウエイト
+;表示があるときのみ
+SIF LOCAL + NOWEX:対象キャラ:放尿 > 0
+	WAIT

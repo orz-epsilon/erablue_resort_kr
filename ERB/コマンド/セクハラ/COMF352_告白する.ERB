@@ -1,0 +1,218 @@
+
+@COMNAME352
+#FUNCTIONS
+TSTR:コマンド名受渡 = 고백하다
+SIF CFLAG:TARGET:起床時告白済み
+	TSTR:コマンド名受渡 = 고백을 받아들이다
+
+;===================================================
+;コマンドタイプ
+;===================================================
+@COMTYPE_352
+#FUNCTION
+TFLAG:コマンドタイプ受渡 = COMTYPE("セクハラ")
+
+@COM_TOOLTIP_352
+LOCALS = <br>■고백하다<br>
+LOCALS += "상대와 연인 상태가 되기 위한 커맨드. <br>상대를 연모 대상으로 삼은 후, 연모 레벨이 일정 이상 필요."
+LOCALS += "<br>COM 타입: 성희롱<br>획득 소스: 없음"
+LOCALS += "<br>고유 획득 경험: 없음<br>"
+TSTR:ツールチップ受渡 = %LOCALS%
+
+
+;告白する
+@COM352
+#DIM 疑似恋慕素質名
+
+RFLAG:コマンド結果受渡し変数 = 告白成功判定(TARGET)
+TIME += 15
+
+IF RFLAG:コマンド結果受渡し変数 < 1
+	RETURN 1
+ENDIF
+
+IF RFLAG:コマンド結果受渡し変数 == 1
+	;通常告白
+	CALL SOURCE_CALC_歓楽(TARGET, PLAYER, 1000)
+	CALL SOURCE_CALC_征服(TARGET, PLAYER, 500)
+	CALL SOURCE_CALC_好感度要素_恋心度UP(TARGET, PLAYER, 1000)
+	TALENT:恋慕 = 1
+	初体験日:TARGET:恋慕 = DAY
+	IF CFLAG:PLAYER:現在マップ種別 == 100 ;お祭り会場
+		TRYCALLFORMF GETPLACENAME_100_%開催予定祭り名%(CFLAG:MASTER:現在位置)
+		IF TSTR:場所名受渡 != ""
+			CALL 履歴データベース登録(CFLAG:MASTER:人物番号, @"%CALLNAME:TARGET%에게 %TSTR:場所名受渡%에서 고백했다.","日常")
+			CALL 履歴データベース登録(CFLAG:TARGET:人物番号, @"%CALLNAME:MASTER%에게 %TSTR:場所名受渡%에서 고백당했다.","日常")
+		ENDIF
+	ENDIF
+	CALL 履歴データベース登録(CFLAG:MASTER:人物番号, @"<img src='えっちハート'><font color='#%カラーパレット_HTML("赤ピンク")%'>%CALLNAME:TARGET%를 [연모]함락시켰다.</font><img src='えっちハート'>","うふふ実績")
+	CALL 履歴データベース登録(CFLAG:TARGET:人物番号, @"<img src='えっちハート'><font color='#%カラーパレット_HTML("赤ピンク")%'>함락소질[연모]를 얻었다.</font><img src='えっちハート'>","うふふ実績")
+	IF TALENT:TARGET:恋人持ち > 0
+		RFLAG:コマンド結果受渡し変数３ = 1
+		TALENT:TARGET:浮気 = 1
+	ELSEIF TALENT:TARGET:恋人持ち == -1
+		RFLAG:コマンド結果受渡し変数３ = 2
+		TALENT:TARGET:恋人持ち = 0
+	ENDIF
+ELSEIF RFLAG:コマンド結果受渡し変数 == 2
+	;無知告白、疑似恋慕
+	CALL SOURCE_CALC_歓楽(TARGET, PLAYER, 1000)
+	CALL SOURCE_CALC_好感度要素_恋心度UP(TARGET, PLAYER, 1000)
+	TALENT:疑似恋慕 = 1
+	初体験日:TARGET:疑似恋慕 = DAY
+	IF CFLAG:PLAYER:現在マップ種別 == 100 ;お祭り会場
+		TRYCALLFORMF GETPLACENAME_100_%開催予定祭り名%(CFLAG:MASTER:現在位置)
+		IF TSTR:場所名受渡 != ""
+			CALL 履歴データベース登録(CFLAG:MASTER:人物番号, @"%CALLNAME:TARGET%에게 %TSTR:場所名受渡%에서 고백했다.","日常")
+			CALL 履歴データベース登録(CFLAG:TARGET:人物番号, @"%CALLNAME:MASTER%에게 %TSTR:場所名受渡%에서 고백당했다.","日常")
+		ENDIF
+	ENDIF
+	;固有の疑似恋慕素質名を取得、ない場合はデフォルト名
+	;一応該当文字列を空っぽにしてから呼ぶ
+	CSTR:TARGET:擬似恋慕陥落名称 = 
+	TRYCALLFORM 固有擬似恋慕陥落_陥落名変更_{NO:TARGET}(TARGET)
+	IF CSTR:TARGET:擬似恋慕陥落名称 == ""
+		CSTR:TARGET:擬似恋慕陥落名称 = 연인
+	ENDIF
+
+	CALL 履歴データベース登録(CFLAG:MASTER:人物番号, @"<img src='えっちハート'><font color='#%カラーパレット_HTML("赤ピンク")%'>%CALLNAME:TARGET%을 [의사연모（%CSTR:TARGET:擬似恋慕陥落名称%）]함락시켰다.</font><img src='えっちハート'>","うふふ実績")
+	CALL 履歴データベース登録(CFLAG:TARGET:人物番号, @"<img src='えっちハート'><font color='#%カラーパレット_HTML("赤ピンク")%'>의사연모 함락소질[%CSTR:TARGET:擬似恋慕陥落名称%]을 얻었다.</font><img src='えっちハート'>","うふふ実績")
+	IF TALENT:TARGET:恋人持ち > 0
+		RFLAG:コマンド結果受渡し変数３ = 1
+		TALENT:TARGET:浮気 = 1
+	ELSEIF TALENT:TARGET:恋人持ち == -1
+		RFLAG:コマンド結果受渡し変数３ = 2
+		TALENT:TARGET:恋人持ち = 0
+	ENDIF
+ENDIF
+RETURN 1
+
+;-------------------------------------------------
+;実行判定
+;-------------------------------------------------
+
+@COM_ABLE352
+;告白する実行判定
+SIF SAVESTR:ゲームフェイズ管理 != "通常モード"
+	RETURN 0
+;一括管理
+SIF GLOBAL_COMABLE(352)
+	RETURN RESULT
+;二人きりでないとだめ
+SIF GET_TARGETNUM() > 1
+	RETURN 0
+;飲み会時はだめ
+SIF TFLAG:調教モード == 3
+	RETURN 0
+;恋慕対象設定じゃないとだめ
+SIF !CFLAG:TARGET:ゲージ起動分類
+	RETURN 0
+;馴れ合い強度1
+SIF TCVAR:MASTER:馴れ合い強度 < 1
+	RETURN 0
+;すでに恋慕を得ている場合はだめ
+SIF 陥落チェック_恋慕系(TARGET)
+	RETURN 0
+;睡眠中
+SIF CFLAG:睡眠
+	RETURN 0
+RETURN 1
+
+;-------------------------------------------------
+;実行時メッセージ
+;-------------------------------------------------
+@MESSAGE_COM352
+IF RFLAG:コマンド結果受渡し変数 == 0
+	PRINTFORML 아직 %CALLNAME:TARGET%에게 고백해도 받아주지 않을 것이다…
+	PRINTL 조금 더 사이를 돈독히 한 후에 하자.
+ELSEIF RFLAG:コマンド結果受渡し変数 == -1
+	PRINTFORML %CALLNAME:TARGET%에게는 이미 연인이 있다.
+	PRINTL 관계를 어지럽히는 것은 그만두자.
+ELSEIF CFLAG:TARGET:起床時告白済み
+	;起床時告白の後
+	PRINTFORML %CALLNAME:PLAYER%는 이전에 %CALLNAME:TARGET%에게 받은 고백을 승낙한다고 전했다
+	PRINTFORML %CALLNAME:TARGET%는 %CALLNAME:PLAYER%와의 연인이 된 것을 매우 기뻐하고 있다…
+	PRINTFORML %CALLNAME:TARGET%는 [연모]를 얻었습니다.
+	IF RFLAG:コマンド結果受渡し変数３ == 1
+		PRINTFORM %CALLNAME:TARGET%는
+		SETCOLOR カラーパレット("えっちな色")
+		PRINT [바람]
+		RESETCOLOR
+		PRINT 을(를) 얻었다……
+	ELSEIF RFLAG:コマンド結果受渡し変数３ == 2
+		PRINTFORM %CALLNAME:TARGET%는
+		SETCOLOR カラーパレット("えっちな色")
+		PRINT [짝사랑 상대 있음]
+		RESETCOLOR
+		PRINT 을(를) 잃었다……
+	ENDIF
+ELSEIF RFLAG:コマンド結果受渡し変数 == 1
+	PRINTFORML %CALLNAME:PLAYER%는 결심하고 %CALLNAME:TARGET%에게 연정을 전했다…
+	PRINTFORML %CALLNAME:TARGET%는 기뻐하며, %CALLNAME:PLAYER%의 마음을 받아주었다…
+	PRINTFORML %CALLNAME:TARGET%는 [연모]를 얻었습니다.
+	IF RFLAG:コマンド結果受渡し変数３ == 1
+		PRINTFORM %CALLNAME:TARGET%는
+		SETCOLOR カラーパレット("えっちな色")
+		PRINT [바람]
+		RESETCOLOR
+		PRINT 을(를) 얻었다……
+	ELSEIF RFLAG:コマンド結果受渡し変数３ == 2
+		PRINTFORM %CALLNAME:TARGET%는
+		SETCOLOR カラーパレット("えっちな色")
+		PRINT [짝사랑 상대 있음]
+		RESETCOLOR
+		PRINT 을(를) 잃었다……
+	ENDIF
+ELSEIF RFLAG:コマンド結果受渡し変数 == 2
+	PRINTFORML %CALLNAME:PLAYER%는 결심하고 %CALLNAME:TARGET%에게 연정을 전했다…
+	PRINTFORML %CALLNAME:TARGET%은(는) 아직 사랑을 완전히 이해하지 못한 것 같지만, %CALLNAME:PLAYER%에 대해서는 왠지 특별한 사람처럼 느끼고 있었던 것 같다
+	PRINTFORML 이 마음이 사랑임을 알고, %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%의 마음을 받아주었다…
+	PRINTFORML %CALLNAME:TARGET%은(는) ［%CSTR:TARGET:擬似恋慕陥落名称%］을(를) 얻었습니다.
+	IF RFLAG:コマンド結果受渡し変数３ == 1
+		PRINTFORM %CALLNAME:TARGET%은(는)
+		SETCOLOR カラーパレット("えっちな色")
+		PRINT [바람기]
+		RESETCOLOR
+		PRINT 을(를) 얻었다……
+	ELSEIF RFLAG:コマンド結果受渡し変数３ == 2
+		PRINTFORM %CALLNAME:TARGET%은(는)
+		SETCOLOR カラーパレット("えっちな色")
+		PRINT [짝사랑 상대 있음]
+		RESETCOLOR
+		PRINT 을(를) 잃었다……
+	ENDIF
+ENDIF
+
+
+@告白成功判定(対象キャラ)
+#FUNCTION
+#DIM 対象キャラ
+#DIM 返り値
+
+返り値 = 1
+
+SIF TALENT:対象キャラ:恋慕
+	RETURNF 0
+SIF !CFLAG:対象キャラ:ゲージ起動分類
+	RETURNF 0
+;無知分岐
+IF 知識素質:対象キャラ:性知識 < 0
+	SIF CFLAG:対象キャラ:恋心度 < 経験値テーブル:(関係閾値:2)
+		RETURNF 0
+	;返す値をズラす
+	返り値 = 2
+ELSE
+	SIF CFLAG:対象キャラ:恋慕レベル <= 50
+		RETURNF 0
+ENDIF
+SIF GETBIT(TALENT:対象キャラ:陥落不可, 0)
+	RETURNF 0
+; SIF DT_SELECT("関係性データベース", @"(対象キャラ１ = {CFLAG:対象キャラ:人物番号} Or 対象キャラ２ = {CFLAG:対象キャラ:人物番号}) And 関係性種別 = '恋慕'")
+; 	RETURNF -1
+
+TRYCALLFORMF 告白成功判定_キャラ個別条件_{NO:対象キャラ}(対象キャラ)
+SIF RESULT > 0
+	RETURNF 0
+
+RETURNF 返り値
+

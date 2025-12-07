@@ -1,0 +1,65 @@
+
+@イベント発生条件_メインシナリオ_森に住み着いた魔物
+;開放条件を満たしたら1を返すこと
+;初期イベントなので開放条件なし、無条件で1を返す
+RETURN 1
+
+
+@イベント関数_メインシナリオ_森に住み着いた魔物(ARG)
+DRAWLINE
+PRINTL ［숲에 눌러앉은 마물］
+DRAWLINE
+PRINTW
+PRINTFORMW 성정수 era에게서 받은 힘으로, 욕망을 이루려 불타는%CALLNAME:PLAYER%。
+PRINTFORMW 이 힘은 만능이지만, ZP라는 연료가 없으면 아무것도 할 수 없다.
+PRINTFORMW 그러기 위해서는 이 리조트 하우스를 개조·강화하여, 많은 관광객이 찾아오는 장소로 키워나가야 할 것이다.
+PRINTFORMW 또한 섬 내의 각지를 개척하여, 새로운 시설을 건설하는 것도 필요할지 모른다.
+PRINTL 
+PRINTFORMW 어느 쪽이든, 당분간은 외부 상인에게 공사를 맡겨야 한다.
+PRINTFORMW %CALLNAME:PLAYER%은(는) 만물상에 공사를 의뢰한 편지의 답장을 읽고 있었다.
+PRINTL 
+PRINTL 셰로카르테:
+PRINTFORMW 『정말 죄송합니다만~
+PRINTFORMW 　그쪽 섬에 있는 항구 근처 숲에, 어떤 마물이 눌러앉아 버린 것 같습니다~
+PRINTFORMW 　그 이름은 「스톤 이터」라고 합니다만~
+PRINTFORMW 　건축에 사용하는 석재나 벽돌을, 우적우적 먹어버리는 마물입니다~
+PRINTFORMW 　숲에 살고 있는 스톤 이터가, 돌을 우적우적……우후후~
+PRINTFORMW 　농담은 차치하고~, 그 마물이 있는 한, 공사는 할 수 없습니다~
+PRINTFORMW 　건축 자재 피해도 있을 것이고, 작업원이 습격당해도 곤란하니까요~
+PRINTFORMW 　그러니, 그 마물을 퇴치해 주시면 공사를 접수하겠습니다~
+PRINTFORMW 　물론, 퇴치 자체를 이쪽으로 의뢰해 주셔도 상관없습니다~. 별도 요금이 들지만, 싸게 해드리겠습니다~』
+PRINTL 
+PRINTFORMW ……%CALLNAME:PLAYER%는 마물 퇴치 견적을 보고, 즉시 의뢰를 포기했다.
+PRINTFORMW 이 리조트 섬은 벽지에 해당하는 곳. 그곳에 기공사를 부르려면 비용이 치솟는 것은 어쩔 수 없는 일.
+PRINTFORMW 공사 비용으로 빠듯한 %CALLNAME:PLAYER%가 지불할 수 있는 금액이 아니었다.
+PRINTL 
+PRINTFORMW 그럼 어떻게 할까. 안타깝게도 %CALLNAME:PLAYER%에게는 싸움의 재능이 없다.
+PRINTFORMW 그렇다면…… 이 섬에 체류하고 있는 관광객 중에서, 실력 있는 자를 임시 탐색 요원으로 고용하는 수밖에 없을 것이다.
+PRINTFORMW 밖에서 부를 수 없다면 안에서 어떻게든 할 수밖에 없으니까.
+PRINTL 
+PRINTFORM 싸울 수 있는 자와 교류를 깊게 하고,
+SETCOLOR カラーパレット("真っ赤")
+PRINT 『안면』 이상이 되면 단기적인 도움 정도는 줄 것이다
+RESETCOLOR
+PRINTW .
+PRINTW 직접 얼굴을 마주했을 때 「탐색에 초대」를 실행하고, 「탐색계 정보 일람」에서 파티를 편성하면 탐색할 수 있게 될 것이다.
+PRINTFORMW 물론, 상대가 체류를 마치고 리조트를 떠나버리면 사라지겠지만……
+PRINTFORMW 다행히도 스톤 이터는 그렇게 강한 마물은 아닌 것 같다.
+PRINTFORMW 어떻게든 전력을 모아 격퇴하면, 루피나 ZP를 벌 수 있는 체제를 시작할 수 있을 것이다─────
+PRINTL 
+PRINTL 
+SETCOLOR 0xFFFF00
+PRINTFORML 던전［연안부의 숲］이 해방되었습니다.
+RESETCOLOR
+FORCEWAIT
+ダンジョン出現フラグ_沿岸部の森 = 1
+
+CALL イベント完了フラグ汎用処理("森に住み着いた魔物")
+
+
+
+
+
+
+
+

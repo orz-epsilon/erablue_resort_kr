@@ -1,0 +1,156 @@
+
+@COMNAME328
+#FUNCTIONS
+TSTR:コマンド名受渡 = 치마 걷어올리기
+
+;===================================================
+;コマンドタイプ
+;===================================================
+@COMTYPE_328
+#FUNCTION
+TFLAG:コマンドタイプ受渡 = COMTYPE("セクハラ")
+
+@COM_TOOLTIP_328
+LOCALS = <br>■치마 걷어올리기<br>
+LOCALS += "자신의 치마를 걷어올려 상대를 유혹하는 커맨드. <br>그 자리에 있는 인원수가 많을수록 반감이 증가한다."
+LOCALS += "<br>COM 타입: 성희롱<br>획득 소스: 쾌락・반감"
+LOCALS += "<br>고유 획득 경험: 없음<br>"
+TSTR:ツールチップ受渡 = %LOCALS%
+
+
+@COM328
+
+CALL セクハラ反応タイプ判定(TARGET)
+;RFLAG:コマンド結果受渡し変数
+;1:拒絶  2:受け入れ  3:喜び
+;RFLAG:コマンド結果受渡し変数２
+;1:無知  2:無反応  3:嫌悪  4:拒否  5:余裕  6:羞恥  7:愉悦  8:汎用
+
+IF GET_TARGETNUM() > 1 && !CFLAG:PLAYER:隠密 && !CFLAG:TARGET:隠密
+	;自身とあなた以外のキャラが居る場合
+	CALL SOURCE_CALC_反感(TARGET, PLAYER, (GET_TARGETNUM() - 1) * 5 + 50)
+ELSE
+	;二人きりの場合
+	IF 陥落チェック(TARGET) == 0
+		CALL SOURCE_CALC_反感(TARGET, PLAYER, 50)
+	ELSEIF 初体験日取得("初うふふ", TARGET, MASTER) && BASE:TARGET:性欲 > 1000 && RFLAG:コマンド結果受渡し変数２ > 2
+		;陥落済みかつ初うふふ済みかつ性欲一定以上なら押し倒し
+		IF 現在地自宅チェック(TARGET) || 現在地自宅チェック(PLAYER)
+			RFLAG:コマンド結果受渡し変数３ = 1
+		ELSE
+			RFLAG:コマンド結果受渡し変数３ = 2
+			CFLAG:PLAYER:隠密 = 1
+			CFLAG:TARGET:隠密 = 1
+			PALAM:TARGET:欲情 = 30000
+			SIF GETBIT(TALENT:TARGET:性別, 0)
+				PALAM:TARGET:潤滑 = 30000
+		ENDIF
+		CALL うふふ開始キャラ処理(TARGET, "あなたの挑発に乗る")
+		CFLAG:PLAYER:うふふ = 1
+		FLAG:モード管理 = 0
+	ENDIF
+ENDIF
+
+TIME += 3
+
+;性別によっては同性愛がないと歓楽発生しない
+IF 同性愛性癖判定(TARGET,PLAYER)
+	SIF 性癖素質:TARGET:同性愛 < 1
+		RETURN 1
+ENDIF
+;相手が無性だと歓楽発生しない
+SIF TALENT:TARGET:性別 == 0
+	RETURN 1
+;性欲なしも同様
+SIF TALENT:TARGET:性欲 == -2
+	RETURN 1
+
+CALL SOURCE_CALC_歓楽(TARGET, PLAYER, 150)
+CALL SOURCE_CALC_好感度要素_性愛度UP(TARGET, PLAYER, 50)
+;ノーパン時、陥落が倍
+IF TEQUIP:PLAYER:下半身下着あり < 1
+	CALL SOURCE_CALC_歓楽(TARGET, PLAYER, 150)
+	CALL SOURCE_CALC_好感度要素_性愛度UP(TARGET, PLAYER, 100)
+ENDIF
+
+RETURN 1
+
+
+;-------------------------------------------------
+;実行判定
+;-------------------------------------------------
+@COM_ABLE328
+
+;実行判定
+SIF SAVESTR:ゲームフェイズ管理 != "通常モード"
+	RETURN 0
+;一括管理
+SIF GLOBAL_COMABLE(328)
+	RETURN RESULT
+;睡眠中
+SIF CFLAG:睡眠
+	RETURN 0
+;スカート着用必須
+SIF TEQUIP:PLAYER:下半身服あり == 0
+	RETURN 0
+SIF TEQUIP:PLAYER:スカートめくり可 == 0
+	RETURN 0
+RETURN 1
+
+;-------------------------------------------------
+;実行時メッセージ
+;-------------------------------------------------
+@MESSAGE_COM328
+
+PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%을(를) 향해, 자신의 옷자락을 걷어올렸다.
+PRINTFORM %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%의
+IF TEQUIP:PLAYER:下半身下着あり == 0
+	PRINTL 아무것도 입지 않은 사타구니를 보고 말았다…
+ELSEIF TEQUIP:PLAYER:下半身下着あり == 2
+	PRINTL 중요한 부분만을 가리는 작은 앞가리개를 보고 말았다…
+ELSE
+	PRINTFORML %今日の下着文字列生成(PLAYER)%을(를) 보고 말았다…
+ENDIF
+
+IF RFLAG:コマンド結果受渡し変数３ == 1
+	WAIT
+	PRINTFORML 유혹당한 %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%의 몸을 끌어당겨, 침대에 밀어 넘어뜨렸다
+ELSEIF RFLAG:コマンド結果受渡し変数３ == 2
+	WAIT
+	PRINTFORML 유혹당한 %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%을(를) 물가로 데려가, 끌어안았다
+ENDIF
+
+
+
+@MESSAGE_COM328_非口上時
+
+PRINTFORM %CALLNAME:TARGET%은(는)
+
+IF RFLAG:コマンド結果受渡し変数３
+	PRINTFORML 정욕을 억누르지 못하는 눈으로 %CALLNAME:PLAYER%을(를) 보고 있다…
+ELSE
+	SELECTCASE RFLAG:コマンド結果受渡し変数２
+		CASE 1
+			;無知
+			PRINTFORM 무엇을 하고 있는지 모르는 듯한 모습으로, %CALLNAME:PLAYER%을(를) 보고 있다.
+		CASE 2
+			;無反応
+			PRINTFORM 아무것도 신경 쓰지 않는 듯 무표정으로 %CALLNAME:PLAYER%을(를) 보고 있다.
+		CASEELSE
+			;汎用
+			IF GET_TARGETNUM() > 1
+				PRINTFORM 황급히 %CALLNAME:PLAYER%의 옷을 붙잡고, 이런 짓을 하지 않도록 주의를 주었다.
+			ELSE
+				IF RFLAG:コマンド結果受渡し変数 == 1
+					;拒絶
+					PRINTFORM 황급히 %CALLNAME:PLAYER%의 옷을 붙잡고, 이런 짓을 하지 않도록 주의를 주었다.
+				ELSEIF RFLAG:コマンド結果受渡し変数 == 2
+					;受け入れ
+					PRINTFORM 쓴웃음을 지으며 %CALLNAME:PLAYER%에게 가볍게 주의를 주었다.
+				ELSE
+					;喜び
+					PRINTFORM 자신 이외의 사람에게는 하지 않도록, 라고 %CALLNAME:PLAYER%에게 주의를 주었다.
+				ENDIF
+			ENDIF
+	ENDSELECT
+ENDIF

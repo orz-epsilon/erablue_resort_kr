@@ -1,0 +1,95 @@
+@ダンジョンハプニング_あなたスカート捲れ(対象キャラ番号)
+#DIM 対象キャラ番号
+#DIM 選定用配列, 10
+
+WSTR:(K++) = 갑자기 돌풍이 불었다!
+KSTR:(K++) = %CALLNAME:PLAYER%의 옷이 걷어 올라가,
+NSTR:(K++) = 눈앞에 있던 %CALLNAME:対象キャラ番号%는
+IF TEQUIP:PLAYER:下タイツあり
+	IF TEQUIP:PLAYER:下タイツ破れ
+		NSTR:(K++) = 찢어진
+	ENDIF
+	NSTR:(K++) = 타이츠 안쪽의
+ENDIF
+SELECTCASE TEQUIP:PLAYER:下半身下着あり
+	CASE 1
+		KSTR:(K++) = %CALLNAME:PLAYER%의 속옷을 제대로 보고 말았다._PAGE
+	CASE 2
+		KSTR:(K++) = %CALLNAME:PLAYER%의 작은 천이 붙어 있을 뿐인 중요한 부분을 보고 말았다._PAGE
+	CASE 3
+		KSTR:(K++) = %CALLNAME:PLAYER%의 훈도시를 제대로 보고 말았다._PAGE
+	CASE 4
+		KSTR:(K++) = %CALLNAME:PLAYER%의 사타구니가 리본으로 덮여 있을 뿐인 것을 목격하고 말았다._PAGE
+	CASEELSE
+		KSTR:(K++) = %CALLNAME:PLAYER%의 아무것도 입지 않은 은밀한 부분을 제대로 보고 말았다._PAGE
+ENDSELECT
+
+CALL メッセージ欄表示用関数()
+CALL 口上変数初期化
+
+CALL セクハラ反応タイプ判定(対象キャラ番号)
+TRYCALLFORM KOJO_ハプニング_あなたスカート捲れ_{NO:対象キャラ番号}(対象キャラ番号)
+IF 口上有無確認(0, 1) == 0
+	SELECTCASE RFLAG:コマンド結果受渡し変数２
+		CASE 1
+			;無知
+			KSTR:(K++) = 하지만, %CALLNAME:対象キャラ番号%는 딱히 아무것도 신경 쓰지 않는 듯하다.
+		CASE 2
+			;無反応
+			KSTR:(K++) = 하지만, %CALLNAME:対象キャラ番号%는 아무 일도 없었다는 듯이 탐색으로 돌아갔다.
+		CASEELSE
+			;汎用
+			IF TALENT:対象キャラ番号:性別 == TALENT:PLAYER:性別 || TALENT:PLAYER:性別 == 0
+				;同性、あるいは無性なら大した反応はしない
+				KSTR:(K++) = %CALLNAME:対象キャラ番号%는 조심하라고, %CALLNAME:PLAYER%에게 주의를 주고 있다.
+			ELSE
+				SELECTCASE RFLAG:コマンド結果受渡し変数
+					CASE 1
+						;拒絶
+						KSTR:(K++) = %CALLNAME:対象キャラ番号%는 순간적으로 외면하며, %CALLNAME:PLAYER%에게 한마디 사과했다.
+					CASE 2
+						;受入れ
+						KSTR:(K++) = %CALLNAME:対象キャラ番号%는 다른 시선으로부터 가드하듯이, %CALLNAME:PLAYER%의 앞으로 이동했다.
+					CASE 3
+						;喜び
+						KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 다른 시선으로부터 가드하듯이 %CALLNAME:PLAYER%의 앞으로 이동하여, 조심하라고 주의를 주고 있다.
+				ENDSELECT
+			ENDIF
+	ENDSELECT
+	CALL メッセージ欄表示用関数()
+ENDIF
+
+;ソース増減部分
+SELECTCASE RFLAG:コマンド結果受渡し変数
+	CASE 1
+		;拒絶
+		CALL SOURCE_CALC_不快(対象キャラ番号, PLAYER, 50)
+		CALL SOURCE_CALC_露出(PLAYER, 対象キャラ番号, 150)
+		CALL SOURCE_CALC_歓楽(対象キャラ番号, PLAYER, 70)
+	CASE 2
+		;受け入れ
+		CALL SOURCE_CALC_露出(PLAYER, 対象キャラ番号, 100)
+		CALL SOURCE_CALC_歓楽(対象キャラ番号, PLAYER, 100)
+		CALL SOURCE_CALC_好感度要素_恋心度UP(対象キャラ番号, PLAYER, 50)
+		CALL SOURCE_CALC_好感度要素_性愛度UP(対象キャラ番号, PLAYER, 100)
+	CASE 3
+		;喜び
+		CALL SOURCE_CALC_露出(PLAYER, 対象キャラ番号, 100)
+		CALL SOURCE_CALC_歓楽(対象キャラ番号, PLAYER, 150)
+		CALL SOURCE_CALC_好感度要素_恋心度UP(対象キャラ番号, PLAYER, 100)
+		CALL SOURCE_CALC_好感度要素_性愛度UP(対象キャラ番号, PLAYER, 100)
+ENDSELECT
+
+
+
+
+
+@ダンジョンハプニング_ABLE_あなたスカート捲れ(判定キャラ番号)
+#DIM 判定キャラ番号
+
+SIF TEQUIP:PLAYER:下半身服あり == 0
+	RETURN 0
+SIF TEQUIP:PLAYER:スカートめくり可 == 0
+	RETURN 0
+
+RETURN 1

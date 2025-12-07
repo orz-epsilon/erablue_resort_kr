@@ -1,0 +1,183 @@
+;-------------------------------------------------
+;手マンする
+;愛撫系コマンド、レベル1
+;-------------------------------------------------
+@RAPE_COMNAME2
+#FUNCTIONS
+TSTR:コマンド名受渡 = 핑거링하다
+
+
+
+;===================================================
+;コマンドタイプ
+;===================================================
+@RAPE_COMTYPE_2
+#FUNCTION
+TFLAG:コマンドタイプ受渡 = RAPE_COMTYPE("Ｖ系")
+
+
+@RAPE_COM_TOOLTIP_2
+LOCALS = <br>■핑거링하다<br>
+LOCALS += "싫어하는 상대의 질에 손가락을 넣어 애무하는 커맨드. <br>처녀에게 할 경우, 큰 고통이 따른다."
+LOCALS += "<br>RAPE_COM 타입: V계<br>획득 소스: 쾌락V・노출・접촉・고통"
+LOCALS += "<br>고유 획득 경험: 없음<br>"
+TSTR:ツールチップ受渡 = %LOCALS%
+
+@RAPE_COM2
+;-------------------------------------------------
+;ソース追加処理
+;-------------------------------------------------
+
+IF !TALENT:処女
+	CALL SOURCE_CALC_快Ｖ(TARGET, PLAYER, 120)
+ELSE
+	CALL SOURCE_CALC_快Ｖ(TARGET, PLAYER, 30)
+ENDIF
+SIF TALENT:PLAYER:器用な指
+	CALL SOURCE_CALC_快Ｖ(TARGET, PLAYER, 50)
+CALL SOURCE_CALC_露出(TARGET, PLAYER, 120)
+CALL SOURCE_CALC_接触(TARGET, PLAYER, 150)
+
+;苦痛
+LOCAL = 40 * PAIN_CHECK_V(TARGET) / 1000
+SIF TALENT:処女
+	TIMES LOCAL , 1.50
+
+CALL SOURCE_CALC_苦痛(TARGET, PLAYER, LOCAL)
+
+;下タイツがある場合は破く。
+IF TEQUIP:下タイツあり == 1
+	TEQUIP:下タイツ破れ = 1
+	RFLAG:コマンド結果受渡し変数 = 1
+ENDIF
+;前張りがあったら剥がす
+IF TEQUIP:下半身下着あり == 2
+	TEQUIP:下半身下着あり = 0
+	RFLAG:コマンド結果受渡し変数２ = 1
+ENDIF
+;-------------------------------------------------
+;経験の処理
+;-------------------------------------------------
+;同性愛　レズなら戻り値1ゲイなら戻り値2
+IF HETEROSEX(TARGET,PLAYER)
+	EXP:同性愛経験 += 1
+	EXP:PLAYER:同性愛経験 += 1
+ENDIF
+
+RETURN 1
+
+;-------------------------------------------------
+;実行判定
+;-------------------------------------------------
+
+@RAPE_COM_ABLE2
+;実行判定
+;一括管理
+SIF GLOBAL_RAPE_COMABLE(3)
+	RETURN RESULT
+;Vがない場合駄目
+SIF TALENT:TARGET:Ｖ感度 == -2
+	RETURN 0
+SIF GETBIT(TALENT:TARGET:性別, 0) == 0
+	RETURN 0
+
+;下半身着衣
+;前鎧、めくれない服があると無理
+SIF TEQUIP:下腹部前鎧あり
+	RETURN 0
+SIF TEQUIP:下半身服あり && (!TEQUIP:スカートめくり可 && !TEQUIP:ずらし可)
+	RETURN 0
+
+;指を何かに使ってる・届かないなら無理
+SIF TEQUIP:PLAYER:指
+	RETURN 0
+;膣を何かに使ってる・届かないなら無理
+SIF TEQUIP:TARGET:膣
+	RETURN 0
+
+;オートコマンド中の制限
+IF FLAG:オートコマンド判定中フラグ
+	SIF EXP:TARGET:Ｖ経験 == 0
+		RETURN 0
+ENDIF
+RETURN 1
+
+;-------------------------------------------------
+;実行時メッセージ
+;-------------------------------------------------
+
+@RAPE_MESSAGE_COM2
+;下半身着衣
+PRINTFORM %CALLNAME:PLAYER%은(는)
+
+SIF TEQUIP:下半身服あり
+		PRINTFORM 옷 안에 손을%TEXTR("억지로 집어넣어/억지로 파고들어")%,
+
+SIF RFLAG:コマンド結果受渡し変数 == 1
+		PRINTFORM 입고 있던 타이츠를 억지로%TEXTR("찢어발겨/찢어")% 노출시켰다,
+
+SIF RFLAG:コマンド結果受渡し変数２ == 1
+		PRINTFORM 붙어 있던 앞가리개를 억지로 벗겨 노출시켰다,
+
+PRINTFORM %CALLNAME:TARGET%의
+
+;潤滑LV4以上。とてもつごうのいいかいしゃく
+SIF PALAM:潤滑 >= PALAMLV:4
+	PRINTFORM 강간당하고 있으면서도%TEXTR("기대/욕정")%으로 흠뻑 젖은
+
+;処女
+IF TALENT:処女 == 1
+	IF TALENT:TARGET:恋人持ち == 1
+		;恋人持ち
+		PRINTFORM 아직%TEXTR("연인의 침입도 허락하지 않은/연인에게도 손대지 않은/연인에게 내주지 않은 새것의")%
+	ELSEIF TALENT:TARGET:恋人持ち == -1
+		;想い人あり
+		PRINTFORM 아직 짝사랑 상대에게 바치지 않은
+	ELSE
+		PRINTFORM 아직%TEXTR("누구의 침입도 허락하지 않은/남자를 모르는")%
+	ENDIF
+ELSE
+	IF TALENT:TARGET:恋人持ち == 2
+		;人妻
+		PRINTFORM 반려자의 것이었을 터인
+	ELSEIF TALENT:TARGET:恋人持ち == 1
+		;恋人持ち
+		PRINTFORM 연인의 것이었을
+	ELSEIF TALENT:TARGET:恋人持ち == -1
+		;想い人あり
+		PRINTFORM 짝사랑 상대의 것이었을
+	ENDIF
+ENDIF
+
+;冠詞群
+SIF 知識素質:TARGET:高貴 >= 1
+	PRINTFORM 고귀한
+IF アイドル判定(TARGET)
+	PRINTFORM 아이돌
+ELSEIF TALENT:種族 == 4
+	PRINTFORM 하빈
+ELSEIF TALENT:体格 <= -1
+	PRINTFORM 꽉 조이는
+ENDIF
+SIF CFLAG:TARGET:発情期フラグ < 0
+	PRINTFORM 발정
+IF TALENT:TARGET:恋人持ち == 2
+	PRINTFORM 유부녀
+ELSEIF BASE:年齢 <= 13 || TALENT:年齢層 == 10
+	PRINTFORM %TEXTR("애새끼/아이")%
+ELSEIF TALENT:処女 == 1
+	PRINTFORM 처녀
+ENDIF
+PRINTFORM 보지에
+;↑全部乗せで「高貴なキツキツ発情ガキまんこ」
+
+PRINTFORML 손가락을 천천히 삽입했다…
+PRINTL
+IF CFLAG:TARGET:睡眠
+	PRINTFORML 잠든 %CALLNAME:TARGET%는 원치 않는 침입자의 감촉에 잠든 채로 살짝 몸을 떨었다…
+ELSEIF TALENT:処女 == 1
+	PRINTFORML %CALLNAME:TARGET%는 원치 않는 침입자의 감촉에 몸을 굳히고, 싫다고 고개를 저으며 자비를 구하고 있다…
+ELSE
+	PRINTFORML %CALLNAME:TARGET%는 싫다고 고개를 저으면서도 %CALLNAME:PLAYER%에게 매달려, 삽입된 손가락을 씰룩씰룩 조이고 있다…
+ENDIF
+

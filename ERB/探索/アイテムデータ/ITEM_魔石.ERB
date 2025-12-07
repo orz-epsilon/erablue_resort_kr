@@ -1,0 +1,48 @@
+
+@アイテム個別文章表示_魔石(ARGS)
+IF ARGS == "値段"
+	詳細文文字列受け渡し変数 = 루피
+	RETURN 1000
+ENDIF
+
+LOCALS = 
+LOCALS += @"■마석　　　소지 수:{DT_CELL_GET("所持アイテムデータベース", 0, "魔石")}<br>"
+LOCALS += "마력이 많이 포함된 흔한 광석. <br>"
+LOCALS += "부수면, 돌에서 넘쳐흐른 마력으로 MP를 회복할 수 있다. <br>"
+LOCALS += "가공하면 마나 포션이 되지만, 이대로도 그럭저럭<br>"
+LOCALS += "효과가 있다<br>"
+LOCALS += "<br>"
+LOCALS += "【효과】<br>"
+LOCALS += "아군 단일 대상의 MP를 [100] 회복한다. <br>"
+
+詳細文文字列受け渡し変数 = %LOCALS%
+
+@アイテム使用先表示_魔石
+CALL 汎用使用先表示("味方単体")
+
+@アイテム効果処理_魔石(ARG)
+;ARG = 隊列の何番目か
+
+IF !BATTLE_STATE:ARG:キャラ登録番号
+	RETURN 0
+ENDIF
+
+IF DT_CELL_GET("所持アイテムデータベース", 0, "魔石") < 1
+	PRINTW 아이템이 없습니다
+	RETURN 0
+ENDIF
+
+IF BATTLE_STATE:ARG:最大ＭＰ == BATTLE_STATE:ARG:ＭＰ
+	PRINTW MP가 최대입니다
+	RETURN 0
+ENDIF
+
+IF BATTLE_STATE:ARG:最大ＭＰ - BATTLE_STATE:ARG:ＭＰ < 100
+	PRINTFORMW %CALLNAME:(BATTLE_STATE:ARG:キャラ登録番号)%의 MP를{BATTLE_STATE:ARG:最大ＭＰ - BATTLE_STATE:ARG:ＭＰ}회복했습니다
+ELSE
+	PRINTFORMW %CALLNAME:(BATTLE_STATE:ARG:キャラ登録番号)%의 MP를100회복했습니다
+ENDIF
+
+BATTLE_STATE:ARG:ＭＰ = MIN(BATTLE_STATE:ARG:ＭＰ + 100, BATTLE_STATE:ARG:最大ＭＰ)
+
+RETURN 1

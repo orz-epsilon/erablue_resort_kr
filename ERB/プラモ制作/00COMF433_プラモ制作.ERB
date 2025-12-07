@@ -1,0 +1,140 @@
+
+
+@COMNAME433
+#FUNCTIONS
+
+	TSTR:コマンド名受渡 = 프라모델 만지기
+
+
+;コマンドタイプ
+;===================================================
+@COMTYPE_433
+#FUNCTION
+TFLAG:コマンドタイプ受渡 = COMTYPE("単独可能")
+
+@COM_TOOLTIP_433
+LOCALS = <br>■프라모델 만지기<br>
+LOCALS += "프라모델에 관한 커맨드."
+LOCALS += "<br>COM 타입: 일상<br>조건: 자기 방・타인이 없을 것"
+LOCALS += "<br>고유의 취득 경험: 없음<br>"
+TSTR:ツールチップ受渡 = %LOCALS%
+
+
+;-------------------------------------------------
+;-------------------------------------------------
+@COM433
+
+;resortのデフォ描画値がわからんので取得して抜けるとき戻す
+CURRENTREDRAW
+LOCAL:10 = RESULT:0
+;PRINTFORMW 描画値{LOCAL:10}
+REDRAW 0
+
+
+;イベントなどのチェック
+
+;鋼鉄ジーグを持たない場合＝初回
+IF プラモ_所有キット:21 == 0
+	プラモ_金 = 10000
+	;キットのベースデータなどすべてを消す
+
+	;初回のみキットが貰える
+	DRAWLINEFORM =
+	PRINTFORML 지금, %CALLNAME:MASTER% 앞에는 『프라모델』이 2개 있다
+	PRINTFORML 얼마 전 프라모델 마이스터라고 자칭하는 이상한 아저씨에게 받은 것이다
+	PRINTFORML 
+	PRINTFORML 그리고 최근 전공에서, 이 플라스틱제 모형 『프라모델』이라는 것을 조립하여 싸우게 하는 취미가 유행하고 있는… 듯하다
+	PRINTFORML 
+	PRINTFORMW 남는 시간에 만들어 보는 것도 좋을지도 모르겠네.
+	DRAWLINEFORM -
+	PRINTFORML 받은 프라모델 중 하나는 『강철 지그』
+	PRINTFORML 아저씨 말로는, 평범하게 조립하기만 해도 강하다! 초보자에게 추천하는 로봇이라고 한다
+	PRINTFORML 
+	PRINTFORML 다른 하나는 여자아이. 이쪽은 미소녀 프라모델이라고 하는 듯하다
+	DRAWLINEFORM -
+	PRINTFORML 키트의 이름은…
+	PRINTFORML [1]리셰타　　[2]티아샤　　[3]루루체
+	PRINTFORML 
+	INPUT
+	DRAWLINEFORM =
+	IF RESULT == 1
+		PRINTFORML 리셰타라고 쓰여 있네
+		PRINTFORML 
+		PRINTFORML 프라모델 키트【리셰타】와 【강철 지그】를 손에 넣었다!!
+		プラモ_所有キット:1 = 1
+		プラモ_所有キット:21 = 1
+	ELSEIF RESULT == 2
+		PRINTFORML 티아샤라고 쓰여 있네
+		PRINTFORML 
+		PRINTFORML 프라모델 키트【티아샤】와 【강철 지그】를 손에 넣었다!!
+		プラモ_所有キット:2 = 1
+		プラモ_所有キット:21 = 1
+	ELSEIF RESULT == 3
+		PRINTFORML 루루체라고 쓰여 있네
+		PRINTFORML 
+		PRINTFORML 프라모델 키트【루루체】와 【강철 지그】를 손에 넣었다!!
+		プラモ_所有キット:3 = 1
+		プラモ_所有キット:21 = 1
+	ELSE
+		PRINTFORML 아니, 두 개나 받는 건 좀 그래서 그쪽은 받지 않았던가…
+		PRINTFORML 뭐… 이 강철 지그만 있으면 괜찮겠지
+		PRINTFORML 
+		PRINTFORML 키트: 강철 지그를 손에 넣었다!!
+		プラモ_所有キット:21 = 1
+	ENDIF
+	WAIT
+	DRAWLINEFORM =
+	
+
+ENDIF
+
+CALL COM_433プラモいじり本体
+
+
+;時間の経過するコマンドを実行した場合戻す
+IF プラモ用経過時間ストッカ > 0
+	TIME += プラモ用経過時間ストッカ
+	プラモ用経過時間ストッカ = 0
+	;描画制御を元に戻す
+	REDRAW LOCAL:10
+	RETURN 0
+ENDIF
+
+
+
+
+
+@COM_ABLE433
+
+;実行判定
+SIF SAVESTR:ゲームフェイズ管理 != "通常モード"
+	RETURN 0
+;一括管理
+SIF GLOBAL_COMABLE(433)
+	RETURN RESULT
+
+;TARGETが居る場合は不可
+IF TARGET:1 > 0
+	RETURN 0
+ENDIF
+
+;初日は不可
+IF DAY <= 1
+	RETURN 0
+ENDIF
+
+;自室じゃないと不可
+IF CFLAG:PLAYER:現在位置 == 20
+	
+ELSEIF CFLAG:PLAYER:現在位置 == 2020
+	
+ELSE
+	RETURN 0
+ENDIF
+
+RETURN 1
+
+
+
+
+

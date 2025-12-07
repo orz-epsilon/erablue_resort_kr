@@ -1,0 +1,159 @@
+
+@COMNAME_S60_7
+#FUNCTIONS
+TSTR:コマンド名受渡 = 가슴 고삐 정상위
+
+;===================================================
+;コマンドタイプ
+;===================================================
+@COMTYPE_S_60_7
+#FUNCTION
+TFLAG:コマンドタイプ受渡 = COMTYPE("Ｖ系")
+弱点コマンドカテゴリ = V
+オートコマンド許可 = 1
+
+@COM_TOOLTIP_S60_7
+LOCALS = <br>■가슴 고삐 정상위<br>
+LOCALS += "거유를 움켜쥐고, 잡아당기면서 허리를 흔드는 커맨드. <br>정상위 시에만 가능하며, 잡을 수 있을 정도로 가슴이 크지 않으면 실행할 수 없다. <br>피학적 성감으로 효과가 상승한다."
+LOCALS += "<br>몇 번이고 반복 실행하면……?"
+LOCALS += "<br>COM 타입: V계<br>획득 소스: 정복・쾌B・쾌V・접촉・고통"
+LOCALS += "<br>고유 획득 경험: V성교 경험(TARGET)・C성교 경험_V삽입(PLAYER)<br>"
+TSTR:ツールチップ受渡 = %LOCALS%
+
+@COM_S60_7
+;-------------------------------------------------
+;ソース追加処理
+;-------------------------------------------------
+
+
+CALL SOURCE_CALC_征服(PLAYER, TARGET, 150)
+CALL SOURCE_CALC_快Ｂ(TARGET, PLAYER, 400)
+CALL SOURCE_CALC_快Ｖ(TARGET, PLAYER, 400)
+CALL SOURCE_CALC_接触(TARGET, PLAYER, 150)
+
+IF !MODE_存在判定_ターゲット側("ペニスバンド", PLAYER)
+	CALL SOURCE_CALC_快Ｃ(PLAYER, TARGET, 400)
+ELSE
+	CALL SOURCE_CALC_快Ｖ(PLAYER, TARGET, 150)
+ENDIF
+
+;苦痛
+LOCAL = 200 * PAIN_CHECK_V(TARGET) / 1000
+CALL SOURCE_CALC_苦痛(TARGET, PLAYER, LOCAL)
+
+CALL SOURCE_CALC_苦痛(TARGET, PLAYER, 180)
+RCVAR:TARGET:苦痛コマンドフラグ = 1
+RCVAR:PLAYER:嗜虐コマンドフラグ = 1
+
+;マゾに効果大。ただし苦痛の量が増すのではなくそのほかが増える。
+;痛みで締まるので快Ｖも盛っちゃお
+IF ABL:TARGET:マゾ性感 > 2
+	CALL SOURCE_CALC_征服(PLAYER, TARGET, 80)
+	CALL SOURCE_CALC_快Ｖ(TARGET, PLAYER, 80)
+	CALL SOURCE_CALC_快Ｂ(TARGET, PLAYER, 100)
+	CALL SOURCE_CALC_歓楽(TARGET, PLAYER, 100)
+	EXP:TARGET:苦痛快楽経験 += 1
+ELSE
+	CALL SOURCE_CALC_反感(TARGET, PLAYER, 60)
+ENDIF
+
+;サドは嗜虐快楽
+SIF ABL:PLAYER:サド性感
+	EXP:PLAYER:嗜虐快楽経験 ++
+
+
+;-------------------------------------------------
+;経験の処理
+;-------------------------------------------------
+EXP:PLAYER:Ｃ性交経験_Ｖ挿入 ++
+EXP:Ｖ性交経験 ++
+
+;同性愛
+SIF 同性愛性癖判定(TARGET,PLAYER)
+	EXP:TARGET:同性愛経験 += 4
+SIF 同性愛性癖判定(PLAYER,TARGET)
+	EXP:PLAYER:同性愛経験 += 4
+
+;EXPにしたほうがえっちかもしれないんだけど、強い経験名が浮かばなかったのでやむなくCFLAGに格納
+CFLAG:TARGET:おっぱい引っぱりカウント += 1
+
+RETURN 1
+
+;-------------------------------------------------
+;実行判定
+;-------------------------------------------------
+@COM_ABLE_S60_7
+;実行判定
+SIF SAVESTR:ゲームフェイズ管理 != "通常モード"
+	RETURN 0
+;一括管理
+SIF GLOBAL_COMABLE_S("60_7")
+	RETURN RESULT
+;あなたが指を何かに使ってるなら無理
+SIF TEQUIP:PLAYER:指
+	RETURN 0
+;巨乳以上でなければ実行不可
+SIF TALENT:TARGET:バストサイズ < 1
+	RETURN 0
+;体格差はあっても多分実行できそうなのでヨシ
+
+;正常位じゃない時はアウト。対面座位とかでも出来はするんだけど、対面まで包括したグッとくるコマンド名が思い浮かばずやむなく正常位限定とする
+SIF !MODE_存在判定_完全一致("正常位", PLAYER, TARGET)
+	RETURN 0
+RETURN 1
+
+;-------------------------------------------------
+;実行時メッセージ
+;-------------------------------------------------
+@MESSAGE_COM_S60_7
+#DIM 同時キャラ番号
+PRINTFORM %CALLNAME:PLAYER%는,
+IF TALENT:TARGET:長乳
+	PRINTFORM %CALLNAME:PLAYER%에게 %TEXTR("몇 번이고/수없이/반복해서")% 잡아당겨져서 완전히 %TEXTR("천박하게/너덜너덜하게")% 늘어져 %TEXTR("버렸/")%다
+ELSE
+	PRINTFORM %TEXTR("누워 있는/찌를 때마다 눈앞에서 흔들리는/흔들리며 당신을 유혹하는")%
+ENDIF
+PRINTFORM %CALLNAME:TARGET%의
+IF TALENT:TARGET:バストサイズ == 3
+	;魔乳
+	;「あまりにもデカすぎるデカパイ」、頭悪すぎて好き
+	;「下品に育ちきった」とか「だらしなく実った」とかもアリかもしれないけど……純愛シチュの時に貶すようなワード出てもアレかもなぁってことで一応保留
+	PRINTFORM %TEXTR("킹사이즈의/너무나도 거대한/사람 머리만 한 크기의/규격 외 사이즈의")%%TEXTR("가슴/왕젖통/마유")%
+ELSEIF TALENT:TARGET:バストサイズ == 2
+	;爆乳
+	PRINTFORM %TEXTR("손바닥에서 넘쳐흐를 정도의/평소부터 남자들의 시선을 사로잡아 마지않는/꿈이 가득한")%%TEXTR("가슴/왕젖통/폭유")%
+ELSEIF TALENT:TARGET:バストサイズ == 1
+	;巨乳
+	IF TALENT:TARGET:種族 == 3
+	;ドラフ
+	;「小さめな巨乳」という矛盾したワード
+		PRINTFORM 드라프치고는 작은 편인 %TEXTR("왕젖통/거유")%
+	ELSE
+		PRINTFORM %TEXTR("볼륨감 넘치는/움켜쥐기 딱 좋은 크기의")%%TEXTR("가슴/왕젖통/거유")%
+	ENDIF
+ENDIF
+PRINTFORM 을 %TEXTR("꾸욱/꼬옥")%
+CALL PRINT_STR("_H_")
+PRINTFORML 하고 %TEXTR("움켜쥐며/와락 움켜쥐고/손바닥 가득 움켜쥐고")%,
+PRINTFORM %TEXTR("뭉개애애～～앳/꾸물꾸물～～앳")%
+CALL PRINT_STR("_H__H__H_")
+PRINTFORML 하고 잡아당기면서 %TEXTR("강하게/격렬하게/거칠게")% 허리를 부딪쳤다……
+
+IF CFLAG:TARGET:おっぱい引っぱりカウント >= 20 && TALENT:TARGET:長乳 == 0
+	PRINTW
+	PRINTFORM 몇 번이고 몇 번이고 반복해서 %CALLNAME:PLAYER%에게 교미 시의 고삐가 된 %CALLNAME:TARGET%의
+	IF TALENT:TARGET:バストサイズ == 3
+		PRINTFORM 마유
+	ELSEIF TALENT:TARGET:バストサイズ == 2
+		PRINTFORM 폭유
+	ELSEIF TALENT:TARGET:バストサイズ == 1
+		PRINTFORM 거유
+	ENDIF
+	PRINTFORML 는,
+	PRINTFORM 집요하게 잡아당겨진 탓에 너덜너덜하게 세로로 늘어져,
+	SETCOLOR カラーパレット("えっちな色")
+		PRINT [장유]
+	RESETCOLOR
+	PRINTFORML 가 되어버렸다……
+	TALENT:TARGET:長乳 = 1
+ENDIF

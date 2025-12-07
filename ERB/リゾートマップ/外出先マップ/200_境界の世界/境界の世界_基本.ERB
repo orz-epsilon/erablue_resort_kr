@@ -1,0 +1,199 @@
+
+@MAP_VIEWING_200(AA)
+#DIMS REF AA, 0
+TRYCALLFORM MAP_RESORT_200_{TFLAG:マップ種別}(AA)
+
+@エリア情報登録_200(ARGS)
+SELECTCASE ARGS
+	CASE "エリア名"
+		TSTR:場所名受渡 = 경계의 백성 마을
+	CASE "エリア移動可能場所"
+		RETURN 1
+	CASE "選択肢名"
+		TSTR:場所名受渡 = 경계의 세계
+	CASE "外出先出現条件"
+		SIF ダンジョンクリアフラグ_境界への導き < 1
+			RETURN 0
+		
+		RETURN 1
+	CASE "外出先説明"
+		TSTR:ツールチップ受渡 = 
+		TSTR:ツールチップ受渡 += "■경계의 세계<br>"
+		TSTR:ツールチップ受渡 += "<br>"
+		TSTR:ツールチップ受渡 += "하늘의 세계와 붉은 지평선 사이에 있는 기묘한 세계. <br>"
+		TSTR:ツールチップ受渡 += "별의 백성 타피라와 소수의 사람들이 조용히 살고 있다. <br>"
+		TSTR:ツールチップ受渡 += "<br>"
+		TSTR:ツールチップ受渡 += "※이벤트 작성 중이므로, 외출해도 이벤트는 진행되지 않습니다. <br>"
+		TSTR:ツールチップ受渡 += "<br>"
+		TSTR:ツールチップ受渡 += "거주 캐릭터: 타피라, 시토리<br>"
+ENDSELECT
+
+@外出先_登場キャラ設定_200(対象キャラ)
+#DIM 対象キャラ
+
+SIF GROUPMATCH(NO:対象キャラ, 997, 410)
+	RETURN 1
+
+RETURN 0
+
+
+@MAP_RESORT_200_0(AA)
+#DIMS REF AA, 0
+#DIM MAP
+
+MAP = 0
+AA:(MAP++) = 　
+AA:(MAP++) = 　　┌─────┐
+AA:(MAP++) = 　　│　　　　　│
+AA:(MAP++) = 　　│　　01　　│
+AA:(MAP++) = 　　│　　　　　│　　　　　　　　　　　　　　　　　　┌───┐
+AA:(MAP++) = 　　└─────┘　　　　　　　　　　　　　　　　　　│　　　│
+AA:(MAP++) = 　　　　　　　　　　　　　　　　　　　　　　　　　　　│　02　│
+AA:(MAP++) = 　　　　　　　　　　　　　　　　　　　　　　　　　　　│　　　│
+AA:(MAP++) = 　　　　　　　　　　　　　　┌───┐　　　　　　　　└───┘
+AA:(MAP++) = 　　　　　　　　　　　　　　│　　　│
+AA:(MAP++) = 　　　　　　　　　　　　　　└───┘
+AA:(MAP++) = 　　　　　┌─┐　
+AA:(MAP++) = 　　　　　│　│
+AA:(MAP++) = 　　　　　│　│　　　　　　　　　　　　　　　┌─┐
+AA:(MAP++) = 　　　　　│　│　　　　　　　　　　　　　　　│　│
+AA:(MAP++) = 　　　　　│　└───┐　　　　　　　　　　　└─┘
+AA:(MAP++) = 　　　　　│03　　　　│
+AA:(MAP++) = 　　　　　└─────┘
+AA:(MAP++) = 
+AA:(MAP++) = 　　　　≡≡≡≡≡≡≡≡≡　　　　　　　　　　　┌───┐
+AA:(MAP++) = 　　　　≡≡≡≡≡≡≡≡≡　　　　　　　　　　　│　　　│
+AA:(MAP++) = 　　　　≡≡≡≡畑≡≡≡≡　　　　　　　　　　　│　　　│
+AA:(MAP++) = 　　　　≡≡≡≡≡≡≡≡≡　　　　　　　　　　　│　04　│
+AA:(MAP++) = 　　　　≡≡≡≡≡≡≡≡≡　　　　　　　　　　　│　　　│
+AA:(MAP++) = 　　　　　　　　　　　　　　　　　　　　　　　　│　　　│
+AA:(MAP++) = 　　　　≡≡≡≡≡≡≡≡≡　　　　　　　　　　　└───┘
+AA:(MAP++) = 　　　　≡≡≡≡≡≡≡≡≡　　　　　　　　　　　　　　　┌─┐
+AA:(MAP++) = 　　　　≡≡≡≡畑≡≡≡≡　　　　　　　　　　　　　　　│　│
+AA:(MAP++) = 　　　　≡≡≡≡≡≡≡≡≡　　　　　　　　　　　　　　　└─┘
+AA:(MAP++) = 　　　　≡≡≡≡≡≡≡≡≡
+AA:(MAP++) = 　
+AA:(MAP++) = 　
+AA:(MAP++) = 01：タピィラの家　　　02：ミカとシトリの家　03：民家　　　　　　　04：空き家
+
+
+
+@GETPLACENAME_200_0(ARG)
+#FUNCTION
+SELECTCASE ARG
+	CASE 1
+		TSTR:場所名受渡 = 타피라의 집
+	CASE 2
+		TSTR:場所名受渡 = 미카와 시토리의 집
+	CASE 3
+		TSTR:場所名受渡 = 민가
+	CASE 4
+		TSTR:場所名受渡 = 빈집
+ENDSELECT
+
+@DRAW_MAP_BG_200_0(SLICED, 表示文字列)
+#DIMS REF 表示文字列
+#DIMS SLICED
+#DIM 改行フラグ
+
+SELECTCASE SLICED
+	CASE "≡"
+		表示文字列 += @"<font color='#ce0000'>%SLICED%</font>"
+	CASE "畑"
+		表示文字列 += @"<font color='#ce0000'>%SLICED%</font>"
+	;ふつうの
+	CASEELSE
+		表示文字列 += @"%SLICED%"
+ENDSELECT
+
+
+@外出先_封印コマンド設定_200(コマンド番号)
+#FUNCTION
+#DIMS コマンド番号
+
+;コマンド番号が封印するものなら０を返す、封印しないなら１を返す
+
+;日常系
+SIF GROUPMATCH(コマンド番号, "301", "316", "317", "318", "305", "320", "401", "402", "403", "404", "405", "411", "412")
+	RETURNF 0
+
+;性処理
+SIF GROUPMATCH(コマンド番号, "315")
+	RETURNF 0
+
+;セクハラ
+SIF GROUPMATCH(コマンド番号, "363")
+	RETURNF 0
+
+;業務系・誘い系
+SIF GROUPMATCH(コマンド番号, "600", "601", "602", "603", "604", "605")
+	RETURNF 0
+
+RETURNF 1
+
+
+@エリア来訪時イベント_200
+
+IF 境界の民の村初来訪イベントフラグ == 0
+	DRAWLINE
+	PRINTL ［첫 방문: 경계의 세계］
+	DRAWLINE
+	PRINTW
+	PRINTFORMW %CALLNAME:PLAYER%은(는) 별의 백성 타피라에게 이끌려 경계의 세계를 방문했다.
+	CALL CALLPRINT_用語解説("空の世界")
+	PRINT 하지만
+	CALL CALLPRINT_用語解説("赤き地平")
+	PRINTFORMW 도 아닌, 암운에 둘러싸여 황혼처럼 어둑어둑한 이상한 세계다.
+	PRINTFORMW 유일하게 구름 사이에 떠 있는 육지를 바라보니, 근처에 작은 마을이 보인다.
+	PRINTFORMW %CALLNAME:PLAYER%은(는) 배를 조종하여, 그 마을 근처에 착륙한다──.
+	PRINTL
+	PRINTFORMW ………
+	PRINTFORMW ……
+	PRINTFORMW …
+	PRINTL
+	PRINTFORMW 마을 입구에는 한 명의 미녀가 %CALLNAME:PLAYER% 일행을 기다리고 있었다.
+	PRINTL
+
+	CALLF 任意顔グラ表示用文字列関数(キャラ検索("[隠遁する星の民]タピィラ"),"顔_デフォルト",100,,,)
+	LOCALS = %立ち絵リソース記録%
+	IF LOCALS != "顔ノーイメ"
+		PRINT_IMG LOCALS, 1125, 1125
+		PRINTL 
+		PRINTL 
+		PRINTL 
+		PRINTL 
+		PRINTL 
+		PRINTL 
+		PRINTL 
+		PRINTL 
+		PRINTL 
+		PRINTL 
+	ENDIF
+	PRINTL 타피라:
+	PRINTFORMW 「기다리고 있었습니다, %CALLNAME:PLAYER%.
+	PRINTFORMW 　여기까지 와주셔서 정말 감사합니다」
+	PRINTL
+	PRINTBUTTON "[0] 여기는 뭐하는 곳이야? 라고 묻는다", 0
+	PRINTL
+	PRINTBUTTON "[1] era를 위해 왔다, 이야기를 진행해달라고 재촉한다", 1
+	PRINTL
+	BINPUT
+	IF RESULT == 0
+		PRINTL
+		PRINTL 타피라:
+		PRINTFORMW 「여기는 경계의 세계. 하늘과 붉은 지평선 사이에 있는 곳.
+		PRINTFORMW 　옛날에는 왕래할 수 없는 고립된 공간이었지만……
+		PRINTFORMW 　지금은 길만 알고 있다면 드나들 수 있는 정도의 장소일 뿐입니다.
+		PRINTFORMW 　예전에 여기에 있던 사람들도 밖으로 나갔습니다. 지금은 이제 손에 꼽을 정도의 사람만이 살고 있을 뿐입니다」
+		PRINTL
+	ENDIF
+	PRINTL
+	PRINTL 타피라:
+	PRINTFORMW 「그럼…… 본론으로 들어가기 전에, 제 집으로 가시죠.
+	PRINTFORMW 　조금 긴 이야기가 될 겁니다. 뭔가 해야 할 일이 있다면, 먼저 끝내두세요.」
+	PRINTL
+	PRINTFORMW 그렇게 말하며, 타피라는 마을 앞에 있는 집으로 들어간다.
+	PRINTFORMW 이야기를 들을 준비가 되면, 타피라 앞에서 「이벤트 진행」 명령을 실행하자.
+	境界の民の村初来訪イベントフラグ = 1
+ENDIF
+

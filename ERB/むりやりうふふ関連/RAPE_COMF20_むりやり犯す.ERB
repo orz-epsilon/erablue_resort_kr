@@ -1,0 +1,669 @@
+;-------------------------------------------------
+;無理やり犯す
+;セックス系コマンド、レベル1
+;-------------------------------------------------
+@RAPE_COMNAME20
+#FUNCTIONS
+TSTR:コマンド名受渡 = 억지로 범하다
+SIF MODE_確認_完全一致("Ｖ挿入系", PLAYER, TARGET) > -1
+	TSTR:コマンド名受渡 = 범하는 체위를 바꾸다
+
+SIF 派生名フラグ
+	TSTR:コマンド名受渡 = 억지로 범하다
+
+
+;===================================================
+;コマンドタイプ
+;===================================================
+@RAPE_COMTYPE_20
+#FUNCTION
+TFLAG:コマンドタイプ受渡 = RAPE_COMTYPE("Ｖ系")
+
+@RAPE_COM_TOOLTIP_20
+LOCALS = <br>■억지로 범하다<br>
+LOCALS += "상대의 질에 억지로 삽입하여 섹스를 하는 커맨드. <br>V삽입계 모드 시, [범하는 체위를 바꾸다]로 변화한다. <br>V삽입계 모드가 되어, 모드를 변경하거나 성행위를 종료할 때까지 지속적으로 쾌락이 발생한다. <br>[처녀]를 잃는다."
+LOCALS += "<br>RAPE_COM 타입: V계<br>획득 소스: 쾌V・노출・접촉・고통・불결(일정 조건 시)"
+LOCALS += "<br>고유 획득 경험: V성교 경험(TARGET)・C성교 경험_V삽입(PLAYER)<br>"
+TSTR:ツールチップ受渡 = %LOCALS%
+
+@RAPE_COM20
+
+;この時点であなたが相手にＶ挿入しているなら、「犯す体位を変える」として実行されているということになる。
+SIF MODE_確認_完全一致("Ｖ挿入系", PLAYER, TARGET) > -1
+	RFLAG:コマンド結果受渡し変数２ = 1
+
+	$体位_LOOP
+	DRAWLINE
+	PRINTL ■체위를 선택해 주세요
+	PRINTL
+	FOR LOCAL, 0, 20
+		TRYCCALLFORM RAPE_COM_ABLE20_{LOCAL}
+			IF RESULT
+				SELECTCASE LOCAL
+					CASE 0
+						PRINTBUTTONLC "[0]정상위", 0
+					CASE 1
+						PRINTBUTTONLC "[1]후배위", 1
+					CASE 2
+						PRINTBUTTONLC "[2]누운 후배위", 2
+					CASE 3
+						PRINTBUTTONLC "[3]대면 좌위", 3
+					CASE 4
+						PRINTBUTTONLC "[4]배면 좌위", 4
+					CASE 5
+						PRINTBUTTONLC "[5]기승위", 5
+					CASE 6
+						PRINTBUTTONLC "[6]측위", 6
+					CASE 7
+						PRINTBUTTONLC "[7]굴곡위", 7
+					CASE 8
+						PRINTBUTTONLC "[8]에키벤", 8
+					CASE 9
+						PRINTBUTTONLC "[9]배면 에키벤", 9
+					CASE 10
+						PRINTBUTTONLC "[10]대면 입위", 10
+					CASE 11
+						PRINTBUTTONLC "[11]서서 하는 백", 11
+				ENDSELECT
+			ENDIF
+		CATCH
+			CONTINUE
+		ENDCATCH
+	NEXT
+
+	PRINTL
+	PRINTL
+	PRINTBUTTONLC "[999]돌아가기", 999
+
+	$INPUT_LOOP
+	INPUT
+
+	LOCAL = RESULT
+	SELECTCASE LOCAL
+		CASE 0 TO 11
+			TRYCALLFORM RAPE_COM_ABLE20_{LOCAL}
+			IF RESULT
+				TRYCALLFORM RAPE_COM20_{LOCAL}
+				;メッセージ用に体位の種類を保存
+				RFLAG:コマンド結果受渡し変数 = LOCAL
+				RETURN 1
+			ENDIF
+			GOTO INPUT_LOOP
+		CASE 999
+			RETURN -1
+		CASEELSE
+			GOTO INPUT_LOOP
+	ENDSELECT
+
+
+@RAPE_COM20_0
+;引数は前から快楽量、露出量、接触量
+CALL 体位RAPE_COM(400, 50, 150)
+CALL MODE_CHANGE("正常位", PLAYER, TARGET)
+RETURN RESULT
+
+@RAPE_COM20_1
+;後背位
+CALL 体位RAPE_COM(400, 70, 100)
+CALL MODE_CHANGE("後背位", PLAYER, TARGET)
+RETURN RESULT
+
+@RAPE_COM20_2
+;寝バック
+CALL 体位RAPE_COM(600, 50, 150)
+CALL MODE_CHANGE("寝バック", PLAYER, TARGET)
+RETURN RESULT
+
+@RAPE_COM20_3
+;対面座位
+CALL 体位RAPE_COM(550, 70, 200)
+CALL MODE_CHANGE("対面座位", PLAYER, TARGET)
+RETURN RESULT
+
+@RAPE_COM20_4
+;背面座位
+CALL 体位RAPE_COM(450, 90, 120)
+CALL MODE_CHANGE("背面座位", PLAYER, TARGET)
+RETURN RESULT
+
+@RAPE_COM20_5
+;騎乗位
+CALL 体位RAPE_COM(500, 120, 150)
+CALL MODE_CHANGE("騎乗位", PLAYER, TARGET)
+RETURN RESULT
+
+@RAPE_COM20_6
+;側位
+CALL 体位RAPE_COM(500, 70, 100)
+CALL MODE_CHANGE("側位", PLAYER, TARGET)
+RETURN RESULT
+
+@RAPE_COM20_7
+;屈曲位
+CALL 体位RAPE_COM(550, 70, 100)
+CALL MODE_CHANGE("屈曲位", PLAYER, TARGET)
+RETURN RESULT
+
+@RAPE_COM20_8
+;駅弁
+CALL 体位RAPE_COM(450, 70, 200)
+CALL MODE_CHANGE("駅弁", PLAYER, TARGET)
+RETURN RESULT
+
+@RAPE_COM20_9
+;背面駅弁
+CALL 体位RAPE_COM(400, 110, 120)
+CALL MODE_CHANGE("背面駅弁", PLAYER, TARGET)
+RETURN RESULT
+
+@RAPE_COM20_10
+;対面立位
+CALL 体位RAPE_COM(400, 70, 150)
+CALL MODE_CHANGE("対面立位", PLAYER, TARGET)
+RETURN RESULT
+
+@RAPE_COM20_11
+;立ちバック
+CALL 体位RAPE_COM(450, 90, 100)
+CALL MODE_CHANGE("立ちバック", PLAYER, TARGET)
+RETURN RESULT
+
+
+
+@体位RAPE_COM(ARG, ARG:1, ARG:2)
+;-------------------------------------------------
+;RAPE_COM別FLAGの設定
+;-------------------------------------------------
+
+;-------------------------------------------------
+;ソース追加処理
+;-------------------------------------------------
+
+CALL SOURCE_CALC_快Ｖ(TARGET, PLAYER, ARG)
+CALL SOURCE_CALC_露出(TARGET, PLAYER, ARG:1)
+CALL SOURCE_CALC_接触(TARGET, PLAYER, ARG:2)
+
+IF MODE_確認_ターゲット側("ペニスバンド", PLAYER) < 0
+	CALL SOURCE_CALC_快Ｃ(PLAYER, TARGET, ARG)
+ELSE
+	CALL SOURCE_CALC_快Ｖ(PLAYER, TARGET, ARG / 3)
+ENDIF
+
+;苦痛
+LOCAL = 200 * PAIN_CHECK_V(TARGET) / 1000
+CALL SOURCE_CALC_苦痛(TARGET, PLAYER, LOCAL)
+
+;貞操観念
+IF !TALENT:恋慕
+	IF TALENT:貞操 == 1
+		CALL SOURCE_CALC_不潔(TARGET, PLAYER, 500)
+	ELSEIF TALENT:貞操 == 0
+		CALL SOURCE_CALC_不潔(TARGET, PLAYER, 250)
+	ENDIF
+ENDIF
+
+;処女喪失
+
+IF TALENT:TARGET:処女
+	CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>%CALLNAME:TARGET%의 처녀를 억지로 빼앗았다.</font><img src='えっちハート'>","うふふ")
+	CALL 履歴データベース登録(CFLAG:TARGET:人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>%CALLNAME:PLAYER%에게 억지로 범해져서, 처녀를 빼앗기고 말았다.</font><img src='えっちハート'>","うふふ")
+ENDIF
+CALL LOST_VIRGIN(TARGET, PLAYER, 1)
+CALL LOST_MAN_VIRGIN(PLAYER, TARGET)
+
+
+;-------------------------------------------------
+;経験の処理
+;-------------------------------------------------
+EXP:Ｖ性交経験 ++
+EXP:PLAYER:Ｃ性交経験_Ｖ挿入 ++
+
+;同性愛　レズなら戻り値1ゲイなら戻り値2
+IF HETEROSEX(TARGET,PLAYER)
+	EXP:同性愛経験 += 4
+	EXP:PLAYER:同性愛経験 += 4
+ENDIF
+
+	EXP:愛情経験 += TALENT:恋慕 * 2
+	;処女
+	SIF TALENT:処女 && TALENT:恋慕
+		EXP:愛情経験 += ARG:2 / 15
+
+RETURN 1
+
+
+
+;-------------------------------------------------
+;実行判定
+;-------------------------------------------------
+
+@RAPE_COM_ABLE20
+;V挿入共通実行判定
+;一括管理
+SIF GLOBAL_RAPE_COMABLE(20)
+	RETURN RESULT
+;Vがない場合駄目
+SIF TALENT:TARGET:Ｖ感度 == -2
+	RETURN 0
+;調教者がオトコ、半人半妖、ふたなりの場合はある程度勃起してないとダメ
+SIF (TALENT:PLAYER:性別 & 2) && BASE:PLAYER:勃起 < 1000
+	RETURN 0
+;オトコだとダメ
+SIF !(TALENT:性別 & 1)
+	RETURN 0
+
+;調教者がオトコ、半人半妖、ふたなり、もしくはペニスバンドがないとダメ
+SIF !(TALENT:PLAYER:性別 & 2) && MODE_確認_ターゲット側("ペニスバンド", PLAYER) < 0
+	RETURN 0
+;処女かつ潤滑不足はだめ
+SIF PALAM:潤滑 < PALAMLV:3 && TALENT:処女
+	RETURN 0
+;処女でなくとも潤滑不足はだめ
+SIF PALAM:潤滑 < PALAMLV:2
+	RETURN 0
+
+;下半身着衣
+;前鎧、めくれない服、タイツ、前張りがあると無理
+SIF TEQUIP:下腹部前鎧あり
+	RETURN 0
+SIF TEQUIP:下半身服あり && (!TEQUIP:スカートめくり可 && !TEQUIP:ずらし可)
+	RETURN 0
+SIF TEQUIP:下タイツあり && !TEQUIP:下タイツ破れ
+	RETURN 0
+SIF TEQUIP:下半身下着あり == 2
+	RETURN 0
+
+IF MODE_確認_完全一致("Ｖ挿入系", PLAYER, TARGET) < 0 && MODE_確認_完全一致("Ｖ挿入系", TARGET, PLAYER) < 0
+	;ちんこを何かに使ってる・届かないなら無理（V挿入中は許可）
+	SIF TEQUIP:PLAYER:ペニス
+		RETURN 0
+	SIF TEQUIP:TARGET:膣
+		RETURN 0
+ENDIF
+
+;オートコマンド中の制限
+IF FLAG:オートコマンド判定中フラグ
+	SIF MODE_確認_完全一致("Ｖ挿入系", PLAYER, TARGET) > -1 || MODE_確認_完全一致("Ｖ挿入系", TARGET, PLAYER) > -1
+		RETURN 0
+ENDIF
+
+RETURN 1
+
+;力ずくでモノにしている状況で、やれベッドがないとダメだのマットがないとダメだのなんて気にしない
+
+
+@RAPE_COM_ABLE20_0
+;正常位
+
+RETURN 1
+
+@RAPE_COM_ABLE20_1
+;後背位
+;だいたいいつでもOK
+
+RETURN 1
+
+@RAPE_COM_ABLE20_2
+;寝バック
+RETURN 1
+
+@RAPE_COM_ABLE20_3
+;対面座位
+
+RETURN 1
+
+@RAPE_COM_ABLE20_4
+;背面座位
+
+RETURN 1
+
+@RAPE_COM_ABLE20_5
+;騎乗位
+
+;睡眠中ダメ
+SIF CFLAG:TARGET:睡眠
+	RETURN 0
+
+RETURN 1
+
+@RAPE_COM_ABLE20_6
+;側位
+
+RETURN 1
+
+@RAPE_COM_ABLE20_7
+;屈曲位
+
+RETURN 1
+
+@RAPE_COM_ABLE20_8
+;駅弁
+;男側がハーヴィンかつ相手がハーヴィン以外だとダメ
+SIF TALENT:PLAYER:種族 == 4 && TALENT:TARGET:種族 != 4
+	RETURN 0
+;睡眠中ダメ
+SIF CFLAG:TARGET:睡眠
+	RETURN 0
+
+RETURN 1
+
+@RAPE_COM_ABLE20_9
+;背面駅弁
+;男側がハーヴィンかつ相手がハーヴィン以外だとダメ
+SIF TALENT:PLAYER:種族 == 4 && TALENT:TARGET:種族 != 4
+	RETURN 0
+;睡眠中ダメ
+SIF CFLAG:TARGET:睡眠
+	RETURN 0
+
+RETURN 1
+
+@RAPE_COM_ABLE20_10
+;対面立位
+;男側がハーヴィンかつ相手がハーヴィン以外だとダメ
+SIF TALENT:PLAYER:種族 == 4 && TALENT:TARGET:種族 != 4
+	RETURN 0
+;睡眠中ダメ
+SIF CFLAG:TARGET:睡眠
+	RETURN 0
+
+RETURN 1
+
+@RAPE_COM_ABLE20_11
+;立ちバック
+;男側がハーヴィンかつ相手がハーヴィン以外だとダメ
+SIF TALENT:PLAYER:種族 == 4 && TALENT:TARGET:種族 != 4
+	RETURN 0
+;睡眠中ダメ
+SIF CFLAG:TARGET:睡眠
+	RETURN 0
+
+RETURN 1
+
+
+;-------------------------------------------------
+;実行時メッセージ
+;-------------------------------------------------
+@RAPE_MESSAGE_COM20
+#DIM 同時キャラ番号
+#DIM 対象キャラ
+#DIM 対象キャラ２
+
+SELECTCASE RFLAG:コマンド結果受渡し変数
+	CASE 0
+		;正常位
+		PRINTFORML %CALLNAME:PLAYER%은(는) 똑바로 눕혀 쓰러뜨린 %CALLNAME:TARGET%의,
+	CASE 1
+		;後背位
+		PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%을(를) 네 발로 엎드리게 붙잡고,
+	CASE 2
+		;寝バック
+		PRINTFORML %CALLNAME:PLAYER%은(는) 엎드리게 붙잡은 %CALLNAME:TARGET%의,
+	CASE 3
+		;対面座位
+		PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%을(를) 마주 보게 안고,
+	CASE 4
+		;背面座位
+		PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%을(를) 뒤에서 안고,
+	CASE 5
+		;騎乗位
+		PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%을(를) 위에 태우고, 그대로 아래에서,
+	CASE 6
+		;側位
+		PRINTFORML %CALLNAME:PLAYER%은(는) 옆으로 눕힌 %CALLNAME:TARGET%의,
+	CASE 7
+		;屈曲位
+		PRINTFORML %CALLNAME:PLAYER%은(는) 누워 있는 %CALLNAME:TARGET%의 다리를 들어 올리고,
+	CASE 8
+		;駅弁
+		PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%을(를) 마주 본 채 들어 올리고,
+	CASE 9
+		;背面駅弁
+		PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%을(를) 뒤로 안아 올리고,
+	CASE 10
+		;対面立位
+		PRINTFORML %CALLNAME:PLAYER%은(는) 선 채로의 %CALLNAME:TARGET%의 한쪽 다리를 들어 올리고,
+	CASE 11
+		;立ちバック
+		PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%에게 뒤로 엉덩이를 내밀게 하고,
+ENDSELECT
+
+	IF TALENT:TARGET:恋人持ち == 1
+		;恋人持ち
+		IF TALENT:TARGET:処女
+			PRINTFORM %TEXTR("아직 연인의 침입도 허락하지 않은/아직 연인에게도 손대지 않은/연인에게 바칠 예정이었을/연인을 위해 막을 남겨두었을")%
+		ELSE
+			PRINTFORM 연인에게만 허락해야 했을
+		ENDIF
+	ELSEIF TALENT:TARGET:恋人持ち == 2
+		;人妻
+		IF TALENT:TARGET:処女
+			PRINTFORM 결혼했으면서도, 아직 남편의 침입도 허락하지 않았던
+		ELSE
+			PRINTFORM 남편에게만 허락해야 했을
+		ENDIF
+	ELSEIF TALENT:TARGET:恋人持ち == 3
+	;未亡人
+		IF TALENT:TARGET:処女
+			PRINTFORM 옛 남편에게%TEXTR("바치는 것조차 이루지 못했던/정조를 지켰을")% 미망인의
+		ELSE
+			PRINTFORM 남편을 잃고%TEXTR("남자 가뭄/욕구불만")%이었을 성숙한
+		ENDIF
+	ELSEIF TALENT:TARGET:恋人持ち == -1
+	;想い人あり
+		IF TALENT:TARGET:処女
+			PRINTFORM %TEXTR("아직 연모하는 사람에게도 침입을 허락하지 않은/아직 누구에게도 손대지 않은/연모하는 사람에게 바칠 예정이었을/연모하는 사람을 위해 막을 남겨두었을")%
+		ELSE
+			PRINTFORM 연모하는 사람에게만 허락해야 했을
+		ENDIF
+	ELSEIF キャラ一致チェック(TARGET, "[蒼天の剣閃]モニカ") || キャラ一致チェック(TARGET, "[スカイセイバー]リーシャ")
+		IF TALENT:TARGET:処女
+			PRINTFORM 질서처럼 굳게 지켜왔을
+		ELSE
+			PRINTFORM 질서처럼 흐트러지지 않았을
+		ENDIF
+	ELSEIF TALENT:TARGET:種族 == 5 && TALENT:TARGET:処女
+	;星晶獣かつ処女
+		PRINTFORM %TEXTR("불로/장명")%의 존재이면서도 순결을 지킨 채의
+	ELSEIF TALENT:TARGET:処女
+		IF RAND:4 == 0
+			PRINTFORM %CALLNAME:PLAYER%에게 범해지기 위해 지금까지 순결을 지켜주었던
+		ELSE
+			PRINTFORM %TEXTR("순결을 지키고 있던/아직 순진한/아직 사용되지 않은")%
+		ENDIF
+	ELSE
+	;その他　犯す側の、自分勝手であまりにも都合の良い解釈
+		PRINTFORM %CALLNAME:PLAYER%%TEXTR("의 페니스를 음란하게 유혹하는/의 사타구니를 흥분시키는/의 수욕을 끊임없이 흥분시키는")%
+	ENDIF
+	
+;	PRINTFORM %CALLNAME:TARGET%の
+	
+	;おまんこ冠詞群
+	;範囲が狭くシコリティの高そうなものから順につけていく
+	IF 知識素質:TARGET:高貴 >= 1
+	;高貴持ち
+		PRINTFORM 고귀한
+	ELSEIF アイドル判定(対象キャラ)
+	;アイドル勢
+		PRINTFORM 아이돌
+	ELSEIF 固有素質チェック(対象キャラ, "女子高生")
+		PRINTFORM 여고생
+	ELSEIF 固有素質チェック(対象キャラ, "中学生")
+		PRINTFORM 중학생
+	ELSEIF 固有素質チェック(対象キャラ, "小学生")
+		PRINTFORM 초등학생
+	ELSEIF 固有素質チェック(対象キャラ, "サーヴァント")
+	;包括して英霊という表現を使っていいものかは……まぁ文句来たら変えればヨシ
+		PRINTFORM %TEXTR("영령/서번트")%
+	ELSEIF TALENT:TARGET:ギャル
+	;ギャル
+		PRINTFORM 갸루
+	ELSEIF TALENT:TARGET:子持ち
+	;子持ち
+		PRINTFORM 경산부의
+	ELSEIF TALENT:TARGET:経験豊富
+	;経験豊富
+		PRINTFORM %TEXTR("경험이 풍부한/많이 사용된")%
+	ELSEIF TALENT:TARGET:性別嗜好 == 1
+	;男嫌い
+		PRINTFORM 남자를 싫어하는
+	ELSEIF TALENT:TARGET:種族 == 4
+	;ハーヴィン
+		PRINTFORM 하빈의 작은
+	ELSEIF TALENT:TARGET:種族 == 5
+	;星晶獣
+		IF TALENT:TARGET:処女
+			PRINTFORM %TEXTR("노처녀/나이 든 여자/신품급 중고")%
+		ELSE
+			PRINTFORM 강대한 성정수의
+		ENDIF
+	ELSEIF TALENT:TARGET:年齢層 == 10 || (BASE:TARGET:年齢 <= 13 && BASE:TARGET:年齢 != 0)
+	;幼い
+		PRINTFORM 어리고 미숙한
+	ELSEIF TALENT:TARGET:体格 <= -1
+	;小柄以下
+		PRINTFORM %TEXTR("작고 좁은/좁고 꽉 끼는")%
+	ELSEIF TALENT:TARGET:処女 && TALENT:TARGET:性的興味 == 1
+	;処女かつ好奇心
+		PRINTFORM 음흉한 변태 같은
+	ENDIF
+	
+	IF RISKY_DAY(TARGET) >= 1
+		IF CFLAG:TARGET:発情期フラグ < 0
+			PRINTFORM 발정
+		ELSE
+			PRINTFORM 위험한 날
+		ENDIF
+	ENDIF
+	
+	SIF TALENT:TARGET:恋人持ち == 3
+		PRINTFORM %TEXTR("미망인/독신")%
+	SIF TALENT:TARGET:恋人持ち == 2
+		PRINTFORM 유부녀
+	SIF (TALENT:TARGET:年齢層 == 16 && TALENT:TARGET:外見年齢 == 10) || (TALENT:TARGET:年齢層 == 16 && TALENT:TARGET:外見年齢 == 11)
+		PRINTFORM 로리 할머니
+	SIF TALENT:TARGET:処女
+		PRINTFORM %TEXTR("미통/처녀/미사용")%
+	SIF TALENT:TARGET:年齢層 == 10 || (BASE:TARGET:年齢 <= 13 && BASE:TARGET:年齢 != 0)
+		PRINTFORM %TEXTR("로리/아이/아이/애새끼")%
+	
+	PRINTFORM 보지에
+
+IF MODE_確認_ターゲット側("ペニスバンド", PLAYER) < 0
+	PRINTFORM %TEXTR("딱딱하게 발기하고/단단하게 솟아오른")% %TEXTR("음경/자지/페니스/육봉")%
+ELSE
+	PRINTFORM 페니스 밴드
+ENDIF
+
+PRINTFORML 을(를) %TEXTR("삽입해 나갔다/밀어 넣었다/쑤셔 넣었다/쑤셔 넣어 나갔다/파묻어 나갔다")%…
+PRINTL
+;おまけ
+IF TCVAR:TARGET:泥酔眠姦 < 1
+	IF キャラ一致チェック(TARGET, "[炎舞の紅脚]アリーザ")
+		PRINTFORM %CALLNAME:TARGET%은(는) 몽롱한 의식 속에서, 헛소리처럼 스탄%TEXTR("의 이름을 부르고 있/에게 사죄를 반복하고 있")%
+		IF PALAM:欲情 >= PALAMLV:3
+			PRINTFORML 하지만,
+			PRINTFORML %CALLNAME:PLAYER%이(가) 허리를 찔러 넣자 점차 그 목소리는 쾌락에 녹아 교성 속에 파묻혀갔다…
+		ELSE
+			PRINTFORML 다…
+		ENDIF
+		PRINTW 
+		PRINTFORM 　　　　　　　　「%TEXTR("미안해, 스탄/스탄……나, 이제")%……읏
+		CALL PRINT_STRL(@"_H_」")
+	ELSEIF キャラ一致チェック(TARGET, "[狂恋の華鎧]ヴィーラ")
+		対象キャラ２ = キャラ検索("[蒼天の守護騎士]カタリナ・アリゼ")
+		IF STRFIND(経験相手:対象キャラ２:Ｖ挿入初体験, @"-{CFLAG:PLAYER:人物番号}-") >= 0
+		;カタリナとヤったことがある場合。ド級の畜生、「ド畜生」である。
+			PRINTFORM %CALLNAME:PLAYER%이(가) 장난스럽게
+			IF RAND:2 == 0
+				PRINTFORML 「%TEXTR("카타리나보다 기분 좋아/카타리나보다 잘 조여져")%」라고 가장 사랑하는 언니와의 관계를 암시하자,
+			ELSE
+				PRINTFORML 「%TEXTR("이거라면 카타리나가 더 기분 좋았어/이거라면 카타리나가 더 잘 조여져서 기분 좋았어")%」라고 가장 사랑하는 언니를 빌미로 비라를 깎아내리자,
+			ENDIF
+			PRINTFORML 비라는 몽롱하게%TEXTR("하면서/달콤한 목소리를 내면서/교성을 내면서")%도 필사적으로 %CALLNAME:PLAYER%을(를) 노려보았다……
+		ELSE
+			PRINTFORM %CALLNAME:TARGET%은(는) 몽롱한 의식 속에서, 헛소리처럼 카타리나%TEXTR("의 이름을 부르고 있/에게 사죄를 반복하고 있")%
+			IF PALAM:欲情 >= PALAMLV:3
+				PRINTFORML 하지만,
+				PRINTFORML %CALLNAME:PLAYER%이(가) 허리를 찔러 넣자 점차 그 목소리는 쾌락에 녹아 교성 속에 파묻혀갔다…
+			ELSE
+				PRINTFORML 다…
+			ENDIF
+			PRINTW 
+			PRINTFORM 　　　　　　　　「아아……언니, 님아……읏
+			CALL PRINT_STRL(@"_H_」")
+		ENDIF
+	ELSEIF キャラ一致チェック(TARGET, "[純白の花嫁]ジュリエット")
+		PRINTFORM %CALLNAME:TARGET%은(는) 몽롱한 의식 속에서, 헛소리처럼 로미오%TEXTR("의 이름을 부르고 있/에게 사죄를 반복하고 있")%
+		IF PALAM:欲情 >= PALAMLV:3
+			PRINTFORML 하지만,
+			PRINTFORML %CALLNAME:PLAYER%이 허리를 찔러 넣자 점차 그 목소리는 쾌락에 녹아 교성 속에 묻혀갔다…
+		ELSE
+			PRINTFORML 르…
+		ENDIF
+		PRINTW 
+		PRINTFORM 　　　　　　　　「아아……로미오……미안해요……!
+		CALL PRINT_STRL(@"_H_」")
+	ELSEIF キャラ一致チェック(TARGET, "[奮い立つ決意の盾]マシュ・キリエライト")
+		PRINTFORM %CALLNAME:TARGET%은 몽롱한 의식 속에서 헛소리처럼 「선배」라는 사람%TEXTR("을 부르고 있/에게 사죄를 반복하고 있")%
+		IF PALAM:欲情 >= PALAMLV:3
+			PRINTFORML 었지만,
+			PRINTFORML %CALLNAME:PLAYER%이 허리를 찔러 넣자 점차 그 목소리는 쾌락에 녹아 교성 속에 묻혀갔다…
+		ELSE
+			PRINTFORML 르…
+		ENDIF
+		PRINTW 
+		PRINTFORM 　　　　　　　　「아아, 아……선, 배……
+		CALL PRINT_STRL(@"_H_」")
+	ELSEIF キャラ一致チェック(TARGET, "[トラブルメーカープリンセス]ララ・サタリン・デビルーク") || キャラ一致チェック(TARGET, "[ハレンチ！風紀委員]古手川唯") || キャラ一致チェック(TARGET, "[密かな片思い]西連寺春菜") || キャラ一致チェック(TARGET, "[清楚な小悪魔]モモ・ベリア・デビルーク") || キャラ一致チェック(TARGET, "[結城家の大黒柱]結城美柑")
+		;ToLoveる勢で犯されたときにリトにごめんねしそうな子ら。想い人ありがない子もいるのでわりと勝手めなチョイスかも？
+		PRINTFORM %CALLNAME:TARGET%은 몽롱한 의식 속에서 헛소리처럼 연인%TEXTR("스러운 이름을 부르고 있/에게 사죄를 반복하고 있")%
+		IF PALAM:欲情 >= PALAMLV:3
+			PRINTFORML 었지만,
+			PRINTFORML %CALLNAME:PLAYER%이 허리를 찔러 넣자 점차 그 목소리는 쾌락에 녹아 교성 속에 묻혀갔다…
+		ELSE
+			PRINTFORML 르…
+		ENDIF
+		PRINTW
+		PRINTFORM 　　　　　　　　「아아, 아……
+		IF キャラ一致チェック(TARGET, "[トラブルメーカープリンセス]ララ・サタリン・デビルーク") || キャラ一致チェック(TARGET, "[結城家の大黒柱]結城美柑")
+			PRINTFORM 리토……나……
+		ELSEIF キャラ一致チェック(TARGET, "[ハレンチ！風紀委員]古手川唯") ||キャラ一致チェック(TARGET, "[密かな片思い]西連寺春菜")
+			PRINTFORM 유우키, 군……
+		ELSEIF キャラ一致チェック(TARGET, "[清楚な小悪魔]モモ・ベリア・デビルーク")
+			PRINTFORM 리토 씨…… 미안, 해요……
+		ENDIF
+		CALL PRINT_STRL(@"_H_」")
+	ELSEIF キャラ一致チェック(TARGET, "[盾舜六花]井上織姫")
+		PRINTFORM %CALLNAME:TARGET%은(는) 몽롱한 의식 속에서, 헛소리처럼 연인%TEXTR("의 이름을 부르고 있/에게 사죄를 반복하고 있")%
+		IF PALAM:欲情 >= PALAMLV:3
+			PRINTFORML 었지만,
+			PRINTFORML %CALLNAME:PLAYER%이 허리를 찔러 넣자 점차 그 목소리는 쾌락에 녹아 교성 속에 묻혀갔다…
+		ELSE
+			PRINTFORML 다…
+		ENDIF
+		PRINTW 
+		PRINTFORM 　　　　　　　　「아아, 아…… 쿠로사키, 군……
+		CALL PRINT_STRL(@"_H_」")
+	ELSEIF TALENT:TARGET:恋人持ち == 2
+		PRINTFORM %CALLNAME:TARGET%은(는) 몽롱한 의식 속에서, 헛소리처럼 반려에게 사죄를 반복하고 있
+		IF PALAM:欲情 >= PALAMLV:3
+			PRINTFORML 었지만,
+			PRINTFORML %CALLNAME:PLAYER%이 허리를 찔러 넣자 점차 그 목소리는 쾌락에 녹아 교성 속에 묻혀갔다…
+		ELSE
+			PRINTFORML 다…
+		ENDIF
+	ELSEIF TALENT:TARGET:恋人持ち == -1
+		PRINTFORM %CALLNAME:TARGET%은(는) 몽롱한 의식 속에서, 헛소리처럼 연인%TEXTR("의 이름을 부르고 있/에게 사죄를 반복하고 있")%
+		IF PALAM:欲情 >= PALAMLV:3
+			PRINTFORML 었지만,
+			PRINTFORML %CALLNAME:PLAYER%이 허리를 찔러 넣자 점차 그 목소리는 쾌락에 녹아 교성 속에 묻혀갔다…
+		ELSE
+			PRINTFORML 다…
+		ENDIF
+	ENDIF
+ELSE
+	PRINTFORML %CALLNAME:PLAYER%이 한 번 찌를 때마다 흔들흔들 몸을%TEXTR("흔들려도/흔들려도")%도,
+	PRINTFORML 만취한 %CALLNAME:TARGET%은(는) 무슨 일을 당하고 있는지 모르는 것 같다…
+ENDIF
+

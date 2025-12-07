@@ -1,0 +1,78 @@
+;変数の書き換えなどを伴なうバージョンアップ用
+@VERSION_UP
+
+;飛ばしたバージョンかどうかを判定する関数
+;バージョンを飛ばした場合、ここに飛ばしたバージョンを入れる
+@IS_SKIPPED_VERSION(ARG)
+#FUNCTION
+SELECTCASE ARG
+	CASE 48, 49
+		RETURNF 1
+	CASE 58 TO 99
+		RETURNF 1
+	CASEELSE
+		RETURNF 0
+ENDSELECT
+
+
+@バージョンアップ準備処理
+#DIM NEW_VERSION
+#DIM NEW_ALLOWVERSION
+#DIM VERCOUNT
+
+PRINTL erablue_resort 버전업 어시스턴트입니다(개발자용)
+PRINTL 버전업 준비를 하시겠습니까?
+PRINTBUTTONLC "[0]예", 0
+PRINTBUTTONLC "[1]아니오", 1
+
+BINPUT
+SIF RESULT == 1
+	RETURN
+
+NEW_VERSION = GAMEBASE_VERSION + 1
+NEW_ALLOWVERSION = MAX(GAMEBASE_ALLOWVERSION, NEW_VERSION - 2)
+
+CALL VERUP用ファイル生成(NEW_VERSION)
+
+PRINTFORML ./CSV/GameBase.csv의 "버전,{GAMEBASE_VERSION}"을 "버전,{NEW_VERSION}"으로
+PRINTFORML "버전 차이 인정,{GAMEBASE_ALLOWVERSION}"을 "버전 차이 인정,{NEW_ALLOWVERSION}"으로 덮어쓰세요
+PRINTL 
+PRINTFORML ./ERB_EDITFILE/VERUP_{NEW_VERSION}.ERB를 ./ERB/버전업 관련/에 두고, 대신 다음을 삭제하세요:
+FOR VERCOUNT, GAMEBASE_ALLOWVERSION, NEW_ALLOWVERSION
+	PRINTFORML ./ERB/버전업 관련/VERUP_{VERCOUNT}.ERB
+NEXT
+PRINTL 
+PRINTL 내부에서 사용되는 팔로우 변수의 정의도 적절히 삭제하세요
+WAIT
+
+CLEARLINE LINECOUNT
+RETURN 0
+
+@VERUP用ファイル生成(バージョン)
+#DIM バージョン
+
+REDRAW 0
+CLEARLINE LINECOUNT
+
+PRINTFORML ;Ver%TOSTR(バージョン, "0,.000")%과 구 버전과의 호환을 위한 처리
+PRINTFORML ;Ver%TOSTR(バージョン+3, "0,.000")%으로 했을 때 지울, 호환을 {バージョン+1}으로
+HTML_PRINT "<br>"
+PRINTL ;추가 TALENT, 추가 CSTR 체크
+PRINTFORML @VERUP_{バージョン}_CHARA(ARG)
+HTML_PRINT "<br>"
+PRINTL ;그 외 광역 변수 덮어쓰기 등
+PRINTFORML @VERUP_{バージョン}()
+HTML_PRINT "<br>"
+PRINTL ; IF 어떤 팔로우 == 0
+PRINTL ; 	;어떤 팔로우 처리
+PRINTL ; 	;ここで"なんらかフォロー = 1"하지 않는다
+PRINTL ; ENDIF
+HTML_PRINT "<br>"
+PRINTL ;대응 처리용 플래그를 대응 완료 상태로 설정
+PRINTFORML @VERUP_{バージョン}_FINISH()
+PRINTL ; なんらかフォロー = 1
+HTML_PRINT "<br>"
+
+OUTPUTLOG @"ERB_EDITFILE/VERUP_{バージョン}.ERB", 1
+CLEARLINE LINECOUNT
+REDRAW 1

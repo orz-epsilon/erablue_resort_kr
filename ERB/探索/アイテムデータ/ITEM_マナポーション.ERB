@@ -1,0 +1,47 @@
+
+@アイテム個別文章表示_マナポーション(ARGS)
+IF ARGS == "値段"
+	詳細文文字列受け渡し変数 = 루피
+	RETURN 6000
+ENDIF
+
+LOCALS = 
+LOCALS += @"■마나 포션　　　소지 수:{DT_CELL_GET("所持アイテムデータベース", 0, "マナポーション")}<br>"
+LOCALS += "마력을 회복하기 위한 흔한 포션. <br>"
+LOCALS += "마시면 적당한 MP를 회복할 수 있다. <br>"
+LOCALS += "범용품이지만 수요가 커서 가격이 조금 비싸다. <br>"
+LOCALS += "<br>"
+LOCALS += "【효과】<br>"
+LOCALS += "아군 단일 대상의 MP를 [300] 회복한다. <br>"
+
+詳細文文字列受け渡し変数 = %LOCALS%
+
+@アイテム使用先表示_マナポーション
+CALL 汎用使用先表示("味方単体")
+
+@アイテム効果処理_マナポーション(ARG)
+;ARG = 隊列の何番目か
+
+IF !BATTLE_STATE:ARG:キャラ登録番号
+	RETURN 0
+ENDIF
+
+IF DT_CELL_GET("所持アイテムデータベース", 0, "マナポーション") < 1
+	PRINTW 아이템이 없습니다
+	RETURN 0
+ENDIF
+
+IF BATTLE_STATE:ARG:最大ＭＰ == BATTLE_STATE:ARG:ＭＰ
+	PRINTW MP가 최대입니다
+	RETURN 0
+ENDIF
+
+IF BATTLE_STATE:ARG:最大ＭＰ - BATTLE_STATE:ARG:ＭＰ < 300
+	PRINTFORMW %CALLNAME:(BATTLE_STATE:ARG:キャラ登録番号)%의 MP를 {BATTLE_STATE:ARG:最大ＭＰ - BATTLE_STATE:ARG:ＭＰ} 회복했습니다
+ELSE
+	PRINTFORMW %CALLNAME:(BATTLE_STATE:ARG:キャラ登録番号)%의 MP를 300 회복했습니다
+ENDIF
+
+BATTLE_STATE:ARG:ＭＰ = MIN(BATTLE_STATE:ARG:ＭＰ + 300, BATTLE_STATE:ARG:最大ＭＰ)
+
+RETURN 1
