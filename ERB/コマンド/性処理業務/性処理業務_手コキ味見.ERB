@@ -354,7 +354,7 @@ IF TALENT:対象キャラ:恋慕
 	PRINTFORML 할인
 ;恋慕は完全無料
 	SETCOLOR カラーパレット("ピンク")
-	PRINTFORM %"だいすき割", 25, LEFT%：　　　　　%CALLNAME:PLAYER%한정100％할인
+	PRINTFORM %"だいすき割", 25, LEFT%：　　　　　%CALLNAME:PLAYER%한정100％ 할인
 	CALL PRINT_STRL(@"_H_")
 	RESETCOLOR
 	値段計算 *= 0

@@ -97,7 +97,7 @@ SELECTCASE ARGS
 			CALL メッセージ欄表示用関数()
 			CALL 接続ルート全開放処理(マス深度, マス分岐)
 			CALL 口上変数初期化
-			WSTR:(K++) = 「잘 들어라. 왼쪽 위에 _IMAGE_자신_아이콘_이 보이지?」
+			WSTR:(K++) = 「잘 들어라. 왼쪽 위에 _IMAGE_自機アイコン_이 보이지?」
 			WSTR:(K++) = 「그것이 너의 현재 위치다」
 			KSTR:(K++) = 「다른 칸을 클릭하여 이동할 수 있다. 시험 삼아 옆 칸으로 이동해 보거라」
 			CALL メッセージ欄表示用関数("顔エラ","星晶獣era",,0)
@@ -145,8 +145,8 @@ SELECTCASE ARGS
 			IF LOCAL:1 < 2
 				敵BATTLE_STATE_STR:1:エネミー名 = Lv2_ゴブリン
 			ELSE
-				敵BATTLE_STATE_STR:0:エネミー名 = Lv2_고블린
-				敵BATTLE_STATE_STR:1:エネミー名 = Lv2_고블린
+				敵BATTLE_STATE_STR:0:エネミー名 = Lv2_ゴブリン
+				敵BATTLE_STATE_STR:1:エネミー名 = Lv2_ゴブリン
 			ENDIF
 			CALL 雑魚敵遭遇汎用処理
 
@@ -342,8 +342,8 @@ SELECTCASE ARGS
 	CASE "マスイベント"
 		CALL 口上変数初期化
 		IF 初来訪マス判定用フラグ == 0
-			敵BATTLE_STATE_STR:0:エネミー名 = Lv2_바람의 엘리멘탈
-			敵BATTLE_STATE_STR:1:エネミー名 = Lv2_바람의 엘리멘탈
+			敵BATTLE_STATE_STR:0:エネミー名 = Lv2_風のエレメンタル
+			敵BATTLE_STATE_STR:1:エネミー名 = Lv2_風のエレメンタル
 			CALL 雑魚敵繰り返し戦闘処理
 		ELSE
 			;最初に訪れた時
@@ -351,8 +351,8 @@ SELECTCASE ARGS
 			KSTR:(K++) = ……아니, 이 강함은 자연의 바람이 아니다! 정령계의 적이다!
 			CALL メッセージ欄表示用関数()
 			
-			敵BATTLE_STATE_STR:0:エネミー名 = Lv2_바람의 엘리멘탈
-			敵BATTLE_STATE_STR:1:エネミー名 = Lv2_바람의 엘리멘탈
+			敵BATTLE_STATE_STR:0:エネミー名 = Lv2_風のエレメンタル
+			敵BATTLE_STATE_STR:1:エネミー名 = Lv2_風のエレメンタル
 			CALL 雑魚敵遭遇汎用処理
 			SETBIT ダンジョン構造配列_沿岸部の森:11:0, 1
 		ENDIF
@@ -476,9 +476,9 @@ SELECTCASE ARGS
 	CASE "マスイベント"
 		CALL 口上変数初期化
 		IF 初来訪マス判定用フラグ == 0
-			敵BATTLE_STATE_STR:0:エネミー名 = Lv2_바람의 엘리멘탈
-			敵BATTLE_STATE_STR:1:エネミー名 = Lv2_바람의 엘리멘탈
-			敵BATTLE_STATE_STR:2:エネミー名 = Lv2_바람의 엘리멘탈
+			敵BATTLE_STATE_STR:0:エネミー名 = Lv2_風のエレメンタル
+			敵BATTLE_STATE_STR:1:エネミー名 = Lv2_風のエレメンタル
+			敵BATTLE_STATE_STR:2:エネミー名 = Lv2_風のエレメンタル
 			CALL 雑魚敵繰り返し戦闘処理
 		ELSE
 			;最初に訪れた時
@@ -487,9 +487,9 @@ SELECTCASE ARGS
 			KSTR:(K++) = 그것들은 분별없이 날뛰며, 너희들에게도 덮쳐온다!
 			CALL メッセージ欄表示用関数()
 			
-			敵BATTLE_STATE_STR:0:エネミー名 = Lv2_바람의 엘리멘탈
-			敵BATTLE_STATE_STR:1:エネミー名 = Lv2_바람의 엘리멘탈
-			敵BATTLE_STATE_STR:2:エネミー名 = Lv2_바람의 엘리멘탈
+			敵BATTLE_STATE_STR:0:エネミー名 = Lv2_風のエレメンタル
+			敵BATTLE_STATE_STR:1:エネミー名 = Lv2_風のエレメンタル
+			敵BATTLE_STATE_STR:2:エネミー名 = Lv2_風のエレメンタル
 			CALL 雑魚敵遭遇汎用処理
 		ENDIF
 		CALL 画面再描画
@@ -589,9 +589,9 @@ SELECTCASE ARGS
 	CASE "マスイベント"
 		CALL 口上変数初期化
 		IF 初来訪マス判定用フラグ == 0
-			敵BATTLE_STATE_STR:0:エネミー名 = Lv2_고블린
-			敵BATTLE_STATE_STR:2:エネミー名 = Lv2_바람의 엘리멘탈
-			敵BATTLE_STATE_STR:4:エネミー名 = Lv2_고블린
+			敵BATTLE_STATE_STR:0:エネミー名 = Lv2_ゴブリン
+			敵BATTLE_STATE_STR:2:エネミー名 = Lv2_風のエレメンタル
+			敵BATTLE_STATE_STR:4:エネミー名 = Lv2_ゴブリン
 			CALL 雑魚敵繰り返し戦闘処理
 		ELSE
 			;最初に訪れた時
@@ -599,9 +599,9 @@ SELECTCASE ARGS
 			KSTR:(K++) = 미개발 지역이라고는 해도 리조트가 있는 섬에 마물이 많으면 곤란하다. 가능한 한 쓰러뜨리고 나아가자.
 			CALL メッセージ欄表示用関数()
 			
-			敵BATTLE_STATE_STR:0:エネミー名 = Lv2_고블린
-			敵BATTLE_STATE_STR:2:エネミー名 = Lv2_바람의 엘리멘탈
-			敵BATTLE_STATE_STR:4:エネミー名 = Lv2_고블린
+			敵BATTLE_STATE_STR:0:エネミー名 = Lv2_ゴブリン
+			敵BATTLE_STATE_STR:2:エネミー名 = Lv2_風のエレメンタル
+			敵BATTLE_STATE_STR:4:エネミー名 = Lv2_ゴブリン
 			CALL 雑魚敵遭遇汎用処理
 			SETBIT ダンジョン構造配列_沿岸部の森:11:5, 1
 		ENDIF

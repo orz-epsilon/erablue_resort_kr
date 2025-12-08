@@ -503,8 +503,8 @@ PRINTFORMW 잠시 동안의 러브러브%TEXTR("기분/교미/섹스")%를 즐�
 							CFLAG:ARG:現在マップ種別 = 部屋検索_マップ種別
 							CALL TARGET_SET()
 							;EVENTCOMENDからそのままもってきた。正直よくわかってない。
-LOCALS '= CSTR:ARG:코스프레 전의 옷
-LOCALS:1 '= CSTR:ARG:갈아입을 옷
+LOCALS '= CSTR:ARG:コスプレ前の服
+LOCALS:1 '= CSTR:ARG:着せ替え服
 							CSTR:ARG:コスプレ前の服 '= LOCALS
 							CALL CLOTHES_CHANGE(ARG, LOCALS:1)
 							;うふふに移行
@@ -570,8 +570,8 @@ PRINTFORML 손바닥으로 간호의 특권을 즐기며 열쇠를 열고 방에
 							CALL TARGET_SET()
 							;EVENTCOMENDからそのままもってきた。正直よくわかってない。
 							;むりやりうふふごっこのとこ
-							LOCALS '= CSTR:ARG:코스프레 전의 옷
-							LOCALS:1 '= CSTR:ARG:갈아입을 옷
+							LOCALS '= CSTR:ARG:コスプレ前の服
+							LOCALS:1 '= CSTR:ARG:着せ替え服
 							CALL ゲームフェイズ変更("むりやりうふふモード")
 							CSTR:ARG:コスプレ前の服 '= LOCALS
 							CALL CLOTHES_CHANGE(ARG, LOCALS:1)

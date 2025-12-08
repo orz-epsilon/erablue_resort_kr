@@ -521,7 +521,7 @@ NEXT
 @エネミー初期化処理(敵番号)
 #DIM 敵番号
 
-敵BATTLE_STATE_STR:敵番号:エネミー関数キー '= 敵BATTLE_STATE_STR:敵番号:적 이름
+敵BATTLE_STATE_STR:敵番号:エネミー関数キー '= 敵BATTLE_STATE_STR:敵番号:エネミー名
 CALLFORM 敵BATTLE_STATE_%敵BATTLE_STATE_STR:敵番号:エネミー関数キー%(敵番号)
 SIF 敵BATTLE_STATE:敵番号:行動速度 <= 0
 	敵BATTLE_STATE:敵番号:行動速度 = 1

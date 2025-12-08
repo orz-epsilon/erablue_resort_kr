@@ -190,7 +190,7 @@ ENDSELECT
 SELECTCASE 処理モード
 	CASE "アビ名"
 		SIF LEVEL > 0
-			TSTR:コマンド名受渡 '= 어빌명
+			TSTR:コマンド名受渡 '= アビ名
 	CASE "アビ説明文"
 		IF 対象キャラ <= 0 && LEVEL != 2
 			詳細文文字列受け渡し変数 '= @"■%アビ名%（장비자가 총 특기or연격 타입일 때）<br>"
@@ -235,7 +235,7 @@ ENDSELECT
 SELECTCASE 処理モード
 	CASE "アビ名"
 		SIF LEVEL > 0
-			TSTR:コマンド名受渡 '= 어빌명
+			TSTR:コマンド名受渡 '= アビ名
 	CASE "アビ説明文"
 		詳細文文字列受け渡し変数 '= @"■%アビ名%<br>"
 		詳細文文字列受け渡し変数 += @"　소비 MP：{消費ＭＰ}<br>"
