@@ -676,15 +676,15 @@ LOOP 1
 
 KSTR:(K++) = 강적의 기척이 느껴진다…… 계속 진행하시겠습니까?
 KSTR:(K++) = BUTTON_[예]
-KSTR:(K++) = BUTTON_[아니오]
+KSTR:(K++) = BUTTON_[아니요]
 CALL メッセージ欄表示用関数(,,,0)
 $LOOP_MESSAGE
 INPUTS
 SELECTCASE RESULTS
-	CASE "[はい]"
+	CASE "[예]"
 		CALL 口上変数初期化
 		RETURN 0
-	CASE "[いいえ]"
+	CASE "[아니요]"
 		CALL 口上変数初期化
 		RETURN 1
 	CASEELSE

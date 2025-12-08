@@ -246,14 +246,14 @@ SELECTCASE ARGS
 			$LOOP_MESSAGE
 			INPUTS
 			SELECTCASE RESULTS
-				CASE "[リスを追い出して壺を持っていく]"
+				CASE "[다람쥐를 쫓아내고 항아리를 가져간다]"
 					CALL 口上変数初期化
 					WSTR:(K++) = 쉿쉿, 하고 다람쥐를 쫓아내고 둥지를 항아리에서 꺼내 가볍게 닦는다.
 					WSTR:(K++) = 리조트 경영에 돈은 아무리 많아도 곤란하지 않다. 돌아가면 만물상 경유로 수집가에게 팔아달라고 하자.
 					WSTR:(K++) = %CALLNAME:PLAYER%은(는) 10,000루피를 손에 넣었다!
 					CALL メッセージ欄表示用関数(,,,0)
 					MONEY += 10000
-				CASE "[巣があるならしょうがない。壺を諦める]"
+				CASE "[둥지가 있다면 어쩔 수 없지. 항아리를 포기한다]"
 					CALL 口上変数初期化
 					WSTR:(K++) = 루피는 갖고 싶지만, 굳이 둥지를 부술 정도는 아니다.
 					WSTR:(K++) = 이 항아리는 그대로 두자.
@@ -1129,7 +1129,7 @@ SELECTCASE ARGS
 			$LOOP_MESSAGE
 			INPUTS
 			SELECTCASE RESULTS
-				CASE "[無くなってもまた新しく作るだろう。巣を持っていく]"
+				CASE "[없어져도 다시 새로 만들겠지. 둥지를 가져간다]"
 					CALL 口上変数初期化
 					WSTR:(K++) = %CALLNAME:PLAYER%은(는) 둥지를 주워, 짐 가방 안에 넣는다.
 					WSTR:(K++) = 유바메는 슬픈 듯한 목소리로 한 번 울고, 어딘가로 날아가 버렸다.
@@ -1137,7 +1137,7 @@ SELECTCASE ARGS
 					WSTR:(K++) = %CALLNAME:PLAYER%은(는) 10,000루피를 손에 넣었다!
 					CALL メッセージ欄表示用関数(,,,0)
 					MONEY += 10000
-				CASE "[住処を奪うのは可哀想だ。巣を戻してやる]"
+				CASE "[보금자리를 빼앗는 건 불쌍하다. 둥지를 돌려준다]"
 					CALL 口上変数初期化
 					WSTR:(K++) = %CALLNAME:PLAYER%은(는) 천천히 유바메에게 다가가, 둥지를 주워 돌려주었다.
 					WSTR:(K++) = 유바메는 기쁜 듯한 소리로 한 번 울고, 고쳐진 둥지에서 편안히 쉬고 있다.
@@ -1305,17 +1305,17 @@ SELECTCASE ARGS
 		;回復の泉
 		IF ダンジョン内一時変数:2
 		ELSE
-KSTR:(K++) = 유적의 한 방에, 맑은 물이 솟아나는 방이 있었다.
-KSTR:(K++) = 잠시 쉬어 가시겠습니까?
+			KSTR:(K++) = 유적의 한 방에, 맑은 물이 솟아나는 방이 있었다.
+			KSTR:(K++) = 잠시 쉬어 가시겠습니까?
 			KSTR:(K++) = (PT 멤버 전원 회복・던전을 한 번 나갈 때까지 소멸)
 			KSTR:(K++) = BUTTON_[예]
-			KSTR:(K++) = BUTTON_[아니오]
+			KSTR:(K++) = BUTTON_[아니요]
 			CALL メッセージ欄表示用関数(,,,0)
 			CALL 口上変数初期化
 			$LOOP_MESSAGE
 			INPUTS
 			SELECTCASE RESULTS
-				CASE "[はい]"
+				CASE "[예]"
 					KSTR:(K++) = 너희는 유적의 한 방에서 충분한 휴식을 취하고 체력을 회복했다!
 					CALL メッセージ欄表示用関数()
 					ダンジョン内一時変数:2 = 1
@@ -1326,7 +1326,7 @@ KSTR:(K++) = 잠시 쉬어 가시겠습니까?
 						BATTLE_STATE:LOCAL:ＨＰ = BATTLE_STATE:LOCAL:最大ＨＰ
 						BATTLE_STATE:LOCAL:ＭＰ = BATTLE_STATE:LOCAL:最大ＭＰ
 					NEXT
-				CASE "[いいえ]"
+				CASE "[아니요]"
 					KSTR:(K++) = 아직 쉴 만큼 지치지 않았다. 계속 나아가자.
 					CALL メッセージ欄表示用関数()
 				CASEELSE
@@ -1530,7 +1530,7 @@ SELECTCASE ARGS
 			$LOOP_MESSAGE
 			INPUTS
 			SELECTCASE RESULTS
-				CASE "[はい]"
+				CASE "[예]"
 					敵BATTLE_STATE_STR:1:エネミー名 = Lv8_고블린 솔저
 					敵BATTLE_STATE_STR:2:エネミー名 = Lv8_고블린 솔저
 					敵BATTLE_STATE_STR:3:エネミー名 = Lv8_고블린 솔저
@@ -1558,7 +1558,7 @@ SELECTCASE ARGS
 						ENDIF
 					ENDIF
 					CALL 口上変数初期化
-				CASE "[いいえ]"
+				CASE "[아니요]"
 					CALL 口上変数初期化
 				CASEELSE
 					CLEARLINE 1
@@ -1662,12 +1662,12 @@ SELECTCASE ARGS
 			$LOOP_MESSAGE
 			INPUTS
 			SELECTCASE RESULTS
-				CASE "[襲いかかられては危険だ。このままにしておく]"
+				CASE "[습격당하면 위험하다. 이대로 둔다]"
 					CALL 口上変数初期化
 					WSTR:(K++) = 골렘은 강적이다. 무력화되어 있다면 더할 나위 없다.
 					WSTR:(K++) = %CALLNAME:PLAYER%들은 잔해를 그대로 두고 방을 나선다.
 					CALL メッセージ欄表示用関数(,,,0)
-				CASE "[瓦礫をどかしてゴーレムを助けてあげる]"
+				CASE "[잔해를 치우고 골렘을 도와준다]"
 					CALL 口上変数初期化
 					WSTR:(K++) = %CALLNAME:PLAYER%들은 잔해를 힘들게 치우고, 골렘을 자유롭게 해 주었다.
 					WSTR:(K++) = 움직일 수 있게 된 골렘은 일어서서 너희들을 빤히 보고 있다.
@@ -1912,21 +1912,21 @@ SELECTCASE ARGS
 			$LOOP_MESSAGE
 			INPUTS
 			SELECTCASE RESULTS
-				CASE "[漁夫の利だ。両方とも倒す]"
+				CASE "[어부지리다. 둘 다 쓰러뜨린다]"
 					CALL 口上変数初期化
 					WSTR:(K++) = 어설프게 남겨두고 적대당해도 귀찮다.
 					WSTR:(K++) = %CALLNAME:PLAYER%들은 기습하여, 둘 다 전멸시켰다.
 					WSTR:(K++) = 어린 마이코니드는 도망쳤지만, 적대하지 않는다면 문제없을 것이다.
 					CALL メッセージ欄表示用関数(,,,0)
-				CASE "[子を守る親は悪くない。義によってマイコニドに助太刀いたす]"
+				CASE "[아이를 지키는 부모는 나쁘지 않다. 의로써 마이코니드를 돕겠다]"
 					CALL 口上変数初期化
-WSTR:(K++) = %CALLNAME:PLAYER%들은 고블린의 후방에서 기습하여, 마이코니드들과 협공을 펼친다.
-WSTR:(K++) = 혼란에 빠진 고블린들은 제대로 저항도 못 하고 괴멸했다.
-KSTR:(K++) = 남은 마이코니드들은 한동안 이쪽을 경계하고 있었지만, 적대하지 않는다는 것을 알자
-WSTR:(K++) = 인사를 하듯이 몸을 꾸벅 숙이고 있다.
-KSTR:(K++) = 게다가 감사의 표시인지, 몇 개의 버섯을 이쪽으로 내밀었다._PAGE
-WSTR:(K++) = 마을에서도 먹는 흔한 버섯이다. 모처럼이니 받아가자.
-WSTR:(K++) = %CALLNAME:PLAYER%들은 맛있는 버섯을 3개 손에 넣었다!
+					WSTR:(K++) = %CALLNAME:PLAYER%들은 고블린의 후방에서 기습하여, 마이코니드들과 협공을 펼친다.
+					WSTR:(K++) = 혼란에 빠진 고블린들은 제대로 저항도 못 하고 괴멸했다.
+					KSTR:(K++) = 남은 마이코니드들은 한동안 이쪽을 경계하고 있었지만, 적대하지 않는다는 것을 알자
+					WSTR:(K++) = 인사를 하듯이 몸을 꾸벅 숙이고 있다.
+					KSTR:(K++) = 게다가 감사의 표시인지, 몇 개의 버섯을 이쪽으로 내밀었다._PAGE
+					WSTR:(K++) = 마을에서도 먹는 흔한 버섯이다. 모처럼이니 받아가자.
+					WSTR:(K++) = %CALLNAME:PLAYER%들은 맛있는 버섯을 3개 손에 넣었다!
 					CALL 素材入手処理("おいしいキノコ", 3)
 					SETBIT ダンジョン構造配列_名前を亡くした遺跡:マス深度:マス分岐, 4
 					ゆぐゆぐ信頼度_名前を亡くした遺跡 += 10
@@ -1941,10 +1941,10 @@ WSTR:(K++) = %CALLNAME:PLAYER%들은 맛있는 버섯을 3개 손에 넣었다!
 		ELSE
 			IF GETBIT(ダンジョン構造配列_名前を亡くした遺跡:マス深度:マス分岐, 4)
 				;マイコニドを助けた
-KSTR:(K++) = 마이코니드들이 배웅해 주고 있다.
+				KSTR:(K++) = 마이코니드들이 배웅해 주고 있다.
 			ELSE
 				;全滅させた
-KSTR:(K++) = 격렬한 전투의 흔적이 남아있다.
+				KSTR:(K++) = 격렬한 전투의 흔적이 남아있다.
 			ENDIF
 			CALL メッセージ欄表示用関数(,,,0)
 		ENDIF
@@ -2142,7 +2142,7 @@ SELECTCASE ARGS
 				$LOOP_MESSAGE2
 				INPUTS
 				SELECTCASE RESULTS
-					CASE "[はい]"
+					CASE "[예]"
 						敵BATTLE_STATE_STR:2:エネミー名 = Lv14_고블린 제너럴
 						敵BATTLE_STATE_STR:0:エネミー名 = Lv8_고블린 솔저
 						敵BATTLE_STATE_STR:1:エネミー名 = Lv8_고블린 솔저
@@ -2187,7 +2187,7 @@ SELECTCASE ARGS
 							ダンジョン表示モード = マップ画面
 						ENDIF
 						CALL 口上変数初期化
-					CASE "[いいえ]"
+					CASE "[아니요]"
 						CALL 口上変数初期化
 					CASEELSE
 						CLEARLINE 1

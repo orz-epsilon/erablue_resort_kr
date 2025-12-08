@@ -208,7 +208,7 @@ ELSE
 	$LOOP_MESSAGE
 	BINPUTS
 	SELECTCASE RESULTS
-		CASE "[採掘を行う]"
+		CASE "[채굴을 한다]"
 			WSTR:(K++) = 약간의 위험은 문제없다. 채굴하자.
 			WSTR:(K++) = …………
 			SELECTCASE RAND:(5 - 採掘済みフラグ)
@@ -237,7 +237,7 @@ ELSE
 					採掘済みフラグ ++
 					GOTO 採掘ループ
 			ENDSELECT
-		CASE "[この場を離れる]"
+		CASE "[이곳을 떠난다]"
 			IF 採掘済みフラグ
 				WSTR:(K++) = 이 이상의 채굴은 위험할 것이다.
 			ELSE

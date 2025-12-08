@@ -281,14 +281,14 @@ CALL 口上変数初期化
 $LOOP_MESSAGE
 BINPUTS
 SELECTCASE RESULTS
-	CASE "[はい]"
+	CASE "[예]"
 		KSTR:(K++) = %CALLNAME:PLAYER%들은 다음 계층으로 나아갔다…
 		CALL メッセージ欄表示用関数()
 		;次階層生成
 		CALL ダンジョン初期処理_リゾート島開拓作業
 		CALL 踏破マス開放処理
 		CALL 接続ルート全開放処理((ダンジョン現在位置:0), (ダンジョン現在位置:1))
-	CASE "[いいえ]"
+	CASE "[아니요]"
 		KSTR:(K++) = 이 계층을 좀 더 탐색해 보자.
 		CALL メッセージ欄表示用関数()
 	CASEELSE
@@ -311,7 +311,7 @@ CALL 口上変数初期化
 $LOOP_MESSAGE2
 BINPUTS
 SELECTCASE RESULTS
-	CASE "[はい]"
+	CASE "[예]"
 		WSTR:(K++) = %CALLNAME:PLAYER%들은 준비를 갖추고 강적에게 도전한다!
 		CALL メッセージ欄表示用関数(,,,0)
 		
@@ -348,7 +348,7 @@ SELECTCASE RESULTS
 			;逃走時
 			CALL 口上変数初期化
 		ENDIF
-	CASE "[いいえ]"
+	CASE "[아니요]"
 		KSTR:(K++) = 이 계층을 좀 더 탐색해 보자.
 		CALL メッセージ欄表示用関数()
 	CASEELSE

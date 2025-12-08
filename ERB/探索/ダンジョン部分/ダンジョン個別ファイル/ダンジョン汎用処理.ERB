@@ -9,9 +9,9 @@ IF OPTION変数:敵探索SKIP == 0
 	$LOOP_MESSAGE
 	INPUTS
 	SELECTCASE RESULTS
-		CASE "[はい]"
+		CASE "[예]"
 			CALL 雑魚敵遭遇汎用処理
-		CASE "[いいえ]"
+		CASE "[아니요]"
 			VARSET 敵BATTLE_STATE:0:0
 			VARSET 敵BATTLE_STATE_STR:0:0
 			CALL 口上変数初期化

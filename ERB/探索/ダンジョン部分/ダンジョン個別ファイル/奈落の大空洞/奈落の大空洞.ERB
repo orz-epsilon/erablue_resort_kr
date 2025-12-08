@@ -196,7 +196,7 @@ SELECTCASE ARGS
 			CALL メッセージ欄表示用関数(,,,0)
 			BINPUTS
 			SELECTCASE RESULTS
-				CASE "[はい]"
+				CASE "[예]"
 					CALL 口上変数初期化
 					WSTR:(K++) = %CALLNAME:PLAYER%들은 무기를 들고 강적에게 도전한다!
 					CALL 奈落の大空洞_追加レベル補正算出
@@ -211,7 +211,7 @@ SELECTCASE ARGS
 						CALL 接続ルート全開放処理(マス深度, マス分岐)
 						SETBIT ダンジョン構造配列_奈落の大空洞:マス深度:マス分岐, 4
 					ENDIF
-				CASE "[いいえ]"
+				CASE "[아니요]"
 					CALL 口上変数初期化
 					WSTR:(K++) = 상대는 강적이다. 준비를 철저히 하고 도전하자.
 					CALL メッセージ欄表示用関数(,,,0)
@@ -246,7 +246,7 @@ SELECTCASE ARGS
 			CALL メッセージ欄表示用関数(,,,0)
 			BINPUTS
 			SELECTCASE RESULTS
-				CASE "[はい]"
+				CASE "[예]"
 					CALL 口上変数初期化
 					WSTR:(K++) = %CALLNAME:PLAYER%들은 무기를 들고 강적에게 도전한다!
 					CALL 奈落の大空洞_追加レベル補正算出
@@ -261,7 +261,7 @@ SELECTCASE ARGS
 						CALL 接続ルート全開放処理(マス深度, マス分岐)
 						SETBIT ダンジョン構造配列_奈落の大空洞:マス深度:マス分岐, 4
 					ENDIF
-				CASE "[いいえ]"
+				CASE "[아니요]"
 					CALL 口上変数初期化
 					WSTR:(K++) = 상대는 강적이다. 준비를 철저히 하고 도전하자.
 					CALL メッセージ欄表示用関数(,,,0)
@@ -292,11 +292,11 @@ SELECTCASE ARGS
 			WSTR:(K++) = 마물이 자리 잡고 있어서, 피해서 안쪽으로는 나아갈 수 없을 것 같다.
 			KSTR:(K++) = 강적에게 싸움을 걸겠습니까?
 			KSTR:(K++) = BUTTON_[예]
-			KSTR:(K++) = BUTTON_[아니오]
+			KSTR:(K++) = BUTTON_[아니요]
 			CALL メッセージ欄表示用関数(,,,0)
 			BINPUTS
 			SELECTCASE RESULTS
-				CASE "[はい]"
+				CASE "[예]"
 					CALL 口上変数初期化
 					WSTR:(K++) = %CALLNAME:PLAYER%들은 무기를 들고, 강적에게 도전한다!
 					CALL 奈落の大空洞_追加レベル補正算出
@@ -311,7 +311,7 @@ SELECTCASE ARGS
 						CALL 接続ルート全開放処理(マス深度, マス分岐)
 						SETBIT ダンジョン構造配列_奈落の大空洞:マス深度:マス分岐, 4
 					ENDIF
-				CASE "[いいえ]"
+				CASE "[아니요]"
 					CALL 口上変数初期化
 					WSTR:(K++) = 상대는 강적이다. 준비를 철저히 하고 도전하자.
 					CALL メッセージ欄表示用関数(,,,0)
@@ -342,11 +342,11 @@ SELECTCASE ARGS
 			WSTR:(K++) = 마물이 자리 잡고 있어서, 피해서 안쪽으로는 나아갈 수 없을 것 같다.
 			KSTR:(K++) = 강적에게 싸움을 걸겠습니까?
 			KSTR:(K++) = BUTTON_[예]
-			KSTR:(K++) = BUTTON_[아니오]
+			KSTR:(K++) = BUTTON_[아니요]
 			CALL メッセージ欄表示用関数(,,,0)
 			BINPUTS
 			SELECTCASE RESULTS
-				CASE "[はい]"
+				CASE "[예]"
 					CALL 口上変数初期化
 					WSTR:(K++) = %CALLNAME:PLAYER%들은 무기를 들고, 강적에게 도전한다!
 					CALL 奈落の大空洞_追加レベル補正算出
@@ -361,7 +361,7 @@ SELECTCASE ARGS
 						CALL 接続ルート全開放処理(マス深度, マス分岐)
 						SETBIT ダンジョン構造配列_奈落の大空洞:マス深度:マス分岐, 4
 					ENDIF
-				CASE "[いいえ]"
+				CASE "[아니요]"
 					CALL 口上変数初期化
 					WSTR:(K++) = 상대는 강적이다. 준비를 철저히 하고 도전하자.
 					CALL メッセージ欄表示用関数(,,,0)
@@ -390,11 +390,11 @@ SELECTCASE ARGS
 		WSTR:(K++) = 아마 이 계층에서 가장 강한 마물일 것이다. 물론 피해서 안쪽으로 나아갈 수는 없을 것 같다.
 		KSTR:(K++) = 강적에게 싸움을 거시겠습니까?
 		KSTR:(K++) = BUTTON_[예]
-		KSTR:(K++) = BUTTON_[아니오]
+		KSTR:(K++) = BUTTON_[아니요]
 		CALL メッセージ欄表示用関数(,,,0)
 		BINPUTS
 		SELECTCASE RESULTS
-			CASE "[はい]"
+			CASE "[예]"
 				CALL 口上変数初期化
 				WSTR:(K++) = %CALLNAME:PLAYER%들은 무기를 들고 강적에게 도전한다!
 				CALL 奈落の大空洞_追加レベル補正算出
@@ -431,7 +431,7 @@ SELECTCASE ARGS
 					CALL 口上変数初期化
 					ダンジョン終了状況 = 踏破達成
 				ENDIF
-			CASE "[いいえ]"
+			CASE "[아니요]"
 				CALL 口上変数初期化
 				WSTR:(K++) = 상대는 강적이다. 준비를 철저히 하고 도전하자.
 				CALL メッセージ欄表示用関数(,,,0)

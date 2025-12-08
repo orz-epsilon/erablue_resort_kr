@@ -922,10 +922,10 @@ CALL 口上変数初期化
 $LOOP_MESSAGE
 INPUTS
 SELECTCASE RESULTS
-	CASE "[はい（再戦闘なし）]"
+	CASE "[예 (재전투 없음)]"
 		SETBIT RFLAG:ダンジョン再視聴フラグ, 0
 		RETURN 0
-	CASE "[はい（再戦闘あり）]"
+	CASE "[예 (재전투 있음)]"
 		SETBIT RFLAG:ダンジョン再視聴フラグ, 0
 		SETBIT RFLAG:ダンジョン再視聴フラグ, 1
 		RETURN 0
@@ -938,7 +938,7 @@ SELECTCASE RESULTS
 	CASE 追加ボタン6
 		INVERTBIT RFLAG:ダンジョン再視聴フラグ, 6
 		RETURN 1
-	CASE "[いいえ]"
+	CASE "[아니요]"
 		;いらんはずだけど一応フラグをリセット
 		RFLAG:ダンジョン再視聴フラグ = 0
 		RETURN 0

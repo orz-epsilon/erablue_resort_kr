@@ -630,7 +630,7 @@ SELECTCASE ARGS
 				$LOOP_MESSAGE
 				INPUTS
 				SELECTCASE RESULTS
-					CASE "[はい]"
+					CASE "[예]"
 						WSTR:(K++) = 지리도 모르고, 함께 가고 싶다고 레이무에게 고한다.
 						WSTR:(K++) = 소녀는 별로 생각하는 기색도 없이, 아무래도 좋다는 듯 동행을 허락했다.
 						CALL メッセージ欄表示用関数(,,,0)
@@ -643,7 +643,7 @@ SELECTCASE ARGS
 						CALL メッセージ欄表示用関数(,,,0)
 						CALL 口上変数初期化
 						返答フラグ = 1
-					CASE "[いいえ]"
+					CASE "[아니요]"
 						WSTR:(K++) = 아니, 조금 더 어느 쪽을 따라갈지 생각하자.
 						WSTR:(K++) = 레이무에게는 아무것도 아니라고 답한다.
 						CALL メッセージ欄表示用関数(,,,0)
@@ -730,7 +730,7 @@ SELECTCASE ARGS
 				$LOOP_MESSAGE
 				INPUTS
 				SELECTCASE RESULTS
-					CASE "[はい]"
+					CASE "[예]"
 						WSTR:(K++) = 지리도 모르고, 여기는 날아간 마리사를 쫓아가자.
 						WSTR:(K++) = 하늘을 향해 손을 흔들며 쫓아가자, 눈치챈 마리사가 돌아와 주었다.
 						WSTR:(K++) = 함께 가고 싶다고 전하자, 소녀는 흔쾌히 승낙해 준다.
@@ -746,7 +746,7 @@ SELECTCASE ARGS
 						CALL メッセージ欄表示用関数(立ち絵_魔理沙,"魔理沙",,0)
 						CALL 口上変数初期化
 						返答フラグ = 1
-					CASE "[いいえ]"
+					CASE "[아니요]"
 						WSTR:(K++) = 아니, 조금 더 어느 쪽을 따라갈지 생각하자.
 						CALL メッセージ欄表示用関数(,,,0)
 						CALL 口上変数初期化
