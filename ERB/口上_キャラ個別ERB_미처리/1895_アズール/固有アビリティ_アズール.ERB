@@ -5,7 +5,7 @@
 #DIMS アビ名
 #DIM 効果数値
 #DIM 連撃数
-#DIM DA率計算値
+#DIM DA율計算値
 #DIM TA率計算値
 #DIM 連撃率加算値
 #DIM 隊列番号
@@ -42,8 +42,8 @@ SELECTCASE ARGS
 	
 		;攻撃回数決定
 		LOCAL = RAND:100
-		CALL バフ・デバフ測定(隊列番号, "DA率")
-		DA率計算値 = RESULT + アビ汎用変数:DA率補正値
+		CALL バフ・デバフ測定(隊列番号, "DA율")
+		DA율計算値 = RESULT + アビ汎用変数:DA율補正値
 		CALL バフ・デバフ測定(隊列番号, "TA率")
 		TA率計算値 = RESULT + アビ汎用変数:TA率補正値
 		CALL バフ・デバフ測定(隊列番号, "連続攻撃率")
@@ -52,7 +52,7 @@ SELECTCASE ARGS
 			連撃数 = 3
 		 ELSE
 			LOCAL = RAND:100
-			IF DA率計算値 + 連撃率加算値 > LOCAL
+			IF DA율計算値 + 連撃率加算値 > LOCAL
 				連撃数 = 2
 			ELSE
 				連撃数 = 1
@@ -74,7 +74,7 @@ SELECTCASE ARGS
 			CALL バフ込み数値算出("命中率", 隊列番号)
 			アビ汎用変数:命中率補正値 = -(RESULT / 2)
 			アビ汎用変数:TA率補正値 = -400
-			アビ汎用変数:DA率補正値 = -400
+			アビ汎用変数:DA율補正値 = -400
 			CALL アビテンプレート_通常攻撃処理
 			
 			SELECTCASE 連撃数
@@ -151,7 +151,7 @@ SELECTCASE ARGS
 		CALL バフ込み数値算出("命中率", 隊列番号)
 		アビ汎用変数:命中率補正値 = -RESULT
 		アビ汎用変数:TA率補正値 = -400
-		アビ汎用変数:DA率補正値 = -400
+		アビ汎用変数:DA율補正値 = -400
 		CALL アビテンプレート_通常攻撃処理
 		
 		CALL アビ汎用変数文字列リセット

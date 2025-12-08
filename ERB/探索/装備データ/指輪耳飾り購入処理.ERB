@@ -65,7 +65,7 @@ IF 表示用ステータス格納配列:0:0 == 0
 						表示用ステータス格納配列:LOCAL:5 = TOINT(LOCALS:(LOCAL:1 * 2 + 1))
 					CASE "行動速度"
 						表示用ステータス格納配列:LOCAL:6 = TOINT(LOCALS:(LOCAL:1 * 2 + 1))
-					CASE "DA率"
+					CASE "DA율"
 						表示用ステータス格納配列:LOCAL:7 = TOINT(LOCALS:(LOCAL:1 * 2 + 1))
 					CASE "TA率"
 						表示用ステータス格納配列:LOCAL:8 = TOINT(LOCALS:(LOCAL:1 * 2 + 1))
@@ -199,7 +199,7 @@ IF 一括売却フラグ
 ELSE
 	LOCALS += "　　　　　　　　　　　　　　　　　　　　　　　"
 ENDIF
-LOCALS += "　　<button value='999'>[999] 가게에서 나가기</button></div>"
+LOCALS += "　<button value='999'>[999] 가게에서 나가기</button></div>"
 HTML_PRINT LOCALS, 1
 
 FOR LOCAL, 0, 37

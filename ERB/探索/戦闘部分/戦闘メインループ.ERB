@@ -414,7 +414,7 @@ FOR LOCAL, 0, 14
 	BATTLE_STATE:LOCAL:行動速度 = 基礎BATTLE_STATE:(BATTLE_STATE:LOCAL:キャラ登録番号):行動速度 + 装備ステータス補正保存:(BATTLE_STATE:LOCAL:キャラ登録番号):行動速度
 	SIF BATTLE_STATE:LOCAL:行動速度 <= 0
 		BATTLE_STATE:LOCAL:行動速度 = 1
-	BATTLE_STATE:LOCAL:DA率 = 基礎BATTLE_STATE:(BATTLE_STATE:LOCAL:キャラ登録番号):DA率 + 装備ステータス補正保存:(BATTLE_STATE:LOCAL:キャラ登録番号):DA率
+	BATTLE_STATE:LOCAL:DA율 = 基礎BATTLE_STATE:(BATTLE_STATE:LOCAL:キャラ登録番号):DA율 + 装備ステータス補正保存:(BATTLE_STATE:LOCAL:キャラ登録番号):DA율
 	BATTLE_STATE:LOCAL:TA率 = 基礎BATTLE_STATE:(BATTLE_STATE:LOCAL:キャラ登録番号):TA率 + 装備ステータス補正保存:(BATTLE_STATE:LOCAL:キャラ登録番号):TA率
 	BATTLE_STATE:LOCAL:ゲージ上昇効率 = 基礎BATTLE_STATE:(BATTLE_STATE:LOCAL:キャラ登録番号):ゲージ上昇効率 + 装備ステータス補正保存:(BATTLE_STATE:LOCAL:キャラ登録番号):ゲージ上昇効率
 	BATTLE_STATE:LOCAL:ゲージ上昇効率_被ダメ時 = 基礎BATTLE_STATE:(BATTLE_STATE:LOCAL:キャラ登録番号):ゲージ上昇効率_被ダメ時 + 装備ステータス補正保存:(BATTLE_STATE:LOCAL:キャラ登録番号):ゲージ上昇効率_被ダメ時
@@ -585,16 +585,16 @@ IF ターン中奥義回数保存 > 1
 		戦闘行動キャラ = チェンバ基準キャラ保存:0
 		CALL バフ込み数値算出("攻撃力")
 		LOCAL = RESULT
-		LOCALS = 공격력
+		LOCALS = 攻撃力
 		CALL バフ込み数値算出("防御力")
 		IF LOCAL < RESULT
 			LOCAL = RESULT
-			LOCALS = 방어력
+			LOCALS = 防御力
 		ENDIF
 		CALL バフ込み数値算出("回復力")
 		IF LOCAL < RESULT
 			LOCAL = RESULT
-			LOCALS = 회복력
+			LOCALS = 回復力
 		ENDIF
 		CALL アビ対象選択テンプレート_敵全体_生者のみ
 		アビ汎用文字列:ダメージ種類 = 체인 버스트 대미지

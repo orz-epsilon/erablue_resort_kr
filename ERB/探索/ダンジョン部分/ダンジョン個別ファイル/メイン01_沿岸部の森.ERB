@@ -897,7 +897,7 @@ SELECTCASE ARGS
 				INPUTS
 				SELECTCASE RESULTS
 					CASE "[예]"
-						敵BATTLE_STATE_STR:0:エネミー名 = Lv6_스톤 이터
+						敵BATTLE_STATE_STR:0:エネミー名 = Lv6_ストーンイーター
 						CALL 雑魚敵遭遇汎用処理
 						IF RESULT == 0
 							CALL 口上変数初期化
@@ -947,7 +947,7 @@ SELECTCASE ARGS
 					CALL 口上変数初期化
 					KSTR:(K++) = 너희는 무기를 들고, 스톤 이터에게 싸움을 걸었다!
 					CALL メッセージ欄表示用関数()
-					敵BATTLE_STATE_STR:0:エネミー名 = Lv6_스톤 이터
+					敵BATTLE_STATE_STR:0:エネミー名 = Lv6_ストーンイーター
 					CALL BATTLE_MAIN_LOOP
 
 					IF RESULT == 0
