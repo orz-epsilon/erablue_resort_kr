@@ -9,19 +9,19 @@
 
 ;初期ステータスを登録
 ;ステータスのバランスは「@初期ステータス設定_テンプレート適用」を参考
-基礎BATTLE_STATE:キャラ番号:最大ＨＰ = 180
-基礎BATTLE_STATE:キャラ番号:最大ＭＰ = 120
-基礎BATTLE_STATE:キャラ番号:攻撃力 = 120
-基礎BATTLE_STATE:キャラ番号:防御力 = 80
-基礎BATTLE_STATE:キャラ番号:回復力 = 80
-基礎BATTLE_STATE:キャラ番号:行動速度 = 110
+基礎BATTLE_STATE:キャラ番号:최대HP = 180
+基礎BATTLE_STATE:キャラ番号:최대MP = 120
+基礎BATTLE_STATE:キャラ番号:공격력 = 120
+基礎BATTLE_STATE:キャラ番号:방어력 = 80
+基礎BATTLE_STATE:キャラ番号:회복력 = 80
+基礎BATTLE_STATE:キャラ番号:행동속도 = 110
 基礎BATTLE_STATE:キャラ番号:DA율 = 10
-基礎BATTLE_STATE:キャラ番号:TA率 = 5
-基礎BATTLE_STATE:キャラ番号:ゲージ上昇効率 = 100
-基礎BATTLE_STATE:キャラ番号:ゲージ上昇効率_被ダメ時 = 100
-基礎BATTLE_STATE:キャラ番号:ゲージ最大値 = 300
-基礎BATTLE_STATE:キャラ番号:命中率 = 100
-基礎BATTLE_STATE:キャラ番号:回避率 = 5
+基礎BATTLE_STATE:キャラ番号:TA율 = 5
+基礎BATTLE_STATE:キャラ番号:게이지상승효율 = 100
+基礎BATTLE_STATE:キャラ番号:게이지상승효율_被ダメ時 = 100
+基礎BATTLE_STATE:キャラ番号:게이지최대값 = 300
+基礎BATTLE_STATE:キャラ番号:명중률 = 100
+基礎BATTLE_STATE:キャラ番号:회피율 = 5
 基礎BATTLE_STATE:キャラ番号:クリティカル率 = 0
 基礎BATTLE_STATE:キャラ番号:クリティカルダメージ率 = 150
 基礎BATTLE_STATE:キャラ番号:敵対心 = 100

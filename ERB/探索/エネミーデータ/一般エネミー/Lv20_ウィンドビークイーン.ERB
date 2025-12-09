@@ -3,16 +3,16 @@
 #DIM 対象エネミー
 ;コンセプト：通常ビーと一緒にいる、通常は弱いがトリガー技は強い
 敵BATTLE_STATE:対象エネミー:Lv = 20
-敵BATTLE_STATE:対象エネミー:最大ＨＰ = 2850
+敵BATTLE_STATE:対象エネミー:최대HP = 2850
 敵BATTLE_STATE:対象エネミー:ＨＰ = 2850
-敵BATTLE_STATE:対象エネミー:攻撃力 = 820
-敵BATTLE_STATE:対象エネミー:防御力 = 750
-敵BATTLE_STATE:対象エネミー:回復力 = 300
-敵BATTLE_STATE:対象エネミー:行動速度 = 400
+敵BATTLE_STATE:対象エネミー:공격력 = 820
+敵BATTLE_STATE:対象エネミー:방어력 = 750
+敵BATTLE_STATE:対象エネミー:회복력 = 300
+敵BATTLE_STATE:対象エネミー:행동속도 = 400
 敵BATTLE_STATE:対象エネミー:DA율 = 0
-敵BATTLE_STATE:対象エネミー:TA率 = 0
-敵BATTLE_STATE:対象エネミー:命中率 = 105
-敵BATTLE_STATE:対象エネミー:回避率 = 0
+敵BATTLE_STATE:対象エネミー:TA율 = 0
+敵BATTLE_STATE:対象エネミー:명중률 = 105
+敵BATTLE_STATE:対象エネミー:회피율 = 0
 敵BATTLE_STATE:対象エネミー:属性 = 2
 敵BATTLE_STATE:対象エネミー:所持EXP = 534
 敵BATTLE_STATE:対象エネミー:所持ルピ = 730
@@ -42,7 +42,7 @@ CALL ドロップ判定処理(ドロップ確率, ドロップアイテム)
 アビ汎用文字列:実行時メッセージ１ = %敵BATTLE_STATE_STR:(戦闘行動キャラ - 10):エネミー名%의 공격!
 
 アビテンプレート用_アビ名 = 攻撃
-CALL アビ対象選択テンプレート_味方単体_最大ＨＰ()
+CALL アビ対象選択テンプレート_味方単体_최대HP()
 アビ汎用変数:効果割合 = 1
 アビ汎用文字列:ダメージ種類 = 일반 공격 데미지
 CALL アビテンプレート_ダメージ処理_自属性

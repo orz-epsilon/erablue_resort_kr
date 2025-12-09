@@ -1,16 +1,16 @@
 
 @敵BATTLE_STATE_Lv100_ザ・ワールド(ARG)
 敵BATTLE_STATE:ARG:Lv = 100
-敵BATTLE_STATE:ARG:最大ＨＰ = 360000
+敵BATTLE_STATE:ARG:최대HP = 360000
 敵BATTLE_STATE:ARG:ＨＰ = 360000
-敵BATTLE_STATE:ARG:攻撃力 = 1000
-敵BATTLE_STATE:ARG:防御力 = 1000
-敵BATTLE_STATE:ARG:回復力 = 0
-敵BATTLE_STATE:ARG:行動速度 = 1000
+敵BATTLE_STATE:ARG:공격력 = 1000
+敵BATTLE_STATE:ARG:방어력 = 1000
+敵BATTLE_STATE:ARG:회복력 = 0
+敵BATTLE_STATE:ARG:행동속도 = 1000
 敵BATTLE_STATE:ARG:DA율 = 50
-敵BATTLE_STATE:ARG:TA率 = 25
-敵BATTLE_STATE:ARG:命中率 = 120
-敵BATTLE_STATE:ARG:回避率 = 20
+敵BATTLE_STATE:ARG:TA율 = 25
+敵BATTLE_STATE:ARG:명중률 = 120
+敵BATTLE_STATE:ARG:회피율 = 20
 敵BATTLE_STATE:ARG:属性 = 6
 敵BATTLE_STATE:ARG:所持EXP = 45000
 敵BATTLE_STATE:ARG:所持ルピ = 90000
@@ -96,7 +96,7 @@ ELSEIF バフ番号取得_枠("スターリー・ノヴァ", 戦闘行動キャ�
 		CALL バフ削除_枠(戦闘行動キャラ, "スターリー・ノヴァ")
 		RETURN 1
 	ELSE
-		;『スターリー・ノヴァ』：味方全体にランダム属性4倍ダメージ/ザ・ワールドに与ダメ増加効果・TA率UP効果
+		;『スターリー・ノヴァ』：味方全体にランダム属性4倍ダメージ/ザ・ワールドに与ダメ増加効果・TA율UP効果
 		SELECTCASE RAND:2
 			CASE 0
 				WSTR:(K++) = 「새로운 이치다…!」
@@ -145,7 +145,7 @@ ELSEIF バフ番号取得_枠("スターリー・ノヴァ", 戦闘行動キャ�
 		CALL バフ削除_枠(戦闘行動キャラ, "スターリー・ノヴァ")
 		RETURN 1
 	ENDIF
-ELSEIF 敵BATTLE_STATE:(戦闘行動キャラ - 10):ＨＰ < (敵BATTLE_STATE:(戦闘行動キャラ - 10):最大ＨＰ / 4) * 3 && GETBIT(敵BATTLE_STATE:(戦闘行動キャラ - 10):トリガー行動フラグ, 0) == 0
+ELSEIF 敵BATTLE_STATE:(戦闘行動キャラ - 10):ＨＰ < (敵BATTLE_STATE:(戦闘行動キャラ - 10):최대HP / 4) * 3 && GETBIT(敵BATTLE_STATE:(戦闘行動キャラ - 10):トリガー行動フラグ, 0) == 0
 	;75%で真の力を解放/弱体効果を回復
 	WSTR:(K++) = %敵BATTLE_STATE_STR:(戦闘行動キャラ - 10):エネミー名%이 진정한 힘을 해방했다!
 	
@@ -161,7 +161,7 @@ ELSEIF 敵BATTLE_STATE:(戦闘行動キャラ - 10):ＨＰ < (敵BATTLE_STATE:(�
 	;HPトリガー使い終わったのでフラグを立てる
 	SETBIT 敵BATTLE_STATE:(戦闘行動キャラ - 10):トリガー行動フラグ, 0
 	RETURN 1
-ELSEIF 敵BATTLE_STATE:(戦闘行動キャラ - 10):ＨＰ < 敵BATTLE_STATE:(戦闘行動キャラ - 10):最大ＨＰ / 2 && GETBIT(敵BATTLE_STATE:(戦闘行動キャラ - 10):トリガー行動フラグ, 1) == 0
+ELSEIF 敵BATTLE_STATE:(戦闘行動キャラ - 10):ＨＰ < 敵BATTLE_STATE:(戦闘行動キャラ - 10):최대HP / 2 && GETBIT(敵BATTLE_STATE:(戦闘行動キャラ - 10):トリガー行動フラグ, 1) == 0
 	;50%で『ヴァース・クライシス』を構え始める
 	WSTR:(K++) = %敵BATTLE_STATE_STR:(戦闘行動キャラ - 10):エネミー名%의 손바닥에 창조의 빛이 수렴한다…!
 	
@@ -180,7 +180,7 @@ ELSEIF 敵BATTLE_STATE:(戦闘行動キャラ - 10):ＨＰ < 敵BATTLE_STATE:(�
 	;HPトリガー使い終わったのでフラグを立てる
 	SETBIT 敵BATTLE_STATE:(戦闘行動キャラ - 10):トリガー行動フラグ, 1
 	RETURN 1
-ELSEIF 敵BATTLE_STATE:(戦闘行動キャラ - 10):ＨＰ < 敵BATTLE_STATE:(戦闘行動キャラ - 10):最大ＨＰ / 5 && GETBIT(敵BATTLE_STATE:(戦闘行動キャラ - 10):トリガー行動フラグ, 2) == 0
+ELSEIF 敵BATTLE_STATE:(戦闘行動キャラ - 10):ＨＰ < 敵BATTLE_STATE:(戦闘行動キャラ - 10):최대HP / 5 && GETBIT(敵BATTLE_STATE:(戦闘行動キャラ - 10):トリガー行動フラグ, 2) == 0
 	;25%で『スターリー・ノヴァ』を構え始める
 	WSTR:(K++) = %敵BATTLE_STATE_STR:(戦闘行動キャラ - 10):エネミー名%이 별의 힘을 모으기 시작했다…
 	
@@ -204,7 +204,7 @@ ENDIF
 
 
 @敵チャージ行動_Lv100_ザ・ワールド
-IF 敵BATTLE_STATE:(戦闘行動キャラ - 10):ＨＰ < (敵BATTLE_STATE:(戦闘行動キャラ - 10):最大ＨＰ / 4) * 3
+IF 敵BATTLE_STATE:(戦闘行動キャラ - 10):ＨＰ < (敵BATTLE_STATE:(戦闘行動キャラ - 10):최대HP / 4) * 3
 	SELECTCASE RAND:2
 		CASE 0
 			SELECTCASE RAND:2
@@ -452,12 +452,12 @@ IF プロジェクション・ワールド > -1
 		アビ汎用変数:持続ターン = -1
 		アビ汎用変数:消去不可オプション = 1
 		
-		アビ汎用文字列:バフ・デバフ枠 = 攻撃力_P・W
-		アビ汎用文字列:バフ・デバフ対象能力 = 攻撃力
+		アビ汎用文字列:バフ・デバフ枠 = 공격력_P・W
+		アビ汎用文字列:バフ・デバフ対象能力 = 공격력
 		CALL アビテンプレート_有利効果_累積バフ効果セット
 		
-		アビ汎用文字列:バフ・デバフ枠 = 防御力_P・W
-		アビ汎用文字列:バフ・デバフ対象能力 = 防御力
+		アビ汎用文字列:バフ・デバフ枠 = 방어력_P・W
+		アビ汎用文字列:バフ・デバフ対象能力 = 방어력
 		CALL アビテンプレート_有利効果_累積バフ効果セット
 	ENDIF
 ENDIF

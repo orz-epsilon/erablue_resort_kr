@@ -176,8 +176,8 @@ SELECTCASE ARGS
 	CASE "マスイベント"
 		CALL 口上変数初期化
 		IF 初来訪マス判定用フラグ == 0
-			敵BATTLE_STATE_STR:0:エネミー名 = Lv4_식인조
-			敵BATTLE_STATE_STR:1:エネミー名 = Lv4_식인조
+			敵BATTLE_STATE_STR:0:エネミー名 = Lv4_人食い鳥
+			敵BATTLE_STATE_STR:1:エネミー名 = Lv4_人食い鳥
 			CALL 雑魚敵繰り返し戦闘処理
 		ELSE
 			;最初に訪れた時
@@ -185,8 +185,8 @@ SELECTCASE ARGS
 			KSTR:(K++) = 황야를 나아가고 있는데, 하늘에서 식인조가 너희를 덮쳐왔다!
 			CALL メッセージ欄表示用関数()
 
-			敵BATTLE_STATE_STR:0:エネミー名 = Lv4_식인조
-			敵BATTLE_STATE_STR:1:エネミー名 = Lv4_식인조
+			敵BATTLE_STATE_STR:0:エネミー名 = Lv4_人食い鳥
+			敵BATTLE_STATE_STR:1:エネミー名 = Lv4_人食い鳥
 			CALL 雑魚敵遭遇汎用処理
 			
 			SETBIT ダンジョン構造配列_人食い鳥の島:3:0, 1
@@ -393,17 +393,17 @@ KSTR:(K++) = BUTTON_[아니요]
 			INPUTS
 			SELECTCASE RESULTS
 				CASE "[예]"
-					敵BATTLE_STATE_STR:1:エネミー名 = Lv4_물의 엘리멘탈
-					敵BATTLE_STATE_STR:2:エネミー名 = Lv3_스니퍼
-					敵BATTLE_STATE_STR:3:エネミー名 = Lv4_물의 엘리멘탈
+					敵BATTLE_STATE_STR:1:エネミー名 = Lv4_水のエレメンタル
+					敵BATTLE_STATE_STR:2:エネミー名 = Lv3_スニッパー
+					敵BATTLE_STATE_STR:3:エネミー名 = Lv4_水のエレメンタル
 					CALL 雑魚敵遭遇汎用処理
 					IF RESULT == 0
-						敵BATTLE_STATE_STR:1:エネミー名 = Lv4_물의 엘리멘탈
-						敵BATTLE_STATE_STR:3:エネミー名 = Lv4_물의 엘리멘탈
-						敵BATTLE_STATE_STR:5:エネミー名 = Lv4_물의 엘리멘탈
+						敵BATTLE_STATE_STR:1:エネミー名 = Lv4_水のエレメンタル
+						敵BATTLE_STATE_STR:3:エネミー名 = Lv4_水のエレメンタル
+						敵BATTLE_STATE_STR:5:エネミー名 = Lv4_水のエレメンタル
 						CALL 雑魚敵遭遇汎用処理
 						IF RESULT == 0
-							敵BATTLE_STATE_STR:1:エネミー名 = Lv4_물의 엘리멘탈
+							敵BATTLE_STATE_STR:1:エネミー名 = Lv4_水のエレメンタル
 							敵BATTLE_STATE_STR:2:エネミー名 = Lv3_スニッパー
 							敵BATTLE_STATE_STR:3:エネミー名 = Lv4_水のエレメンタル
 							敵BATTLE_STATE_STR:4:エネミー名 = Lv3_スニッパー
@@ -621,15 +621,15 @@ SELECTCASE ARGS
 			INPUTS
 			SELECTCASE RESULTS
 				CASE "[예]"
-					敵BATTLE_STATE_STR:1:エネミー名 = Lv4_식인조
-					敵BATTLE_STATE_STR:2:エネミー名 = Lv4_식인조
-					敵BATTLE_STATE_STR:4:エネミー名 = Lv4_식인조
+					敵BATTLE_STATE_STR:1:エネミー名 = Lv4_人食い鳥
+					敵BATTLE_STATE_STR:2:エネミー名 = Lv4_人食い鳥
+					敵BATTLE_STATE_STR:4:エネミー名 = Lv4_人食い鳥
 					CALL 雑魚敵遭遇汎用処理
 					IF RESULT == 0
-						敵BATTLE_STATE_STR:1:エネミー名 = Lv4_식인조
-						敵BATTLE_STATE_STR:3:エネミー名 = Lv6_식인조
-						敵BATTLE_STATE_STR:5:エネミー名 = Lv4_식인조
-						敵BATTLE_STATE_STR:7:エネミー名 = Lv4_식인조
+						敵BATTLE_STATE_STR:1:エネミー名 = Lv4_人食い鳥
+						敵BATTLE_STATE_STR:3:エネミー名 = Lv6_人食い鳥
+						敵BATTLE_STATE_STR:5:エネミー名 = Lv4_人食い鳥
+						敵BATTLE_STATE_STR:7:エネミー名 = Lv4_人食い鳥
 						CALL 雑魚敵遭遇汎用処理
 						IF RESULT == 0
 							SETBIT ダンジョン構造配列_人食い鳥の島:マス深度:マス分岐, 4
@@ -669,9 +669,9 @@ SELECTCASE ARGS
 	CASE "マスイベント"
 		CALL 口上変数初期化
 		IF 初来訪マス判定用フラグ == 0
-			敵BATTLE_STATE_STR:0:エネミー名 = Lv4_물의 정령
-			敵BATTLE_STATE_STR:1:エネミー名 = Lv4_물의 정령
-			敵BATTLE_STATE_STR:3:エネミー名 = Lv4_물의 정령
+			敵BATTLE_STATE_STR:0:エネミー名 = Lv4_水のエレメンタル
+			敵BATTLE_STATE_STR:1:エネミー名 = Lv4_水のエレメンタル
+			敵BATTLE_STATE_STR:3:エネミー名 = Lv4_水のエレメンタル
 			CALL 雑魚敵繰り返し戦闘処理
 		ELSE
 			;最初に訪れた時
@@ -680,9 +680,9 @@ SELECTCASE ARGS
 			KSTR:(K++) = 정령형 에너미다! 그것들은 침입자인 너희에게 덮쳐온다!
 			CALL メッセージ欄表示用関数()
 
-			敵BATTLE_STATE_STR:0:エネミー名 = Lv4_물의 정령
-			敵BATTLE_STATE_STR:1:エネミー名 = Lv4_물의 정령
-			敵BATTLE_STATE_STR:3:エネミー名 = Lv4_물의 정령
+			敵BATTLE_STATE_STR:0:エネミー名 = Lv4_水のエレメンタル
+			敵BATTLE_STATE_STR:1:エネミー名 = Lv4_水のエレメンタル
+			敵BATTLE_STATE_STR:3:エネミー名 = Lv4_水のエレメンタル
 			CALL 雑魚敵遭遇汎用処理
 			
 			SETBIT ダンジョン構造配列_人食い鳥の島:10:3, 1
@@ -929,8 +929,8 @@ SELECTCASE ARGS
 	CASE "マスイベント"
 		CALL 口上変数初期化
 		IF 初来訪マス判定用フラグ == 0
-			敵BATTLE_STATE_STR:0:エネミー名 = Lv5_샌드피쉬
-			敵BATTLE_STATE_STR:3:エネミー名 = Lv5_샌드피쉬
+			敵BATTLE_STATE_STR:0:エネミー名 = Lv5_サンドフィッシュ
+			敵BATTLE_STATE_STR:3:エネミー名 = Lv5_サンドフィッシュ
 			CALL 雑魚敵繰り返し戦闘処理
 		ELSE
 			;最初に訪れた時
@@ -1151,8 +1151,8 @@ SELECTCASE ARGS
 						IF BATTLE_STATE:LOCAL:キャラ登録番号 < 1
 							BREAK
 						ENDIF
-						BATTLE_STATE:LOCAL:ＨＰ = BATTLE_STATE:LOCAL:最大ＨＰ
-						BATTLE_STATE:LOCAL:ＭＰ = BATTLE_STATE:LOCAL:最大ＭＰ
+						BATTLE_STATE:LOCAL:ＨＰ = BATTLE_STATE:LOCAL:최대HP
+						BATTLE_STATE:LOCAL:ＭＰ = BATTLE_STATE:LOCAL:최대MP
 					NEXT
 				CASE "[아니요]"
 					KSTR:(K++) = 아직 쉴 정도로 지치지는 않았다. 앞으로 나아가자.
@@ -1182,10 +1182,10 @@ SELECTCASE ARGS
 	CASE "マスイベント"
 		CALL 口上変数初期化
 		IF 初来訪マス判定用フラグ == 0
-			敵BATTLE_STATE_STR:0:エネミー名 = Lv5_샌드피쉬
-			敵BATTLE_STATE_STR:3:エネミー名 = Lv5_샌드피쉬
-			敵BATTLE_STATE_STR:4:エネミー名 = Lv4_식인조
-			敵BATTLE_STATE_STR:5:エネミー名 = Lv4_식인조
+			敵BATTLE_STATE_STR:0:エネミー名 = Lv5_サンドフィッシュ
+			敵BATTLE_STATE_STR:3:エネミー名 = Lv5_サンドフィッシュ
+			敵BATTLE_STATE_STR:4:エネミー名 = Lv4_人食い鳥
+			敵BATTLE_STATE_STR:5:エネミー名 = Lv4_人食い鳥
 			CALL 雑魚敵繰り返し戦闘処理
 		ELSE
 			;最初に訪れた時
@@ -1195,10 +1195,10 @@ SELECTCASE ARGS
 			KSTR:(K++) = 그래도 개의치 않고 발걸음을 옮기자, 새와 물고기가 너희에게 덤벼들었다!
 			CALL メッセージ欄表示用関数()
 
-			敵BATTLE_STATE_STR:0:エネミー名 = Lv5_샌드피쉬
-			敵BATTLE_STATE_STR:3:エネミー名 = Lv5_샌드피쉬
-			敵BATTLE_STATE_STR:4:エネミー名 = Lv4_식인조
-			敵BATTLE_STATE_STR:5:エネミー名 = Lv4_식인조
+			敵BATTLE_STATE_STR:0:エネミー名 = Lv5_サンドフィッシュ
+			敵BATTLE_STATE_STR:3:エネミー名 = Lv5_サンドフィッシュ
+			敵BATTLE_STATE_STR:4:エネミー名 = Lv4_人食い鳥
+			敵BATTLE_STATE_STR:5:エネミー名 = Lv4_人食い鳥
 			CALL 雑魚敵遭遇汎用処理
 			
 			WSTR:(K++) = 이렇게까지 엄중하게 경계하고 있다면, 이 앞에 무리의 보스가 둥지를 틀고 있을지도 모른다.
@@ -1243,20 +1243,20 @@ KSTR:(K++) = BUTTON_[아니요]
 			INPUTS
 			SELECTCASE RESULTS
 				CASE "[예]"
-					敵BATTLE_STATE_STR:1:エネミー名 = Lv6_식인조
-					敵BATTLE_STATE_STR:2:エネミー名 = Lv6_식인조
-					敵BATTLE_STATE_STR:4:エネミー名 = Lv6_식인조
+					敵BATTLE_STATE_STR:1:エネミー名 = Lv6_人食い鳥
+					敵BATTLE_STATE_STR:2:エネミー名 = Lv6_人食い鳥
+					敵BATTLE_STATE_STR:4:エネミー名 = Lv6_人食い鳥
 					CALL 雑魚敵遭遇汎用処理
 					IF RESULT == 0
-						敵BATTLE_STATE_STR:1:エネミー名 = Lv4_식인조
-						敵BATTLE_STATE_STR:3:エネミー名 = Lv6_식인조
-						敵BATTLE_STATE_STR:5:エネミー名 = Lv6_식인조
-						敵BATTLE_STATE_STR:7:エネミー名 = Lv4_식인조
+						敵BATTLE_STATE_STR:1:エネミー名 = Lv4_人食い鳥
+						敵BATTLE_STATE_STR:3:エネミー名 = Lv6_人食い鳥
+						敵BATTLE_STATE_STR:5:エネミー名 = Lv6_人食い鳥
+						敵BATTLE_STATE_STR:7:エネミー名 = Lv4_人食い鳥
 						CALL 雑魚敵遭遇汎用処理
 						IF RESULT == 0
-							敵BATTLE_STATE_STR:0:エネミー名 = Lv10_보스 식인조
-							敵BATTLE_STATE_STR:4:エネミー名 = Lv6_식인조
-							敵BATTLE_STATE_STR:5:エネミー名 = Lv6_식인조
+							敵BATTLE_STATE_STR:0:エネミー名 = Lv10_ボス人食い鳥
+							敵BATTLE_STATE_STR:4:エネミー名 = Lv6_人食い鳥
+							敵BATTLE_STATE_STR:5:エネミー名 = Lv6_人食い鳥
 							CALL BATTLE_MAIN_LOOP
 							IF RESULT == 0
 								;勝利時
@@ -1308,20 +1308,20 @@ KSTR:(K++) = BUTTON_[아니요]
 				INPUTS
 				SELECTCASE RESULTS
 					CASE "[예]"
-						敵BATTLE_STATE_STR:1:エネミー名 = Lv6_식인조
-						敵BATTLE_STATE_STR:2:エネミー名 = Lv6_식인조
-						敵BATTLE_STATE_STR:4:エネミー名 = Lv6_식인조
+						敵BATTLE_STATE_STR:1:エネミー名 = Lv6_人食い鳥
+						敵BATTLE_STATE_STR:2:エネミー名 = Lv6_人食い鳥
+						敵BATTLE_STATE_STR:4:エネミー名 = Lv6_人食い鳥
 						CALL 雑魚敵遭遇汎用処理
 						IF RESULT == 0
-							敵BATTLE_STATE_STR:1:エネミー名 = Lv4_식인조
-							敵BATTLE_STATE_STR:3:エネミー名 = Lv6_식인조
-							敵BATTLE_STATE_STR:5:エネミー名 = Lv6_식인조
-							敵BATTLE_STATE_STR:7:エネミー名 = Lv4_식인조
+							敵BATTLE_STATE_STR:1:エネミー名 = Lv4_人食い鳥
+							敵BATTLE_STATE_STR:3:エネミー名 = Lv6_人食い鳥
+							敵BATTLE_STATE_STR:5:エネミー名 = Lv6_人食い鳥
+							敵BATTLE_STATE_STR:7:エネミー名 = Lv4_人食い鳥
 							CALL 雑魚敵遭遇汎用処理
 							IF RESULT == 0
-								敵BATTLE_STATE_STR:0:エネミー名 = Lv10_보스 식인조
-								敵BATTLE_STATE_STR:4:エネミー名 = Lv6_식인조
-								敵BATTLE_STATE_STR:5:エネミー名 = Lv6_식인조
+								敵BATTLE_STATE_STR:0:エネミー名 = Lv10_ボス人食い鳥
+								敵BATTLE_STATE_STR:4:エネミー名 = Lv6_人食い鳥
+								敵BATTLE_STATE_STR:5:エネミー名 = Lv6_人食い鳥
 								CALL BATTLE_MAIN_LOOP
 								IF RESULT == 0
 									;勝利時
@@ -1627,15 +1627,15 @@ SELECTCASE ARGS
 			INPUTS
 			SELECTCASE RESULTS
 				CASE "[예]"
-					敵BATTLE_STATE_STR:1:エネミー名 = Lv4_식인조
-					敵BATTLE_STATE_STR:2:エネミー名 = Lv4_식인조
-					敵BATTLE_STATE_STR:4:エネミー名 = Lv4_식인조
+					敵BATTLE_STATE_STR:1:エネミー名 = Lv4_人食い鳥
+					敵BATTLE_STATE_STR:2:エネミー名 = Lv4_人食い鳥
+					敵BATTLE_STATE_STR:4:エネミー名 = Lv4_人食い鳥
 					CALL 雑魚敵遭遇汎用処理
 					IF RESULT == 0
-						敵BATTLE_STATE_STR:1:エネミー名 = Lv4_식인조
-						敵BATTLE_STATE_STR:3:エネミー名 = Lv4_식인조
-						敵BATTLE_STATE_STR:5:エネミー名 = Lv6_식인조
-						敵BATTLE_STATE_STR:7:エネミー名 = Lv4_식인조
+						敵BATTLE_STATE_STR:1:エネミー名 = Lv4_人食い鳥
+						敵BATTLE_STATE_STR:3:エネミー名 = Lv4_人食い鳥
+						敵BATTLE_STATE_STR:5:エネミー名 = Lv6_人食い鳥
+						敵BATTLE_STATE_STR:7:エネミー名 = Lv4_人食い鳥
 						CALL 雑魚敵遭遇汎用処理
 						IF RESULT == 0
 							SETBIT ダンジョン構造配列_人食い鳥の島:マス深度:マス分岐, 4
@@ -1743,9 +1743,9 @@ SELECTCASE ARGS
 	CASE "マスイベント"
 		CALL 口上変数初期化
 		IF 初来訪マス判定用フラグ == 0
-			敵BATTLE_STATE_STR:0:エネミー名 = Lv4_식인조
-			敵BATTLE_STATE_STR:3:エネミー名 = Lv4_식인조
-			敵BATTLE_STATE_STR:4:エネミー名 = Lv4_식인조
+			敵BATTLE_STATE_STR:0:エネミー名 = Lv4_人食い鳥
+			敵BATTLE_STATE_STR:3:エネミー名 = Lv4_人食い鳥
+			敵BATTLE_STATE_STR:4:エネミー名 = Lv4_人食い鳥
 			CALL 雑魚敵繰り返し戦闘処理
 		ELSE
 			;最初に訪れた時
@@ -2128,29 +2128,29 @@ SELECTCASE ARGS
 					WSTR:(K++) = 가까운 항구까지 데려다주는 것뿐이라면, 이라며 너희는 구조를 승낙했다.
 					KSTR:(K++) = 「감사합니다!」_PAGE
 					WSTR:(K++) = 「바로 사례를 하게 해주세요! 이것을 드리겠습니다!」
-WSTR:(K++) = 청년은 메고 있던 거대한 배낭을 열어, 너희에게 안을 보여준다.
-KSTR:(K++) = 안에는 짤랑짤랑하는 소리를 내며 대량의 엠블럼 같은 것이 가득 차 있었다._PAGE
-WSTR:(K++) = 「이것은 직업의 증표라고 합니다. 장비하면 다양한 어빌리티를 사용할 수 있는 물건입니다」
-WSTR:(K++) = 「행상을 위해 운반하고 있었으므로, 종류는 그리 많지 않지만……」
-KSTR:(K++) = 「도움을 받는 것뿐만 아니라 항구까지 데려다주시는 은혜! 부디 받아주십시오!」_PAGE
-WSTR:(K++) = 청년의 말대로, 엠블럼──직업의 증표에서는 신비한 힘이 느껴진다.
-WSTR:(K++) = 거절해도 억지로 떠넘길 것 같은 분위기를 느꼈기에, 너희는 순순히 감사를 받아들였다.
-WSTR:(K++) = 직업의 증표를 장비하면_COLOR_c0c070_새로운 어빌리티를 다룰 수 있게 될_것이다.
-WSTR:(K++) = 만드는 것 자체는 간단하므로,_COLOR_c0c070_하나 입수하면 여러 사람이 같은 증표를 장비하는 것도 가능_하다.
-KSTR:(K++) = 동료에게 여러 가지를 장착하여 시험해 보는 것도 좋을 것이다._PAGE
-WSTR:(K++) = 감사를 받은 너희는 일단 배로 돌아가, 청년을 태운다.
-KSTR:(K++) = 탐색이 끝나면 근처 항구에 내려주도록 하자._PAGE
-WSTR:(K++) = 직업의 증표 「파이터의 증표」를 손에 넣었다!
-WSTR:(K++) = 직업의 증표 「나이트의 증표」를 손에 넣었다!
-WSTR:(K++) = 직업의 증표 「프리스트의 증표」를 손에 넣었다!
-KSTR:(K++) = 직업의 증표 「위자드의 증표」를 손에 넣었다!
+					WSTR:(K++) = 청년은 메고 있던 거대한 배낭을 열어, 너희에게 안을 보여준다.
+					KSTR:(K++) = 안에는 짤랑짤랑하는 소리를 내며 대량의 엠블럼 같은 것이 가득 차 있었다._PAGE
+					WSTR:(K++) = 「이것은 직업의 증표라고 합니다. 장비하면 다양한 어빌리티를 사용할 수 있는 물건입니다」
+					WSTR:(K++) = 「행상을 위해 운반하고 있었으므로, 종류는 그리 많지 않지만……」
+					KSTR:(K++) = 「도움을 받는 것뿐만 아니라 항구까지 데려다주시는 은혜! 부디 받아주십시오!」_PAGE
+					WSTR:(K++) = 청년의 말대로, 엠블럼──직업의 증표에서는 신비한 힘이 느껴진다.
+					WSTR:(K++) = 거절해도 억지로 떠넘길 것 같은 분위기를 느꼈기에, 너희는 순순히 감사를 받아들였다.
+					WSTR:(K++) = 직업의 증표를 장비하면_COLOR_c0c070_새로운 어빌리티를 다룰 수 있게 될_것이다.
+					WSTR:(K++) = 만드는 것 자체는 간단하므로,_COLOR_c0c070_하나 입수하면 여러 사람이 같은 증표를 장비하는 것도 가능_하다.
+					KSTR:(K++) = 동료에게 여러 가지를 장착하여 시험해 보는 것도 좋을 것이다._PAGE
+					WSTR:(K++) = 감사를 받은 너희는 일단 배로 돌아가, 청년을 태운다.
+					KSTR:(K++) = 탐색이 끝나면 근처 항구에 내려주도록 하자._PAGE
+					WSTR:(K++) = 직업의 증표 「파이터의 증표」를 손에 넣었다!
+					WSTR:(K++) = 직업의 증표 「나이트의 증표」를 손에 넣었다!
+					WSTR:(K++) = 직업의 증표 「프리스트의 증표」를 손에 넣었다!
+					KSTR:(K++) = 직업의 증표 「위자드의 증표」를 손에 넣었다!
 					CALL 汎用証取得処理("ファイターの証")
 					CALL 汎用証取得処理("ナイトの証")
 					CALL 汎用証取得処理("プリーストの証")
 					CALL 汎用証取得処理("ウィザードの証")
 				CASE "[아니요]"
 					CALL 口上変数初期化
-KSTR:(K++) = 「그런 말 하지 마세요! 부디 부탁드립니다!」
+					KSTR:(K++) = 「그런 말 하지 마세요! 부디 부탁드립니다!」
 					CALL メッセージ欄表示用関数()
 					GOTO LOOP_MESSAGE_2
 				CASEELSE
@@ -2188,11 +2188,11 @@ KSTR:(K++) = 이제 아무것도 없다.
 		ELSE
 			;最初に訪れた時
 			SETBIT ダンジョン構造配列_人食い鳥の島:マス深度:マス分岐, 2
-WSTR:(K++) = 계곡 바닥에는 다양한 잡동사니가 떨어져 있다. 천 조각이나 나무 상자 잔해, 부러진 검 등……
-WSTR:(K++) = 너희는 그 안에서 반짝이는 반지를 발견했다.
-WSTR:(K++) = 고블린 얼굴이 새겨진 조금 희귀한 반지다.
-WSTR:(K++) = 주인에 대한 단서는 찾을 수 없다. 획득물로 가져가자.
-KSTR:(K++) = %CALLNAME:PLAYER%은(는) 고블린 살해의 반지를 손에 넣었다!
+			WSTR:(K++) = 계곡 바닥에는 다양한 잡동사니가 떨어져 있다. 천 조각이나 나무 상자 잔해, 부러진 검 등……
+			WSTR:(K++) = 너희는 그 안에서 반짝이는 반지를 발견했다.
+			WSTR:(K++) = 고블린 얼굴이 새겨진 조금 희귀한 반지다.
+			WSTR:(K++) = 주인에 대한 단서는 찾을 수 없다. 획득물로 가져가자.
+			KSTR:(K++) = %CALLNAME:PLAYER%은(는) 고블린 살해의 반지를 손에 넣었다!
 			CALL メッセージ欄表示用関数()
 			CALL 汎用指輪取得処理("ゴブリン殺しの指輪")
 			CALL 口上変数初期化
@@ -2223,12 +2223,12 @@ KSTR:(K++) = 이미 식인조는 어딘가로 떠나간 뒤다.
 		ELSE
 			;最初に訪れた時
 			SETBIT ダンジョン構造配列_人食い鳥の島:マス深度:マス分岐, 2
-WSTR:(K++) = 계곡 바닥 깊숙한 곳에 식인조의 둥지가 있다.
-WSTR:(K++) = 새 둥지는 비슷한 것들이 여러 개 늘어서 있었고, 많은 식인조의 모습이 보였다.
-KSTR:(K++) = 둥지를 제거하려면 새들과 연전이 될 것이다. 준비는 되었는가._PAGE
-KSTR:(K++) = 마물 무리와 싸우겠습니까? (3연전)
-KSTR:(K++) = BUTTON_[예]
-KSTR:(K++) = BUTTON_[아니요]
+			WSTR:(K++) = 계곡 바닥 깊숙한 곳에 식인조의 둥지가 있다.
+			WSTR:(K++) = 새 둥지는 비슷한 것들이 여러 개 늘어서 있었고, 많은 식인조의 모습이 보였다.
+			KSTR:(K++) = 둥지를 제거하려면 새들과 연전이 될 것이다. 준비는 되었는가._PAGE
+			KSTR:(K++) = 마물 무리와 싸우겠습니까? (3연전)
+			KSTR:(K++) = BUTTON_[예]
+			KSTR:(K++) = BUTTON_[아니요]
 			CALL メッセージ欄表示用関数(,,,0)
 			$LOOP_MESSAGE
 			INPUTS
@@ -2292,7 +2292,7 @@ SELECTCASE ARGS
 		CALL 口上変数初期化
 		IF 初来訪マス判定用フラグ == 0
 			敵BATTLE_STATE_STR:0:エネミー名 = Lv5_マンイータープラント
-			敵BATTLE_STATE_STR:1:エネミー名 = Lv5_マン이터 플랜트
+			敵BATTLE_STATE_STR:1:エネミー名 = Lv5_マンイータープラント
 			CALL 雑魚敵繰り返し戦闘処理
 		ELSE
 			;最初に訪れた時
@@ -2301,8 +2301,8 @@ SELECTCASE ARGS
 			KSTR:(K++) = ……아니, 이것은 덩굴이 아니라 식물 마물이다!
 			CALL メッセージ欄表示用関数()
 
-			敵BATTLE_STATE_STR:0:エネミー名 = Lv5_맨이터 플랜트
-			敵BATTLE_STATE_STR:1:エネミー名 = Lv5_맨이터 플랜트
+			敵BATTLE_STATE_STR:0:エネミー名 = Lv5_マンイータープラント
+			敵BATTLE_STATE_STR:1:エネミー名 = Lv5_マンイータープラント
 			CALL 雑魚敵遭遇汎用処理
 			
 			SETBIT ダンジョン構造配列_人食い鳥の島:29:3, 1
@@ -2352,9 +2352,9 @@ SELECTCASE ARGS
 	CASE "マスイベント"
 		CALL 口上変数初期化
 		IF 初来訪マス判定用フラグ == 0
-			敵BATTLE_STATE_STR:0:エネミー名 = Lv5_맨이터 플랜트
-			敵BATTLE_STATE_STR:1:エネミー名 = Lv5_맨이터 플랜트
-			敵BATTLE_STATE_STR:2:エネミー名 = Lv5_맨이터 플랜트
+			敵BATTLE_STATE_STR:0:エネミー名 = Lv5_マンイータープラント
+			敵BATTLE_STATE_STR:1:エネミー名 = Lv5_マンイータープラント
+			敵BATTLE_STATE_STR:2:エネミー名 = Lv5_マンイータープラント
 			CALL 雑魚敵繰り返し戦闘処理
 		ELSE
 			;最初に訪れた時
@@ -2364,9 +2364,9 @@ SELECTCASE ARGS
 			KSTR:(K++) = 너희는 무기를 들고 전투에 돌입한다.
 			CALL メッセージ欄表示用関数()
 
-			敵BATTLE_STATE_STR:0:エネミー名 = Lv5_맨이터 플랜트
-			敵BATTLE_STATE_STR:1:エネミー名 = Lv5_맨이터 플랜트
-			敵BATTLE_STATE_STR:2:エネミー名 = Lv5_맨이터 플랜트
+			敵BATTLE_STATE_STR:0:エネミー名 = Lv5_マンイータープラント
+			敵BATTLE_STATE_STR:1:エネミー名 = Lv5_マンイータープラント
+			敵BATTLE_STATE_STR:2:エネミー名 = Lv5_マンイータープラント
 			CALL 雑魚敵遭遇汎用処理
 			
 			SETBIT ダンジョン構造配列_人食い鳥の島:31:3, 1
@@ -2450,8 +2450,8 @@ SELECTCASE ARGS
 						IF BATTLE_STATE:LOCAL:キャラ登録番号 < 1
 							BREAK
 						ENDIF
-						BATTLE_STATE:LOCAL:ＨＰ = BATTLE_STATE:LOCAL:最大ＨＰ
-						BATTLE_STATE:LOCAL:ＭＰ = BATTLE_STATE:LOCAL:最大ＭＰ
+						BATTLE_STATE:LOCAL:ＨＰ = BATTLE_STATE:LOCAL:최대HP
+						BATTLE_STATE:LOCAL:ＭＰ = BATTLE_STATE:LOCAL:최대MP
 					NEXT
 				CASE "[아니요]"
 					KSTR:(K++) = 아직 쉴 만큼 지치지 않았다. 계속 나아가자.
@@ -2481,10 +2481,10 @@ SELECTCASE ARGS
 	CASE "マスイベント"
 		CALL 口上変数初期化
 		IF 初来訪マス判定用フラグ == 0
-			敵BATTLE_STATE_STR:1:エネミー名 = Lv4_식인조
-			敵BATTLE_STATE_STR:2:エネミー名 = Lv4_식인조
-			敵BATTLE_STATE_STR:5:エネミー名 = Lv4_식인조
-			敵BATTLE_STATE_STR:6:エネミー名 = Lv6_식인조
+			敵BATTLE_STATE_STR:1:エネミー名 = Lv4_人食い鳥
+			敵BATTLE_STATE_STR:2:エネミー名 = Lv4_人食い鳥
+			敵BATTLE_STATE_STR:5:エネミー名 = Lv4_人食い鳥
+			敵BATTLE_STATE_STR:6:エネミー名 = Lv6_人食い鳥
 			CALL 雑魚敵繰り返し戦闘処理
 		ELSE
 			;最初に訪れた時
@@ -2494,10 +2494,10 @@ SELECTCASE ARGS
 			KSTR:(K++) = ……하지만, 탐색하는 도중에 식인조 무리에게 들켜버렸다!
 			CALL メッセージ欄表示用関数()
 
-			敵BATTLE_STATE_STR:1:エネミー名 = Lv4_식인조
-			敵BATTLE_STATE_STR:2:エネミー名 = Lv4_식인조
-			敵BATTLE_STATE_STR:5:エネミー名 = Lv4_식인조
-			敵BATTLE_STATE_STR:6:エネミー名 = Lv6_식인조
+			敵BATTLE_STATE_STR:1:エネミー名 = Lv4_人食い鳥
+			敵BATTLE_STATE_STR:2:エネミー名 = Lv4_人食い鳥
+			敵BATTLE_STATE_STR:5:エネミー名 = Lv4_人食い鳥
+			敵BATTLE_STATE_STR:6:エネミー名 = Lv6_人食い鳥
 			CALL 雑魚敵遭遇汎用処理
 			
 			SETBIT ダンジョン構造配列_人食い鳥の島:27:7, 1
@@ -2636,21 +2636,21 @@ KSTR:(K++) = BUTTON_[아니요]
 			INPUTS
 			SELECTCASE RESULTS
 				CASE "[예]"
-					敵BATTLE_STATE_STR:1:エネミー名 = Lv4_식인조
-					敵BATTLE_STATE_STR:2:エネミー名 = Lv4_식인조
-					敵BATTLE_STATE_STR:4:エネミー名 = Lv4_식인조
-					敵BATTLE_STATE_STR:7:エネミー名 = Lv4_식인조
+					敵BATTLE_STATE_STR:1:エネミー名 = Lv4_人食い鳥
+					敵BATTLE_STATE_STR:2:エネミー名 = Lv4_人食い鳥
+					敵BATTLE_STATE_STR:4:エネミー名 = Lv4_人食い鳥
+					敵BATTLE_STATE_STR:7:エネミー名 = Lv4_人食い鳥
 					CALL 雑魚敵遭遇汎用処理
 					IF RESULT == 0
-						敵BATTLE_STATE_STR:0:エネミー名 = Lv4_식인조
-						敵BATTLE_STATE_STR:3:エネミー名 = Lv4_식인조
-						敵BATTLE_STATE_STR:4:エネミー名 = Lv4_식인조
+						敵BATTLE_STATE_STR:0:エネミー名 = Lv4_人食い鳥
+						敵BATTLE_STATE_STR:3:エネミー名 = Lv4_人食い鳥
+						敵BATTLE_STATE_STR:4:エネミー名 = Lv4_人食い鳥
 						CALL 雑魚敵遭遇汎用処理
 						IF RESULT == 0
-							敵BATTLE_STATE_STR:1:エネミー名 = Lv4_식인조
-							敵BATTLE_STATE_STR:3:エネミー名 = Lv4_식인조
-							敵BATTLE_STATE_STR:5:エネミー名 = Lv4_식인조
-							敵BATTLE_STATE_STR:7:エネミー名 = Lv4_식인조
+							敵BATTLE_STATE_STR:1:エネミー名 = Lv4_人食い鳥
+							敵BATTLE_STATE_STR:3:エネミー名 = Lv4_人食い鳥
+							敵BATTLE_STATE_STR:5:エネミー名 = Lv4_人食い鳥
+							敵BATTLE_STATE_STR:7:エネミー名 = Lv4_人食い鳥
 							CALL 雑魚敵遭遇汎用処理
 							IF RESULT == 0
 								SETBIT ダンジョン構造配列_人食い鳥の島:マス深度:マス分岐, 4
@@ -2740,9 +2740,9 @@ WSTR:(K++) = 그냥 덩굴 덩어리로도 보이지만, 이것은 식물계 마
 KSTR:(K++) = 목표인 식인조는 아니지만, 철수할 때 얽히면 곤란하다. 미리 제거해 두자.
 			CALL メッセージ欄表示用関数()
 
-			敵BATTLE_STATE_STR:1:エネミー名 = Lv5_맨이터 플랜트
-			敵BATTLE_STATE_STR:3:エネミー名 = Lv5_맨이터 플랜트
-			敵BATTLE_STATE_STR:5:エネミー名 = Lv5_맨이터 플랜트
+			敵BATTLE_STATE_STR:1:エネミー名 = Lv5_マンイータープラント
+			敵BATTLE_STATE_STR:3:エネミー名 = Lv5_マンイータープラント
+			敵BATTLE_STATE_STR:5:エネミー名 = Lv5_マンイータープラント
 			CALL 雑魚敵遭遇汎用処理
 			
 			SETBIT ダンジョン構造配列_人食い鳥の島:30:8, 1

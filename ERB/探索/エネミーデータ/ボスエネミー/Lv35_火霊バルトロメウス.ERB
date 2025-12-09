@@ -2,16 +2,16 @@
 @敵BATTLE_STATE_Lv35_火霊バルトロメウス(対象エネミー)
 #DIM 対象エネミー
 敵BATTLE_STATE:対象エネミー:Lv = 35
-敵BATTLE_STATE:対象エネミー:最大ＨＰ = 53000
+敵BATTLE_STATE:対象エネミー:최대HP = 53000
 敵BATTLE_STATE:対象エネミー:ＨＰ = 53000
-敵BATTLE_STATE:対象エネミー:攻撃力 = 1450
-敵BATTLE_STATE:対象エネミー:防御力 = 1200
-敵BATTLE_STATE:対象エネミー:回復力 = 0
-敵BATTLE_STATE:対象エネミー:行動速度 = 1050
+敵BATTLE_STATE:対象エネミー:공격력 = 1450
+敵BATTLE_STATE:対象エネミー:방어력 = 1200
+敵BATTLE_STATE:対象エネミー:회복력 = 0
+敵BATTLE_STATE:対象エネミー:행동속도 = 1050
 敵BATTLE_STATE:対象エネミー:DA율 = 0
-敵BATTLE_STATE:対象エネミー:TA率 = 30
-敵BATTLE_STATE:対象エネミー:命中率 = 120
-敵BATTLE_STATE:対象エネミー:回避率 = 20
+敵BATTLE_STATE:対象エネミー:TA율 = 30
+敵BATTLE_STATE:対象エネミー:명중률 = 120
+敵BATTLE_STATE:対象エネミー:회피율 = 20
 敵BATTLE_STATE:対象エネミー:属性 = 0
 敵BATTLE_STATE:対象エネミー:所持EXP = 5800
 敵BATTLE_STATE:対象エネミー:所持ルピ = 8000
@@ -37,7 +37,7 @@ IF バフ番号取得_枠("大技待機", 戦闘行動キャラ) > -1
 	CALL 大技待機解除(戦闘行動キャラ)
 
 	RETURN 1
-ELSEIF 敵BATTLE_STATE:(戦闘行動キャラ - 10):ＨＰ < 敵BATTLE_STATE:(戦闘行動キャラ - 10):最大ＨＰ / 2 && GETBIT(敵BATTLE_STATE:(戦闘行動キャラ - 10):トリガー行動フラグ, 0) == 0
+ELSEIF 敵BATTLE_STATE:(戦闘行動キャラ - 10):ＨＰ < 敵BATTLE_STATE:(戦闘行動キャラ - 10):최대HP / 2 && GETBIT(敵BATTLE_STATE:(戦闘行動キャラ - 10):トリガー行動フラグ, 0) == 0
 	;HPが半分以下になったら全体攻撃
 	アビ汎用文字列:実行時メッセージ１ = %敵BATTLE_STATE_STR:(戦闘行動キャラ - 10):エネミー名%은(는) 크게 다쳐 분노에 불타고 있다!
 	アビ汎用文字列:実行時メッセージ２ = %敵BATTLE_STATE_STR:(戦闘行動キャラ - 10):エネミー名%의 특수 행동이 변화했다!

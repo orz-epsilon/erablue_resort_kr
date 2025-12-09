@@ -326,10 +326,10 @@ TSTR:メッセージ欄文字列受け渡し_上側 = <div rect='281,62,5662,168
 
 @行動順決定
 #DIM ループ用
-#DIM 行動速度保存
-#DIM バフ込み行動速度
+#DIM 행동속도保存
+#DIM バフ込み행동속도
 ;全員の比較
-行動速度保存 = -999
+행동속도保存 = -999
 
 FOR ループ用, 0, 4
 	SIF BATTLE_STATE:ループ用:キャラ登録番号 < 1
@@ -338,10 +338,10 @@ FOR ループ用, 0, 4
 		CONTINUE
 	SIF BATTLE_STATE:ループ用:ＨＰ < 1
 		CONTINUE
-	CALL バフ・デバフ測定(ループ用, "行動速度")
-	バフ込み行動速度 = RESULT
-	IF バフ込み行動速度 > 行動速度保存
-		行動速度保存 = バフ込み行動速度
+	CALL バフ・デバフ測定(ループ用, "행동속도")
+	バフ込み행동속도 = RESULT
+	IF バフ込み행동속도 > 행동속도保存
+		행동속도保存 = バフ込み행동속도
 		戦闘行動キャラ = ループ用
 	ENDIF
 NEXT
@@ -353,10 +353,10 @@ FOR ループ用, 0, 10
 		CONTINUE
 	SIF 敵BATTLE_STATE:ループ用:ＨＰ < 1
 		CONTINUE
-	CALL バフ・デバフ測定(ループ用 + 10, "行動速度")
-	バフ込み行動速度 = RESULT
-	IF バフ込み行動速度 > 行動速度保存
-		行動速度保存 = バフ込み行動速度
+	CALL バフ・デバフ測定(ループ用 + 10, "행동속도")
+	バフ込み행동속도 = RESULT
+	IF バフ込み행동속도 > 행동속도保存
+		행동속도保存 = バフ込み행동속도
 		戦闘行動キャラ = ループ用 + 10
 	ENDIF
 NEXT
@@ -367,7 +367,7 @@ IF 戦闘行動キャラ < 10
 ENDIF
 
 ;ないはずだけど全員行動済みでここに来たパターンのフォロー
-SIF 行動速度保存 == -999
+SIF 행동속도保存 == -999
 	RETURN 1
 
 RETURN 0
@@ -401,26 +401,26 @@ FOR LOCAL, 0, 14
 
 	;キャラ番号だけは変動しないので入れない
 	BATTLE_STATE:LOCAL:Lv = 基礎BATTLE_STATE:(BATTLE_STATE:LOCAL:キャラ登録番号):Lv
-	BATTLE_STATE:LOCAL:最大ＨＰ = 基礎BATTLE_STATE:(BATTLE_STATE:LOCAL:キャラ登録番号):最大ＨＰ + 装備ステータス補正保存:(BATTLE_STATE:LOCAL:キャラ登録番号):最大ＨＰ
-	BATTLE_STATE:LOCAL:最大ＭＰ = 基礎BATTLE_STATE:(BATTLE_STATE:LOCAL:キャラ登録番号):最大ＭＰ + 装備ステータス補正保存:(BATTLE_STATE:LOCAL:キャラ登録番号):最大ＭＰ
+	BATTLE_STATE:LOCAL:최대HP = 基礎BATTLE_STATE:(BATTLE_STATE:LOCAL:キャラ登録番号):최대HP + 装備ステータス補正保存:(BATTLE_STATE:LOCAL:キャラ登録番号):최대HP
+	BATTLE_STATE:LOCAL:최대MP = 基礎BATTLE_STATE:(BATTLE_STATE:LOCAL:キャラ登録番号):최대MP + 装備ステータス補正保存:(BATTLE_STATE:LOCAL:キャラ登録番号):최대MP
 	IF 初期設定フラグ
-		BATTLE_STATE:LOCAL:ＨＰ = BATTLE_STATE:LOCAL:最大ＨＰ
-		BATTLE_STATE:LOCAL:ＭＰ = BATTLE_STATE:LOCAL:最大ＭＰ
+		BATTLE_STATE:LOCAL:ＨＰ = BATTLE_STATE:LOCAL:최대HP
+		BATTLE_STATE:LOCAL:ＭＰ = BATTLE_STATE:LOCAL:최대MP
 		BATTLE_STATE:LOCAL:奥義ゲージ = 0
 	ENDIF
-	BATTLE_STATE:LOCAL:攻撃力 = 基礎BATTLE_STATE:(BATTLE_STATE:LOCAL:キャラ登録番号):攻撃力 + 装備ステータス補正保存:(BATTLE_STATE:LOCAL:キャラ登録番号):攻撃力
-	BATTLE_STATE:LOCAL:防御力 = 基礎BATTLE_STATE:(BATTLE_STATE:LOCAL:キャラ登録番号):防御力 + 装備ステータス補正保存:(BATTLE_STATE:LOCAL:キャラ登録番号):防御力
-	BATTLE_STATE:LOCAL:回復力 = 基礎BATTLE_STATE:(BATTLE_STATE:LOCAL:キャラ登録番号):回復力 + 装備ステータス補正保存:(BATTLE_STATE:LOCAL:キャラ登録番号):回復力
-	BATTLE_STATE:LOCAL:行動速度 = 基礎BATTLE_STATE:(BATTLE_STATE:LOCAL:キャラ登録番号):行動速度 + 装備ステータス補正保存:(BATTLE_STATE:LOCAL:キャラ登録番号):行動速度
-	SIF BATTLE_STATE:LOCAL:行動速度 <= 0
-		BATTLE_STATE:LOCAL:行動速度 = 1
+	BATTLE_STATE:LOCAL:공격력 = 基礎BATTLE_STATE:(BATTLE_STATE:LOCAL:キャラ登録番号):공격력 + 装備ステータス補正保存:(BATTLE_STATE:LOCAL:キャラ登録番号):공격력
+	BATTLE_STATE:LOCAL:방어력 = 基礎BATTLE_STATE:(BATTLE_STATE:LOCAL:キャラ登録番号):방어력 + 装備ステータス補正保存:(BATTLE_STATE:LOCAL:キャラ登録番号):방어력
+	BATTLE_STATE:LOCAL:회복력 = 基礎BATTLE_STATE:(BATTLE_STATE:LOCAL:キャラ登録番号):회복력 + 装備ステータス補正保存:(BATTLE_STATE:LOCAL:キャラ登録番号):회복력
+	BATTLE_STATE:LOCAL:행동속도 = 基礎BATTLE_STATE:(BATTLE_STATE:LOCAL:キャラ登録番号):행동속도 + 装備ステータス補正保存:(BATTLE_STATE:LOCAL:キャラ登録番号):행동속도
+	SIF BATTLE_STATE:LOCAL:행동속도 <= 0
+		BATTLE_STATE:LOCAL:행동속도 = 1
 	BATTLE_STATE:LOCAL:DA율 = 基礎BATTLE_STATE:(BATTLE_STATE:LOCAL:キャラ登録番号):DA율 + 装備ステータス補正保存:(BATTLE_STATE:LOCAL:キャラ登録番号):DA율
-	BATTLE_STATE:LOCAL:TA率 = 基礎BATTLE_STATE:(BATTLE_STATE:LOCAL:キャラ登録番号):TA率 + 装備ステータス補正保存:(BATTLE_STATE:LOCAL:キャラ登録番号):TA率
-	BATTLE_STATE:LOCAL:ゲージ上昇効率 = 基礎BATTLE_STATE:(BATTLE_STATE:LOCAL:キャラ登録番号):ゲージ上昇効率 + 装備ステータス補正保存:(BATTLE_STATE:LOCAL:キャラ登録番号):ゲージ上昇効率
-	BATTLE_STATE:LOCAL:ゲージ上昇効率_被ダメ時 = 基礎BATTLE_STATE:(BATTLE_STATE:LOCAL:キャラ登録番号):ゲージ上昇効率_被ダメ時 + 装備ステータス補正保存:(BATTLE_STATE:LOCAL:キャラ登録番号):ゲージ上昇効率_被ダメ時
-	BATTLE_STATE:LOCAL:ゲージ最大値 = 基礎BATTLE_STATE:(BATTLE_STATE:LOCAL:キャラ登録番号):ゲージ最大値 + 装備ステータス補正保存:(BATTLE_STATE:LOCAL:キャラ登録番号):ゲージ最大値
-	BATTLE_STATE:LOCAL:命中率 = 基礎BATTLE_STATE:(BATTLE_STATE:LOCAL:キャラ登録番号):命中率 + 装備ステータス補正保存:(BATTLE_STATE:LOCAL:キャラ登録番号):命中率
-	BATTLE_STATE:LOCAL:回避率 = 基礎BATTLE_STATE:(BATTLE_STATE:LOCAL:キャラ登録番号):回避率 + 装備ステータス補正保存:(BATTLE_STATE:LOCAL:キャラ登録番号):回避率
+	BATTLE_STATE:LOCAL:TA율 = 基礎BATTLE_STATE:(BATTLE_STATE:LOCAL:キャラ登録番号):TA율 + 装備ステータス補正保存:(BATTLE_STATE:LOCAL:キャラ登録番号):TA율
+	BATTLE_STATE:LOCAL:게이지상승효율 = 基礎BATTLE_STATE:(BATTLE_STATE:LOCAL:キャラ登録番号):게이지상승효율 + 装備ステータス補正保存:(BATTLE_STATE:LOCAL:キャラ登録番号):게이지상승효율
+	BATTLE_STATE:LOCAL:게이지상승효율_被ダメ時 = 基礎BATTLE_STATE:(BATTLE_STATE:LOCAL:キャラ登録番号):게이지상승효율_被ダメ時 + 装備ステータス補正保存:(BATTLE_STATE:LOCAL:キャラ登録番号):게이지상승효율_被ダメ時
+	BATTLE_STATE:LOCAL:게이지최대값 = 基礎BATTLE_STATE:(BATTLE_STATE:LOCAL:キャラ登録番号):게이지최대값 + 装備ステータス補正保存:(BATTLE_STATE:LOCAL:キャラ登録番号):게이지최대값
+	BATTLE_STATE:LOCAL:명중률 = 基礎BATTLE_STATE:(BATTLE_STATE:LOCAL:キャラ登録番号):명중률 + 装備ステータス補正保存:(BATTLE_STATE:LOCAL:キャラ登録番号):명중률
+	BATTLE_STATE:LOCAL:회피율 = 基礎BATTLE_STATE:(BATTLE_STATE:LOCAL:キャラ登録番号):회피율 + 装備ステータス補正保存:(BATTLE_STATE:LOCAL:キャラ登録番号):회피율
 	BATTLE_STATE:LOCAL:属性 = 基礎BATTLE_STATE:(BATTLE_STATE:LOCAL:キャラ登録番号):属性
 	IF 装備ステータス補正保存:(BATTLE_STATE:LOCAL:キャラ登録番号):属性
 		;0を火属性にしちゃったので数値そのままだと属性変更してるかどうか判別がつかないため、装備による属性変更は属性番号+10で保存している
@@ -432,18 +432,18 @@ FOR LOCAL, 0, 14
 	BATTLE_STATE:LOCAL:敵対心 = 基礎BATTLE_STATE:(BATTLE_STATE:LOCAL:キャラ登録番号):敵対心
 	BATTLE_STATE:LOCAL:行動済みフラグ = 0
 
-	BATTLE_STATE:LOCAL:火耐性 = 基礎BATTLE_STATE:(BATTLE_STATE:LOCAL:キャラ登録番号):火耐性 + 装備ステータス補正保存:(BATTLE_STATE:LOCAL:キャラ登録番号):火耐性
-	BATTLE_STATE:LOCAL:水耐性 = 基礎BATTLE_STATE:(BATTLE_STATE:LOCAL:キャラ登録番号):水耐性 + 装備ステータス補正保存:(BATTLE_STATE:LOCAL:キャラ登録番号):水耐性
-	BATTLE_STATE:LOCAL:風耐性 = 基礎BATTLE_STATE:(BATTLE_STATE:LOCAL:キャラ登録番号):風耐性 + 装備ステータス補正保存:(BATTLE_STATE:LOCAL:キャラ登録番号):風耐性
-	BATTLE_STATE:LOCAL:土耐性 = 基礎BATTLE_STATE:(BATTLE_STATE:LOCAL:キャラ登録番号):土耐性 + 装備ステータス補正保存:(BATTLE_STATE:LOCAL:キャラ登録番号):土耐性
-	BATTLE_STATE:LOCAL:光耐性 = 基礎BATTLE_STATE:(BATTLE_STATE:LOCAL:キャラ登録番号):光耐性 + 装備ステータス補正保存:(BATTLE_STATE:LOCAL:キャラ登録番号):光耐性
-	BATTLE_STATE:LOCAL:闇耐性 = 基礎BATTLE_STATE:(BATTLE_STATE:LOCAL:キャラ登録番号):闇耐性 + 装備ステータス補正保存:(BATTLE_STATE:LOCAL:キャラ登録番号):闇耐性
-	BATTLE_STATE:LOCAL:火強化 = 基礎BATTLE_STATE:(BATTLE_STATE:LOCAL:キャラ登録番号):火強化 + 装備ステータス補正保存:(BATTLE_STATE:LOCAL:キャラ登録番号):火強化
-	BATTLE_STATE:LOCAL:水強化 = 基礎BATTLE_STATE:(BATTLE_STATE:LOCAL:キャラ登録番号):水強化 + 装備ステータス補正保存:(BATTLE_STATE:LOCAL:キャラ登録番号):水強化
-	BATTLE_STATE:LOCAL:風強化 = 基礎BATTLE_STATE:(BATTLE_STATE:LOCAL:キャラ登録番号):風強化 + 装備ステータス補正保存:(BATTLE_STATE:LOCAL:キャラ登録番号):風強化
-	BATTLE_STATE:LOCAL:土強化 = 基礎BATTLE_STATE:(BATTLE_STATE:LOCAL:キャラ登録番号):土強化 + 装備ステータス補正保存:(BATTLE_STATE:LOCAL:キャラ登録番号):土強化
-	BATTLE_STATE:LOCAL:光強化 = 基礎BATTLE_STATE:(BATTLE_STATE:LOCAL:キャラ登録番号):光強化 + 装備ステータス補正保存:(BATTLE_STATE:LOCAL:キャラ登録番号):光強化
-	BATTLE_STATE:LOCAL:闇強化 = 基礎BATTLE_STATE:(BATTLE_STATE:LOCAL:キャラ登録番号):闇強化 + 装備ステータス補正保存:(BATTLE_STATE:LOCAL:キャラ登録番号):闇強化
+	BATTLE_STATE:LOCAL:화내성 = 基礎BATTLE_STATE:(BATTLE_STATE:LOCAL:キャラ登録番号):화내성 + 装備ステータス補正保存:(BATTLE_STATE:LOCAL:キャラ登録番号):화내성
+	BATTLE_STATE:LOCAL:수내성 = 基礎BATTLE_STATE:(BATTLE_STATE:LOCAL:キャラ登録番号):수내성 + 装備ステータス補正保存:(BATTLE_STATE:LOCAL:キャラ登録番号):수내성
+	BATTLE_STATE:LOCAL:풍내성 = 基礎BATTLE_STATE:(BATTLE_STATE:LOCAL:キャラ登録番号):풍내성 + 装備ステータス補正保存:(BATTLE_STATE:LOCAL:キャラ登録番号):풍내성
+	BATTLE_STATE:LOCAL:토내성 = 基礎BATTLE_STATE:(BATTLE_STATE:LOCAL:キャラ登録番号):토내성 + 装備ステータス補正保存:(BATTLE_STATE:LOCAL:キャラ登録番号):토내성
+	BATTLE_STATE:LOCAL:광내성 = 基礎BATTLE_STATE:(BATTLE_STATE:LOCAL:キャラ登録番号):광내성 + 装備ステータス補正保存:(BATTLE_STATE:LOCAL:キャラ登録番号):광내성
+	BATTLE_STATE:LOCAL:암내성 = 基礎BATTLE_STATE:(BATTLE_STATE:LOCAL:キャラ登録番号):암내성 + 装備ステータス補正保存:(BATTLE_STATE:LOCAL:キャラ登録番号):암내성
+	BATTLE_STATE:LOCAL:화강화 = 基礎BATTLE_STATE:(BATTLE_STATE:LOCAL:キャラ登録番号):화강화 + 装備ステータス補正保存:(BATTLE_STATE:LOCAL:キャラ登録番号):화강화
+	BATTLE_STATE:LOCAL:수강화 = 基礎BATTLE_STATE:(BATTLE_STATE:LOCAL:キャラ登録番号):수강화 + 装備ステータス補正保存:(BATTLE_STATE:LOCAL:キャラ登録番号):수강화
+	BATTLE_STATE:LOCAL:풍강화 = 基礎BATTLE_STATE:(BATTLE_STATE:LOCAL:キャラ登録番号):풍강화 + 装備ステータス補正保存:(BATTLE_STATE:LOCAL:キャラ登録番号):풍강화
+	BATTLE_STATE:LOCAL:토강화 = 基礎BATTLE_STATE:(BATTLE_STATE:LOCAL:キャラ登録番号):토강화 + 装備ステータス補正保存:(BATTLE_STATE:LOCAL:キャラ登録番号):토강화
+	BATTLE_STATE:LOCAL:광강화 = 基礎BATTLE_STATE:(BATTLE_STATE:LOCAL:キャラ登録番号):광강화 + 装備ステータス補正保存:(BATTLE_STATE:LOCAL:キャラ登録番号):광강화
+	BATTLE_STATE:LOCAL:암강화 = 基礎BATTLE_STATE:(BATTLE_STATE:LOCAL:キャラ登録番号):암강화 + 装備ステータス補正保存:(BATTLE_STATE:LOCAL:キャラ登録番号):암강화
 
 	;初期設定時は衣装を探索時衣装に変更
 	IF 初期設定フラグ
@@ -458,28 +458,28 @@ BATTLE_STATE:9:キャラ登録番号 = PLAYER
 FOR LOCAL, 0, 6
 	IF ISNUMERIC(DT_CELL_GETS("所持乗機データベース", 装備乗機ID, @"武装{LOCAL}", 1))
 		兵器id = TOINT(DT_CELL_GETS("所持乗機データベース", 装備乗機ID, @"武装{LOCAL}", 1))
-		計算値 += DT_CELL_GET("所持兵器データベース", 兵器id, "攻撃力変動値_強化後", 1)
+		計算値 += DT_CELL_GET("所持兵器データベース", 兵器id, "공격력変動値_強化後", 1)
 	ENDIF
 NEXT
-BATTLE_STATE:9:攻撃力 = DT_CELL_GET("所持乗機データベース", 装備乗機ID, "乗機攻撃力_強化後", 1) + 計算値
+BATTLE_STATE:9:공격력 = DT_CELL_GET("所持乗機データベース", 装備乗機ID, "乗機공격력_強化後", 1) + 計算値
 
 ;マイナスにはしない
-SIF BATTLE_STATE:9:攻撃力 < 1
-	BATTLE_STATE:9:攻撃力 = 1
+SIF BATTLE_STATE:9:공격력 < 1
+	BATTLE_STATE:9:공격력 = 1
 
 ;計算値入れる前にデフォ値フォロー
-BATTLE_STATE:9:命中率 = DT_CELL_GET("所持乗機データベース", 装備乗機ID, "乗機命中率_強化後", 1)
-SIF BATTLE_STATE:9:命中率 < 1
-	BATTLE_STATE:9:命中率 = 100
+BATTLE_STATE:9:명중률 = DT_CELL_GET("所持乗機データベース", 装備乗機ID, "乗機명중률_強化後", 1)
+SIF BATTLE_STATE:9:명중률 < 1
+	BATTLE_STATE:9:명중률 = 100
 
 計算値 = 0
 FOR LOCAL, 0, 6
 	IF ISNUMERIC(DT_CELL_GETS("所持乗機データベース", 装備乗機ID, @"武装{LOCAL}", 1))
 		兵器id = TOINT(DT_CELL_GETS("所持乗機データベース", 装備乗機ID, @"武装{LOCAL}", 1))
-		計算値 += DT_CELL_GET("所持兵器データベース", 兵器id, "命中率変動値_強化後", 1)
+		計算値 += DT_CELL_GET("所持兵器データベース", 兵器id, "명중률変動値_強化後", 1)
 	ENDIF
 NEXT
-BATTLE_STATE:9:命中率 += 計算値
+BATTLE_STATE:9:명중률 += 計算値
 BATTLE_STATE:9:クリティカルダメージ率 = 150
 
 ;初期設定時に残弾のリセット
@@ -523,8 +523,8 @@ NEXT
 
 敵BATTLE_STATE_STR:敵番号:エネミー関数キー '= 敵BATTLE_STATE_STR:敵番号:エネミー名
 CALLFORM 敵BATTLE_STATE_%敵BATTLE_STATE_STR:敵番号:エネミー関数キー%(敵番号)
-SIF 敵BATTLE_STATE:敵番号:行動速度 <= 0
-	敵BATTLE_STATE:敵番号:行動速度 = 1
+SIF 敵BATTLE_STATE:敵番号:행동속도 <= 0
+	敵BATTLE_STATE:敵番号:행동속도 = 1
 SIF 敵BATTLE_STATE:敵番号:ランダムエネミーフラグ
 	CALL 敵レベルアップ_テンプレート適用(敵番号, 敵BATTLE_STATE:敵番号:ランダムエネミーフラグ)
 SIF 敵BATTLE_STATE:敵番号:クリティカルダメージ率 == 0
@@ -583,18 +583,18 @@ IF ターン中奥義回数保存 > 1
 
 		;2回以上奥義を撃っていた場合、敵全体にダメージ
 		戦闘行動キャラ = チェンバ基準キャラ保存:0
-		CALL バフ込み数値算出("攻撃力")
+		CALL バフ込み数値算出("공격력")
 		LOCAL = RESULT
-		LOCALS = 攻撃力
-		CALL バフ込み数値算出("防御力")
+		LOCALS = 공격력
+		CALL バフ込み数値算出("방어력")
 		IF LOCAL < RESULT
 			LOCAL = RESULT
-			LOCALS = 防御力
+			LOCALS = 방어력
 		ENDIF
-		CALL バフ込み数値算出("回復力")
+		CALL バフ込み数値算出("회복력")
 		IF LOCAL < RESULT
 			LOCAL = RESULT
-			LOCALS = 回復力
+			LOCALS = 회복력
 		ENDIF
 		CALL アビ対象選択テンプレート_敵全体_生者のみ
 		アビ汎用文字列:ダメージ種類 = 체인 버스트 대미지
@@ -655,7 +655,7 @@ IF ターン中奥義回数保存 > 1
 		ENDSELECT
 		SETBIT アビ汎用変数:かばう無視オプション, 0
 		SETBIT アビ汎用変数:かばう無視オプション, 1
-		アビ汎用変数:命中率補正値 = 200
+		アビ汎用変数:명중률補正値 = 200
 		CALL アビテンプレート_ダメージ処理_自属性
 
 		ターン中奥義回数保存 = チェイン保存
@@ -714,7 +714,7 @@ NEXT
 
 ;バフ、デバフのターン経過処理
 CALL 戦闘効果ターン経過処理()
-CALL 戦闘中最大ＨＰＭＰ変動処理()
+CALL 戦闘中최대HPＭＰ変動処理()
 
 ;乗機のCT進行
 表示兵装数 = ENUMFUNCBEGINSWITH(@"乗機兵装関数_%DT_CELL_GETS("所持乗機データベース", 装備乗機ID, "乗機名", 1)%_")
@@ -812,9 +812,9 @@ FOR ループ用, 0, DT_ROW_LENGTH("戦闘効果データベース")
 		IF 戦闘行動キャラ < 10
 			キャラNAME '= CALLNAME:(BATTLE_STATE:戦闘行動キャラ:キャラ登録番号)
 			;ダメージ量決定
-			効果量 = DT_CELL_GET("戦闘効果データベース", ループ用, "効果量_固定値") + (BATTLE_STATE:戦闘行動キャラ:最大ＨＰ * DT_CELL_GET("戦闘効果データベース", ループ用, "効果量_割合") / 100)
+			効果量 = DT_CELL_GET("戦闘効果データベース", ループ用, "効果量_固定値") + (BATTLE_STATE:戦闘行動キャラ:최대HP * DT_CELL_GET("戦闘効果データベース", ループ用, "効果量_割合") / 100)
 			IF DT_CELL_GETS("戦闘効果データベース", ループ用, "付随効果枠") != ""
-				効果量 += 付随依存変動算出(ループ用, 戦闘行動キャラ, "고정값") + (BATTLE_STATE:戦闘行動キャラ:最大ＨＰ * 付随依存変動算出(ループ用, 戦闘行動キャラ, "비율") / 100)
+				効果量 += 付随依存変動算出(ループ用, 戦闘行動キャラ, "고정값") + (BATTLE_STATE:戦闘行動キャラ:최대HP * 付随依存変動算出(ループ用, 戦闘行動キャラ, "비율") / 100)
 			ENDIF
 			効果量 = 効果量 * RAND(95, 105) / 100
 			効果量 = MIN(効果量, BATTLE_STATE:戦闘行動キャラ:ＨＰ)
@@ -828,9 +828,9 @@ FOR ループ用, 0, DT_ROW_LENGTH("戦闘効果データベース")
 		ELSE
 			キャラNAME '= 敵BATTLE_STATE_STR:(戦闘行動キャラ - 10):エネミー名
 			;ダメージ量決定
-			効果量 = DT_CELL_GET("戦闘効果データベース", ループ用, "効果量_固定値") + (敵BATTLE_STATE:(戦闘行動キャラ - 10):最大ＨＰ * DT_CELL_GET("戦闘効果データベース", ループ用, "効果量_割合") / 100)
+			効果量 = DT_CELL_GET("戦闘効果データベース", ループ用, "効果量_固定値") + (敵BATTLE_STATE:(戦闘行動キャラ - 10):최대HP * DT_CELL_GET("戦闘効果データベース", ループ用, "効果量_割合") / 100)
 			IF DT_CELL_GETS("戦闘効果データベース", ループ用, "付随効果枠") != ""
-				効果量 += 付随依存変動算出(ループ用, 戦闘行動キャラ, "고정값") + (敵BATTLE_STATE:(戦闘行動キャラ - 10):最大ＨＰ * 付随依存変動算出(ループ用, 戦闘行動キャラ, "비율") / 100)
+				効果量 += 付随依存変動算出(ループ用, 戦闘行動キャラ, "고정값") + (敵BATTLE_STATE:(戦闘行動キャラ - 10):최대HP * 付随依存変動算出(ループ用, 戦闘行動キャラ, "비율") / 100)
 			ENDIF
 			効果量 = 効果量 * RAND(95, 105) / 100
 			効果量 = MIN(効果量, 敵BATTLE_STATE:(戦闘行動キャラ - 10):ＨＰ)
@@ -856,9 +856,9 @@ FOR ループ用, 0, DT_ROW_LENGTH("戦闘効果データベース")
 			ダメージデバフフラグ = 1
 		IF ダメージデバフフラグ
 			;ダメージ量決定
-			効果量 = DT_CELL_GET("戦闘効果データベース", ループ用, "効果量_固定値") + (BATTLE_STATE:戦闘行動キャラ:最大ＭＰ * DT_CELL_GET("戦闘効果データベース", ループ用, "効果量_割合") / 100)
+			効果量 = DT_CELL_GET("戦闘効果データベース", ループ用, "効果量_固定値") + (BATTLE_STATE:戦闘行動キャラ:최대MP * DT_CELL_GET("戦闘効果データベース", ループ用, "効果量_割合") / 100)
 			IF DT_CELL_GETS("戦闘効果データベース", ループ用, "付随効果枠") != ""
-				効果量 += 付随依存変動算出(ループ用, 戦闘行動キャラ, "고정값") + (BATTLE_STATE:戦闘行動キャラ:最大ＭＰ * 付随依存変動算出(ループ用, 戦闘行動キャラ, "비율") / 100)
+				効果量 += 付随依存変動算出(ループ用, 戦闘行動キャラ, "고정값") + (BATTLE_STATE:戦闘行動キャラ:최대MP * 付随依存変動算出(ループ用, 戦闘行動キャラ, "비율") / 100)
 			ENDIF
 			効果量 = 効果量 * RAND(95, 105) / 100
 			効果量 = MIN(効果量, BATTLE_STATE:戦闘行動キャラ:ＭＰ)
@@ -883,9 +883,9 @@ CALL デバフ回数経過処理(戦闘行動キャラ, "ＭＰ自傷")
 FOR ループ用, 0, DT_ROW_LENGTH("戦闘効果データベース")
 	IF バフ・デバフ効果適用判定_行指定(ループ用, "バフ", "再生", 戦闘行動キャラ)
 		;回復量決定
-		効果量 = DT_CELL_GET("戦闘効果データベース", ループ用, "効果量_固定値") + (BATTLE_STATE:戦闘行動キャラ:最大ＨＰ * DT_CELL_GET("戦闘効果データベース", ループ用, "効果量_割合") / 100)
+		効果量 = DT_CELL_GET("戦闘効果データベース", ループ用, "効果量_固定値") + (BATTLE_STATE:戦闘行動キャラ:최대HP * DT_CELL_GET("戦闘効果データベース", ループ用, "効果量_割合") / 100)
 		IF DT_CELL_GETS("戦闘効果データベース", ループ用, "付随効果枠") != ""
-			効果量 += 付随依存変動算出(ループ用, 戦闘行動キャラ, "고정값") + (BATTLE_STATE:戦闘行動キャラ:最大ＨＰ * 付随依存変動算出(ループ用, 戦闘行動キャラ, "비율") / 100)
+			効果量 += 付随依存変動算出(ループ用, 戦闘行動キャラ, "고정값") + (BATTLE_STATE:戦闘行動キャラ:최대HP * 付随依存変動算出(ループ用, 戦闘行動キャラ, "비율") / 100)
 		ENDIF
 		効果量 = 効果量 * RAND(95, 105) / 100
 
@@ -927,13 +927,13 @@ FOR ループ用, 0, DT_ROW_LENGTH("戦闘効果データベース")
 					ループ終了 = 1
 				ENDIF
 			ELSE
-				効果量 = MIN(効果量, BATTLE_STATE:戦闘行動キャラ:最大ＨＰ - BATTLE_STATE:戦闘行動キャラ:ＨＰ)
+				効果量 = MIN(効果量, BATTLE_STATE:戦闘行動キャラ:최대HP - BATTLE_STATE:戦闘行動キャラ:ＨＰ)
 				IF デバフ番号取得("強圧", 戦闘行動キャラ) >= 0
 					WSTR:(K++) = %CALLNAME:(BATTLE_STATE:戦闘行動キャラ:キャラ登録番号)%의 HP는 회복되지 않았다…
 					CALL デバフ回数経過処理(戦闘行動キャラ, "強圧")
 				ELSE
 					WSTR:(K++) = %CALLNAME:(BATTLE_STATE:戦闘行動キャラ:キャラ登録番号)%은(는) %DT_CELL_GETS("戦闘効果データベース", ループ用, "効果名")%의 효과로 {効果量}의 HP를 회복!
-					BATTLE_STATE:戦闘行動キャラ:ＨＰ = MIN(BATTLE_STATE:戦闘行動キャラ:ＨＰ + 効果量, BATTLE_STATE:戦闘行動キャラ:最大ＨＰ)
+					BATTLE_STATE:戦闘行動キャラ:ＨＰ = MIN(BATTLE_STATE:戦闘行動キャラ:ＨＰ + 効果量, BATTLE_STATE:戦闘行動キャラ:최대HP)
 				ENDIF
 			ENDIF
 		ELSE
@@ -946,13 +946,13 @@ FOR ループ用, 0, DT_ROW_LENGTH("戦闘効果データベース")
 					ループ終了 = 1
 				ENDIF
 			ELSE
-				効果量 = MIN(効果量, 敵BATTLE_STATE:(戦闘行動キャラ - 10):最大ＨＰ - 敵BATTLE_STATE:(戦闘行動キャラ - 10):ＨＰ)
+				効果量 = MIN(効果量, 敵BATTLE_STATE:(戦闘行動キャラ - 10):최대HP - 敵BATTLE_STATE:(戦闘行動キャラ - 10):ＨＰ)
 				IF デバフ番号取得("強圧", 戦闘行動キャラ) >= 0
 					WSTR:(K++) = %敵BATTLE_STATE_STR:(戦闘行動キャラ - 10):エネミー名%의 HP는 회복되지 않았다…
 					CALL デバフ回数経過処理(戦闘行動キャラ, "強圧")
 				ELSE
 					WSTR:(K++) = %敵BATTLE_STATE_STR:(戦闘行動キャラ - 10):エネミー名%은(는) %DT_CELL_GETS("戦闘効果データベース", ループ用, "効果名")%의 효과로 {効果量}의 HP를 회복!
-					敵BATTLE_STATE:(戦闘行動キャラ - 10):ＨＰ = MIN(敵BATTLE_STATE:(戦闘行動キャラ - 10):ＨＰ + 効果量, 敵BATTLE_STATE:(戦闘行動キャラ - 10):最大ＨＰ)
+					敵BATTLE_STATE:(戦闘行動キャラ - 10):ＨＰ = MIN(敵BATTLE_STATE:(戦闘行動キャラ - 10):ＨＰ + 効果量, 敵BATTLE_STATE:(戦闘行動キャラ - 10):최대HP)
 				ENDIF
 			ENDIF
 		ENDIF
@@ -966,13 +966,13 @@ FOR ループ用, 0, DT_ROW_LENGTH("戦闘効果データベース")
 		IF DT_CELL_GETS("戦闘効果データベース", ループ用, "付随効果枠") != ""
 			効果量 += 付随依存変動算出(ループ用, 戦闘行動キャラ, "固定値") + (BATTLE_STATE:戦闘行動キャラ:奥義ゲージ * 付随依存変動算出(ループ用, 戦闘行動キャラ, "割合") / 100)
 		ENDIF
-		効果量 = MIN(効果量, BATTLE_STATE:戦闘行動キャラ:ゲージ最大値 - BATTLE_STATE:戦闘行動キャラ:奥義ゲージ)
+		効果量 = MIN(効果量, BATTLE_STATE:戦闘行動キャラ:게이지최대값 - BATTLE_STATE:戦闘行動キャラ:奥義ゲージ)
 		IF デバフ番号取得("恐怖", 戦闘行動キャラ) >= 0
 			WSTR:(K++) = %CALLNAME:(BATTLE_STATE:戦闘行動キャラ:キャラ登録番号)%의 오의 게이지는 상승하지 않았다…
 			CALL デバフ回数経過処理(戦闘行動キャラ, "恐怖")
 		ELSE
 			WSTR:(K++) =%DT_CELL_GETS("戦闘効果データベース", ループ用, "効果名")%의 효과로 %CALLNAME:(BATTLE_STATE:戦闘行動キャラ:キャラ登録番号)%의 오의 게이지가 {効果量} 상승!
-			BATTLE_STATE:戦闘行動キャラ:奥義ゲージ = MIN(BATTLE_STATE:戦闘行動キャラ:奥義ゲージ + 効果量, BATTLE_STATE:戦闘行動キャラ:ゲージ最大値)
+			BATTLE_STATE:戦闘行動キャラ:奥義ゲージ = MIN(BATTLE_STATE:戦闘行動キャラ:奥義ゲージ + 効果量, BATTLE_STATE:戦闘行動キャラ:게이지최대값)
 		ENDIF
 		CALL メッセージ欄表示用関数(,,,0)
 		CALL 口上変数初期化
@@ -986,7 +986,7 @@ CALL バフ回数経過処理(戦闘行動キャラ, "高揚")
 CALL バフ行動回数経過処理(戦闘行動キャラ)
 CALL デバフ行動回数経過処理(戦闘行動キャラ)
 
-CALL 戦闘中最大ＨＰＭＰ変動処理()
+CALL 戦闘中최대HPＭＰ変動処理()
 
 ;0 = 交代は実行されなかった, 1 = 交代が実行された, -1 = 交代に失敗した/キャンセルされた
 @戦闘中交代効果処理
@@ -1038,7 +1038,7 @@ FOR ループ用, 0, DT_ROW_LENGTH("戦闘効果データベース")
 	ループ用 --
 NEXT
 
-CALL 戦闘中最大ＨＰＭＰ変動処理()
+CALL 戦闘中최대HPＭＰ変動処理()
 
 RETURN 交代実行結果
 

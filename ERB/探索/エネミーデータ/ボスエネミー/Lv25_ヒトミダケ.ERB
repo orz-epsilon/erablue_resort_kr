@@ -1,16 +1,16 @@
 
 @敵BATTLE_STATE_Lv25_ヒトミダケ(ARG)
 敵BATTLE_STATE:ARG:Lv = 25
-敵BATTLE_STATE:ARG:最大ＨＰ = 25500
+敵BATTLE_STATE:ARG:최대HP = 25500
 敵BATTLE_STATE:ARG:ＨＰ = 25500
-敵BATTLE_STATE:ARG:攻撃力 = 720
-敵BATTLE_STATE:ARG:防御力 = 860
-敵BATTLE_STATE:ARG:回復力 = 0
-敵BATTLE_STATE:ARG:行動速度 = 730
+敵BATTLE_STATE:ARG:공격력 = 720
+敵BATTLE_STATE:ARG:방어력 = 860
+敵BATTLE_STATE:ARG:회복력 = 0
+敵BATTLE_STATE:ARG:행동속도 = 730
 敵BATTLE_STATE:ARG:DA율 = 20
-敵BATTLE_STATE:ARG:TA率 = 20
-敵BATTLE_STATE:ARG:命中率 = 95
-敵BATTLE_STATE:ARG:回避率 = 5
+敵BATTLE_STATE:ARG:TA율 = 20
+敵BATTLE_STATE:ARG:명중률 = 95
+敵BATTLE_STATE:ARG:회피율 = 5
 敵BATTLE_STATE:ARG:属性 = 3
 敵BATTLE_STATE:ARG:所持EXP = 1250
 敵BATTLE_STATE:ARG:所持ルピ = 1500
@@ -22,7 +22,7 @@
 敵BATTLE_STATE_STR:ARG:ステータスタイプ指定 = 보스 서포트
 
 @敵トリガー行動_Lv25_ヒトミダケ
-IF 敵BATTLE_STATE:(戦闘行動キャラ - 10):ＨＰ < 敵BATTLE_STATE:(戦闘行動キャラ - 10):最大ＨＰ / 2 && GETBIT(敵BATTLE_STATE:(戦闘行動キャラ - 10):トリガー行動フラグ, 0) == 0
+IF 敵BATTLE_STATE:(戦闘行動キャラ - 10):ＨＰ < 敵BATTLE_STATE:(戦闘行動キャラ - 10):최대HP / 2 && GETBIT(敵BATTLE_STATE:(戦闘行動キャラ - 10):トリガー行動フラグ, 0) == 0
 	;HPが半分以下になったら全体攻撃
 	アビ汎用文字列:実行時メッセージ１ = %敵BATTLE_STATE_STR:(戦闘行動キャラ - 10):エネミー名%은(는) 크게 다쳐 분노에 불타고 있다!
 	アビ汎用文字列:実行時メッセージ２ = %敵BATTLE_STATE_STR:(戦闘行動キャラ - 10):エネミー名%의 폭렬 포자!

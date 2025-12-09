@@ -200,7 +200,7 @@ IF 選択モード
 			BUTTON_TEXT += " → 0"
 		ソート情報 '= ソート情報表示(対象キャラ)
 		SIF ソート情報 != ""
-			BUTTON_TEXT += "　" + 정렬 정보
+			BUTTON_TEXT += "　" + ソート情報
 		PRINTBUTTON BUTTON_TEXT, L_CNT
 		PRINTL
 	NEXT
@@ -254,7 +254,7 @@ ELSE
 				BUTTON_TEXT += " → 0"
 			ソート情報 '= ソート情報表示(対象キャラ)
 			SIF ソート情報 != ""
-				BUTTON_TEXT += "　" + 정렬 정보
+				BUTTON_TEXT += "　" + ソート情報
 			PRINTBUTTON BUTTON_TEXT, L_CNT
 			PRINTL
 		NEXT

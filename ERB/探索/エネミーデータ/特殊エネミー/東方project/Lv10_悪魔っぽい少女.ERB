@@ -1,16 +1,16 @@
 
 @敵BATTLE_STATE_Lv10_悪魔っぽい少女(ARG)
 敵BATTLE_STATE:ARG:Lv = 9
-敵BATTLE_STATE:ARG:最大ＨＰ = 8800
+敵BATTLE_STATE:ARG:최대HP = 8800
 敵BATTLE_STATE:ARG:ＨＰ = 8800
-敵BATTLE_STATE:ARG:攻撃力 = 400
-敵BATTLE_STATE:ARG:防御力 = 470
-敵BATTLE_STATE:ARG:回復力 = 0
-敵BATTLE_STATE:ARG:行動速度 = 500
+敵BATTLE_STATE:ARG:공격력 = 400
+敵BATTLE_STATE:ARG:방어력 = 470
+敵BATTLE_STATE:ARG:회복력 = 0
+敵BATTLE_STATE:ARG:행동속도 = 500
 敵BATTLE_STATE:ARG:DA율 = 0
-敵BATTLE_STATE:ARG:TA率 = 0
-敵BATTLE_STATE:ARG:命中率 = 90
-敵BATTLE_STATE:ARG:回避率 = 0
+敵BATTLE_STATE:ARG:TA율 = 0
+敵BATTLE_STATE:ARG:명중률 = 90
+敵BATTLE_STATE:ARG:회피율 = 0
 敵BATTLE_STATE:ARG:属性 = 5
 敵BATTLE_STATE:ARG:所持EXP = 360
 敵BATTLE_STATE:ARG:所持ルピ = 0
@@ -28,7 +28,7 @@ IF 敵BATTLE_STATE:0:ＨＰ < 1
 	アビ汎用文字列:実行時メッセージ１ = 「히이이, 파츄리 님이! 항복, 항복이에요!」
 
 	CALL アビ対象選択テンプレート_自己のみ
-	アビ汎用変数:命中率補正値 = 999
+	アビ汎用変数:명중률補正値 = 999
 	アビ汎用変数:効果量 = 9999
 	CALL アビテンプレート_ダメージ処理_無属性
 
@@ -100,12 +100,12 @@ RETURN 1
 IF RAND:2
 	CALL アビ対象選択テンプレート_味方ランダムＸ体(1)
 	アビ汎用変数:効果割合 = 150
-	アビ汎用変数:命中率補正値 = 999
+	アビ汎用変数:명중률補正値 = 999
 	CALL アビテンプレート_ダメージ処理_自属性
 ELSE
 	アビ汎用文字列:実行時メッセージ４ = ……하지만 공격은 빗나가, 악마 같은 소녀는 벽에 충돌했다!
 	CALL アビ対象選択テンプレート_自己のみ
 	アビ汎用変数:効果割合 = 150
-	アビ汎用変数:命中率補正値 = 999
+	アビ汎用変数:명중률補正値 = 999
 	CALL アビテンプレート_ダメージ処理_自属性
 ENDIF

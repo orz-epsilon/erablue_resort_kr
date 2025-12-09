@@ -30,7 +30,7 @@ FOR LOCAL, 0, 10
 	GSETFONT レイヤー番号, GETFONT(), 18
 	GSETPEN レイヤー番号, 0x00FFFFFF, -1
 	LOCAL:2 = 敵BATTLE_STATE:LOCAL:ＨＰ
-	LOCAL:3 = 敵BATTLE_STATE:LOCAL:最大ＨＰ
+	LOCAL:3 = 敵BATTLE_STATE:LOCAL:최대HP
 	GSETBRUSH レイヤー番号, 属性数値文字色変換_透明度込(敵BATTLE_STATE:LOCAL:属性)
 	IF LOCAL:2 <= 0
 		GSETBRUSH レイヤー番号, カラーパレット_透明度込("戦闘不能")

@@ -2,16 +2,16 @@
 @敵BATTLE_STATE_Lv20_ゲラシーン(対象エネミー)
 #DIM 対象エネミー
 敵BATTLE_STATE:対象エネミー:Lv = 20
-敵BATTLE_STATE:対象エネミー:最大ＨＰ = 27000
+敵BATTLE_STATE:対象エネミー:최대HP = 27000
 敵BATTLE_STATE:対象エネミー:ＨＰ = 27000
-敵BATTLE_STATE:対象エネミー:攻撃力 = 750
-敵BATTLE_STATE:対象エネミー:防御力 = 780
-敵BATTLE_STATE:対象エネミー:回復力 = 0
-敵BATTLE_STATE:対象エネミー:行動速度 = 675
+敵BATTLE_STATE:対象エネミー:공격력 = 750
+敵BATTLE_STATE:対象エネミー:방어력 = 780
+敵BATTLE_STATE:対象エネミー:회복력 = 0
+敵BATTLE_STATE:対象エネミー:행동속도 = 675
 敵BATTLE_STATE:対象エネミー:DA율 = 50
-敵BATTLE_STATE:対象エネミー:TA率 = 0
-敵BATTLE_STATE:対象エネミー:命中率 = 110
-敵BATTLE_STATE:対象エネミー:回避率 = 5
+敵BATTLE_STATE:対象エネミー:TA율 = 0
+敵BATTLE_STATE:対象エネミー:명중률 = 110
+敵BATTLE_STATE:対象エネミー:회피율 = 5
 敵BATTLE_STATE:対象エネミー:属性 = 5
 敵BATTLE_STATE:対象エネミー:所持EXP = 2200
 敵BATTLE_STATE:対象エネミー:所持ルピ = 2850
@@ -90,7 +90,7 @@ IF ダンジョン名 == "深海の古戦場跡" && GETBIT(ダンジョン構造
 
 			CALL アビ対象選択テンプレート_味方全体_生者のみ()
 			アビ汎用変数:効果割合 = 700
-			アビ汎用変数:命中率補正値 = 999
+			アビ汎用変数:명중률補正値 = 999
 			CALL アビテンプレート_ダメージ処理_自属性
 			敵BATTLE_STATE:(戦闘行動キャラ - 10):チャージターン = 0
 			
@@ -100,7 +100,7 @@ IF ダンジョン名 == "深海の古戦場跡" && GETBIT(ダンジョン構造
 			RETURN 1
 		ENDIF
 	ENDIF
-ELSEIF 敵BATTLE_STATE:(戦闘行動キャラ - 10):ＨＰ < 敵BATTLE_STATE:(戦闘行動キャラ - 10):最大ＨＰ / 2 && GETBIT(敵BATTLE_STATE:(戦闘行動キャラ - 10):トリガー行動フラグ, 2) == 0
+ELSEIF 敵BATTLE_STATE:(戦闘行動キャラ - 10):ＨＰ < 敵BATTLE_STATE:(戦闘行動キャラ - 10):최대HP / 2 && GETBIT(敵BATTLE_STATE:(戦闘行動キャラ - 10):トリガー行動フラグ, 2) == 0
 	;HPが1/2以下になったら発狂
 	アビ汎用文字列:実行時メッセージ１ = %敵BATTLE_STATE_STR:(戦闘行動キャラ - 10):エネミー名%이 어둠의 오라를 두르고, 흉포화했다!
 	アビテンプレート用_アビ名 = 闇のオーラ
@@ -117,7 +117,7 @@ ELSEIF 敵BATTLE_STATE:(戦闘行動キャラ - 10):ＨＰ < 敵BATTLE_STATE:(�
 	;HPトリガー使い終わったのでフラグを立てる
 	SETBIT 敵BATTLE_STATE:(戦闘行動キャラ - 10):トリガー行動フラグ, 2
 	RETURN 1
-ELSEIF 敵BATTLE_STATE:(戦闘行動キャラ - 10):ＨＰ < 敵BATTLE_STATE:(戦闘行動キャラ - 10):最大ＨＰ / 5 && GETBIT(敵BATTLE_STATE:(戦闘行動キャラ - 10):トリガー行動フラグ, 3) == 0
+ELSEIF 敵BATTLE_STATE:(戦闘行動キャラ - 10):ＨＰ < 敵BATTLE_STATE:(戦闘行動キャラ - 10):최대HP / 5 && GETBIT(敵BATTLE_STATE:(戦闘行動キャラ - 10):トリガー行動フラグ, 3) == 0
 	;HPが1/5以下になったらオーラ掛け直した上で攻撃
 	アビ汎用文字列:実行時メッセージ１ = %敵BATTLE_STATE_STR:(戦闘行動キャラ - 10):エネミー名%이(가) 어둠의 오라를 두르고 흉포화했다!
 	アビテンプレート用_アビ名 = 闇のオーラ

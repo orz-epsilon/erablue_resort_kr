@@ -418,7 +418,7 @@ IF GETNUM(BATTLE_STATE, バフ・デバフ種類, 2) > 0
 		バフ・デバフ補正後数値 = MAX(敵BATTLE_STATE:(観測隊列 - 10):バフ・デバフ種類 / 2, バフ・デバフ補正後数値)
 	ENDIF
 ELSEIF バフ・デバフ種類 == "連続攻撃率"
-	;連撃率はステータスになく、かつDA율TA率と基本的に加算するので基本値を無視して補正値のみ
+	;連撃率はステータスになく、かつDA율TA율と基本的に加算するので基本値を無視して補正値のみ
 	FOR ループ用, 0, DT_ROW_LENGTH("戦闘効果データベース")
 		IF バフ・デバフ効果適用判定_行指定(ループ用, "ALL", バフ・デバフ種類, 観測隊列)
 			IF DT_CELL_GETS("戦闘効果データベース", ループ用, "バフ・デバフフラグ") == "バフ"
@@ -558,7 +558,7 @@ ELSEIF バフ・デバフ種類 == "ストレングス"
 		CALL バフ回数経過処理(観測隊列, "ストレングス")
 	ENDIF
 	IF LOCAL > 0
-		バフ・デバフ補正後数値 = (((BATTLE_STATE:観測隊列:ＨＰ * 200 / BATTLE_STATE:観測隊列:最大ＨＰ + 100) * (LOCAL/3) / 100) + 100)
+		バフ・デバフ補正後数値 = (((BATTLE_STATE:観測隊列:ＨＰ * 200 / BATTLE_STATE:観測隊列:최대HP + 100) * (LOCAL/3) / 100) + 100)
 	ELSE
 		バフ・デバフ補正後数値 = 100
 	ENDIF
@@ -583,7 +583,7 @@ ELSEIF バフ・デバフ種類 == "逆境"
 		CALL バフ回数経過処理(観測隊列, "逆境")
 	ENDIF
 	IF LOCAL > 0
-		バフ・デバフ補正後数値 = ((((BATTLE_STATE:観測隊列:最大ＨＰ - BATTLE_STATE:観測隊列:ＨＰ) * 200 / BATTLE_STATE:観測隊列:最大ＨＰ + 100) * (LOCAL/3) / 100) + 100)
+		バフ・デバフ補正後数値 = ((((BATTLE_STATE:観測隊列:최대HP - BATTLE_STATE:観測隊列:ＨＰ) * 200 / BATTLE_STATE:観測隊列:최대HP + 100) * (LOCAL/3) / 100) + 100)
 	ELSE
 		バフ・デバフ補正後数値 = 100
 	ENDIF
@@ -1017,7 +1017,7 @@ ENDIF
 RETURNF 0
 
 
-@戦闘中最大ＨＰＭＰ変動処理()
+@戦闘中최대HPＭＰ変動処理()
 #DIM 対象配列, 10
 #DIM 対象数
 
@@ -1040,10 +1040,10 @@ FOR LOCAL, 10, 14
 		CONTINUE
 	SIF BATTLE_STATE:LOCAL:ＨＰ < 1
 		CONTINUE
-	BATTLE_STATE:LOCAL:最大ＨＰ = 基礎BATTLE_STATE:(BATTLE_STATE:LOCAL:キャラ登録番号):最大ＨＰ + 装備ステータス補正保存:(BATTLE_STATE:LOCAL:キャラ登録番号):最大ＨＰ
-	BATTLE_STATE:LOCAL:ＨＰ = MIN(BATTLE_STATE:LOCAL:ＨＰ, BATTLE_STATE:LOCAL:最大ＨＰ)
-	BATTLE_STATE:LOCAL:最大ＭＰ = 基礎BATTLE_STATE:(BATTLE_STATE:LOCAL:キャラ登録番号):最大ＭＰ + 装備ステータス補正保存:(BATTLE_STATE:LOCAL:キャラ登録番号):最大ＭＰ
-	BATTLE_STATE:LOCAL:ＭＰ = MIN(BATTLE_STATE:LOCAL:ＭＰ, BATTLE_STATE:LOCAL:最大ＭＰ)
+	BATTLE_STATE:LOCAL:최대HP = 基礎BATTLE_STATE:(BATTLE_STATE:LOCAL:キャラ登録番号):최대HP + 装備ステータス補正保存:(BATTLE_STATE:LOCAL:キャラ登録番号):최대HP
+	BATTLE_STATE:LOCAL:ＨＰ = MIN(BATTLE_STATE:LOCAL:ＨＰ, BATTLE_STATE:LOCAL:최대HP)
+	BATTLE_STATE:LOCAL:최대MP = 基礎BATTLE_STATE:(BATTLE_STATE:LOCAL:キャラ登録番号):최대MP + 装備ステータス補正保存:(BATTLE_STATE:LOCAL:キャラ登録番号):최대MP
+	BATTLE_STATE:LOCAL:ＭＰ = MIN(BATTLE_STATE:LOCAL:ＭＰ, BATTLE_STATE:LOCAL:최대MP)
 NEXT
 
 FOR LOCAL, 0, 対象数
@@ -1052,18 +1052,18 @@ FOR LOCAL, 0, 対象数
 		CONTINUE
 
 	;一旦初期化
-	BATTLE_STATE:(対象配列:LOCAL):最大ＨＰ = 基礎BATTLE_STATE:(BATTLE_STATE:(対象配列:LOCAL):キャラ登録番号):最大ＨＰ + 装備ステータス補正保存:(BATTLE_STATE:(対象配列:LOCAL):キャラ登録番号):最大ＨＰ
+	BATTLE_STATE:(対象配列:LOCAL):최대HP = 基礎BATTLE_STATE:(BATTLE_STATE:(対象配列:LOCAL):キャラ登録番号):최대HP + 装備ステータス補正保存:(BATTLE_STATE:(対象配列:LOCAL):キャラ登録番号):최대HP
 	;バフ測定
-	CALL バフ・デバフ測定(対象配列:LOCAL, "最大ＨＰ", 0, 1)
-	BATTLE_STATE:(対象配列:LOCAL):最大ＨＰ = RESULT
-	BATTLE_STATE:(対象配列:LOCAL):ＨＰ = MIN(BATTLE_STATE:(対象配列:LOCAL):ＨＰ, BATTLE_STATE:(対象配列:LOCAL):最大ＨＰ)
+	CALL バフ・デバフ測定(対象配列:LOCAL, "최대HP", 0, 1)
+	BATTLE_STATE:(対象配列:LOCAL):최대HP = RESULT
+	BATTLE_STATE:(対象配列:LOCAL):ＨＰ = MIN(BATTLE_STATE:(対象配列:LOCAL):ＨＰ, BATTLE_STATE:(対象配列:LOCAL):최대HP)
 
 	;一旦初期化
-	BATTLE_STATE:(対象配列:LOCAL):最大ＭＰ = 基礎BATTLE_STATE:(BATTLE_STATE:(対象配列:LOCAL):キャラ登録番号):最大ＭＰ + 装備ステータス補正保存:(BATTLE_STATE:(対象配列:LOCAL):キャラ登録番号):最大ＭＰ
+	BATTLE_STATE:(対象配列:LOCAL):최대MP = 基礎BATTLE_STATE:(BATTLE_STATE:(対象配列:LOCAL):キャラ登録番号):최대MP + 装備ステータス補正保存:(BATTLE_STATE:(対象配列:LOCAL):キャラ登録番号):최대MP
 	;バフ測定
-	CALL バフ・デバフ測定(対象配列:LOCAL, "最大ＭＰ", 0, 1)
-	BATTLE_STATE:(対象配列:LOCAL):最大ＭＰ = RESULT
-	BATTLE_STATE:(対象配列:LOCAL):ＭＰ = MIN(BATTLE_STATE:(対象配列:LOCAL):ＭＰ, BATTLE_STATE:(対象配列:LOCAL):最大ＭＰ)
+	CALL バフ・デバフ測定(対象配列:LOCAL, "최대MP", 0, 1)
+	BATTLE_STATE:(対象配列:LOCAL):최대MP = RESULT
+	BATTLE_STATE:(対象配列:LOCAL):ＭＰ = MIN(BATTLE_STATE:(対象配列:LOCAL):ＭＰ, BATTLE_STATE:(対象配列:LOCAL):최대MP)
 NEXT
 
 @チェンバ組み合わせ確認(キャラNAME1, キャラNAME2 = "", キャラNAME3 = "", キャラNAME4 = "", キャラNAME5 = "")

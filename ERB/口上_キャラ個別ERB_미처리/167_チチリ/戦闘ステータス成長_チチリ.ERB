@@ -11,19 +11,19 @@
 ;ステータスのバランスは「@初期ステータス設定_テンプレート適用」を参考
 
 ;『赤き火炎の鉞』：敵のターゲットにされやすいが、アビリティ与ダメージアップ
-基礎BATTLE_STATE:キャラ番号:最大ＨＰ = 180
-基礎BATTLE_STATE:キャラ番号:最大ＭＰ = 120
-基礎BATTLE_STATE:キャラ番号:攻撃力 = 120
-基礎BATTLE_STATE:キャラ番号:防御力 = 80
-基礎BATTLE_STATE:キャラ番号:回復力 = 80
-基礎BATTLE_STATE:キャラ番号:行動速度 = 110
+基礎BATTLE_STATE:キャラ番号:최대HP = 180
+基礎BATTLE_STATE:キャラ番号:최대MP = 120
+基礎BATTLE_STATE:キャラ番号:공격력 = 120
+基礎BATTLE_STATE:キャラ番号:방어력 = 80
+基礎BATTLE_STATE:キャラ番号:회복력 = 80
+基礎BATTLE_STATE:キャラ番号:행동속도 = 110
 基礎BATTLE_STATE:キャラ番号:DA율 = 10
-基礎BATTLE_STATE:キャラ番号:TA率 = 5
-基礎BATTLE_STATE:キャラ番号:ゲージ上昇効率 = 100
-基礎BATTLE_STATE:キャラ番号:ゲージ上昇効率_被ダメ時 = 100
-基礎BATTLE_STATE:キャラ番号:ゲージ最大値 = 100
-基礎BATTLE_STATE:キャラ番号:命中率 = 100
-基礎BATTLE_STATE:キャラ番号:回避率 = 5
+基礎BATTLE_STATE:キャラ番号:TA율 = 5
+基礎BATTLE_STATE:キャラ番号:게이지상승효율 = 100
+基礎BATTLE_STATE:キャラ番号:게이지상승효율_被ダメ時 = 100
+基礎BATTLE_STATE:キャラ番号:게이지최대값 = 100
+基礎BATTLE_STATE:キャラ番号:명중률 = 100
+基礎BATTLE_STATE:キャラ番号:회피율 = 5
 基礎BATTLE_STATE:キャラ番号:クリティカル率 = 0
 基礎BATTLE_STATE:キャラ番号:クリティカルダメージ率 = 150
 基礎BATTLE_STATE:キャラ番号:敵対心 = 150
@@ -39,36 +39,36 @@
 
 ;基礎上昇量を登録
 ;上昇量は「@レベルアップ処理」を参考
-基礎BATTLE_STATE:キャラ番号:最大ＨＰ += 36 * 上昇レベル
-基礎BATTLE_STATE:キャラ番号:最大ＭＰ += 24 * 上昇レベル
-基礎BATTLE_STATE:キャラ番号:攻撃力 += 24 * 上昇レベル
-基礎BATTLE_STATE:キャラ番号:防御力 += 16 * 上昇レベル
-基礎BATTLE_STATE:キャラ番号:回復力 += 16 * 上昇レベル
-基礎BATTLE_STATE:キャラ番号:行動速度 += 22 * 上昇レベル
+基礎BATTLE_STATE:キャラ番号:최대HP += 36 * 上昇レベル
+基礎BATTLE_STATE:キャラ番号:최대MP += 24 * 上昇レベル
+基礎BATTLE_STATE:キャラ番号:공격력 += 24 * 上昇レベル
+基礎BATTLE_STATE:キャラ番号:방어력 += 16 * 上昇レベル
+基礎BATTLE_STATE:キャラ番号:회복력 += 16 * 上昇レベル
+基礎BATTLE_STATE:キャラ番号:행동속도 += 22 * 上昇レベル
 
 ;特定のレベルを境に上昇するステータス
 IF 基礎BATTLE_STATE:キャラ番号:Lv < 20 && 計算後レベル >= 20
 	基礎BATTLE_STATE:キャラ番号:DA율 += 3
-	基礎BATTLE_STATE:キャラ番号:TA率 += 1
-	基礎BATTLE_STATE:キャラ番号:命中率 += 5
-	基礎BATTLE_STATE:キャラ番号:回避率 += 2
+	基礎BATTLE_STATE:キャラ番号:TA율 += 1
+	基礎BATTLE_STATE:キャラ番号:명중률 += 5
+	基礎BATTLE_STATE:キャラ番号:회피율 += 2
 ENDIF
 IF 基礎BATTLE_STATE:キャラ番号:Lv < 40 && 計算後レベル >= 40
 	基礎BATTLE_STATE:キャラ番号:DA율 += 3
-	基礎BATTLE_STATE:キャラ番号:TA率 += 1
-	基礎BATTLE_STATE:キャラ番号:命中率 += 5
-	基礎BATTLE_STATE:キャラ番号:回避率 += 2
+	基礎BATTLE_STATE:キャラ番号:TA율 += 1
+	基礎BATTLE_STATE:キャラ番号:명중률 += 5
+	基礎BATTLE_STATE:キャラ番号:회피율 += 2
 ENDIF
 IF 基礎BATTLE_STATE:キャラ番号:Lv < 60 && 計算後レベル >= 60
 	基礎BATTLE_STATE:キャラ番号:DA율 += 3
-	基礎BATTLE_STATE:キャラ番号:TA率 += 1
-	基礎BATTLE_STATE:キャラ番号:命中率 += 5
-	基礎BATTLE_STATE:キャラ番号:回避率 += 2
+	基礎BATTLE_STATE:キャラ番号:TA율 += 1
+	基礎BATTLE_STATE:キャラ番号:명중률 += 5
+	基礎BATTLE_STATE:キャラ番号:회피율 += 2
 ENDIF
 IF 基礎BATTLE_STATE:キャラ番号:Lv < 80 && 計算後レベル >= 80
 	基礎BATTLE_STATE:キャラ番号:DA율 += 3
-	基礎BATTLE_STATE:キャラ番号:TA率 += 1
-	基礎BATTLE_STATE:キャラ番号:命中率 += 5
-	基礎BATTLE_STATE:キャラ番号:回避率 += 2
+	基礎BATTLE_STATE:キャラ番号:TA율 += 1
+	基礎BATTLE_STATE:キャラ番号:명중률 += 5
+	基礎BATTLE_STATE:キャラ番号:회피율 += 2
 ENDIF
 

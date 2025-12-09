@@ -610,40 +610,40 @@ IF 装備ステータス補正保存:ARG:属性
 	ENDIF
 	IF 装備ステータス補正保存:ARG:属性 - 10 < 4
 		LOCALS:1 = %属性数値文字色変換_HTML(有利属性変換(装備ステータス補正保存:ARG:属性 - 10))%
-		LOCALS += @"<font color='#%LOCALS:1%'>　対%属性数値文字列変換(有利属性変換(装備ステータス補正保存:ARG:属性 - 10))%</font>　　攻撃力＋{LOCAL}％<br>"
+		LOCALS += @"<font color='#%LOCALS:1%'>　対%属性数値文字列変換(有利属性変換(装備ステータス補正保存:ARG:属性 - 10))%</font>　　공격력＋{LOCAL}％<br>"
 		LOCALS:1 = %属性数値文字色変換_HTML(不利属性変換(装備ステータス補正保存:ARG:属性 - 10))%
-		LOCALS += @"<font color='#%LOCALS:1%'>　対%属性数値文字列変換(不利属性変換(装備ステータス補正保存:ARG:属性 - 10))%</font>　　攻撃力－{LOCAL:1}％<br>"
+		LOCALS += @"<font color='#%LOCALS:1%'>　対%属性数値文字列変換(不利属性変換(装備ステータス補正保存:ARG:属性 - 10))%</font>　　공격력－{LOCAL:1}％<br>"
 	ELSEIF 装備ステータス補正保存:ARG:属性 - 10 < 6
 		LOCALS:1 = %属性数値文字色変換_HTML(有利属性変換(装備ステータス補正保存:ARG:属性 - 10))%
-		LOCALS += @"<font color='#%LOCALS:1%'>　対%属性数値文字列変換(有利属性変換(装備ステータス補正保存:ARG:属性 - 10))%</font>　　攻撃力＋{LOCAL}％<br>"
+		LOCALS += @"<font color='#%LOCALS:1%'>　対%属性数値文字列変換(有利属性変換(装備ステータス補正保存:ARG:属性 - 10))%</font>　　공격력＋{LOCAL}％<br>"
 	ENDIF
 	SIF 基礎BATTLE_STATE:ARG:属性 == 装備ステータス補正保存:ARG:属性 - 10
-		LOCALS += @"　その他　攻撃力＋5％<br>"
+		LOCALS += @"　その他　공격력＋5％<br>"
 ELSE
 	LOCALS:1 = %属性数値文字色変換_HTML(基礎BATTLE_STATE:ARG:属性)%
 	LOCALS += @"<font color='#%LOCALS:1%'>属性　　　：%属性数値文字列変換(基礎BATTLE_STATE:ARG:属性), 5%</font><br>"
 	IF 基礎BATTLE_STATE:ARG:属性 < 4
 		LOCALS:1 = %属性数値文字色変換_HTML(有利属性変換(基礎BATTLE_STATE:ARG:属性))%
-		LOCALS += @"<font color='#%LOCALS:1%'>　対%属性数値文字列変換(有利属性変換(基礎BATTLE_STATE:ARG:属性))%</font>　　攻撃力＋30％<br>"
+		LOCALS += @"<font color='#%LOCALS:1%'>　対%属性数値文字列変換(有利属性変換(基礎BATTLE_STATE:ARG:属性))%</font>　　공격력＋30％<br>"
 		LOCALS:1 = %属性数値文字色変換_HTML(不利属性変換(基礎BATTLE_STATE:ARG:属性))%
-		LOCALS += @"<font color='#%LOCALS:1%'>　対%属性数値文字列変換(不利属性変換(基礎BATTLE_STATE:ARG:属性))%</font>　　攻撃力－30％<br>"
+		LOCALS += @"<font color='#%LOCALS:1%'>　対%属性数値文字列変換(不利属性変換(基礎BATTLE_STATE:ARG:属性))%</font>　　공격력－30％<br>"
 	ELSEIF 基礎BATTLE_STATE:ARG:属性 < 6
 		LOCALS:1 = %属性数値文字色変換_HTML(有利属性変換(基礎BATTLE_STATE:ARG:属性))%
-		LOCALS += @"<font color='#%LOCALS:1%'>　対%属性数値文字列変換(有利属性変換(基礎BATTLE_STATE:ARG:属性))%</font>　　攻撃力＋30％<br>"
+		LOCALS += @"<font color='#%LOCALS:1%'>　対%属性数値文字列変換(有利属性変換(基礎BATTLE_STATE:ARG:属性))%</font>　　공격력＋30％<br>"
 	ENDIF
 ENDIF
 LOCALS += @"得意武器　：%得意武器表示文字列(基礎BATTLE_STATE:ARG:得意武器), 5%<br>"
 LOCALS += @"タイプ　　：%タイプ数値文字列変換(基礎BATTLE_STATE:ARG:ステータスタイプ保存), 5%<br>"
-LOCALS += @"最大ＨＰ　：{基礎BATTLE_STATE:ARG:最大ＨＰ + 装備ステータス補正保存:ARG:最大ＨＰ, 5}<br>"
-LOCALS += @"最大ＭＰ　：{基礎BATTLE_STATE:ARG:最大ＭＰ + 装備ステータス補正保存:ARG:最大ＭＰ, 5}<br>"
-LOCALS += @"攻撃力　　：{基礎BATTLE_STATE:ARG:攻撃力 + 装備ステータス補正保存:ARG:攻撃力, 5}<br>"
-LOCALS += @"防御力　　：{基礎BATTLE_STATE:ARG:防御力 + 装備ステータス補正保存:ARG:防御力, 5}<br>"
-LOCALS += @"回復力　　：{基礎BATTLE_STATE:ARG:回復力 + 装備ステータス補正保存:ARG:回復力, 5}<br>"
-LOCALS += @"行動速度　：{基礎BATTLE_STATE:ARG:行動速度 + 装備ステータス補正保存:ARG:行動速度, 5}<br>"
+LOCALS += @"최대HP　：{基礎BATTLE_STATE:ARG:최대HP + 装備ステータス補正保存:ARG:최대HP, 5}<br>"
+LOCALS += @"최대MP　：{基礎BATTLE_STATE:ARG:최대MP + 装備ステータス補正保存:ARG:최대MP, 5}<br>"
+LOCALS += @"공격력　　：{基礎BATTLE_STATE:ARG:공격력 + 装備ステータス補正保存:ARG:공격력, 5}<br>"
+LOCALS += @"방어력　　：{基礎BATTLE_STATE:ARG:방어력 + 装備ステータス補正保存:ARG:방어력, 5}<br>"
+LOCALS += @"회복력　　：{基礎BATTLE_STATE:ARG:회복력 + 装備ステータス補正保存:ARG:회복력, 5}<br>"
+LOCALS += @"행동속도　：{基礎BATTLE_STATE:ARG:행동속도 + 装備ステータス補正保存:ARG:행동속도, 5}<br>"
 LOCALS += @"DA율　　　：{基礎BATTLE_STATE:ARG:DA율 + 装備ステータス補正保存:ARG:DA율, 5}\%<br>"
-LOCALS += @"TA率　　　：{基礎BATTLE_STATE:ARG:TA率 + 装備ステータス補正保存:ARG:TA率, 5}\%<br>"
-LOCALS += @"命中率　　：{基礎BATTLE_STATE:ARG:命中率 + 装備ステータス補正保存:ARG:命中率, 5}\%<br>"
-LOCALS += @"回避率　　：{基礎BATTLE_STATE:ARG:回避率 + 装備ステータス補正保存:ARG:回避率, 5}\%<br></div>"
+LOCALS += @"TA율　　　：{基礎BATTLE_STATE:ARG:TA율 + 装備ステータス補正保存:ARG:TA율, 5}\%<br>"
+LOCALS += @"명중률　　：{基礎BATTLE_STATE:ARG:명중률 + 装備ステータス補正保存:ARG:명중률, 5}\%<br>"
+LOCALS += @"회피율　　：{基礎BATTLE_STATE:ARG:회피율 + 装備ステータス補正保存:ARG:회피율, 5}\%<br></div>"
 
 縦幅調整 = 787
 表示位置調整 = 0

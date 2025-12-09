@@ -63,7 +63,7 @@ FOR LOCAL, ページ数 * 項目表示数, 候補人数
 		LOCALS += "</font>"
 	ソート情報 '= ソート情報表示(表示候補:LOCAL, 1)
 	IF ソート情報 != ""
-		LOCALS += 정렬 정보 + "　"
+		LOCALS += ソート情報 + "　"
 	ELSE
 		IF CFLAG:(表示候補:LOCAL):長期雇用
 			LOCALS += "　　장기 고용 중　"

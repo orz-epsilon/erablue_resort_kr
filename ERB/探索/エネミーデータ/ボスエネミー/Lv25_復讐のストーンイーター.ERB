@@ -1,16 +1,16 @@
 @敵BATTLE_STATE_Lv25_復讐のストーンイーター(対象エネミー)
 #DIM 対象エネミー
 敵BATTLE_STATE:対象エネミー:Lv = 6
-敵BATTLE_STATE:対象エネミー:最大ＨＰ = 22000
+敵BATTLE_STATE:対象エネミー:최대HP = 22000
 敵BATTLE_STATE:対象エネミー:ＨＰ = 22000
-敵BATTLE_STATE:対象エネミー:攻撃力 = 1300
-敵BATTLE_STATE:対象エネミー:防御力 = 760
-敵BATTLE_STATE:対象エネミー:回復力 = 0
-敵BATTLE_STATE:対象エネミー:行動速度 = 560
+敵BATTLE_STATE:対象エネミー:공격력 = 1300
+敵BATTLE_STATE:対象エネミー:방어력 = 760
+敵BATTLE_STATE:対象エネミー:회복력 = 0
+敵BATTLE_STATE:対象エネミー:행동속도 = 560
 敵BATTLE_STATE:対象エネミー:DA율 = 0
-敵BATTLE_STATE:対象エネミー:TA率 = 50
-敵BATTLE_STATE:対象エネミー:命中率 = 105
-敵BATTLE_STATE:対象エネミー:回避率 = 5
+敵BATTLE_STATE:対象エネミー:TA율 = 50
+敵BATTLE_STATE:対象エネミー:명중률 = 105
+敵BATTLE_STATE:対象エネミー:회피율 = 5
 敵BATTLE_STATE:対象エネミー:属性 = 3
 敵BATTLE_STATE:対象エネミー:所持EXP = 2455
 敵BATTLE_STATE:対象エネミー:所持ルピ = 3115
@@ -53,7 +53,7 @@ IF GETBIT(敵BATTLE_STATE:(戦闘行動キャラ - 10):トリガー行動フラ�
 	;HPトリガー使い終わったのでフラグを立てる
 	SETBIT 敵BATTLE_STATE:(戦闘行動キャラ - 10):トリガー行動フラグ, 0
 	RETURN 1
-ELSEIF 敵BATTLE_STATE:(戦闘行動キャラ - 10):ＨＰ < 敵BATTLE_STATE:(戦闘行動キャラ - 10):最大ＨＰ / 2 && GETBIT(敵BATTLE_STATE:(戦闘行動キャラ - 10):トリガー行動フラグ, 1) == 0
+ELSEIF 敵BATTLE_STATE:(戦闘行動キャラ - 10):ＨＰ < 敵BATTLE_STATE:(戦闘行動キャラ - 10):최대HP / 2 && GETBIT(敵BATTLE_STATE:(戦闘行動キャラ - 10):トリガー行動フラグ, 1) == 0
 	;HPが半分以下になったら呪いを撒いてくる
 	アビ汎用文字列:実行時メッセージ１ = %敵BATTLE_STATE_STR:(戦闘行動キャラ - 10):エネミー名%은(는) 크게 다쳐 분노에 불타고 있다!
 	アビ汎用文字列:実行時メッセージ２ = %敵BATTLE_STATE_STR:(戦闘行動キャラ - 10):エネミー名%의 특수 행동이 변화했다!

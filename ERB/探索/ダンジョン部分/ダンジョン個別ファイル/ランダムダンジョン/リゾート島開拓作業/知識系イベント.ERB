@@ -426,7 +426,7 @@ ELSE
 					WSTR:(K++) = %CALLNAME:(BATTLE_STATE:飲むキャラ:0)%의 HP가 완전히 회복되었다!
 					CALL メッセージ欄表示用関数(,,,0)
 					CALL 口上変数初期化
-					BATTLE_STATE:飲むキャラ:ＨＰ = BATTLE_STATE:飲むキャラ:最大ＨＰ
+					BATTLE_STATE:飲むキャラ:ＨＰ = BATTLE_STATE:飲むキャラ:최대HP
 					WSTR:(K++) = %CALLNAME:PLAYER%들이 할머니 쪽을 돌아보자, 어느새인가 어딘가로 사라져 버렸다.
 					KSTR:(K++) = 감사 인사를 할 틈도 없었던 것을 아쉬워하며, %CALLNAME:PLAYER%들은 탐색으로 돌아간다.
 				CASE 3
@@ -434,7 +434,7 @@ ELSE
 					WSTR:(K++) = %CALLNAME:(BATTLE_STATE:飲むキャラ:0)%의 오의 게이지가 최대로 되었다!
 					CALL メッセージ欄表示用関数(,,,0)
 					CALL 口上変数初期化
-					BATTLE_STATE:飲むキャラ:奥義ゲージ = BATTLE_STATE:飲むキャラ:ゲージ最大値
+					BATTLE_STATE:飲むキャラ:奥義ゲージ = BATTLE_STATE:飲むキャラ:게이지최대값
 					WSTR:(K++) = %CALLNAME:PLAYER%들이 노파 쪽을 돌아보자, 어느새인가 어딘가로 사라져 버렸다.
 					KSTR:(K++) = 감사 인사를 할 틈도 없었던 것을 아쉬워하며, %CALLNAME:PLAYER%들은 탐색으로 돌아간다.
 			ENDSELECT

@@ -85,7 +85,7 @@ VARSET LOCAL
 VARSET LOCALS
 表示数 = 0
 LOCALS = <div rect='262,{y軸位置},5537,3625'><nobr>
-LOCALS += "　　　 탑승기명　　　　　　　　　　<button value='乗機攻撃力_強化後'>공격력</button>　<button value='乗機命中率_強化後'>명중률</button>　<button value='武装0'>슬롯０</button>　<button value='武装1'>슬롯１</button>　<button value='武装2'>슬롯２</button>　<button value='武装3'>슬롯３</button>　<button value='武装4'>슬롯４</button>　<button value='武装5'>슬롯５</button>　<button value='サブ搭乗数_強化後'>서브 수</button><br>"
+LOCALS += "　　　 탑승기명　　　　　　　　　　<button value='乗機공격력_強化後'>공격력</button>　<button value='乗機명중률_強化後'>명중률</button>　<button value='武装0'>슬롯０</button>　<button value='武装1'>슬롯１</button>　<button value='武装2'>슬롯２</button>　<button value='武装3'>슬롯３</button>　<button value='武装4'>슬롯４</button>　<button value='武装5'>슬롯５</button>　<button value='サブ搭乗数_強化後'>서브 수</button><br>"
 LOCALS += "--------------------------------------------------------------------------------------------------------------<br>"
 FOR LOCAL, 0, DT_ROW_LENGTH("所持乗機データベース")
 	IF 設計フラグ
@@ -113,16 +113,16 @@ FOR LOCAL, 0, DT_ROW_LENGTH("所持乗機データベース")
 	FOR 武装番号, 0, 6
 		IF ISNUMERIC(DT_CELL_GETS("所持乗機データベース", ソート後配列:LOCAL, @"武装{武装番号}", 1))
 			兵器id = TOINT(DT_CELL_GETS("所持乗機データベース", ソート後配列:LOCAL, @"武装{武装番号}", 1))
-			計算値 += DT_CELL_GET("所持兵器データベース", 兵器id, "攻撃力変動値_強化後", 1)
+			計算値 += DT_CELL_GET("所持兵器データベース", 兵器id, "공격력変動値_強化後", 1)
 		ENDIF
 	NEXT
 	SELECTCASE 計算値
 		CASE IS > 0
-			LOCALS += @"<font color='#%カラーパレット_HTML("緑")%'>{DT_CELL_GET("所持乗機データベース", ソート後配列:LOCAL, "乗機攻撃力", 1) + 計算値, 7}</font>"
+			LOCALS += @"<font color='#%カラーパレット_HTML("緑")%'>{DT_CELL_GET("所持乗機データベース", ソート後配列:LOCAL, "乗機공격력", 1) + 計算値, 7}</font>"
 		CASE IS < 0
-			LOCALS += @"<font color='#%カラーパレット_HTML("赤ピンク")%'>{DT_CELL_GET("所持乗機データベース", ソート後配列:LOCAL, "乗機攻撃力", 1) + 計算値, 7}</font>"
+			LOCALS += @"<font color='#%カラーパレット_HTML("赤ピンク")%'>{DT_CELL_GET("所持乗機データベース", ソート後配列:LOCAL, "乗機공격력", 1) + 計算値, 7}</font>"
 		CASEELSE
-			LOCALS += @"{DT_CELL_GET("所持乗機データベース", ソート後配列:LOCAL, "乗機攻撃力", 1), 7}"
+			LOCALS += @"{DT_CELL_GET("所持乗機データベース", ソート後配列:LOCAL, "乗機공격력", 1), 7}"
 	ENDSELECT
 
 	LOCALS += " "
@@ -131,16 +131,16 @@ FOR LOCAL, 0, DT_ROW_LENGTH("所持乗機データベース")
 	FOR 武装番号, 0, 6
 		IF ISNUMERIC(DT_CELL_GETS("所持乗機データベース", ソート後配列:LOCAL, @"武装{武装番号}", 1))
 			兵器id = TOINT(DT_CELL_GETS("所持乗機データベース", ソート後配列:LOCAL, @"武装{武装番号}", 1))
-			計算値 += DT_CELL_GET("所持兵器データベース", 兵器id, "命中率変動値_強化後", 1)
+			計算値 += DT_CELL_GET("所持兵器データベース", 兵器id, "명중률変動値_強化後", 1)
 		ENDIF
 	NEXT
 	SELECTCASE 計算値
 		CASE IS > 0
-			LOCALS += @"<font color='#%カラーパレット_HTML("緑")%'>{DT_CELL_GET("所持乗機データベース", ソート後配列:LOCAL, "乗機命中率", 1) + 計算値, 7}</font>"
+			LOCALS += @"<font color='#%カラーパレット_HTML("緑")%'>{DT_CELL_GET("所持乗機データベース", ソート後配列:LOCAL, "乗機명중률", 1) + 計算値, 7}</font>"
 		CASE IS < 0
-			LOCALS += @"<font color='#%カラーパレット_HTML("赤ピンク")%'>{DT_CELL_GET("所持乗機データベース", ソート後配列:LOCAL, "乗機命中率", 1) + 計算値, 7}</font>"
+			LOCALS += @"<font color='#%カラーパレット_HTML("赤ピンク")%'>{DT_CELL_GET("所持乗機データベース", ソート後配列:LOCAL, "乗機명중률", 1) + 計算値, 7}</font>"
 		CASEELSE
-			LOCALS += @"{DT_CELL_GET("所持乗機データベース", ソート後配列:LOCAL, "乗機命中率", 1), 7}"
+			LOCALS += @"{DT_CELL_GET("所持乗機データベース", ソート後配列:LOCAL, "乗機명중률", 1), 7}"
 	ENDSELECT
 
 	FOR 武装番号, 0, 6
@@ -506,8 +506,8 @@ LOOP 1
 @乗機兵装使用実処理
 #DIM 表示兵装数
 #DIM 兵装番号
-#DIM 攻撃力_一時保存
-#DIM 命中率_一時保存
+#DIM 공격력_一時保存
+#DIM 명중률_一時保存
 #DIM INPUT保存
 #DIMS 兵器名保存
 ;使用兵装表示から兵装実行処理まで全部ここで完結させる
@@ -636,13 +636,13 @@ SELECTCASE INPUT保存
 		;搭載兵器の補正を載せる
 		IF ISNUMERIC(DT_CELL_GETS("所持乗機データベース", 装備乗機ID, @"武装{兵装番号}", 1))
 			;数字が入るのは搭載兵器装備時だけ
-			攻撃力_一時保存 = BATTLE_STATE:9:攻撃力
-			命中率_一時保存 = BATTLE_STATE:9:命中率
-			BATTLE_STATE:9:攻撃力 += DT_CELL_GET("所持兵器データベース", TOINT(DT_CELL_GETS("所持乗機データベース", 装備乗機ID, @"武装{兵装番号}", 1)), "공격력 보정_강화 후", 1)
-			BATTLE_STATE:9:命中率 += DT_CELL_GET("所持兵器データベース", TOINT(DT_CELL_GETS("所持乗機データベース", 装備乗機ID, @"武装{兵装番号}", 1)), "명중률 보정_강화 후", 1)
+			공격력_一時保存 = BATTLE_STATE:9:공격력
+			명중률_一時保存 = BATTLE_STATE:9:명중률
+			BATTLE_STATE:9:공격력 += DT_CELL_GET("所持兵器データベース", TOINT(DT_CELL_GETS("所持乗機データベース", 装備乗機ID, @"武装{兵装番号}", 1)), "공격력 보정_강화 후", 1)
+			BATTLE_STATE:9:명중률 += DT_CELL_GET("所持兵器データベース", TOINT(DT_CELL_GETS("所持乗機データベース", 装備乗機ID, @"武装{兵装番号}", 1)), "명중률 보정_강화 후", 1)
 			CALLFORM %兵装関数名保存:INPUT保存%("アビ効果", TOINT(DT_CELL_GETS("所持乗機データベース", 装備乗機ID, @"武装{兵装番号}", 1)))
-			BATTLE_STATE:9:攻撃力 = 攻撃力_一時保存
-			BATTLE_STATE:9:命中率 = 命中率_一時保存
+			BATTLE_STATE:9:공격력 = 공격력_一時保存
+			BATTLE_STATE:9:명중률 = 명중률_一時保存
 		ELSE
 			CALLFORM %兵装関数名保存:INPUT保存%("アビ効果")
 		ENDIF

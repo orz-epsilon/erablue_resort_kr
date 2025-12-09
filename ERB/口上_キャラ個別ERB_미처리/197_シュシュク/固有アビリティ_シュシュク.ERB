@@ -38,7 +38,7 @@ SELECTCASE ARGS
 	CASE "アビ名"
 		TSTR:コマンド名受渡 = %アビ名%
 	CASE "アビ説明文"
-		詳細文文字列受け渡し変数 = 消費ＭＰ：{消費ＭＰ}<br>敵単体に［攻撃力✕250％］の土属性ダメージを与える。
+		詳細文文字列受け渡し変数 = 消費ＭＰ：{消費ＭＰ}<br>敵単体に［공격력✕250％］の土属性ダメージを与える。
 		詳細文文字列受け渡し変数 += @"<br>［1］のスロウ効果を与える。"
 		詳細文文字列受け渡し変数 += @"<br>自身に［20％］の奥義ゲージ増加を与える。"
 		IF 基礎BATTLE_STATE:キャラ番号:Lv >= 56
@@ -64,15 +64,15 @@ SELECTCASE ARGS
 			CALL アビ対象選択テンプレート_自己のみ
 			アビ汎用文字列:バフ・デバフ枠 = バリア
 			アビ汎用文字列:バフ・デバフ対象能力 = バリア
-			IF (BATTLE_STATE:戦闘行動キャラ:最大ＨＰ / 5) * 4 < BATTLE_STATE:戦闘行動キャラ:ＨＰ && BATTLE_STATE:戦闘行動キャラ:ＨＰ <= BATTLE_STATE:戦闘行動キャラ:最大ＨＰ
+			IF (BATTLE_STATE:戦闘行動キャラ:최대HP / 5) * 4 < BATTLE_STATE:戦闘行動キャラ:ＨＰ && BATTLE_STATE:戦闘行動キャラ:ＨＰ <= BATTLE_STATE:戦闘行動キャラ:최대HP
 				アビ汎用変数:効果量 = 300
-			ELSEIF (BATTLE_STATE:戦闘行動キャラ:最大ＨＰ / 5) * 3 < BATTLE_STATE:戦闘行動キャラ:ＨＰ && BATTLE_STATE:戦闘行動キャラ:ＨＰ <= (BATTLE_STATE:戦闘行動キャラ:最大ＨＰ / 5) * 4
+			ELSEIF (BATTLE_STATE:戦闘行動キャラ:최대HP / 5) * 3 < BATTLE_STATE:戦闘行動キャラ:ＨＰ && BATTLE_STATE:戦闘行動キャラ:ＨＰ <= (BATTLE_STATE:戦闘行動キャラ:최대HP / 5) * 4
 				アビ汎用変数:効果量 = 400
-			ELSEIF (BATTLE_STATE:戦闘行動キャラ:最大ＨＰ / 5) * 2 < BATTLE_STATE:戦闘行動キャラ:ＨＰ && BATTLE_STATE:戦闘行動キャラ:ＨＰ <= (BATTLE_STATE:戦闘行動キャラ:最大ＨＰ / 5) * 3
+			ELSEIF (BATTLE_STATE:戦闘行動キャラ:최대HP / 5) * 2 < BATTLE_STATE:戦闘行動キャラ:ＨＰ && BATTLE_STATE:戦闘行動キャラ:ＨＰ <= (BATTLE_STATE:戦闘行動キャラ:최대HP / 5) * 3
 				アビ汎用変数:効果量 = 500
-			ELSEIF BATTLE_STATE:戦闘行動キャラ:最大ＨＰ / 5 < BATTLE_STATE:戦闘行動キャラ:ＨＰ && BATTLE_STATE:戦闘行動キャラ:ＨＰ <= (BATTLE_STATE:戦闘行動キャラ:最大ＨＰ / 5) * 2
+			ELSEIF BATTLE_STATE:戦闘行動キャラ:최대HP / 5 < BATTLE_STATE:戦闘行動キャラ:ＨＰ && BATTLE_STATE:戦闘行動キャラ:ＨＰ <= (BATTLE_STATE:戦闘行動キャラ:최대HP / 5) * 2
 				アビ汎用変数:効果量 = 600
-			ELSEIF BATTLE_STATE:戦闘行動キャラ:ＨＰ <= BATTLE_STATE:戦闘行動キャラ:最大ＨＰ / 5
+			ELSEIF BATTLE_STATE:戦闘行動キャラ:ＨＰ <= BATTLE_STATE:戦闘行動キャラ:최대HP / 5
 				アビ汎用変数:効果量 = 700
 			ENDIF
 			アビ汎用変数:持続ターン = -1
@@ -123,7 +123,7 @@ SELECTCASE ARGS
 	CASE "アビ名"
 		TSTR:コマンド名受渡 = %アビ名%
 	CASE "アビ説明文"
-		詳細文文字列受け渡し変数 = 消費ＭＰ：{消費ＭＰ}<br>敵全体に［攻撃力✕100％］の土属性ダメージを4回与える。
+		詳細文文字列受け渡し変数 = 消費ＭＰ：{消費ＭＰ}<br>敵全体に［공격력✕100％］の土属性ダメージを4回与える。
 		詳細文文字列受け渡し変数 += @"<br>自身に［10％］（通常枠・5ターン）高揚効果を与える。"
 		IF 基礎BATTLE_STATE:キャラ番号:Lv >= 72
 			詳細文文字列受け渡し変数 += @"<br>自身のHPが50％以上の時、［1500］（通常枠・2ターン）の奥義与ダメージ上昇効果を与える。"
@@ -146,7 +146,7 @@ SELECTCASE ARGS
 		CALL アビテンプレート_有利効果_バフ効果セット
 		
 		IF 基礎BATTLE_STATE:キャラ番号:Lv >= 72
-			IF BATTLE_STATE:戦闘行動キャラ:ＨＰ >= BATTLE_STATE:戦闘行動キャラ:最大ＨＰ / 2
+			IF BATTLE_STATE:戦闘行動キャラ:ＨＰ >= BATTLE_STATE:戦闘行動キャラ:최대HP / 2
 				CALL アビ汎用変数文字列リセット
 				CALL アビ対象選択テンプレート_自己のみ
 				アビ汎用文字列:バフ・デバフ枠 = 奥義与ダメージ
@@ -214,8 +214,8 @@ SELECTCASE ARGS
 		TSTR:コマンド名受渡 = %アビ名%
 	CASE "アビ説明文"
 		詳細文文字列受け渡し変数 = 消費ＭＰ：{消費ＭＰ}　　　自身に［現在ＨＰの80％］のＨＰ減少を与える。
-		詳細文文字列受け渡し変数 += @"<br>敵単体に［攻撃力✕500％］の土属性ダメージを与える。"
-		詳細文文字列受け渡し変数 += @"<br>［25％］（Ｂ枠・5ターン）の防御力減少効果を与える。"
+		詳細文文字列受け渡し変数 += @"<br>敵単体に［공격력✕500％］の土属性ダメージを与える。"
+		詳細文文字列受け渡し変数 += @"<br>［25％］（Ｂ枠・5ターン）の방어력減少効果を与える。"
 		IF 基礎BATTLE_STATE:キャラ番号:Lv >= 80
 			詳細文文字列受け渡し変数 += @"<br>自身にウェポンバースト効果を与え、金棘吸気・尖刃衝波を強化する。"
 		ELSE
@@ -228,8 +228,8 @@ SELECTCASE ARGS
 		RETURN 消費ＭＰ
 	CASE "アビ説明文_詳細"
 		詳細文文字列受け渡し変数 = 消費ＭＰ：{消費ＭＰ}　　　自身に［現在ＨＰの80％］のＨＰ減少を与える。
-		詳細文文字列受け渡し変数 += @"<br>敵単体に［攻撃力✕500％］の土属性ダメージを与える。"
-		詳細文文字列受け渡し変数 += @"<br>［25％］（Ｂ枠・5ターン）の防御力減少効果を与える。"
+		詳細文文字列受け渡し変数 += @"<br>敵単体に［공격력✕500％］の土属性ダメージを与える。"
+		詳細文文字列受け渡し変数 += @"<br>［25％］（Ｂ枠・5ターン）の방어력減少効果を与える。"
 		IF 基礎BATTLE_STATE:キャラ番号:Lv >= 80
 			詳細文文字列受け渡し変数 += @"<br>自身にウェポンバースト効果を与える。"
 			詳細文文字列受け渡し変数 += @"<br>自身がアビリティ「金棘吸気」「尖刃衝波」を使用する時、１度だけＭＰ・行動回数を消費しない。"
@@ -249,8 +249,8 @@ SELECTCASE ARGS
 		CALL アビテンプレート_ダメージ処理_土属性
 		
 		CALL アビ汎用変数文字列リセット
-		アビ汎用文字列:バフ・デバフ枠 = 防御力B
-		アビ汎用文字列:バフ・デバフ対象能力 = 防御力
+		アビ汎用文字列:バフ・デバフ枠 = 방어력B
+		アビ汎用文字列:バフ・デバフ対象能力 = 방어력
 		アビ汎用変数:効果割合 = 25
 		アビ汎用変数:持続ターン = 5
 		CALL アビテンプレート_不利効果_デバフ効果セット
@@ -294,7 +294,7 @@ CALL アビテンプレ変数リセット
 ; #DIM バフ・デバフ行数
 ; #DIM 効果量
 
-; 効果量 = ((BATTLE_STATE:戦闘行動キャラ:最大ＨＰ - BATTLE_STATE:戦闘行動キャラ:ＨＰ) / BATTLE_STATE:戦闘行動キャラ:最大ＨＰ) * 10
+; 効果量 = ((BATTLE_STATE:戦闘行動キャラ:최대HP - BATTLE_STATE:戦闘行動キャラ:ＨＰ) / BATTLE_STATE:戦闘行動キャラ:최대HP) * 10
 
 ; DT_CELL_SET "戦闘効果データベース", バフ・デバフ行数, "効果量_割合", 効果量 + 5
 
@@ -304,15 +304,15 @@ CALL アビテンプレ変数リセット
 #DIM バフ・デバフ行数
 #DIM 効果量
 
-IF (BATTLE_STATE:戦闘行動キャラ:最大ＨＰ / 5) * 4 < BATTLE_STATE:戦闘行動キャラ:ＨＰ && BATTLE_STATE:戦闘行動キャラ:ＨＰ <= BATTLE_STATE:戦闘行動キャラ:最大ＨＰ
+IF (BATTLE_STATE:戦闘行動キャラ:최대HP / 5) * 4 < BATTLE_STATE:戦闘行動キャラ:ＨＰ && BATTLE_STATE:戦闘行動キャラ:ＨＰ <= BATTLE_STATE:戦闘行動キャラ:최대HP
 	効果量 = 0
-ELSEIF (BATTLE_STATE:戦闘行動キャラ:最大ＨＰ / 5) * 3 < BATTLE_STATE:戦闘行動キャラ:ＨＰ && BATTLE_STATE:戦闘行動キャラ:ＨＰ <= (BATTLE_STATE:戦闘行動キャラ:最大ＨＰ / 5) * 4
+ELSEIF (BATTLE_STATE:戦闘行動キャラ:최대HP / 5) * 3 < BATTLE_STATE:戦闘行動キャラ:ＨＰ && BATTLE_STATE:戦闘行動キャラ:ＨＰ <= (BATTLE_STATE:戦闘行動キャラ:최대HP / 5) * 4
 	効果量 = 20
-ELSEIF (BATTLE_STATE:戦闘行動キャラ:最大ＨＰ / 5) * 2 < BATTLE_STATE:戦闘行動キャラ:ＨＰ && BATTLE_STATE:戦闘行動キャラ:ＨＰ <= (BATTLE_STATE:戦闘行動キャラ:最大ＨＰ / 5) * 3
+ELSEIF (BATTLE_STATE:戦闘行動キャラ:최대HP / 5) * 2 < BATTLE_STATE:戦闘行動キャラ:ＨＰ && BATTLE_STATE:戦闘行動キャラ:ＨＰ <= (BATTLE_STATE:戦闘行動キャラ:최대HP / 5) * 3
 	効果量 = 20
-ELSEIF BATTLE_STATE:戦闘行動キャラ:最大ＨＰ / 5 < BATTLE_STATE:戦闘行動キャラ:ＨＰ && BATTLE_STATE:戦闘行動キャラ:ＨＰ <= (BATTLE_STATE:戦闘行動キャラ:最大ＨＰ / 5) * 2
+ELSEIF BATTLE_STATE:戦闘行動キャラ:최대HP / 5 < BATTLE_STATE:戦闘行動キャラ:ＨＰ && BATTLE_STATE:戦闘行動キャラ:ＨＰ <= (BATTLE_STATE:戦闘行動キャラ:최대HP / 5) * 2
 	効果量 = 35
-ELSEIF BATTLE_STATE:戦闘行動キャラ:ＨＰ <= BATTLE_STATE:戦闘行動キャラ:最大ＨＰ / 5
+ELSEIF BATTLE_STATE:戦闘行動キャラ:ＨＰ <= BATTLE_STATE:戦闘行動キャラ:최대HP / 5
 	効果量 = 50
 ENDIF
 

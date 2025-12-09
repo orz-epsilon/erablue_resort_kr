@@ -53,21 +53,21 @@ IF 表示用ステータス格納配列:0:0 == 0
 		FOR LOCAL:1, 0, 8
 			IF LOCALS:(LOCAL:1 * 2) != ""
 				SELECTCASE LOCALS:(LOCAL:1 * 2)
-					CASE "最大ＨＰ"
+					CASE "최대HP"
 						表示用ステータス格納配列:LOCAL:1 = TOINT(LOCALS:(LOCAL:1 * 2 + 1))
-					CASE "最大ＭＰ"
+					CASE "최대MP"
 						表示用ステータス格納配列:LOCAL:2 = TOINT(LOCALS:(LOCAL:1 * 2 + 1))
-					CASE "攻撃力"
+					CASE "공격력"
 						表示用ステータス格納配列:LOCAL:3 = TOINT(LOCALS:(LOCAL:1 * 2 + 1))
-					CASE "防御力"
+					CASE "방어력"
 						表示用ステータス格納配列:LOCAL:4 = TOINT(LOCALS:(LOCAL:1 * 2 + 1))
-					CASE "回復力"
+					CASE "회복력"
 						表示用ステータス格納配列:LOCAL:5 = TOINT(LOCALS:(LOCAL:1 * 2 + 1))
-					CASE "行動速度"
+					CASE "행동속도"
 						表示用ステータス格納配列:LOCAL:6 = TOINT(LOCALS:(LOCAL:1 * 2 + 1))
 					CASE "DA율"
 						表示用ステータス格納配列:LOCAL:7 = TOINT(LOCALS:(LOCAL:1 * 2 + 1))
-					CASE "TA率"
+					CASE "TA율"
 						表示用ステータス格納配列:LOCAL:8 = TOINT(LOCALS:(LOCAL:1 * 2 + 1))
 				ENDSELECT
 			ENDIF
