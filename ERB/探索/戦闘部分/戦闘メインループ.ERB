@@ -458,17 +458,17 @@ BATTLE_STATE:9:キャラ登録番号 = PLAYER
 FOR LOCAL, 0, 6
 	IF ISNUMERIC(DT_CELL_GETS("所持乗機データベース", 装備乗機ID, @"武装{LOCAL}", 1))
 		兵器id = TOINT(DT_CELL_GETS("所持乗機データベース", 装備乗機ID, @"武装{LOCAL}", 1))
-		計算値 += DT_CELL_GET("所持兵器データベース", 兵器id, "공격력変動値_強化後", 1)
+		計算値 += DT_CELL_GET("所持兵器データベース", 兵器id, "攻撃力変動値_強化後", 1)
 	ENDIF
 NEXT
-BATTLE_STATE:9:공격력 = DT_CELL_GET("所持乗機データベース", 装備乗機ID, "乗機공격력_強化後", 1) + 計算値
+BATTLE_STATE:9:공격력 = DT_CELL_GET("所持乗機データベース", 装備乗機ID, "乗機攻撃力_強化後", 1) + 計算値
 
 ;マイナスにはしない
 SIF BATTLE_STATE:9:공격력 < 1
 	BATTLE_STATE:9:공격력 = 1
 
 ;計算値入れる前にデフォ値フォロー
-BATTLE_STATE:9:명중률 = DT_CELL_GET("所持乗機データベース", 装備乗機ID, "乗機명중률_強化後", 1)
+BATTLE_STATE:9:명중률 = DT_CELL_GET("所持乗機データベース", 装備乗機ID, "乗機命中率_強化後", 1)
 SIF BATTLE_STATE:9:명중률 < 1
 	BATTLE_STATE:9:명중률 = 100
 
@@ -476,7 +476,7 @@ SIF BATTLE_STATE:9:명중률 < 1
 FOR LOCAL, 0, 6
 	IF ISNUMERIC(DT_CELL_GETS("所持乗機データベース", 装備乗機ID, @"武装{LOCAL}", 1))
 		兵器id = TOINT(DT_CELL_GETS("所持乗機データベース", 装備乗機ID, @"武装{LOCAL}", 1))
-		計算値 += DT_CELL_GET("所持兵器データベース", 兵器id, "명중률変動値_強化後", 1)
+		計算値 += DT_CELL_GET("所持兵器データベース", 兵器id, "命中率変動値_強化後", 1)
 	ENDIF
 NEXT
 BATTLE_STATE:9:명중률 += 計算値
@@ -655,7 +655,7 @@ IF ターン中奥義回数保存 > 1
 		ENDSELECT
 		SETBIT アビ汎用変数:かばう無視オプション, 0
 		SETBIT アビ汎用変数:かばう無視オプション, 1
-		アビ汎用変数:명중률補正値 = 200
+		アビ汎用変数:命中率補正値 = 200
 		CALL アビテンプレート_ダメージ処理_自属性
 
 		ターン中奥義回数保存 = チェイン保存

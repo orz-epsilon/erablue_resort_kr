@@ -248,7 +248,7 @@ SELECTCASE ARGS
 			敵BATTLE_STATE_STR:0:エネミー名 = Lv12_暴走機械B
 			敵BATTLE_STATE_STR:2:エネミー名 = Lv12_暴走機械B
 			敵BATTLE_STATE_STR:4:エネミー名 = Lv12_暴走機械B
-			敵BATTLE_STATE_STR:3:エネミー名 = Lv12_폭주 기계A
+			敵BATTLE_STATE_STR:3:エネミー名 = Lv12_暴走機械A
 			CALL 雑魚敵繰り返し戦闘処理
 		ENDIF
 		CALL 画面再描画
@@ -392,8 +392,8 @@ SELECTCASE ARGS
 			WSTR:(K++) = 아무래도 공장의 기계가 %CALLNAME:PLAYER%들을 침입자로 간주한 것 같다.
 			WSTR:(K++) = 묻지도 따지지도 않고 폭주한 기계가 덮쳐온다!
 			CALL メッセージ欄表示用関数(,,,0)
-			敵BATTLE_STATE_STR:0:エネミー名 = Lv12_폭주기계A
-			敵BATTLE_STATE_STR:2:エネミー名 = Lv12_폭주기계A
+			敵BATTLE_STATE_STR:0:エネミー名 = Lv12_暴走機械A
+			敵BATTLE_STATE_STR:2:エネミー名 = Lv12_暴走機械A
 			敵BATTLE_STATE_STR:5:エネミー名 = Lv12_暴走機械B
 			敵BATTLE_STATE_STR:7:エネミー名 = Lv12_暴走機械B
 			CALL 雑魚敵遭遇汎用処理
@@ -502,9 +502,9 @@ SELECTCASE ARGS
 			WSTR:(K++) = 그것은 붉게 흔들리는 불꽃처럼 보이지만, 그러나 스스로의 의지로 움직이는 것처럼도 보인다.
 			WSTR:(K++) = …………저것은 불의 정령이다! 거처에 침입한 %CALLNAME:PLAYER%들에게 덮쳐온다!
 			CALL メッセージ欄表示用関数(,,,0)
-			敵BATTLE_STATE_STR:0:エネミー名 = Lv13_불의 엘리멘탈
-			敵BATTLE_STATE_STR:3:エネミー名 = Lv13_불의 엘리멘탈
-			敵BATTLE_STATE_STR:4:エネミー名 = Lv13_불의 엘리멘탈
+			敵BATTLE_STATE_STR:0:エネミー名 = Lv13_火のエレメンタル
+			敵BATTLE_STATE_STR:3:エネミー名 = Lv13_火のエレメンタル
+			敵BATTLE_STATE_STR:4:エネミー名 = Lv13_火のエレメンタル
 			CALL 雑魚敵遭遇汎用処理
 			IF RESULT == 0
 				;勝利時のみ先へ進む
@@ -518,9 +518,9 @@ SELECTCASE ARGS
 				SETBIT ダンジョン構造配列_バルツ地下廃工場:マス深度:マス分岐, 4
 			ENDIF
 		ELSE
-			敵BATTLE_STATE_STR:0:エネミー名 = Lv13_불의 엘리멘탈
-			敵BATTLE_STATE_STR:3:エネミー名 = Lv13_불의 엘리멘탈
-			敵BATTLE_STATE_STR:4:エネミー名 = Lv13_불의 엘리멘탈
+			敵BATTLE_STATE_STR:0:エネミー名 = Lv13_火のエレメンタル
+			敵BATTLE_STATE_STR:3:エネミー名 = Lv13_火のエレメンタル
+			敵BATTLE_STATE_STR:4:エネミー名 = Lv13_火のエレメンタル
 			CALL 雑魚敵繰り返し戦闘処理
 		ENDIF
 		CALL 画面再描画
@@ -975,7 +975,7 @@ KSTR:(K++) = BUTTON_[아니요]
 					CALL 口上変数初期化
 					WSTR:(K++) = %CALLNAME:PLAYER%들은 무기를 들고, 거대한 기계에 싸움을 걸었다!
 					CALL メッセージ欄表示用関数(,,,0)
-					敵BATTLE_STATE_STR:0:エネミー名 = Lv16_거대 관리 기계
+					敵BATTLE_STATE_STR:0:エネミー名 = Lv16_巨大管理機械
 					CALL 雑魚敵遭遇汎用処理
 					IF RESULT == 0
 						;勝利時のみ先へ進む
@@ -1008,7 +1008,7 @@ KSTR:(K++) = BUTTON_[아니요]
 			INPUTS
 			SELECTCASE RESULTS
 				CASE "[예]"
-					敵BATTLE_STATE_STR:0:エネミー名 = Lv16_거대 관리 기계
+					敵BATTLE_STATE_STR:0:エネミー名 = Lv16_巨大管理機械
 					CALL 雑魚敵遭遇汎用処理
 				CASE "[아니요]"
 					CALL 口上変数初期化
@@ -1043,11 +1043,11 @@ SELECTCASE ARGS
 			WSTR:(K++) = 웅웅 소리를 내며 벨트 컨베이어가 움직이고 있다.
 			WSTR:(K++) = ……이런 벨트 컨베이어가 폭주한 기계를 운반해 와 버렸다!
 			CALL メッセージ欄表示用関数(,,,0)
-			敵BATTLE_STATE_STR:1:エネミー名 = Lv12_폭주 기계A
-			敵BATTLE_STATE_STR:5:エネミー名 = Lv12_폭주 기계A
-			敵BATTLE_STATE_STR:2:エネミー名 = Lv12_폭주 기계B
-			敵BATTLE_STATE_STR:4:エネミー名 = Lv12_폭주 기계B
-			敵BATTLE_STATE_STR:6:エネミー名 = Lv12_폭주 기계B
+			敵BATTLE_STATE_STR:1:エネミー名 = Lv12_暴走機械A
+			敵BATTLE_STATE_STR:5:エネミー名 = Lv12_暴走機械A
+			敵BATTLE_STATE_STR:2:エネミー名 = Lv12_暴走機械B
+			敵BATTLE_STATE_STR:4:エネミー名 = Lv12_暴走機械B
+			敵BATTLE_STATE_STR:6:エネミー名 = Lv12_暴走機械B
 			CALL 雑魚敵遭遇汎用処理
 
 			WSTR:(K++) = 또 벨트 컨베이어가 새로운 적을 운반해 올지도 모른다.
@@ -1346,10 +1346,10 @@ SELECTCASE ARGS
 			;最初に訪れた時
 			WSTR:(K++) = %CALLNAME:PLAYER%들이 공장을 나아가자, 불의 정령들이 앞길을 막아서듯이 모여들었다!
 			CALL メッセージ欄表示用関数(,,,0)
-			敵BATTLE_STATE_STR:0:エネミー名 = Lv13_불의 엘리멘탈
-			敵BATTLE_STATE_STR:5:エネミー名 = Lv13_불의 엘리멘탈
-			敵BATTLE_STATE_STR:2:エネミー名 = Lv13_불의 엘리멘탈
-			敵BATTLE_STATE_STR:6:エネミー名 = Lv13_불의 엘리멘탈
+			敵BATTLE_STATE_STR:0:エネミー名 = Lv13_火のエレメンタル
+			敵BATTLE_STATE_STR:5:エネミー名 = Lv13_火のエレメンタル
+			敵BATTLE_STATE_STR:2:エネミー名 = Lv13_火のエレメンタル
+			敵BATTLE_STATE_STR:6:エネミー名 = Lv13_火のエレメンタル
 			CALL 雑魚敵遭遇汎用処理
 			IF RESULT == 0
 				;勝利時のみ先へ進む
@@ -1362,10 +1362,10 @@ SELECTCASE ARGS
 				SETBIT ダンジョン構造配列_バルツ地下廃工場:マス深度:マス分岐, 4
 			ENDIF
 		ELSE
-			敵BATTLE_STATE_STR:0:エネミー名 = Lv13_불의 엘리멘탈
-			敵BATTLE_STATE_STR:5:エネミー名 = Lv13_불의 엘리멘탈
-			敵BATTLE_STATE_STR:2:エネミー名 = Lv13_불의 엘리멘탈
-			敵BATTLE_STATE_STR:6:エネミー名 = Lv13_불의 엘리멘탈
+			敵BATTLE_STATE_STR:0:エネミー名 = Lv13_火のエレメンタル
+			敵BATTLE_STATE_STR:5:エネミー名 = Lv13_火のエレメンタル
+			敵BATTLE_STATE_STR:2:エネミー名 = Lv13_火のエレメンタル
+			敵BATTLE_STATE_STR:6:エネミー名 = Lv13_火のエレメンタル
 			CALL 雑魚敵繰り返し戦闘処理
 		ENDIF
 		CALL 画面再描画
@@ -1601,9 +1601,9 @@ SELECTCASE ARGS
 			WSTR:(K++) = 즉, 공존 관계에 있다는 것이다.
 			WSTR:(K++) = 그 추측을 뒷받침하듯이, %CALLNAME:PLAYER%들에게 눈치챈 기계들은 연계하여 덮쳐온다!
 			CALL メッセージ欄表示用関数(,,,0)
-			敵BATTLE_STATE_STR:0:エネミー名 = Lv13_불의 엘리멘탈
-			敵BATTLE_STATE_STR:4:エネミー名 = Lv13_불의 엘리멘탈
-			敵BATTLE_STATE_STR:3:エネミー名 = Lv12_폭주 기계B
+			敵BATTLE_STATE_STR:0:エネミー名 = Lv13_火のエレメンタル
+			敵BATTLE_STATE_STR:4:エネミー名 = Lv13_火のエレメンタル
+			敵BATTLE_STATE_STR:3:エネミー名 = Lv12_暴走機械B
 			CALL 雑魚敵遭遇汎用処理
 			IF RESULT == 0
 				;勝利時のみ先へ進む
@@ -1617,9 +1617,9 @@ SELECTCASE ARGS
 				SETBIT ダンジョン構造配列_バルツ地下廃工場:マス深度:マス分岐, 4
 			ENDIF
 		ELSE
-			敵BATTLE_STATE_STR:0:エネミー名 = Lv13_불의 엘리멘탈
-			敵BATTLE_STATE_STR:4:エネミー名 = Lv13_불의 엘리멘탈
-			敵BATTLE_STATE_STR:3:エネミー名 = Lv12_폭주 기계B
+			敵BATTLE_STATE_STR:0:エネミー名 = Lv13_火のエレメンタル
+			敵BATTLE_STATE_STR:4:エネミー名 = Lv13_火のエレメンタル
+			敵BATTLE_STATE_STR:3:エネミー名 = Lv12_暴走機械B
 			CALL 雑魚敵繰り返し戦闘処理
 		ENDIF
 		CALL 画面再描画
@@ -1747,10 +1747,10 @@ SELECTCASE ARGS
 			WSTR:(K++) = 전망 좋은 이곳에서는 숨어서 나아가기 어려울 것 같다.
 			WSTR:(K++) = 무기를 들고, %CALLNAME:PLAYER%들은 싸움을 시작한다.
 			CALL メッセージ欄表示用関数(,,,0)
-			敵BATTLE_STATE_STR:2:エネミー名 = Lv13_불의 엘리멘탈
-			敵BATTLE_STATE_STR:1:エネミー名 = Lv12_폭주 기계A
-			敵BATTLE_STATE_STR:4:エネミー名 = Lv13_불의 엘리멘탈
-			敵BATTLE_STATE_STR:3:エネミー名 = Lv12_폭주 기계A
+			敵BATTLE_STATE_STR:2:エネミー名 = Lv13_火のエレメンタル
+			敵BATTLE_STATE_STR:1:エネミー名 = Lv12_暴走機械A
+			敵BATTLE_STATE_STR:4:エネミー名 = Lv13_火のエレメンタル
+			敵BATTLE_STATE_STR:3:エネミー名 = Lv12_暴走機械A
 			CALL 雑魚敵遭遇汎用処理
 			IF RESULT == 0
 				;勝利時のみ先へ進む
@@ -1763,10 +1763,10 @@ SELECTCASE ARGS
 				SETBIT ダンジョン構造配列_バルツ地下廃工場:マス深度:マス分岐, 4
 			ENDIF
 		ELSE
-			敵BATTLE_STATE_STR:2:エネミー名 = Lv13_불의 엘리멘탈
-			敵BATTLE_STATE_STR:1:エネミー名 = Lv12_폭주 기계A
-			敵BATTLE_STATE_STR:4:エネミー名 = Lv13_불의 엘리멘탈
-			敵BATTLE_STATE_STR:3:エネミー名 = Lv12_폭주 기계A
+			敵BATTLE_STATE_STR:2:エネミー名 = Lv13_火のエレメンタル
+			敵BATTLE_STATE_STR:1:エネミー名 = Lv12_暴走機械A
+			敵BATTLE_STATE_STR:4:エネミー名 = Lv13_火のエレメンタル
+			敵BATTLE_STATE_STR:3:エネミー名 = Lv12_暴走機械A
 			CALL 雑魚敵繰り返し戦闘処理
 		ENDIF
 		CALL 画面再描画
@@ -2049,7 +2049,7 @@ SELECTCASE ARGS
 							WSTR:(K++) = 시설 개조 「대장간 시설」이 해방되었다!
 							WSTR:(K++) = 도구점에 「불의 마석」이 추가되었다!
 						ELSE
-							WSTR:(K++) = 대장간 시설에서 소비하는 루피 금액이 10% 감소했다!
+							WSTR:(K++) = 대장간 시설에서 소비하는 루피 금액이 10％ 감소했다!
 						ENDIF
 						LOCAL = GETCHARA(137)
 					CASE "[콜로마그 짱이 뭐야?]"
@@ -2093,7 +2093,7 @@ KSTR:(K++) = 콜로서스와의 싸움의 기억을 떠올리겠습니까?
 			INPUTS
 			SELECTCASE RESULTS
 				CASE "[예]"
-					敵BATTLE_STATE_STR:0:エネミー名 = Lv18_콜로서스
+					敵BATTLE_STATE_STR:0:エネミー名 = Lv18_コロッサス
 					CALL 雑魚敵遭遇汎用処理
 					IF RESULT == 0
 						CALL 口上変数初期化
@@ -2211,10 +2211,10 @@ SELECTCASE ARGS
 			ENDIF
 		ELSE
 			敵BATTLE_STATE_STR:0:エネミー名 = Lv13_火のエレメンタル
-			敵BATTLE_STATE_STR:3:エネミー名 = Lv13_불의 엘리멘탈
-			敵BATTLE_STATE_STR:4:エネミー名 = Lv13_불의 엘리멘탈
-			敵BATTLE_STATE_STR:7:エネミー名 = Lv13_불의 엘리멘탈
-			敵BATTLE_STATE_STR:8:エネミー名 = Lv13_불의 엘리멘탈
+			敵BATTLE_STATE_STR:3:エネミー名 = Lv13_火のエレメンタル
+			敵BATTLE_STATE_STR:4:エネミー名 = Lv13_火のエレメンタル
+			敵BATTLE_STATE_STR:7:エネミー名 = Lv13_火のエレメンタル
+			敵BATTLE_STATE_STR:8:エネミー名 = Lv13_火のエレメンタル
 			CALL 雑魚敵繰り返し戦闘処理
 			CALL 接続ルート全開放処理(マス深度, マス分岐)
 		ENDIF
@@ -2323,8 +2323,8 @@ SELECTCASE ARGS
 			WSTR:(K++) = 아무래도 병기 내부에 정령이 씌어 움직이는 것 같다.
 			WSTR:(K++) = 정령이 씌인 병기는 그대로, %CALLNAME:PLAYER%들에게 덮쳐온다!
 			CALL メッセージ欄表示用関数(,,,0)
-			敵BATTLE_STATE_STR:1:エネミー名 = Lv14_정령이 씌인 병기 부품
-			敵BATTLE_STATE_STR:5:エネミー名 = Lv14_정령이 씌인 병기 부품
+			敵BATTLE_STATE_STR:1:エネミー名 = Lv14_精霊憑きの兵器パーツ
+			敵BATTLE_STATE_STR:5:エネミー名 = Lv14_精霊憑きの兵器パーツ
 			CALL 雑魚敵遭遇汎用処理
 			IF RESULT == 0
 				;勝利時のみ先へ進む
@@ -2338,8 +2338,8 @@ SELECTCASE ARGS
 				SETBIT ダンジョン構造配列_バルツ地下廃工場:マス深度:マス分岐, 4
 			ENDIF
 		ELSE
-			敵BATTLE_STATE_STR:1:エネミー名 = Lv14_정령이 씌인 병기 부품
-			敵BATTLE_STATE_STR:5:エネミー名 = Lv14_정령이 깃든 병기 부품
+			敵BATTLE_STATE_STR:1:エネミー名 = Lv14_精霊憑きの兵器パーツ
+			敵BATTLE_STATE_STR:5:エネミー名 = Lv14_精霊憑きの兵器パーツ
 			CALL 雑魚敵繰り返し戦闘処理
 		ENDIF
 		CALL 画面再描画
@@ -2470,7 +2470,7 @@ SELECTCASE ARGS
 			WSTR:(K++) = ……라고 생각했더니, 병기가 저절로 움직이기 시작했다!
 			WSTR:(K++) = 불의 정령이 내부에 씌어 있는 듯하다. 병기의 몸째로, 너희에게 덮쳐온다!
 			CALL メッセージ欄表示用関数(,,,0)
-			敵BATTLE_STATE_STR:3:エネミー名 = Lv14_정령 들린 병기 부품
+			敵BATTLE_STATE_STR:3:エネミー名 = Lv14_精霊憑きの兵器パーツ
 			CALL 雑魚敵遭遇汎用処理
 			IF RESULT == 0
 				;勝利時のみ先へ進む
@@ -2486,7 +2486,7 @@ WSTR:(K++) = 잔해를 한쪽으로 치우고%CALLNAME:PLAYER%들은 앞으로 �
 				SETBIT ダンジョン構造配列_バルツ地下廃工場:マス深度:マス分岐, 4
 			ENDIF
 		ELSE
-			敵BATTLE_STATE_STR:3:エネミー名 = Lv14_정령이 깃든 병기 부품
+			敵BATTLE_STATE_STR:3:エネミー名 = Lv14_精霊憑きの兵器パーツ
 			CALL 雑魚敵繰り返し戦闘処理
 		ENDIF
 		CALL 画面再描画

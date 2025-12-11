@@ -173,7 +173,7 @@ SELECTCASE ARGS
 			WSTR:(K++) = ……아니, 실제로 움직이고 있다! 이 조각은 유적을 지키는 골렘이다!
 			CALL メッセージ欄表示用関数(,,,0)
 
-			敵BATTLE_STATE_STR:3:エネミー名 = Lv10_골렘
+			敵BATTLE_STATE_STR:3:エネミー名 = Lv10_ゴーレム
 			CALL 雑魚敵遭遇汎用処理
 			IF RESULT == 0
 				;勝利時のみ先へ進む
@@ -187,7 +187,7 @@ SELECTCASE ARGS
 				SETBIT ダンジョン構造配列_名前を亡くした遺跡:マス深度:マス分岐, 4
 			ENDIF
 		ELSE
-			敵BATTLE_STATE_STR:3:エネミー名 = Lv10_골렘
+			敵BATTLE_STATE_STR:3:エネミー名 = Lv10_ゴーレム
 			CALL 雑魚敵繰り返し戦闘処理
 		ENDIF
 		CALL 画面再描画
@@ -417,13 +417,13 @@ SELECTCASE ARGS
 			WSTR:(K++) = 버섯이 움직이기 시작하며, 너희를 습격해 온다!
 			CALL メッセージ欄表示用関数(,,,0)
 
-			敵BATTLE_STATE_STR:0:エネミー名 = Lv9_마이코니드
-			敵BATTLE_STATE_STR:2:エネミー名 = Lv9_마이코니드
+			敵BATTLE_STATE_STR:0:エネミー名 = Lv9_マイコニド
+			敵BATTLE_STATE_STR:2:エネミー名 = Lv9_マイコニド
 			CALL 雑魚敵遭遇汎用処理
 			CALL 接続ルート全開放処理(マス深度, マス分岐)
 		ELSE
-			敵BATTLE_STATE_STR:0:エネミー名 = Lv9_마이코니드
-			敵BATTLE_STATE_STR:2:エネミー名 = Lv9_마이코니드
+			敵BATTLE_STATE_STR:0:エネミー名 = Lv9_マイコニド
+			敵BATTLE_STATE_STR:2:エネミー名 = Lv9_マイコニド
 			CALL 雑魚敵繰り返し戦闘処理
 		ENDIF
 		CALL 画面再描画
@@ -688,10 +688,10 @@ SELECTCASE ARGS
 			ENDIF
 			CALL メッセージ欄表示用関数(,,,0)
 
-			敵BATTLE_STATE_STR:0:エネミー名 = Lv8_고블린 솔저
-			敵BATTLE_STATE_STR:2:エネミー名 = Lv8_고블린 솔저
-			敵BATTLE_STATE_STR:1:エネミー名 = Lv8_고블린 실더
-			敵BATTLE_STATE_STR:3:エネミー名 = Lv8_고블린 실더
+			敵BATTLE_STATE_STR:0:エネミー名 = Lv8_ゴブリンソルジャー
+			敵BATTLE_STATE_STR:2:エネミー名 = Lv8_ゴブリンソルジャー
+			敵BATTLE_STATE_STR:1:エネミー名 = Lv8_ゴブリンシールダー
+			敵BATTLE_STATE_STR:3:エネミー名 = Lv8_ゴブリンシールダー
 			CALL 雑魚敵遭遇汎用処理
 			IF RESULT == 0
 				;勝利時のみ進行
@@ -699,10 +699,10 @@ SELECTCASE ARGS
 				SETBIT ダンジョン構造配列_名前を亡くした遺跡:マス深度:マス分岐, 4
 			ENDIF
 		ELSE
-			敵BATTLE_STATE_STR:0:エネミー名 = Lv8_고블린 솔저
-			敵BATTLE_STATE_STR:2:エネミー名 = Lv8_고블린 솔저
-			敵BATTLE_STATE_STR:1:エネミー名 = Lv8_고블린 실더
-			敵BATTLE_STATE_STR:3:エネミー名 = Lv8_고블린 실더
+			敵BATTLE_STATE_STR:0:エネミー名 = Lv8_ゴブリンソルジャー
+			敵BATTLE_STATE_STR:2:エネミー名 = Lv8_ゴブリンソルジャー
+			敵BATTLE_STATE_STR:1:エネミー名 = Lv8_ゴブリンシールダー
+			敵BATTLE_STATE_STR:3:エネミー名 = Lv8_ゴブリンシールダー
 			CALL 雑魚敵繰り返し戦闘処理
 		ENDIF
 		CALL 画面再描画
@@ -843,8 +843,8 @@ SELECTCASE ARGS
 			WSTR:(K++) = 너희는 무기를 들고 싸움을 시작한다.
 			CALL メッセージ欄表示用関数(,,,0)
 
-			敵BATTLE_STATE_STR:0:エネミー名 = Lv8_고블린 트래퍼
-			敵BATTLE_STATE_STR:2:エネミー名 = Lv8_고블린 트래퍼
+			敵BATTLE_STATE_STR:0:エネミー名 = Lv8_ゴブリントラッパー
+			敵BATTLE_STATE_STR:2:エネミー名 = Lv8_ゴブリントラッパー
 			CALL 雑魚敵遭遇汎用処理
 			CALL 接続ルート全開放処理(マス深度, マス分岐)
 			CALL 口上変数初期化
@@ -855,8 +855,8 @@ SELECTCASE ARGS
 			CALL メッセージ欄表示用関数(,,,0)
 			CALL 口上変数初期化
 		ELSE
-			敵BATTLE_STATE_STR:0:エネミー名 = Lv8_고블린 트래퍼
-			敵BATTLE_STATE_STR:2:エネミー名 = Lv8_고블린 트래퍼
+			敵BATTLE_STATE_STR:0:エネミー名 = Lv8_ゴブリントラッパー
+			敵BATTLE_STATE_STR:2:エネミー名 = Lv8_ゴブリントラッパー
 			CALL 雑魚敵繰り返し戦闘処理
 		ENDIF
 		CALL 画面再描画
@@ -1029,10 +1029,10 @@ SELECTCASE ARGS
 			ENDIF
 			CALL メッセージ欄表示用関数(,,,0)
 
-			敵BATTLE_STATE_STR:4:エネミー名 = Lv8_고블린 솔저
+			敵BATTLE_STATE_STR:4:エネミー名 = Lv8_ゴブリンソルジャー
 			敵BATTLE_STATE_STR:3:エネミー名 = Lv8_ゴブリンソルジャー
-			敵BATTLE_STATE_STR:0:エネミー名 = Lv8_고블린 트래퍼
-			敵BATTLE_STATE_STR:2:エネミー名 = Lv8_고블린 트래퍼
+			敵BATTLE_STATE_STR:0:エネミー名 = Lv8_ゴブリントラッパー
+			敵BATTLE_STATE_STR:2:エネミー名 = Lv8_ゴブリントラッパー
 			CALL 雑魚敵遭遇汎用処理
 			IF RESULT == 0
 				;勝利時のみ進行
@@ -1040,10 +1040,10 @@ SELECTCASE ARGS
 				SETBIT ダンジョン構造配列_名前を亡くした遺跡:マス深度:マス分岐, 4
 			ENDIF
 		ELSE
-			敵BATTLE_STATE_STR:4:エネミー名 = Lv8_고블린 솔저
-			敵BATTLE_STATE_STR:3:エネミー名 = Lv8_고블린 솔저
-			敵BATTLE_STATE_STR:0:エネミー名 = Lv8_고블린 트래퍼
-			敵BATTLE_STATE_STR:2:エネミー名 = Lv8_고블린 트래퍼
+			敵BATTLE_STATE_STR:4:エネミー名 = Lv8_ゴブリンソルジャー
+			敵BATTLE_STATE_STR:3:エネミー名 = Lv8_ゴブリンソルジャー
+			敵BATTLE_STATE_STR:0:エネミー名 = Lv8_ゴブリントラッパー
+			敵BATTLE_STATE_STR:2:エネミー名 = Lv8_ゴブリントラッパー
 			CALL 雑魚敵繰り返し戦闘処理
 		ENDIF
 		CALL 画面再描画
@@ -1531,18 +1531,18 @@ SELECTCASE ARGS
 			INPUTS
 			SELECTCASE RESULTS
 				CASE "[예]"
-					敵BATTLE_STATE_STR:1:エネミー名 = Lv8_고블린 솔저
-					敵BATTLE_STATE_STR:2:エネミー名 = Lv8_고블린 솔저
-					敵BATTLE_STATE_STR:3:エネミー名 = Lv8_고블린 솔저
+					敵BATTLE_STATE_STR:1:エネミー名 = Lv8_ゴブリンソルジャー
+					敵BATTLE_STATE_STR:2:エネミー名 = Lv8_ゴブリンソルジャー
+					敵BATTLE_STATE_STR:3:エネミー名 = Lv8_ゴブリンソルジャー
 					CALL 雑魚敵遭遇汎用処理
 					IF RESULT == 0
-						敵BATTLE_STATE_STR:1:エネミー名 = Lv8_고블린 솔저
-						敵BATTLE_STATE_STR:2:エネミー名 = Lv8_고블린 트래퍼
-						敵BATTLE_STATE_STR:5:エネミー名 = Lv8_고블린 솔저
+						敵BATTLE_STATE_STR:1:エネミー名 = Lv8_ゴブリンソルジャー
+						敵BATTLE_STATE_STR:2:エネミー名 = Lv8_ゴブリントラッパー
+						敵BATTLE_STATE_STR:5:エネミー名 = Lv8_ゴブリンソルジャー
 						CALL 雑魚敵遭遇汎用処理
 						IF RESULT == 0
-							敵BATTLE_STATE_STR:1:エネミー名 = Lv8_고블린 실더
-							敵BATTLE_STATE_STR:2:エネミー名 = Lv8_고블린 트래퍼
+							敵BATTLE_STATE_STR:1:エネミー名 = Lv8_ゴブリンシールダー
+							敵BATTLE_STATE_STR:2:エネミー名 = Lv8_ゴブリントラッパー
 							敵BATTLE_STATE_STR:3:エネミー名 = Lv8_ゴブリンシールダー
 							敵BATTLE_STATE_STR:4:エネミー名 = Lv8_ゴブリントラッパー
 							敵BATTLE_STATE_STR:5:エネミー名 = Lv8_ゴブリンシールダー
@@ -1777,11 +1777,11 @@ SELECTCASE ARGS
 			ENDIF
 			CALL メッセージ欄表示用関数(,,,0)
 
-			敵BATTLE_STATE_STR:1:エネミー名 = Lv8_고블린 실더
-			敵BATTLE_STATE_STR:3:エネミー名 = Lv8_고블린 실더
-			敵BATTLE_STATE_STR:5:エネミー名 = Lv8_고블린 실더
-			敵BATTLE_STATE_STR:2:エネミー名 = Lv8_고블린 트래퍼
-			敵BATTLE_STATE_STR:4:エネミー名 = Lv8_고블린 트래퍼
+			敵BATTLE_STATE_STR:1:エネミー名 = Lv8_ゴブリンシールダー
+			敵BATTLE_STATE_STR:3:エネミー名 = Lv8_ゴブリンシールダー
+			敵BATTLE_STATE_STR:5:エネミー名 = Lv8_ゴブリンシールダー
+			敵BATTLE_STATE_STR:2:エネミー名 = Lv8_ゴブリントラッパー
+			敵BATTLE_STATE_STR:4:エネミー名 = Lv8_ゴブリントラッパー
 			CALL 雑魚敵遭遇汎用処理
 			IF RESULT == 0
 				;勝利時のみ進行
@@ -1789,11 +1789,11 @@ SELECTCASE ARGS
 				SETBIT ダンジョン構造配列_名前を亡くした遺跡:マス深度:マス分岐, 4
 			ENDIF
 		ELSE
-			敵BATTLE_STATE_STR:1:エネミー名 = Lv8_고블린 실더
-			敵BATTLE_STATE_STR:3:エネミー名 = Lv8_고블린 실더
-			敵BATTLE_STATE_STR:5:エネミー名 = Lv8_고블린 실더
-			敵BATTLE_STATE_STR:2:エネミー名 = Lv8_고블린 트래퍼
-			敵BATTLE_STATE_STR:4:エネミー名 = Lv8_고블린 트래퍼
+			敵BATTLE_STATE_STR:1:エネミー名 = Lv8_ゴブリンシールダー
+			敵BATTLE_STATE_STR:3:エネミー名 = Lv8_ゴブリンシールダー
+			敵BATTLE_STATE_STR:5:エネミー名 = Lv8_ゴブリンシールダー
+			敵BATTLE_STATE_STR:2:エネミー名 = Lv8_ゴブリントラッパー
+			敵BATTLE_STATE_STR:4:エネミー名 = Lv8_ゴブリントラッパー
 			CALL 雑魚敵繰り返し戦闘処理
 		ENDIF
 		CALL 画面再描画
@@ -1828,11 +1828,11 @@ SELECTCASE ARGS
 			ENDIF
 			CALL メッセージ欄表示用関数(,,,0)
 
-			敵BATTLE_STATE_STR:1:エネミー名 = Lv8_고블린 실더
-			敵BATTLE_STATE_STR:3:エネミー名 = Lv8_고블린 실더
-			敵BATTLE_STATE_STR:5:エネミー名 = Lv8_고블린 실더
-			敵BATTLE_STATE_STR:2:エネミー名 = Lv8_고블린 트래퍼
-			敵BATTLE_STATE_STR:4:エネミー名 = Lv8_고블린 트래퍼
+			敵BATTLE_STATE_STR:1:エネミー名 = Lv8_ゴブリンシールダー
+			敵BATTLE_STATE_STR:3:エネミー名 = Lv8_ゴブリンシールダー
+			敵BATTLE_STATE_STR:5:エネミー名 = Lv8_ゴブリンシールダー
+			敵BATTLE_STATE_STR:2:エネミー名 = Lv8_ゴブリントラッパー
+			敵BATTLE_STATE_STR:4:エネミー名 = Lv8_ゴブリントラッパー
 			CALL 雑魚敵遭遇汎用処理
 			IF RESULT == 0
 				;勝利時のみ進行
@@ -1840,11 +1840,11 @@ SELECTCASE ARGS
 				SETBIT ダンジョン構造配列_名前を亡くした遺跡:マス深度:マス分岐, 4
 			ENDIF
 		ELSE
-			敵BATTLE_STATE_STR:1:エネミー名 = Lv8_고블린 실더
-			敵BATTLE_STATE_STR:3:エネミー名 = Lv8_고블린 실더
-			敵BATTLE_STATE_STR:5:エネミー名 = Lv8_고블린 실더
-			敵BATTLE_STATE_STR:2:エネミー名 = Lv8_고블린 트래퍼
-			敵BATTLE_STATE_STR:4:エネミー名 = Lv8_고블린 트래퍼
+			敵BATTLE_STATE_STR:1:エネミー名 = Lv8_ゴブリンシールダー
+			敵BATTLE_STATE_STR:3:エネミー名 = Lv8_ゴブリンシールダー
+			敵BATTLE_STATE_STR:5:エネミー名 = Lv8_ゴブリンシールダー
+			敵BATTLE_STATE_STR:2:エネミー名 = Lv8_ゴブリントラッパー
+			敵BATTLE_STATE_STR:4:エネミー名 = Lv8_ゴブリントラッパー
 			CALL 雑魚敵繰り返し戦闘処理
 		ENDIF
 		CALL 画面再描画
@@ -1981,11 +1981,11 @@ WSTR:(K++) = 너희는 다시 고블린과의 싸움을 시작한다.
 			ENDIF
 			CALL メッセージ欄表示用関数(,,,0)
 
-			敵BATTLE_STATE_STR:1:エネミー名 = Lv8_고블린 실더
+			敵BATTLE_STATE_STR:1:エネミー名 = Lv8_ゴブリンシールダー
 			敵BATTLE_STATE_STR:3:エネミー名 = Lv8_ゴブリンソルジャー
-			敵BATTLE_STATE_STR:5:エネミー名 = Lv8_ゴブリン실더
-			敵BATTLE_STATE_STR:7:エネミー名 = Lv8_고블린솔저
-			敵BATTLE_STATE_STR:9:エネミー名 = Lv8_고블린실더
+			敵BATTLE_STATE_STR:5:エネミー名 = Lv8_ゴブリンシールダー
+			敵BATTLE_STATE_STR:7:エネミー名 = Lv8_ゴブリンソルジャー
+			敵BATTLE_STATE_STR:9:エネミー名 = Lv8_ゴブリンシールダー
 			CALL 雑魚敵遭遇汎用処理
 			IF RESULT == 0
 				;勝利時のみ進行
@@ -1993,11 +1993,11 @@ WSTR:(K++) = 너희는 다시 고블린과의 싸움을 시작한다.
 				SETBIT ダンジョン構造配列_名前を亡くした遺跡:マス深度:マス分岐, 4
 			ENDIF
 		ELSE
-			敵BATTLE_STATE_STR:1:エネミー名 = Lv8_고블린실더
-			敵BATTLE_STATE_STR:3:エネミー名 = Lv8_고블린솔저
-			敵BATTLE_STATE_STR:5:エネミー名 = Lv8_고블린실더
-			敵BATTLE_STATE_STR:7:エネミー名 = Lv8_고블린솔저
-			敵BATTLE_STATE_STR:9:エネミー名 = Lv8_고블린실더
+			敵BATTLE_STATE_STR:1:エネミー名 = Lv8_ゴブリンシールダー
+			敵BATTLE_STATE_STR:3:エネミー名 = Lv8_ゴブリンソルジャー
+			敵BATTLE_STATE_STR:5:エネミー名 = Lv8_ゴブリンシールダー
+			敵BATTLE_STATE_STR:7:エネミー名 = Lv8_ゴブリンソルジャー
+			敵BATTLE_STATE_STR:9:エネミー名 = Lv8_ゴブリンシールダー
 			CALL 雑魚敵繰り返し戦闘処理
 		ENDIF
 		CALL 画面再描画
@@ -2075,10 +2075,10 @@ SELECTCASE ARGS
 				WSTR:(K++) = 「몇 번을 오든 마찬가지다. 몇 번이고 때려눕혀주마!」
 			ENDIF
 			CALL メッセージ欄表示用関数(,,,0)
-			敵BATTLE_STATE_STR:2:エネミー名 = Lv14_고블린 제너럴
-			敵BATTLE_STATE_STR:0:エネミー名 = Lv8_고블린 솔저
-			敵BATTLE_STATE_STR:1:エネミー名 = Lv8_고블린 솔저
-			敵BATTLE_STATE_STR:6:エネミー名 = Lv8_고블린 솔저
+			敵BATTLE_STATE_STR:2:エネミー名 = Lv14_ゴブリンジェネラル
+			敵BATTLE_STATE_STR:0:エネミー名 = Lv8_ゴブリンソルジャー
+			敵BATTLE_STATE_STR:1:エネミー名 = Lv8_ゴブリンソルジャー
+			敵BATTLE_STATE_STR:6:エネミー名 = Lv8_ゴブリンソルジャー
 			敵BATTLE_STATE_STR:7:エネミー名 = Lv8_ゴブリンソルジャー
 			CALL BATTLE_MAIN_LOOP
 			IF RESULT == 0
@@ -2143,11 +2143,11 @@ SELECTCASE ARGS
 				INPUTS
 				SELECTCASE RESULTS
 					CASE "[예]"
-						敵BATTLE_STATE_STR:2:エネミー名 = Lv14_고블린 제너럴
-						敵BATTLE_STATE_STR:0:エネミー名 = Lv8_고블린 솔저
-						敵BATTLE_STATE_STR:1:エネミー名 = Lv8_고블린 솔저
-						敵BATTLE_STATE_STR:6:エネミー名 = Lv8_고블린 솔저
-						敵BATTLE_STATE_STR:7:エネミー名 = Lv8_고블린 솔저
+						敵BATTLE_STATE_STR:2:エネミー名 = Lv14_ゴブリンジェネラル
+						敵BATTLE_STATE_STR:0:エネミー名 = Lv8_ゴブリンソルジャー
+						敵BATTLE_STATE_STR:1:エネミー名 = Lv8_ゴブリンソルジャー
+						敵BATTLE_STATE_STR:6:エネミー名 = Lv8_ゴブリンソルジャー
+						敵BATTLE_STATE_STR:7:エネミー名 = Lv8_ゴブリンソルジャー
 						CALL BATTLE_MAIN_LOOP
 						IF RESULT == 0
 							;勝利時
@@ -2386,9 +2386,9 @@ SELECTCASE ARGS
 			ENDIF
 			CALL メッセージ欄表示用関数(,,,0)
 
-			敵BATTLE_STATE_STR:4:エネミー名 = Lv8_고블린 솔저
-			敵BATTLE_STATE_STR:3:エネミー名 = Lv8_고블린 솔저
-			敵BATTLE_STATE_STR:0:エネミー名 = Lv8_고블린 트래퍼
+			敵BATTLE_STATE_STR:4:エネミー名 = Lv8_ゴブリンソルジャー
+			敵BATTLE_STATE_STR:3:エネミー名 = Lv8_ゴブリンソルジャー
+			敵BATTLE_STATE_STR:0:エネミー名 = Lv8_ゴブリントラッパー
 			敵BATTLE_STATE_STR:2:エネミー名 = Lv8_ゴブリントラッパー
 			CALL 雑魚敵遭遇汎用処理
 			IF RESULT == 0
@@ -2528,8 +2528,8 @@ SELECTCASE ARGS
 		ELSE
 			敵BATTLE_STATE_STR:1:エネミー名 = Lv8_ゴブリンソルジャー
 			敵BATTLE_STATE_STR:3:エネミー名 = Lv8_ゴブリンソルジャー
-			敵BATTLE_STATE_STR:4:エネミー名 = Lv8_ゴブリント라퍼
-			敵BATTLE_STATE_STR:6:エネミー名 = Lv8_고블린트라퍼
+			敵BATTLE_STATE_STR:4:エネミー名 = Lv8_ゴブリントラッパー
+			敵BATTLE_STATE_STR:6:エネミー名 = Lv8_ゴブリントラッパー
 			CALL 雑魚敵繰り返し戦闘処理
 		ENDIF
 		CALL 画面再描画
