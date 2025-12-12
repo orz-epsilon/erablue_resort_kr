@@ -940,17 +940,21 @@ FOR LOCAL, 0, CHARANUM
 		CASE 2
 			仕事人数表示用:常駐業務担当人数 ++
 			LOCALS = %MAP_GET("常駐業務名", REPLACE(GETPLACENAME(現在仕事:LOCAL:1 / 10000, 現在仕事:LOCAL:1 % 10000), "『.*』", ""))%
-			
-			RESULTS = 
-			CALLFORM 常駐業務効果_%LOCALS%(LOCAL, "ルピ補正")
-			SIF 現在仕事:LOCAL:1 / 10000 == 1 && 現在仕事:LOCAL:1 % 10000 >= 3 && 現在仕事:LOCAL:1 % 10000 <= 8
-				港商店常駐_収支報告文字列:(現在仕事:LOCAL:1 % 10000) += @"%RESULTS%"
-			売上分ルピ += RESULT
-			CALLFORM 常駐業務効果_%LOCALS%(LOCAL, "経験値取得")
-			IF RESULT
-				;レポート強調用記憶：従業員業務報告(＋仕事レベル上昇：常駐業務)
-				レポート強調フラグ:従業員業務報告 = 1
-				フォント色変更:2 = 1
+			IF LOCALS == ""
+				業務別報告文字列:仕事変数 += @"%CALLNAME:LOCAL, 18, LEFT%의 업무 레벨이 너무 낮아서 일을 제대로 못했습니다.<br>"
+			ELSE
+				RESULTS = 
+				CALLFORM 常駐業務効果_%LOCALS%(LOCAL, "ルピ補正")
+				SIF 現在仕事:LOCAL:1 / 10000 == 1 && 現在仕事:LOCAL:1 % 10000 >= 3 && 現在仕事:LOCAL:1 % 10000 <= 8
+					港商店常駐_収支報告文字列:(現在仕事:LOCAL:1 % 10000) += @"%RESULTS%"
+				売上分ルピ += RESULT
+				CALLFORM 常駐業務効果_%LOCALS%(LOCAL, "経験値取得")
+				IF RESULT
+					;レポート強調用記憶：従業員業務報告(＋仕事レベル上昇：常駐業務)
+					レポート強調フラグ:従業員業務報告 = 1
+					フォント色変更:2 = 1
+				ENDIF
+				
 			ENDIF
 		CASE 3
 			仕事人数表示用:秘書担当人数 ++

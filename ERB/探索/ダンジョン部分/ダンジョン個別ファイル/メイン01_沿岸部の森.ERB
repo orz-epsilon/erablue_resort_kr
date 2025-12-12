@@ -668,8 +668,8 @@ SELECTCASE ARGS
 	CASE "マスイベント"
 		CALL 口上変数初期化
 		IF 初来訪マス判定用フラグ == 0
-			敵BATTLE_STATE_STR:0:エネミー名 = Lv3_스니퍼
-			敵BATTLE_STATE_STR:1:エネミー名 = Lv3_스니퍼
+			敵BATTLE_STATE_STR:0:エネミー名 = Lv3_スニッパー
+			敵BATTLE_STATE_STR:1:エネミー名 = Lv3_スニッパー
 			CALL 雑魚敵繰り返し戦闘処理
 		ELSE
 			;最初に訪れた時
@@ -703,8 +703,8 @@ SELECTCASE ARGS
 					WSTR:(K++) = 이 물가를 영역으로 삼고 있는 마물들이 모여, 어느새 너희를 둘러싸고 있다!
 					KSTR:(K++) = 다수의 마물들이 너희에게 덮쳐왔다!
 					CALL メッセージ欄表示用関数()
-					敵BATTLE_STATE_STR:4:エネミー名 = Lv3_스니퍼
-					敵BATTLE_STATE_STR:7:エネミー名 = Lv3_스니퍼
+					敵BATTLE_STATE_STR:4:エネミー名 = Lv3_スニッパー
+					敵BATTLE_STATE_STR:7:エネミー名 = Lv3_スニッパー
 				CASE "[아니요]"
 					CALL 口上変数初期化
 					WSTR:(K++) = 물가는 마물이 모이기 쉬운 장소다. 무방비하게 쉬는 것은 위험할지도 모른다.

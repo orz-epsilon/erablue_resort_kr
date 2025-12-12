@@ -233,7 +233,7 @@ ENDIF
 LOCALS += "<div rect='81,375,1937,3312' border='31' bcolor='#C0C0C0'></div><div rect='2050,375,3875,3312' border='31' bcolor='#C0C0C0'></div>"
 LOCALS += "<div rect='156,500,1937,3312'>"
 LOCAL = 99 + !CSVエディタフラグ
-LOCALS += @"<button value='{LOCAL}'>[{LOCAL, 3, RIGHT}] \@ CSV 에디터 플래그? 개성# 이름\@을 설정한다</button>"
+LOCALS += @"<button value='{LOCAL}'>[{LOCAL, 3, RIGHT}] \@ CSVエディタフラグ? 개성# 이름\@을 설정한다</button>"
 LOCALS += "<br>"
 IF CSVエディタフラグ && GETBIT(表示モード:1, 0)
 	LOCALS += "<button value='107'>├[107] CSV 번호를 설정한다</button>"
@@ -452,7 +452,7 @@ SELECTCASE 表示モード
 ;				LOCALS:1 '= ""
 				LOCALS:1 '= "이 설정에서는 나이가 표시되지 않습니다"
 			ENDIF
-			LOCALS:1 '= @"<button value='12140'><font color='#%見出し文字色%'>　\@ 랜덤 캐릭터 소질:34 ? 외모# 나이\@：</font>%LOCALS:1%</button>"
+			LOCALS:1 '= @"<button value='12140'><font color='#%見出し文字色%'>　\@ ランダムキャラ素質:34 ? 외모# 나이\@：</font>%LOCALS:1%</button>"
 			LOCALS += LOCALS:1 + " " * (40 - MIN(40-1, STRLENS(HTML_TOPLAINTEXT(LOCALS:1))))
 			LOCALS += @"　<font color='#%見出し文字色%'>성지식 레벨：</font>"
 			SELECTCASE ランダムキャラ素質:6
@@ -480,7 +480,7 @@ SELECTCASE 表示モード
 			ENDSELECT
 			LOCALS:1 += \@ GETBIT(ランダムキャラ素質:1, 0) && !GETBIT(ランダムキャラ素質:2, 0) ? (처녀) # \@
 			LOCALS:1 += \@ GETBIT(ランダムキャラ素質:1, 1) && !GETBIT(ランダムキャラ素質:2, 1) ? (동정) # \@
-			LOCALS:1 += \@ A처녀 보존 ? # (A처녀)\@
+			LOCALS:1 += \@ Ａ処女保存 ? # (Ａ처녀)\@
 			LOCALS:1 = %REPLACE(LOCALS:1, "）（", "／"), 30, LEFT%
 			LOCALS += LOCALS:1
 			IF GETBIT(ランダムキャラ素質:1, 1)
@@ -1065,7 +1065,7 @@ SELECTCASE 表示モード
 				CASEELSE
 					LOCALS:2 = 
 			ENDSELECT
-			LOCALS += @"<font color='#%LOCALS:1%'><button value='{12100 + LOCAL}' title='%LOCALS:2%'>[\@ LOCAL == 연령층_불명? 나이# \@%GET_TALENTNAME(164, LOCAL)%]</button></font>"
+			LOCALS += @"<font color='#%LOCALS:1%'><button value='{12100 + LOCAL}' title='%LOCALS:2%'>[\@ LOCAL == 年齢層_不詳? 나이# \@%GET_TALENTNAME(164, LOCAL)%]</button></font>"
 		NEXT
 		LOCALS += "<br>"
 		;外見年齢が年齢層区分±1の場合、外見年齢を0（＝年相応）にする
