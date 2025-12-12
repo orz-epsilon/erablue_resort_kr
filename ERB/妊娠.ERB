@@ -906,7 +906,7 @@ DRAWLINE
 SELECTCASE OPTION変数:オート名付け関連
 	CASE 0
 		;オート選択をしない
-		PRINTFORML \@ (아이순서 > 0) ? {子供順番}번째 # \@이름은…
+		PRINTFORML \@ (子供順番 > 0) ? {子供順番}번째 # \@이름은…
 		PRINTBUTTON "[0]직접 생각하기", 0
 		IF PARENT:0 != MASTER
 			PRINTL 

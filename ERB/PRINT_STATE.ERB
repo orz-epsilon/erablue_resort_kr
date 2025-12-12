@@ -594,6 +594,8 @@ HTML_PRINT LOCALS
 PRINTFORM ■%NAME表示(ARG)%
 PRINTL
 PRINTL
+SIF 基礎BATTLE_STATE:ARG:Lv == 0
+	基礎BATTLE_STATE:ARG:Lv = 1
 LOCALS = <div rect='0,0,1125,2387'>□ ステータス □------<br>
 LOCALS += @"Lv　　　　：{基礎BATTLE_STATE:ARG:Lv, 5}<br>"
 LOCALS += @"EXP 　　　：{基礎BATTLE_STATE:ARG:蓄積EXP, 5}<br>"
@@ -2458,7 +2460,7 @@ SELECTCASE PREGNANCY_SIZE(ARG)
 	CASE 3
 		PRINTL 복부는 볼록하게 솟아올라 있어, 멀리서도 임신했다는 것을 한눈에 알 수 있다
 	CASE 4
-		PRINTFORML 커다란 복부 안에서, 아이% CFLAG:ARG:今回受胎人数 > 1 ? 들 # %은 순조롭게 무럭무럭 자라고 있는 것 같아.
+		PRINTFORML 커다란 복부 안에서, 아이\@ CFLAG:ARG:今回受胎人数 > 1 ? 들 # \@은(는) 순조롭게 무럭무럭 자라고 있는 것 같아.
 	CASE 5
 		IF 異種妊娠(ARG) && TALENT:ARG:種族 == 種族_ハーヴィン
 			PRINTFORML 크게 솟아오른 불룩한 배는 심상치 않은 크기로, 이종족 수컷에게 임신된 것이 한눈에 뻔히 보여.
@@ -2470,7 +2472,7 @@ SELECTCASE PREGNANCY_SIZE(ARG)
 			PRINTL 무겁게 부풀어 오른 만삭 배는, 어쩔 수 없이 보는 사람에게 출산이 임박했음을 떠올리게 해.
 		ENDIF
 	CASE 6
-		PRINTFORML \@ (CFLAG:ARG:子の父親 >= 0 && INRANGE(TALENT:(CFLAG:ARG:子の父親):種族, 1, 5) && 異種妊娠(ARG)) ? %GET_TALENTNAME(200,TALENT:(CFLAG:ARG:子の父親):種族,,CFLAG:ARG:子の父親)% # 이종족 \@과의 아이% CFLAG:ARG:今回受胎人数 > 1 ? 들 # %을 출산이 임박한 만삭 배는 너무나 거대해서, 걷는 것도 힘들어 보여.
+		PRINTFORML \@ (CFLAG:ARG:子の父親 >= 0 && INRANGE(TALENT:(CFLAG:ARG:子の父親):種族, 1, 5) && 異種妊娠(ARG)) ? %GET_TALENTNAME(200,TALENT:(CFLAG:ARG:子の父親):種族,,CFLAG:ARG:子の父親)% # 이종족 \@과의 아이\@ CFLAG:ARG:今回受胎人数 > 1 ? 들 # \@을 출산이 임박한 만삭 배는 너무나 거대해서, 걷는 것도 힘들어 보여.
 ENDSELECT
 SIF (GROUPMATCH(TALENT:ARG:種族,種族_ドラフ,種族_ハーヴィン) || TALENT:ARG:体格 < 0) && TALENT:ARG:バストサイズ >= 2 && PREGNANCY_SIZE(ARG) >= 4
 	PRINTFORML 　%CALLNAME:ARG%의 거대한 흉부는 크게 솟아오른 불룩한 배에 밀려 올라가 있어.
