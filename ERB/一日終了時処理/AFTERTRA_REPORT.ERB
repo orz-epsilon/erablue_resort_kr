@@ -1951,7 +1951,7 @@ FOR LOCAL, 0, 10
 				SIF LOCAL:1
 					PRINTL
 				RSTR:依頼報告_記録文字列 += @"<font color='#%カラーパレット_HTML("青緑")%'>"
-				RSTR:依頼報告_記録文字列 += @"%@"%의뢰 수주자명:LOCAL% が %수행 중 의뢰:LOCAL% の依頼を達成したようだ！", 80, LEFT%"
+				RSTR:依頼報告_記録文字列 += @"%@"%依頼受注者名:LOCAL% が %遂行中依頼:LOCAL% の依頼を達成したようだ！", 80, LEFT%"
 				RSTR:依頼報告_記録文字列 += @"<button value='{LOCAL + 100}'>[자세히 보기]</button>"
 				RSTR:依頼報告_記録文字列 +=  "</font><br>"
 				CALLFORM 依頼完了時処理_%遂行中依頼:LOCAL%(LOCAL)
