@@ -776,7 +776,7 @@ FOR 表示数カウント, ページ数 * 15, ページ数 * 15 + 15
 	IF DT_ROW_LENGTH("写真データベース") > 表示数カウント
 		SIF 一括削除モード && STRCOUNT(削除番号, @"_{DT_CELL_GET("写真データベース", 表示数カウント, "id")}_")
 			SETCOLOR カラーパレット("黄")
-		PRINTBUTTON @"[{表示数カウント, 3}] - 『%DT_CELL_GETS("写真データベース", 表示数カウント, "写真タイトル")%』", 표시수 카운트
+		PRINTBUTTON @"[{表示数カウント, 3}] - 『%DT_CELL_GETS("写真データベース", 表示数カウント, "写真タイトル")%』", 表示数カウント
 		RESETCOLOR
 		PRINTL
 	ELSE
