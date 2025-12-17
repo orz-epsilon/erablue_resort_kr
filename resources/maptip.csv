@@ -69,8 +69,8 @@
 リゾート遠景,リゾート遠景/resort.webp,0,0,825,436
 リゾートハウス,リゾート遠景/resorthouse.webp,0,0,300,250
 空艇港,リゾート遠景/minato.webp,0,0,300,250
-居住区エリア,リゾート遠景/jutaku.webp,0,0,300,250
-海エリア,リゾート遠景/umi.webp,0,0,300,250
+주거지역,リゾート遠景/jutaku.webp,0,0,300,250
+바다지역,リゾート遠景/umi.webp,0,0,300,250
 
 
 ;------------------------------------------------------------
@@ -86,23 +86,23 @@
 バフアイコン_小,buff_aicn_result.webp,100,0,50,50
 デバフアイコン_小,buff_aicn_result.webp,150,0,50,50
 
-バフ_攻撃力,buff_aicn_result.webp,0,50,50,50
-デバフ_攻撃力,buff_aicn_result.webp,50,50,50,50
-バフ_防御力,buff_aicn_result.webp,100,50,50,50
-デバフ_防御力,buff_aicn_result.webp,150,50,50,50
-バフ_攻撃力_累積,buff_aicn_result.webp,200,50,50,50
-デバフ_攻撃力_累積,buff_aicn_result.webp,250,50,50,50
-バフ_防御力_累積,buff_aicn_result.webp,300,50,50,50
-デバフ_防御力_累積,buff_aicn_result.webp,350,50,50,50
+バフ_공격력,buff_aicn_result.webp,0,50,50,50
+デバフ_공격력,buff_aicn_result.webp,50,50,50,50
+バフ_방어력,buff_aicn_result.webp,100,50,50,50
+デバフ_방어력,buff_aicn_result.webp,150,50,50,50
+バフ_공격력_累積,buff_aicn_result.webp,200,50,50,50
+デバフ_공격력_累積,buff_aicn_result.webp,250,50,50,50
+バフ_방어력_累積,buff_aicn_result.webp,300,50,50,50
+デバフ_방어력_累積,buff_aicn_result.webp,350,50,50,50
 
 バフ_弱体耐性,buff_aicn_result.webp,0,100,50,50
 デバフ_弱体耐性,buff_aicn_result.webp,50,100,50,50
-バフ_行動速度,buff_aicn_result.webp,100,100,50,50
-デバフ_行動速度,buff_aicn_result.webp,150,100,50,50
-バフ_DA率,buff_aicn_result.webp,200,100,50,50
-デバフ_DA率,buff_aicn_result.webp,250,100,50,50
-バフ_TA率,buff_aicn_result.webp,300,100,50,50
-デバフ_TA率,buff_aicn_result.webp,350,100,50,50
+バフ_행동속도,buff_aicn_result.webp,100,100,50,50
+デバフ_행동속도,buff_aicn_result.webp,150,100,50,50
+バフ_DA율,buff_aicn_result.webp,200,100,50,50
+デバフ_DA율,buff_aicn_result.webp,250,100,50,50
+バフ_TA율,buff_aicn_result.webp,300,100,50,50
+デバフ_TA율,buff_aicn_result.webp,350,100,50,50
 
 バフ_属性与ダメージ_火,buff_aicn_result.webp,0,150,50,50
 デバフ_属性与ダメージ_火,buff_aicn_result.webp,50,150,50,50
@@ -144,9 +144,9 @@
 
 バフ_再生,buff_aicn_result.webp,0,400,50,50
 バフ_回復量,buff_aicn_result.webp,50,400,50,50
-バフ_回復力,buff_aicn_result.webp,100,400,50,50
-デバフ_回復力_累積,buff_aicn_result.webp,150,400,50,50
-バフ_回避率,buff_aicn_result.webp,200,400,50,50
+バフ_회복력,buff_aicn_result.webp,100,400,50,50
+デバフ_회복력_累積,buff_aicn_result.webp,150,400,50,50
+バフ_회피율,buff_aicn_result.webp,200,400,50,50
 バフ_幻影,buff_aicn_result.webp,250,400,50,50
 バフ_バリア,buff_aicn_result.webp,300,400,50,50
 バフ_弱体無効,buff_aicn_result.webp,350,400,50,50
@@ -165,8 +165,8 @@
 バフ_テンション2,buff_aicn_result.webp,100,500,50,50
 バフ_テンション3,buff_aicn_result.webp,150,500,50,50
 バフ_テンション4,buff_aicn_result.webp,200,500,50,50
-バフ_ゲージ上昇効率,buff_aicn_result.webp,250,500,50,50
-デバフ_ゲージ上昇効率,buff_aicn_result.webp,300,500,50,50
+バフ_게이지상승효율,buff_aicn_result.webp,250,500,50,50
+デバフ_게이지상승효율,buff_aicn_result.webp,300,500,50,50
 デバフ_ショート,buff_aicn_result.webp,350,500,50,50
 
 バフ_被ダメージ_他,buff_aicn_result.webp,0,550,50,50
