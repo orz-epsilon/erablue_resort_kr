@@ -424,7 +424,7 @@ SELECTCASE ARGS
 			WSTR:(K++) = 여기는 사회 공헌을 해두도록 하자. %CALLNAME:PLAYER%들은 무기를 들고 마물 구제에 들어간다.
 			CALL メッセージ欄表示用関数(,,,0)
 			;前のエネミーを再利用
-			敵BATTLE_STATE_STR:0:エネミー名 = Lv2_바람의 엘리멘탈
+			敵BATTLE_STATE_STR:0:エネミー名 = Lv2_風のエレメンタル
 			敵BATTLE_STATE:0:ランダムエネミーフラグ = 17
 			敵BATTLE_STATE_STR:3:エネミー名 = Lv2_風のエレメンタル
 			敵BATTLE_STATE:3:ランダムエネミーフラグ = 17
@@ -773,9 +773,9 @@ SELECTCASE ARGS
 			WSTR:(K++) = 평소처럼 토벌하려고 무기를 들었지만…… 어딘가 상태가 이상하다.
 			WSTR:(K++) = 저것은 바람의 엘리멘탈이 아니라…… 어둠의 엘리멘탈이다!
 			CALL メッセージ欄表示用関数(,,,0)
-			敵BATTLE_STATE_STR:3:エネミー名 = Lv21_어둠의 엘리멘탈
-			敵BATTLE_STATE_STR:4:エネミー名 = Lv21_어둠의 엘리멘탈
-			敵BATTLE_STATE_STR:7:エネミー名 = Lv21_어둠의 엘리멘탈
+			敵BATTLE_STATE_STR:3:エネミー名 = Lv21_闇のエレメンタル
+			敵BATTLE_STATE_STR:4:エネミー名 = Lv21_闇のエレメンタル
+			敵BATTLE_STATE_STR:7:エネミー名 = Lv21_闇のエレメンタル
 			CALL 雑魚敵遭遇汎用処理
 			IF RESULT == 0
 				;勝利時のみ先へ進む
@@ -789,9 +789,9 @@ SELECTCASE ARGS
 				SETBIT ダンジョン構造配列_風遊ぶ渓谷の参道:マス深度:マス分岐, 4
 			ENDIF
 		ELSE
-			敵BATTLE_STATE_STR:3:エネミー名 = Lv21_어둠의 엘리멘탈
-			敵BATTLE_STATE_STR:4:エネミー名 = Lv21_어둠의 엘리멘탈
-			敵BATTLE_STATE_STR:7:エネミー名 = Lv21_어둠의 엘리멘탈
+			敵BATTLE_STATE_STR:3:エネミー名 = Lv21_闇のエレメンタル
+			敵BATTLE_STATE_STR:4:エネミー名 = Lv21_闇のエレメンタル
+			敵BATTLE_STATE_STR:7:エネミー名 = Lv21_闇のエレメンタル
 			CALL 雑魚敵繰り返し戦闘処理
 		ENDIF
 		CALL 画面再描画
@@ -999,9 +999,9 @@ SELECTCASE ARGS
 			WSTR:(K++) = 하지만…… 왠지 모르게 약해 보이고, 수도 적은 것 같다.
 			WSTR:(K++) = %CALLNAME:PLAYER%들은 위화감을 느끼면서도, 무기를 들고 싸움을 시작한다.
 			CALL メッセージ欄表示用関数(,,,0)
-			敵BATTLE_STATE_STR:0:エネミー名 = Lv2_바람의 엘리멘탈
+			敵BATTLE_STATE_STR:0:エネミー名 = Lv2_風のエレメンタル
 			敵BATTLE_STATE:0:ランダムエネミーフラグ = 14
-			敵BATTLE_STATE_STR:5:エネミー名 = Lv2_바람의 엘리멘탈
+			敵BATTLE_STATE_STR:5:エネミー名 = Lv2_風のエレメンタル
 			敵BATTLE_STATE:5:ランダムエネミーフラグ = 14
 			CALL 雑魚敵遭遇汎用処理
 			IF RESULT == 0
@@ -1015,9 +1015,9 @@ SELECTCASE ARGS
 				SETBIT ダンジョン構造配列_風遊ぶ渓谷の参道:マス深度:マス分岐, 4
 			ENDIF
 		ELSE
-			敵BATTLE_STATE_STR:0:エネミー名 = Lv2_바람의 엘리멘탈
+			敵BATTLE_STATE_STR:0:エネミー名 = Lv2_風のエレメンタル
 			敵BATTLE_STATE:0:ランダムエネミーフラグ = 14
-			敵BATTLE_STATE_STR:5:エネミー名 = Lv2_바람의 엘리멘탈
+			敵BATTLE_STATE_STR:5:エネミー名 = Lv2_風のエレメンタル
 			敵BATTLE_STATE:5:ランダムエネミーフラグ = 14
 			CALL 雑魚敵繰り返し戦闘処理
 		ENDIF
@@ -1586,12 +1586,12 @@ SELECTCASE ARGS
 			WSTR:(K++) = 이 길은 정상으로 가는 길은 아니지만, 마물을 방치했다가 누군가 습격당하면 찜찜하다.
 			WSTR:(K++) = 조금 구제해 두자. %CALLNAME:PLAYER%들은 무기를 들고 마물들에게 접근한다!
 			CALL メッセージ欄表示用関数(,,,0)
-			敵BATTLE_STATE_STR:0:エネミー名 = Lv2_바람의 엘리멘탈
+			敵BATTLE_STATE_STR:0:エネミー名 = Lv2_風のエレメンタル
 			敵BATTLE_STATE:0:ランダムエネミーフラグ = 19
-			敵BATTLE_STATE_STR:2:エネミー名 = Lv18_엠다 래빗
-			敵BATTLE_STATE_STR:5:エネミー名 = Lv2_바람의 엘리멘탈
+			敵BATTLE_STATE_STR:2:エネミー名 = Lv18_エムダラビット
+			敵BATTLE_STATE_STR:5:エネミー名 = Lv2_風のエレメンタル
 			敵BATTLE_STATE:5:ランダムエネミーフラグ = 19
-			敵BATTLE_STATE_STR:7:エネミー名 = Lv18_엠다 래빗
+			敵BATTLE_STATE_STR:7:エネミー名 = Lv18_エムダラビット
 			CALL 雑魚敵遭遇汎用処理
 			IF RESULT == 0
 				;勝利時のみ先へ進む
@@ -1603,12 +1603,12 @@ SELECTCASE ARGS
 				SETBIT ダンジョン構造配列_風遊ぶ渓谷の参道:マス深度:マス分岐, 4
 			ENDIF
 		ELSE
-			敵BATTLE_STATE_STR:0:エネミー名 = Lv2_바람의 엘리멘탈
+			敵BATTLE_STATE_STR:0:エネミー名 = Lv2_風のエレメンタル
 			敵BATTLE_STATE:0:ランダムエネミーフラグ = 19
-			敵BATTLE_STATE_STR:2:エネミー名 = Lv18_엠다 래빗
-			敵BATTLE_STATE_STR:5:エネミー名 = Lv2_바람의 엘리멘탈
+			敵BATTLE_STATE_STR:2:エネミー名 = Lv18_エムダラビット
+			敵BATTLE_STATE_STR:5:エネミー名 = Lv2_風のエレメンタル
 			敵BATTLE_STATE:5:ランダムエネミーフラグ = 19
-			敵BATTLE_STATE_STR:7:エネミー名 = Lv18_엠다 래빗
+			敵BATTLE_STATE_STR:7:エネミー名 = Lv18_エムダラビット
 			CALL 雑魚敵繰り返し戦闘処理
 		ENDIF
 		CALL 画面再描画
@@ -2271,19 +2271,19 @@ SELECTCASE ARGS
 			WSTR:(K++) = %CALLNAME:PLAYER%들은 무기를 들었다.
 			CALL メッセージ欄表示用関数(,,,0)
 
-			敵BATTLE_STATE_STR:1:エネミー名 = Lv2_바람의 엘리멘탈
+			敵BATTLE_STATE_STR:1:エネミー名 = Lv2_風のエレメンタル
 			敵BATTLE_STATE:1:ランダムエネミーフラグ = 19
-			敵BATTLE_STATE_STR:2:エネミー名 = Lv2_바람의 엘리멘탈
+			敵BATTLE_STATE_STR:2:エネミー名 = Lv2_風のエレメンタル
 			敵BATTLE_STATE:2:ランダムエネミーフラグ = 19
-			敵BATTLE_STATE_STR:3:エネミー名 = Lv2_바람의 엘리멘탈
+			敵BATTLE_STATE_STR:3:エネミー名 = Lv2_風のエレメンタル
 			敵BATTLE_STATE:3:ランダムエネミーフラグ = 19
-			敵BATTLE_STATE_STR:5:エネミー名 = Lv2_바람의 엘리멘탈
+			敵BATTLE_STATE_STR:5:エネミー名 = Lv2_風のエレメンタル
 			敵BATTLE_STATE:5:ランダムエネミーフラグ = 19
-			敵BATTLE_STATE_STR:6:エネミー名 = Lv2_바람의 엘리멘탈
+			敵BATTLE_STATE_STR:6:エネミー名 = Lv2_風のエレメンタル
 			敵BATTLE_STATE:6:ランダムエネミーフラグ = 19
-			敵BATTLE_STATE_STR:7:エネミー名 = Lv2_바람의 엘리멘탈
+			敵BATTLE_STATE_STR:7:エネミー名 = Lv2_風のエレメンタル
 			敵BATTLE_STATE:7:ランダムエネミーフラグ = 19
-			敵BATTLE_STATE_STR:9:エネミー名 = Lv2_바람의 엘리멘탈
+			敵BATTLE_STATE_STR:9:エネミー名 = Lv2_風のエレメンタル
 			敵BATTLE_STATE:9:ランダムエネミーフラグ = 19
 			CALL 雑魚敵遭遇汎用処理
 
@@ -2300,19 +2300,19 @@ SELECTCASE ARGS
 				SETBIT ダンジョン構造配列_風遊ぶ渓谷の参道:マス深度:マス分岐, 4
 			ENDIF
 		ELSE
-			敵BATTLE_STATE_STR:1:エネミー名 = Lv2_바람의 엘리멘탈
+			敵BATTLE_STATE_STR:1:エネミー名 = Lv2_風のエレメンタル
 			敵BATTLE_STATE:1:ランダムエネミーフラグ = 19
-			敵BATTLE_STATE_STR:2:エネミー名 = Lv2_바람의 엘리멘탈
+			敵BATTLE_STATE_STR:2:エネミー名 = Lv2_風のエレメンタル
 			敵BATTLE_STATE:2:ランダムエネミーフラグ = 19
-			敵BATTLE_STATE_STR:3:エネミー名 = Lv2_바람의 엘리멘탈
+			敵BATTLE_STATE_STR:3:エネミー名 = Lv2_風のエレメンタル
 			敵BATTLE_STATE:3:ランダムエネミーフラグ = 19
-			敵BATTLE_STATE_STR:5:エネミー名 = Lv2_바람의 엘리멘탈
+			敵BATTLE_STATE_STR:5:エネミー名 = Lv2_風のエレメンタル
 			敵BATTLE_STATE:5:ランダムエネミーフラグ = 19
-			敵BATTLE_STATE_STR:6:エネミー名 = Lv2_바람의 엘리멘탈
+			敵BATTLE_STATE_STR:6:エネミー名 = Lv2_風のエレメンタル
 			敵BATTLE_STATE:6:ランダムエネミーフラグ = 19
-			敵BATTLE_STATE_STR:7:エネミー名 = Lv2_바람의 엘리멘탈
+			敵BATTLE_STATE_STR:7:エネミー名 = Lv2_風のエレメンタル
 			敵BATTLE_STATE:7:ランダムエネミーフラグ = 19
-			敵BATTLE_STATE_STR:9:エネミー名 = Lv2_바람의 엘리멘탈
+			敵BATTLE_STATE_STR:9:エネミー名 = Lv2_風のエレメンタル
 			敵BATTLE_STATE:9:ランダムエネミーフラグ = 19
 			CALL 雑魚敵繰り返し戦闘処理
 		ENDIF
@@ -2815,7 +2815,7 @@ SELECTCASE ARGS
 			WSTR:(K++) = 아무래도 티아마트에서 새어 나오는 바람의 마력을 독차지하기 위해, 정상에 다가오는 자들을 방해하고 있는 것 같다.
 			WSTR:(K++) = 여기서 물러설 이유는 없다. 방해한다면 물리쳐 버리자!
 			CALL メッセージ欄表示用関数(,,,0)
-			敵BATTLE_STATE_STR:3:エネミー名 = Lv22_와이번
+			敵BATTLE_STATE_STR:3:エネミー名 = Lv22_ワイバーン
 			敵BATTLE_STATE_STR:5:エネミー名 = Lv22_ワイバーン
 			CALL 雑魚敵遭遇汎用処理
 			IF RESULT == 0
@@ -2943,7 +2943,7 @@ SELECTCASE ARGS
 					WSTR:(K++) = %CALLNAME:PLAYER%들은 무기를 들고, 티아마트와의 전투 훈련을 시작한다!
 					CALL メッセージ欄表示用関数(,,,0)
 					CALL 口上変数初期化
-					敵BATTLE_STATE_STR:0:エネミー名 = Lv24_티아마트
+					敵BATTLE_STATE_STR:0:エネミー名 = Lv24_ティアマト
 					CALL 雑魚敵遭遇汎用処理
 
 					IF RESULT == 0
@@ -3486,10 +3486,10 @@ WSTR:(K++) = 생각했던 대로. 볼 애니멀 무리다!
 			ENDIF
 			CALL メッセージ欄表示用関数(,,,0)
 
-			敵BATTLE_STATE_STR:0:エネミー名 = Lv19_볼 애니멀
-			敵BATTLE_STATE_STR:1:エネミー名 = Lv19_볼 애니멀
-			敵BATTLE_STATE_STR:4:エネミー名 = Lv19_볼 애니멀
-			敵BATTLE_STATE_STR:5:エネミー名 = Lv19_볼 애니멀
+			敵BATTLE_STATE_STR:0:エネミー名 = Lv19_ボールアニマル
+			敵BATTLE_STATE_STR:1:エネミー名 = Lv19_ボールアニマル
+			敵BATTLE_STATE_STR:4:エネミー名 = Lv19_ボールアニマル
+			敵BATTLE_STATE_STR:5:エネミー名 = Lv19_ボールアニマル
 			CALL 雑魚敵遭遇汎用処理
 
 			IF RESULT == 0

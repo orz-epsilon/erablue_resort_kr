@@ -179,7 +179,7 @@ SELECTCASE ランダムキャラデータ_GET_B(Ｒキャラ追加候補記録, 
 		表示文字列 += "짐승 수준"
 	CASE 0
 		IF ランダムキャラデータ_GET_B(Ｒキャラ追加候補記録, 管理番号, "素質", "性的興味") > 0
-			表示文字列 += "귀로만 나이 먹음"
+			表示文字列 += "듣기만 함"
 		ELSE
 			表示文字列 += "서투름"
 		ENDIF
@@ -220,7 +220,7 @@ FOR LOCAL, 6, 160
 		CONTINUE
 
 	IF (STRLENS(HTML_TOPLAINTEXT(素質行格納 + LOCALS)) + 2) / (3625 / 50) > 0
-		表示文字列 += 소질행 저장 + "<br>"
+		表示文字列 += 素質行格納 + "<br>"
 		素質行格納 '= "　"
 	ENDIF
 	素質行格納 += @"[%LOCALS%]"
@@ -231,7 +231,7 @@ FOR LOCAL, 220, 300
 		CONTINUE
 
 	IF (STRLENS(HTML_TOPLAINTEXT(素質行格納 + LOCALS)) + 2) / (3625 / 50) > 0
-		表示文字列 += 소질행 저장 + "<br>"
+		表示文字列 += 素質行格納 + "<br>"
 		素質行格納 '= "　"
 	ENDIF
 	素質行格納 += @"[%LOCALS%]"
@@ -242,7 +242,7 @@ FOR LOCAL, 0, 10
 		CONTINUE
 
 	IF (STRLENS(HTML_TOPLAINTEXT(素質行格納 + LOCALS)) + 2) / (3625 / 50) > 0
-		表示文字列 += 소질행 저장 + "<br>"
+		表示文字列 += 素質行格納 + "<br>"
 		素質行格納 '= "　"
 	ENDIF
 	素質行格納 += @"[%LOCALS%]"
@@ -257,12 +257,12 @@ FOR LOCAL, 1, 100
 	LOCALS += @"Lv{LOCAL:1}"
 
 	IF (STRLENS(HTML_TOPLAINTEXT(素質行格納 + LOCALS)) + 2) / (3625 / 50) > 0
-		表示文字列 += 소질행 저장 + "<br>"
+		表示文字列 += 素質行格納 + "<br>"
 		素質行格納 '= "　"
 	ENDIF
 	素質行格納 += @"[%LOCALS%]"
 NEXT
-表示文字列 += 소질행 저장 + "<br><br>"
+表示文字列 += 素質行格納 + "<br><br>"
 
 表示文字列 += "□ 능력 □---------------------------------------------------------------<br>"
 改行フラグ = 0
@@ -325,7 +325,7 @@ LOCALS '= ランダムキャラデータ_GETS_B(Ｒキャラ追加候補記録, 
 IF OPTION変数:汎用立ち絵制御
 	追加表示格納 += @"<button value='120'>[120] 범용 스탠딩 CG ON / <font color='#%カラーパレット_HTML("グレーアウト")%'>OFF</font></button>"
 	追加表示格納 += "<br>"
-	追加表示格納 += @"<button value='130'>[130] 워울프의 스탠딩 CG를 변경한다<br>　　　（현재：\@ OPTION변수:워울프 이미지 수인도? 수인에 가깝게# 인간에 가깝게\@）</button>"
+	追加表示格納 += @"<button value='130'>[130] 워울프의 스탠딩 CG를 변경한다<br>　　　（현재：\@ OPTION変数:ワーウルフ画像ケモ度? 수인에 가깝게# 인간에 가깝게\@）</button>"
 	追加表示格納 += "<br>"
 ELSE
 	追加表示格納 += @"<button value='120'>[120] 범용 스탠딩 CG <font color='#%カラーパレット_HTML("グレーアウト")%'>ON</font> / OFF</button>"
