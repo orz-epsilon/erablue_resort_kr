@@ -1022,7 +1022,7 @@ FOR 項目番号, 1, フレーバー素質_項目数 + 1
 				表示内容 = フレーバー素質_ふたなり時_玉なし
 			ENDIF
 	ENDSELECT
-	PRINTFORM %ERDNAME(フレーバー素質, 項目番号), 10, LEFT%：%GET_フレーバー素質NAME(項目番号, 표시 내용), 12, LEFT%
+	PRINTFORM %ERDNAME(フレーバー素質, 項目番号), 10, LEFT%：%GET_フレーバー素質NAME(項目番号, 表示内容), 12, LEFT%
 	改行チェック += 1
 	IF 改行チェック >= 3
 		改行チェック = 0
