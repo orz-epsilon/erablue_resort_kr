@@ -222,8 +222,8 @@ IF !FLAG:クリア済み視聴フラグ
 	;-----------ここから
 	TALENT:対象キャラ:恋慕 = 2
 	初体験日:対象キャラ:伴侶 = DAY
-	CALL 履歴データベース登録(CFLAG:MASTER:人物番号, @"<img src='えっちハート'><font color='#%カラーパレット_HTML("赤ピンク")%'>%CALLNAME:対象キャラ%を[伴侶]陥落させた</font><img src='えっちハート'>","うふふ実績")
-	CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"<img src='えっちハート'><font color='#%カラーパレット_HTML("赤ピンク")%'>陥落素質[伴侶]を得た</font><img src='えっちハート'>","うふふ実績")
+	CALL 履歴データベース登録(CFLAG:MASTER:人物番号, @"<img src='えっちハート'><font color='#%カラーパレット_HTML("赤ピンク")%'>%CALLNAME:対象キャラ%를 [반려]함락시켰다</font><img src='えっちハート'>","うふふ実績")
+	CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"<img src='えっちハート'><font color='#%カラーパレット_HTML("赤ピンク")%'>함락소질[반려]를 얻었다</font><img src='えっちハート'>","うふふ実績")
 	IF TALENT:対象キャラ:浮気 > 0
 		TALENT:対象キャラ:浮気 = 0
 	ENDIF
