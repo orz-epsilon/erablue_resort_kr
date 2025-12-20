@@ -53,7 +53,7 @@ FOR ミルク番号, 0, DT_ROW_LENGTH("ミルクデータベース") + (15 - DT_
 			CASEELSE
 				消費期限 = 期限切れ
 		ENDSELECT
-		PRINTBUTTON @"[{ミルク番号, 3}] - %ミルク名, 50, LEFT% - 유통기한:%消費期限%", 우유 번호
+		PRINTBUTTON @"[{ミルク番号, 3}] - %ミルク名, 50, LEFT% - 유통기한:%消費期限%", ミルク番号
 		RESETCOLOR
 		PRINTL
 	ELSE

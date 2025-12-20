@@ -689,7 +689,7 @@ FOR LOCAL,0,CHARANUM
 		IF 母乳種別 == "通常"
 			PRINTFORML %CALLNAME:TARGET保存%의 모유가 쌓였기 때문에, 「%CALLNAME:TARGET保存%의 우유」를 입수했다.
 		ELSE
-			PRINTFORML %CALLNAME:TARGET保存%의 모유가 쌓였기 때문에, 「%CALLNAME:TARGET保存%의 %모유종류% 우유」를 입수했다.
+			PRINTFORML %CALLNAME:TARGET保存%의 모유가 쌓였기 때문에, 「%CALLNAME:TARGET保存%의 %母乳種別% 우유」를 입수했다.
 		ENDIF
 		PRINTW ※소비 칼로리: 100kcal
 		TCVAR:LOCAL:摂取カロリー -= 100
