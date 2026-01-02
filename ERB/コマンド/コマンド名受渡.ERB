@@ -145,11 +145,11 @@ FOR 同室番号, 1, CHARANUM
 	ELSEIF PLAYER == 対象キャラ
 		;指示モード中は自分の場所はMASTERに変える
 		対象キャラ = MASTER
-		PRINTBUTTON @"[{同室番号, 3}] %ADD_STR_SPACE(NAME表示省略(NAME表示(対象キャラ)), "]"), 41, LEFT%", 동실 번호
+		PRINTBUTTON @"[{同室番号, 3}] %ADD_STR_SPACE(NAME表示省略(NAME表示(対象キャラ)), "]"), 41, LEFT%", 同室番号
 		PRINTS " "
 		CALL 同時モード設定_状態表示(対象キャラ)
 	ELSE
-		PRINTBUTTON @"[{同室番号, 3}] %ADD_STR_SPACE(NAME表示省略(NAME表示(対象キャラ)), "]"), 41, LEFT%", 동실 번호
+		PRINTBUTTON @"[{同室番号, 3}] %ADD_STR_SPACE(NAME表示省略(NAME表示(対象キャラ)), "]"), 41, LEFT%", 同室番号
 		PRINTS " "
 		CALL 同時モード設定_状態表示(対象キャラ)
 	ENDIF

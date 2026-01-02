@@ -1350,7 +1350,7 @@ FOR 行カウント, 現在ページ * 表示件数, 現在ページ * 表示件
 	ENDIF
 	SIF MATCH(設定フィルタ配列, 出典候補:行カウント)
 		SETCOLOR カラーパレット("黄")
-	PRINTBUTTON @"%@"[%출전 후보:행 카운트%]", 40, LEFT%", 行カウント
+	PRINTBUTTON @"%@"[%出典候補:行カウント%]", 40, LEFT%", 行カウント
 	RESETCOLOR
 NEXT
 PRINTL
