@@ -163,7 +163,7 @@ IF ページ数 > 0
 ELSE
 	PRINTLC 　
 ENDIF
-PRINTFORM - {페이지 수 + 1} -
+PRINTFORM - {ページ数 + 1} -
 IF 次ページフラグ
 	PRINTBUTTONLC "[997] 다음 페이지로", 997
 ENDIF
@@ -281,7 +281,7 @@ FOR 部位番号, 0, VARSIZE("部位リスト")
 	; 部位が使用中の場合はグレーアウト
 	SIF !同時モード設定_部位使用可能判定(対象キャラ, 部位リスト:部位番号, 1)
 		SETCOLOR カラーパレット("グレーアウト")
-	PRINTS @" %부위 목록:부위 번호% "
+	PRINTS @" %部位リスト:部位番号% "
 	SETCOLOR フォント色
 NEXT
 
