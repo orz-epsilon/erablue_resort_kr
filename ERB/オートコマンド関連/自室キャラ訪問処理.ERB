@@ -301,7 +301,7 @@ SELECTCASE 訪問目的
 				PRINTL 　　　　　　　　　　　장소 이동 등은 일어나지 않으며, 캐릭터는 방문 전에 있던 장소로 돌아갑니다.
 				PRINTL 
 				PRINTL 거절하기: 거절합니다. 캐릭터는 방문 전에 있던 장소로 돌아가며, 호감도 변화는 일어나지 않습니다.
-				PRINTL %CALLNAME:PLAYER%는 %CALLNAME:AUTOCOM_実行番号保存%를 방으로 초대하여, 부드럽게 안아주었다.
+				PRINTL 
 				WAIT
 				GOTO 訪問ラベル
 		ENDSELECT
@@ -313,7 +313,7 @@ SELECTCASE 訪問目的
 				CFLAG:PLAYER:現在マップ種別 = 0
 				CFLAG:AUTOCOM_実行番号保存:現在マップ種別 = 0
 				CFLAG:AUTOCOM_実行番号保存:同室 = 1
-				PRINTFORML 일정이 있다고 말하며, %CALLNAME:PLAYER%는 %CALLNAME:AUTOCOM_実行番号保存%의 유혹을 거절했다……
+				PRINTFORML %CALLNAME:PLAYER%는 %CALLNAME:AUTOCOM_実行番号保存%를 방으로 초대하여, 부드럽게 안아주었다.
 				TFLAG:TARGET変更用 = AUTOCOM_実行番号保存
 				TARGET:(GET_TARGETNUM() + 1) = AUTOCOM_実行番号保存
 				CFLAG:AUTOCOM_実行番号保存:一緒に遊ぶ = 120
@@ -331,13 +331,13 @@ SELECTCASE 訪問目的
 				CFLAG:MASTER:うふふ = 1
 				TFLAG:マップ種別 = 派生マップ番号取得(CFLAG:AUTOCOM_実行番号保存:現在マップ種別, CFLAG:AUTOCOM_実行番号保存:現在位置)
 			CASE 2
-				PRINTFORMW 방으로 초대하기: 찾아온 캐릭터를 자신의 방으로 초대하여, 쓰러뜨립니다.
+				PRINTFORMW 일정이 있다고 말하며, %CALLNAME:PLAYER%는 %CALLNAME:AUTOCOM_実行番号保存%의 유혹을 거절했다……
 				RETURN 1
 			CASE 100
 				DRAWLINE
-				PRINTL 거절하기: 거절합니다. 캐릭터는 방문 전에 있던 장소로 돌아가며, 호감도 변화는 일어나지 않습니다.
+				PRINTL 방으로 초대하기: 찾아온 캐릭터를 자신의 방으로 초대하여, 쓰러뜨립니다.
 				PRINTL
-				PRINTL 断る：断ります。キャラクターは訪問前にいた場所に戻り、好感度変化は起こりません。
+				PRINTL 거절하기: 거절합니다. 캐릭터는 방문 전에 있던 장소로 돌아가며, 호감도 변화는 일어나지 않습니다.
 				PRINTL %CALLNAME:PLAYER%는 %CALLNAME:AUTOCOM_実行番号保存%와(과) 함께 %RSTR:コマンド結果受渡し文字列%에서 술자리를 갖기로 했다.
 				WAIT
 				GOTO 訪問ラベル
