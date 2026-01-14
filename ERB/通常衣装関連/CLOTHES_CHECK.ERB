@@ -22,7 +22,7 @@ IF !BATHROOM(CFLAG:対象キャラ:現在マップ種別, CFLAG:対象キャラ:
 	CATCH
 ;		CALL CLOTHES_CHANGE(対象キャラ, "浴衣")
 ;		CSTR:対象キャラ:湯浴み着ポジション服名 = 浴衣
-		CSTR:対象キャラ:浴衣ポジション服名 = 목욕 후
+		CSTR:対象キャラ:浴衣ポジション服名 = 유카타
 		CALL CLOTHES_CHANGE(対象キャラ, "湯上がり")
 	ENDCATCH
 	着替え済みフラグ = 1
@@ -55,7 +55,7 @@ IF BATHROOM(CFLAG:対象キャラ:現在マップ種別, CFLAG:対象キャラ:�
 		TRYCCALLFORM 風呂場着替え特殊処理_{NO:対象キャラ}(対象キャラ)
 		CATCH
 			CALL CLOTHES_CHANGE(対象キャラ, "湯浴み着")
-			CSTR:対象キャラ:湯浴み着ポジション服名 = 목욕복
+			CSTR:対象キャラ:湯浴み着ポジション服名 = 목욕가운
 		ENDCATCH
 		TCVAR:対象キャラ:入浴フラグ = 1
 	ENDIF
@@ -71,7 +71,7 @@ IF CFLAG:対象キャラ:現在位置 == キャラクター部屋検索(対象�
 			IF STRCOUNT(GRAP_RAND(対象キャラ, "顔_", "部屋着"), "部屋着")
 				CALL CLOTHES_CHANGE(対象キャラ, "部屋着")
 			ELSE
-				CSTR:対象キャラ:浴衣ポジション服名 = 목욕 후
+				CSTR:対象キャラ:浴衣ポジション服名 = 유카타
 				CALL CLOTHES_CHANGE(対象キャラ, "湯上がり")
 			ENDIF
 			CSTR:対象キャラ:部屋着ポジション服名 = 실내복

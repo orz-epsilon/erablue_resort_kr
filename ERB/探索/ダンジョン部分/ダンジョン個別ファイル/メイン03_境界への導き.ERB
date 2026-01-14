@@ -516,16 +516,16 @@ ENDSELECT
 @エネミーランダム登録_境界への導き()
 SELECTCASE RAND:8
 	CASE 0
-		敵BATTLE_STATE_STR:0:エネミー名 = Lv35_엠프티 코어α
-		敵BATTLE_STATE_STR:3:エネミー名 = Lv35_엠프티 코어α
+		敵BATTLE_STATE_STR:0:エネミー名 = Lv35_エンプティ・コアα
+		敵BATTLE_STATE_STR:3:エネミー名 = Lv35_エンプティ・コアα
 	CASE 1
-		敵BATTLE_STATE_STR:0:エネミー名 = Lv35_엠프티 코어α
-		敵BATTLE_STATE_STR:3:エネミー名 = Lv35_엠프티 코어α
-		敵BATTLE_STATE_STR:4:エネミー名 = Lv35_엠프티 코어α
+		敵BATTLE_STATE_STR:0:エネミー名 = Lv35_エンプティ・コアα
+		敵BATTLE_STATE_STR:3:エネミー名 = Lv35_エンプティ・コアα
+		敵BATTLE_STATE_STR:4:エネミー名 = Lv35_エンプティ・コアα
 	CASE 2
-		敵BATTLE_STATE_STR:0:エネミー名 = Lv35_엠프티 코어β
-		敵BATTLE_STATE_STR:1:エネミー名 = Lv35_엠프티 코어β
-		敵BATTLE_STATE_STR:4:エネミー名 = Lv35_엠프티 코어β
+		敵BATTLE_STATE_STR:0:エネミー名 = Lv35_エンプティ・コアβ
+		敵BATTLE_STATE_STR:1:エネミー名 = Lv35_エンプティ・コアβ
+		敵BATTLE_STATE_STR:4:エネミー名 = Lv35_エンプティ・コアβ
 		敵BATTLE_STATE_STR:5:エネミー名 = Lv35_エンプティ・コアβ
 		敵BATTLE_STATE_STR:6:エネミー名 = Lv35_エンプティ・コアβ
 		敵BATTLE_STATE_STR:7:エネミー名 = Lv35_エンプティ・コアβ
@@ -1359,11 +1359,11 @@ SELECTCASE ARGS
 			;最初に訪れた時
 			WSTR:(K++) = 기묘한 공간이 끝나고, 전방에 출구가 보인다.
 			WSTR:(K++) = 무사히 목적지인 「경계의 세계」에 도착할 수 있었던 것 같다.
-WSTR:(K++) = 「성정수 era를 구해줬으면 좋겠어」라고, 꿈속에서 말을 걸어온 별의 백성 타피라는 말했다.
-WSTR:(K++) = 이 앞에 있는 본인과 만나면, 자세한 사정을 들을 수 있을 것이다.
-KSTR:(K++) = 그다지 나쁜 이야기가 아니면 좋겠는데……. _PAGE
-WSTR:(K++) = 외출 장소에 「경계의 세계」가 추가되었다!
-WSTR:(K++) = 경계로의 인도를 클리어했습니다, 귀환합니다.
+			WSTR:(K++) = 「성정수 era를 구해줬으면 좋겠어」라고, 꿈속에서 말을 걸어온 별의 백성 타피라는 말했다.
+			WSTR:(K++) = 이 앞에 있는 본인과 만나면, 자세한 사정을 들을 수 있을 것이다.
+			KSTR:(K++) = 그다지 나쁜 이야기가 아니면 좋겠는데……. _PAGE
+			WSTR:(K++) = 외출 장소에 「경계의 세계」가 추가되었다!
+			WSTR:(K++) = 경계로의 인도를 클리어했습니다, 귀환합니다.
 			CALL メッセージ欄表示用関数(,,,0)
 			CALL 画面再描画
 			ダンジョン終了状況 = 踏破達成

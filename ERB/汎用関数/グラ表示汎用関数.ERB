@@ -559,7 +559,7 @@ DRAWLINE
 PRINTL 사용할 이미지 폴더를 선택해 주세요
 PRINTL ※부모 이미지 폴더를 사용할 수 있습니다
 IF F_NUM > FOLDER_NUM_MAX
-	PRINTFORML (%CALLNAME:画像キャラ%の有効な画像フォルダが多すぎます。最初に見つかった{FOLDER_NUM_MAX}個のみが有効となります。)
+	PRINTFORML (%CALLNAME:画像キャラ%의 유효한 이미지 폴더가 너무 많습니다. 처음 발견된{FOLDER_NUM_MAX}개만 유효합니다.)
 	F_NUM = FOLDER_NUM_MAX
 ENDIF
 IF F_NUM:1 > FOLDER_NUM_MAX

@@ -45,13 +45,13 @@ IF 処理モード == "移動処理"
 	ELSE
 		ボタン数値 = 999
 	ENDIF
-	エリア名 = リゾートエリア
+	エリア名 = 리조트 지역
 	LOCALS += @"<div rect='3200,2400,700,500'><button value='{ボタン数値}'><img src='リゾートハウス' height='500'></button></div>"
-	LOCALS += @"<div rect='3100,2830,{STRLENS(エリア名) * 50 + 120},212' padding='35,25,35' border='31' bcolor='#C0C0C0' color='#333333'><button value='{ボタン数値}'>%エリア名%</button></div>"
+	LOCALS += @"<div rect='3100,2830,{STRLENS(エリア名) * 75 + 120},212' padding='35,25,35' border='31' bcolor='#C0C0C0' color='#333333'><button value='{ボタン数値}'>%エリア名%</button></div>"
 ELSE
-	エリア名 = リゾートエリア
+	エリア名 = 리조트 지역
 	LOCALS += @"<div rect='3200,2400,700,500'><img src='リゾートハウス' height='500'></div>"
-	LOCALS += @"<div rect='3100,2830,{STRLENS(エリア名) * 50 + 120},212' padding='35,25,35' border='31' bcolor='#C0C0C0' color='#333333'>%エリア名%</div>"
+	LOCALS += @"<div rect='3100,2830,{STRLENS(エリア名) * 75 + 120},212' padding='35,25,35' border='31' bcolor='#C0C0C0' color='#333333'>%エリア名%</div>"
 ENDIF
 
 IF ダンジョンクリアフラグ_沿岸部の森
@@ -61,13 +61,13 @@ IF ダンジョンクリアフラグ_沿岸部の森
 		ELSE
 			ボタン数値 = 999
 		ENDIF
-		エリア名 = 空艇港エリア
+		エリア名 = 기공선 항구 지역
 		LOCALS += @"<div rect='2650,2900,700,500'><button value='{ボタン数値}'><img src='空艇港' height='500'></button></div>"
-		LOCALS += @"<div rect='2600,3330,{STRLENS(エリア名) * 50 + 120},212' padding='35,25,35' border='31' bcolor='#C0C0C0' color='#333333'><button value='{ボタン数値}'>%エリア名%</button></div>"
+		LOCALS += @"<div rect='2600,3330,{STRLENS(エリア名) * 75 + 120},212' padding='35,25,35' border='31' bcolor='#C0C0C0' color='#333333'><button value='{ボタン数値}'>%エリア名%</button></div>"
 	ELSE
-		エリア名 = 空艇港エリア
+		エリア名 = 기공선 항구 지역
 		LOCALS += @"<div rect='2650,2900,700,500'><img src='空艇港' height='500'></div>"
-		LOCALS += @"<div rect='2600,3330,{STRLENS(エリア名) * 50 + 120},212' padding='35,25,35' border='31' bcolor='#C0C0C0' color='#333333'>%エリア名%</div>"
+		LOCALS += @"<div rect='2600,3330,{STRLENS(エリア名) * 75 + 120},212' padding='35,25,35' border='31' bcolor='#C0C0C0' color='#333333'>%エリア名%</div>"
 	ENDIF
 ENDIF
 
@@ -85,24 +85,24 @@ FOR LOCAL, 0, 2
 				ボタン数値 = 999
 			ENDIF
 			IF 開拓エリア開発番号:LOCAL == 0
-				エリア名 = ＊空きエリア＊
-				LOCALS += @"<div rect='{表示位置X:LOCAL},{表示位置Y:LOCAL},{STRLENS(エリア名) * 50 + 120},212' padding='35,25,35' border='31' bcolor='#C0C0C0' color='#333333'>%エリア名%</div>"
+				エリア名 = ＊미개발 지역＊
+				LOCALS += @"<div rect='{表示位置X:LOCAL},{表示位置Y:LOCAL},{STRLENS(エリア名) * 75 + 120},212' padding='35,25,35' border='31' bcolor='#C0C0C0' color='#333333'>%エリア名%</div>"
 			ELSE
 				CALLFORM エリア情報登録_{開拓エリア開発番号:LOCAL}("エリア名")
 				エリア名 = %TSTR:場所名受渡%
 				LOCALS += @"<div rect='{表示位置X:LOCAL + 50},{表示位置Y:LOCAL - 430},700,500'><button value='{ボタン数値}'><img src='%エリア名%' height='500'></button></div>"
-				LOCALS += @"<div rect='{表示位置X:LOCAL},{表示位置Y:LOCAL},{STRLENS(エリア名) * 50 + 120},212' padding='35,25,35' border='31' bcolor='#C0C0C0' color='#333333'><button value='{ボタン数値}'>%エリア名%</button></div>"
+				LOCALS += @"<div rect='{表示位置X:LOCAL},{表示位置Y:LOCAL},{STRLENS(エリア名) * 75 + 120},212' padding='35,25,35' border='31' bcolor='#C0C0C0' color='#333333'><button value='{ボタン数値}'>%エリア名%</button></div>"
 			ENDIF
 		ELSE
 			ボタン数値 = LOCAL
 			IF 開拓エリア開発番号:LOCAL == 0
-				エリア名 = ＊空きエリア＊
-				LOCALS += @"<div rect='{表示位置X:LOCAL},{表示位置Y:LOCAL},{STRLENS(エリア名) * 50 + 120},212' padding='35,25,35' border='31' bcolor='#C0C0C0' color='#333333'><button value='{ボタン数値}'>%エリア名%</button></div>"
+				エリア名 = ＊미개발 지역＊
+				LOCALS += @"<div rect='{表示位置X:LOCAL},{表示位置Y:LOCAL},{STRLENS(エリア名) * 75 + 120},212' padding='35,25,35' border='31' bcolor='#C0C0C0' color='#333333'><button value='{ボタン数値}'>%エリア名%</button></div>"
 			ELSE
 				CALLFORM エリア情報登録_{開拓エリア開発番号:LOCAL}("エリア名")
 				エリア名 = %TSTR:場所名受渡%
 				LOCALS += @"<div rect='{表示位置X:LOCAL + 50},{表示位置Y:LOCAL - 430},700,500'><img src='%エリア名%' height='500'></div>"
-				LOCALS += @"<div rect='{表示位置X:LOCAL},{表示位置Y:LOCAL},{STRLENS(エリア名) * 50 + 120},212' padding='35,25,35' border='31' bcolor='#C0C0C0' color='#333333'>%エリア名%</div>"
+				LOCALS += @"<div rect='{表示位置X:LOCAL},{表示位置Y:LOCAL},{STRLENS(エリア名) * 75 + 120},212' padding='35,25,35' border='31' bcolor='#C0C0C0' color='#333333'>%エリア名%</div>"
 			ENDIF
 		ENDIF
 	ENDIF
@@ -137,7 +137,7 @@ FOR LOCAL, 0, 候補数
 		CONTINUE
 	エリア名 = %REPLACE(RESULTS:LOCAL, "大規模エリア建設条件_", "")%
 	LOCALS += @"<div rect='{LOCAL:1 * 1000 + 356},{LOCAL:1 / 5 * 800 + 155},600,500'><button value='{LOCAL}'><img src='%エリア名%' height='500'></button></div>"
-	LOCALS += @"<div rect='{LOCAL:1 * 1000 + 106 + (20 - STRLENS(エリア名)) * 25},{LOCAL:1 / 5 * 800 + 585},{STRLENS(エリア名) * 50 + 120},212' padding='35,25,35' border='31' bcolor='#C0C0C0' color='#333333'><button value='{LOCAL}'>%エリア名%</button></div>"
+	LOCALS += @"<div rect='{LOCAL:1 * 1000 + 106 + (20 - STRLENS(エリア名)) * 25},{LOCAL:1 / 5 * 800 + 585},{STRLENS(エリア名) * 75 + 120},212' padding='35,25,35' border='31' bcolor='#C0C0C0' color='#333333'><button value='{LOCAL}'>%エリア名%</button></div>"
 	LOCAL:1 ++
 NEXT
 

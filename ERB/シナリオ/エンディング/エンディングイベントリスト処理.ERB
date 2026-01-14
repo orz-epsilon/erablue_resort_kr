@@ -121,7 +121,7 @@ ELSEIF 表示キー == -1
 	LOCALS += "이 칸에는 엔딩의 상세 내용과, 엔딩을 시청할지 여부의 확인 버튼이 표시됩니다。<br>"
 ELSE
 	CALLFORM イベント関数_エンディングイベント_%DT_CELL_GETS("エンディング用変数配列", 表示用リスト:表示キー, "イベント名", 1)%("設定取得", 表示用リスト:表示キー)
-	LOCALS += TSTR:툴팁 전달
+	LOCALS += TSTR:ツールチップ受渡
 	LOCALS += "<br>"
 	IF FLAG:クリア済み視聴フラグ
 		LOCALS += "<button value='10000'>[10000]이 엔딩을 다시 시청하기</button><br>"

@@ -62,7 +62,7 @@ FOR LOCAL, ページ数 * 17, ページ数 * 17 + 17
 			LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'>"
 		LOCALS += @"<button value='{LOCAL}'>%CALLNAME:(従業員一覧:LOCAL), 16, LEFT%[%現在仕事数字文字列変換(現在仕事:(従業員一覧:LOCAL):0, 0, 従業員一覧:LOCAL)%"
 		IF 現在仕事:(従業員一覧:LOCAL):0 == 2
-			LOCALS = %SUBSTRING(LOCALS, 0, STRLENS(LOCALS) - 4)%
+			LOCALS = %SUBSTRING(LOCALS, 0, STRLENS(LOCALS) - 2)%
 			IF 現在仕事:(従業員一覧:LOCAL):1 >= 10003 && 現在仕事:(従業員一覧:LOCAL):1 <= 10010
 				屋号保存 = 『%空艇港店舗屋号記録:(現在仕事:(従業員一覧:LOCAL):1 % 10000)%』
 			ELSE
@@ -483,7 +483,7 @@ SELECTCASE ARG
 		RETURNF "雑務"
 	CASE 2
 		IF ARG:1
-LOCALS = 특정 장소에서 전문적인 일을 하는 업무. <br>효과: 하루의 마지막에, 루피가 <br>　　　［체류자 수×(일 레벨＋１)＾３］증가한다.
+			LOCALS = 특정 장소에서 전문적인 일을 하는 업무. <br>효과: 하루의 마지막에, 루피가 <br>　　　［체류자 수×(일 레벨＋１)＾３］증가한다.
 			LOCALS += "<br><br>"
 			IF 現在仕事:キャラ番号:1 == 2
 				LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'>[3002] 로비 :현재 상주 장소</font><br>"

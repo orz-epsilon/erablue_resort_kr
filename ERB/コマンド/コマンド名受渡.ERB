@@ -145,11 +145,11 @@ FOR 同室番号, 1, CHARANUM
 	ELSEIF PLAYER == 対象キャラ
 		;指示モード中は自分の場所はMASTERに変える
 		対象キャラ = MASTER
-		PRINTBUTTON @"[{同室番号, 3}] %ADD_STR_SPACE(NAME表示省略(NAME表示(対象キャラ)), "]"), 41, LEFT%", 동실 번호
+		PRINTBUTTON @"[{同室番号, 3}] %ADD_STR_SPACE(NAME表示省略(NAME表示(対象キャラ)), "]"), 41, LEFT%", 同室番号
 		PRINTS " "
 		CALL 同時モード設定_状態表示(対象キャラ)
 	ELSE
-		PRINTBUTTON @"[{同室番号, 3}] %ADD_STR_SPACE(NAME表示省略(NAME表示(対象キャラ)), "]"), 41, LEFT%", 동실 번호
+		PRINTBUTTON @"[{同室番号, 3}] %ADD_STR_SPACE(NAME表示省略(NAME表示(対象キャラ)), "]"), 41, LEFT%", 同室番号
 		PRINTS " "
 		CALL 同時モード設定_状態表示(対象キャラ)
 	ENDIF
@@ -163,7 +163,7 @@ IF ページ数 > 0
 ELSE
 	PRINTLC 　
 ENDIF
-PRINTFORM - {페이지 수 + 1} -
+PRINTFORM - {ページ数 + 1} -
 IF 次ページフラグ
 	PRINTBUTTONLC "[997] 다음 페이지로", 997
 ENDIF
@@ -281,7 +281,7 @@ FOR 部位番号, 0, VARSIZE("部位リスト")
 	; 部位が使用中の場合はグレーアウト
 	SIF !同時モード設定_部位使用可能判定(対象キャラ, 部位リスト:部位番号, 1)
 		SETCOLOR カラーパレット("グレーアウト")
-	PRINTS @" %부위 목록:부위 번호% "
+	PRINTS @" %部位リスト:部位番号% "
 	SETCOLOR フォント色
 NEXT
 

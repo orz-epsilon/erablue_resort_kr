@@ -170,8 +170,8 @@ WSTR:(K++) = 산적이 나이프를 한 손에%CALLNAME:PLAYER%들에게 덮쳐�
 		ENDIF
 		IF GETBIT(RFLAG:ダンジョン再視聴フラグ, 1)
 			;戦闘部分
-			敵BATTLE_STATE_STR:0:エネミー名 = Lv10_산적
-			敵BATTLE_STATE_STR:3:エネミー名 = Lv10_산적
+			敵BATTLE_STATE_STR:0:エネミー名 = Lv10_野盗
+			敵BATTLE_STATE_STR:3:エネミー名 = Lv10_野盗
 			CALL 雑魚敵遭遇汎用処理
 			IF RESULT != 0 && GETBIT(RFLAG:ダンジョン再視聴フラグ, 10)
 				CALL マス未踏破戻し処理(ダンジョン現在位置:0, ダンジョン現在位置:1)
@@ -613,10 +613,10 @@ SELECTCASE ARGS
 		ENDIF
 		IF GETBIT(RFLAG:ダンジョン再視聴フラグ, 1)
 			;戦闘部分
-			敵BATTLE_STATE_STR:0:エネミー名 = Lv10_산적
-			敵BATTLE_STATE_STR:3:エネミー名 = Lv10_산적
-			敵BATTLE_STATE_STR:4:エネミー名 = Lv10_산적
-			敵BATTLE_STATE_STR:7:エネミー名 = Lv10_산적
+			敵BATTLE_STATE_STR:0:エネミー名 = Lv10_野盗
+			敵BATTLE_STATE_STR:3:エネミー名 = Lv10_野盗
+			敵BATTLE_STATE_STR:4:エネミー名 = Lv10_野盗
+			敵BATTLE_STATE_STR:7:エネミー名 = Lv10_野盗
 			CALL 雑魚敵遭遇汎用処理
 			IF RESULT != 0 && GETBIT(RFLAG:ダンジョン再視聴フラグ, 10)
 				CALL マス未踏破戻し処理(ダンジョン現在位置:0, ダンジョン現在位置:1)
@@ -821,7 +821,7 @@ SELECTCASE ARGS
 		ENDIF
 		IF GETBIT(RFLAG:ダンジョン再視聴フラグ, 1)
 			;戦闘部分
-			敵BATTLE_STATE_STR:0:エネミー名 = Lv15_산적 보스
+			敵BATTLE_STATE_STR:0:エネミー名 = Lv15_野盗のボス
 			CALL 雑魚敵遭遇汎用処理
 			IF RESULT != 0 && GETBIT(RFLAG:ダンジョン再視聴フラグ, 10)
 				CALL マス未踏破戻し処理(ダンジョン現在位置:0, ダンジョン現在位置:1)

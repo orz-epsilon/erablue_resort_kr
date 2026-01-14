@@ -320,7 +320,7 @@ SELECTCASE ARGS
 		ENDIF
 		IF GETBIT(RFLAG:ダンジョン再視聴フラグ, 1)
 			;戦闘部分
-			敵BATTLE_STATE_STR:0:エネミー名 = Lv10_검은 구슬의 소녀
+			敵BATTLE_STATE_STR:0:エネミー名 = Lv10_黒い球の少女
 			CALL 雑魚敵遭遇汎用処理
 			IF RESULT != 0 && GETBIT(RFLAG:ダンジョン再視聴フラグ, 10)
 				CALL マス未踏破戻し処理(ダンジョン現在位置:0, ダンジョン現在位置:1)
@@ -495,8 +495,8 @@ WSTR:(K++) = ……맡겨질 때까지는 생각하지 못했네……!
 		ENDIF
 		IF GETBIT(RFLAG:ダンジョン再視聴フラグ, 1)
 			;戦闘部分
-			敵BATTLE_STATE_STR:0:エネミー名 = Lv12_얼음 날개를 가진 소녀
-			敵BATTLE_STATE_STR:4:エネミー名 = Lv9_요정 같은 소녀
+			敵BATTLE_STATE_STR:0:エネミー名 = Lv12_氷の羽を持つ少女
+			敵BATTLE_STATE_STR:4:エネミー名 = Lv9_妖精のような少女
 			CALL 雑魚敵遭遇汎用処理
 			IF RESULT != 0 && GETBIT(RFLAG:ダンジョン再視聴フラグ, 10)
 				CALL マス未踏破戻し処理(ダンジョン現在位置:0, ダンジョン現在位置:1)
@@ -949,7 +949,7 @@ SELECTCASE ARGS
 		ENDIF
 		IF GETBIT(RFLAG:ダンジョン再視聴フラグ, 1)
 			;戦闘部分
-			敵BATTLE_STATE_STR:0:エネミー名 = Lv14_붉은 머리 격투 소녀
+			敵BATTLE_STATE_STR:0:エネミー名 = Lv14_赤毛の格闘少女
 			戦闘時_特殊処理フラグ = 霊夢の助力_紅魔事変
 			CALL 雑魚敵遭遇汎用処理
 			IF RESULT != 0 && GETBIT(RFLAG:ダンジョン再視聴フラグ, 10)
@@ -1078,9 +1078,9 @@ WSTR:(K++) = 책의 사역마가 습격해왔다!
 		ENDIF
 		IF GETBIT(RFLAG:ダンジョン再視聴フラグ, 1)
 			;戦闘部分
-			敵BATTLE_STATE_STR:2:エネミー名 = Lv9_책의 사역마
-			敵BATTLE_STATE_STR:5:エネミー名 = Lv9_책의 사역마
-			敵BATTLE_STATE_STR:6:エネミー名 = Lv9_책의 사역마
+			敵BATTLE_STATE_STR:2:エネミー名 = Lv9_本の使い魔
+			敵BATTLE_STATE_STR:5:エネミー名 = Lv9_本の使い魔
+			敵BATTLE_STATE_STR:6:エネミー名 = Lv9_本の使い魔
 			戦闘時_特殊処理フラグ = 魔理沙の助力_紅魔事変
 			CALL 雑魚敵遭遇汎用処理
 			IF RESULT != 0 && GETBIT(RFLAG:ダンジョン再視聴フラグ, 10)
@@ -1123,8 +1123,8 @@ WSTR:(K++) = 보라색 소녀가 덮쳐왔다!
 		ENDIF
 		IF GETBIT(RFLAG:ダンジョン再視聴フラグ, 1)
 			;戦闘部分
-			敵BATTLE_STATE_STR:0:エネミー名 = Lv14_보라색 소녀
-			敵BATTLE_STATE_STR:4:エネミー名 = Lv10_악마 같은 소녀
+			敵BATTLE_STATE_STR:0:エネミー名 = Lv14_紫色の少女
+			敵BATTLE_STATE_STR:4:エネミー名 = Lv10_悪魔っぽい少女
 			戦闘時_特殊処理フラグ = 魔理沙の助力_紅魔事変
 			CALL 雑魚敵遭遇汎用処理
 			IF RESULT != 0 && GETBIT(RFLAG:ダンジョン再視聴フラグ, 10)
@@ -1319,7 +1319,7 @@ WSTR:(K++) = 아까 그 문지기 소녀일까? 이번에야말로 이야기를 
 		ENDIF
 		IF GETBIT(RFLAG:ダンジョン再視聴フラグ, 1)
 			;戦闘部分
-			敵BATTLE_STATE_STR:0:エネミー名 = Lv16_메이드장 사쿠야
+			敵BATTLE_STATE_STR:0:エネミー名 = Lv16_メイド長の咲夜
 			戦闘時_特殊処理フラグ = 霊夢と魔理沙の助力_紅魔事変
 			CALL 雑魚敵遭遇汎用処理
 			IF RESULT != 0 && GETBIT(RFLAG:ダンジョン再視聴フラグ, 10)
@@ -1553,7 +1553,7 @@ SELECTCASE ARGS
 		ENDIF
 		IF GETBIT(RFLAG:ダンジョン再視聴フラグ, 1)
 			;戦闘部分
-			敵BATTLE_STATE_STR:0:エネミー名 = Lv18_흡혈귀 레밀리아
+			敵BATTLE_STATE_STR:0:エネミー名 = Lv18_吸血鬼レミリア
 			CALL 雑魚敵遭遇汎用処理
 			IF RESULT != 0 && GETBIT(RFLAG:ダンジョン再視聴フラグ, 10)
 				CALL マス未踏破戻し処理(ダンジョン現在位置:0, ダンジョン現在位置:1)
