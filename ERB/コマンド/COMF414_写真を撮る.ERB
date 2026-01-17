@@ -1219,28 +1219,28 @@ ENDIF
 IF DT_CELL_GETS("写真データベース", ボタン記録, "写真添付口上", 1) != ""
 	;html形式で保存されているはず
 	HTML_PRINT @"　　%REPLACE(DT_CELL_GETS("写真データベース", ボタン記録, "写真添付口上", 1), "<br>", "<br>　　")%"
-	PRINTL 촬영 일시: {DAY산출 / 120 + 1}년째　%월 등록:((DAY산출 / 30) % 4)%　{DAY산출 % 30 + 1}일(%요일 등록:(DAY산출 % 7)%)　{TIME산출 / 60}시{TIME산출 % 60}분
+	PRINTL 
 ENDIF
 
 DAY算出 = TOINT(DT_CELL_GETS("写真データベース", ボタン記録, "撮影日時", 1)) / 10000
 TIME算出 = TOINT(DT_CELL_GETS("写真データベース", ボタン記録, "撮影日時", 1)) % 10000
+PRINTFORML 　　촬영 일시: {DAY산출 / 120 + 1}년째　%월 등록:((DAY산출 / 30) % 4)%　{DAY산출 % 30 + 1}일(%요일 등록:(DAY산출 % 7)%)　{TIME산출 / 60}시{TIME산출 % 60}분
 PRINTFORML 　　촬영 장소: %DT_CELL_GETS("写真データベース", ボタン記録, "撮影場所名前", 1)%
 PRINTFORML 　　촬영 대상: %DT_CELL_GETS("写真データベース", ボタン記録, "撮影対象NAME", 1)%
-PRINTFORML 　　사진 메모: %DT_CELL_GETS("写真データベース", ボタン記録, "写真添付メモ", 1)%
 IF DT_CELL_GETS("写真データベース", ボタン記録, "写真添付メモ", 1) != ""
-	PRINTFORML 　　"[999] 돌아가기", 999
+	PRINTFORML 　　사진 메모: %DT_CELL_GETS("写真データベース", ボタン記録, "写真添付メモ", 1)%
 ENDIF
 PRINTL
 
-PRINTBUTTONLC "[1010] 메모 변경", 1010
+PRINTBUTTONLC "[999] 돌아가기", 999
 IF DT_CELL_GETS("写真データベース", ボタン記録, "写真添付メモ", 1) != ""
+	PRINTBUTTONLC "[1010] 메모 변경", 1010
 	PRINTBUTTONLC "[1011] 메모 삭제", 1011
-	PRINTBUTTONLC "[1010] 메모 추가", 1010
 ELSE
-PRINTBUTTONLC "[1000] 이 사진을 삭제하기", 1000
+PRINTBUTTONLC "[1010] 메모 추가", 1010
 ENDIF
 PRINTL
-PRINTBUTTONLC "[1000] 이 사진을 삭제한다", 1000
+PRINTBUTTONLC "[1000] 이 사진을 삭제하기", 1000
 PRINTL 
 IF 前フラグ
 	PRINTBUTTONLC "[4] 이전 사진으로", 4
