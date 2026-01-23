@@ -1,0 +1,521 @@
+
+;----------------------------------------------------
+;キャラ固有コマンド処理
+;----------------------------------------------------
+;コマンド名
+;----------------------------------------------------
+@CHARACOMNAME370_25
+#FUNCTION
+LOCAL = GETCHARA(25)
+TSTR:コマンド名受渡 = 육체 재연성
+;===================================================
+;コマンドタイプ
+;===================================================
+@COMTYPE_370_25
+#FUNCTION
+TFLAG:コマンドタイプ受渡 = COMTYPE("日常")
+
+@COM_TOOLTIP_370_25
+LOCALS = <br>■육체 재연성<br>
+LOCALS += "칼리오스트로에게 부탁하여, ZP를 사용하지 않고 육체의 외형을 변화시켜 다시 연성하게 한다"
+LOCALS += "<br>경과 시간:60분"
+TSTR:ツールチップ受渡 = %LOCALS%
+
+;-------------------------------------------------
+;実行処理
+;-------------------------------------------------
+@CHARACOM370_25
+#DIM 変更フラグ, 7
+#DIM 変更後数値, 4
+#DIM CONST 変更箇所 = 161, 205, 163, 210, 2, 200, 162
+#DIM L_COUNT
+#DIM CONST 全長 = 0
+#DIM CONST 胸囲 = 1
+#DIM CONST 腹囲 = 2
+#DIM CONST 臀囲 = 3
+#DIM CONST 雌雄 = 4
+#DIM CONST 人種 = 5 
+#DIM CONST 竿長 = 6
+#DIMS CONST 変更フラグ名 = "全長", "胸囲", "腹囲","臀囲","雌雄","人種","竿長"
+
+DEBUGCLEAR
+LOCAL = GETCHARA(25)
+VARSET 変更フラグ, -5
+VARSET 変更後数値, 0
+
+PRINTL
+L_COUNT = LINECOUNT
+
+$LOOP_START
+CLEARLINE LINECOUNT - L_COUNT
+PRINT 「
+FONTITALIC
+PRINT 그래서, 어떤 설계로 할 건가?
+FONTSTYLE 0
+PRINTL 」
+PRINTL 어떤 소질을 변화시키겠습니까?
+DRAWLINE
+
+PRINT 성별:　
+FOR LOCAL , 1, 4
+	SIF 素質切り替えOPTION記憶:ふたなり_女性 && LOCAL == 3
+		CONTINUE
+	IF TALENT:性別 == LOCAL && (変更フラグ:雌雄 == LOCAL || 変更フラグ:雌雄 == -5)
+		SETCOLOR 0x666666
+		PRINTPLAINFORM [{LOCAL, 2}]%GET_TALENTNAME(変更箇所:雌雄, LOCAL, 0,TARGET)+"（現在）", 23, LEFT%
+		RESETCOLOR
+	ELSEIF 変更フラグ:雌雄 == LOCAL
+		SETCOLOR 0xFFFFCC
+		PRINTPLAINFORM [{LOCAL, 2}]%GET_TALENTNAME(変更箇所:雌雄, LOCAL, 0,TARGET)+"（予定）", 23, LEFT%
+		RESETCOLOR
+	ELSEIF TALENT:性別 == LOCAL
+		PRINTBUTTON @"[{LOCAL, 2}]%GET_TALENTNAME(変更箇所:雌雄, LOCAL, 0,TARGET)+"（現在）", 23, LEFT%", LOCAL
+	ELSE
+		PRINTBUTTON @"[{LOCAL, 2}]%GET_TALENTNAME(変更箇所:雌雄, LOCAL, 0,TARGET), 23, LEFT%", LOCAL
+	ENDIF
+NEXT
+PRINTL 
+
+PRINT 종족:　
+FOR LOCAL , 1, 7
+	IF TALENT:種族 == LOCAL && (変更フラグ:人種 == LOCAL || 変更フラグ:人種 == -5)
+		SETCOLOR 0x666666
+		PRINTPLAINFORM [{LOCAL+10}]%GET_TALENTNAME(変更箇所:人種, LOCAL, 0,TARGET)+"（現在）", 23, LEFT%
+		RESETCOLOR
+	ELSEIF 変更フラグ:人種 == LOCAL
+		SETCOLOR 0xFFFFCC
+		PRINTPLAINFORM [{LOCAL+10}]%GET_TALENTNAME(変更箇所:人種, LOCAL, 0,TARGET)+"（予定）", 23, LEFT%
+		RESETCOLOR
+	ELSEIF TALENT:種族 == LOCAL
+		PRINTBUTTON @"[{LOCAL+10}]%GET_TALENTNAME(変更箇所:人種, LOCAL, 0,TARGET)+"（現在）", 23, LEFT%", LOCAL+10
+	ELSE
+		PRINTBUTTON @"[{LOCAL+10}]%GET_TALENTNAME(変更箇所:人種, LOCAL, 0,TARGET), 23, LEFT%", LOCAL+10
+	ENDIF
+NEXT
+PRINTL 
+
+PRINT 체격:　
+FOR LOCAL, -3, 3
+	IF TALENT:体格 == LOCAL && (変更フラグ:全長 == LOCAL || 変更フラグ:全長 == -5)
+		SETCOLOR 0x666666
+		PRINTPLAINFORM [{LOCAL+44}]%GET_TALENTNAME(変更箇所:全長, LOCAL, 0,TARGET)+"（現在）", 23, LEFT%
+		RESETCOLOR
+	ELSEIF 変更フラグ:全長 == LOCAL
+		SETCOLOR 0xFFFFCC
+		PRINTPLAINFORM [{LOCAL+44}]%GET_TALENTNAME(変更箇所:全長, LOCAL, 0,TARGET)+"（予定）", 23, LEFT%
+		RESETCOLOR
+	ELSEIF TALENT:体格 == LOCAL
+		PRINTBUTTON @"[{LOCAL+44}]%GET_TALENTNAME(変更箇所:全長, LOCAL, 0,TARGET)+"（現在）", 23, LEFT%", LOCAL+44
+	ELSE
+		PRINTBUTTON @"[{LOCAL+44}]%GET_TALENTNAME(変更箇所:全長, LOCAL, 0,TARGET), 23, LEFT%", LOCAL+44
+	ENDIF
+NEXT
+PRINTL
+
+PRINT 체형:　
+FOR LOCAL, -3, 4
+	IF TALENT:体型 == LOCAL && (変更フラグ:腹囲 == LOCAL || 変更フラグ:腹囲 == -5)
+		SETCOLOR 0x666666
+		PRINTPLAINFORM [{LOCAL+54}]%GET_TALENTNAME(変更箇所:腹囲, LOCAL, 0,TARGET)+"（現在）", 23, LEFT%
+		RESETCOLOR
+	ELSEIF 変更フラグ:腹囲 == LOCAL
+		SETCOLOR 0xFFFFCC
+		PRINTPLAINFORM [{LOCAL+54}]%GET_TALENTNAME(変更箇所:腹囲, LOCAL, 0,TARGET)+"（予定）", 23, LEFT%
+		RESETCOLOR
+	ELSEIF TALENT:体型 == LOCAL
+		PRINTBUTTON @"[{LOCAL+54}]%GET_TALENTNAME(変更箇所:腹囲, LOCAL, 0,TARGET)+"（現在）", 23, LEFT%", LOCAL+54
+	ELSE
+		PRINTBUTTON @"[{LOCAL+54}]%GET_TALENTNAME(変更箇所:腹囲, LOCAL, 0,TARGET), 23, LEFT%", LOCAL+54
+	ENDIF
+NEXT
+PRINTL
+
+PRINT 하반신:
+FOR LOCAL, -1, 2
+	IF TALENT:下半身 == LOCAL && (変更フラグ:臀囲 == LOCAL || 変更フラグ:臀囲 == -5)
+		SETCOLOR 0x666666
+		PRINTPLAINFORM [{LOCAL+62}]%GET_TALENTNAME(変更箇所:臀囲, LOCAL, 0,TARGET)+"（現在）", 23, LEFT%
+		RESETCOLOR
+	ELSEIF 変更フラグ:臀囲 == LOCAL
+		SETCOLOR 0xFFFFCC
+		PRINTPLAINFORM [{LOCAL+62}]%GET_TALENTNAME(変更箇所:臀囲, LOCAL, 0,TARGET)+"（予定）", 23, LEFT%
+		RESETCOLOR
+	ELSEIF TALENT:下半身 == LOCAL
+		PRINTBUTTON @"[{LOCAL+62}]%GET_TALENTNAME(変更箇所:臀囲, LOCAL, 0,TARGET)+"（現在）", 23, LEFT%", LOCAL+62
+	ELSE
+		PRINTBUTTON @"[{LOCAL+62}]%GET_TALENTNAME(変更箇所:臀囲, LOCAL, 0,TARGET), 23, LEFT%", LOCAL+62
+	ENDIF
+NEXT
+PRINTL
+
+IF GETBIT(TALENT:性別, 0) || (変更フラグ:雌雄 > -1 && GETBIT(変更フラグ:雌雄, 0))
+	PRINTL 가슴 크기:
+	PRINT 　　　　
+	FOR LOCAL, -2, 4
+		IF TALENT:バストサイズ == LOCAL && (変更フラグ:胸囲 == LOCAL || 変更フラグ:胸囲 == -5)
+			SETCOLOR 0x666666
+			PRINTPLAINFORM [{LOCAL+23}]%GET_TALENTNAME(変更箇所:胸囲, LOCAL, 0,TARGET)+"（現在）", 23, LEFT%
+			RESETCOLOR
+		ELSEIF 変更フラグ:胸囲 == LOCAL
+			SETCOLOR 0xFFFFCC
+			PRINTPLAINFORM [{LOCAL+23}]%GET_TALENTNAME(変更箇所:胸囲, LOCAL, 0,TARGET)+"（予定）", 23, LEFT%
+			RESETCOLOR
+		ELSEIF TALENT:バストサイズ == LOCAL
+			PRINTBUTTON @"[{LOCAL+23}]%GET_TALENTNAME(変更箇所:胸囲, LOCAL, 0,TARGET)+"（現在）", 23, LEFT%", LOCAL+23
+		ELSE
+			PRINTBUTTON @"[{LOCAL+23}]%GET_TALENTNAME(変更箇所:胸囲, LOCAL, 0,TARGET), 23, LEFT%", LOCAL+23
+		ENDIF
+	NEXT
+ENDIF
+PRINTL 
+
+IF GETBIT(TALENT:性別, 1) || (変更フラグ:雌雄 > -1 && GETBIT(変更フラグ:雌雄, 1))
+	PRINTL 남성기 크기:
+	PRINT 　　　　
+	FOR LOCAL , -2, 3
+		IF TALENT:男性器サイズ == LOCAL && (変更フラグ:竿長 == LOCAL || 変更フラグ:竿長 == -5)
+			SETCOLOR 0x666666
+			PRINTPLAINFORM [{LOCAL+33}]%GET_TALENTNAME(変更箇所:竿長, LOCAL, 0,TARGET)+"（現在）", 23, LEFT%
+			RESETCOLOR
+		ELSEIF 変更フラグ:竿長 == LOCAL
+			SETCOLOR 0xFFFFCC
+			PRINTPLAINFORM [{LOCAL+33}]%GET_TALENTNAME(変更箇所:竿長, LOCAL, 0,TARGET)+"（予定）", 23, LEFT%
+			RESETCOLOR
+		ELSEIF TALENT:男性器サイズ == LOCAL
+			PRINTBUTTON @"[{LOCAL+33}]%GET_TALENTNAME(変更箇所:竿長, LOCAL, 0,TARGET)+"（現在）", 23, LEFT%", LOCAL+33
+		ELSE
+			PRINTBUTTON @"[{LOCAL+33}]%GET_TALENTNAME(変更箇所:竿長, LOCAL, 0,TARGET), 23, LEFT%", LOCAL+33
+		ENDIF
+	NEXT
+ENDIF
+PRINTL 
+
+PRINTBUTTONC "[900] 변경 취소", 900
+PRINTBUTTONC "[910] 원래 상태로 되돌리기", 910
+PRINTBUTTONC "[999] 종료한다", 999
+PRINTL
+
+BINPUT
+SELECTCASE RESULT
+	CASE 1 TO 9
+		;性別
+		変更フラグ:雌雄 = RESULT
+		GOTO LOOP_START
+	CASE 10 TO 19
+		;種族
+		変更フラグ:人種 = RESULT - 10
+		GOTO LOOP_START
+	CASE 20 TO 29
+		;バスト
+		IF RESULT == 27
+		ELSEIF RESULT < 27
+			変更フラグ:胸囲 = RESULT - 23
+		ENDIF
+		GOTO LOOP_START
+	CASE 30 TO 39
+		;男性器
+		変更フラグ:竿長 = RESULT - 33
+		GOTO LOOP_START
+	CASE 40 TO 49
+		;体格・身長
+		IF RESULT == 47
+		ELSEIF RESULT < 47
+			変更フラグ:全長 = RESULT - 44
+		ENDIF
+				GOTO LOOP_START
+	CASE 50 TO 59
+		;体型・ウエスト
+		IF RESULT == 58
+		ELSEIF RESULT < 58
+			変更フラグ:腹囲 = RESULT - 54
+		ENDIF
+		GOTO LOOP_START
+	CASE 60 TO 69
+		;下半身・ヒップ
+		IF RESULT == 64
+		ELSEIF RESULT < 64
+			変更フラグ:臀囲 = RESULT - 62
+		ENDIF
+		GOTO LOOP_START
+	CASE 900
+		;変更箇所をキャンセルする
+		VARSET 変更フラグ, -5
+		VARSET 変更後数値, 0
+		GOTO LOOP_START
+	CASE 910
+		;デフォルトの状態に戻す
+		変更フラグ:人種 = 種族_ヒューマン
+		変更フラグ:雌雄 = 性別_女性
+		変更フラグ:全長 = 体格_小柄
+		変更フラグ:胸囲 = バストサイズ_貧乳
+		変更フラグ:腹囲 = 体型_普通
+		変更フラグ:臀囲 = 下半身_普通
+		GOTO LOOP_START
+	CASE 999
+		;変更点なしなら未実行のまま戻る
+		SIF MAXARRAY(変更フラグ) < -4
+			RETURN -1
+		LOCAL:1 = 0
+		FOR LOCAL, 0, VARSIZE("変更フラグ")
+			IF TALENT:(変更箇所:LOCAL) == 変更フラグ:LOCAL || 変更フラグ:LOCAL == -5
+				LOCAL:1 ++
+			ELSE
+				SIF LOCAL == 2 && !(GETBIT(TALENT:性別, 0) || (変更フラグ:雌雄 > -1 && GETBIT(変更フラグ:雌雄, 0)))
+					LOCAL:1 ++
+				SIF LOCAL == 3 && !(GETBIT(TALENT:性別, 1) || (変更フラグ:雌雄 > -1 && GETBIT(変更フラグ:雌雄, 1)))
+					LOCAL:1 ++
+			ENDIF
+		NEXT
+		SIF LOCAL:1 == VARSIZE("変更フラグ")
+			RETURN -1
+	CASEELSE
+		GOTO LOOP_START
+ENDSELECT
+
+PRINTL
+PRINT 「
+FONTITALIC
+PRINT 이걸로 괜찮은가?
+FONTSTYLE 0
+PRINTL 」
+
+PRINTFORM 성별【%GET_TALENTNAME(2, (変更フラグ:雌雄 > -5 ? 変更フラグ:雌雄 # TALENT:性別), 0,TARGET)%】　
+PRINTFORM 종족【%GET_TALENTNAME(変更箇所:人種, (変更フラグ:人種 > -5 ? 変更フラグ:人種 # TALENT:種族), 0,TARGET)%】　
+PRINTFORM 체격【%GET_TALENTNAME(変更箇所:全長, (変更フラグ:全長 > -5 ? 変更フラグ:全長 # TALENT:体格), 0,TARGET)%】　
+PRINTFORM 체형【%GET_TALENTNAME(変更箇所:腹囲, (変更フラグ:腹囲 > -5 ? 変更フラグ:腹囲 # TALENT:体型), 0,TARGET)%】　
+PRINTFORM 하반신【%GET_TALENTNAME(変更箇所:臀囲, (変更フラグ:臀囲 > -5 ? 変更フラグ:臀囲 # TALENT:下半身), 0,TARGET)%】
+
+SIF GETBIT(TALENT:性別, 0) || (変更フラグ:雌雄 > -1 && GETBIT(変更フラグ:雌雄, 0))
+	PRINTFORM 가슴 크기【%GET_TALENTNAME(変更箇所:胸囲, (変更フラグ:胸囲 > -5 ? 変更フラグ:胸囲# TALENT:バストサイズ), 0,TARGET)%】
+SIF GETBIT(TALENT:性別, 1) || (変更フラグ:雌雄 > -1 && GETBIT(変更フラグ:雌雄, 1))
+	PRINTFORM 남성기 크기【%GET_TALENTNAME(変更箇所:竿長, (変更フラグ:竿長 > -5 ? 変更フラグ:竿長# TALENT:男性器サイズ), 0,TARGET)%】
+PRINTL
+
+DEBUGPRINTFORM 処理前
+FOR LOCAL, 0, VARSIZE("変更フラグ")
+	DEBUGPRINTFORM  : %変更フラグ名:LOCAL% = {変更フラグ:LOCAL}
+NEXT
+DEBUGPRINTL
+
+CALL CHOICE(LOCALS, "はい", "いいえ", "再錬成を中止する")
+SIF RESULT == 1
+	GOTO LOOP_START
+
+IF RESULT == 2
+	PRINT 「
+	FONTITALIC
+	PRINT 그런가…… 그럼, 좀 더 이 모습에서의 '귀여움'을 추구해 볼까
+	FONTSTYLE 0
+	PRINTL 」
+	RETURN -1
+ENDIF
+
+FOR LOCAL, 0, 7
+	IF 変更フラグ:LOCAL != -5 && TALENT:(変更箇所:LOCAL) != 変更フラグ:LOCAL
+		TALENT:(変更箇所:LOCAL) = 変更フラグ:LOCAL
+		IF LOCAL == 人種
+			TALENT:ハーヴィン耳 = 0
+			TALENT:吸血鬼 = 0
+			TALENT:発情期あり = 0
+			TALENT:尻尾あり = 0
+			TALENT:エルーン耳 = 0
+			TALENT:角あり = 0
+			CSTR:特殊種族 = 
+			IF TALENT:(変更箇所:LOCAL) == 種族_エルーン
+				CALL CHOICE("「エルーンかぁ……　ね、尻尾は欲しい？」", "はい", "いいえ")
+				TALENT:尻尾あり = !RESULT
+				PRINTL 「오케이♪」
+			ELSEIF TALENT:(変更箇所:LOCAL) == 種族_その他
+				$INPUT_EXRACE
+				LOCAL:1 = LINECOUNT
+				CALL CHOICE("「サンプル数の少ない種族ね。どれにしよっか？」", "クリスタリア", "ヴァンパイア", "ワーウルフ", "その他")
+				SELECTCASE RESULT
+					CASE 0
+						;クリスタリア
+						CSTR:特殊種族 = 크리스탈리아
+					CASE 1
+						;ヴァンパイア
+						CSTR:特殊種族 = 뱀파이어
+					CASE 2
+						;ワーウルフ
+						CSTR:特殊種族 = 워울프
+					CASE 3
+						;自由選択（名前のみ）
+						PRINT 「
+						FONTITALIC
+						PRINT 말해두지만, 나님도 너무 희귀한 종족은 거의 재현할 수 없다고?
+						FONTSTYLE 0
+						PRINTL 」
+						PRINTL 추가 종족명을 임의로 입력해주세요
+						INPUTS
+						IF RESULTS != ""
+							CSTR:特殊種族 = %RESULTS%
+						ELSE
+							CLEARLINE LINECOUNT - LOCAL:1
+							GOTO INPUT_EXRACE
+						ENDIF
+				ENDSELECT
+				CALL CHOICE(@"「いわゆる亜人の中でも【%CSTR:特殊種族%】に併せる…これでいい？」", "ＯＫ！", "選び直す")
+				IF RESULT == 1
+					CLEARLINE LINECOUNT - LOCAL:1
+					GOTO INPUT_EXRACE
+				ENDIF
+			ENDIF
+			;種族ごとに特徴を設定し直す
+			SELECTCASE TALENT:(変更箇所:人種)
+				CASE 種族_ヒューマン
+					;特徴なし
+				CASE 種族_エルーン
+					TALENT:エルーン耳 = 1
+				CASE 種族_ドラフ
+					TALENT:角あり = 1
+				CASE 種族_ハーヴィン
+					TALENT:ハーヴィン耳 = 1
+				CASE 種族_星晶獣
+					;特徴なし
+				CASE 種族_その他
+					SELECTCASE CSTR:特殊種族
+						CASE "クリスタリア"
+							;クリスタリア
+							TALENT:ハーヴィン耳 = 1
+						CASE "ヴァンパイア"
+							;ヴァンパイア
+							TALENT:吸血鬼 = 1
+						CASE "ワーウルフ"
+							;ワーウルフ
+							TALENT:ハーヴィン耳 = 0
+							TALENT:発情期あり = 1
+							TALENT:尻尾あり = 1
+							TALENT:エルーン耳 = 1
+						CASEELSE
+							;特徴なし
+					ENDSELECT
+			ENDSELECT
+		ENDIF
+	ENDIF
+NEXT
+
+;素質を元に再計算させるため、一旦0にする
+BASE:身長 = 0
+BASE:バスト = 0
+BASE:ウエスト = 0
+BASE:ヒップ = 0
+CALL SET_BODYSIZE(TARGET, 0)
+
+IF GROUPMATCH(TALENT:性別, 性別_女性, 性別_ふたなり) && TALENT:種族 == 種族_ヒューマン && TALENT:体格 >= 体格_普通 && TALENT:バストサイズ >= バストサイズ_巨乳
+	;肉体条件を満たした場合、大人スタイル
+	IF CSTR:スタイル管理文字列 != "[天才美人錬金術師]カリオストロ"
+		;スタイル変更していない場合、変更させる
+		CSTR:スタイル管理文字列 '= "[천재 미인 연금술사]칼리오스트로"
+		CALL スタイル変更_25(TARGET, "変更後処理", 1)
+	ENDIF
+	IF GETBIT(口上フラグ_25:1, 0)
+		CALL 口上変数初期化
+		KSTR:(K++) = IMAGEPATH_%CSTR:画像フォルダ%/短冊_デフォルト
+		CALL 口上変数表示(, 0)
+		PRINTL 「어른스러운 칼리오스트로가 취향이야? 어쩔 수 없네♪」
+	ELSE
+		SETBIT 口上フラグ_25:1, 0
+		PRINT 「
+		FONTITALIC
+		PRINT 과연, 즉……
+		FONTSTYLE 0
+		PRINT 이런 게 취향이라는 거네
+		PRINT_IMG "えっちハート"
+		PRINTL 」
+		PRINTFORMW 그렇게 말하자, %CALLNAME:TARGET%는 옛 모습을 간직한 채, 어른의 매력을 품은 모습으로 변모했다
+		CALL 口上変数初期化
+		KSTR:(K++) = IMAGEPATH_%CSTR:画像フォルダ%/短冊_デフォルト
+		CALL 口上変数表示(, 0)
+		PRINTL
+		PRINTFORML 「어때? 이게 칼리오스트로의 새로운 측면, 연장자로서의 자애와 포용력의 구현이야☆
+		PRINTFORML 　의상도 큐트하면서도 우아함을 기본으로, 약간 코케티시한 면도 넣어봤는데……
+		PRINTFORM 　(싱긋) %CSTR:二人称%님도 마음에 드신 것 같네
+		PRINT_IMG "えっちハート"
+		PRINTW 」
+		PRINTL
+		PRINTFORML %CALLNAME:TARGET%가 『[천재 미인 연금술사] 칼리오스트로』로 스타일을 변경했습니다.
+		PRINTFORML 기상 전 메뉴의 [121]능력 표시→[92]전투 능력 표시 화면→[115]스타일 변경에서도 변경할 수 있습니다 (전투 능력에는 변화가 없습니다).
+	ENDIF
+ELSE
+	IF CSTR:スタイル管理文字列 != ""
+		;別スタイルの維持条件を満たさない場合、デフォルトスタイルに戻る
+		CSTR:スタイル管理文字列 '= ""
+		CALL スタイル変更_25(TARGET, "変更後処理", 1)
+		CALL 口上変数初期化
+		KSTR:(K++) = IMAGEPATH_%CSTR:画像フォルダ%/短冊_デフォルト
+		CALL 口上変数表示(, 0)
+	ENDIF
+	IF TALENT:種族 == 種族_ヒューマン && TALENT:性別 == 性別_女性 && TALENT:体格 == 体格_小柄 && TALENT:バストサイズ == バストサイズ_貧乳 && TALENT:体型 == 体型_普通 && TALENT:下半身 == 下半身_普通
+		;身長を元に戻し再計算
+		BASE:身長 = 0
+		BASE:バスト = 0
+		BASE:ウエスト = 0
+		BASE:ヒップ = 0
+		CALL INIT_BODYSIZE(TARGET)
+		PRINTL 「역시, 평소의 칼리오스트로가 최고지☆ 라는 거겠지♪」
+	ELSE
+		IF CSTR:スタイル管理文字列 != ""
+			;別スタイルの維持条件を満たさない場合、デフォルトスタイルに戻る
+			CSTR:スタイル管理文字列 '= ""
+			CALL スタイル変更_25(TARGET, "変更後処理", 1)
+			CALL 口上変数初期化
+			KSTR:(K++) = IMAGEPATH_%CSTR:画像フォルダ%/短冊_デフォルト
+			CALL 口上変数表示(, 0)
+		ENDIF
+		PRINT 「
+		FONTITALIC
+		PRINT 이번에는 이 모습으로 실증 실험이라는 건가. 좋아, 어울려주지
+		FONTSTYLE 0
+		PRINTL 」
+	ENDIF
+ENDIF
+PRINT 칼리오스트로는 현재의 육체를
+PRINTFORM 성별【%GET_TALENTNAME(2, TALENT:性別, 0,TARGET)%】　
+PRINTFORM 종족【%GET_TALENTNAME(変更箇所:人種, TALENT:種族, 0,TARGET)%\@ TALENT:種族 == 6? (%CSTR:特殊種族%)# \@】　
+PRINTFORM 체격【%GET_TALENTNAME(変更箇所:全長, TALENT:体格, 0,TARGET)%】　
+PRINTFORM 체형【%GET_TALENTNAME(変更箇所:腹囲, TALENT:体型, 0,TARGET)%】　
+PRINTFORML 하반신【%GET_TALENTNAME(変更箇所:臀囲, TALENT:下半身, 0,TARGET)%】
+PRINTFORM 신장:%DECIMAL_STRING(BASE:身長, 1), 6, RIGHT%cm/ 
+PRINTFORM B:%DECIMAL_STRING(補正込みバストサイズ(TARGET), 1), 6, RIGHT%cm / 
+PRINTFORM W:%DECIMAL_STRING(補正込みウエストサイズ(TARGET), 1), 6, RIGHT%cm / 
+PRINTFORM H:%DECIMAL_STRING(補正込みヒップサイズ(TARGET), 1), 6, RIGHT%cm
+PRINTL
+SIF GETBIT(TALENT:性別, 0)
+	PRINTFORM 가슴 크기【%GET_TALENTNAME(変更箇所:胸囲, TALENT:バストサイズ, 0,TARGET)%】
+SIF GETBIT(TALENT:性別, 1)
+	PRINTFORM 남성기 크기【%GET_TALENTNAME(変更箇所:竿長, TALENT:男性器サイズ, 0,TARGET)%】
+PRINTW 으로 재연성했습니다
+
+
+TIME += 0
+
+RETURN 1
+
+;-------------------------------------------------
+;実行判定
+;-------------------------------------------------
+@COM_ABLE370_25
+;一括管理
+SIF GLOBAL_COMABLE(370)
+	RETURN RESULT
+LOCAL = GETCHARA(25)
+SIF TARGET != LOCAL
+	RETURN 0
+;陥落後にZPショップから外見変更を伴う素質変化を1度は行うまで使用不可
+SIF 特定状況口上用フラグ:LOCAL:0 >= 0
+	RETURN 0
+;妊娠中は赤ちゃんへの影響を鑑みて使用不可
+SIF CFLAG:LOCAL:妊娠発覚
+	RETURN 0
+RETURN 1
+
+
+;-------------------------------------------------
+;実行時メッセージ
+;-------------------------------------------------
+@MESSAGE_COM370_25
+LOCAL = GETCHARA(25)
+
+
+
