@@ -152,7 +152,7 @@ IF GETBIT(FLAG:モード管理, モードビット_同時)
 	FOR 同時キャラ番号, 0, 同時モード_選択数
 		SIF 同時キャラ番号 > 0
 			PRINT ,
-		PRINTFORM %CALLNAME:(동시모드_선택캐릭터:동시캐릭터번호)%
+		PRINTFORM %CALLNAME:(同時モード_選択キャラ:同時キャラ番号)%
 	NEXT
 	PRINT 모두의 페니스를 각각의 오나홀에 삽입했다
 	RETURN 0

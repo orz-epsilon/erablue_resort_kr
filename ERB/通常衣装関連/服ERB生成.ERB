@@ -317,8 +317,8 @@ SELECTCASE RESULT
 			PRINTL RETURN 판매 가격
 			HTML_PRINT "<br>"
 		ENDIF
-		PRINTFORML @CLOTHES_CHANGE_%服名保存%(대상 캐릭터)
-		PRINTL #DIM 대상 캐릭터
+		PRINTFORML @CLOTHES_CHANGE_%服名保存%(対象キャラ)
+		PRINTL #DIM 対象キャラ
 		HTML_PRINT "<br>"
 		PRINTL ;이전 의상을 유지
 		PRINTFORML SIF CSTR:対象キャラ:着せ替え服 != "%服名保存%"
@@ -332,8 +332,8 @@ SELECTCASE RESULT
 		NEXT
 		HTML_PRINT "<br>"
 		IF 服種別設定保存 >= 2
-			PRINTFORML @CLOTHES_착용조건_%服名保存%(대상캐릭터)
-			PRINTL #DIM 대상캐릭터
+			PRINTFORML @CLOTHES_착용조건_%服名保存%(対象キャラ)
+			PRINTL #DIM 対象キャラ
 			HTML_PRINT "<br>"
 			PRINTL ;조건을 만족하지 못하는 경우는 NG
 			PRINTL ;SIF NG조건

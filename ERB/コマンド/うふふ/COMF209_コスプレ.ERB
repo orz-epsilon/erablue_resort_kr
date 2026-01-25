@@ -323,7 +323,7 @@ SELECTCASE LOCAL
 		PRINTL
 		DRAWLINE
 		PRINTL 착용하고 싶은 액세서리를 골라주세요.
-		PRINTFORM %CALLNAME:캐릭터번호% 착용 중인 액세서리:
+		PRINTFORM %CALLNAME:キャラ番号% 착용 중인 액세서리:
 		FOR LOCAL, 206, 210
 			SIF TALENT:キャラ番号:LOCAL == 2
 				PRINTFORM %アクセサリ文字列:(LOCAL - 206)%　

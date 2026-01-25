@@ -749,7 +749,7 @@ FOR LOCAL, 1, CHARANUM
 		CFLAG:(TARGET:LOCAL):酔いすぎ = 1
 		PRINTL
 		IF 終了原因 == "目撃される"
-			SAVESTR:ゲームフェイズ管理 = 일반 모드
+			SAVESTR:ゲームフェイズ管理 = 通常モード
 		ELSE
 			PRINTFORM 술에 취해 쓰러진%CALLNAME:(TARGET:LOCAL)%의 몸을%TEXTR("무단으로/")%%TEXTR("마음껏/만족할 때까지/몰래")%%TEXTR("만끽하고/맛보고")%
 			IF TCVAR:(TARGET:LOCAL):膣内精液量

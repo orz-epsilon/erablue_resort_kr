@@ -1224,7 +1224,7 @@ ENDIF
 
 DAY算出 = TOINT(DT_CELL_GETS("写真データベース", ボタン記録, "撮影日時", 1)) / 10000
 TIME算出 = TOINT(DT_CELL_GETS("写真データベース", ボタン記録, "撮影日時", 1)) % 10000
-PRINTFORML 　　촬영 일시: {DAY算出 / 120 + 1}년째　%월 등록:((DAY算出 / 30) % 4)%　{DAY算出 % 30 + 1}일(%요일 등록:(DAY算出 % 7)%)　{TIME算出 / 60}시{TIME算出 % 60}분
+PRINTFORML 　　촬영 일시: {DAY算出 / 120 + 1}년째　%月登録:((DAY算出 / 30) % 4)%　{DAY算出 % 30 + 1}일(%曜日登録:(DAY算出 % 7)%)　{TIME算出 / 60}시{TIME算出 % 60}분
 PRINTFORML 　　촬영 장소: %DT_CELL_GETS("写真データベース", ボタン記録, "撮影場所名前", 1)%
 PRINTFORML 　　촬영 대상: %DT_CELL_GETS("写真データベース", ボタン記録, "撮影対象NAME", 1)%
 IF DT_CELL_GETS("写真データベース", ボタン記録, "写真添付メモ", 1) != ""

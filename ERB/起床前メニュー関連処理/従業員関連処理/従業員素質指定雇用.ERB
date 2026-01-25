@@ -1085,7 +1085,7 @@ SELECTCASE 表示モード
 			LOCALS:2 = 
 			IF INRANGE(LOCAL, ランダムキャラ素質:33-1, ランダムキャラ素質:33+1)
 				LOCALS += "<clearbutton>"
-LOCALS:2 = 실제 연령층에 가까운 외견 연령은 설정할 수 없습니다
+				LOCALS:2 = 실제 연령층에 가까운 외견 연령은 설정할 수 없습니다
 			ENDIF
 			LOCALS += @"<font color='#%LOCALS:1%'><button value='{12120 + LOCAL}' title='%LOCALS:2%'>[%GET_TALENTNAME(164, LOCAL)%]</button></font>"
 			SIF INRANGE(LOCAL, ランダムキャラ素質:33-1, ランダムキャラ素質:33+1)
@@ -1383,9 +1383,9 @@ LOCALS:2 = 실제 연령층에 가까운 외견 연령은 설정할 수 없습�
 					CASE 1
 						LOCALS:2 = 흥미
 					CASE 2
-LOCALS:2 = 애호
+						LOCALS:2 = 애호
 					CASE 3
-LOCALS:2 = 중독
+						LOCALS:2 = 중독
 				ENDSELECT
 				IF 性癖素質数値保存:COUNT == LOCAL:1
 					LOCALS:1 = C0C0C0
