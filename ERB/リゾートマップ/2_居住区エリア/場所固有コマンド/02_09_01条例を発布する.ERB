@@ -106,36 +106,36 @@ SELECTCASE 条例発布:0
 	CASE 2
 		HTML文字列 += "경제 중시의 상업 도시<br>"
 		HTML文字列 += "　　상점 등을 유치하여, 섬 내의 경제를 돌리는 것을 우선하는 방침.<br>"
-		HTML文字列 += "　　효과: 하루 종료 시의 리조트의 루피 수지가 플러스일 때,<br>"
+		HTML文字列 += "　　효과: 하루 종료 시의 리조트의 루피 수지가 플러스일 때,<br>　　　　　증가액을 1.2배로 한다.<br>"
 	CASE 3
-		HTML文字列 += "증가액을 1.2배로 한다.<br>"
 		HTML文字列 += "자급 중시의 농업 도시<br>"
 		HTML文字列 += "　　식량 증산을 유념하여, 섬 내의 자급률을 올리는 방침.<br>"
+		HTML文字列 += "　　효과: 메뉴 개발 시, 요리 랭크 +1. 「BBQ를 한다」 커맨드 강화.<br>"
 ENDSELECT
 HTML文字列 += "<br>"
 
 IF 条例発布:0 == 0
-		HTML文字列 += "　　효과: 메뉴 개발 시, 요리 랭크 +1. 「BBQ를 한다」 커맨드 강화.<br>"
+		HTML文字列 += @"<font color='#%カラーパレット_HTML("黄")%'>[200] 자율성에 맡긴다</font>"
 ELSE
-	HTML文字列 += @"<font color='#%カラーパレット_HTML("黄")%'>[200] 자율성에 맡긴다</font>"
+	HTML文字列 += "<button value='200'>[200] 자율성에 맡긴다</button>"
 ENDIF
 HTML文字列 += "<br>"
 IF 条例発布:0 == 1
-	HTML文字列 += "<button value='200'>[200] 자율성에 맡긴다</button>"
-ELSE
 	HTML文字列 += @"<font color='#%カラーパレット_HTML("黄")%'>[201] 보기 좋음 중시의 관광 도시</font>"
+ELSE
+	HTML文字列 += "<button value='201'>[201] 보기 좋음 중시의 관광 도시</button>"
 ENDIF
 HTML文字列 += "<br>"
 IF 条例発布:0 == 2
-	HTML文字列 += "<button value='201'>[201] 보기 좋음 중시의 관광 도시</button>"
-ELSE
 	HTML文字列 += @"<font color='#%カラーパレット_HTML("黄")%'>[202] 경제 중시의 상업 도시</font>"
+ELSE
+	HTML文字列 += "<button value='202'>[202] 경제 중시의 상업 도시</button>"
 ENDIF
 HTML文字列 += "<br>"
 IF 条例発布:0 == 3
-	HTML文字列 += "<button value='202'>[202] 경제 중시의 상업 도시</button>"
+	HTML文字列 +=  @"<font color='#%カラーパレット_HTML("黄")%'>[203] 자급 중시의 농업 도시</font>"
 ELSE
-	HTML文字列 += @"<font color='#%カラーパレット_HTML("黄")%'>[203] 자급 중시의 농업 도시</font>"
+	HTML文字列 += "<button value='203'>[203] 자급 중시의 농업 도시</button>"
 ENDIF
 HTML文字列 += "<br>"
 

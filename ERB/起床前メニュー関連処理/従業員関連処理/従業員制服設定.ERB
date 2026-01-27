@@ -1123,7 +1123,7 @@ ELSE
 		LOCAL = 1
 	ELSEIF 制服改造:改造対象:下半身下着あり == 2
 		SIF STRFIND(改造パターン名_下, "前張り_") < 0
-			改造パターン名_下 += "앞가리개_"
+			改造パターン名_下 += "前張り_"
 		LOCAL = 1
 	ELSEIF 制服改造:改造対象:下半身下着あり == 3
 		SIF STRFIND(改造パターン名_下, "ふんどし_") < 0
@@ -1182,20 +1182,20 @@ LOCALS '= "정장・긴 바지"
 
 IF パターン改造素質逆引き(GETNUM(制服改造, "リゾート従業員制服", 1), 改造パターン名_上, 改造パターン名_下, 改造パターン名_その他)
 	IF STRFIND(改造パターン名_上, "エロ改造：トップレス_") > -1
-		LOCALS = 토플리스・
+		LOCALS = トップレス・
 	ELSEIF STRFIND(改造パターン名_上, "谷間露出_") > -1 || STRFIND(改造パターン名_上, "横乳露出_") > -1
-		LOCALS = 흉부 노출・
+		LOCALS = 胸部露出・
 	ELSE
-		LOCALS = 정장・
+		LOCALS = スーツ・
 	ENDIF
 	IF STRFIND(改造パターン名_下, "エロ改造：ボトムレス_") > -1
-		LOCALS += "하의 없음"
+		LOCALS += "ボトムレス"
 	ELSEIF STRFIND(改造パターン名_下, "ミニスカ") > -1
-		LOCALS += "미니스커트"
+		LOCALS += "ミニスカ"
 	ELSEIF STRFIND(改造パターン名_下, "スカート") > -1
-		LOCALS += "스커트"
+		LOCALS += "スカート"
 	ELSE
-		LOCALS += "긴 바지"
+		LOCALS += "ロングパンツ"
 	ENDIF
 ENDIF
 RETURNF LOCALS

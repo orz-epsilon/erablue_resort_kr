@@ -77,30 +77,30 @@ ELSEIF GETBIT(FLAG:モード管理, モードビット_同時)
 		DRAWLINE
 		PRINTL ■속도·강도 초기값을 선택해주세요
 		PRINT 　　A 삽입 강도:
-		PRINTBUTTON "[-]"
+		PRINTBUTTON "[-]", 899
 		FOR LOCAL, 0, 6
 			IF 強さ初期値記録 >= LOCAL
-				PRINTBUTTON 899
+				PRINTBUTTON "■", 900 + LOCAL
 			ELSE
-				PRINTBUTTON "■"
+				PRINTBUTTON "□", 900 + LOCAL
 			ENDIF
 		NEXT
-		PRINTBUTTON 900 + LOCAL
-		PRINT 　　"□"
-		PRINT 900 + LOCAL
-		PRINTBUTTON "[+]"
+		PRINTBUTTON "[+]", 906
+		PRINT 　　
+		PRINT Ａ 삽입 속도：
+		PRINTBUTTON "[-]", 909
 		FOR LOCAL, 0, 6
 			IF 速さ初期値記録 >= LOCAL
-				PRINTBUTTON 906
+				PRINTBUTTON "■", 910 + LOCAL
 			ELSE
 				PRINTBUTTON "□", 910 + LOCAL
 			ENDIF
 		NEXT
-		PRINTBUTTON A 삽입 속도:
+		PRINTBUTTON "[+]", 916
 		PRINTL
 		PRINTL
 		IF PLAYER == MASTER
-			PRINT "[-]"
+			PRINT ■速さ・強さの自動最適化:
 			IF ABL:PLAYER:腰使い < 5
 				HTML_PRINT @"<font color='#%カラーパレット_HTML("グレーアウト")%'>[OFF] (腰使いLv5が必要)</font>",1
 			ELSEIF あなた挿入最適化フラグ
@@ -110,8 +110,8 @@ ELSEIF GETBIT(FLAG:モード管理, モードビット_同時)
 			ENDIF
 			PRINTL
 		ENDIF
-		PRINTBUTTONLC 909
-		PRINTBUTTONLC "■"
+		PRINTBUTTONLC "[998]決定", 998
+		PRINTBUTTONLC "[999]戻る", 999
 
 		BINPUT
 
@@ -176,7 +176,7 @@ ELSE
 	ENDIF
 	$体位_LOOP
 	DRAWLINE
-	PRINTL 910 + LOCAL
+	PRINTL ■체위를 선택해주세요
 	PRINTL
 	LOCAL:1 = 0
 	FOR LOCAL, 0, 20
@@ -220,14 +220,14 @@ ELSE
 		ENDCATCH
 	NEXT
 	IF !LOCAL:1
-		PRINTW 910 + LOCAL
+		PRINTW 현재 선택할 수있는 위치가 없으므로 취소합니다.
 		RETURN -1
 	ENDIF
 
 	PRINTL
 	PRINTL
 	PRINTL ■속도・강도의 초기치를 선택해 주세요
-	PRINT 　　Ａ삽입 강도
+	PRINT 　　Ａ삽입 강도:
 	PRINTBUTTON "[-]", 899
 	FOR LOCAL, 0, 6
 		IF 強さ初期値記録 >= LOCAL
