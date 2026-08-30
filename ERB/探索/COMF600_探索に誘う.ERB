@@ -3,7 +3,7 @@
 ;-------------------------------------------------
 @COMNAME600
 #FUNCTIONS
-TSTR:コマンド名受渡 = 탐색에 초대하다
+TSTR:コマンド名受渡 = 탐색에 권유
 
 ;===================================================
 ;コマンドタイプ
@@ -29,7 +29,7 @@ ENDIF
 ; 	RETURN
 ; ENDIF
 
-; ;現状は無条件で勧誘可能
+; ;현재は無条件で勧誘可能
 FOR ループ用, 0, 4
 	IF !BATTLE_STATE:ループ用:キャラ登録番号
 		BATTLE_STATE:ループ用:キャラ登録番号 = TARGET
@@ -77,10 +77,10 @@ RETURN 1
 #DIM ループ用
 
 IF RFLAG:コマンド結果受渡し変数
-	PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%을(를) 탐색에 초대했지만, 거절당하고 말았다……
+	PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%을(를) 탐색에 권유했지만, 거절당하고 말았다……
 ELSE
-	PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%을(를) 탐색에 초대했다.
-	PRINTFORML %CALLNAME:TARGET%은(는) 흔쾌히 받아들여 주었다.
+	PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%을(를) 탐색에 권유했다.
+	PRINTFORML %CALLNAME:TARGET%은(는) 흔쾌히 수락해 주었다.
 ENDIF
 
 

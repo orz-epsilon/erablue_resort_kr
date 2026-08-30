@@ -68,7 +68,7 @@ VARSET EXP一時保存:0, -1
 VARSET LOCAL
 ランダムキャラ素質:0 = 1
 ランダムキャラ素質:1 = 1
-好物一時保存 = %好物一覧:(RAND(VARSIZE("好物一覧")))%_
+好物一時保存 = %ランダムプレゼント好み(0)%_
 服装数値保存:30 = !RAND:3 + !RAND:3 + !RAND:3
 ;ビキニ　8/27 ワンピース 12/27 ボーイレッグ 6/27 プランジングネック 1/27
 ランダムキャラ招待不可フラグ = 3
@@ -132,12 +132,12 @@ $従業員_LOOP
 DRAWLINE
 IF CSVエディタフラグ
 	PRINTL 소질 등을 지정하여 CSV 파일을 생성합니다.
-	PRINTL 생성된 CSV 파일은 'CSV_EDITFILE' 폴더 안에 있으므로, 사용 시에는 CSV 폴더로 이동시켜 주십시오.
+	PRINTL 생성된 CSV 파일은 「CSV_EDITFILE」 폴더 안에 있으니, 사용 시에는 CSV 폴더로 이동시켜 주세요.
 	DRAWLINE
 	LOCALS = 
 	IF !登録番号
 		;空き番号取得
-		FOR LOCAL, 3000, キャラクタ数上限
+		FOR LOCAL, 4000, キャラクタ数上限
 			IF EXISTCSV(LOCAL) == 0
 				登録番号 = LOCAL
 				BREAK
@@ -145,12 +145,12 @@ IF CSVエディタフラグ
 		NEXT
 	ENDIF
 ELSE
-	PRINTL 직원의 소질을 완전히 지정하여 고용합니다.
-	PRINTPLAIN 지정한 소질의 수에 따라 필요 루피가 상승하므로 주의하십시오.
+	PRINTL 종업원의 소질을 완전히 지정하여 고용합니다.
+	PRINTPLAIN 지정한 소질의 수에 따라 필요 루피가 상승하니 주의해 주세요.
 	PRINTL
 	DRAWLINE
 	LOCALS = <div rect='81,0,1937,344' border='31' bcolor='#C0C0C0'></div>
-	LOCALS += @"<div rect='156,62,1912,281'>소지 루피：%NUM_FORMAT(MONEY)%<br>소지 ZP　：%ZP所持量全文字列()%</div>"
+	LOCALS += @"<div rect='156,62,1912,281'>보유 루피:%NUM_FORMAT(MONEY)%<br>보유 ZP　:%ZP所持量全文字列()%</div>"
 
 
 	LOCALS += "<div rect='2050,0,3875,344' border='31' bcolor='#C0C0C0'></div>"
@@ -219,28 +219,28 @@ ELSE
 	NEXT
 
 
-	LOCALS += @"현재 필요 루피：%NUM_FORMAT(必要ルピ), 12%루피<br>"
+	LOCALS += @"현재 필요 루피:%NUM_FORMAT(必要ルピ), 12%루피<br>"
 	部屋使用数 = 0
 	FOR LOCAL, 0, 従業員部屋数
 		IF 従業員部屋割り配列:LOCAL != 0
 			部屋使用数 ++
 		ENDIF
 	NEXT
-	LOCALS += @"현재 직원 방 사용 수 / 방 수：{部屋使用数}실 / {従業員部屋数}실"
+	LOCALS += @"현재 종업원 방 사용 수 / 방 수:{部屋使用数}실 / {従業員部屋数}실"
 	LOCALS += "</div>"
 ENDIF
 
 LOCALS += "<div rect='81,375,1937,3312' border='31' bcolor='#C0C0C0'></div><div rect='2050,375,3875,3312' border='31' bcolor='#C0C0C0'></div>"
 LOCALS += "<div rect='156,500,1937,3312'>"
 LOCAL = 99 + !CSVエディタフラグ
-LOCALS += @"<button value='{LOCAL}'>[{LOCAL, 3, RIGHT}] \@ CSVエディタフラグ? 개성# 이름\@을 설정한다</button>"
+LOCALS += @"<button value='{LOCAL}'>[{LOCAL, 3, RIGHT}] \@ CSVエディタフラグ? 개성# 이름\@을(를) 설정한다</button>"
 LOCALS += "<br>"
 IF CSVエディタフラグ && GETBIT(表示モード:1, 0)
 	LOCALS += "<button value='107'>├[107] CSV 번호를 설정한다</button>"
 	LOCALS += "<br>"
 	LOCALS += "<button value='100'>├[100] 이름을 설정한다</button>"
 	LOCALS += "<br>"
-	LOCALS += "<button value='101'>├[101] 별명을 설정한다</button>"
+	LOCALS += "<button value='101'>├[101] 이명을 설정한다</button>"
 	LOCALS += "<br>"
 	LOCALS += "<button value='102'>├[102] 호칭을 설정한다</button>"
 	LOCALS += "<br>"
@@ -259,7 +259,7 @@ IF CSVエディタフラグ && GETBIT(表示モード:1, 0)
 	LOCALS += "<button value='111'>└[111] 초기 관계성을 설정한다</button>"
 	LOCALS += "<br>"
 ELSEIF CSVエディタフラグ
-	LOCALS += "<button value='99'><font color='#808080'>└ 전개한다</font></button>"
+	LOCALS += "<button value='99'><font color='#808080'>└ 펼치기</font></button>"
 	LOCALS += "<br>"
 ELSE
 	LOCALS += "<button value='102'>├[102] 호칭을 설정한다</button>"
@@ -286,7 +286,7 @@ IF CSVエディタフラグ && GETBIT(表示モード:1, 1)
 	LOCALS += "<button value='134'>└[134] 고유 소질을 설정한다</button>"
 	LOCALS += "<br>"
 ELSEIF CSVエディタフラグ
-	LOCALS += "<button value='131'><font color='#808080'>└ 전개한다</font></button>"
+	LOCALS += "<button value='131'><font color='#808080'>└ 펼치기</font></button>
 	LOCALS += "<br>"
 ELSEIF CSVエディタフラグ == 0
 	LOCALS += "<button value='132'>[132] 지식 소질을 설정한다</button>"
@@ -310,7 +310,7 @@ ELSE
 	ENDIF
 ENDIF
 LOCALS += "<br>"
-LOCALS += "<button value='200'>[200] 이것으로 결정한다</button>"
+LOCALS += "<button value='200'>[200] 이대로 결정한다</button>"
 LOCALS += "<br>"
 IF CSVエディタフラグ
 	LOCALS += "<button value='997'>[997] 코멘트/해설 에디터를 기동한다</button>"
@@ -318,15 +318,15 @@ IF CSVエディタフラグ
 	LOCALS += "<button value='998'>[998] 기존 캐릭터를 복사한다</button>"
 	LOCALS += "<br>"
 ENDIF
-LOCALS += "<button value='999'>[999] 돌아간다</button>"
+LOCALS += "<button value='999'>[999] 돌아가기</button>"
 LOCALS += "</div>"
 
 LOCALS += "<div rect='2125,500,3675,3312'>"
 
 IF GROUPMATCH(表示モード, 0, 1, 2)
-	;現状の設定表示
+	;현재の設定表示
 	IF CSVエディタフラグ
-		LOCALS += @"<font color='#%見出し文字色%'>■</font><button value='107'>번호.{登録番号, 4, LEFT}</button>　"
+		LOCALS += @"<font color='#%見出し文字色%'>■</font><button value='107'>No.{登録番号, 4, LEFT}</button>　"
 	ENDIF
 	IF ランダムキャラネーム != ""
 		IF CSVエディタフラグ
@@ -338,9 +338,9 @@ IF GROUPMATCH(表示モード, 0, 1, 2)
 	ELSE
 		IF CSVエディタフラグ
 			LOCALS += @"<button value='101'>[%ランダムキャラ二つ名%]</button>"
-			LOCALS += @"<button value='100'>(랜덤 결정)　　　"
+			LOCALS += @"<button value='100'>（랜덤 결정）　　　"
 		ELSE
-			LOCALS += @"[종업원]<button value='100'>(랜덤 결정)　　　"
+			LOCALS += @"[종업원]<button value='100'>（랜덤 결정）　　　"
 		ENDIF
 	ENDIF
 	LOCALS += @"</button>"
@@ -355,15 +355,15 @@ IF GROUPMATCH(表示モード, 0, 1, 2)
 		LOCALS += @"</button>"
 ;	ENDIF
 	IF CSVエディタフラグ
-		LOCALS += @"<br>　<button value='108'><font color='#%見出し文字色%'>1인칭:</font>%ランダムキャラ人称:0, 24, LEFT%</button>"
-		LOCALS += @"　<button value='109'><font color='#%見出し文字色%'>2인칭:</font>%ランダムキャラ人称:1, 24, LEFT%</button>"
+		LOCALS += @"<br>　<button value='108'><font color='#%見出し文字色%'>1인칭：</font>%ランダムキャラ人称:0, 24, LEFT%</button>"
+		LOCALS += @"　<button value='109'><font color='#%見出し文字色%'>2인칭：</font>%ランダムキャラ人称:1, 24, LEFT%</button>"
 	ENDIF
 	LOCALS:1 = %属性数値文字色変換_HTML(ランダムキャラ戦闘タイプ:0)%
-	LOCALS += @"<br>　<font color='#%LOCALS:1%'>속성:%属性数値文字列変換(ランダムキャラ戦闘タイプ:0)%</font>"
-	LOCALS += @"　<font color='#%見出し文字色%'>타입:</font>%成長タイプ:(ランダムキャラ戦闘タイプ:2), 10, LEFT%　"
-	LOCALS += @"　<font color='#%見出し文字色%'>특기 무기:</font>%得意武器表示文字列(ランダムキャラ戦闘タイプ:1)%"
+	LOCALS += @"<br>　<font color='#%LOCALS:1%'>속성：%属性数値文字列変換(ランダムキャラ戦闘タイプ:0)%</font>"
+	LOCALS += @"　<font color='#%見出し文字色%'>타입：</font>%成長タイプ:(ランダムキャラ戦闘タイプ:2), 10, LEFT%　"
+	LOCALS += @"　<font color='#%見出し文字色%'>특기 무기：</font>%得意武器表示文字列(ランダムキャラ戦闘タイプ:1)%"
 	IF ランダムキャラ出演作品 != ""
-		LOCALS += @"<br>　<button value='103'><font color='#%見出し文字色%'>출연 작품:</font>%ランダムキャラ出演作品%</button>"
+		LOCALS += @"<br>　<button value='103'><font color='#%見出し文字色%'>출연 작품：</font>%ランダムキャラ出演作品%</button>"
 	ENDIF
 	IF CSVエディタフラグ
 		SELECTCASE ランダムキャラ招待不可フラグ
@@ -372,27 +372,27 @@ IF GROUPMATCH(表示モード, 0, 1, 2)
 			CASE 1
 				LOCALS:1 = 초기부터, ZP 상점의 「특별한 캐릭터를 초대 후보에 추가」 목록에 탑재된다
 			CASE 2
-				LOCALS:1 = ZP 상점에 탑재되지 않으며, 초대 대상도 되지 않는다. 이벤트에 의한 해금용
+				LOCALS:1 = ZP 상점에 탑재되지 않으며, 초대 대상도 되지 않는다. 이벤트로 해금용
 			CASE 3
-				LOCALS:1 = 이벤트 「「평행 세계」라는 장소」를 클리어함으로써 해금되며, <br>ZP 상점의 「특별한 캐릭터를 초대 후보에 추가」 목록에 탑재된다
+				LOCALS:1 = 이벤트 「「평행세계」라는 장소」를 클리어함으로써 해금되며, <br>ZP 상점의 「특별한 캐릭터를 초대 후보에 추가」 목록에 탑재된다
 		ENDSELECT
-		LOCALS += @"<br>　<button value='106' title='%LOCALS:1%'><font color='#%見出し文字色%'>초대 불가 플래그:</font>{ランダムキャラ招待不可フラグ}</button>"
+		LOCALS += @"<br>　<button value='106' title='%LOCALS:1%'><font color='#%見出し文字色%'>초대 불가 플래그：</font>{ランダムキャラ招待不可フラグ}</button>"
 	ENDIF
 	LOCALS += "<br><br>"
 ENDIF
 
 SELECTCASE 表示モード
 	CASE 0
-		;現状の設定表示
+		;현재の設定表示
 		LOCALS += @"<button value='1010'>□ \@ GETBIT(表示モード:1, 10)? |▶ # ▽\@ 정보　 □ --------------------------------------------------------</button><br>"
 		IF !GETBIT(表示モード:1, 10)
 			LOCALS:1 '= @"　<font color='#%見出し文字色%'>종족:</font>"
 			LOCALS:2 = 
 			SELECTCASE ランダムキャラ素質:0
 				CASE 1
-					LOCALS:1 += "인간"
+					LOCALS:1 += "휴먼"
 				CASE 2
-					LOCALS:1 += "에룬"
+					LOCALS:1 += "엘룬"
 				CASE 3
 					LOCALS:1 += "드라프"
 				CASE 4
@@ -411,13 +411,13 @@ SELECTCASE 表示モード
 				IF 肉体特徴数値保存:LOCAL
 					SELECTCASE LOCAL
 						CASE 0
-							LOCALS:2 '= " (뿔 있음)"
+							LOCALS:2 '= "（뿔 있음）"
 						CASE 1
-							LOCALS:2 '= " (꼬리 있음)"
+							LOCALS:2 '= "（꼬리 있음）"
 						CASE 2
-							LOCALS:2 '= " (에룬 귀)"
+							LOCALS:2 '= "（엘룬 귀）"
 						CASE 3
-							LOCALS:2 '= " (하빈 귀)"
+							LOCALS:2 '= "（하빈 귀）"
 					ENDSELECT
 				ELSE
 					LOCALS:2 '= ""
@@ -457,56 +457,56 @@ SELECTCASE 表示モード
 			LOCALS += @"　<font color='#%見出し文字色%'>성지식 레벨：</font>"
 			SELECTCASE ランダムキャラ素質:6
 				CASE -2
-					LOCALS += "무지"
+LOCALS += "무지"
 				CASE -1
-					LOCALS += "짐승 수준"
+LOCALS += "짐승 수준"
 				CASE 0
-					LOCALS += "서투름"
+LOCALS += "서투름"
 				CASE 1
-					LOCALS += "필요충분"
+LOCALS += "필요충분"
 				CASE 2
-					LOCALS += "유식자"
+LOCALS += "유식자"
 				CASE 3
-					LOCALS += "백전연마"
+LOCALS += "백전연마"
 			ENDSELECT
-			LOCALS += @"<br>　<font color='#%見出し文字色%'>성별：</font>"
+LOCALS += @"<br>　<font color='#%見出し文字色%'>성별:</font>"
 			SELECTCASE ランダムキャラ素質:1
 				CASE 1
-					LOCALS:1 = 여성
+LOCALS:1 = 여성
 				CASE 2
-					LOCALS:1 = 남성
+LOCALS:1 = 남성
 				CASE 3
-					LOCALS:1 = 후타나리
+LOCALS:1 = 후타나리
 			ENDSELECT
-			LOCALS:1 += \@ GETBIT(ランダムキャラ素質:1, 0) && !GETBIT(ランダムキャラ素質:2, 0) ? (처녀) # \@
-			LOCALS:1 += \@ GETBIT(ランダムキャラ素質:1, 1) && !GETBIT(ランダムキャラ素質:2, 1) ? (동정) # \@
-			LOCALS:1 += \@ Ａ処女保存 ? # (Ａ처녀)\@
+LOCALS:1 += \@ GETBIT(ランダムキャラ素質:1, 0) && !GETBIT(ランダムキャラ素質:2, 0) ? （처녀） # \@
+LOCALS:1 += \@ GETBIT(ランダムキャラ素質:1, 1) && !GETBIT(ランダムキャラ素質:2, 1) ? （동정） # \@
+LOCALS:1 += \@ Ａ処女保存 ? # （A처녀）\@
 			LOCALS:1 = %REPLACE(LOCALS:1, "）（", "／"), 30, LEFT%
 			LOCALS += LOCALS:1
 			IF GETBIT(ランダムキャラ素質:1, 1)
-				LOCALS += @"　　<font color='#%見出し文字色%'>남성기 사이즈:</font>"
+LOCALS += @"　　<font color='#%見出し文字色%'>남성기 사이즈：</font>"
 				LOCALS += @"%GET_TALENTNAME(162,ランダムキャラ素質:32)%"
 			ENDIF
 			LOCALS += "<br>"
 			IF !身長数値設定フラグ
-				LOCALS += @"　<font color='#%見出し文字色%'>체격:</font>"
+LOCALS += @"　<font color='#%見出し文字色%'>체격：</font>"
 				LOCALS += @"%GET_TALENTNAME(161,ランダムキャラ素質:31), 12, LEFT%"
 			ELSE
-				LOCALS += @"　<font color='#%見出し文字色%'>신장:</font>%DECIMAL_STRING(身長保存, 1) + "cm", 12, LEFT%"
+				LOCALS += @"　<font color='#%見出し文字色%'>키:</font>%DECIMAL_STRING(身長保存, 1) + "cm", 12, LEFT%"
 			ENDIF
 			IF !GETBIT(ランダムキャラ素質:1, 0)
-				LOCALS += @"　<font color='#%見出し文字色%'>체형:</font>"
+				LOCALS += @"　<font color='#%見出し文字色%'>체형：</font>"
 				LOCALS += @"%GET_TALENTNAME(163,体型保存), 12, LEFT%"
 			ELSE
 				LOCALS += "　" * 10
 			ENDIF
 			IF !GETBIT(ランダムキャラ素質:1, 0) || (!ウエスト数値設定フラグ && ヒップ数値設定フラグ)
-				LOCALS += @"　　　　<font color='#%見出し文字色%'>하반신:</font>"
+				LOCALS += @"　　　　<font color='#%見出し文字色%'>하반신：</font>"
 				LOCALS += @"%GET_TALENTNAME(210,下半身保存)%"
 			ENDIF
 			IF GETBIT(ランダムキャラ素質:1, 0)
 				LOCALS += "<br>"
-				LOCALS += @"　<font color='#%見出し文字色%'>가슴:</font>"
+				LOCALS += @"　<font color='#%見出し文字色%'>가슴둘레:</font>"
 				IF バスト数値設定フラグ
 					LOCALS:1 '= @"%DECIMAL_STRING(バスト保存, 1)%cm"
 					LOCALS:1 += @"%EDIT用バストサイズ表示(バスト保存, EDIT用アンダーバスト算出(ランダムキャラ素質:1, ランダムキャラ素質:0, 身長保存, ランダムキャラ素質:31, 体型保存))%"
@@ -517,21 +517,21 @@ SELECTCASE 表示モード
 				IF ウエスト数値設定フラグ
 					LOCALS:1 '= @"　<font color='#%見出し文字色%'>허리:</font>" + DECIMAL_STRING(ウエスト保存, 1) + "cm"
 				ELSE
-					LOCALS:1 '= @"　<font color='#%見出し文字色%'>체형:</font>" + GET_TALENTNAME(163,体型保存)
+					LOCALS:1 '= @"　<font color='#%見出し文字色%'>체형：</font>" + GET_TALENTNAME(163,体型保存)
 				ENDIF
 				LOCALS += LOCALS:1 + " " * (20 - MIN(20-1, STRLENS(HTML_TOPLAINTEXT(LOCALS:1))))
 				IF ヒップ数値設定フラグ
 					LOCALS += @"　<font color='#%見出し文字色%'>엉덩이:</font>"
 					LOCALS += @"%DECIMAL_STRING(ヒップ保存, 1)%cm"
 				ELSE
-					LOCALS += @"　<font color='#%見出し文字色%'>하반신:</font>"
+					LOCALS += @"　<font color='#%見出し文字色%'>하반신：</font>"
 					LOCALS += @"%GET_TALENTNAME(210,下半身保存)%"
 				ENDIF
 			ENDIF
 			IF CSVエディタフラグ == 0
-				LOCALS += @"<br>　　　<font color='#%見出し文字色%'>용모:</font>"
+				LOCALS += @"<br>　　　<font color='#%見出し文字色%'>용모：</font>"
 				IF ランダムキャラ素質:30 == 0
-					LOCALS += "모브 얼굴　　　"
+					LOCALS += "일반얼굴　　　"
 				ELSE
 					LOCALS += @"%GET_TALENTNAME(160,ランダムキャラ素質:30), 12, LEFT%"
 				ENDIF
@@ -619,7 +619,7 @@ SELECTCASE 表示モード
 			ENDIF
 		ENDIF
 	CASE 1
-		;現状の設定表示（能力素質）
+		;현재の設定表示（能力素質）
 		LOCALS += @"<button value='1013'>□ \@ GETBIT(表示モード:1, 13)? |▶ # ▽\@ 오의　 □ --------------------------------------------------------</button><br>"
 		IF !GETBIT(表示モード:1, 13)
 			LOCAL = 0
@@ -629,7 +629,7 @@ SELECTCASE 表示モード
 						LOCALS += "<br>"
 					LOCALS += @"　\@ LOCAL == 0? 통상# 함락\@시 오의명："
 					IF ランダムキャラ奥義名:((LOCAL/3)*3) == "" && ランダムキャラ奥義名:0 == ""
-						LOCALS += @"<font color='#888888'>（범용\@ LOCAL == 0? # 함락 시\@오의）</font>"
+						LOCALS += @"<font color='#888888'>（범용\@ LOCAL == 0? # 함락시\@오의）</font>"
 						LOCAL += 3
 						CONTINUE
 					ENDIF
@@ -648,7 +648,7 @@ SELECTCASE 表示モード
 						LOCALS += @"%ランダムキャラ奥義名:0 + UNICODE(0x2665) * (LOCAL%3)%"
 					ELSE
 						;ここにはこないはず
-						LOCALS += @"분기식이 이상해"
+						LOCALS += @"분기식 이상해"
 					ENDIF
 					LOCALS += @"</font>"
 				ENDIF
@@ -710,7 +710,7 @@ SELECTCASE 表示モード
 			NEXT
 		ENDIF
 	CASE 2
-		;現状の設定表示（服装）
+		;현재の設定表示（服装）
 		LOCALS += "□ 복장 □---------------------------------------------------------------<br>"
 		LOCALS += @"　명칭：%ランダムキャラ服装名%<br>"
 		LOCAL = 0
@@ -744,16 +744,16 @@ SELECTCASE 表示モード
 				LOCALS += "（배꼽 노출）"
 			ENDIF
 			IF 服装数値保存:5
-				LOCALS += "（벌리기 가능）"
+				LOCALS += "（벌릴 수 있음）"
 			ENDIF
 			IF 服装数値保存:6
 				LOCALS += "（삽입 가능）"
 			ENDIF
 			IF 服装数値保存:7
-				LOCALS += "(옷 입은 채 파이즈리 가능)"
+				LOCALS += "（착의 파이즈리 가능）"
 			ENDIF
-			IF 服装数値保存:9
-				LOCALS += "(브래지어 빼내기 가능)"
+			IF 服装数値保存:10
+				LOCALS += "（브라 제거 가능）"
 			ENDIF
 			LOCALS += "]"
 			LOCALS += "<br>"
@@ -761,13 +761,13 @@ SELECTCASE 表示モード
 
 		;下半身服
 		IF 服装数値保存:13
-			LOCALS += "　　[하반신 의류"
+			LOCALS += "　　[하반신 옷"
 			SIF 服装数値保存:14
-				LOCALS += "(걷어 올리기 가능)"
+				LOCALS += "（걷어 올릴 수 있음）"
 			SIF 服装数値保存:15
-				LOCALS += "(내리기 가능)"
+				LOCALS += "（젖히기 가능）"
 			SIF 服装数値保存:18
-				LOCALS += "(속옷 빼내기 가능)"
+				LOCALS += "（속옷 빼내기 가능）"
 			LOCALS += "]"
 			LOCALS += "<br>"
 		ENDIF
@@ -775,19 +775,19 @@ SELECTCASE 表示モード
 		IF 服装数値保存:20
 			LOCALS += "　　[상하 타이츠"
 			SIF 服装数値保存:21 || 服装数値保存:22
-				LOCALS += "(찢어짐)"
+				LOCALS += "（찢어짐）"
 			LOCALS += "]"
 			LOCALS += "<br>"
 		ELSEIF 服装数値保存:8
 			LOCALS += "　　[이너"
 			SIF 服装数値保存:21
-				LOCALS += "(찢어짐)"
+				LOCALS += "（찢어짐）"
 			LOCALS += "]"
 			LOCALS += "<br>"
 		ELSEIF 服装数値保存:16
 			LOCALS += "　　[타이츠"
 			SIF 服装数値保存:22
-				LOCALS += "(찢어짐)"
+				LOCALS += "（찢어짐）"
 			LOCALS += "]"
 			LOCALS += "<br>"
 		ENDIF
@@ -798,13 +798,13 @@ SELECTCASE 表示モード
 		SIF 服装数値保存:9 == 1
 			LOCALS += "[브라 착용]"
 		SIF 服装数値保存:9 == 2
-			LOCALS += "[니플 패치]"
+			LOCALS += "[니플레스]"
 		SIF 服装数値保存:9 == 3
-			LOCALS += "[가슴 가리개]"
+			LOCALS += "[사라시]"
 		SIF 服装数値保存:9 == 4
 			LOCALS += "[리본]"
 		SIF 服装数値保存:9 == 5
-			LOCALS += "[오픈 컵 브라]"
+			LOCALS += "[오픈컵 브라]"
 		SIF 服装数値保存:9 == 6
 			LOCALS += "[니플 피어싱]"
 		SIF 服装数値保存:9 == 7
@@ -829,7 +829,7 @@ SELECTCASE 表示モード
 		LOCALS += "<br>"
 
 		LOCALS += "<br>"
-		LOCALS += @"　수영복：%水着一覧:(服装数値保存:30)%"
+		LOCALS += @"　수영복: %水着一覧:(服装数値保存:30)%"
 		LOCALS += "<br>"
 	CASE 3
 		LOCALS += "■동행 후보 캐릭터의 상한은 100명입니다"
@@ -910,7 +910,7 @@ SELECTCASE 表示モード
 			LOCALS += @"<font color='#%LOCALS:1%'><button value='{11010 + LOCAL}'>[%得意武器数値文字列変換(LOCAL)%]</button></font>"
 		NEXT
 		LOCALS += "<br>"
-		LOCALS += "타입:"
+		LOCALS += "타입："
 		FOR LOCAL, 0, 8
 			IF ランダムキャラ戦闘タイプ:2 == LOCAL
 				LOCALS:1 = C0C0C0
@@ -923,9 +923,9 @@ SELECTCASE 表示モード
 		LOCAL = 0
 		DO
 			IF LOCAL % 3 == 0
-				LOCALS += @"<br>\@ LOCAL == 0? 통상# 함락\@시 오의명:"
+				LOCALS += @"<br>\@ LOCAL == 0? 통상# 함락\@시 오의명："
 				IF ランダムキャラ奥義名:((LOCAL/3)*3) == "" && ランダムキャラ奥義名:0 == ""
-					LOCALS += @"<font color='#888888'><button value='{11040 + LOCAL}'>（범용\@ LOCAL == 0? # 함락 시\@오의）</button></font>"
+					LOCALS += @"<font color='#888888'><button value='{11040 + LOCAL}'>（범용\@ LOCAL == 0? # 함락시\@ 오의）</button></font>"
 					LOCAL += 3
 					CONTINUE
 				ENDIF
@@ -945,7 +945,7 @@ SELECTCASE 表示モード
 					LOCALS += @"%ランダムキャラ奥義名:0 + UNICODE(0x2665) * (LOCAL%3)%"
 				ELSE
 					;ここにはこないはず
-					LOCALS += @"분기식이 이상해"
+					LOCALS += @"분기식 이상해"
 				ENDIF
 				LOCALS += @"</font>"
 			ENDIF
@@ -954,7 +954,7 @@ SELECTCASE 表示モード
 		LOOP LOCAL < 6
 		LOCALS += "<br>"
 		LOCALS += "<br>"
-		LOCALS += "<button value='11100'>[스테이터스 화면으로 돌아가기]</button>"
+		LOCALS += "<button value='11100'>[상태 화면으로 돌아가기]</button>"
 	CASE 120
 		;- 肉体情報
 		; 種族
@@ -976,13 +976,13 @@ SELECTCASE 表示モード
 			LOCALS += "<br>"
 		ENDIF
 		; 身体特徴
-		LOCALS += @"<font color='#%見出し文字色%'>뿔:</font>"
+		LOCALS += @"<font color='#%見出し文字色%'>뿔：</font>"
 		IF 肉体特徴数値保存:0
 			LOCALS += @"<font color='#%LOCALS:3%'><button value='{12070}'>[있음]</button></font>"
 		ELSE
 			LOCALS += @"<font color='#%LOCALS:2%'><button value='{12070}'>[없음]</button></font>"
 		ENDIF
-		LOCALS += @"　<font color='#%見出し文字色%'>꼬리:</font>"
+		LOCALS += @"　<font color='#%見出し文字色%'>꼬리：</font>"
 		IF 肉体特徴数値保存:1
 			LOCALS += @"<font color='#%LOCALS:3%'><button value='{12071}'>[있음]</button></font>"
 		ELSE
@@ -1002,7 +1002,7 @@ SELECTCASE 表示モード
 		ENDIF
 		LOCALS += "<br>"
 
-		LOCALS += @"<font color='#%見出し文字色%'>성별：</font>"
+		LOCALS += @"<font color='#%見出し文字色%'>성별:</font>"
 		LOCALS += @"<font color='#\@ ランダムキャラ素質:1 == 1? %LOCALS:3%# %LOCALS:2%\@'><button value='{12007}'>[여성]</button></font>"
 		LOCALS += @"<font color='#\@ ランダムキャラ素質:1 == 2? %LOCALS:3%# %LOCALS:2%\@'><button value='{12008}'>[남성]</button></font>"
 		LOCALS += @"<font color='#\@ ランダムキャラ素質:1 == 3? %LOCALS:3%# %LOCALS:2%\@'><button value='{12009}'>[후타나리]</button></font>"
@@ -1022,7 +1022,7 @@ SELECTCASE 表示モード
 		LOCALS += @"<font color='#%LOCALS:(3-LOCAL)%'><button value='{12014}'>[A처녀]</button></font>"
 		LOCALS += @"<font color='#%LOCALS:(2+LOCAL)%'><button value='{12015}'>[비A처녀]</button></font>"
 		LOCALS += "<br>"
-		LOCALS += @"<font color='#%見出し文字色%'>성지식 레벨:</font>"
+		LOCALS += @"<font color='#%見出し文字色%'>성지식 레벨：</font>"
 		FOR LOCAL, -2, 4
 			IF ランダムキャラ素質:6 == LOCAL
 				LOCALS:1 = C0C0C0
@@ -1034,17 +1034,17 @@ SELECTCASE 表示モード
 		LOCALS += "<br>"
 		LOCALS += "<br>"
 		IF 年齢数値設定フラグ
-			LOCALS += @"<font color='#%見出し文字色%'>실제 나이:</font>"
+			LOCALS += @"<font color='#%見出し文字色%'>실나이:</font>"
 			LOCALS += @"<button value='{12097}'>[{年齢保存}세]</button>"
 			LOCALS += @"　　　<button value='{12098}'>[대략적으로 설정한다]</button>"
 			LOCALS += @"　　　<button value='{12139}'>[리롤]</button>"
 		ELSE
-			LOCALS += @"<font color='#%見出し文字色%'>연령층:</font>"
+			LOCALS += @"<font color='#%見出し文字色%'>나이층：</font>"
 			LOCALS += @"%GET_TALENTNAME(164, ランダムキャラ素質:33)%"
-			LOCALS += @"　　　<button value='{12098}'>[실제 나이로 설정한다]</button>"
+			LOCALS += @"　　　<button value='{12098}'>[실나이로 설정한다]</button>"
 		ENDIF
 		LOCALS += "<br>"
-		LOCALS += @"<font color='#%見出し文字色%'>연령층:</font>"
+		LOCALS += @"<font color='#%見出し文字色%'>나이층：</font>"
 		FOR LOCAL, 年齢層_最小, 年齢層_最大 + 1
 			SIF LOCAL != 年齢層_不詳 && !INRANGE(LOCAL, 年齢層_幼い, 年齢層_人外)
 				CONTINUE
@@ -1061,19 +1061,19 @@ SELECTCASE 表示モード
 				CASE 年齢層_幼い TO 年齢層_老年
 					LOCALS:2 '= @"종족 관계없이, 실제 나이로{年齢ボーダー:(LOCAL-1)}～{年齢ボーダー:LOCAL-1}세 정도"
 				CASE 年齢層_人外
-					LOCALS:2 '= @"종족 관계없이, 실제 나이로{年齢ボーダー:(LOCAL-1)}세 이상"
+					LOCALS:2 '= @"종족 관계없이, 실제 나이로 {年齢ボーダー:(LOCAL-1)}세 이상"
 				CASEELSE
 					LOCALS:2 = 
 			ENDSELECT
-			LOCALS += @"<font color='#%LOCALS:1%'><button value='{12100 + LOCAL}' title='%LOCALS:2%'>[\@ LOCAL == 年齢層_不詳? 나이# \@%GET_TALENTNAME(164, LOCAL)%]</button></font>"
+			LOCALS += @"<font color='#%LOCALS:1%'><button value='{12100 + LOCAL}' title='%LOCALS:2%'>[\@ LOCAL == 나이層_不詳? 나이# \@%GET_TALENTNAME(164, LOCAL)%]</button></font>"
 		NEXT
 		LOCALS += "<br>"
 		;外見年齢が年齢層区分±1の場合、外見年齢を0（＝年相応）にする
 		SIF INRANGE(ランダムキャラ素質:34, ランダムキャラ素質:33-1, ランダムキャラ素質:33+1)
 			ランダムキャラ素質:34 = 0
-		LOCALS:2 = 단순한 동안이나 노안 수준이 아니라, 로리 할머니나 태어난 지 3년 만에 거의 어른이 된 듯한 느낌의<br>외모 나이와 실제 나이가 크게 벗어나는 경우에만 설정할 것.
-		LOCALS += @"<font color='#%見出し文字色%'><nonbutton title='%LOCALS:2%'>외모 나이:</nonbutton></font>"
-		LOCALS += @"<font color='#\@ ランダムキャラ素質:34? 333333# C0C0C0\@'><button value='{12120}'>[나이에 걸맞음]</button></font>"
+		LOCALS:2 = 단순한 동안 얼굴이나 노안 얼굴 수준이 아니라, 로리 할머니나 생후 3년 만에 거의 어른이 된 듯한 느낌의<br>외견 나이와 실제 나이가 크게 벗어나는 경우에만 설정할 것.
+		LOCALS += @"<font color='#%見出し文字色%'><nonbutton title='%LOCALS:2%'>외견 나이:</nonbutton></font>"
+		LOCALS += @"<font color='#\@ ランダムキャラ素質:34? 333333# C0C0C0\@'><button value='{12120}'>[연령에 맞음]</button></font>"
 		FOR LOCAL, 年齢層_最小, 年齢層_最大 + 1
 			SIF !INRANGE(LOCAL, 年齢層_幼い, 年齢層_人外)
 				CONTINUE
@@ -1085,7 +1085,7 @@ SELECTCASE 表示モード
 			LOCALS:2 = 
 			IF INRANGE(LOCAL, ランダムキャラ素質:33-1, ランダムキャラ素質:33+1)
 				LOCALS += "<clearbutton>"
-				LOCALS:2 = 실제 연령층에 가까운 외견 연령은 설정할 수 없습니다
+				LOCALS:2 = 실제 연령층에 가까운 외견 나이는 설정할 수 없습니다
 			ENDIF
 			LOCALS += @"<font color='#%LOCALS:1%'><button value='{12120 + LOCAL}' title='%LOCALS:2%'>[%GET_TALENTNAME(164, LOCAL)%]</button></font>"
 			SIF INRANGE(LOCAL, ランダムキャラ素質:33-1, ランダムキャラ素質:33+1)
@@ -1094,7 +1094,7 @@ SELECTCASE 表示モード
 		LOCALS += "<br>"
 		IF GETBIT(ランダムキャラ素質:1, 0)
 			LOCALS += "<br>"
-			LOCALS += @"<font color='#%見出し文字色%'>가슴 사이즈:</font>"
+			LOCALS += @"<font color='#%見出し文字色%'>가슴 사이즈：</font>"
 			IF バスト数値設定フラグ
 				LOCALS:1 = %DECIMAL_STRING(バスト保存, 1)%cm
 				LOCALS:1 += @"%EDIT用バストサイズ表示(バスト保存, EDIT用アンダーバスト算出(ランダムキャラ素質:1, ランダムキャラ素質:0, 身長保存, ランダムキャラ素質:31, 体型保存))%"
@@ -1102,7 +1102,7 @@ SELECTCASE 表示モード
 				LOCALS += @"<button value='{12026}'>[%LOCALS:1%]</button>"
 				LOCALS += " " * (14 - MIN(14-1, STRLENS(LOCALS:1)))
 				LOCALS += @"　<button value='{12999}'>[컵 사이즈로 지정]</button>"
-				LOCALS += @"　<button value='{12997}'>[리롤]</button>"
+				LOCALS += @"　<button value='{12997}'>[재설정]</button>"
 			ELSE
 				LOCALS += @"%GET_TALENTNAME(205, ランダムキャラ素質:3), 16, LEFT%"
 				LOCALS += @"　<button value='{12999}'>[수치로 지정]</button>"
@@ -1128,20 +1128,20 @@ SELECTCASE 表示モード
 			NEXT
 			LOCALS += LOCALS:2
 			LOCALS += "<br>"
-			LOCALS += @"<font color='#%見出し文字色%'>허리 사이즈:</font>"
+			LOCALS += @"<font color='#%見出し文字色%'>허리 사이즈：</font>"
 			IF ウエスト数値設定フラグ
 				LOCALS:1 = %DECIMAL_STRING(ウエスト保存, 1)%cm
 
 				LOCALS += @"<button value='{12990}'>[%LOCALS:1%]</button>"
 				LOCALS += " " * (14 - MIN(14-1, STRLENS(LOCALS:1)))
-				LOCALS += @"　<button value='{12994}'>[리롤]</button>"
+				LOCALS += @"　<button value='{12994}'>[재설정]</button>"
 				LOCALS += @"　<button value='{12992}'>[자동으로 설정]</button>"
 			ELSE
 				LOCALS += @"(체격・체형에 따라 자동 산출)"
 				LOCALS += @"　<button value='{12992}'>[수동으로 설정]</button>"
 			ENDIF
 			LOCALS += "<br>"
-			LOCALS += @"<font color='#%見出し文字色%'>엉덩이 사이즈:</font>"
+LOCALS += @"<font color='#%見出し文字色%'>엉덩이 크기：</font>"
 			IF ヒップ数値設定フラグ
 				LOCALS:1 = %DECIMAL_STRING(ヒップ保存, 1)%cm
 
@@ -1151,7 +1151,7 @@ SELECTCASE 表示モード
 				LOCALS += @"　<button value='{12993}'>[자동으로 설정]</button>"
 			ELSE
 				LOCALS += @"　(체격・체형에 따라 자동 산출)"
-				LOCALS += @"　<button value='{12993}'>[수동으로 설정한다]</button>"
+				LOCALS += @"　<button value='{12993}'>[수동으로 설정]</button>"
 			ENDIF
 		ENDIF
 		LOCALS += "<br>"
@@ -1172,17 +1172,17 @@ SELECTCASE 表示モード
 			LOCALS += "<br>"
 		ENDIF
 		LOCALS += "<br>"
-		LOCALS += @"<font color='#%見出し文字色%'>신장：</font>"
+		LOCALS += @"<font color='#%見出し文字色%'>키:</font>"
 		IF 身長数値設定フラグ
 			LOCALS:1 = %DECIMAL_STRING(身長保存, 1)%cm
 
 			LOCALS += @"<button value='{12025}'>[%LOCALS:1%]</button>"
 			LOCALS += " " * (12 - MIN(12-1, STRLENS(LOCALS:1)))
-			LOCALS += @"　<button value='{12998}'>[대략적으로 설정한다]</button>"
+			LOCALS += @"　<button value='{12998}'>[대략적으로 설정]</button>"
 			LOCALS += @"　<button value='{12996}'>[리롤]</button>"
 		ELSE
 			LOCALS += @"%GET_TALENTNAME(161, ランダムキャラ素質:31), 14, LEFT%"
-			LOCALS += @"　<button value='{12998}'>[수치로 설정한다]</button>"
+			LOCALS += @"　<button value='{12998}'>[수치로 설정]</button>"
 		ENDIF
 		LOCALS += "<br>"
 		LOCALS += @"<font color='#%見出し文字色%'>체격：</font>"
@@ -1224,7 +1224,7 @@ SELECTCASE 表示モード
 			LOCALS += "<br>"
 		ENDIF
 		IF GETBIT(ランダムキャラ素質:1, 1)
-			LOCALS += @"<font color='#%見出し文字色%'>남성기 사이즈：</font>"
+			LOCALS += @"<font color='#%見出し文字色%'>남성기 크기：</font>"
 			FOR LOCAL, -2, 3
 				IF ランダムキャラ素質:32 == LOCAL
 					LOCALS:1 = C0C0C0
@@ -1236,16 +1236,20 @@ SELECTCASE 表示モード
 			LOCALS += "<br>"
 		ENDIF
 		LOCALS += "<br>"
-		LOCALS += "<button value='11100'>[스테이터스 화면으로 돌아간다]</button>"
-		LOCALS += "　<button value='9'>[항목명의 색을 변경한다]</button>"
+		LOCALS += "<button value='11100'>[스테이터스 화면으로돌아가기]</button>"
+		LOCALS += "　<button value='9'>[항목 이름 색상 변경]</button>"
 	CASE 130
 		FOR LOCAL, ページ数 * 20, ページ数 * 20 + 20
 			SIF TALENT一時保存:LOCAL == 0
 				BREAK
 			LOCALS += @"%TALENTNAME:(TALENT一時保存:LOCAL), 18, LEFT%："
 			FOR LOCAL:1, -2, 4
-				;母乳体質だけ例外
+				;母乳体質は例外
 				IF TALENT一時保存:LOCAL == 149 && LOCAL:1 > 1
+					CONTINUE
+				ENDIF
+				;時空移動は例外
+				IF TALENT一時保存:LOCAL == 255 && LOCAL:1 > 1
 					CONTINUE
 				ENDIF
 				LOCALS:2 = %GET_TALENTNAME(TALENT一時保存:LOCAL,LOCAL:1)%
@@ -1270,7 +1274,7 @@ SELECTCASE 表示モード
 		ELSE
 			LOCALS += "　　　　　　"
 		ENDIF
-		LOCALS += "　　　　<button value='11100'>[스테이터스 화면으로 돌아가기]</button>　　　　"
+		LOCALS += "　　　　<button value='11100'>[스테이터스 화면으로돌아가기]</button>　　　　"
 		IF ページ数 < LOCAL:10 / 20
 			LOCALS += "<button value='29999'>[다음 페이지]</button>"
 		ENDIF
@@ -1278,11 +1282,11 @@ SELECTCASE 表示モード
 		FOR COUNT, 1, 6
 			SIF ERDNAME(フレーバー素質, COUNT) == ""
 				CONTINUE
-			LOCALS += @"%ERDNAME(フレーバー素質, COUNT), 12, LEFT%:"
+			LOCALS += @"%ERDNAME(フレーバー素質, COUNT), 12, LEFT%："
 			FOR LOCAL:1, 0, 6
 				LOCALS:2 = %GET_フレーバー素質NAME(COUNT,LOCAL:1)%
 				IF LOCAL:1 == 0
-					LOCALS:2 = 숨기기
+					LOCALS:2 = 숨김
 				ENDIF
 				IF COUNT == 5 && LOCAL:1 == 4
 					CONTINUE
@@ -1298,7 +1302,7 @@ SELECTCASE 表示モード
 			NEXT
 			LOCALS += "<br>"
 		NEXT
-		LOCALS += @"%ERDNAME(フレーバー素質, 6), 12, LEFT%:　　　　"
+		LOCALS += @"%ERDNAME(フレーバー素質, 6), 12, LEFT%：　　　　"
 		FOR LOCAL:1, 0, 4
 			LOCALS:2 = %GET_フレーバー素質NAME(6, POWER(2, LOCAL:1))%
 			IF LOCALS:2 == ""
@@ -1316,16 +1320,16 @@ SELECTCASE 表示モード
 		LOCALS += "</div>"
 		LOCALS += "<div rect='2125,3506,3675,2812'>"
 		LOCALS += "　　　　　　"
-		LOCALS += "　　　　<button value='11100'>[스테이터스 화면으로 돌아가기]</button>"
+		LOCALS += "　　　　<button value='11100'>[스테이터스 화면으로돌아가기]</button>"
 	CASE 132
 		IF CSVエディタフラグ
-			LOCALS += "기본적으로 지식 소질로 설정되는 레벨은 「그랑블루 세계의 지식」입니다. <br>"
-			LOCALS += "이세계 출신 캐릭터는 그에 상응하게 레벨을 낮춰 설정하는 것이 바람직합니다. <br>"
-			LOCALS += "　취미 레벨은 1, 프로급・직업으로 할 수 있는 레벨은 2<br>　전공에서도 최강 레벨인 경우는 3이 기준　　<button value='69999'>[설정 기준 상세]</button><br>"
+			LOCALS += "기본적으로 지식 소질로 설정되는 레벨은 「그랑블루 세계의 지식」입니다.<br>"
+			LOCALS += "이세계 출신 캐릭터는 그에 맞춰 레벨을 낮게 설정하는 것이 바람직합니다.<br>"
+			LOCALS += "　취미 수준은 1, 프로급・직업으로 삼을 수 있는 수준은 2<br>　전공에서도 최강 수준일 경우 3이 기준　　<button value='69999'>[설정 기준 상세]</button><br>"
 			LOCALS += "<br>"
 		ELSE
-			LOCALS += "・지식 레벨의 기준"
-			LOCALS += "　취미 레벨은 1, 프로급・직업으로 할 수 있는 레벨은 2<br>　전공에서도 최강 레벨인 경우는 3<br>"
+			LOCALS += "・지식 수준의 기준"
+			LOCALS += "　취미 수준은 1, 프로급・직업으로 삼을 수 있는 수준은 2<br>　전공에서도 최강 수준일 경우 3<br>"
 			LOCALS += "<br>"
 		ENDIF
 		FOR COUNT, 1, 100
@@ -1334,15 +1338,15 @@ SELECTCASE 表示モード
 			LOCALS:3 '= ERDNAME(知識素質, COUNT)
 			SELECTCASE LOCALS:3
 				CASE "農業知識"
-					LOCALS:3 += @"<br>　　현실 세계에서도 토지가 다르면 농업 노하우가 완전히 다른 것은 드물지 않다. <br>　　기후가 비슷하다면 그대로, 다른 기후라면 낮추는 것이 좋다."
+					LOCALS:3 += @"<br>　　현실 세계에서도 땅이 다르면 농업 노하우가 완전히 다른 것은 드물지 않다.<br>　　기후가 비슷하다면 그대로, 다른 기후라면 낮추는 것이 좋다."
 				CASE "経営知識"
-					LOCALS:3 += @"<br>　　기본적으로는 떨어지지 않는 쪽의 지식이지만, 현대 경영과는 달리 통신이나 운송 수단이<br>　　제한되는 그랑블루 세계에서는 노하우가 통용되지 않는 패턴을 생각할 수 있다. <br>　　반면, 판타지 출신 캐릭터라면 어느 정도 통용될 것으로 생각된다."
+					LOCALS:3 += @"<br>　　기본적으로는 내려가지 않는 쪽의 지식이지만, 현대 경영과는 달리 통신이나 운송 수단이<br>　　제한적인 그랑블루 세계에서는 노하우가 통용되지 않는 패턴을 생각할 수 있다.<br>　　반면, 판타지 출신 캐릭터라면 어느 정도 통용될 것으로 생각된다."
 				CASE "高貴"
-					LOCALS:3 += @"<br>　　기본적으로는 떨어지지 않는 쪽의 지식이지만, 출신 세계와 그랑블루 세계에서<br>　　너무나도 문화가 다른 경우에는 낮추는 것이 적절한 경우가 있다."
+					LOCALS:3 += @"<br>　　기본적으로는 내려가지 않는 쪽의 지식이지만, 출신 세계와 그랑블루 세계에서<br>　　너무나도 문화가 다른 경우에는 낮추는 것이 적절할 수 있다."
 				CASE "魔法知識"
-					LOCALS:3 += @"<br>　　기본적으로는 떨어지는 쪽의 지식이지만, 그랑블루의 마법 계통이 매우 폭넓다는 점, <br>　　또한 콜라보 등에서도 기본적으로 특수 능력이 유지되는 묘사로 보아, 마법의 원리가<br>　　범용적인 것이라면 레벨을 유지해도 부자연스럽지 않다."
+					LOCALS:3 += @"<br>　　기본적으로는 내려가는 쪽의 지식이지만, 그랑블루의 마법 계통이 매우 폭넓다는 점,<br>　　또한 콜라보 등에서도 기본적으로 특수 능력은 유지되는 묘사로 보아, 마법의 원리가<br>　　범용적인 것이라면 레벨을 유지해도 부자연스럽지 않다."
 				CASE "魔物知識","歴史知識"
-					LOCALS:3 += @"<br>　　세계마다 완전히 다른 역사와 발전을 이루었을 것이다<br>　　특별한 일이 없는 한, 레벨은 크게 낮춰야 할 것이다"
+					LOCALS:3 += @"<br>　　세계마다 완전히 다른 역사・발전을 이루었을 것이다<br>　　특별한 일이 없는 한, 레벨은 크게 낮춰야 할 것이다"
 				CASE "調合知識", "機械知識","錬金知識"
 					LOCALS:3 += @"<br>　　세계별 기술 체계의 차이로 응용하기 어려울 것으로 생각된다<br>　　레벨은 다소 낮춰야 할 것이다"
 				CASEELSE
@@ -1370,7 +1374,7 @@ SELECTCASE 表示モード
 		LOCALS += "</div>"
 		LOCALS += "<div rect='2125,3506,3675,2812'>"
 		LOCALS += "　　　　　　"
-		LOCALS += "　　　　<button value='11100'>[스테이터스 화면으로 돌아가기]</button>"
+		LOCALS += "　　　　<button value='11100'>[상태 화면으로 돌아가기]</button>"
 	CASE 133
 		FOR COUNT, 1, 20
 			SIF ERDNAME(性癖素質, COUNT) == ""
@@ -1433,7 +1437,7 @@ SELECTCASE 表示モード
 		ELSE
 			LOCALS += "　　　　　　"
 		ENDIF
-		LOCALS += "　　　　<button value='11100'>[상태 화면으로 돌아가기]</button>　　　　"
+		LOCALS += "　　　　<button value='11100'>[상태 화면으로돌아가기]</button>　　　　"
 		IF ページ数 < LOCAL:11 / 20
 			LOCALS += "<button value='29999'>[다음 페이지]</button>"
 		ENDIF
@@ -1451,7 +1455,7 @@ SELECTCASE 表示モード
 		ELSE
 			LOCALS += "　　　　　　"
 		ENDIF
-		LOCALS += "　　　　<button value='11100'>[상태 화면으로 돌아가기]</button>　　　　"
+		LOCALS += "　　　　<button value='11100'>[상태 화면으로돌아가기]</button>　　　　"
 		IF ページ数 < LOCAL:12 / 20
 			LOCALS += "<button value='29999'>[다음 페이지]</button>"
 		ENDIF
@@ -1480,12 +1484,12 @@ SELECTCASE 表示モード
 				LOCALS += @"<font color='#%LOCALS:1%'><button value='{70000 + LOCAL * 10}'>[노브라]</button></font>"
 				LOCALS += @"<font color='#%LOCALS:2%'><button value='{70000 + LOCAL * 10 + 1}'>[브라 착용]</button></font>"
 				LOCALS += @"<font color='#%LOCALS:3%'><button value='{70000 + LOCAL * 10 + 2}'>[니플 패치]</button></font>"
-				LOCALS += @"<font color='#%LOCALS:4%'><button value='{70000 + LOCAL * 10 + 3}'>[가슴 가리개]</button></font>"
+				LOCALS += @"<font color='#%LOCALS:4%'><button value='{70000 + LOCAL * 10 + 3}'>[사라시]</button></font>"
 				LOCALS += @"<font color='#%LOCALS:5%'><button value='{70000 + LOCAL * 10 + 4}'>[리본]</button></font>"
 				LOCALS += "<br>" + " " * 26
 				LOCALS += @"<font color='#%LOCALS:6%'><button value='{70000 + LOCAL * 10 + 5}'>[오픈컵 브라]</button></font>"
 				LOCALS += @"<font color='#%LOCALS:7%'><button value='{70000 + LOCAL * 10 + 6}'>[니플 피어싱]</button></font>"
-				LOCALS += @"<font color='#%LOCALS:8%'><button value='{70000 + LOCAL * 10 + 7}'>[유두에 명찰]</button></font>"
+				LOCALS += @"<font color='#%LOCALS:8%'><button value='{70000 + LOCAL * 10 + 7}'>[젖꼭지에 명찰]</button></font>"
 			ELSEIF LOCAL == 17
 				LOCALS += @"<font color='#%LOCALS:1%'><button value='{70000 + LOCAL * 10}'>[노팬티]</button></font>"
 				LOCALS += @"<font color='#%LOCALS:2%'><button value='{70000 + LOCAL * 10 + 1}'>[속옷 착용]</button></font>"
@@ -1493,7 +1497,7 @@ SELECTCASE 表示モード
 				LOCALS += @"<font color='#%LOCALS:4%'><button value='{70000 + LOCAL * 10 + 3}'>[훈도시]</button></font>"
 				LOCALS += @"<font color='#%LOCALS:5%'><button value='{70000 + LOCAL * 10 + 4}'>[리본]</button></font>"
 				LOCALS += "<br>" + " " * 26
-				LOCALS += @"<font color='#%LOCALS:6%'><button value='{70000 + LOCAL * 10 + 5}'>[오픈 팬티]</button></font>"
+				LOCALS += @"<font color='#%LOCALS:6%'><button value='{70000 + LOCAL * 10 + 5}'>[오픈 쇼츠]</button></font>"
 				LOCALS += @"<font color='#%LOCALS:7%'><button value='{70000 + LOCAL * 10 + 6}'>[성기 피어싱]</button></font>"
 				LOCALS += @"<font color='#%LOCALS:8%'><button value='{70000 + LOCAL * 10 + 7}'>[클리에 명찰]</button></font>"
 			ELSE
@@ -1541,7 +1545,7 @@ SELECTCASE 表示モード
 				SIF LOCAL >= VARSIZE("水着一覧")
 					BREAK
 				IF LOCAL > 1
-					LOCALS:4 = \@ LOCAL == 3? 목덜미부터 가슴 아래까지 트임이 있는 원피스# 하의가 반바지\@
+					LOCALS:4 = \@ LOCAL == 3? 목부터 가슴 아래까지 트임이 있는 원피스# 하의는 반바지\@
 				ENDIF
 				LOCALS:(2 + LOCAL%2) += @"<font color='#%LOCALS:1%'><button value='{70000 + 30 * 10 + LOCAL}' title='%LOCALS:4%'>[%水着一覧:LOCAL%]</button></font>"
 			ENDIF
@@ -1550,7 +1554,7 @@ SELECTCASE 表示モード
 		LOCALS += "</div>"
 		LOCALS += "<div rect='2125,3506,3675,2812'>"
 		LOCALS += @"<button value='71000'>복장명：%ランダムキャラ服装名, 30, LEFT%</button>"
-		LOCALS += "　　　　<button value='11100'>[상태 화면으로 돌아가기]</button>　　　　"
+		LOCALS += "　　　　<button value='11100'>[스테이터스 화면으로돌아가기]</button>　　　　"
 	CASE 105
 		IF !DT_EXIST("DT_CHARA")
 			DT_CREATE "DT_CHARA"
@@ -1561,7 +1565,7 @@ SELECTCASE 表示モード
 				SIF !EXISTCSV(LOCAL)
 					CONTINUE
 				;ランダムキャラ排除
-				SIF LOCAL == 999
+				SIF ランダムキャラ判定(LOCAL)
 					CONTINUE
 				DT_ROW_ADD "DT_CHARA", "NO", LOCAL, "NAME", CSVNAME(LOCAL), "VALUE", 0
 			NEXT
@@ -1619,12 +1623,12 @@ SELECTCASE 表示モード
 				SIF !EXISTCSV(LOCAL)
 					CONTINUE
 				;ランダムキャラ排除
-				SIF LOCAL == 999
+				SIF ランダムキャラ判定(LOCAL)
 					CONTINUE
 				DT_ROW_ADD "DT_CHARA_REL", "NO", LOCAL, "NAME", CSVNAME(LOCAL), "REL", ""
 			NEXT
 		ENDIF
-		LOCALS += "■연모 캐릭터는 1명까지, 섹스 프렌드 캐릭터는 99명까지 설정할 수 있습니다■<button value='199999'>[상세]</button><br>"
+		LOCALS += "■연모 캐릭터는 1명까지, 섹프 캐릭터는 99명까지 설정할 수 있습니다■<button value='199999'>[상세]</button><br>"
 		LOCAL:1 = DT_ROW_LENGTH("DT_CHARA_REL")
 		FOR LOCAL, ページ数 * 20, ページ数 * 20 + 20
 			SIF LOCAL >= LOCAL:1
@@ -1638,11 +1642,11 @@ SELECTCASE 表示モード
 				LOCALS += @"<button value='{200000 + LOCAL * 10}'>[연모]</button>"
 			ENDIF
 			IF DT_CELL_GETS("DT_CHARA_REL", LOCAL, "REL") == "セフレ"
-				LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'><button value='{200000 + LOCAL * 10 + 1}'>[섹스 프렌드]</button></font>"
+				LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'><button value='{200000 + LOCAL * 10 + 1}'>[섹프]</button></font>"
 			ELSEIF DT_SELECT("DT_CHARA_REL", "REL = 'セフレ'") >= 99
-				LOCALS += @"<font color='#%カラーパレット_HTML("グレーアウト")%'>[섹스 프렌드]</font>"
+				LOCALS += @"<font color='#%カラーパレット_HTML("グレーアウト")%'>[섹프]</font>"
 			ELSE
-				LOCALS += @"<button value='{200000 + LOCAL * 10 + 1}'>[섹스 프렌드]</button>"
+				LOCALS += @"<button value='{200000 + LOCAL * 10 + 1}'>[섹프]</button>"
 			ENDIF
 			LOCALS += "<br>"
 		NEXT
@@ -1747,7 +1751,7 @@ SELECTCASE LOCAL
 		LOCAL:1 = LOCAL - 11040
 		PRINTFORM \@ LOCAL:1 / 3? 함락# 통상\@시, 제%TOFULL(TOSTR(1 + LOCAL:1 % 3))%단계에서의
 		PRINTL 오의명을 입력해 주세요.
-		PRINTL (통상・함락 시 각 제1단계의 오의명이 미설정된 경우, 그 이후 단계의 설정은 무시됩니다)
+		PRINTL （통상・함락 시 각각의 1단계 오의명이 미설정된 경우, 그 이후 단계의 설정은 무시됩니다）
 		SETTEXTBOX ランダムキャラ奥義名:(LOCAL:1)
 		CALL 入力処理_HTML記法警告付き()
 		ランダムキャラ奥義名:(LOCAL:1) = %RESULTS%
@@ -1852,9 +1856,9 @@ SELECTCASE LOCAL
 	CASE 12013
 		SETBIT ランダムキャラ素質:2, 1
 	CASE 12014
-		CLEARBIT Ａ処女保存, 1
+		CLEARBIT Ａ処女保存, 0
 	CASE 12015
-		SETBIT Ａ処女保存, 1
+		SETBIT Ａ処女保存, 0
 	CASE 12018 TO 12023
 		IF ランダムキャラ素質:0 == 3
 			ランダムキャラ素質:3 = MAX(LOCAL - 12020, 2)
@@ -1910,14 +1914,14 @@ SELECTCASE LOCAL
 		下半身保存 = LOCAL - 12090
 		ヒップ保存 = EDIT用ヒップ算出(ランダムキャラ素質:1, 身長保存, ランダムキャラ素質:31, 体型保存, 下半身保存)
 	CASE 12096
-		PRINTL 종족명을 입력해 주세요.
+PRINTL 종족명을 입력해주세요.
 		SETTEXTBOX ランダムキャラ特殊種族
 		CALL 入力処理_HTML記法警告付き()
 		ランダムキャラ特殊種族 = %SUBSTRING(RESULTS, 0, 24)%
 	CASE 12097
 		ランダムキャラ素質:33 = 0
 		DRAWLINE
-		PRINTL 나이를 입력해 주십시오.
+PRINTL 나이를 입력해주세요.
 		SETTEXTBOX TOSTR(年齢保存)
 		INPUT
 		年齢保存 = RESULT
@@ -1957,13 +1961,13 @@ SELECTCASE LOCAL
 		INVERTBIT OPTION変数:身体項目表示切り替え, 5
 	CASE 12990
 		DRAWLINE
-		PRINTL 허리 사이즈를 mm 단위로 입력해 주십시오.
+PRINTL 허리 사이즈를 mm 단위로 입력해주세요.
 		SETTEXTBOX TOSTR(ウエスト保存)
 		INPUT
 		ウエスト保存 = RESULT
 	CASE 12991
 		DRAWLINE
-		PRINTL 엉덩이 사이즈를 mm 단위로 입력해 주십시오.
+PRINTL 엉덩이 사이즈를 mm 단위로 입력해주세요.
 		SETTEXTBOX TOSTR(ヒップ保存)
 		INPUT
 		ヒップ保存 = RESULT
@@ -2005,7 +2009,7 @@ SELECTCASE LOCAL
 ;EXP--------------------------------------------------------
 	CASE 40000 TO 49997
 		RESULT = 0
-		PRINTL 경험 횟수를 입력해 주십시오. (3자리까지)
+PRINTL 경험치를 입력해주세요. (3자리까지)
 		SETTEXTBOX TOSTR(EXP数値保存:((LOCAL - 40000) / 10))
 		INPUT
 		EXP数値保存:((LOCAL - 40000) / 10) = MIN(RESULT, 999)
@@ -2018,34 +2022,34 @@ SELECTCASE LOCAL
 	CASE 60000 TO 60209
 		知識素質数値保存:((LOCAL - 60000) / 10) = LOCAL % 10
 	CASE 69999
-		PRINTL 기본적으로 지식 소질로 설정되는 레벨은 「그랑블루 세계의 지식」인 것으로 합니다.
-		PRINTL 따라서, 이세계 출신의 캐릭터는 그에 상응하게 레벨을 낮춰 설정하는 것이 바람직합니다.
+PRINTL 기본적으로 지식 소질로 설정되는 레벨은 「그랑블루 세계의 지식」인 것으로 간주합니다.
+PRINTL 따라서, 이세계 출신 캐릭터는 그에 상응하게 레벨을 낮춰 설정하는 것이 바람직합니다.
 		PRINTL
-		PRINTL ・레벨이 크게 낮아지는 지식
-		PRINTL 마물 지식, 역사 지식
+PRINTL ・레벨이 크게 낮아지는 지식
+PRINTL 마물 지식、역사 지식
 		PRINTL
-		PRINTL ・레벨이 낮아지기 쉬운 지식
-		PRINTL 조합 지식, 기계 지식, 연금 지식
+PRINTL ・레벨이 낮아지기 쉬운 지식
+PRINTL 조합 지식、기계 지식、연금 지식
 		PRINTL
-		PRINTL ・레벨이 거의 변하지 않는 지식
-		PRINTL 화가, 낚시꾼, 무용수, 가창 기능, 요리사, 수영 기능,
+PRINTL ・레벨이 거의 변하지 않는 지식
+PRINTL 화가、낚시광、무희、가창 기술、요리사、수영 기술、
 		PRINTL
-		PRINTL ・경우에 따른 지식
-		PRINTL 마법 지식: 기본적으로는 낮아지는 쪽의 지식이지만, 그랑블루의 마법 계통이 매우 폭넓다는 점,
+PRINTL ・경우에 따른 지식
+PRINTL 마법 지식：기본적으로는 낮아지는 쪽의 지식이지만, 그랑블루의 마법 계통이 매우 폭넓다는 점,
 		PRINTL 　　　　　또한 콜라보 등에서도 기본적으로 특수 능력은 유지되는 묘사로부터, 마법의
 		PRINTL 　　　　　원리가 범용적인 것이라면 레벨을 유지해도 부자연스럽지 않다.
 		PRINTL
-		PRINTL 고귀　　：기본적으로는 내려가지 않는 쪽의 지식이지만, 출신 세계와 그랑블루 세계에서 너무나도
-		PRINTL 　　　　　문화가 다른 경우는 내리는 것이 적절한 경우가 있다.
+		PRINTL 고귀　　：기본적으로는 내려가지 않는 쪽의 지식이지만, 출신 세계와 그랑블루 세계가 너무나도
+		PRINTL 　　　　　문화가 다른 경우에는 내리는 것이 적절한 경우가 있다.
 		PRINTL
-		PRINTL 경영지식：기본적으로는 내려가지 않는 쪽의 지식이지만, 현대의 경영과는 달리 통신이나 운송 수단
-		PRINTL 　　　　　이 제한되는 그랑블루 세계에서는 노하우가 통용되지 않는 패턴을 생각할 수 있다.
-		PRINTL 　　　　　반면, 판타지 출신 캐릭터라면 어느 정도 통용된다고 생각할 수 있다.
+		PRINTL 경영 지식：기본적으로는 내려가지 않는 쪽의 지식이지만, 현대의 경영과는 달리 통신이나 운송 수단
+		PRINTL 　　　　　이 제한되는 그랑블루 세계에서는 노하우가 통용되지 않는 패턴을 생각해볼 수 있다.
+		PRINTL 　　　　　반면, 판타지 출신 캐릭터라면 어느 정도 통용된다고 생각된다.
 		PRINTL
-		PRINTL 농업지식：현실 세계에서도 토지가 다르면 농업 노하우가 전혀 다른 것은 드물지 않다.
-		PRINTL 　　　　　기후가 비슷하다면 그대로, 다른 기후라면 내리는 것이 좋다.
+		PRINTL 농업 지식：현실 세계에서도 토지가 다르면 농업 노하우가 완전히 다른 것은 드물지 않다.
+		PRINTL 　　　　　기후가 비슷하다면 그대로 두고, 다른 기후라면 내리는 것이 좋다.
 		PRINTL
-		PRINTW (이것들은 각종 지식의 툴팁에서도 확인할 수 있습니다)
+		PRINTW （이것들은 각종 지식의 툴팁에서도 확인할 수 있습니다）
 ;服装----------------------------------------------------
 	CASE 70010 TO 70231
 		服装数値保存:((LOCAL - 70000) / 10) = LOCAL % 10
@@ -2053,7 +2057,7 @@ SELECTCASE LOCAL
 	CASE 70300 TO 70303
 		服装数値保存:30 = LOCAL % 10
 	CASE 71000
-		PRINTL 복장명을 입력해 주세요.
+		PRINTL 복장명을 입력해주세요.
 		SETTEXTBOX ランダムキャラ服装名
 		CALL 入力処理_HTML記法警告付き()
 		ランダムキャラ服装名 = %RESULTS%
@@ -2062,7 +2066,7 @@ SELECTCASE LOCAL
 		性癖素質数値保存:((LOCAL - 80000) / 10) = LOCAL % 10
 ;固有素質----------------------------------------------------
 	CASE 85000 TO 85010
-		PRINTL 고유 소질명을 입력해 주세요.
+		PRINTL 고유 소질명을 입력해주세요.
 		SETTEXTBOX 固有素質一時保存:(LOCAL - 85000)
 		CALL 入力処理_HTML記法警告付き()
 		固有素質一時保存:(LOCAL - 85000) = %RESULTS%
@@ -2070,7 +2074,7 @@ SELECTCASE LOCAL
 	CASE 100000 TO 100000 + キャラクタ数上限 * 10
 		LOCAL:2 = DT_CELL_GET("DT_CHARA", (LOCAL - 100000) / 10, "VALUE")
 		IF LOCAL % 10 == 0
-			PRINTL 동행 확률을 %로 입력해 주세요. (0~100 사이)
+			PRINTL 동행 확률을 %로 입력해주세요. (0~100 사이)
 			SETTEXTBOX TOSTR(LOCAL:2)
 			INPUT
 			DT_CELL_SET "DT_CHARA", (LOCAL - 100000) / 10, "VALUE", LIMIT(RESULT, 0, 100)
@@ -2079,9 +2083,9 @@ SELECTCASE LOCAL
 			DT_CELL_SET "DT_CHARA", (LOCAL - 100000) / 10, "VALUE", LIMIT(LOCAL:2, 0, 100)
 		ENDIF
 	CASE 199999
-		PRINTL ■동행률이 자동으로 80%로 설정되지만, 동행률 설정을 하고 있는 경우 그쪽이 우선됩니다
+		PRINTL ■동행률이 자동으로 80%로 설정되지만, 동행률 설정을 하고 있는 경우 해당 설정이 우선됩니다
 		PRINTL ■복수 CSV에서 설정이 충돌하는 경우, 낮은 번호의 CSV가 우선됩니다
-		PRINTL 　(캐릭터 A의 CSV에 캐릭터 B와의 연모, 캐릭터 C의 CSV에 캐릭터 B와의 연모가 있는 경우, AB의 연모가 우선)
+		PRINTL 　（캐릭터 A의 CSV에 캐릭터 B와의 연모, 캐릭터 C의 CSV에 캐릭터 B와의 연모가 있는 경우, AB의 연모가 우선）
 		PRINTL ■즉, 커플을 설정할 경우 한쪽 캐릭터만 설정하면 문제 없습니다
 		WAIT
 	CASE 200000 TO 200000 + キャラクタ数上限 * 10 + 1
@@ -2116,8 +2120,8 @@ SELECTCASE LOCAL
 			SIF EXISTCSV(LOCAL:1)
 				LOCAL:3 = LOCAL:1
 		NEXT
-		PRINTFORML 사용할 CSV 번호를 입력해 주세요. (현재: {登録番号, 4, LEFT}／상한: {キャラクタ数上限-1})
-		PRINTFORML 그랑블루 캐릭터는 {LOCAL:2}번까지, Ex 캐릭터는 {LOCAL:3}번까지 사용되었을 가능성이 있습니다.
+		PRINTFORML 사용하고 싶은 CSV 번호를 입력해주세요.（현재：{登録番号, 4, LEFT}／상한：{キャラクタ数上限-1}）
+		PRINTFORML 그랑블루 캐릭터는 {LOCAL:2}번까지, Ex 캐릭터는 {LOCAL:3}번까지 사용되고 있을 가능성이 있습니다.
 		$INPUT_NUM
 		SETTEXTBOX TOSTR(登録番号)
 		INPUTS
@@ -2135,8 +2139,8 @@ SELECTCASE LOCAL
 		登録番号 = LOCAL:4
 	CASE 100
 		$INPUT_NAME
-		PRINTFORML 이름을 입력해 주세요. (현재: %ランダムキャラネーム%)
-		PRINTL ┗[1] 명명 테이블에서 무작위로 결정한다 [2] 완전히 무작위 이름을 생성한다 [0] 현재 것을 사용한다
+		PRINTFORML 이름을 입력해주세요.　（현재：%ランダムキャラネーム%）
+		PRINTL ┗[1] 명명 테이블에서 무작위로 결정한다　[2] 완전히 무작위 이름을 생성한다　[0] 현재 것을 사용한다
 		SETTEXTBOX ランダムキャラネーム
 		CALL 入力処理_HTML記法警告付き()
 		IF RESULTS == "1" || RESULTS == "2"
@@ -2148,8 +2152,8 @@ SELECTCASE LOCAL
 		ELSEIF RESULTS == "0"
 		ELSE
 			IF STRFIND(RESULTS, " ") >= 0 || STRFIND(RESULTS, "_") >= 0
-				PRINTL 처리상 이름에 반각 공백과 「_」는 사용할 수 없습니다.
-				PRINTW 「-」로 대체하거나 공백을 채우는 등의 대응을 부탁드립니다.
+				PRINTL 처리상, 이름에 반각 스페이스와 「_」는 사용할 수 없습니다.
+				PRINTW 「-」로 대체하거나, 공백을 채우는 등의 대응을 부탁드립니다.
 				GOTO INPUT_NAME
 			ELSE
 				ランダムキャラネーム = %RESULTS%
@@ -2157,30 +2161,30 @@ SELECTCASE LOCAL
 		ENDIF
 	CASE 101
 		$二つ名ループ
-		PRINTL 별명을 입력해 주세요.
+		PRINTL 별명을 입력해주세요.
 		SETTEXTBOX ランダムキャラ二つ名
 		CALL 入力処理_HTML記法警告付き()
 		IF STRFIND(RESULTS, " ") >= 0 || STRFIND(RESULTS, "_") >= 0
-			PRINTL 처리상 별명에 반각 공백과 「_」는 사용할 수 없습니다.
+			PRINTL 처리상, 별명에 반각 스페이스와 「_」는 사용할 수 없습니다.
 			PRINTW 「-」로 대체하는 등의 대응을 부탁드립니다.
 			GOTO 二つ名ループ
 		ELSE
 			ランダムキャラ二つ名 = %RESULTS%
 		ENDIF
 	CASE 102
-		PRINTL 호칭을 입력해 주세요.
+		PRINTL 호칭을 입력해주세요.
 		SETTEXTBOX ランダムキャラCALLネーム
 		CALL 入力処理_HTML記法警告付き()
 		ランダムキャラCALLネーム = %RESULTS%
 	CASE 103
-		PRINTL 출연 작품을 입력해 주세요.
+		PRINTL 출연 작품을 입력해주세요.
 		SETTEXTBOX ランダムキャラ出演作品
 		CALL 入力処理_HTML記法警告付き()
 		ランダムキャラ出演作品 = %RESULTS%
 	CASE 104
 		$好物_LOOP
 		DRAWLINE
-		PRINTL 선물 선호도를 설정해 주세요.
+		PRINTL 선물 선호도를 설정해주세요.
 		DRAWLINE
 		FOR LOCAL:1, 0, VARSIZE("好物一覧")
 			IF GROUPMATCH(好物一覧:(LOCAL:1), "飲食系", "芸術品", "美容系", "実用品")
@@ -2234,7 +2238,7 @@ SELECTCASE LOCAL
 					ENDIF
 				NEXT
 			ENDIF
-			PRINTBUTTON @"%@"[{LOCAL:1, 2}] %선호품 목록:(LOCAL:1), 10, LEFT%", 16, LEFT%", LOCAL:1
+			PRINTBUTTON @"%@"[{LOCAL:1, 2}] %선호 목록:(LOCAL:1), 10, LEFT%", 16, LEFT%", LOCAL:1
 			PRINT 　
 			SIF GROUPMATCH(好物一覧:(LOCAL:1), "飲食系", "芸術品", "美容系", "実用品")
 				PRINT ＞　
@@ -2321,24 +2325,24 @@ SELECTCASE LOCAL
 		PRINTL 
 		PRINTL 招待不可フラグ=0　초기부터 초대 대상이 됨
 		PRINTL 
-		PRINTL 招待不可フラグ=1  ZP 상점의 「특별한 캐릭터를 초대 후보에 추가」 목록에 탑재된다.
-		PRINTL 그때, 「ZP 상점 가격」의 수치가 가격이 된다. 0(설정하지 않음)인 경우, 50ZP가 된다
-		PRINTL 플래그 3은 플레이버에 따라 구분하여 사용할 것
+		PRINTL 招待不可フラグ=1  ZP 상점의 「특별한 캐릭터를 초대 후보에 추가」 목록에 탑재됩니다.
+		PRINTL 그때, 「ZP 상점가격」의 수치가 가격이 됩니다. ０(설정하지 않은) 경우, 50ZP가 됩니다
+		PRINTL 플래그 3이란 플레이버에 따라 구분하여 사용하는 것
 		PRINTL 
-		PRINTL 招待不可フラグ=2  ZP 상점에 탑재되지 않으며, 초대 대상도 되지 않는다
+		PRINTL 招待不可フラグ=2  ZP 상점에 탑재되지 않으며, 또한 초대 대상도 되지 않습니다
 		PRINTL 특별한 이벤트로 초대가 가능해지는 캐릭터용
 		PRINTL 
-		PRINTL 招待不可フラグ=3  ZP 상점의 「특별한 캐릭터를 초대 후보에 추가」 목록에 탑재된다.
-		PRINTL 단, 이벤트 「「평행세계」라는 장소」를 클리어하지 않았다면 목록에 표시되지 않는다.
-		PRINTL (기본적으로 그랑블루 판타지 이외의 캐릭터에 대해 설정한다)
-		PRINTL 그때, 「ZP 상점 가격」의 수치가 가격이 된다. 0(설정하지 않음)인 경우, 50ZP가 된다
-		PRINTL 플래그 1은 플레이버에 따라 구분하여 사용하는 것
+		PRINTL 招待不可フラグ=3  ZP 상점의 「특별한 캐릭터를 초대 후보에 추가」 목록에 탑재됩니다.
+		PRINTL 단, 이벤트 「「평행세계」라는장소」를 클리어하지 않았다면 목록에 표시되지 않습니다.
+		PRINTL （기본적으로 그랑블루 이외의 캐릭터에 대해 설정합니다）
+		PRINTL 그때, 「ZP 상점値段」의 수치가 가격이 된다. 0(설정하지 않은) 경우, 50ZP가 된다
+		PRINTL 플래그 1이란 플레이버에 따라 구분하여 사용하는 것
 		DRAWLINE
-		PRINTFORML 현재 초대 불가 플래그＝{ランダムキャラ招待不可フラグ}
+		PRINTFORML 현재의 초대 불가 플래그＝{ランダムキャラ招待不可フラグ}
 		FOR LOCAL, 0, 4
 			SIF LOCAL == ランダムキャラ招待不可フラグ
 				CONTINUE
-			PRINTBUTTON @"[{LOCAL}] 초대 불가 플래그를 {LOCAL}로 설정한다", LOCAL
+			PRINTBUTTON @"[{LOCAL}] 초대 불가 플래그를{LOCAL}으로 설정한다", LOCAL
 			PRINTL
 		NEXT
 		PRINTL
@@ -2352,12 +2356,12 @@ SELECTCASE LOCAL
 				ランダムキャラ招待不可フラグ = RESULT
 		ENDSELECT
 	CASE 108
-		PRINTL 1인칭(자신을 부르는 호칭)을 입력해 주세요.
+		PRINTL 1인칭（자신에게의 호칭）을(를) 입력해 주세요.
 		SETTEXTBOX ランダムキャラ人称
 		CALL 入力処理_HTML記法警告付き()
 		ランダムキャラ人称 = %RESULTS%
 	CASE 109
-		PRINTL 2인칭(「당신」을 부르는 호칭)을 입력해 주세요.
+		PRINTL 2인칭（「당신」에게의 호칭）을(를) 입력해 주세요.
 		SETTEXTBOX ランダムキャラ人称:1
 		CALL 入力処理_HTML記法警告付き()
 		ランダムキャラ人称:1 = %RESULTS%
@@ -2429,32 +2433,34 @@ SELECTCASE LOCAL
 			PRINTL 기초,이성,1000
 			PRINTL 기초,분노,1000
 			HTML_PRINT "<br>"
-			PRINTFORML CSTR,1인칭,%ランダムキャラ人称:0%
-			PRINTFORML CSTR,2인칭,%ランダムキャラ人称:1%
+			SIF ランダムキャラ人称:0 != ""
+				PRINTFORML CSTR,1인칭,%ランダムキャラ人称:0%
+			SIF ランダムキャラ人称:1 != ""
+				PRINTFORML CSTR,二人称,%ランダムキャラ人称:1%
 			IF ランダムキャラ出演作品 != ""
 				PRINTL ;-------------------------------------------------------------------------------------------
 				PRINTL ;초기 초대 불가 캐릭터 설정
 				PRINTL ;게임을 시작한 직후의 상태에서, 초대 대상이 되지 않는 캐릭터를 설정한다
-				PRINTL ;招待不可フラグ=1  ZP 상점의 「특별한 캐릭터를 초대 후보에 추가」 목록에 탑재된다.
-				PRINTL 		;그때, 「ZP 상점 가격」의 수치가 가격이 된다. 0(설정하지 않음)인 경우, 50ZP가 된다
-				PRINTL 		;플래그 3과는 플레이버에 따라 구분하여 사용할 것
+				PRINTL ;招待不可フラグ=1 ZP 상점의 「특별한 캐릭터를 초대 후보에 추가한다」 목록에 탑재된다.
+				PRINTL 		;그때, 「ZP 상점値段」의 수치가 가격이 된다. 0(설정하지 않은) 경우, 50ZP가 된다
+				PRINTL 		;플래그 3과는 플레이버에 따라 구분하는 것
 				HTML_PRINT "<br>"
-				PRINTL ;招待不可フラグ=2  ZP 상점에 탑재되지 않으며, 또한 초대 대상도 되지 않는다
-				PRINTL 		;특별한 이벤트로 초대 가능하게 되는 캐릭터용
+				PRINTL ;招待不可フラグ=2 ZP 상점에 탑재되지 않으며, 또한 초대 대상도 되지 않는다
+				PRINTL 		;특별한 이벤트로 초대 가능해지는 캐릭터용
 				HTML_PRINT "<br>"
-				PRINTL ;招待不可フラグ=3  ZP 상점의 「특별한 캐릭터를 초대 후보에 추가」 목록에 탑재된다.
-				PRINTL 		;단, 이벤트 「「평행 세계」라는 장소」를 클리어하지 않았다면 목록에 표시되지 않는다.
-				PRINTL 		;그때, 「ZP 상점 가격」의 수치가 가격이 된다. 0(설정하지 않음)인 경우, 50ZP가 된다
-				PRINTL 		;플래그 1과는 플레이버에 따라 구분하여 사용할 것
+				PRINTL ;招待不可フラグ=3 ZP 상점의 「특별한 캐릭터를 초대 후보에 추가한다」 목록에 탑재된다.
+				PRINTL 		;단, 이벤트 「「평행세계」라는 장소」를 클리어하지 않았다면 목록에 표시되지 않는다.
+				PRINTL 		;그때, 「ZP 상점値段」의 수치가 가격이 된다. 0(설정하지 않은) 경우, 50ZP가 된다
+				PRINTL 		;플래그 1과는 플레이버에 따라 구분하는 것
 				PRINTL ;-------------------------------------------------------------------------------------------
-				PRINTFORML CSTR,출연 작품,%ランダムキャラ出演作品%
+				PRINTFORML CSTR,出演作品,%ランダムキャラ出演作品%
 			ENDIF
 			IF ランダムキャラ招待不可フラグ
-				PRINTFORML 플래그,초대 불가 플래그,{ランダムキャラ招待不可フラグ}
+				PRINTFORML フラグ,招待不可フラグ,{ランダムキャラ招待不可フラグ}
 			ENDIF
 			HTML_PRINT "<br>"
 			SIF 年齢数値設定フラグ
-				PRINTFORML 기초,나이,{年齢保存}
+				PRINTFORML 基礎,나이,{年齢保存}
 			SIF 身長数値設定フラグ
 				PRINTFORML 기초,신장,{身長保存}
 			IF GETBIT(ランダムキャラ素質:1, 0)
@@ -2501,49 +2507,49 @@ SELECTCASE LOCAL
 				PRINTL 소질,비동정,0
 			ENDIF
 			IF Ａ処女保存
-PRINTL 소질,A처녀,0
+				PRINTL 소질,Ａ처녀,0
 			ELSE
-PRINTL 소질,A처녀,1
+PRINTL 素質,Ａ処女,1
 			ENDIF
 			SIF GETBIT(ランダムキャラ素質:1, 0) && !バスト数値設定フラグ
-PRINTFORML 소질,가슴 사이즈,{ランダムキャラ素質:3}
+PRINTFORML 素質,가슴サイズ,{ランダムキャラ素質:3}
 			SIF 肉体特徴数値保存:0
-PRINTFORML 소질,뿔 있음,1
+PRINTFORML 素質,角あり,1
 			SIF 肉体特徴数値保存:1
-PRINTFORML 소질,꼬리 있음,1
+PRINTFORML 素質,尻尾あり,1
 			SIF 肉体特徴数値保存:2
-PRINTFORML 소질,엘룬 귀,1
+PRINTFORML 素質,エルーン耳,1
 			SIF 肉体特徴数値保存:3
-PRINTFORML 소질,하빈 귀,1
+PRINTFORML 素質,ハーヴィン耳,1
 			FOR LOCAL, 0, 300
 				SIF TALENT数値保存:LOCAL == 0
 					CONTINUE
 				SIF TALENT数値保存:LOCAL == 5
 					CONTINUE
-PRINTFORML 소질,%TALENTNAME:(TALENT一時保存:LOCAL)%,{TALENT数値保存:LOCAL - 5}
+PRINTFORML 素質,%TALENTNAME:(TALENT一時保存:LOCAL)%,{TALENT数値保存:LOCAL - 5}
 			NEXT
 			FOR LOCAL, 0, 10
 				SIF 固有素質一時保存:LOCAL == ""
 					CONTINUE
-PRINTFORML CSTR,고유 소질{LOCAL},%固有素質一時保存:LOCAL%
+PRINTFORML CSTR,固有素質{LOCAL},%固有素質一時保存:LOCAL%
 			NEXT
 			SIF !(年齢数値設定フラグ && 年齢保存 > 0)
-PRINTFORML 소질,연령층,{ランダムキャラ素質:33}
+PRINTFORML 素質,나이層,{ランダムキャラ素質:33}
 			SIF ランダムキャラ素質:34
-PRINTFORML 소질,외견 연령,{ランダムキャラ素質:34}
+PRINTFORML 素質,外見나이,{ランダムキャラ素質:34}
 			SIF !身長数値設定フラグ
-PRINTFORML 소질,체격,{ランダムキャラ素質:31}
+PRINTFORML 素質,体格,{ランダムキャラ素質:31}
 			SIF !ウエスト数値設定フラグ
-PRINTFORML 소질,체형,{体型保存}
+PRINTFORML 素質,体型,{体型保存}
 			SIF !ウエスト数値設定フラグ || !ヒップ数値設定フラグ
-PRINTFORML 소질,하반신,{下半身保存}
+PRINTFORML 素質,下半身,{下半身保存}
 			SIF GETBIT(ランダムキャラ素質:1, 1)
-PRINTFORML 소질,남성기 사이즈,{ランダムキャラ素質:32}
+PRINTFORML 素質,男性器サイズ,{ランダムキャラ素質:32}
 			HTML_PRINT "<br>"
 
 			FOR LOCAL, 0, 50
 				IF ABL数値保存:LOCAL > 0
-PRINTFORML 능력,%ABLNAME:(ABL一時保存:LOCAL)%,{ABL数値保存:LOCAL}
+PRINTFORML 能力,%ABLNAME:(ABL一時保存:LOCAL)%,{ABL数値保存:LOCAL}
 				ENDIF
 			NEXT
 			HTML_PRINT "<br>"
@@ -2556,12 +2562,12 @@ PRINTFORML 경험,%EXPNAME:(EXP一時保存:LOCAL)%,{EXP数値保存:LOCAL}
 
 			PRINTL ;-------------------------------------------------------------------------------------------
 PRINTL ;선물 취향
-PRINTL ;대분류 및 그에 부수되는 소분류 모두 설정 가능.
-PRINTL ;대분류를 취향으로 설정했을 때, 소분류 전부를 좋아한다고 판정되므로 운용에 주의.
-PRINTL ;선물은 여러 카테고리를 가질 수 있으며, 그 중 하나라도 해당되면 좋아한다고 판정된다.
-PRINTL ;단, 소분류가 여러 개인 경우, 대분류를 좋아하는 사람이 해당되는 것은 첫 번째 하나뿐
+PRINTL ;대분류, 및 그에 부수하는 소분류 모두 설정 가능.
+PRINTL ;대분류를 취향으로 설정했을 시, 소분류 전부를 좋아한다고 판정되므로 운용에 주의.
+PRINTL ;선물은 여러 카테고리를 가질 수 있으며, 그중 하나라도 해당되면 좋아한다고 판정된다.
+PRINTL ;단, 소분류가 여러 개인 경우, 대분류를 좋아하는 사람이 해당되는 것은 첫 번째 하나뿐.
 			PRINTL ;
-PRINTL ;대분류,음식 계열
+PRINTL ;대분류,음식/음료 계열
 PRINTL ;	소분류,고기,생선,야채,과자,진미,술,차류
 PRINTL ;대분류,예술품
 PRINTL ;	소분류,보석,회화,조각,시
@@ -2569,21 +2575,21 @@ PRINTL ;대분류,미용 계열
 PRINTL ;	소분류,액세서리,화장품
 PRINTL ;대분류,실용품
 PRINTL ;	소분류,문구류,건강 기구,일용품,조리 기구,공구
-			PRINTL ;이하는 대분류에 해당하지 않는 개별 소분류
-			PRINTL ;	소분류, 오락, 꽃, 책, 장난감, 기계
+PRINTL ;이하는 대분류에 해당하지 않는 개별 소분류
+			PRINTL ;	소분류,오락,꽃,책,장난감,기계
 			PRINTL ;
-			PRINTL ;복수 취향으로 할 경우 「음식계_오락」과 같이 기술할 것
+			PRINTL ;복수 선호하는 경우 「음식계_오락」과 같이 기술할 것
 			PRINTL ;-------------------------------------------------------------------------------------------
-			PRINTFORML CSTR,선물 취향,%SUBSTRINGU(好物一時保存, 0, STRLENSU(好物一時保存) - 1)%
+			PRINTFORML CSTR,プレゼント好み,%SUBSTRINGU(好物一時保存, 0, STRLENSU(好物一時保存) - 1)%
 			HTML_PRINT "<br>"
 			PRINTL ;-------------------------------------------------------------------------------------------
 			PRINTL ;초기 관계성 설정
 			PRINTL ;「캐릭터의 풀네임_관계성 종류」로 기술할 것. 풀네임은 별명 포함하여 기술. (중복 방지를 위해)
-			PRINTL ;관계성 종류는 현상 「연모」「섹스 파트너」의 2종류만, 문말의 %는 구분 처리 때문에 사용하므로 필수
-			PRINTL ;설정 상대와의 동행률 80%가 자동으로 세트된다
+			PRINTL ;관계성 종류는 현재 「연모」「섹스프렌드」의 2종류만, 문미의 %는 구분 처리 때문에 사용하므로 필수
+			PRINTL ;설정 상대와의 동행률 80%가 자동으로 설정됩니다
 			PRINTL ;-------------------------------------------------------------------------------------------
 			PRINTL {
-			PRINTL CSTR,초기 관계성,
+			PRINTL CSTR,初期関係性,
 			FOR LOCAL, 0, キャラクタ数上限
 				IF DT_CELL_GETS("DT_CHARA_REL", LOCAL, "REL") != ""
 					PRINTFORM %DT_CELL_GETS("DT_CHARA_REL", LOCAL, "NAME")%_
@@ -2595,10 +2601,10 @@ PRINTL ;	소분류,문구류,건강 기구,일용품,조리 기구,공구
 			PRINTL ;-------------------------------------------------------------------------------------------
 			PRINTL ;동행 캐릭터 설정
 			PRINTL ;「캐릭터의 풀네임_동행 확률%」로 기술할 것. 풀네임은 별명 포함하여 기술. (중복 방지를 위해)
-			PRINTL ;초기 관계성과 같은 캐릭터를 지정했을 경우, 동행률은 이쪽이 우선된다
+			PRINTL ;초기 관계성과 같은 캐릭터를 지정한 경우, 동행률은 이쪽이 우선됩니다
 			PRINTL ;-------------------------------------------------------------------------------------------
 			PRINTL {
-			PRINTL CSTR,동행 캐릭터,
+			PRINTL CSTR,同行キャラ,
 			FOR LOCAL, 0, キャラクタ数上限
 				IF DT_CELL_GET("DT_CHARA", LOCAL, "VALUE")
 					PRINTFORM %DT_CELL_GETS("DT_CHARA", LOCAL, "NAME")%_
@@ -2609,11 +2615,11 @@ PRINTL ;	소분류,문구류,건강 기구,일용품,조리 기구,공구
 			PRINTL }
 			HTML_PRINT "<br>"
 			
-			PRINTFORML CSTR,옷 명칭,%ランダムキャラ服装名%
+			PRINTFORML CSTR,服名称,%ランダムキャラ服装名%
 			FOR LOCAL, 1, VARSIZE("服装数値保存")
 				SIF EQUIPNAME:LOCAL == ""
 					CONTINUE
-				PRINTFORM 장착물,%EQUIPNAME:LOCAL%,
+				PRINTFORM 装着物,%EQUIPNAME:LOCAL%,
 				IF EQUIPNAME:LOCAL == "上半身下着あり" && 服装数値保存:LOCAL > 4
 					PRINTFORML {4 - 服装数値保存:LOCAL}
 				ELSEIF EQUIPNAME:LOCAL == "下半身下着あり" && 服装数値保存:LOCAL > 4
@@ -2634,7 +2640,7 @@ PRINTL ;	소분류,문구류,건강 기구,일용품,조리 기구,공구
 			PRINTL ;-------------------------------------------------------------------------------------------
 			PRINTL ;전투 스테이터스 설정
 			PRINTL ;초기값이나 성장 타입은 기본적으로 준비된 템플릿을 선택하는 사양.
-			PRINTL ;세부적으로 설정하고 싶은 경우는 「캐릭터명_파라미터 설정」의 「@구상측 초기 파라미터 변경_XXXX」에서 할 것
+			PRINTL ;세부적으로 설정하고 싶은 경우는 「キャラ名_パラメータ設定」의 「@대사側初期パラメータ変更_XXXX」에서 할 것
 			PRINTL ;-------------------------------------------------------------------------------------------
 			PRINTL {
 			PRINTFORML CSTR,전투 기초 스테이터스 설정,
@@ -2647,10 +2653,10 @@ PRINTL ;	소분류,문구류,건강 기구,일용품,조리 기구,공구
 			HTML_PRINT "<br>"
 			PRINTL ;-------------------------------------------------------------------------------------------
 			PRINTL ;표시 오의 설정
-			PRINTL ;설정하면 고유 오의를 구상에서 설정하지 않아도, 범용 오의의 표시명만을 변경한다
-			PRINTL ;함락 오의 설정에 기술해 두면, 함락 시에 표시명을 변경할 수 있다
-			PRINTL ; _로 구분함으로써 ＋/＋＋로 랭크업할 때 표시명을 변경할 수 있다.
-			PRINTL ;단, 랭크업 후만을 설정할 수는 없다.
+			PRINTL ;설정하면 고유 오의를 대사에서 설정하지 않아도, 범용 오의의 표시명만 변경한다
+			PRINTL ;함락 오의 설정에 기술해두면, 함락 시에 표시명을 변경할 수 있다
+			PRINTL ;_로 구분함으로써 ＋/＋＋로 랭크업할 때 표시명을 변경할 수 있다.
+			PRINTL ;단, 랭크업 후만 설정하는 것은 불가능하다.
 			PRINTL ;-------------------------------------------------------------------------------------------
 			PRINT CSTR,표시 오의 설정,
 			IF ランダムキャラ奥義名:0 != ""
@@ -2661,7 +2667,7 @@ PRINTL ;	소분류,문구류,건강 기구,일용품,조리 기구,공구
 			ELSE
 				HTML_PRINT "<br>"
 			ENDIF
-PRINT CSTR,함락 오의 설정,
+			PRINT CSTR,함락 오의 설정,
 			IF ランダムキャラ奥義名:3 != ""
 				PRINTFORM %ランダムキャラ奥義名:3%
 				SIF ランダムキャラ奥義名:4 != "" || ランダムキャラ奥義名:5 != ""
@@ -2672,7 +2678,7 @@ PRINT CSTR,함락 오의 설정,
 			ENDIF
 			HTML_PRINT "<br>"
 			OUTPUTLOG @"CSV_EDITFILE/Chara{登録番号} %ランダムキャラネーム%.csv", 1
-PRINTW CSV_EDITFILE 폴더에 출력했습니다. CSV/캐릭터 데이터 폴더로 이동하여 다시 시작하십시오
+			PRINTW CSV_EDITFILE 폴더에 출력했습니다. CSV/캐릭터 데이터 폴더로 이동하여 재시작해주세요
 			DT_RELEASE "DT_CHARA"
 			RETURN 0
 		ENDIF
@@ -2684,11 +2690,11 @@ PRINTW CSV_EDITFILE 폴더에 출력했습니다. CSV/캐릭터 데이터 폴더
 			ENDIF
 		NEXT
 		IF LOCAL:5 == 0
-PRINTW 직원 방이 가득 찼습니다.
+			PRINTW 직원 방이 가득 찼습니다.
 			RETURN 0
 		ENDIF
 		IF 必要ルピ > MONEY
-PRINTW 루피가 부족합니다.
+			PRINTW 루피가 부족합니다.
 			RETURN 0
 		ENDIF
 		MONEY -= 必要ルピ
@@ -2834,7 +2840,7 @@ PRINTW 루피가 부족합니다.
 		;戦闘関連設定
 		SIF ランダムキャラ戦闘タイプ:1 == 0
 			ランダムキャラ戦闘タイプ:1 = 1
-		CSTR:(LOCAL:1):戦闘基礎ステータス設定 =  속성_%属性数値文字列変換(ランダムキャラ戦闘タイプ:0)% 특기 무기_%得意武器表示文字列(ランダムキャラ戦闘タイプ:1)% 초기 스테이터스 타입_%成長タイプ:(ランダムキャラ戦闘タイプ:2)%
+		CSTR:(LOCAL:1):戦闘基礎ステータス設定 =  属性_%属性数値文字列変換(ランダムキャラ戦闘タイプ:0)% 得意武器_%得意武器表示文字列(ランダムキャラ戦闘タイプ:1)% 初期ステータスタイプ_%成長タイプ:(ランダムキャラ戦闘タイプ:2)%
 
 		IF ランダムキャラ奥義名:0 != ""
 			表示奥義:(LOCAL:1):0 '= ランダムキャラ奥義名:0
@@ -2878,16 +2884,17 @@ PRINTW 루피가 부족합니다.
 		ページ数 = 0
 		表示モード = 3
 	CASE 9
-		PRINTL 일반 정보・육체 정보・육체 설정 화면의 항목명 표시색을 변경합니다
+		PRINTL 일반 정보・육체 정보・육체 설정 화면의 항목명 표시 색상을 변경합니다
 		PRINTL 아래 목록에서 선택하는 것 외에, 컬러 코드(000000～FFFFFF)를 직접 입력할 수도 있습니다
-		LOCALS:2 = 빨강 파랑 노랑 초록 보라
+		LOCALS:1 '= ""
+		LOCALS:2 = 빨강파랑노랑초록보라
 		FOR LOCAL, 0, STRLENSU(LOCALS:2)
 			LOCALS:3 '= カラーパレット_HTML(CHARATU(LOCALS:2, LOCAL))
 			LOCALS:1 += @"<button value='%LOCALS:3%'><font color='#%LOCALS:3%'>　[%CHARATU(LOCALS:2, LOCAL)%색]</font></button>"
 		NEXT
 		LOCALS:1 += @"<button value='C0C0C0'><font color='#C0C0C0'>　[흰색]</font></button>"
-		LOCALS:1 += @"<button value='666666'><font color='#666666'>　[암회색]</font></button>"
-		LOCALS:1 += @"<button value='959595'><font color='#959595'>　[명회색(기본)]</font></button>"
+		LOCALS:1 += @"<button value='666666'><font color='#666666'>　[어두운 회색]</font></button>"
+		LOCALS:1 += @"<button value='959595'><font color='#959595'>　[밝은 회색 (기본값)]</font></button>"
 		HTML_PRINT LOCALS:1
 		SETTEXTBOX 見出し文字色
 		INPUTS
@@ -2898,11 +2905,11 @@ PRINTW 루피가 부족합니다.
 		ELSE
 			見出し文字色 '= RESULTS
 			SETCOLOR TOINT("0x" + RESULTS)
-			PRINTW 항목 이름의 표시 색상을 변경했습니다
+			PRINTW 항목명의 표시색을 변경했습니다
 			RESETCOLOR
 		ENDIF
 	CASE 997
-		PRINTL 한마디 코멘트/해설 에디터를 시작합니다 (만약을 대비하여, 한 번 CSV를 저장해 두는 것을 권장합니다)
+		PRINTL 한마디 코멘트/해설 에디터를 실행합니다 (만일의 경우를 대비하여, 한 번 CSV를 저장해 두는 것을 권장합니다)
 			CALL CHOICE("よろしいですか？", "はい", "いいえ")
 			SIF !RESULT
 				CALL 一言コメント解説エディタ(登録番号, ランダムキャラネーム, ランダムキャラ人称, ランダムキャラ人称:1)
@@ -3088,7 +3095,7 @@ PRINTW 루피가 부족합니다.
 				SIF !EXISTCSV(LOCAL)
 					CONTINUE
 				;ランダムキャラ排除
-				SIF LOCAL == 999
+				SIF ランダムキャラ判定(LOCAL)
 					CONTINUE
 				DT_ROW_ADD "DT_CHARA", "NO", LOCAL, "NAME", CSVNAME(LOCAL), "VALUE", 0
 			NEXT
@@ -3324,6 +3331,8 @@ RETURNF 基礎値
 #DIM 体型
 #DIM 身長
 #DIM 基礎値
+#DIM 計算値_上限
+#DIM 計算値_下限
 
 基礎値 = 身長 * (性別 == 2 ? 43 # 38) / 100
 
@@ -3357,6 +3366,52 @@ SELECTCASE 体型
 ENDSELECT
 
 基礎値 = 基礎値 * RAND(9700, 10301) / 10000
+;体型と一致しない場合に備えて数値を弄る
+SELECTCASE 体型
+	CASE 体型_痩せすぎ
+		計算値_上限 = 85
+		計算値_下限 = 0
+	CASE 体型_細身
+		計算値_上限 = 90
+		計算値_下限 = 86
+	CASE 体型_スレンダー
+		計算値_上限 = 95
+		計算値_下限 = 91
+	CASE 体型_普通
+		計算値_上限 = 100
+		計算値_下限 = 96
+	CASE 体型_グラマー
+		計算値_上限 = 105
+		計算値_下限 = 101
+	CASE 体型_豊満
+		計算値_上限 = 110
+		計算値_下限 = 106
+	CASE 体型_肥満
+		計算値_上限 = 999999
+		計算値_下限 = 111
+ENDSELECT
+計算値_上限 = 計算値_上限 * 身長 * (性別 == 2 ? 43 # 38) / 10000
+計算値_下限 = 計算値_下限 * 身長 * (性別 == 2 ? 43 # 38) / 10000
+SELECTCASE 体格
+	CASE 体格_ハーヴィン並
+		計算値_上限 = 計算値_上限 * 100 / 82
+		計算値_下限 = 計算値_下限 * 100 / 82
+	CASE 体格_子供
+		計算値_上限 = 計算値_上限 * 100 / 93
+		計算値_下限 = 計算値_下限 * 100 / 93
+	CASE 体格_小柄
+		計算値_上限 = 計算値_上限 * 100 / 97
+		計算値_下限 = 計算値_下限 * 100 / 97
+	CASE 体格_普通
+	CASE 体格_長身
+		計算値_上限 = 計算値_上限 * 100 / 102
+		計算値_下限 = 計算値_下限 * 100 / 102
+	CASE 体格_男ドラフ並
+		計算値_上限 = 計算値_上限 * 100 / 103
+		計算値_下限 = 計算値_下限 * 100 / 103
+ENDSELECT
+
+基礎値 = LIMIT(基礎値, 計算値_下限 + 5, 計算値_上限)
 
 RETURNF 基礎値
 
@@ -3369,6 +3424,8 @@ RETURNF 基礎値
 #DIM 下半身
 #DIM 基礎値
 #DIM 補正値
+#DIM 計算値_上限
+#DIM 計算値_下限
 
 基礎値 = 身長 * (性別 == 2 ? 47 # 54) / 100
 
@@ -3418,6 +3475,71 @@ ENDIF
 
 基礎値 = 基礎値 * RAND(9600, 10401) / 10000
 
+;下半身素質と一致しない場合に備えて数値を弄る
+SELECTCASE 下半身
+	CASE IS <= -1
+		IF 性別 == 2
+			計算値_上限 = 95
+			計算値_下限 = 0
+		ELSE
+			計算値_上限 = 90
+			計算値_下限 = 0
+		ENDIF
+	CASE 0
+		IF 性別 == 2
+			計算値_上限 = 103
+			計算値_下限 = 96
+		ELSE
+			計算値_上限 = 103
+			計算値_下限 = 91
+		ENDIF
+	CASE IS >= 1
+		計算値_上限 = 9999999
+		計算値_下限 = 104
+ENDSELECT
+計算値_上限 = 計算値_上限 * 身長 * (性別 == 2 ? 47 # 54) / 10000
+計算値_下限 = 計算値_下限 * 身長 * (性別 == 2 ? 47 # 54) / 10000
+SELECTCASE 体格
+	CASE 体格_ハーヴィン並
+		計算値_上限 = 計算値_上限 * 100 / 83
+		計算値_下限 = 計算値_下限 * 100 / 83
+	CASE 体格_子供
+		計算値_上限 = 計算値_上限 * 100 / 95
+		計算値_下限 = 計算値_下限 * 100 / 95
+	CASE 体格_小柄
+		計算値_上限 = 計算値_上限 * 100 / 98
+		計算値_下限 = 計算値_下限 * 100 / 98
+	CASE 体格_普通
+	CASE 体格_長身
+		計算値_上限 = 計算値_上限 * 100 / 101
+		計算値_下限 = 計算値_下限 * 100 / 101
+	CASE 体格_男ドラフ並
+		計算値_上限 = 計算値_上限 * 100 / 102
+		計算値_下限 = 計算値_下限 * 100 / 102
+ENDSELECT
+SELECTCASE 体型
+	CASE 体型_痩せすぎ
+		計算値_上限 = 計算値_上限 * 100 / 108
+		計算値_下限 = 計算値_下限 * 100 / 108
+	CASE 体型_細身
+		計算値_上限 = 計算値_上限 * 100 / 105
+		計算値_下限 = 計算値_下限 * 100 / 105
+	CASE 体型_スレンダー
+		計算値_上限 = 計算値_上限 * 100 / 102
+		計算値_下限 = 計算値_下限 * 100 / 102
+	CASE 体型_グラマー
+		計算値_上限 = 計算値_上限 * 100 / 96
+		計算値_下限 = 計算値_下限 * 100 / 96
+	CASE 体型_豊満
+		計算値_上限 = 計算値_上限 * 100 / 92
+		計算値_下限 = 計算値_下限 * 100 / 92
+	CASE 体型_肥満
+		計算値_上限 = 計算値_上限 * 100 / 89
+		計算値_下限 = 計算値_下限 * 100 / 89
+ENDSELECT
+
+基礎値 = LIMIT(基礎値, 計算値_下限 + 5, 計算値_上限)
+
 RETURNF 基礎値
 
 
@@ -3450,19 +3572,21 @@ ENDSELECT
 
 SELECTCASE ARG
 	CASE 5
-		LOCALS = 단추 등을 풀지 않아도 가슴이 노출될 수 있는가?
+		LOCALS = 버튼 등을 풀지 않아도, 의상을 비키는 것만으로 가슴이 노출될 수 있는가?
 	CASE 6
-		LOCALS = 벗기지 않아도 노브라 시 젖꼭지를 만질 수 있는가?
+		LOCALS = 벗기지 않아도 노브라 시에 손을 넣어 유두를 만질 수 있는가?
 	CASE 7
-		LOCALS = 벗기지 않아도 파이즈리 할 수 있는가?
+		LOCALS = 벗기지 않아도 파이즈리(가슴 애무)를 할 수 있는가?
 	CASE 10
 		LOCALS = 벗기지 않아도 브라를 벗길 수 있는가?
 	CASE 14
-		LOCALS = 스커트라고 쓰여 있지만 앞치마 등도 포함
+		LOCALS = 스커트나 앞치마처럼, 들추는 것으로 팬티나 사타구니를 만질 수 있는가?
 	CASE 15
-		LOCALS = 레오타드나 바니걸 등의 하이레그 형태를 상정
+		LOCALS = 레오타드 등과 같이 하이레그 형태로 사타구니를 덮고 있지만, 비키면 사타구니를 만질 수 있는가?
 	CASE 18
 		LOCALS = 벗기지 않아도 팬티를 벗길 수 있는가?
+	CASE 23
+		LOCALS = 미니스커트나 반바지 등, 하반신 의상을 입은 상태에서 무릎이나 허벅지가 드러나 있는가? (양말 등은 고려하지 않음)
 	CASEELSE
 		LOCALS '= ""
 ENDSELECT
@@ -3516,13 +3640,13 @@ HTML_PRINT TEMP_HTML
 TEMP_HTML = 
 DRAWLINE
 IF ページ数 > 0
-	TEMP_HTML += "<button value='9997'>[9997] 이전 페이지로</button>"
+	TEMP_HTML += "<button value='9997'>[9997] 이전 페이지</button>"
 ELSE
 	TEMP_HTML += "　　　 　　　　　　"
 ENDIF
 TEMP_HTML += "　　　　　　<button value='9999'>[9999] 돌아가기</button>　　　　　　"
 IF F_NUM >= ページ数 * 40 + 40
-	TEMP_HTML += "<button value='9998'>[9998] 다음 페이지로</button>"
+	TEMP_HTML += "<button value='9998'>[9998] 다음 페이지</button>"
 ELSE
 	TEMP_HTML += "　　　 　　　　　　"
 ENDIF
@@ -3576,7 +3700,7 @@ VARSET 表示配列
 FOR CSV番号, 1, キャラクタ数上限
 	SIF EXISTCSV(CSV番号) == 0
 		CONTINUE
-	SIF CSV番号 == 999
+	SIF ランダムキャラ判定(CSV番号)
 		CONTINUE
 	IF フィルタフラグ
 		SIF STRCOUNT(キャラ一覧フィルタ:性別, @"性別：%GET_TALENTNAME(2, CSVTALENT(CSV番号, GETNUM(TALENT, "性別")))%")
@@ -3607,9 +3731,11 @@ SIF 表示数:1 % 40 == 0
 
 DRAWLINE
 IF !ARG
-	PRINTL 기존 CSV에서 설정을 복사합니다. 복사 대상을 선택해 주세요
-ELSE
-	PRINTL 기존 CSV를 대상으로 에디터를 실행합니다. 편집 대상을 선택해 주세요
+	PRINTL 기존 CSV에서 설정을 복사합니다. 복사 대상을 선택해주세요
+ELSEIF ARG == 1
+	PRINTL 기존 CSV를 대상으로 에디터를 실행합니다. 편집 대상을 선택해주세요
+ELSEIF ARG == 2
+	PRINTL 고유 어빌리티의 대상 캐릭터를 변경합니다. 캐릭터를 선택해주세요
 ENDIF
 DRAWLINE
 
@@ -3664,23 +3790,23 @@ ENDIF
 HTML_PRINT Row_page
 DRAWLINE
 
-Row_filter '= @"<button value='9000'>□フィルタ機能（<font color='#\@ フィルタフラグ? B0B0B0'> ON# 666666'>OFF\@</font>）</button>"
+Row_filter '= @"<button value='9000'>□필터 기능（<font color='#\@ フィルタフラグ? B0B0B0'> ON# 666666'>OFF\@</font>）</button>"
 IF フィルタフラグ
 	Row_filter += "<br>"
 	Row_filter += @"　■성별　　　"
 	FOR LOCAL, 1, 4
 		Row_filter += @"<font color='#\@  STRCOUNT(キャラ一覧フィルタ:性別, @"性別：%GET_TALENTNAME(2, LOCAL)%")? 666666# B0B0B0\@'>"
-		Row_filter += @"<button value='性別：%GET_TALENTNAME(2, LOCAL)%'>[%GET_TALENTNAME(2, LOCAL)%]</button></font> "
+		Row_filter += @"<button value='성별:%GET_TALENTNAME(2, LOCAL)%'>[%GET_TALENTNAME(2, LOCAL)%]</button></font> "
 	NEXT
 	Row_filter += @"<font color='#\@  STRCOUNT(キャラ一覧フィルタ:性別, @"性別：%GET_TALENTNAME(2, 0)%")? 666666# B0B0B0\@'>"
-	Row_filter += @"<button value='性別：%GET_TALENTNAME(2, 0)%'>[%GET_TALENTNAME(2, 0)%]</button></font> "
+	Row_filter += @"<button value='성별:%GET_TALENTNAME(2, 0)%'>[%GET_TALENTNAME(2, 0)%]</button></font> "
 	Row_filter += @"／<button value='性別：全て表示'>[모두 표시]</button> <button value='性別：全て非表示'>[모두 숨기기]</button>"
 	Row_filter += "<br>"
 
 	Row_filter += @"　■종족　　　"
 	FOR LOCAL, 1, 7
 		Row_filter += @"<font color='#\@  STRCOUNT(キャラ一覧フィルタ:種族, @"種族：%GET_TALENTNAME(200, LOCAL)%")? 666666# B0B0B0\@'>"
-		Row_filter += @"<button value='種族：%GET_TALENTNAME(200, LOCAL)%'>[%GET_TALENTNAME(200, LOCAL)%]</button></font> "
+		Row_filter += @"<button value='종족:%GET_TALENTNAME(200, LOCAL)%'>[%GET_TALENTNAME(200, LOCAL)%]</button></font> "
 	NEXT
 	Row_filter += @"／<button value='種族：全て表示'>[모두 표시]</button> <button value='種族：全て非表示'>[모두 숨기기]</button>"
 	Row_filter += "<br>"
@@ -3688,9 +3814,9 @@ IF フィルタフラグ
 	Row_filter += @"　■기타　　"
 	FOR LOCAL, 0, 4
 		Row_filter += @"<font color='#\@  STRCOUNT(キャラ一覧フィルタ:その他, @"その他：招待不可%TOSTR(LOCAL)%")? 666666# B0B0B0\@'>"
-		Row_filter += @"<button value='その他：招待不可%TOSTR(LOCAL)%'>[초대 불가 플래그%TOSTR(LOCAL)%]</button></font> "
+		Row_filter += @"<button value='기타：招待不可%TOSTR(LOCAL)%'>[초대 불가 플래그%TOSTR(LOCAL)%]</button></font> "
 	NEXT
-	Row_filter += @"／<button value='その他：全て表示'>[모두 표시]</button> <button value='その他：全て非表示'>[모두 숨기기]</button>"
+	Row_filter += @"／<button value='기타：全て表示'>[모두 표시]</button> <button value='기타：全て非表示'>[모두 숨기기]</button>"
 	Row_filter += "<br>"
 
 	Row_filter += @"　■출연 작품　"
@@ -3721,16 +3847,16 @@ IF フィルタフラグ
 	IF フィルタフラグ:1
 		Row_filter += "　■출연 작품명 필터　"
 		Row_filter += @"<font color='#\@  フィルタ文字列:2 == ""? 666666# B0B0B0\@'>"
-		Row_filter += @"<button value='出演作品名フィルタ'>\@ 필터 문자열:2 == ""? (없음)# %フィルタ文字列:2%\@</button></font> "
+		Row_filter += @"<button value='出演作品名フィルタ'>\@ フィルタ文字列:2 == ""? （없음）# %フィルタ文字列:2%\@</button></font> "
 		SIF フィルタ文字列:1 != ""
-		Row_filter += @"<button value='出演作品名フィルタ消去'>[출연 작품명 필터 삭제]</button> "
+		Row_filter += @"<button value='出演作品名フィルタ消去'>[출연 작품명 필터 제거]</button> "
 		Row_filter += "<br>"
 	ENDIF
 	Row_filter += "　■이름 검색　"
 	Row_filter += @"<font color='#\@  フィルタ文字列:1 == ""? 666666# B0B0B0\@'>"
-	Row_filter += @"<button value='直接入力'>\@ 필터 문자열:1 == ""? (없음)# %フィルタ文字列:1%\@</button></font> "
+	Row_filter += @"<button value='直接入力'>\@ フィルタ文字列:1 == ""? (없음)# %フィルタ文字列:1%\@</button></font> "
 	SIF フィルタ文字列:1 != ""
-	Row_filter += @"<button value='入力消去'>[입력 삭제]</button> "
+	Row_filter += @"<button value='入力消去'>[입력 제거]</button> "
 	Row_filter += "<br>"
 ENDIF
 HTML_PRINT Row_filter
@@ -3739,6 +3865,7 @@ HTML_PRINT Row_filter
 BINPUTS
 IF !ISNUMERIC(RESULTS)
 	LOCALS = %RESULTS%
+	CSVページ数 = 0
 	IF STRCOUNT(LOCALS, "種族：")
 		LOCAL = 0
 	ELSEIF STRCOUNT(LOCALS, "性別：")
@@ -3841,12 +3968,14 @@ SELECTCASE LOCAL
 	CASEELSE
 		CSV番号 = LOCAL
 		IF !ARG
-			PRINTFORML %CSVNAME(CSV番号)%의 데이터를 복사합니다. 괜찮으시겠습니까?
-		ELSE
-			PRINTFORML %CSVNAME(CSV番号)%을(를) 편집 대상으로 합니다. 괜찮으시겠습니까?
+			PRINTFORML %CSVNAME(CSV番号)%의 데이터를 복사합니다. 괜찮습니까?
+		ELSEIF ARG == 1
+			PRINTFORML %CSVNAME(CSV番号)%을(를) 편집 대상으로 합니다. 괜찮습니까?
+		ELSEIF ARG == 2
+			PRINTFORML %CSVNAME(CSV番号)%을(를) 생성 대상으로 합니다. 괜찮습니까?
 		ENDIF
 		PRINTBUTTONLC "[0] 예", 0
-		PRINTBUTTONLC "[1] 아니요", 1
+		PRINTBUTTONLC "[1] 아니오", 1
 		PRINTL
 		BINPUT
 		IF RESULT == 0

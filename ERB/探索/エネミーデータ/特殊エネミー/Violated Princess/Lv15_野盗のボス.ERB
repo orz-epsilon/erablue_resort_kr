@@ -1,16 +1,16 @@
 
 @敵BATTLE_STATE_Lv15_野盗のボス(ARG)
 敵BATTLE_STATE:ARG:Lv = 15
-敵BATTLE_STATE:ARG:최대HP = 12000
+敵BATTLE_STATE:ARG:最大ＨＰ = 12000
 敵BATTLE_STATE:ARG:ＨＰ = 12000
-敵BATTLE_STATE:ARG:공격력 = 500
-敵BATTLE_STATE:ARG:방어력 = 500
-敵BATTLE_STATE:ARG:회복력 = 0
-敵BATTLE_STATE:ARG:행동속도 = 125
-敵BATTLE_STATE:ARG:DA율 = 30
-敵BATTLE_STATE:ARG:TA율 = 15
-敵BATTLE_STATE:ARG:명중률 = 80
-敵BATTLE_STATE:ARG:회피율 = 0
+敵BATTLE_STATE:ARG:攻撃力 = 500
+敵BATTLE_STATE:ARG:防御力 = 500
+敵BATTLE_STATE:ARG:回復力 = 0
+敵BATTLE_STATE:ARG:行動速度 = 125
+敵BATTLE_STATE:ARG:DA率 = 30
+敵BATTLE_STATE:ARG:TA率 = 15
+敵BATTLE_STATE:ARG:命中率 = 80
+敵BATTLE_STATE:ARG:回避率 = 0
 敵BATTLE_STATE:ARG:属性 = 6
 敵BATTLE_STATE:ARG:所持EXP = 1500
 敵BATTLE_STATE:ARG:所持ルピ = 1500
@@ -19,10 +19,10 @@
 敵BATTLE_STATE:ARG:ボスフラグ = 1
 敵BATTLE_STATE:ARG:ランダム不許可フラグ = 1
 
-敵BATTLE_STATE_STR:ARG:種族 = 인형_불량배
+敵BATTLE_STATE_STR:ARG:種族 = 人型_ならず者
 
 SIF EXIST画像FILE(@"%CSTR:(キャラ検索("[グラツィア大公家の小公女]セレナ")):画像フォルダ%/ダンジョン用_野盗ボス")
-	敵BATTLE_STATE_STR:ARG:ボス画像 = %CSTR:(キャラ検索("[グラツィア大公家の小公女]セレナ")):画像フォルダ%/ダンジョン用_野盗ボス
+敵BATTLE_STATE_STR:ARG:ボス画像 = %CSTR:(キャラ検索("[グラツィア大公家の小公女]セレナ")):画像フォルダ%/ダンジョン用_野盗ボス
 
 @敵討伐後処理_Lv15_野盗のボス(隊列番号)
 #DIM 隊列番号
@@ -44,7 +44,7 @@ CALL ドロップ判定処理(ドロップ確率, ドロップアイテム)
 @敵チャージ行動_Lv15_野盗のボス
 アビテンプレート用_アビ名 = 衝撃波
 
-KSTR:(K++) = %敵BATTLE_STATE_STR:(戦闘行動キャラ - 10):エネミー名%은(는) 땅을 강하게 내리쳐, 충격파를 발생시켰다!
+KSTR:(K++) = %敵BATTLE_STATE_STR:(戦闘行動キャラ - 10):エネミー名%은(는) 땅을 강하게 내리쳐 충격파를 발생시켰다!
 CALL メッセージ欄表示用関数()
 
 CALL アビ対象選択テンプレート_味方全体_生者のみ()

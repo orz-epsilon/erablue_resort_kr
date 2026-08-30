@@ -20,8 +20,8 @@ TFLAG:コマンドタイプ受渡 = COMTYPE("触手系")
 
 @COM_TOOLTIP_100
 LOCALS = <br>■촉수 유두 괴롭힘<br>
-LOCALS += "유두에 특화된 촉수를 내어 강한 쾌락을 주는 커맨드."
-LOCALS += "<br>COM타입: 촉수계<br>획득 소스: 쾌B・노출・접촉"
+LOCALS += "유두에 특화된 촉수를 내어, 강한 쾌락을 주는 커맨드."
+LOCALS += "<br>COM 타입: 촉수계<br>획득 소스: 쾌B・노출・접촉"
 LOCALS += "<br>고유 획득 경험: 촉수 조작 경험(PLAYER), 유두 개발(TARGET)<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
@@ -82,42 +82,42 @@ RETURN 1
 ;-------------------------------------------------
 @MESSAGE_COM100
 #DIM 同時キャラ番号
-PRINTFORM %CALLNAME:PLAYER%는
+PRINTFORM %CALLNAME:PLAYER%은(는)
 
 IF GETBIT(FLAG:モード管理, モードビット_同時)
-	PRINT 수많은 촉수를
+	PRINT 여러 개의 촉수를
 	FOR 同時キャラ番号, 0, 同時モード_選択数
 		SIF 同時キャラ番号 > 0
-			PRINT ,
+			PRINT 、
 		PRINTFORM %CALLNAME:(同時モード_選択キャラ:同時キャラ番号)%
 	NEXT
 	PRINT 의 유두에 달라붙게 했다
 	RETURN 0
 ENDIF
 
-PRINTFORM 자신의 촉수를 %CALLNAME:TARGET%의
+PRINTFORM 자신의 촉수를%CALLNAME:TARGET%의
 IF TEQUIP:上半身鎧あり
-	PRINT 갑옷 틈새로
+	PRINT 갑옷의 틈새로
 	IF TEQUIP:上タイツあり
 		PRINT 타이츠 아래로
 	ENDIF
-	PRINT 파고들게 하고,
+	PRINT 파고들게 하여,
 ELSEIF TEQUIP:上半身服あり
-	PRINT 옷 틈새로
+	PRINT 옷의 틈새로
 	IF TEQUIP:上タイツあり
 		PRINT 타이츠 아래로
 	ENDIF
-	PRINT 파고들게 하고,
+	PRINT 파고들게 하여,
 ELSEIF TEQUIP:上半身下着あり == 1
 		IF TEQUIP:下タイツあり
 			PRINT 타이츠 아래에서
 		ENDIF
-		PRINT 브래지어 안으로 파고들게 하고,
+		PRINT 브라 안으로 파고들어,
 ENDIF
 IF TALENT:陥没乳首 && !TCVAR:陥没乳首露出フラグ
-	PRINT 아직 유륜에 가려진
+	PRINT 아직 유륜에 숨어있는
 ELSEIF PALAM:欲情 >= PALAMLV:3
-	PRINT 딱딱하게 솟아오른
+	PRINT 단단하게 솟아오른
 ENDIF
-PRINTL 유두에 달라붙게 했다
+PRINTL 유두에 빨려들게 했다
 

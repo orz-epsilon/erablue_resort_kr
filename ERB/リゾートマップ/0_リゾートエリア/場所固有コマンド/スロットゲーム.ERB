@@ -22,7 +22,7 @@
 #DIM 選択リール
 #DIM リール状態,3 ;何番目の枠で止まっているか
 #DIM リザルト状態,3 ;何番目の有効キャラリストIDで止まっているか
-#DIM CONST 文字列分割F = 0, 1, 1, 1, 1, 2, 2, 2, 3, 3, 3 ;CALLNAME 분할
+#DIM CONST 文字列分割F = 0, 1, 1, 1, 1, 2, 2, 2, 3, 3, 3 ;CALLNAMEの分割
 #DIM CONST 文字列分割R = 0, 1, 2, 2, 2, 4, 4, 4, 6, 6, 6
 #DIM CONST 文字数 = 0, 1, 1, 1, 1, 2, 2, 2, 3, 3, 3
 #DIMS リザルト
@@ -97,7 +97,7 @@ FOR LOCAL:1, 0, 100
 	SIF 衣装差分:(LOCAL:1) == ""
 		BREAK
 	VARSET カテゴリ内有効キャラ数
-	キー文字列 '= "탄자쿠_" + 衣装差分:(LOCAL:1)
+	キー文字列 '= "短冊_" + 衣装差分:(LOCAL:1)
 	FOR 対象キャラ, 1, CHARANUM
 		IF STRFIND(CSTR:対象キャラ:画像ファイル名合算, @"resources/" + CSTR:対象キャラ:画像フォルダ + "/" + キー文字列 + ".") > -1
 			カテゴリ内有効キャラ数 ++
@@ -111,7 +111,7 @@ FOR LOCAL:1, 0, 100
 		SIF 表情差分:(LOCAL:2) == ""
 			BREAK
 		VARSET カテゴリ内有効キャラ数
-		キー文字列 '= "탄자쿠_" + 衣装差分:(LOCAL:1) + 表情差分:(LOCAL:2)
+		キー文字列 '= "短冊_" + 衣装差分:(LOCAL:1) + 表情差分:(LOCAL:2)
 		FOR 対象キャラ, 1, CHARANUM
 			IF STRFIND(CSTR:対象キャラ:画像ファイル名合算, @"resources/" + CSTR:対象キャラ:画像フォルダ + "/" + キー文字列 + ".") > -1
 				カテゴリ内有効キャラ数 ++
@@ -126,7 +126,7 @@ FOR LOCAL:1, 0, 100
 		SIF スケベ表情差分:(LOCAL:2) == ""
 			BREAK
 		VARSET カテゴリ内有効キャラ数
-		キー文字列 '= "탄자쿠_" + 衣装差分:(LOCAL:1) + スケベ表情差分:(LOCAL:2)
+		キー文字列 '= "短冊_" + 衣装差分:(LOCAL:1) + スケベ表情差分:(LOCAL:2)
 		FOR 対象キャラ, 1, CHARANUM
 			IF STRFIND(CSTR:対象キャラ:画像ファイル名合算, @"resources/" + CSTR:対象キャラ:画像フォルダ + "/" + キー文字列 + ".") > -1
 				カテゴリ内有効キャラ数 ++
@@ -143,7 +143,7 @@ FOR LOCAL:1, 0, 100
 	SIF スケベ衣装差分:(LOCAL:1) == ""
 		BREAK
 	VARSET カテゴリ内有効キャラ数
-	キー文字列 '= "탄자쿠_" + スケベ衣装差分:(LOCAL:1)
+	キー文字列 '= "短冊_" + スケベ衣装差分:(LOCAL:1)
 	FOR 対象キャラ, 1, CHARANUM
 		IF STRFIND(CSTR:対象キャラ:画像ファイル名合算, @"resources/" + CSTR:対象キャラ:画像フォルダ + "/" + キー文字列 + ".") > -1
 			カテゴリ内有効キャラ数 ++
@@ -157,7 +157,7 @@ FOR LOCAL:1, 0, 100
 		SIF 表情差分:(LOCAL:2) == ""
 			BREAK
 		VARSET カテゴリ内有効キャラ数
-		キー文字列 '= "탄자쿠_" + スケベ衣装差分:(LOCAL:1) + 表情差分:(LOCAL:2)
+		キー文字列 '= "短冊_" + スケベ衣装差分:(LOCAL:1) + 表情差分:(LOCAL:2)
 		FOR 対象キャラ, 1, CHARANUM
 			IF STRFIND(CSTR:対象キャラ:画像ファイル名合算, @"resources/" + CSTR:対象キャラ:画像フォルダ + "/" + キー文字列 + ".") > -1
 				カテゴリ内有効キャラ数 ++
@@ -172,7 +172,7 @@ FOR LOCAL:1, 0, 100
 		SIF スケベ表情差分:(LOCAL:2) == ""
 			BREAK
 		VARSET カテゴリ内有効キャラ数
-		キー文字列 '= "탄자쿠_" + スケベ衣装差分:(LOCAL:1) + スケベ表情差分:(LOCAL:2)
+		キー文字列 '= "短冊_" + スケベ衣装差分:(LOCAL:1) + スケベ表情差分:(LOCAL:2)
 		FOR 対象キャラ, 1, CHARANUM
 			IF STRFIND(CSTR:対象キャラ:画像ファイル名合算, @"resources/" + CSTR:対象キャラ:画像フォルダ + "/" + キー文字列 + ".") > -1
 				カテゴリ内有効キャラ数 ++
@@ -236,17 +236,17 @@ IF スロット変更カウンタ == 3 || !スロット変更カウンタ
 	スロット変更カウンタ = 3
 	IF !スケベスロット予約フラグ
 		SPLIT 有効カテゴリ:(RAND:有効カテゴリ数) , "_", LOCALS
-		キー文字列 '= "탄자쿠_" + 衣装差分:TOINT(LOCALS) + 表情差分:TOINT(LOCALS:1)
+		キー文字列 '= "短冊_" + 衣装差分:TOINT(LOCALS) + 表情差分:TOINT(LOCALS:1)
 		スケベスロット実行フラグ = 0
 		加速モード = 0
 	ELSE
 		SPLIT 有効スケベカテゴリ:(RAND:有効スケベカテゴリ数) , "_", LOCALS
 		IF TOINT(LOCALS) < 100
-			キー文字列 '= "탄자쿠_" + 衣装差分:TOINT(LOCALS) + スケベ表情差分:(TOINT(LOCALS:1) - 100)
+			キー文字列 '= "短冊_" + 衣装差分:TOINT(LOCALS) + スケベ表情差分:(TOINT(LOCALS:1) - 100)
 		ELSEIF TOINT(LOCALS:1) < 100
-			キー文字列 '= "탄자쿠_" + スケベ衣装差分:(TOINT(LOCALS) - 100) + 表情差分:TOINT(LOCALS:1)
+			キー文字列 '= "短冊_" + スケベ衣装差分:(TOINT(LOCALS) - 100) + 表情差分:TOINT(LOCALS:1)
 		ELSE
-			キー文字列 '= "탄자쿠_" + スケベ衣装差分:(TOINT(LOCALS) - 100) + スケベ表情差分:(TOINT(LOCALS:1) - 100)
+			キー文字列 '= "短冊_" + スケベ衣装差分:(TOINT(LOCALS) - 100) + スケベ表情差分:(TOINT(LOCALS:1) - 100)
 		ENDIF
 		スケベスロット実行フラグ = 1
 		加速モード = 1
@@ -305,7 +305,7 @@ FOR LOCAL, 0, 表示枚数
 		RESULT = ENUMFILES("resources/" + CSTR:(有効キャラリスト:LOCAL):画像フォルダ, キー文字列 + "*.*")
 		LOCALS '= SUBSTRING(RESULTS:(RAND:RESULT), 10, -1)
 	ELSE
-		RESULT = ENUMFILES("resources/" + CSTR:(有効キャラリスト:LOCAL):画像フォルダ, キー文字列 + "_差分_表情*.*")
+		RESULT = ENUMFILES("resources/" + CSTR:(有効キャラリスト:LOCAL):画像フォルダ, キー文字列 + "_差분_表情*.*")
 		LOCAL:1 = RAND:(RESULT + 1)
 		SELECTCASE LOCAL:1
 			CASE RESULT
@@ -623,7 +623,7 @@ ENDIF
 SELECTCASE LOCAL
 CASE 0
 	IF MONEY < 投入レート
-		PRINTL 루피가 부족해...
+		PRINTL 루피가 부족하다...
 		GOTO INPUTLOOP2
 	ELSE
 		IF !RAND:10 && 有効スケベカテゴリ数

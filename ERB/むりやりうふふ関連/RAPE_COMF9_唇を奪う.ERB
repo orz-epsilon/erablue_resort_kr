@@ -20,8 +20,8 @@ TFLAG:コマンドタイプ受渡 = RAPE_COMTYPE("うふふ_被挿入中")
 @RAPE_COM_TOOLTIP_9
 LOCALS = <br>■입술을 빼앗다<br>
 LOCALS += "상대의 입술을 억지로 빼앗는다. 키스 모드로 이행. <br>[혀놀림][고양이혀]에 따라 효과가 증감."
-LOCALS += "<br>RAPE_COM타입: 우후후or피삽입중or성희롱<br>획득 소스: 노출・접촉・쾌S・불결・고통(일정 조건 시)"
-LOCALS += "<br>고유 획득 경험: 키스 경험(당신・TARGET)<br>"
+LOCALS += "<br>RAPE_COM 타입: 우후후or피삽입중or성희롱<br>취득 소스: 노출・접촉・쾌S・불결・고통(일정조건시)"
+LOCALS += "<br>고유 획득 경험：키스 경험(당신・TARGET)<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
 
@@ -87,13 +87,13 @@ EXP:PLAYER:キス経験 ++
 CALL 初体験日登録処理(PLAYER, TARGET, "ファーストキス", DAY * 1440 + TIME, GETPLACENAME(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置), "唇", "", 1)
 IF RESULT
 	RCVAR:PLAYER:ファーストキス中フラグ = 1
-	CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>%CALLNAME:TARGET%의 [입술]에 첫 키스를 해버렸다.</font><img src='えっちハート'>","うふふ")
+	CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>%CALLNAME:TARGET%の[唇]で初めてのキスを済ませた</font><img src='えっちハート'>","うふふ")
 ENDIF
 CALL 初体験日登録処理(PLAYER, TARGET, "キス", DAY * 1440 + TIME, GETPLACENAME(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置), "唇", "", 0)
 
 CALL 初体験日登録処理(TARGET, PLAYER, "ファーストキス", DAY * 1440 + TIME, GETPLACENAME(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置), "唇", "", 1)
 IF RESULT
-	CALL 履歴データベース登録(CFLAG:TARGET:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>%CALLNAME:PLAYER%의 [입술]에 첫 키스를 빼앗겼다.</font><img src='えっちハート'>","うふふ")
+	CALL 履歴データベース登録(CFLAG:TARGET:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>%CALLNAME:PLAYER%の[唇]に初めてのキスを奪われてしまった</font><img src='えっちハート'>","うふふ")
 	RFLAG:コマンド結果受渡し変数 = 1
 	RCVAR:TARGET:ファーストキス中フラグ = 1
 ENDIF
@@ -150,7 +150,7 @@ IF CFLAG:TARGET:睡眠
 	ENDIF
 ENDIF
 IF MODE_確認_完全一致("Ｖ挿入系", PLAYER, TARGET) > -1 || MODE_確認_完全一致("Ａ挿入系", PLAYER, TARGET) > -1 || MODE_確認_完全一致("Ｖ挿入系", TARGET, PLAYER) > -1 || MODE_確認_完全一致("Ａ挿入系", TARGET, PLAYER) > -1
-	PRINTFORML %CALLNAME:TARGET%을(를)%TEXTR("마음대로/욕망대로")%으로%TEXTR("범하면서/범하며 허리를 부딪치면서/범하며 허리를 흔들어대면서/")%,
+	PRINTFORML %CALLNAME:TARGET%을(를)%TEXTR("마음대로/욕망하는 대로")% %TEXTR("범하면서/범하며 허리를 부딪치면서/범하며 허리를 흔들어대면서/")%、
 ELSE
 	PRINTFORM %CALLNAME:TARGET%의,
 ENDIF
@@ -175,11 +175,11 @@ ELSEIF TALENT:TARGET:恋人持ち == 3
 	ENDIF
 ELSE
 	IF RFLAG:コマンド結果受渡し変数 == 1
-		PRINTFORM 아직 누구와도 키스한 적 없었던 순수한
+		PRINTFORM 아직 누구와도 키스한 적 없었던 순결한
 	ELSE
 		PRINTFORM %TEXTR("부드러운/싱그러운/맛있어 보이는/사랑스러운")%
 	ENDIF
 ENDIF
 
-PRINTFORML 입술을%TEXTR("억지로 빼앗았다/억지로 빼앗아 맛보았다/억지로 빼앗아 만끽했다")%…
+PRINTFORML 입술을%TEXTR("억지로 빼앗았다/힘으로 빼앗아 맛보았다/억지로 빼앗아 만끽했다")%…
 

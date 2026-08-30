@@ -152,18 +152,18 @@ FOR FOLDER_CNT, 0, FOLDER_NUM
 	SIF USE_BUTTON
 		PRINTFORML [{FOLDER_CNT}] %FOLDER_NAME%
 	; 枚数表示
-	PRINTFORM 이미지 수：얼굴{G_NUM_S, 3}장 / 단책{G_NUM_L, 3}장 / 
+	PRINTFORM 이미지 수：얼굴{G_NUM_S, 3}장 / 단자쿠{G_NUM_L, 3}장 /
 	IF G_NUM_O >= 0
-		PRINTFORM 기타{G_NUM_O, 3}장 
+		PRINTFORM 기타{G_NUM_O, 3}장
 	ELSE
 		;- 「その他の画像」の枚数がマイナス
 		; フォルダ内の画像の枚数が1100(RESULTSの配列数上限)を超えていて枚数が正しく取得できなかったケース
 		; 作成時点ではカリオストロ(1403枚)が該当
 		; 正確な数が把握できないので「???」表記にしておく
-		PRINTFORM 기타???장 
+		PRINTFORM 기타???장
 	ENDIF
 	SIF G_NUM_O
-		PRINTFORM (カットイン\@ G_NUM_C ? あり # なし \@)
+		PRINTFORM (컷인\@ G_NUM_C ? 있음 # 없음 \@)
 	PRINTL
 
 	

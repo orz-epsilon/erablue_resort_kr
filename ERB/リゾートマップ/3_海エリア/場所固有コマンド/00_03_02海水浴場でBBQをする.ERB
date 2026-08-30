@@ -5,7 +5,7 @@
 @COMNAME_PLACE_381_3_3
 #FUNCTION
 
-TSTR:コマンド名受渡 = BBQ를 하다
+TSTR:コマンド名受渡 = BBQ를 한다
 RETURNF 1
 
 ;===================================================
@@ -16,7 +16,7 @@ RETURNF 1
 TFLAG:コマンドタイプ受渡 = COMTYPE("日常")
 
 @COM_TOOLTIP_381_3_3
-LOCALS = <br>■BBQ를 하다<br>
+LOCALS = <br>■BBQ를 한다<br>
 LOCALS += "그 자리에 있는 캐릭터 전원과 BBQ를 하며 식사하는 커맨드. 일정 확률로 대성공, 성공, 실패, 대실패로 분기. <br>소지하고 있는 식재료를 제공하면 효과가 상승한다."
 LOCALS += "<br>COM 타입: 일상<br>획득 소스: 환락・정복"
 LOCALS += "<br>고유 획득 경험: 없음<br>"
@@ -52,18 +52,18 @@ RETURN 1
 ;-------------------------------------------------
 @MESSAGE_COM381_3_3
 
-PRINTFORM %CALLNAME:PLAYER%은(는)%CALLNAME:TARGET%\@ GET_TARGETNUM() > 1 ? 들 # \@과
+PRINTFORM %CALLNAME:PLAYER%은(는)%CALLNAME:TARGET%\@ GET_TARGETNUM() > 1 ? 들 # \@와(과)
 PRINT 바비큐를 했다
 
 SELECTCASE RFLAG:コマンド結果受渡し変数
 	CASE -2
 		;大失敗時
-		PRINTL 하지만,
+		PRINTL 했지만,
 		PRINTW 요리를 대실패해서 아무것도 먹지 못했다…
 	CASE -1
 		;失敗時
 		PRINTL 
-		PRINTW 곳곳에 탄 고기나 채소가 눈에 띄었지만, 배는 불렀다.
+		PRINTW 곳곳이 탄 고기나 채소가 눈에 띄었지만, 배는 불렀다.
 	CASE 1
 		;成功時
 		PRINTL 

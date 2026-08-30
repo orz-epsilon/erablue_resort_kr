@@ -4,7 +4,7 @@
 ;-------------------------------------------------
 @COMNAME21
 #FUNCTIONS
-TSTR:コマンド名受渡 = 아무것도 안 한다
+TSTR:コマンド名受渡 = 아무것도 하지 않는다
 
 
 ;===================================================
@@ -55,13 +55,13 @@ RETURN 1
 ;-------------------------------------------------
 @MESSAGE_COM21
 SIF PALAM:欲情 >= PALAMLV:3
-	PRINTFORM %CALLNAME:TARGET%는 숨을 헐떡이며
+	PRINTFORM %CALLNAME:TARGET%은(는) 숨을 헐떡이며
 SIF PALAM:欲情 >= PALAMLV:5
-	PRINT 열기 띤 눈동자로 이쪽을 응시하고
+	PRINT 열띤 눈으로 이쪽을 응시하고
 SIF PALAM:欲情 >= PALAMLV:3 && TEQUIP:媚薬
-	PRINT , 덜덜 떨리는 몸을 끌어안으면서
+	PRINT , 덜덜 떨리는 몸을 끌어안으며
 SIF PALAM:欲情 >= PALAMLV:4
-	PRINT 자꾸만 허벅지를 비비고
+	PRINT 동시에, 계속해서 허벅지를 비벼대고
 SIF PALAM:欲情 >= PALAMLV:3
 	PRINTL 있다……
 

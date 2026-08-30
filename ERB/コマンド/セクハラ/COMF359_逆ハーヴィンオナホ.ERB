@@ -2,7 +2,7 @@
 @COMNAME359
 #FUNCTIONS
 
-TSTR:コマンド名受渡 = 역 하빈 오나홀
+TSTR:コマンド名受渡 = 逆ハーヴィンオナホ
 
 ;===================================================
 ;コマンドタイプ
@@ -12,8 +12,8 @@ TSTR:コマンド名受渡 = 역 하빈 오나홀
 TFLAG:コマンドタイプ受渡 = COMTYPE("セクハラ")
 
 @COM_TOOLTIP_359
-LOCALS = <br>■역 하빈 오나홀<br>
-LOCALS += "자신의 V, 혹은 A에 삽입시킨 채 상대의 옷 아래에 고정하는 커맨드. <br>동실자가 전원 함락된 상태일 때만 가능하지만, 함께 은밀 중일 때는 같은 장소에 비함락 캐릭터가 있어도 가능."
+LOCALS = <br>■逆ハーヴィンオナホ<br>
+LOCALS += "자신의 V, 혹은 A에 삽입시킨 채 상대의 옷 아래에 고정하는 커맨드. <br>동실자가 전원 함락된 시에만 가능하지만, 함께 은밀 시에는 같은 장소에 비함락 캐릭터가 있어도 가능."
 LOCALS += "<br>COM 타입: 성희롱<br>획득 소스: 쾌C・접촉"
 LOCALS += "<br>고유 획득 경험: VorA 성교 경험(PLAYER)・C 성교 경험_VorA 삽입(TARGET)<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
@@ -22,23 +22,23 @@ TSTR:ツールチップ受渡 = %LOCALS%
 ;固定された後は自動で時間が進むのでモード化しない
 
 DRAWLINE
-PRINTL ■삽입할 곳을 선택해 주세요
+PRINTL ■삽입할 곳을 선택해주세요
 PRINTL
 LOCAL = 0
 IF GETBIT(TALENT:PLAYER:性別, 0) == 1 && TALENT:PLAYER:Ｖ感度 != -2
 	IF TEQUIP:PLAYER:膣 == 0
-		LOCALS = V 삽입
+		LOCALS = V挿入
 		SIF TALENT:PLAYER:処女
-			LOCALS += "(처녀)"
+			LOCALS += "（처녀）"
 		PRINTBUTTONLC @"[1] %LOCALS%", 1
 		LOCAL += 1
 	ENDIF
 ENDIF
 IF TALENT:PLAYER:Ａ感度 != -2
 	IF TEQUIP:PLAYER:アナル == 0
-		LOCALS = A 삽입
+		LOCALS = A挿入
 		SIF TALENT:PLAYER:Ａ処女
-			LOCALS += "(A 처녀)"
+			LOCALS += "（A 처녀）"
 		PRINTBUTTONLC @"[2] %LOCALS%", 2
 		LOCAL += 1
 	ENDIF
@@ -123,7 +123,7 @@ RETURN 1
 #DIM 部位フラグ
 
 SKIPDISP ARG
-PRINTFORML 역 하빈 오나홀(%CALLNAME:TARGET%)
+PRINTFORML 逆ハーヴィンオナホ(%CALLNAME:TARGET%)
 ;-------------------------------------------------
 ;実行できるかの判定
 ;-------------------------------------------------
@@ -156,7 +156,7 @@ IF MARK:快楽刻印
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += MARK:快楽刻印 * 3
-	PRINTFORM 쾌락각인LV{MARK:快楽刻印}({MARK:快楽刻印 * 3})
+	PRINTFORM 쾌락 각인LV{MARK:快楽刻印}({MARK:快楽刻印 * 3})
 	＋表示フラグ = 1
 ENDIF
 ;PALAM:潤滑（の不足）
@@ -309,14 +309,14 @@ RETURN RESULT
 ;-------------------------------------------------
 @MESSAGE_COM359
 
-PRINTFORM %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%을(를) 전라로 벗겨, 안듯이 하여
+PRINTFORM %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%를 전라로 벗기고, 끌어안듯이
 SELECTCASE RFLAG:コマンド結果受渡し変数
 	CASE 1
-PRINTL 비열에 삽입했다……
+		PRINTL 은밀한 틈에 삽입했다……
 	CASE 2
-PRINTL 항문에 삽입했다……
+		PRINTL 항문에 삽입했다……
 ENDSELECT
-PRINTFORML 그대로%CALLNAME:PLAYER%을(를) 밀착시키듯이 몸에 고정하고, 옷 아래에 숨겼다.
+PRINTFORML 그대로%CALLNAME:PLAYER%을 밀착시키듯이 몸에 고정하고, 옷 아래에 숨겼다.
 
 
 @逆オナホ解除
@@ -325,9 +325,9 @@ DRAWLINE
 LOCAL = DT_CELL_GET("体位モードデータベース", MODE_確認_ターゲット側("ハーヴィンオナホ系", PLAYER), "実行キャラ")
 
 IF TFLAG:オートコマンド連続発動_逆オナホ == 1
-	PRINTFORMW %CALLNAME:LOCAL%은(는) 옷을 벗고, 고정하고 있던%CALLNAME:PLAYER%을(를) 해방했다.
+	PRINTFORMW %CALLNAME:LOCAL%은 옷을 벗고, 고정하고 있던%CALLNAME:PLAYER%을 해방했다.
 ELSE
-	PRINTFORMW %CALLNAME:LOCAL%은(는) 삽입하고 있던%CALLNAME:PLAYER%을(를) 해방했다.
+	PRINTFORMW %CALLNAME:LOCAL%은 삽입하고 있던%CALLNAME:PLAYER%을 해방했다.
 ENDIF
 
 CALL MODE_DELETE_ターゲット側("ハーヴィンオナホ系", PLAYER)

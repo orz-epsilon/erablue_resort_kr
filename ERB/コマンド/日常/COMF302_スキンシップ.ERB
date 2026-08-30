@@ -88,15 +88,15 @@ RETURN 1
 ;-------------------------------------------------
 @MESSAGE_COM302
 IF BATHROOM(CFLAG:PLAYER:現在マップ種別, CFLAG:MASTER:現在位置)
-	PRINTFORML %CALLNAME:PLAYER%은(는)%CALLNAME:TARGET%의 등을 밀어주었다
+	PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%의 등을 밀어주었다
 ELSE
-	PRINTFORML %CALLNAME:PLAYER%은(는)%CALLNAME:TARGET%와 스킨십을 시도했다
+	PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%와(과) 스킨십을 시도했다
 ENDIF
 IF RFLAG:コマンド結果受渡し変数 == 1
 	PRINTFORML %CALLNAME:TARGET%은(는) 왠지 기뻐하는 것 같다…
 ELSEIF RFLAG:コマンド結果受渡し変数 == 0
-	PRINTFORML %CALLNAME:TARGET%도 싫지 않은 모양이다…
+	PRINTFORML %CALLNAME:TARGET%도 그리 싫지 않은 모양이다…
 ELSEIF RFLAG:コマンド結果受渡し変数 == -1
-	PRINTFORML …아무래도, 조금 너무 친한 척한 것 같다…
+	PRINTFORML …아무래도, 조금 지나치게 친한 척한 것 같다…
 ENDIF
 

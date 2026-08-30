@@ -121,36 +121,36 @@ ENDIF
 ;訪問処理
 $訪問ラベル
 DRAWLINE
-PRINTFORML %CALLNAME:PLAYER%가 자기 방에서 쉬고 있는데, %CALLNAME:AUTOCOM_実行番号保存%가 찾아왔다.
+PRINTFORML %CALLNAME:PLAYER%가 자실에서 쉬고 있는데, %CALLNAME:AUTOCOM_実行番号保存%이(가) 찾아왔다.
 TCVAR:AUTOCOM_実行番号保存:挨拶フラグ = 1
 SELECTCASE 訪問目的
 	CASE 0
-		PRINTFORML %RSTR:コマンド結果受渡し文字列%로 같이 놀지 않겠냐는 권유 같은데…… 어쩌지?
+		PRINTFORML %RSTR:コマンド結果受渡し文字列%에서 놀지 않겠냐는 권유인 것 같은데……어떻게 할까?
 		DRAWLINE
-		PRINTBUTTON "[0] 놀러 간다", 0
+		PRINTBUTTON "[0] 놀러 가기", 0
 		PRINTL
-		PRINTBUTTON "[1] 놀러 간다 (간이판)", 1
+		PRINTBUTTON "[1] 놀러 가기 (간이판)", 1
 		PRINTL
 		PRINTBUTTON "[2] 거절한다", 2
 		PRINTL
 		PRINTL
 		PRINTBUTTON "[100] 선택지에 대해 설명", 100
 	CASE 1
-		PRINTFORML 방으로 놀러 왔다고 하는데…… 어쩌지?
+		PRINTFORML 방에 놀러 왔다고 하는데……어떻게 할까?
 		DRAWLINE
-		PRINTBUTTON "[0] 방으로 들인다", 0
+		PRINTBUTTON "[0] 방으로 초대한다", 0
 		PRINTL
-		PRINTBUTTON "[1] 방으로 들인다 (간이판)", 1
+		PRINTBUTTON "[1] 방으로 초대한다 (간이판)", 1
 		PRINTL
 		PRINTBUTTON "[2] 거절한다", 2
 		PRINTL
 		PRINTL
 		PRINTBUTTON "[100] 선택지에 대해 설명", 100
 	CASE 2
-		PRINTFORML 일과 관련해서 묻고 싶은 게 있는 모양이다.
+		PRINTFORML 일 때문에 물어볼 것이 있는 것 같다.
 		WAIT
-		PRINTFORML %CALLNAME:PLAYER%는 %CALLNAME:AUTOCOM_実行番号保存%의 질문에 답하며 적절한 지시를 내렸다.
-		PRINTFORMW %CALLNAME:AUTOCOM_実行番号保存%는 납득한 듯한 모습으로 일터로 돌아갔다.
+		PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:AUTOCOM_実行番号保存%의 질문에 답하고, 적절한 지시를 내렸다.
+		PRINTFORMW %CALLNAME:AUTOCOM_実行番号保存%은(는) 납득한 듯 일로 돌아갔다.
 
 		CALL SOURCE_CALC_好感度要素_信頼度UP(AUTOCOM_実行番号保存, PLAYER, 250)
 		TARGET = AUTOCOM_実行番号保存
@@ -158,7 +158,7 @@ SELECTCASE 訪問目的
 	CASE 3
 		IF 知識素質:AUTOCOM_実行番号保存:性知識 > 1
 			IF 月算出() == "冬の月" && EXIST画像FILE("resources/" + CSTR:AUTOCOM_実行番号保存:画像フォルダ + "/短冊_裸リボン")
-				PRINTFORML %CALLNAME:AUTOCOM_実行番号保存%는 당신을 기쁘게 하려고 자신의 육체를 선물 삼아 리본으로 장식하고 있다…
+				PRINTFORML %CALLNAME:AUTOCOM_実行番号保存%은(는) 당신을 기쁘게 하려고, 자신의 육체를 선물로 비유하여 리본으로 장식하고 있다…
 				CALL PRINT_STRL(@"IMAGEPATH_%CSTR:AUTOCOM_実行番号保存:画像フォルダ%/短冊_裸リボン")
 				RSTR:コマンド結果受渡し文字列 = 裸リボン
 				;初視聴で衣装ゲット
@@ -166,30 +166,30 @@ SELECTCASE 訪問目的
 					CALL エロ衣装登録処理("裸リボン")
 				ENDIF
 			ELSE
-				PRINTFORML %CALLNAME:AUTOCOM_実行番号保存%는 당신을 기쁘게 하려고 정욕을 부추기는 속옷을 입고 왔다…
+				PRINTFORML %CALLNAME:AUTOCOM_実行番号保存%은(는) 당신을 기쁘게 하려고, 정욕을 부추기는 속옷을 입고 왔다…
 				IF EXIST画像FILE("resources/" + CSTR:AUTOCOM_実行番号保存:画像フォルダ + "/短冊_セクシーランジェリー")
 					CALL PRINT_STRL(@"IMAGEPATH_%CSTR:AUTOCOM_実行番号保存:画像フォルダ%/短冊_セクシーランジェリー")
 				ENDIF
 				RSTR:コマンド結果受渡し文字列 = セクシーランジェリー
 			ENDIF
 		ELSE
-			PRINTFORML %CALLNAME:AUTOCOM_実行番号保存%는 농염한 눈빛으로 %CALLNAME:PLAYER%를 응시하고 있다……
+			PRINTFORML %CALLNAME:AUTOCOM_実行番号保存%은(는) 요염한 눈으로 %CALLNAME:PLAYER%을(를) 바라보고 있다……
 			RSTR:コマンド結果受渡し文字列 = 通常
 		ENDIF
-		PRINTL 아무래도 몸을 겹치자는 권유인 듯한데, 어쩌지?
+		PRINTL 아무래도 살을 섞자는 유혹인 것 같은데, 어떻게 할까?
 		DRAWLINE
-		PRINTBUTTON "[0] 방으로 들인다", 0
+		PRINTBUTTON "[0] 방으로 초대한다", 0
 		PRINTL
 		PRINTBUTTON "[2] 거절한다", 2
 		PRINTL
 		PRINTL
-		PRINTBUTTON "[100] 선택지에 대한 설명", 100
+		PRINTBUTTON "[100] 선택지에 대해 설명", 100
 	CASE 4
-		PRINTFORML %RSTR:コマンド結果受渡し文字列%에서 회식하지 않겠냐는 초대인 것 같은데…… 어떡할까?
+		PRINTFORML %RSTR:コマンド結果受渡し文字列%에서 술자리를 갖자는 유혹인 것 같은데…… 어떻게 할까?
 		DRAWLINE
-		PRINTBUTTON "[0] 회식한다", 0
+		PRINTBUTTON "[0] 술자리를 갖는다", 0
 		PRINTL
-		PRINTBUTTON "[1] 회식한다 (간략 버전)", 1
+		PRINTBUTTON "[1] 술자리를 갖는다 (간이판)", 1
 		PRINTL
 		PRINTBUTTON "[2] 거절한다", 2
 		PRINTL
@@ -208,7 +208,7 @@ SELECTCASE 訪問目的
 				CFLAG:PLAYER:現在マップ種別 = 0
 				CFLAG:AUTOCOM_実行番号保存:現在マップ種別 = 0
 				CFLAG:AUTOCOM_実行番号保存:同室 = 1
-				PRINTFORML %CALLNAME:PLAYER%는 %CALLNAME:AUTOCOM_実行番号保存%와 함께 %RSTR:コマンド結果受渡し文字列%에서 놀기로 했다.
+				PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:AUTOCOM_実行番号保存%와(과) 함께 %RSTR:コマンド結果受渡し文字列%에서 놀기로 했다.
 				;一時間持続だが、休憩段階で60分経つのでその分を加算して代入
 				CFLAG:AUTOCOM_実行番号保存:一緒に遊ぶ = 120
 				TFLAG:TARGET変更用 = AUTOCOM_実行番号保存
@@ -246,24 +246,24 @@ SELECTCASE 訪問目的
 			CASE 1
 				TIME += 60
 				TARGET = AUTOCOM_実行番号保存
-				PRINTFORML %CALLNAME:PLAYER%는 %CALLNAME:AUTOCOM_実行番号保存%와 함께 %RSTR:コマンド結果受渡し文字列%에서 즐겁게 놀았다.
-				PRINTFORMW 만족한 %CALLNAME:AUTOCOM_実行番号保存%와 헤어지고, %CALLNAME:PLAYER%는 자기 방으로 돌아왔다.
+				PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:AUTOCOM_実行番号保存%와(과) 함께 %RSTR:コマンド結果受渡し文字列%에서 즐겁게 놀았다.
+				PRINTFORMW 만족한 %CALLNAME:AUTOCOM_実行番号保存%와(과) 헤어져, %CALLNAME:PLAYER%은(는) 자기 방으로 돌아왔다.
 
 				CALL SOURCE_CALC_歓楽(AUTOCOM_実行番号保存, PLAYER, 500)
 				CALL SOURCE_CALC_好感度要素_友情度UP(AUTOCOM_実行番号保存, PLAYER, 250)
 			CASE 2
-				PRINTFORMW 약속이 있다고 말하며, %CALLNAME:PLAYER%는 %CALLNAME:AUTOCOM_実行番号保存%의 초대를 거절했다……
+				PRINTFORMW 예정이 있다고 말하며, %CALLNAME:PLAYER%은(는) %CALLNAME:AUTOCOM_実行番号保存%의 초대를 거절했다……
 				RETURN 1
 			CASE 100
 				DRAWLINE
-				PRINTL 놀러 간다: 초대한 캐릭터와 함께 장소를 이동합니다.
+				PRINTL 놀러 가기: 초대하러 온 캐릭터와 함께 장소를 이동합니다.
 				PRINTL 　　　　　　그 후의 행동에 대해서는 제한이 없습니다.
 				PRINTL
-				PRINT 놀러 간다 (간략 버전):
-				PRINTL 간단한 묘사와 일정량의 호감도 변화가 실행됩니다.
+				PRINT 놀러 가기 (간이판):
+				PRINTL 간단한 묘사와 일정한 호감도 변화가 실행됩니다.
 				PRINTL 　　　　　　　　　　　장소 이동 등은 일어나지 않으며, 캐릭터는 방문 전에 있던 장소로 돌아갑니다.
 				PRINTL 
-				PRINTL 거절한다: 거절합니다. 캐릭터는 방문 전에 있던 장소로 돌아가고, 호감도 변화는 일어나지 않습니다.
+				PRINTL 거절하기: 거절합니다. 캐릭터는 방문 전에 있던 장소로 돌아가며, 호감도 변화는 일어나지 않습니다.
 				PRINTL 
 				WAIT
 				GOTO 訪問ラベル
@@ -274,7 +274,7 @@ SELECTCASE 訪問目的
 				CFLAG:PLAYER:現在マップ種別 = 0
 				CFLAG:AUTOCOM_実行番号保存:現在マップ種別 = 0
 				CFLAG:AUTOCOM_実行番号保存:同室 = 1
-				PRINTFORML %CALLNAME:PLAYER%는 %CALLNAME:AUTOCOM_実行番号保存%와 함께 자기 방에서 놀기로 했다.
+				PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:AUTOCOM_実行番号保存%와(과) 함께 자기 방에서 놀기로 했다.
 				;一時間持続だが、休憩段階で60分経つのでその分を加算して代入
 				TFLAG:TARGET変更用 = AUTOCOM_実行番号保存
 				CFLAG:AUTOCOM_実行番号保存:一緒に遊ぶ = 120
@@ -282,25 +282,25 @@ SELECTCASE 訪問目的
 			CASE 1
 				TIME += 60
 				TARGET = AUTOCOM_実行番号保存
-				PRINTFORML %CALLNAME:PLAYER%는 %CALLNAME:AUTOCOM_実行番号保存%와 함께 자기 방에서 즐겁게 놀았다.
-				PRINTFORMW 만족한 %CALLNAME:AUTOCOM_実行番号保存%는 리조트로 돌아갔다.
+				PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:AUTOCOM_実行番号保存%와(과) 함께 자기 방에서 즐겁게 놀았다.
+				PRINTFORMW 만족한 %CALLNAME:AUTOCOM_実行番号保存%은(는) 리조트로 돌아갔다.
 
 				CALL SOURCE_CALC_歓楽(AUTOCOM_実行番号保存, PLAYER, 500)
 				CALL SOURCE_CALC_好感度要素_友情度UP(AUTOCOM_実行番号保存, PLAYER, 250)
 			CASE 2
-				PRINTFORMW 일정이 있다고 말하며, %CALLNAME:PLAYER%는 %CALLNAME:AUTOCOM_実行番号保存%의 유혹을 거절했다……
+				PRINTFORMW 예정이 있다고 말하며, %CALLNAME:PLAYER%은(는) %CALLNAME:AUTOCOM_実行番号保存%의 초대를 거절했다……
 				RETURN 1
 			CASE 100
 				DRAWLINE
-				PRINTL 방으로 초대하기: 찾아온 캐릭터를 자신의 방으로 초대합니다.
-				PRINTL 　　　　　　이때, 분위기에 보정이 걸려 일부 명령어의 발생 조건이 완화됩니다.
-				PRINTL 　　　　　　그 이후의 행동에 대한 제한은 없습니다.
+				PRINTL 방으로 초대: 방문한 캐릭터를 자신의 방으로 초대합니다.
+				PRINTL 　　　　　　이시, 분위기에 보정이 걸려 일부 커맨드의 발생 조건이 완화됩니다.
+				PRINTL 　　　　　　그 후의 행동에 대해서는 제한이 없습니다.
 				PRINTL
-				PRINT 방으로 초대하기 (간이 버전):
-				PRINTL 간단한 묘사와 일정한 호감도 변화가 실행됩니다.
-				PRINTL 　　　　　　　　　　　장소 이동 등은 일어나지 않으며, 캐릭터는 방문 전에 있던 장소로 돌아갑니다.
+				PRINT 방으로 초대 (간이판):
+				PRINTL 간단한 묘사와 일정한호감도 변화가 실행됩니다.
+				PRINTL 　　　　　　　　　　　장소 이동 등은 일어나지 않으며, 캐릭터는 방문 전에 있던장소로 돌아갑니다.
 				PRINTL 
-				PRINTL 거절하기: 거절합니다. 캐릭터는 방문 전에 있던 장소로 돌아가며, 호감도 변화는 일어나지 않습니다.
+				PRINTL 거절: 거절합니다. 캐릭터는 방문 전에 있던장소로 돌아가며,호감도 변화는 일어나지 않습니다.
 				PRINTL 
 				WAIT
 				GOTO 訪問ラベル
@@ -313,7 +313,7 @@ SELECTCASE 訪問目的
 				CFLAG:PLAYER:現在マップ種別 = 0
 				CFLAG:AUTOCOM_実行番号保存:現在マップ種別 = 0
 				CFLAG:AUTOCOM_実行番号保存:同室 = 1
-				PRINTFORML %CALLNAME:PLAYER%는 %CALLNAME:AUTOCOM_実行番号保存%를 방으로 초대하여, 부드럽게 안아주었다.
+				PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:AUTOCOM_実行番号保存%을(를) 방으로 초대하여, 부드럽게 안아주었다.
 				TFLAG:TARGET変更用 = AUTOCOM_実行番号保存
 				TARGET:(GET_TARGETNUM() + 1) = AUTOCOM_実行番号保存
 				CFLAG:AUTOCOM_実行番号保存:一緒に遊ぶ = 120
@@ -331,14 +331,14 @@ SELECTCASE 訪問目的
 				CFLAG:MASTER:うふふ = 1
 				TFLAG:マップ種別 = 派生マップ番号取得(CFLAG:AUTOCOM_実行番号保存:現在マップ種別, CFLAG:AUTOCOM_実行番号保存:現在位置)
 			CASE 2
-				PRINTFORMW 일정이 있다고 말하며, %CALLNAME:PLAYER%는 %CALLNAME:AUTOCOM_実行番号保存%의 유혹을 거절했다……
+				PRINTFORMW 약속이 있다고 말하며, %CALLNAME:PLAYER%은(는) %CALLNAME:AUTOCOM_実行番号保存%의 초대를 거절했다……
 				RETURN 1
 			CASE 100
 				DRAWLINE
-				PRINTL 방으로 초대하기: 찾아온 캐릭터를 자신의 방으로 초대하여, 쓰러뜨립니다.
+				PRINTL 방으로 초대: 방문한 캐릭터를 자신의 방으로 초대하여, 쓰러뜨립니다.
 				PRINTL
-				PRINTL 거절하기: 거절합니다. 캐릭터는 방문 전에 있던 장소로 돌아가며, 호감도 변화는 일어나지 않습니다.
-				PRINTL %CALLNAME:PLAYER%는 %CALLNAME:AUTOCOM_実行番号保存%와(과) 함께 %RSTR:コマンド結果受渡し文字列%에서 술자리를 갖기로 했다.
+				PRINTL 거절: 거절합니다. 캐릭터는 방문 전에 있던장소로 돌아가며,호감도 변화는 일어나지 않습니다.
+				PRINTL 
 				WAIT
 				GOTO 訪問ラベル
 		ENDSELECT
@@ -348,7 +348,7 @@ SELECTCASE 訪問目的
 				CFLAG:PLAYER:現在マップ種別 = 0
 				CFLAG:AUTOCOM_実行番号保存:現在マップ種別 = 0
 				CFLAG:AUTOCOM_実行番号保存:同室 = 1
-				PRINTFORML %CALLNAME:PLAYER%는 %CALLNAME:AUTOCOM_実行番号保存%와(과) 함께 %RSTR:コマンド結果受渡し文字列%에서 즐겁게 술자리를 가졌다.
+				PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:AUTOCOM_実行番号保存%와 함께 %RSTR:コマンド結果受渡し文字列%에서 술자리를 갖기로 했다.
 				;一時間持続だが、休憩段階で60分経つのでその分を加算して代入
 				CFLAG:AUTOCOM_実行番号保存:一緒に遊ぶ = 120
 				TFLAG:TARGET変更用 = AUTOCOM_実行番号保存
@@ -376,8 +376,8 @@ SELECTCASE 訪問目的
 			CASE 1
 				TIME += 60
 				TARGET = AUTOCOM_実行番号保存
-				PRINTFORML 만족한 %CALLNAME:AUTOCOM_実行番号保存%와(과) 헤어지고, %CALLNAME:PLAYER%는 자신의 방으로 돌아왔다.
-				PRINTFORMW 일정이 있다고 말하며, %CALLNAME:PLAYER%는 %CALLNAME:AUTOCOM_実行番号保存%의 유혹을 거절했다……
+				PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:AUTOCOM_実行番号保存%와 함께 %RSTR:コマンド結果受渡し文字列%에서 즐거운 술자리를 가졌다.
+				PRINTFORMW 만족한 %CALLNAME:AUTOCOM_実行番号保存%와 헤어지고, %CALLNAME:PLAYER%은(는) 자신의 방으로 돌아왔다.
 
 				
 				IF TALENT:AUTOCOM_実行番号保存:酒に強い == 2
@@ -401,18 +401,18 @@ SELECTCASE 訪問目的
 				CALL SOURCE_CALC_歓楽(AUTOCOM_実行番号保存, PLAYER, 500)
 				CALL SOURCE_CALC_好感度要素_友情度UP(AUTOCOM_実行番号保存, PLAYER, 250)
 			CASE 2
-				PRINTFORMW 予定があると言って、%CALLNAME:PLAYER%は%CALLNAME:AUTOCOM_実行番号保存%の誘いを断った……
+				PRINTFORMW 약속이 있다고 말하며, %CALLNAME:PLAYER%은(는) %CALLNAME:AUTOCOM_実行番号保存%의 초대를 거절했다……
 				RETURN 1
 			CASE 100
 				DRAWLINE
-				PRINTL 술자리 갖기: 권유하러 온 캐릭터와 함께 장소를 이동하여, 술자리 모드로 전환합니다.
+				PRINTL 술자리를 하다: 초대하러 온 캐릭터와 함께장소으로 이동하여, 술자리 모드로 전환합니다.
 				PRINTL 　　　　　　　그 후의 행동에 대해서는 제한이 없습니다.
 				PRINTL
-				PRINT 술자리 갖기 (간이판):
-				PRINTL 간단한 묘사와 일정한 호감도 변화가 실행됩니다.
-				PRINTL 　　　　　　　　　　　　장소 이동 등은 일어나지 않으며, 캐릭터는 방문 전 있던 장소로 돌아갑니다.
+				PRINT 술자리를 하다 (간이 버전):
+				PRINTL 간단한 묘사와 일정량의호감도 변화가 실행됩니다.
+				PRINTL 　　　　　　　　　　　　장소 이동 등은 발생하지 않으며, 캐릭터는 방문 전에 있던장소으로 돌아갑니다.
 				PRINTL 
-				PRINTL 거절하기: 거절합니다. 캐릭터는 방문 전 있던 장소로 돌아가며, 호감도 변화는 일어나지 않습니다.
+				PRINTL 거절하다: 거절합니다. 캐릭터는 방문 전에 있던장소으로 돌아가며,호감도 변화는 발생하지 않습니다.
 				PRINTL 
 				WAIT
 				GOTO 訪問ラベル

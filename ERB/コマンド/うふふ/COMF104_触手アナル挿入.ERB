@@ -4,7 +4,7 @@
 ;-------------------------------------------------
 @COMNAME104
 #FUNCTIONS
-TSTR:コマンド名受渡 = 触手アナル挿入
+TSTR:コマンド名受渡 = 촉수 애널 삽입
 
 
 ;===================================================
@@ -19,10 +19,10 @@ TFLAG:コマンドタイプ受渡 = COMTYPE("触手系&Ａ系")
 
 
 @COM_TOOLTIP_104
-LOCALS = <br>■触手アナル挿入<br>
-LOCALS += "触手をアナルに挿入するコマンド。<br>Ａ挿入系モードとなり、モードを変更するか性行為を終了するまで持続的に快楽が発生する。"
-LOCALS += "<br>COMタイプ：触手系<br>取得ソース：快Ａ・接触・露出・苦痛・不潔(一定条件時)"
-LOCALS += "<br>固有の取得経験：触手操作経験(PLAYER)<br>"
+LOCALS = <br>■촉수 애널 삽입<br>
+LOCALS += "촉수를 애널에 삽입하는 커맨드.<br>A 삽입계 모드가 되어, 모드를 변경하거나 성행위를 종료할 때까지 지속적으로 쾌락이 발생한다."
+LOCALS += "<br>COM 타입: 촉수계<br>획득 소스: 쾌A・접촉・노출・고통・불결(일정 조건 시)"
+LOCALS += "<br>고유 획득 경험: 촉수 조작 경험(PLAYER)<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
 @COM104
@@ -72,7 +72,7 @@ SIF MODE_存在判定_完全一致("触手アナル挿入", PLAYER, TARGET)
 	RETURN 1
 
 SKIPDISP ARG
-PRINTFORML 촉수 항문 삽입(%CALLNAME:TARGET%)
+PRINTFORML 촉수 애널 삽입(%CALLNAME:TARGET%)
 
 ;-------------------------------------------------
 ;実行判定処理
@@ -98,7 +98,7 @@ IF ABL:Ａ感覚
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += ABL:Ａ感覚 * 2
-	PRINTFORM A감각LV{ABL:Ａ感覚}({ABL:Ａ感覚 * 2})
+	PRINTFORM A 감각LV{ABL:Ａ感覚}({ABL:Ａ感覚 * 2})
 	＋表示フラグ = 1
 ENDIF
 ;快楽刻印
@@ -135,7 +135,7 @@ ENDIF
 IF TALENT:快感応答 < 0 && !TALENT:恋慕
 	PRINT  - 
 	実行値 -= 5
-	PRINT 쾌감 부정(5)
+	PRINT 쾌감의 부정(5)
 	＋表示フラグ = 1
 ENDIF
 ;恋慕
@@ -157,7 +157,7 @@ ELSE
 	IF TALENT:性別嗜好 & 2 && TALENT:PLAYER:性別 == 1
 		PRINT  - 
 		実行値 -= 12
-		PRINT 여자 혐오(12)
+		PRINT 여성 혐오(12)
 		＋表示フラグ = 1
 	ENDIF
 ENDIF
@@ -165,7 +165,7 @@ ENDIF
 IF EXP:Ａ経験 < EXPLV:2
 	PRINT  - 
 	実行値 -= 15
-	PRINT A경험 부족(15)
+	PRINT Ａ경험 부족(15)
 	＋表示フラグ = 1
 ENDIF
 ;触手経験
@@ -203,7 +203,7 @@ SIF 実行値 == 必要実行値
 	PRINT  = 
 SIF 実行値 > 必要実行値
 	PRINT  > 
-PRINTFORM 실행값{必要実行値}
+PRINTFORM 실행 값{必要実行値}
 
 WAIT
 SKIPDISP 0
@@ -251,43 +251,43 @@ RETURN 1
 ;-------------------------------------------------
 @MESSAGE_COM104
 #DIM 同時キャラ番号
-PRINTFORM %CALLNAME:PLAYER%은/는
+PRINTFORM %CALLNAME:PLAYER%은(는)
 
 IF GETBIT(FLAG:モード管理, モードビット_同時)
-	PRINT 여러 촉수를
+	PRINT 수많은 촉수를
 	FOR 同時キャラ番号, 0, 同時モード_選択数
 		SIF 同時キャラ番号 > 0
 			PRINT ,
 		PRINTFORM %CALLNAME:(同時モード_選択キャラ:同時キャラ番号)%
 	NEXT
-	PRINT 애널에 삽입했다
+	PRINT 아날로 삽입했다
 	RETURN 0
 ENDIF
 
-PRINTFORM 자신의 촉수를 %CALLNAME:TARGET%의
+PRINTFORM 자신의 촉수를%CALLNAME:TARGET%의
 IF TEQUIP:下腹部前鎧あり || TEQUIP:下腹部後鎧あり
 	PRINT 갑옷 틈새로
 	IF TEQUIP:下タイツあり
 		PRINT 타이츠 아래로
 	ENDIF
-	PRINT 밀어 넣고,
+	PRINT 파고들게 하여,
 ELSEIF TEQUIP:下半身服あり
 	PRINT 옷 틈새로
 	IF TEQUIP:下タイツあり
 		PRINT 타이츠 아래로
 	ENDIF
-	PRINT 밀어 넣고,
+	PRINT 파고들게 하여,
 ELSEIF TEQUIP:下半身下着あり > 0
 	IF TEQUIP:下タイツあり
 		PRINT 타이츠 아래에서
 	ENDIF
-	PRINT 속옷 안으로 밀어 넣고,
+	PRINT 속옷에 파고들게 하여,
 ENDIF
 
 IF EXP:Ａ経験 <= EXPLV:2
 	PRINT 아직 굳게 닫힌
 ELSEIF EXP:Ａ経験 >= EXPLV:4
-	PRINT 완전히 부드럽고 음탕해진
+	PRINT 완전히 부드럽고 음란해진
 ENDIF
-PRINTFORML 애널에 삽입했다
+PRINTFORML 항문으로 삽입했다
 

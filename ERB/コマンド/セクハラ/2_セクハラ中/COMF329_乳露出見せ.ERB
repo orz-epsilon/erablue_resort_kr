@@ -1,7 +1,7 @@
 
 @COMNAME329
 #FUNCTIONS
-TSTR:コマンド名受渡 = 가슴 노출 보이기
+TSTR:コマンド名受渡 = 가슴 노출 보여주기
 
 ;===================================================
 ;コマンドタイプ
@@ -11,9 +11,9 @@ TSTR:コマンド名受渡 = 가슴 노출 보이기
 TFLAG:コマンドタイプ受渡 = COMTYPE("セクハラ")
 
 @COM_TOOLTIP_329
-LOCALS = <br>■가슴 노출 보이기<br>
-LOCALS += "자신의 가슴을 몰래 보여 상대를 유혹하는 커맨드. <br>그 자리에 있는 인원수가 많을수록 반감이 증가한다."
-LOCALS += "<br>COM 타입: 성희롱<br>획득 소스: 환락·반감"
+LOCALS = <br>■가슴 노출 보여주기<br>
+LOCALS += "자신의 가슴을 몰래 보여주어 상대를 유혹하는 커맨드。<br>그 자리에 있는 인원수가 많을수록 반감이 증가한다."
+LOCALS += "<br>COM 타입: 성희롱<br>획득 소스: 환락・반감"
 LOCALS += "<br>고유 획득 경험: 없음<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
@@ -109,10 +109,10 @@ PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%을(를) 향해 젖꼭지�
 
 IF RFLAG:コマンド結果受渡し変数３ == 1
 	WAIT
-	PRINTFORML 유혹당한%CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%의 몸을 끌어당겨, 침대에 밀어 넘어뜨렸다
+	PRINTFORML 유혹당한 %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%의 몸을 끌어당겨, 침대에 밀어 넘어뜨렸다
 ELSEIF RFLAG:コマンド結果受渡し変数３ == 2
 	WAIT
-	PRINTFORML 유혹당한%CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%을(를) 물가로 데려가, 끌어안았다
+	PRINTFORML 유혹당한 %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%을(를) 물러난 곳으로 데려가, 끌어안았다
 ENDIF
 
 
@@ -121,7 +121,7 @@ ENDIF
 PRINTFORM %CALLNAME:TARGET%은(는)
 
 IF RFLAG:コマンド結果受渡し変数３
-	PRINTFORML 정욕을 억누르지 못하는 눈으로%CALLNAME:PLAYER%을(를) 보고 있다…
+	PRINTFORML 정욕을 억누르지 못하는 눈으로 %CALLNAME:PLAYER%을(를) 보고 있다…
 ELSE
 	SELECTCASE RFLAG:コマンド結果受渡し変数２
 		CASE 1
@@ -129,21 +129,21 @@ ELSE
 			PRINTFORM 무엇을 하고 있는지 모르는 듯한 모습으로, %CALLNAME:PLAYER%을(를) 보고 있다.
 		CASE 2
 			;無反応
-			PRINTFORM 아무것도 신경 쓰지 않는 듯 무표정하게%CALLNAME:PLAYER%을(를) 보고 있다.
+			PRINTFORM 아무것도 신경 쓰지 않는 듯 무표정하게 %CALLNAME:PLAYER%을(를) 보고 있다.
 		CASEELSE
 			;汎用
 			IF GET_TARGETNUM() > 1
-				PRINTFORM 황급히%CALLNAME:PLAYER%에게 이런 짓을 하지 말라고 주의를 주었다.
+				PRINTFORM 황급히 %CALLNAME:PLAYER%에게 이런 짓을 하지 말라고 주의를 주었다.
 			ELSE
 				IF RFLAG:コマンド結果受渡し変数 == 1
 					;拒絶
-					PRINTFORML 황급히%CALLNAME:PLAYER%에게 이런 짓을 하지 말라고 주의를 주었다.
+					PRINTFORM 황급히 %CALLNAME:PLAYER%에게 이런 짓을 하지 말라고 주의를 주었다.
 				ELSEIF RFLAG:コマンド結果受渡し変数 == 2
 					;受け入れ
-					PRINTFORML 쓴웃음을 지으며%CALLNAME:PLAYER%을(를) 가볍게 주의시켰다.
+					PRINTFORM 쓴웃음을 지으며 %CALLNAME:PLAYER%을(를) 가볍게 주의시켰다.
 				ELSE
 					;喜び
-					PRINTFORM 자신 이외의 사람에게는 하지 않도록, %CALLNAME:PLAYER%에게 주의를 주었다.
+					PRINTFORM 자신 이외의 사람에게는 하지 말라고, %CALLNAME:PLAYER%에게 주의를 주었다.
 				ENDIF
 			ENDIF
 	ENDSELECT

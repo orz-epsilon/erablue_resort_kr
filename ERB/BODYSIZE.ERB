@@ -1,4 +1,4 @@
-﻿@SET_BODYSIZE(対象, セット位置 = 0)
+@SET_BODYSIZE(対象, セット位置 = 0)
 #DIM 対象
 #DIM セット位置
 
@@ -664,7 +664,7 @@ RETURNF 基礎値
 @SHOW_BODYSIZE(対象)
 #FUNCTIONS
 #DIM 対象
-LOCALS = 身長:%DECIMAL_STRING(BASE:対象:身長, 1), 6, RIGHT%cm/   B:%DECIMAL_STRING(補正込みバストサイズ(対象), 1), 6, RIGHT%cm %GET_CUPSIZE(対象)%
+LOCALS = 신장:%DECIMAL_STRING(BASE:対象:身長, 1), 6, RIGHT%cm/   B:%DECIMAL_STRING(補正込みバストサイズ(対象), 1), 6, RIGHT%cm %GET_CUPSIZE(対象)%
 
 RETURNF LOCALS
 

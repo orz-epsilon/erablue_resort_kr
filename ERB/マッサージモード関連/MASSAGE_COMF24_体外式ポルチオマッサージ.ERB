@@ -3,7 +3,7 @@
 ;-------------------------------------------------
 @MASSAGE_COMNAME24
 #FUNCTIONS
-TSTR:コマンド名受渡 = 체외식 포르치오 마사지
+TSTR:コマンド名受渡 = 体外式ポルチオマッサージ
 
 
 ;===================================================
@@ -14,10 +14,10 @@ TSTR:コマンド名受渡 = 체외식 포르치오 마사지
 TFLAG:コマンドタイプ受渡 = MASSAGE_COMTYPE("エロマッサージ")
 
 @MASSAGE_COM_TOOLTIP_24
-LOCALS = <br>■체외식 포르치오 마사지<br>
+LOCALS = <br>■体外式ポルチオマッサージ<br>
 LOCALS += "자궁구 부근에 존재하는 성감대를 배 위에서 지압하여 강한 자극을 준다."
-LOCALS += "<br>COM 타입: 에로 마사지<br>획득 소스: 쾌V・접촉・고통・환락"
-LOCALS += "<br>고유 획득 경험: 포르치오 개발(TARGET)<br>"
+LOCALS += "<br>COMタイプ：エロマッサージ<br>取得ソース：快Ｖ・接触・苦痛・歓楽"
+LOCALS += "<br>固有の取得経験：ポルチオ開発(TARGET)<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
 @MASSAGE_COM24
@@ -98,24 +98,24 @@ RETURN 1
 ;実行時メッセージ
 ;-------------------------------------------------
 @MASSAGE_MESSAGE_COM24
-PRINTFORM %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%의
+PRINTFORM %CALLNAME:PLAYER%은(는)%CALLNAME:TARGET%의
 	IF TALENT:TARGET:体型 >= 1
 	;肉感的以上
-		PRINTFORM 탱탱한
+		PRINTFORM 포동포동한
 	ELSEIF TALENT:TARGET:体型 <= -2
 	;細身以下
-		PRINTFORM 가늘고 가녀린
+		PRINTFORM 가늘고 가냘픈
 	ENDIF
-PRINTFORML 배 위에서, 손가락 끝으로 원을 그리듯이 포르치오를 %TEXTR("자극했다/주물렀다")%.
+PRINTFORML 배 위에서 손가락 끝으로 원을 그리듯이 포르치오를%TEXTR("자극했다/주물렀다")%。
 
 ;削りが十分な時は追加のメッセージ
 IF (BASE:TARGET:理性 + BASE:TARGET:警戒) < 900
 	PRINTW 
 	SELECTCASE RAND:2
 	CASE 0
-		PRINTFORM %CALLNAME:TARGET%은(는) %TEXTR("황홀하게 눈가를 녹이며/녹아내린 얼굴로 헤프게 입을 벌리고/법열에 눈가를 녹이며")%,
+		PRINTFORM %CALLNAME:TARGET%은(는)%TEXTR("황홀하게 눈가를 녹이며/풀린 얼굴로 헤프게 입을 벌리고/법열에 눈가를 녹이며")%、
 	CASE 1
-		PRINTFORM %CALLNAME:TARGET%은(는) 헤프게 풀린 입에서 %TEXTR("망측한 소리/쾌락에 물든 교성/음란한 소리")%을(를) %TEXTR("내며/흘리며/흘리면서")%,
+		PRINTFORM %CALLNAME:TARGET%은(는) 헤프게 풀린 입에서%TEXTR("주체할 수 없는 목소리/쾌락에 물든 교성/음란한 목소리")%를%TEXTR("내며/흘리며/흘리면서")%、
 	ENDSELECT
-	PRINTFORML %CALLNAME:PLAYER%%TEXTR("의 『마사지』/의 수기/가 주는 쾌락")%%TEXTR("에 취해 있다/에 당하는 대로 되어 있다/을 받아들이고 있다/을 감수하고 있다")%…
+	PRINTFORML %CALLNAME:PLAYER%%TEXTR("의 『마사지』/의 손기술/이 주는 쾌락")%%TEXTR("에 취해 있다/에 몸을 맡기고 있다/을 받아들이고 있다/을 감수하고 있다")%…
 ENDIF

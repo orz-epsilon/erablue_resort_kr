@@ -10,18 +10,18 @@ SELECTCASE ARGS
 		LOCALS = <div rect='2125,500,3762,2812'>
 		LOCALS += "■할로윈 파티<br>"
 		LOCALS += "<br>"
-		LOCALS += "리조트 전체를 할로윈 분위기로 띄웁니다.<br>"
-		LOCALS += "축제 전용 커맨드 「과자를 주다」「장난을 당하다」를 실행할 수 있게 됩니다.<br>"
+		LOCALS += "리조트 전체를 할로윈 분위기로 들뜨게 합니다.<br>"
+		LOCALS += "축제 전용 커맨드「과자를 준다」「장난을 당한다」를 실행할 수 있게 됩니다.<br>"
 		LOCALS += "같은 캐릭터에게는 2시간에 1회, 둘 중 하나만 실행 가능합니다.<br>"
 		LOCALS += "<br>"
-		LOCALS += "과자를 주다: 호감도 요소: 우정이 상승합니다<br>"
-		LOCALS += "장난을 당하다: 호감도 요소: 우정이 상승합니다. 성적인 장난이 될 가능성이 있습니다.<br>"
+		LOCALS += "과자를 준다: 호감도 요소: 우정이 상승합니다<br>"
+		LOCALS += "장난을 당한다: 호감도 요소: 우정이 상승합니다. 성적인 장난이 될 가능성이 있습니다.<br>"
 		LOCALS += "대사로 설정된 캐릭터가 할로윈 의상을 입을 수 있습니다.<br>"
 		LOCALS += "<br>"
 		IF 10000 > MONEY
-			LOCALS += @"루피가 부족합니다. (필요 루피：%NUM_FORMAT(開催費用)%）<br>"
+			LOCALS += @"루피가 부족합니다.（필요 루피：%NUM_FORMAT(開催費用)%）<br>"
 		ELSE
-			LOCALS += @"<button value='0'>[0] 이 축제를 기획한다 (필요 루피：%NUM_FORMAT(開催費用)%）</button><br>"
+			LOCALS += @"<button value='0'>[0] 이 축제를 기획한다（필요 루피：%NUM_FORMAT(開催費用)%）</button><br>"
 		ENDIF
 		LOCALS += "</div>"
 		HTML_PRINT LOCALS, 1
@@ -83,7 +83,7 @@ ENDSELECT
 ;-------------------------------------------------
 @COMNAME_PLACE_385_FESTIVAL_ハロウィンパーティ
 #FUNCTION
-TSTR:コマンド名受渡 = 과자를 주다
+TSTR:コマンド名受渡 = 과자를 준다
 RETURNF 1
 
 ;===================================================
@@ -94,7 +94,7 @@ RETURNF 1
 TFLAG:コマンドタイプ受渡 = COMTYPE("日常")
 
 @COM_TOOLTIP_385_FESTIVAL_ハロウィンパーティ
-LOCALS = <br>■과자를 주다<br>
+LOCALS = <br>■과자를 준다<br>
 LOCALS += "TARGET에게 과자를 주는 커맨드.<br>트릭 오어 트릿!"
 LOCALS += "<br>COM 타입: 일상<br>획득 소스: 환락"
 LOCALS += "<br>고유 획득 경험: 없음<br>"
@@ -133,16 +133,16 @@ RETURN 1
 ;-------------------------------------------------
 @MESSAGE_COM385_FESTIVAL_ハロウィンパーティ
 
-PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%에게 할로윈 과자를 주었다
+PRINTFORML %CALLNAME:PLAYER%은(는)%CALLNAME:TARGET%에게 할로윈 과자를 주었다
 
 @MESSAGE_COM385_FESTIVAL_ハロウィンパーティ_非口上時
 SELECTCASE RAND:3
 	CASE 2
-		PRINTFORML %CALLNAME:TARGET%은(는) 장난을 치지 못했다고 농담하고 있다
+		PRINTFORML %CALLNAME:TARGET%은(는) 장난치려다 실패했다며 농담하고 있다
 	CASE 1
 		PRINTFORML %CALLNAME:TARGET%은(는) 답례로 과자를 %CALLNAME:PLAYER%에게 건네주었다
 	CASE 0
-		PRINTFORML %CALLNAME:TARGET%은(는) 기쁜 듯이 고맙다고 말해주었다
+		PRINTFORML %CALLNAME:TARGET%은(는) 기쁜 듯 고맙다고 말해주었다
 ENDSELECT
 
 
@@ -151,7 +151,7 @@ ENDSELECT
 ;-------------------------------------------------
 @COMNAME_PLACE_386_FESTIVAL_ハロウィンパーティ
 #FUNCTION
-TSTR:コマンド名受渡 = 장난을 당하다
+TSTR:コマンド名受渡 = いたずらされる
 RETURNF 1
 
 ;===================================================
@@ -162,8 +162,8 @@ RETURNF 1
 TFLAG:コマンドタイプ受渡 = COMTYPE("日常")
 
 @COM_TOOLTIP_386_FESTIVAL_ハロウィンパーティ
-LOCALS = <br>■장난을 당하다<br>
-LOCALS += "TARGET에게 장난을 당하는 커맨드. <br>상대가 함락 완료 ＆ 우후후 경험 완료인 경우, 1/2 확률로 성적인 장난이 된다. <br>트릭 오어 트릿!"
+LOCALS = <br>■いたずらされる<br>
+LOCALS += "TARGET에게 장난당하는 커맨드. <br>상대가 함락 완료 & 우후후 경험 완료인 경우, 1/2 확률로 성적인 장난이 된다. <br>트릭 오어 트릿!"
 LOCALS += "<br>COM 타입: 일상<br>획득 소스: 환락・정복"
 LOCALS += "<br>고유 획득 경험: 없음<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
@@ -259,10 +259,10 @@ ENDIF
 IF RFLAG:コマンド結果受渡し変数２ < 1
 	SELECTCASE RAND:3
 		CASE 2
-			PRINTFORML %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%을(를) 간지럽혔다!
+PRINTFORML %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%을(를) 간지럽혔다!
 		CASE 1
-			PRINTFORML %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%의 손에 커다란 개구리를 놓았다! ……라고 생각했는데, 장난감이었다.
+PRINTFORML %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%의 손에 커다란 개구리를 놓았다! ……라고 생각했더니, 장난감이었다.
 		CASE 0
-			PRINTFORML %CALLNAME:TARGET%은(는) 어딘가에서 크래커를 꺼내, 펑! 하고 큰 소리를 울렸다.
+PRINTFORML %CALLNAME:TARGET%은(는) 어디선가 크래커를 꺼내, 빵! 하고 큰 소리를 울렸다.
 	ENDSELECT
 ENDIF

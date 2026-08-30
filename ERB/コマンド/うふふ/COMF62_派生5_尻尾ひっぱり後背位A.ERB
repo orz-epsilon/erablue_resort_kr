@@ -1,7 +1,7 @@
 
 @COMNAME_S62_5
 #FUNCTIONS
-TSTR:コマンド名受渡 = 꼬리 당기기 후배위 A
+TSTR:コマンド名受渡 = 尻尾ひっぱり後背位Ａ
 
 ;===================================================
 ;コマンドタイプ
@@ -13,10 +13,10 @@ TFLAG:コマンドタイプ受渡 = COMTYPE("Ａ系")
 オートコマンド許可 = 1
 
 @COM_TOOLTIP_S62_5
-LOCALS = <br>■꼬리 당기기 후배위 A<br>
-LOCALS += "뒤에서 삽입할 때, 꼬리를 잡고 당기면서 항문을 강하게 몰아붙이는 커맨드. <br>후배위, 스탠딩 백 모드일 때만 실행 가능."
-LOCALS += "<br>COM 타입: A계<br>획득 소스: 정복・쾌A・접촉・고통・불결(일정 조건 시)"
-LOCALS += "<br>고유 획득 경험: A성교 경험(TARGET)・C성교 경험_A삽입(PLAYER)<br>"
+LOCALS = <br>■尻尾ひっぱり後背位Ａ<br>
+LOCALS += "뒤에서 삽입할 때, 꼬리를 잡고 당기면서 항문을 강하게 몰아붙이는 커맨드. <br>후배위, 스탠딩 백 모드 시에만 실행 가능."
+LOCALS += "<br>COM 타입: A계<br>획득 소스: 정복・쾌Ａ・접촉・고통・불결(일정 조건 시)"
+LOCALS += "<br>고유 획득 경험: Ａ性交経験(TARGET)・Ｃ性交経験_Ａ挿入(PLAYER)<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
 @COM_S62_5
@@ -86,7 +86,7 @@ RETURN 1
 ;-------------------------------------------------
 @MESSAGE_COM_S62_5
 #DIM 同時キャラ番号
-PRINTFORM %CALLNAME:PLAYER%은
-PRINTFORML %CALLNAME:TARGET%의 꼬리를 잡고 고삐처럼 %TEXTR("다루며/끌어당기며")% 허리를 강하게 박아 넣었다.
+PRINTFORM %CALLNAME:PLAYER%은(는)
+PRINTFORML %CALLNAME:TARGET%의 꼬리를 잡고, 고삐처럼%TEXTR("다루며/당기며")% 강하게 허리를 부딪쳤다
 
 

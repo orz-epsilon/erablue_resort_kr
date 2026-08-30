@@ -1,0 +1,971 @@
+;特定のキャラをメインにするイベントカテゴリ
+;YYYYを任意のイベント名に変えて使うこと、他との重複不可
+
+@イベント発生条件_キャライベント_エンドオブデイドリーム
+#DIM キャラ番号取得
+#DIM キャラ番号取得１
+
+
+キャラ番号取得 = GETCHARA(1475)
+キャラ番号取得１ = GETCHARA(2726)
+
+SIF 天使のような悪魔の事務員イベフラグ >= 2
+	RETURN 1
+
+;開放条件を満たしたら1を返すこと
+;IF 王子様 != 1
+;ちっひイベ完走済みでない
+;ENDIF
+
+RETURN 0
+
+@イベント関数_キャライベント_エンドオブデイドリーム(ARG)
+#DIM 上昇量
+#DIM キャラ番号取得
+#DIM キャラ番号取得１
+
+上昇量 = 0
+
+キャラ番号取得 = GETCHARA(1475)
+キャラ番号取得１ = GETCHARA(2726)
+
+;滞在していない場合、いることにする。イベントうふふできないのでね
+IF CFLAG:キャラ番号取得:招待不可フラグ
+	CFLAG:キャラ番号取得:招待不可フラグ = 0
+ENDIF
+IF CFLAG:キャラ番号取得１:招待不可フラグ
+	CFLAG:キャラ番号取得１:招待不可フラグ = 0
+ENDIF
+IF CFLAG:キャラ番号取得:滞在期間 < 1
+	CFLAG:キャラ番号取得:滞在期間 = 1
+	CALL CLOTHES_TODAY(キャラ番号取得)
+	CALL CLOTHES_RESET(キャラ番号取得)
+ENDIF
+IF CFLAG:キャラ番号取得１:滞在期間 < 1
+	CFLAG:キャラ番号取得１:滞在期間 = 1
+	CALL CLOTHES_TODAY(キャラ番号取得１)
+	CALL CLOTHES_RESET(キャラ番号取得)
+ENDIF
+
+DRAWLINE
+PRINTFORMW ※주의
+PRINTL
+PRINTFORMW 플레이 환경(주로 마유의 경험이나 소질 관련)에 따라 여러 가지 모순이 생길 수 있으니……각자 뇌내 보관해 줘!!
+;PRINTL
+;DRAWLINE
+;PRINTL
+;PRINTFORMW ※本来あるはずの前提イベント(鋭意作成中)のあらすじ
+;PRINTL
+;PRINTFORML 千川ちひろがera様とタッグを組んで、事務所丸ごとアイドルを全員あなたにプレゼントしたよ！やったネ！！
+;PRINTFORML (前提イベの発生条件は今のところera様陥落とちっひ性愛度20万とかにする予定なので難易度的には結構高め)
+;PRINTFORMW (イベント自体のパワーが高いからこれでバランスを取ったつもりでいる)
+;PRINTL
+DRAWLINE
+PRINTL ［엔드 오브 데이 드림］
+DRAWLINE
+PRINTW
+PRINTFORML 고층에서 바라보는, 신주쿠의 야경.
+PRINTL
+PRINTFORML 인간의 손으로 완전히 개발된 대도시가, 그치지 않는 활동으로 밤의 어둠에 불빛을 반짝이는 모습은,
+PRINTFORMW 하늘 세계에서는 볼 수 없는, 그야말로 이세계 정서가 넘치는 경관이라고 할 수 있다.
+PRINTL
+PRINTFORML 쾌적한 실내 온도를 유지하는 에어컨. 스프링이 좋은, 편안한 잠자리의 거대한 침대.
+PRINTFORMW 냉장고에는 시원하게 식힌 술이 수십 종류. 통신기로 주문하면, 식사도 술안주도 순식간에 준비해 준다고 한다.
+PRINTL
+PRINTFORML ……이것이 이세계의 스위트룸인가……。
+PRINTFORMW 아무리 기술 수준이 다르다고는 해도, 리조트 오너로서 왠지 진 것 같은 기분이 드는 호화로운 호텔의 한 방에, 당신은 초대받아 있었다.
+PRINTL
+PRINTFORML 이곳에 이르러서도 용건은 아직 불명.
+PRINTFORM %CALLNAME:PLAYER%을(를) 초대한 치히로에게 물어봐도,
+CALL PRINT_STRL(@"「그것은 당일의 즐거움입니다_H_」라고 얼버무릴 뿐이고,")
+PRINTFORMW 막상 와보니 이대로, 이 몹시 비싸 보이는 방으로 안내받은 것이다.
+PRINTL
+PRINTFORML 테이블 위에는, 푸른 바탕에 자수 디자인으로 봉인된 서류 봉투.
+;デレステのガシャのアレ
+PRINTFORMW 그리고 방 중앙. 하늘 세계에는 아직 없는 얇은 영사기의 대화면을 켜보니, 그곳에는 환호를 받으며 노래하고 춤추는 한 소녀의 모습이 있었다.
+PRINTL
+PRINTL
+CALL PRINT_STR(@"IMAGEPATH_%CSTR:キャラ番号取得:画像フォルダ%/まゆ1")
+PRINTL
+;これ枠線みたいのつけたほうが書類っぽくなるか？
+PRINTL
+PRINTFORMW 사쿠마 마유
+PRINTL
+PRINTFORML 16세 고등학교 2학년 9월 7일생
+PRINTFORML 신장 153cm 체중 40kg
+PRINTL
+PRINTFORML 쓰리 사이즈는 78-54-80의 C컵
+PRINTL
+PRINTFORML 346 프로덕션 아이돌 부문 신데렐라 프로젝트 소속
+PRINTL
+PRINTFORML 아이돌이 되기 전에는 패션 잡지 모델을 했으며, 독자 모델 시절의 팬을 이어받는 형태로 데뷔.
+PRINTFORML 아이돌이 된 계기에 대해서는 「운명적인 만남이 있어서」 등 팬들 앞에서는 얼버무리고 있지만,
+PRINTFORMW 실제로는 자신을 스카우트한 프로듀서에게 첫눈에 반하는 형태로 프로덕션에 소속되었다…… .
+PRINTL
+PRINTL
+PRINTFORMW 라이브의 열기가 깃든 사랑스러운 얼굴. 균형 잡힌 소녀 체형에 순백의 의상을 두르고, 왼손목의 리본을 휘날리며 춤추는 가련한 아이돌.
+PRINTL
+PRINTFORML 「첫눈에 반함」「운명」「정말 좋아해」라고, 영락없는 소녀다운, 설탕 과자만큼이나 달콤한 사랑 노래를 부르는 화면 속 소녀와 비교하며
+PRINTFORMW 당신이 봉투에 있던 자료를 훑어보고 있자, 톡톡, 하고 조심스럽게 노크 소리가 울렸다.
+PRINTL
+PRINTFORMW ──딸깍.
+PRINTL
+CALL PRINT_STR(@"IMAGEPATH_%CSTR:キャラ番号取得:画像フォルダ%/まゆ2")
+PRINTL
+PRINTL
+PRINTFORMW 「……실례, 합니다……」
+PRINTL
+PRINTFORML 당신이 문을 열자, 그곳에는 치히로에게 어깨를 안긴, 분홍색 사복을 입은 낯익은 소녀가 있었다.
+PRINTFORMW 대화면으로 본 라이브 영상 그대로…… 아니, 화면 너머보다 훨씬 가련한 아이돌 사쿠마 마유 본인이 그곳에 있었다.
+PRINTL
+CALL PRINT_STRL(@"IMAGEPATH_%CSTR:キャラ番号取得１:画像フォルダ%/にっこりちひろ")
+PRINTL 치히로:
+CALL PRINT_STRW(@"「후후, 기다리셨습니다_H_ 자, 마유 쨩♪ 안으로……」")
+PRINTL
+PRINTFORML 긴장한 표정의 마유의 등을 미는 치히로를 방으로 안내하고, 침대에 앉은 %CALLNAME:PLAYER%이 중요한 용건을 묻자
+PRINTFORMW 치히로는 어딘가 즐거운 듯 「그럼 먼저, 설명부터 시작하겠습니다」라며, 마유의 어깨를 안고 이야기하기 시작했다…….
+PRINTL
+CALL PRINT_STRL(@"IMAGEPATH_%CSTR:キャラ番号取得１:画像フォルダ%/営業ちひろ")
+PRINTL 치히로:
+PRINTFORML 「준비해 드린 자료와 라이브 영상은, 보신 것 같네요♪」
+CALL PRINT_STRW(@"「네, 이 아이는 사쿠마 마유 쨩. 저희 프로덕션 소속 아이돌입니다_H_」")
+PRINTL
+CALL PRINT_STRW(@"「후후_H_ 귀엽죠? 보시다시피, 큐트 노선으로 지금 한창 뜨고 있습니다_H_」")
+PRINTL
+CALL PRINT_STRL(@"IMAGEPATH_%CSTR:キャラ番号取得１:画像フォルダ%/もーちひろ")
+PRINTL 치히로:
+PRINTFORMW 「……입니다만, 자료에도 썼듯이, 이 아이, 담당 프로듀서에게 마음을 품고 있어서요」
+PRINTL
+PRINTFORMW 「저희로서는, 한창 뜨고 있는 아이돌이 그 프로듀서와 사내 연애를 하는 건 솔직히 곤란합니다만……」
+PRINTL
+PRINTFORML 「프로듀서와는 아직 정식 교제에 이르지 못했고, 애초에 그녀가 아이돌을 지망한 동기이기도 하니」
+PRINTFORMW 「스캔들에 충분히 주의할 것을 조건으로, 지금까지는 묵인하며 상황을 지켜보는 형태를 취하고 있었습니다」
+PRINTL
+PRINTFORMW 그~러~나~, 라며 노골적으로 말을 끄는 치히로. 어딘가 즐거워 보인다…….
+PRINTL
+CALL PRINT_STRL(@"IMAGEPATH_%CSTR:キャラ番号取得１:画像フォルダ%/もーちひろ")
+PRINTL 치히로：
+PRINTFORML 「이번에, %CALLNAME:PLAYER%님께서 경영하시는 리조트가 저희 회사에 협찬해 주신다고 하여」
+PRINTFORMW 「그에 맞춰 사내 해당 프로젝트 관련 규약・계약 등 여러 가지가 크게 바뀌게 되어서요……」
+PRINTL
+PRINTFORML 「『매우 신세 지고 있는 %CALLNAME:PLAYER%님께서 아이돌을 건드리는 것은 당연한 권리』이고요」
+PRINTFORMW 「『%CALLNAME:PLAYER%님께서 손을 대주시는 것은 여자로서 매우 영광스러운 일』이니까요」
+PRINTL
+PRINTFORMW 「아이돌 여러분은 대부분 전원, 오너이신 %CALLNAME:PLAYER%님께 대한 감사를 담은 여러 가지 『일』에의 참가에 동의해 주셨습니다만……」
+PRINTL
+PRINTFORMW 「이대로는 아무리 『일』이라고는 해도, 짝사랑하는 사람이 있는 마유에게는 조금 가혹한 이야기가 되어버리겠죠?」
+PRINTL
+PRINTFORML 「무엇보다 짝사랑하는 프로듀서에게서, %CALLNAME:PLAYER%님께 대한 봉사를 지시받는 셈이니까요……」
+PRINTFORMW 「마유의 멘탈이나 컨디션에 악영향이 생기는 것은 명백합니다. 사무소로서 묵과하기 어려운 사태입니다」
+PRINTL
+CALL PRINT_STRL(@"IMAGEPATH_%CSTR:キャラ番号取得１:画像フォルダ%/にっこりちひろ")
+PRINTL 치히로：
+CALL PRINT_STRW(@"「그래서! 저희는, 마유에게 어떤 『제안』을 해드리기로 했습니다_H_」")
+PRINTL
+PRINTFORMW 치히로가 흐흥 하고 가슴을 펴고, 손바닥으로 옆에 서 있는 마유를 가리킨다.
+PRINTL
+CALL PRINT_STRL(@"IMAGEPATH_%CSTR:キャラ番号取得１:画像フォルダ%/にっこりちひろ")
+PRINTL 치히로：
+CALL PRINT_STRW(@"「마유의, 프로듀서에게 대한 사랑이 과연 얼마나 되는지, 오너 앞에서 직접 증명하는 겁니다_H_」")
+PRINTL
+PRINTFORML 「만약 이 사랑의 시련을 극복하고 제대로 증명하는 것이 이루어진다면!」
+CALL PRINT_STRW(@"「346 프로덕션은 회사 이름을 걸고, 마유와 프로듀서의 연애를 전력으로 지원해 드리겠습니다_H_」")
+PRINTL
+PRINTFORML 「마유가 팬들 앞에서도 당당하게, 가슴을 펴고 '프로듀서님이 정말 좋아요'라고 말할 수 있도록, 그런 아이돌로 내세울 것이고」
+CALL PRINT_STRW(@"「장래적인 두 사람의 결혼식이나 신혼여행, 임신·출산에 대해서도 모~든 것을, 두터운 지원을 약속드립니다_H_」")
+PRINTL
+CALL PRINT_STRL(@"IMAGEPATH_%CSTR:キャラ番号取得１:画像フォルダ%/営業ちひろ")
+PRINTL 치히로:
+PRINTFORML 「시련의 구체적인 내용을 포함해, 당당하게 '남자친구 있는 아이돌'이 될 수 있는 천재일우의 기회를 저울질하여……」
+PRINTFORMW 「고민 끝에, 마유는 이렇게 이곳에 오는 것을 선택했습니다」
+PRINTL
+CALL PRINT_STRW(@"「그래서 이렇게, 당신께 수고를 부탁드린 것이 사정의 전말입니다_H_ 그렇죠, 마유_H_」")
+PRINTL
+CALL PRINT_STRL(@"IMAGEPATH_%CSTR:キャラ番号取得:画像フォルダ%/緊張まゆ")
+PRINTL 마유:
+PRINTFORM 「읏……!」
+PRINTL
+PRINTFORMW 시종일관 즐거워 보이는 치히로와는 달리, 이름이 불리자 움찔하며 어깨를 떠는 마유.
+PRINTL
+PRINTFORMW 당신을 불러내서, 「사랑의 시련」이라니…… 이미 대충 어떤 속셈인지 짐작이 가지만, 일단 들어보자.
+PRINTL
+PRINTBUTTON "[0] ──그래서, 시련이란?", 0
+PRINTL
+BINPUT
+PRINTL
+CALL PRINT_STRL(@"IMAGEPATH_%CSTR:キャラ番号取得１:画像フォルダ%/にっこりちひろ")
+PRINTL 치히로:
+CALL PRINT_STRW(@"「후후_H_ 그럼, 그쪽 설명은 마유에게서_H_」")
+PRINTL
+PRINTFORML 치히로의 재촉을 받은 마유는, 떨리는 손으로 스커트를 꽉 움켜쥐면서 조심스럽게 당신 앞으로 나아가자,
+PRINTFORMW 심호흡을 한 뒤, 그 눈동자에 결의를 담아 당신을 바라보며 고했다……。
+PRINTL
+CALL PRINT_STR(@"IMAGEPATH_%CSTR:キャラ番号取得:画像フォルダ%/まゆ3")
+PRINTL
+PRINTFORMW 「……마유는……마유는 프로듀서님이, 프로듀서님만이, 좋아요……」
+PRINTL
+PRINTFORMW 「그러니까……」
+PRINTL
+PRINTFORMW 「…………읏……」
+PRINTL
+CALL PRINT_STR(@"IMAGEPATH_%CSTR:キャラ番号取得:画像フォルダ%/まゆ4")
+PRINTL
+PRINTFORMW 「…………오늘 밤만……하룻밤만……」
+PRINTL
+PRINTFORMW 「키스와, 섹, 스 외에는……마유, 뭐든지 참을 테니까……」
+PRINTL
+PRINTFORMW 「그러니까, 그동안……마유가, 한 번도 가지 않으면……」
+PRINTL
+PRINTFORMW 「부탁해요……마유를, 읏……프로듀서님만의 마유로, 있게 해주세요……읏！」
+PRINTL
+PRINTFORMW 눈가에 눈물을 글썽이며, 아직 16세의 미소녀가 몸을 바치겠다고 말하며 간청한다.
+PRINTL
+PRINTFORML 자신의 연애 성취를 위해, 어리면서도 시련에 몸을 던질 각오를 다진 그녀가, 얼마나 아름다운가.
+PRINTFORMW 당신의 입에서 무심코 새어 나온 감탄의 한숨에, 뒤에서 지켜보던 치히로가 쿡 하고 웃었다.
+PRINTL
+CALL PRINT_STRL(@"IMAGEPATH_%CSTR:キャラ番号取得１:画像フォルダ%/にっこりちひろ")
+PRINTL 치히로：
+CALL PRINT_STRW(@"「마유 양, 정말 기특하네요……_H_ 이런 아이에게 호의를 받을 수 있다니, 프로듀서님은 전생에 도대체 얼마나 많은 덕을 쌓으신 걸까요……」")
+PRINTL
+CALL PRINT_STRW(@"「읏, 후후_H_ 그러니까, 말이죠, 오너님_H_ 저도 부탁이 있어요_H_」")
+PRINTL
+CALL PRINT_STRW(@"「마유 양의 이 기특한 각오를 봐서, 부디 조건을 좀 더 쉽게……그래요, 『3회 이상 가지 않으면』으로 해주세요, 네?_H_」")
+PRINTL
+PRINTFORMW 치히로의 지원 사격에, 비애로 흐려져 있던 마유의 표정에 빛이 비치며 눈동자에 희망이 켜진다.
+PRINTL
+CALL PRINT_STRL(@"IMAGEPATH_%CSTR:キャラ番号取得１:画像フォルダ%/営業ちひろ")
+PRINTL 치히로:
+CALL PRINT_STRW(@"「자, 한 번으로는 우연이라거나 우발적이라거나, 그럴 수도 있잖아요. 그걸로 결착을 짓는다는 것도 불쌍하잖아요? 그러니까, 그렇죠?_H_」")
+PRINTL
+CALL PRINT_STRW(@"「괜찮아요_H_ 마유는, 좋아하지도 않는 사람이 만졌다고 해서, 절~대, 느끼거나 하지 않으니까요_H_ 세 번이라면, 분명 성공할 거예요_H_」")
+PRINTL
+CALL PRINT_STRL(@"IMAGEPATH_%CSTR:キャラ番号取得:画像フォルダ%/緊張まゆ")
+PRINTL 마유:
+PRINTFORMW 「읏, 네……! 프로듀서님을 위해서, 마유, 반드시……! 절대로, 해내 보일게요……!」
+PRINTL
+PRINTFORMW %CALLNAME:PLAYER%이 웃으며 고개를 끄덕이자, 자신도 어렴풋이 위태롭다고 생각했던 조건이 완화된 것에 갑자기 의욕을 불태우는 마유.
+PRINTL
+PRINTFORMW ……하지만, 마유의 뒤에서 윙크하는 치히로의 표정을 본 %CALLNAME:PLAYER%은 모든 것을 짐작했다.
+;目標は最初は高く設定しておいて、交渉の結果下げたように見せかけて予定通りの位置に置くのが交渉の基本です♡
+;ふふ、値段交渉でもよくありますよね♪
+PRINTL
+PRINTFORMW 이것은 단순히 조건을 완화한 것이 아니다. 마유를 돕는 척하며, 치히로는 퇴로를 끊은 것이다.
+PRINTL
+PRINTFORML 「우연히」 「우발적으로」 등 그녀가 변명할 수 없도록.
+PRINTFORMW 「어쩔 수 없다」고, 그녀가 진심으로 패배를 인정할 수 있도록.
+PRINTL
+PRINTFORMW ……그리고 패자의 마음의 틈새에, %CALLNAME:PLAYER%이 쉽게 파고들 수 있도록.
+;希望を与えられ、それを奪われる……そのとき人は最も美しい顔をするんです♡
+PRINTL
+CALL PRINT_STRL(@"IMAGEPATH_%CSTR:キャラ番号取得１:画像フォルダ%/営業ちひろ")
+PRINTL 치히로:
+CALL PRINT_STRW(@"「네~_H_ 그럼 규칙을 다시 한번 확인해 볼까요~_H_」")
+PRINTL
+PRINTFORM 「마유를
+SETCOLOR カラーパレット("えっちな色")
+PRINT [3회 이상 가게 하여 데이트 종료를 선언]
+RESETCOLOR
+CALL PRINT_STRW(@"하면, 오너님의 승리_H_」")
+PRINTL
+CALL PRINT_STRW(@"「아이돌 빼앗기 대성공_H_ 마유를 오너님의 것으로 만들 수 있어요_H_」")
+PRINTL
+PRINTFORM 「단, 데이트 종료 선언보다 먼저 마유가
+SETCOLOR カラーパレット("えっちな色")
+PRINT [키스 미경험을 잃거나, 처녀를 잃었을]
+RESETCOLOR
+PRINTFORML 경우, 오너님의 반칙패가 됩니다」
+CALL PRINT_STRW(@"「그 경우, 마유를 몇 번 가게 했더라도, 마유는 프로듀서님의 것이 되고, 연모 불가 상태가 됩니다_H_」")
+PRINTL
+CALL PRINT_STRW(@"「그리고 마유는, 3회 이상 가지 않으면 무사히 시련 달성_H_이 됩니다♪」")
+PRINTL
+CALL PRINT_STRL(@"「러브콜에 좀처럼 응해주지 않는 프로듀서님에게는, 프로덕션에서 업무 명령_H_」")
+CALL PRINT_STRW(@"「마유는 가슴을 펴고, 그의 연인을 자칭할 수 있게 됩니다_H_」")
+PRINTL
+CALL PRINT_STRL(@"IMAGEPATH_%CSTR:キャラ番号取得１:画像フォルダ%/にっこりちひろ")
+PRINTL 치히로：
+CALL PRINT_STRW(@"「심판은 저, 센카와 치히로가 맡겠습니다_H_ 제대로 공정하게 심판할 테니, 방심하면 안 돼요~?」")
+PRINTL
+PRINTFORMW 「그럼 두 분 다, 괜찮으시죠?」
+PRINTL
+PRINTFORMW 이제는 신난 기색을 숨기려 하지 않는 치히로가, 마유를 당신에게 밀어붙이며 카운트다운을 시작한다.
+PRINTL
+PRINTFORML 「사~암……이~이……」
+PRINTL
+PRINTFORML 사뿐히 달콤하게, 품 안으로 떨어진 꽃이 향기를 풍긴다.
+PRINTFORMW 그것도 모른 채 불가능한 시련에 몸을 던지고, 이제는 꺾이기를 기다릴 뿐인, 사랑에 피어난 아름다운 붉은 꽃이.
+PRINTL
+PRINTFORML 「하~나……」
+PRINTL
+PRINTFORML 말랑하고 부드럽게, 가슴팍에 과실이 닿는다.
+PRINTFORMW 16세. 아이와 어른의 딱 그 경계에 있는, 아직 푸르지만 충분히 달콤한 과실이, 연심에 순교하여 탐욕스럽게 먹히는 것을 스스로 인정하며, 품 안에서 몸을 굳혔다.
+PRINTL
+CALL PRINT_STRW(@"「──시작_H_」")
+PRINTL
+PRINTFORMW ──그럼, 일단 '맛보기'로 가볼까. 규칙을 지켜서, 제대로 마유를 빼앗아줘야지……
+PRINTL
+CALL PRINT_STRL(@"IMAGEPATH_%CSTR:キャラ番号取得１:画像フォルダ%/にっこりちひろ")
+PRINTL 치히로:
+CALL PRINT_STRW(@"「후후_H_ 마유 쨩이 변명할 수 없을 정도로, 흠뻑 가게 해주세요~『왕자님』_H_」")
+PRINTL
+CALL PRINT_STR(@"IMAGEPATH_%CSTR:キャラ番号取得:画像フォルダ%/まゆ5")
+PRINTW
+SETCOLOR カラーパレット("えっちな色")
+PRINT [키스 미경험과 처녀를 빼앗지 않도록]
+RESETCOLOR
+PRINTFORM 조심하면서,
+SETCOLOR カラーパレット("えっちな色")
+PRINT [마유를 3번 가게 하고]
+RESETCOLOR
+PRINTFORM 나서
+SETCOLOR カラーパレット("えっちな色")
+PRINT [밀회 종료를 눌러라]
+RESETCOLOR
+PRINTFORML !
+PRINTFORMW ※실수로 빼앗아버려서 그 후의 전개에 문제가 생겨도 일절 책임지지 않습니다.
+;分岐作るのめんどくなっちゃって……
+PRINTL
+IF !FLAG:クリア済み視聴フラグ
+	STR:イベントうふふ場所名 = 긴자의 모 고급 호텔 최상층 스위트룸
+	FLAG:イベントうふふベッドルーム = 1
+	CFLAG:キャラ番号取得:イベントうふふ対象フラグ = 1
+	CALL イベント中うふふ移行処理("エンドオブデイドリーム","むりやりうふふモード")
+ENDIF
+PRINTL
+PRINTL ──
+PRINTL
+PRINTL ────
+PRINTL
+PRINTW ────────
+PRINTL
+CALL PRINT_STRL(@"IMAGEPATH_%CSTR:キャラ番号取得１:画像フォルダ%/にっこりちひろ")
+PRINTL 치히로:
+CALL PRINT_STRW(@"「네~_H_ 거기까지~_H_」")
+PRINTL
+PRINTFORMW 손을 멈춘 당신의 신호에, 아이돌의 사랑스러운 교성으로 가득 차 있던 방에 무자비한 종료 선언이 울려 퍼진다.
+PRINTL
+CALL PRINT_STR(@"IMAGEPATH_%CSTR:キャラ番号取得:画像フォルダ%/まゆ6")
+PRINTL
+CALL PRINT_STRW(@"「흐읍……_H_ 하아, 으읍……_H_」")
+PRINTL
+PRINTFORML 아직 미숙함이 남은 16세 소녀에게, 당신의 마수에서 벗어날 방법 따위 있을 리 없다.
+PRINTFORMW 백전노장의 능숙한 수법에 실컷 농락당한 마유가, 스스로 '3회'의 절정에 지쳐 몸을 내던지고, 벌거벗은 가슴을 여운에 떨게 한다.
+PRINTL
+CALL PRINT_STRL(@"IMAGEPATH_%CSTR:キャラ番号取得１:画像フォルダ%/営業ちひろ")
+PRINTL 치히로:
+CALL PRINT_STRW(@"「어머나~, 아쉽네요_H_ 마유 쨩은 이렇게나 노력했는데, 마음은 프로듀서님께 닿지 않은 것 같네요」")
+PRINTL
+CALL PRINT_STRW(@"「……후후_H_ 역시 겨우 3회로는, 당신에게 도전하기 너무 어려웠을까요_H_」")
+PRINTL
+PRINTFORML 사랑의 시련을 실패라는 형태로 끝내게 된 마유 앞에서, 보란 듯이 치히로가 속삭인다.
+PRINTFORMW 어느새 속옷 차림이 되어 있던 치히로는, 좌절하는 마유의 머리 위로 다가가더니, 살며시 부드럽게 머리카락을 쓰다듬었다.
+PRINTL
+CALL PRINT_STRL(@"IMAGEPATH_%CSTR:キャラ番号取得１:画像フォルダ%/慈愛ちひろ")
+PRINTL 치히로:
+CALL PRINT_STRW(@"「하지만, 어쩔 수 없어요. 마유 쨩_H_」")
+PRINTL
+CALL PRINT_STRL(@"IMAGEPATH_%CSTR:キャラ番号取得:画像フォルダ%/絶望まゆ")
+PRINTL 마유:
+PRINTFORMW 「읏………그럴……리가……」
+PRINTL
+CALL PRINT_STRL(@"IMAGEPATH_%CSTR:キャラ番号取得１:画像フォルダ%/慈愛ちひろ")
+PRINTL 치히로:
+CALL PRINT_STRW(@"「하지만 신데렐라는, 왕자님에게 선택받을 운명, 숙명인걸요_H_」")
+PRINTL
+CALL PRINT_STRW(@"「설령 신데렐라에게 좋아하는 사람이 있었다고 해도, 강하고 훌륭한 왕자님에게는 그런 거, 아무 상관 없는걸요_H_」")
+PRINTL
+CALL PRINT_STRL(@"이제 알겠죠? 라며, 치히로가 미소 지으며 손가락 끝으로 톡_H_ 하고 유두를 찌르자,")
+CALL PRINT_STRW(@"아직 절정의 여운에서 벗어나지 못한 마유는 허리를 덜덜_H_ 떨며, 다시 축 늘어졌다.")
+PRINTL
+CALL PRINT_STRL(@"IMAGEPATH_%CSTR:キャラ番号取得１:画像フォルダ%/にっこりちひろ")
+PRINTL 치히로:
+CALL PRINT_STRW(@"「훗후_H_ 그럼 다시 한번……오너님, 축하드려요오~_H_」")
+PRINTL
+CALL PRINT_STRW(@"「멋지게, 마유 쨩의 몸을 차지한 오너님께는~? ……이쪽입니다아~_H__H_」")
+PRINTL
+CALL PRINT_STRW(@"마유의 시련을 막아선 당신을 드높이 칭찬하며, 치히로는 머리 위로 마유의 다리를 잡고 「영차_H_」 하고 들어 올렸다.")
+PRINTL
+CALL PRINT_STR(@"IMAGEPATH_%CSTR:キャラ番号取得:画像フォルダ%/まゆ7")
+PRINTL
+CALL PRINT_STRW(@"「네에_H_ 이쪽, 상품인 『마유 쨩의 첫 경험 풀코스 세트』입니다아~_H__H_」")
+PRINTL
+CALL PRINT_STRL(@"IMAGEPATH_%CSTR:キャラ番号取得:画像フォルダ%/恐怖まゆ")
+PRINTL 마유:
+PRINTFORMW 「히, 읏! 싫어어……!」
+PRINTL
+CALL PRINT_STRL(@"IMAGEPATH_%CSTR:キャラ番号取得１:画像フォルダ%/にっこりちひろ")
+PRINTL 치히로:
+CALL PRINT_STRW(@"「여기 없는 프로듀서님을 신경 쓸 필요 같은 건, 이제 없으니까요_H_ 플레이의 NG, 전부 해금이에요～_H_」")
+PRINTL
+CALL PRINT_STRW(@"「후후, 아까는 보류였죠_H_ 자, 어떻게 하고 싶으세요～?_H_」")
+PRINTL
+CALL PRINT_STRW(@"「우선 마유가 프로듀서님께 바치기 위해 소중히 간직해 둔 첫 키스, 쪽쪽 츄～하고 빼앗아 버릴까요?_H_」")
+PRINTL
+CALL PRINT_STRW(@"「아니면～……읏?_H__H_」")
+PRINTL
+PRINTFORML 과연 346 최고의 수완가. 사람의 욕망을 부추기는 데 능숙하다.
+PRINTFORMW 마유를 애무하는 동안 묵직하게 쌓여 있던 사정욕이, 터지듯이 꿈틀꿈틀 뱃속 깊은 곳을 밀어 올리는 것을 느낀다.
+PRINTL
+CALL PRINT_STRL(@"IMAGEPATH_%CSTR:キャラ番号取得１:画像フォルダ%/慈愛ちひろ")
+PRINTL 치히로：
+CALL PRINT_STRW(@"「후후, 역시_H_ 그렇죠, 참을 수 없겠죠_H_」")
+PRINTL
+PRINTFORMW 그래. 더 이상 참을 필요는 없는 것이다.
+PRINTL
+PRINTFORML 당신이 꼿꼿하게 발기한 페니스를 꺼내, 축축하게 젖어버린 귀여운 레이스 팬티를 벗기고 암컷의 부드러운 구멍 입구에 귀두를 밀어 넣자,
+PRINTFORMW 치히로에게 억눌려 제대로 저항조차 할 수 없는 마유는, 그저, 허무하게 목소리를 떨었다.
+PRINTL
+PRINTL
+CALL PRINT_STR(@"IMAGEPATH_%CSTR:キャラ番号取得:画像フォルダ%/まゆ8")
+PRINTL
+CALL PRINT_STRW(@"──쭈웁, 읏_H_")
+PRINTL
+;ここは演出上顔グラ表示しないほうがよさそう
+PRINTFORMW 「흐, 읏! 싫어……싫어요……! 그것만은……!」
+PRINTL
+PRINTFORMW 「거기는 프로듀서님의……마유의, 운명의 상대만의……!」
+PRINTL
+CALL PRINT_STRW(@"────뉴웁, 뿌……_H__H_")
+PRINTL
+PRINTFORMW 「야, 싫어, 읏!! 살려, 살려줘, 프로듀, 서…… 으읍……!!」
+PRINTL
+CALL PRINT_STR(@"IMAGEPATH_%CSTR:キャラ番号取得:画像フォルダ%/まゆ9")
+PRINTL
+CALL PRINT_STRW(@"────푸츳_H__H__H__H_ 꿀럭꿀럭～～～읏_H__H__H__H_")
+PRINTL
+PRINTFORMW 「아, 아아아아아아……읏!!」
+PRINTL
+PRINTFORML 뜨끈뜨끈하고 흐물흐물하게 풀어진 암컷 살을 귀두로 천천히 헤치고, 사소한 저항을 뚫고.
+CALL PRINT_STRW(@"꿈틀거리며 휘감기는 처녀 살의 조임에 뇌수를 마비시키면서, 마지막으로 파츙_H__H_꾸물꾸물_H__H_하고 허리를 박아 넣고.")
+PRINTL
+CALL PRINT_STR(@"IMAGEPATH_%CSTR:キャラ番号取得:画像フォルダ%/まゆ10")
+PRINTL
+CALL PRINT_STRW(@"────보뷰읏읏읏_H__H__H__H_ 뚝뚝_H__H__H__H_ 보뷰르르르르～～～～읏읏읏_H__H__H__H__H_")
+PRINTL
+PRINTFORMW 우선 한 방, 잔뜩 고여 있던 걸쭉한 정액을, 순결한 자궁에 흘려 넣는다…….
+PRINTL
+PRINTFORML 허리가 빠질 듯한 쾌락에 등골이 떨리고, 무의식중에 목소리가 흘러나온다.
+CALL PRINT_STRW(@"막 손에 넣은──다른 남자에게서 막 약탈한 소녀의 가랑이에, 그저 무심하게, 무아지경으로, 바츙_H__H_바츙_H__H_하고 몇 번이고 허리를 박아 넣었다……")
+PRINTL
+CALL PRINT_STRL(@"IMAGEPATH_%CSTR:キャラ番号取得１:画像フォルダ%/慈愛ちひろ")
+PRINTL 치히로:
+CALL PRINT_STRW(@"「어머나～……_H_ 후후, 그렇게 기분 좋으세요?_H_」")
+PRINTL
+CALL PRINT_STRL(@"「싫어하는 16세 여고생 아이돌을 억지로 눕혀서, 꽉 조이는 처녀 보지에 극악무도한 자지를 억지로 박아 넣고_H_」")
+CALL PRINT_STRW(@"「가장 안쪽의 아기방에, 한 번 왕복조차 하지 않는 버려지는 사정_H__H_」")
+PRINTL
+PRINTFORML 「발견한 것도, 아이돌이 된 것도, 모~두 프로듀서님의 공인데」
+CALL PRINT_STRW(@"「여자아이의 가장 맛있고 기분 좋은 부분만 가로채서, 강력한 유전자로 잔~뜩 마킹_H__H__H_」")
+PRINTL
+CALL PRINT_STRW(@"「후후_H_ 이~런 사치를 누릴 수 있는 건, 오너님뿐이니까요_H__H_」")
+PRINTL
+PRINTFORM %CALLNAME:PLAYER%이(가) 기분 좋~게 마지막 한 방울까지 쏟아부을 수 있도록, 치히로가
+;PRINTFORM 悪魔のごとく
+PRINTFORMW 속삭이며 욕망을 부추긴다…….
+PRINTL
+PRINTFORML 짝으로 정한 상대를 위해 지금까지 순결을 지켜왔던 마유의 은밀한 구멍은, 그 주인의 자리를 찬탈한 정복자에게 마치 고개를 숙이듯이
+PRINTFORMW 쏟아져 들어온 %CALLNAME:PLAYER%의 정액을 꿀꺽꿀꺽 마셔버리고, 악한에게 자비를 구하듯이, 페니스를 조여 애원하고 있었다…….
+PRINTL
+CALL PRINT_STRL(@"IMAGEPATH_%CSTR:キャラ番号取得１:画像フォルダ%/にっこりちひろ")
+PRINTL 치히로:
+CALL PRINT_STRW(@"「자_H_ 이제부터는 위닝 런일까요_H_」")
+PRINTL
+CALL PRINT_STRW(@"「후후_H_ 그럼 앞으로도, 저와 함께 저희 회사의 아이돌을, 마음껏 즐겨주세요_H__H_」")
+PRINTL
+PRINTFORML %CALLNAME:PLAYER%에게 몸을 비비며, 치히로가 애교 부리듯이 입맞춤을 조른다.
+PRINTFORMW 익숙한 여자의 입술에 욕망이 다시 고개를 들고, 안을 지배당한 채인 가련한 소녀가 다시금 유린당할 예감에 신음한다.
+PRINTL
+PRINTFORML 지난날 운명을 느꼈던 상대──사랑스러운 프로듀서에게 바칠 예정이었던 소중하고 소중한 버진은 이렇게 %CALLNAME:PLAYER%에게 빼앗기고,
+PRINTFORMW 사랑에 설레는 여고생 아이돌 사쿠마 마유의 덧없는 첫사랑은, 눈물과 함께 시트의 얼룩이 되어갔다…….
+PRINTL
+;ここからは『合意』
+IF !FLAG:クリア済み視聴フラグ
+	IF TALENT:キャラ番号取得:処女 
+		CALL 履歴データベース登録(CFLAG:キャラ番号取得:人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>課された愛の試練を達成することができず、%CALLNAME:PLAYER%に処女を奪われ膣内に射精されてしまった……</font><img src='えっちハート'>","うふふ実績")
+		LOCALS = 페니스
+		SIF GETBIT(TALENT:PLAYER:性別, 1) == 0
+			LOCALS = 페니스 밴드
+		TALENT:キャラ番号取得:処女 = 0
+		CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>%LOCALS%で%CALLNAME:キャラ番号取得%のＶ処女を奪った</font><img src='えっちハート'>","うふふ実績")
+	ELSE
+	;齟齬を無視してクリア扱いするときのやつ
+		CALL 履歴データベース登録(CFLAG:キャラ番号取得:人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>課された愛の試練を達成することができず、%CALLNAME:PLAYER%に犯され膣内に射精されてしまった……</font><img src='えっちハート'>","うふふ実績")
+	ENDIF
+	STR:イベントうふふ場所名 = 긴자의 모 고급 호텔 최상층 스위트룸
+	FLAG:イベントうふふベッドルーム = 1
+	TCVAR:キャラ番号取得:言いなり = 1
+	CFLAG:キャラ番号取得:イベントうふふ対象フラグ = 1
+	CFLAG:キャラ番号取得１:イベントうふふ対象フラグ = 1
+	;動きに沿うように正常位スタートしたいけど適当すぎて機能してない。モードのほう弄るべきなんだろうけど……よぐわがんにゃい！！
+	BASE:PLAYER:勃起 = MAXBASE:PLAYER:勃起
+	SIF GETBIT(TALENT:PLAYER:性別, 1) == 0
+		CALL MODE_CHANGE("ペニスバンド", PLAYER, PLAYER)
+	SIF GETBIT(TALENT:キャラ番号取得:性別, 0)
+		CALL MODE_CHANGE("正常位", PLAYER, キャラ番号取得)
+	CALL イベント中うふふ移行処理("エンドオブデイドリーム")
+ENDIF
+PRINTL
+CALL PRINT_STR(@"IMAGEPATH_%CSTR:キャラ番号取得:画像フォルダ%/まゆ11")
+PRINTW
+PRINTL ──
+PRINTL
+PRINTL ────
+PRINTL
+PRINTW ────────
+PRINTL
+CALL PRINT_STRL(@"IMAGEPATH_%CSTR:キャラ番号取得１:画像フォルダ%/慈愛ちひろ")
+PRINTL 치히로:
+CALL PRINT_STRW(@"「수고하셨습니다, 마유 쨩_H_ 처음인데도, 잘 해냈네요_H_」")
+PRINTL
+PRINTFORMW 좋아하지도 않는 남자에게 실컷 범해져, 기력도 체력도 완전히 소진한 마유의 귓가에, 치히로가 살며시 속삭인다.
+PRINTL
+CALL PRINT_STRL(@"IMAGEPATH_%CSTR:キャラ番号取得１:画像フォルダ%/慈愛ちひろ")
+PRINTL 치히로:
+PRINTFORMW 「오너 씨에게 보지 쑤컹쑤컹 파헤쳐지고, 잔뜩 가게 되면서, 마유 쨩 말했었죠?」
+PRINTL
+PRINTFORML 「『왜』『어째서』『그럴 리가』라고」
+PRINTFORMW 「『이런 건 운명이 아닌데』『프로듀서 씨가 아닌데』라고」
+PRINTL
+PRINTFORMW 「……어째서인지, 정말 모르겠나요?」
+PRINTL
+PRINTFORML 눈물마저 말라버린 마유에게, 더 이상 대답할 기력은 없다.
+PRINTFORMW 마유가 희미하게 고개를 젓자, 치히로는 쿡쿡 웃으며, 마유의 머리를 부드럽게 안아주었다.
+PRINTL
+CALL PRINT_STRL(@"IMAGEPATH_%CSTR:キャラ番号取得１:画像フォルダ%/慈愛ちひろ")
+PRINTL 치히로:
+CALL PRINT_STRW(@"「알려줄게요. 그건──」")
+PRINTL
+PRINTL
+CALL PRINT_STRW(@"「──이 사람이야말로 마유 쨩의, 『진정한 운명의 상대』이기 때문이에요_H_」")
+PRINTL
+PRINTFORMW 지쳐버린 몸에, 저항력을 잃은 마음에, 치히로의 속삭임이 스며들듯이 번져간다…….
+PRINTL
+CALL PRINT_STRL(@"IMAGEPATH_%CSTR:キャラ番号取得:画像フォルダ%/絶望まゆ")
+PRINTL 마유:
+PRINTFORMW 「…………운……명……」
+PRINTL
+CALL PRINT_STRL(@"IMAGEPATH_%CSTR:キャラ番号取得１:画像フォルダ%/慈愛ちひろ")
+PRINTL 치히로:
+CALL PRINT_STRW(@"「그렇습니다_H_ 프로듀서님 같은 사람이 아니라, 이 사람이야말로_H_」")
+PRINTL
+CALL PRINT_STRW(@"「왜냐면, 그걸로 모~든 게 설명되잖아요?」")
+PRINTL
+PRINTFORML 「마유 쨩이, 사랑의 시련으로 잔뜩 가게 된 것도」
+CALL PRINT_STRW(@"「억지스러운 강렬한 에치로, 처음이었는데 죽을지도 모를 정도로 기분 좋게 된 것도_H_」")
+PRINTL
+CALL PRINT_STRW(@"「그러니, 슬퍼할 것 따윈 아무것도 없어요_H_ 인정하고, 받아들여 버리죠?_H_」")
+PRINTL
+PRINTFORML 「마유 쨩이 아무리 용기를 냈어도, 손을 잡는 게 고작이고, 포옹도 키스도 아무것도 해주지 않는……」
+CALL PRINT_STRW(@"「마유 쨩이 아무리 『정말 좋아해』라고 전해도, 곤란한 듯 웃기만 하는 사람 따윈 잊어버리고……네_H_」")
+
+PRINTL
+CALL PRINT_STRL(@"IMAGEPATH_%CSTR:キャラ番号取得１:画像フォルダ%/慈愛ちひろ")
+PRINTL 치히로:
+PRINTFORMW 「이 사람이라면, 연인과 하고 싶은 포옹도 키스도, 섹스조차도, 마유 쨩이 바라는 것 모~두 이뤄줄 테고」
+PRINTL
+CALL PRINT_STRW(@"「마유 쨩이 아무리 『좋아해』라는 마음을 키웠어도, 곤란한 얼굴로 얼버무리지 않고 모~두 받아줄 테니까요_H_」")
+PRINTL
+CALL PRINT_STRW(@"「……후후_H_게다가, 상대가 오너님이라면, 신데렐라 프로젝트로서 사랑의 응원 체제는 이미 갖춰져 있고요_H_」")
+PRINTL
+;CALL PRINT_STRL(@"IMAGEPATH_%CSTR:キャラ番号取得１:画像フォルダ%/にっこりちひろ")
+;PRINTL ちひろ：
+CALL PRINT_STRW(@"「그러니, 자_H_ 용기를 내서, 시험 삼아 말해볼까요? 마유 쨩의, 진정한 운명의 사람에게_H_」")
+PRINTL
+PRINTFORMW 상냥한 목소리의 속삭임이, 금이 간 소녀의 마음에 스며들어 약해진 마음을 부식시켜 간다…….
+PRINTL
+PRINTFORML 뿌리내린 대지가 갈증에 부서지고, 시들 날만을 기다리게 된 꽃은……이제 그저 바라고, 기도할 수밖에 없다.
+PRINTFORMW 갈증을 해소할 자비의 한 방울을. 그것이 설령, 탁해진 맹독의 비였다 할지라도……。
+PRINTL
+PRINTFORML 썩어 문드러져 떨어져 내리는 마음을, 그저 바라볼 수밖에 없게 된 마유는,
+PRINTFORMW 달콤한 독주의 향기에 이끌리는 대로, 살짝 입을 열었다……。
+PRINTL
+CALL PRINT_STRL(@"IMAGEPATH_%CSTR:キャラ番号取得:画像フォルダ%/絶望まゆ")
+PRINTL 마유：
+PRINTFORMW 「……………………」
+PRINTL
+PRINTFORMW 「…………읏……, ……좋……」
+PRINTL
+PRINTFORMW 「…………좋, 아…………해요……」
+PRINTL
+PRINTFORMW 「…………읏, 아……」
+PRINTL
+PRINTFORMW 갈라진 목소리의, 미약한 속삭임.
+PRINTL
+PRINTFORML 머리를 끌어안는 치히로조차, 자칫하면 놓쳐버릴 것만 같은 아주 작은 그 목소리에,
+PRINTFORMW 하지만 %CALLNAME:PLAYER%이(가) 응답하며 꽉 안아주자, 마유는 희미하게 한숨을 쉬고……
+PRINTL
+CALL PRINT_STRL(@"IMAGEPATH_%CSTR:キャラ番号取得:画像フォルダ%/絶望まゆ")
+PRINTL 마유：
+PRINTFORMW 「…………」
+PRINTL
+CALL PRINT_STRL(@"IMAGEPATH_%CSTR:キャラ番号取得:画像フォルダ%/あきらめまゆ")
+PRINTL 마유：
+CALL PRINT_STRW(@"「………………_H_」")
+PRINTL
+PRINTFORMW 마지막 힘을 쥐어짜내, 마유는 당신의 등에 팔을 둘렀다……。
+PRINTL
+PRINTL
+PRINTFORMW 옅은 잠결 속에서, 소녀의 부서진 마음이 일그러진 틀에 끼워지고, 진흙으로 비뚤게 덧칠되어 간다……。
+PRINTL
+PRINTFORML 실연으로 뻥 뚫린 마음의 틈새를 치히로와 %CALLNAME:PLAYER%에게 침식당하고, 마음이 향할 곳을 바꿔치기당한 마유는,
+PRINTFORMW 마음속 깊이 새로운 사랑의 시작을 새겨 넣으며, 눈물에 젖은 시트 위에서 운명에 안긴 채 잠에 빠져들었다……。
+PRINTL
+PRINTL ────────
+PRINTL
+PRINTL ────
+PRINTL
+PRINTW ──
+DRAWLINE
+PRINTL
+CALL PRINT_STRL(@"IMAGEPATH_%CSTR:キャラ番号取得１:画像フォルダ%/慈愛ちひろ")
+PRINTL 치히로:
+CALL PRINT_STRW(@"「후우～……_H_ 수고 많으셨습니다, 오너님. 덕분에 살았네요_H_」")
+PRINTL
+PRINTFORMW 「……모오～, 그 얼굴은 뭔가요～……정말, 마유 양을 생각해서 한 일이니까요?」
+PRINTL
+PRINTFORML 「…………아니요, 뭐, 확실히? 아주 쪼～금 악역에 너무 심취해버린 자각이, 없는 건 아니지만요……」
+PRINTFORMW 「……게다가 '３４６의 프로듀서는 아이돌에게 손을 대는 녀석이다'라는 추문에 대해서도, 그건 그거대로 꽤나 진심으로 골치 아픈 이야기이긴 했습니다만……」
+PRINTL
+PRINTFORML 「……네. 에라 씨를 믿을 수 있다고는 해도, 역시 최소한의 납득은 있어야죠. 마유 양이 당신에게 기대어 마음을 맡길 수 없게 되니까요」
+PRINTFORMW 「설령 무리한 시련이라도, 스스로 선택하는 편이 마음은 가벼운 법이니까요」
+PRINTL
+PRINTFORML 「……게다가, '사랑이 너무 무겁다'니, 무능한 변명이라고 생각하지 않으세요?」
+PRINTFORML 「차버리든 붙잡든 확실히 해줬다면, 이야기는 훨씬 간단했을 텐데……」
+PRINTFORMW 「어중간하게 '킵' 취급이나 하고……프로듀서님은 소녀의 마음을 뭐라고 생각하는 걸까요?」
+;お前が言うか～～～？？
+PRINTL
+CALL PRINT_STRW(@"「……후훗_H_ 그 부분은, 당신이라면 안심할 수 있으니까요_H_」")
+PRINTL
+CALL PRINT_STRW(@"「행복은, 걸어와 주지 않으니까요_H_ 그래서 제가, 등을 밀어주는 거예요♪」")
+;いっちにちいっぽん♪ 日課のちんぽ♡
+PRINTL
+CALL PRINT_STRW(@"「……그러니 부디, 마유도, 행복하게 해 주세요_H_ 믿고 있을게요, 저의 사랑스러운 왕자님_H_」")
+PRINTL
+CALL PRINT_STRW(@"「응, 읏…………후후_H_ 사랑해요……_H__H_」")
+PRINTL
+DRAWLINE
+PRINTL
+PRINTL ──
+PRINTL
+PRINTL ────
+PRINTL
+PRINTW ────────
+CALL PRINT_STR(@"IMAGEPATH_%CSTR:キャラ番号取得:画像フォルダ%/まゆ12")
+PRINTL
+PRINTFORMW 「…………응, 으읍……」
+PRINTL
+PRINTFORML 악몽 같던 밤이 밝고, 무거운 눈꺼풀을 뜨자 그곳은 누군가의 품속이었다.
+PRINTFORMW 사람의 온기 속에서, 멍해 있던 의식이 조금씩 깨어난다……。
+PRINTL
+PRINTFORML 겹쳐진 살결과 살결.
+PRINTFORMW 몸을 뒤척일 때마다 시트와 스치는 맨가슴의 감촉이, 조금씩, 조금씩, 떠올리고 싶지 않았던 현실의 윤곽을 전해온다……。
+PRINTL
+PRINTFORMW ……그랬었지. 마유는 어제, 이 사람에게……。
+PRINTL
+PRINTFORMW 누구에게도 보여준 적 없던 알몸을 보이고──
+PRINTL
+PRINTFORMW 가슴도, 엉덩이도, 소중한 곳도, 마음껏 주물러지고──
+PRINTL
+PRINTFORMW 싫다고 말해도, 몇 번이나 가도, 기분 좋은 걸, 멈춰주지 않아서──
+PRINTL
+PRINTFORMW 그래서……그래서 마유의, 소중하고 소중한 처음을──
+PRINTL
+PRINTFORMW ……프로듀서님이었다면 좋았을 텐데. 프로듀서님이, 좋았을 텐데……。
+PRINTL
+PRINTFORML 배에 느껴지는 위화감에, 허벅지에 느껴지는 마른 체액의 불쾌함에,
+PRINTFORMW 찢어질 듯 가슴이 아파 말랐을 터인 눈물이 스며들 듯 시야를 흐렸다.
+PRINTL
+PRINTFORMW ……하고.
+PRINTL
+CALL PRINT_STR(@"IMAGEPATH_%CSTR:キャラ番号取得:画像フォルダ%/まゆ13")
+PRINTL
+PRINTFORMW 「…………아……」
+PRINTL
+PRINTFORMW 문득, 베고 있던 팔이 둥글게 말리고, 반신이 쿵 하고 덮쳐오더니, 그대로 꽉 안아주었다.
+PRINTL
+PRINTFORMW 프로듀서 씨가 아닌 남자의, 깊고 느린 숨결이 머리카락에 닿는다.
+PRINTL
+PRINTFORML 좋아하지도 않는…… 아니, 오히려 억지로 처음을 빼앗아간 미워해야 할 상대의, 그저 잠버릇에 휘말린 것뿐.
+PRINTFORMW 분명 꿈속의 누군가를 대신해, 편리한 안는 베개가 된 것뿐.
+PRINTL
+PRINTFORMW ……그것뿐인데. 이런 건 절대 싫을 터, 싫어할 터, 인데……。
+PRINTL
+PRINTFORMW (…………따뜻, 해……)
+PRINTL
+PRINTFORMW 프로듀서 씨는 끝내 해주지 않았던, 따뜻한 접촉.
+PRINTL
+PRINTFORML 아무리 마유가 다가가도, 꽉 안겨도……
+PRINTFORMW 다시 안아주는 건, 라이브 성공에 들떴을 때 정도.
+PRINTL
+PRINTFORMW (프로듀서 씨 쪽에서 이렇게, 아무것도 아닌 날에 안아준 적은, 없었지……)
+PRINTL
+PRINTFORMW 다른 남자의 품 안에서, 알몸인 채로 안겨서…… 문득, 몽롱한 의식 속에서 들었던, 치히로 씨의 말을 떠올린다.
+PRINTL
+PRINTFORML ──마유 쨩이 아무리 용기를 낸다 해도, 손을 잡는 게 고작이고, 포옹도 키스도 해주지 않아
+PRINTFORMW ──아무리 『정말 좋아해』라고 전해도, 곤란한 듯 웃을 뿐
+PRINTL
+PRINTFORMW …………그래. 언제나 마유의, 짝사랑……。
+PRINTL
+PRINTFORML 귓가에 남는 속삭임에…… 마유의 마음은, 하지만, 그래도, 라고 말하지만.
+PRINTFORMW 맞닿은 맨살에서 전해지는 온기가, 마음의 어조를 빼앗아간다……。
+PRINTL
+PRINTFORMW ──이 사람이라면
+PRINTL
+PRINTFORMW ──이 사람이야말로
+PRINTL
+PRINTFORMW 뇌리에 울려 퍼지는 치히로 씨의 상냥하고, 행복으로 가득했던, 목소리……。
+PRINTL
+PRINTFORMW 몇 번이고 몇 번이고 반복되는 말이, 탄식하며 외치는 마음을 흩뜨려간다……。
+PRINTL
+PRINTFORMW 「…………운명의, 사람……」
+PRINTL
+PRINTFORMW 갈라진 목에서 나온 작은 목소리에, 스르륵 크게 몸을 뒤척이고
+PRINTL
+CALL PRINT_STR(@"IMAGEPATH_%CSTR:キャラ番号取得:画像フォルダ%/まゆ14")
+PRINTL
+PRINTFORMW 「아……」
+PRINTL
+PRINTFORMW 마유를 안은 사람과, 눈이 마주쳤습니다.
+PRINTL
+PRINTFORMW 「읏, 햐……아…………」
+PRINTL
+PRINTFORMW 살며시 머리를 쓰다듬은 커다란 손에 꽉 끌어당겨져, 머리카락에 부드럽게 입술이 닿는다.
+PRINTL
+PRINTFORML 그렇게 심한 짓을 당했는데. 그렇게 부끄러운 짓을 당했는데.
+PRINTFORMW 이런 걸로 용서하면 안 되는데……。
+PRINTL
+PRINTFORML 아주 조금 팔이 느슨해지며, 안아주는 힘이 약해진다.
+PRINTFORMW 단 1초, 그것만으로. 꽉 안아주던 팔의 힘이 그리워져 버려서.
+PRINTL
+PRINTFORMW 가슴 속에서 얼굴을 올려다보니, 커다란 손이 살며시 뺨에 닿는다.
+PRINTL
+CALL PRINT_STR(@"IMAGEPATH_%CSTR:キャラ番号取得:画像フォルダ%/まゆ15")
+PRINTFORMW 「아……, 으음…………읏……」
+PRINTL
+PRINTFORML 입술과 입술이 맞닿는다.
+PRINTFORMW 부드럽고, 따뜻하고, 기분 좋다. 서로 사랑하는 사람들끼리 해야 할, 행위.
+PRINTL
+CALL PRINT_STR(@"IMAGEPATH_%CSTR:キャラ番号取得:画像フォルダ%/まゆ16")
+PRINTL
+CALL PRINT_STRW(@"「음츕……츕……레, 츕……_H_」")
+PRINTL
+PRINTFORML 따뜻한 혀가 입술을 벌리고 들어온다.
+PRINTFORMW 얽히고설키며, 녹아든다. 입안에 퍼진 마유의 것이 아닌 맛이, 섞여 마유와 하나가 되어간다……。
+PRINTL
+PRINTFORMW ──프로듀서 씨와 함께였다면, 이런 느낌이었을까.
+PRINTL
+PRINTFORML 혀끝을 스친 미련이, 얽히는 키스 속에서 닳아 없어진다.
+PRINTFORMW 이제, 그것을 알 일은 없겠지, 라고. 마음속 깊은 곳이 인정해 버리고 있었다……。
+PRINTL
+CALL PRINT_STR(@"IMAGEPATH_%CSTR:キャラ番号取得:画像フォルダ%/まゆ17")
+PRINTL
+CALL PRINT_STRW(@"「츕, 하……_H_ 아…………읏_H_」")
+PRINTL
+PRINTFORML 이어져 있던 혀가 떨어지고, 입술은 원래의 쓸쓸한 외톨이로 돌아간다.
+PRINTFORMW 더, 더 원하던 마음이 짝사랑이었던 건 어제까지.
+PRINTL
+PRINTFORMW 배에 꽉 눌러붙는 열기.
+PRINTL
+CALL PRINT_STRL(@"단단하고, 크고, 무섭고, 멋있어서_H_")
+PRINTFORMW 처음이었는데도 몇 번이고 몇 번이고, 죽을 만큼 마유를 기분 좋게 해준, 늠름한 열기.
+PRINTL
+CALL PRINT_STRW(@"아아, 이렇게나. 이렇게나, 마유를 원하고……_H_")
+PRINTL
+PRINTFORML 정말, 너무한 사람이야…….
+PRINTFORML 단 하룻밤. 그것뿐인데. 괴롭고, 무섭고, 슬퍼서…… 꿈이라면 빨리 깨어나라고, 몇 번이나 생각했을 텐데, 그런데…….
+PRINTFORMW ……이제 마유에게, 싫다고조차 생각하게 해주지 않다니…….
+PRINTL
+PRINTFORML 프로듀서님이 끝까지 주지 않았던 「원해지는 기쁨」이 심장을 두드린다.
+PRINTFORMW 뱃속 깊은 곳이 꽉 아파오고, 어제의 만남을 떠올린 자궁이 불타오르는 것처럼 뜨거워진다.
+PRINTL
+CALL PRINT_STRW(@"야한 짓, 하고 싶어……_H_ 어제 그렇게나 했는데, 아직…… 마유의 몸이 그리워……_H_")
+PRINTL
+CALL PRINT_STRW(@"뱃속 깊은 곳을 깎아내서, 마유가 앙_H_앙_H_하고 우는 소리, 또 듣고 싶어……_H_")
+PRINTL
+CALL PRINT_STRW(@"오늘도 또, 마유에게, 이제 안 돼_H_라고, 용서해 줘_H_라고, 필사적으로 부탁하게 하고 싶어……_H_")
+PRINTL
+CALL PRINT_STRW(@"아아…… 원해준다는 것만으로, 이렇게 기분 좋고, 행복해서……_H__H_")
+PRINTL
+PRINTL
+CALL PRINT_STRW(@"──그러니, 슬퍼할 일은 아무것도 없어요_H_")
+CALL PRINT_STRW(@"──인정하고, 받아들여 버리죠?_H_")
+PRINTL
+PRINTFORMW 마유의 마음속에서 속삭이는 목소리는…… 이제, 마유 자신의 목소리였습니다.
+PRINTL
+CALL PRINT_STRW(@"「아……_H_ 핫_H_ 하읏, 읏_H_ 마, 마유…… 마유도…… 읏_H__H_」")
+PRINTL
+PRINTFORMW 마유도, 그립습니다.
+PRINTL
+PRINTFORMW 프로듀서님이 상대였다면 바로 나왔을 말이, 어째서인지 목에 걸려 나오지 않는다.
+PRINTL
+CALL PRINT_STRW(@"더 키스하고 싶어요_H_ 또 야한 짓 하고 싶어요_H_ 당신의 온기가, 그리워요……_H__H_")
+PRINTL
+PRINTFORMW 천박한 여자라고 생각되고 싶지 않아서 입 밖으로 나오지 않는 말이, 목구멍 깊숙이 얽혀서, 괴롭고, 울 것 같아서.
+PRINTL
+CALL PRINT_STR(@"IMAGEPATH_%CSTR:キャラ番号取得:画像フォルダ%/まゆ18")
+CALL PRINT_STRW(@"「……………아……읏읏_H__H__H_」")
+PRINTL
+PRINTFORMW ──하지만, 말은 없어도, 마음은 통했습니다.
+PRINTL
+PRINTFORML 벌렁 마유를 아래에 깔고 덮쳐온 운명의 사람이, 두근거리는 마유의 가슴을 말랑하게 쓰다듬고
+PRINTFORMW 기대만으로 녹아버린 마유의 그곳을 손가락으로 부드럽게 휘저으며, 마유의 마음에 물어봅니다.
+PRINTL
+PRINTBUTTON "[0]──마유는 누구의 것? ", 0
+PRINTL
+BINPUT
+PRINTL
+CALL PRINT_STR(@"IMAGEPATH_%CSTR:キャラ番号取得:画像フォルダ%/まゆ19")
+PRINTL
+;原作がどこまでいっても「プロデューサーさん」呼びなら「オーナーさん」呼びでもええやろ
+CALL PRINT_STRW(@"「읏_H__H_ 네엣_H__H_ 마유는, 당신의 것이에요옷_H__H__H_」")
+PRINTL
+PRINTFORML 인정해 버린 마음이, 입술 사이를 스르륵 빠져나가.
+PRINTFORMW 그래서, 목에 걸린 것이 풀렸습니다.
+PRINTL
+CALL PRINT_STRW(@"「저기, 감사했습니다……_H_」")
+PRINTL
+PRINTFORMW 신기한 표정을 짓는 오너에게, 가슴에서 말이 쏟아져 나온다.
+PRINTL
+CALL PRINT_STR(@"IMAGEPATH_%CSTR:キャラ番号取得:画像フォルダ%/まゆ20")
+PRINTL
+CALL PRINT_STRW(@"「드디어, 드디어 알았어요_H_ 마유가, 착각하고 있었네요. 몸도 마음도 바쳐 영원을 맹세해야 할, 올바른 운명의 상대를……_H_」")
+PRINTL
+CALL PRINT_STRW(@"「그걸 깨닫게 해주신 거죠? 오너도, 치히로 씨도……_H_」")
+PRINTL
+CALL PRINT_STRW(@"「착각하고 싫어하는 못난 마유를, 억누르고, 배 속 깊은 곳을, 사랑의 채찍으로 때려서……_H_」")
+PRINTL
+PRINTFORML 「마유, 너무 슬프고, 무섭고, 실컷 울어버렸지만……」
+CALL PRINT_STRW(@"「하지만 그 덕분에, 잘못된 상대에게 바치려 했던 처음은, 전부 올바른 상대에게 바칠 수 있게 되어서……_H_」")
+PRINTL
+CALL PRINT_STRL(@"「그러니까, 빼앗겨서, 다행이에요, 읏_H_」")
+CALL PRINT_STRW(@"「마음도, 몸도, 당신의 운명에 덮어씌워져서……_H_ 마유, 행복해요……읏_H_」")
+PRINTL
+CALL PRINT_STRW(@"「이제, 마유, 도망치거나 하지 않을 테니까…… 그러니까, 읏……아_H__H_」")
+PRINTL
+PRINTFORML 딱 마유에게 겨냥한 운명의 그분 거시기가, 뇨푸푸 하고 여자아이의 구멍을 밀어 넓히고,
+PRINTFORMW 마유를 안쪽까지 꿰뚫어, 지배하고, 채워준다……。
+PRINTL
+CALL PRINT_STRW(@"──아아……이것이 운명의, 서로 사랑하는 마음……읏_H__H_")
+PRINTL
+PRINTFORML 익숙한 손길이, 마유가 유일한 존재가 아니라는 것이, 따끔하고 가슴을 찌르지만.
+PRINTFORMW 이 아픔은 분명, 운명을 잘못 택했던 마유에게 내리는 벌.
+PRINTL
+PRINTFORML 왜냐면, 치히로 씨에게도 이 사람은 분명 운명의 사람이었고.
+PRINTFORML 치히로 씨도 분명, 독차지하고 싶었을 테니까.
+PRINTFORMW 하지만, 마유를 위해, 모두를 위해, 치히로 씨는 이 행복을 나눠주었으니까.
+PRINTL
+PRINTFORMW 질투심을 참고, 마유도 누군가에게 이 행복을 나눠줄 수 있는 여자가 될 테니까요. 그러니──.
+PRINTL
+CALL PRINT_STRW(@"「아, 하아아, 읏_H__H_ 그러니 부디, 계속, 계속오, 읏_H__H_ 마유를, 곁에에, 읏_H__H_」")
+PRINTL
+PRINTFORML 눈가에서 주르륵 흘러내리는 것은, 이제 분명
+PRINTFORMW 마유에게 남은 미련이 아니라, 이것은 행복의 눈물이니까.
+PRINTL
+PRINTFORML 침대에 꿰매어지듯이, 손가락을 얽은 연인 잡기로 꽉 잡혀서.
+PRINTFORMW 단지 그것만으로, 배 속 깊은 곳에서 두근두근 행복이 넘쳐흘러서.
+PRINTL
+PRINTFORML 프로듀서 씨와 처음 손을 잡았을 때도, 이런 식으로는 되지 않았으니까……。
+PRINTFORMW 그러니……아아, 정말로, 그 사람은……
+PRINTL
+PRINTFORMW ……운명의 사람이, 아니었군요……。
+PRINTL
+CALL PRINT_STRW(@"「앗_H_ 하우, 읏_H_ 음츄_H_ 읍_H__H_ 흐읏_H__H_ 랄흐읏흐레흐읏_H__H_」")
+PRINTL
+CALL PRINT_STRL(@"허리를 살짝 움직이는 것만으로, 톡_H_ 하고 안쪽을 눌리는 것만으로, 마유의 입에서는 부끄러운 목소리가 넘쳐흘러버려서.」")
+CALL PRINT_STRW(@"부끄러워하는 마유를 배려하듯 입술을 키스로 막아버리면, 이제 안 돼……_H_")
+PRINTL
+CALL PRINT_STRW(@"머리가 「좋아_H_」로 가득 차서, 눈꺼풀 안쪽까지 당신뿐……_H_")
+PRINTL
+PRINTL
+PRINTFORMW ──안녕히 계세요, 프로듀서님. 정말 좋아했어요……。
+PRINTL
+CALL PRINT_STRW(@"──하지만, 이제부터는……마유, 이 사람과 행복해질게요……_H_")
+PRINTL
+PRINTFORMW 짜릿하게 저려오는 절정에 몸이 떨리고, 새하얗게 변한 머리에서 이별의 말조차 사라져가고……。
+PRINTL
+PRINTFORMW 더 이상 의심할 여지 없는 운명에 소녀의 모든 것으로 봉사하면서, 마유는 꽉 목에 매달려 새로운 사랑에 입술을 바쳤습니다──。
+
+DRAWLINE
+CALL PRINT_STR(@"IMAGEPATH_%CSTR:キャラ番号取得:画像フォルダ%/まゆ21")
+PRINTL
+IF !FLAG:クリア済み視聴フラグ
+	TALENT:キャラ番号取得:疑似恋慕 = 1
+	SIF TALENT:キャラ番号取得:恋人持ち == -1
+		TALENT:キャラ番号取得:恋人持ち = 0
+	PRINTFORM 마유의 마음을 차지하고 있던
+	SETCOLOR カラーパレット("えっちな色")
+	PRINT [마음에 둔 사람 있음]
+	RESETCOLOR
+	PRINTFORML 은(는),
+	PRINTFORM %CALLNAME:PLAYER%이(가)
+	SETCOLOR カラーパレット("えっちな色")
+	PRINT [진정한 운명의 사랑]
+	RESETCOLOR
+	PRINTFORML 의 상대는 누구인지, 마유의 몸과 마음에 새겨진 것으로 덮어씌워져 소멸했다……
+	PRINTL
+
+	;疑似恋慕の取得に合わせて「性愛度」がぐいっと上がる
+	上昇量 = 経験値テーブル:41 - CFLAG:キャラ番号取得:性愛度
+	IF 上昇量 > 0
+		NOWEX:キャラ番号取得:性愛度上昇格納 += 上昇量
+	ELSE
+		;既にLv41以上なのでなんか当たり障りのない量を上げる
+		NOWEX:キャラ番号取得:性愛度上昇格納 += 5000
+	ENDIF
+
+	;疑似恋慕を恋慕に変化させる余地を残したいので恋慕度の上昇は控えめ。
+	;ガチ恋させたわけじゃないけど、低すぎるとそれはそれで日常の中での上昇量しょぼいしちょっとだけ上げておく。
+	上昇量 = 経験値テーブル:21 - CFLAG:キャラ番号取得:恋心度
+	IF 上昇量 > 0
+		NOWEX:キャラ番号取得:恋心度上昇格納 += 上昇量
+	ELSE
+		;既にLv21以上なのでなんか当たり障りのない量を上げる
+		NOWEX:キャラ番号取得:恋心度上昇格納 += 5000
+	ENDIF
+
+	CALL 履歴データベース登録(CFLAG:キャラ番号取得:人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>とっても気持ちいい『愛の鞭』で処女を奪ってくれた%CALLNAME:PLAYER%に、本当の運命の相手が誰なのか、体に深く刻んでいただいた</font><img src='えっちハート'>","うふふ実績")
+	CALL 履歴データベース登録(CFLAG:キャラ番号取得:人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>過去の想いに別れを告げ、正しい運命の相手に唇を捧げ永遠を誓った</font><img src='えっちハート'>","うふふ実績")
+	;CSTR:キャラ番号取得:スタイル管理文字列 = [デイドリームイズオーバー]佐久間まゆ
+	;書いてる時は、スタイル変更で［エヴリデイドリーム］がこのイベントを経て［デイドリームイズオーバー］に変化する、みたいな演出したかった気はしたんだけど
+	;現状のCSVだと二つ名がエヴリデイドリームじゃなかった(奥義名だった)し変更箇所めっちゃ多そうので、ほなええかと思い直しつつある
+ENDIF
+CALL PRINT_STRW(@"──해피엔딩_H_")
+DRAWLINE
+PRINTL
+PRINTL ──
+PRINTL
+PRINTL ────
+PRINTL
+PRINTW ────────
+PRINTL
+PRINTL
+CALL PRINT_STRW(@"「응……츕_H_」")
+PRINTL
+CALL PRINT_STRW(@"「우후후_H_ 오너님은, 어떤 마유를 원하세요?_H_」")
+PRINTL
+CALL PRINT_STRW(@"「이렇게 운명의 사람과 맺어질 수 있었으니, 마유, 이제 아이돌에 미련 같은 건 없어요_H_」")
+PRINTL
+CALL PRINT_STRW(@"「오너님의 리조트에서, 마유, 어떤 일을 하게 될까요_H_」")
+PRINTL
+PRINTFORML 「메이드 복장으로 시중이나 요리? 아니면, 유기장에서 음료를 나눠주는 바니걸?」
+CALL PRINT_STRW(@"「마유, 뭐든지 할 거예요_H_ 당신 곁에 있을 수 있다면_H_」")
+PRINTL
+PRINTFORMW 「아니면…… 마유, 역시 아이돌을 계속하는 게 좋을까요?」
+PRINTL
+PRINTFORML 「많은 팬을 거느린 아이돌 마유의, 누구에게도 보여주지 않는 의상 아래를 오너님께 독점당하는 편이」
+CALL PRINT_STRW(@"「마유에게 흥분해 주실 건가요?_H_ 야한 짓 하고 싶다고 생각해 주실 건가요?_H_」")
+PRINTL
+CALL PRINT_STRW(@"「……우후후_H_ 지금의 마유라면 분명, 어떤 나쁜 마유라도 될 수 있어요_H_」")
+PRINTL
+CALL PRINT_STRW(@"「드라마에서 함께 출연했던 여배우도, 다른 사무소의 아이돌도……」")
+CALL PRINT_STRW(@"「잡지 모델 시절의 후배도, 응원해 주는 팬도……_H_」")
+PRINTL
+CALL PRINT_STRW(@"「오너님이 칭찬해 주신다면, 마유, 전부 선물할 수 있으니까요_H_」")
+PRINTL
+CALL PRINT_STRW(@"「응츗, 읏_H_ 우후, 우후후, 읏_H_ 그러니 마유에게, 뭐든지 요구해 주세요_H__H_」")
+
+;固有素質のアイドルを元アイドルに変化させる選択肢入れてもいいが、その場合たぶん『シンデレラ』の選定からは外すべきとなりそうなのでいったん保留
+;イベント完了フラグたてて、『舞踏会』のほうでマジでファン差し出させるとかしてもいい。使い捨てのランダムキャラ機能あるのかは知らないけど……
+
+エンドオブデイドリームクリアフラグ = 1
+
+CALL イベント完了フラグ汎用処理("エンドオブデイドリーム")

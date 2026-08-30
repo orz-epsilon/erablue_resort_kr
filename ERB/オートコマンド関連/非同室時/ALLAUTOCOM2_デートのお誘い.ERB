@@ -1,17 +1,20 @@
 ;------------------------------------------------------------------------------
 ;キャラからのデートお誘い_日中イベント
 ;------------------------------------------------------------------------------
+@ALLAUTOCOMNAME2
+RESULTS = デートのお誘い
+
 @ALLAUTOCOM2
 ;-------------------------------------------------
 ;ソース追加処理
 ;-------------------------------------------------
 
 
-PRINTFORMW %CALLNAME:AUTOCOM_実行番号保存%가 데이트 신청을 하러 왔습니다.
+PRINTFORMW %CALLNAME:AUTOCOM_実行番号保存%이(가) 데이트 신청을 하러 왔습니다.
 TRYCALLFORM KOJO_ALLAUTOCOM_{NO:AUTOCOM_実行番号保存}_2_お誘い時(AUTOCOM_実行番号保存)
 PRINTL
-PRINTL 신청에 응해서 데이트를 시작하시겠습니까?
-PRINTBUTTONLC "[0] 네", 0
+PRINTL 신청에 응하여 데이트를 시작하시겠습니까?
+PRINTBUTTONLC "[0] 예", 0
 PRINTBUTTONLC "[1] 아니오", 1
 PRINTL
 
@@ -27,7 +30,7 @@ SELECTCASE RESULT
 			ENDIF
 		NEXT
 		
-		PRINTFORMW %CALLNAME:AUTOCOM_実行番号保存%와 함께 데이트하기로 했습니다.
+		PRINTFORMW %CALLNAME:AUTOCOM_実行番号保存%와(과) 함께 데이트하기로 했습니다.
 		TRYCALLFORM KOJO_ALLAUTOCOM_{NO:AUTOCOM_実行番号保存}_2_承諾時(AUTOCOM_実行番号保存)
 
 		CFLAG:AUTOCOM_実行番号保存:デート = PLAYER + 100
@@ -44,16 +47,16 @@ SELECTCASE RESULT
 		CALL 初体験日登録処理(AUTOCOM_実行番号保存, PLAYER, "デート", DAY * 1440 + TIME, GETPLACENAME(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置), "", "", 0)
 		IF RESULT
 			;相手とのデートが初の場合にここに入る
-			CALL 履歴データベース登録(CFLAG:AUTOCOM_実行番号保存:人物番号, @"처음으로 %CALLNAME:PLAYER%와 데이트를 했다.","日常")
+			CALL 履歴データベース登録(CFLAG:AUTOCOM_実行番号保存:人物番号, @"初めて%CALLNAME:PLAYER%とデートをした","日常")
 		ENDIF
 		CALL 初体験日登録処理(PLAYER, AUTOCOM_実行番号保存, "初デート", DAY * 1440 + TIME, GETPLACENAME(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置), "", "", 1)
 		CALL 初体験日登録処理(PLAYER, AUTOCOM_実行番号保存, "デート", DAY * 1440 + TIME, GETPLACENAME(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置), "", "", 0)
 		IF RESULT
 			;相手とのデートが初の場合にここに入る
-			CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"처음으로 %CALLNAME:AUTOCOM_実行番号保存%와 데이트를 했다.","日常")
+			CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"初めて%CALLNAME:AUTOCOM_実行番号保存%とデートをした","日常")
 		ENDIF
 	CASE 1
-		PRINTFORMW 오늘은 볼일이 있다며, %CALLNAME:AUTOCOM_実行番号保存%의 신청을 거절했습니다.
+		PRINTFORMW 今일은 용무가 있다고, %CALLNAME:AUTOCOM_実行番号保存%의 신청을 거절했습니다.
 		TRYCALLFORM KOJO_ALLAUTOCOM_{NO:AUTOCOM_実行番号保存}_2_断り時(AUTOCOM_実行番号保存)
 ENDSELECT
 

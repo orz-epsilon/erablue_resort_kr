@@ -26,7 +26,7 @@ TFLAG:コマンドタイプ受渡 = COMTYPE("うふふ_被挿入中")
 @COM_TOOLTIP_6
 LOCALS = <br>■가슴 애무<br>
 LOCALS += "상대의 유방을 부드럽게 애무하는 커맨드."
-LOCALS += "<br>COM 타입: 우후후 or 피삽입 중<br>획득 소스: 쾌B・노출・접촉"
+LOCALS += "<br>COM 타입：우후후or피삽입 중<br>획득 소스：쾌B・노출・접촉"
 LOCALS += "<br>고유 획득 경험: 없음<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
@@ -97,7 +97,7 @@ RETURN 1
 ;-------------------------------------------------
 @MESSAGE_COM6
 #DIM 同時キャラ番号
-PRINTFORM %CALLNAME:PLAYER%는
+PRINTFORM %CALLNAME:PLAYER%은(는)
 IF GETBIT(FLAG:モード管理, モードビット_同時)
 	FOR 同時キャラ番号, 0, 同時モード_選択数
 		SIF 同時キャラ番号 > 0
@@ -109,15 +109,15 @@ IF GETBIT(FLAG:モード管理, モードビット_同時)
 ENDIF
 
 IF MODE_存在判定_順不同("ＶＡ挿入系", PLAYER, TARGET)
-	PRINTFORM %CALLNAME:TARGET%와 이어진 채 %OPPAI_DESCRIPTION(TARGET)%
+	PRINTFORM %CALLNAME:TARGET%와 이어진 채%OPPAI_DESCRIPTION(TARGET)%
 ELSE
-	PRINTFORM %CALLNAME:TARGET%의 %OPPAI_DESCRIPTION(TARGET)%
+	PRINTFORM %CALLNAME:TARGET%의%OPPAI_DESCRIPTION(TARGET)%
 ENDIF
 ;欲望のPALAMLV3以上＋
 ;小柄体型
 IF TALENT:種族 < 0
-	PRINTL 를 부드럽게 쓰다듬듯이 만졌다…
+	PRINTL 을 부드럽게 쓰다듬듯이 만졌다…
 ELSE
-	PRINTL 를 주물렀다…
+	PRINTL 을 주물렀다…
 ENDIF
 

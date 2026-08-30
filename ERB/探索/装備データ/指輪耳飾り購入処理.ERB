@@ -53,21 +53,21 @@ IF 表示用ステータス格納配列:0:0 == 0
 		FOR LOCAL:1, 0, 8
 			IF LOCALS:(LOCAL:1 * 2) != ""
 				SELECTCASE LOCALS:(LOCAL:1 * 2)
-					CASE "최대HP"
+					CASE "最大ＨＰ"
 						表示用ステータス格納配列:LOCAL:1 = TOINT(LOCALS:(LOCAL:1 * 2 + 1))
-					CASE "최대MP"
+					CASE "最大ＭＰ"
 						表示用ステータス格納配列:LOCAL:2 = TOINT(LOCALS:(LOCAL:1 * 2 + 1))
-					CASE "공격력"
+					CASE "攻撃力"
 						表示用ステータス格納配列:LOCAL:3 = TOINT(LOCALS:(LOCAL:1 * 2 + 1))
-					CASE "방어력"
+					CASE "防御力"
 						表示用ステータス格納配列:LOCAL:4 = TOINT(LOCALS:(LOCAL:1 * 2 + 1))
-					CASE "회복력"
+					CASE "回復力"
 						表示用ステータス格納配列:LOCAL:5 = TOINT(LOCALS:(LOCAL:1 * 2 + 1))
-					CASE "행동속도"
+					CASE "行動速度"
 						表示用ステータス格納配列:LOCAL:6 = TOINT(LOCALS:(LOCAL:1 * 2 + 1))
-					CASE "DA율"
+					CASE "DA率"
 						表示用ステータス格納配列:LOCAL:7 = TOINT(LOCALS:(LOCAL:1 * 2 + 1))
-					CASE "TA율"
+					CASE "TA率"
 						表示用ステータス格納配列:LOCAL:8 = TOINT(LOCALS:(LOCAL:1 * 2 + 1))
 				ENDSELECT
 			ENDIF
@@ -103,32 +103,32 @@ ENDIF
 
 
 LOCALS = <div rect='200,0,1912,344' border='31' bcolor='#C0C0C0'></div>
-LOCALS += @"<div rect='262,62,1912,281'>소지 루피：%NUM_FORMAT(MONEY)%<br>소지 ZP　：%ZP所持量全文字列()%"
+LOCALS += @"<div rect='262,62,1912,281'>보유 루피:%NUM_FORMAT(MONEY)%<br>보유 ZP　:%ZP所持量全文字列()%"
 LOCALS += "</div>"
 
 LOCALS += "<div rect='2144,0,3719,344' border='31' bcolor='#C0C0C0'></div>"
-LOCALS += @"<div rect='2206,62,3437,281'><button value='1010'>[소지 반지 목록]</button>　　　<button value='1011'>[소지 귀걸이 목록]</button><br>"
+LOCALS += @"<div rect='2206,62,3437,281'><button value='1010'>[보유 반지 목록]</button>　　　<button value='1011'>[보유 귀걸이 목록]</button><br>"
 IF 購入_売却モード == 0
 	;購入画面
-	LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'>■구입</font>"
-	LOCALS += "　　　<button value='1101'>■반지 매각</button>"
-	LOCALS += "　　　<button value='1102'>■귀걸이 매각</button>"
+	LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'>■구매</font>"
+	LOCALS += "　　　<button value='1101'>■반지 판매</button>"
+	LOCALS += "　　　<button value='1102'>■귀걸이 판매</button>"
 ELSEIF 購入_売却モード == 1
 	;売却画面
-	LOCALS += @"<button value='1100'>■구입</button>"
-	LOCALS += @"　　　<font color='#%カラーパレット_HTML("黄")%'>■반지 매각</font>"
-	LOCALS += "　　　<button value='1102'>■귀걸이 매각</button>"
+	LOCALS += @"<button value='1100'>■구매</button>"
+	LOCALS += @"　　　<font color='#%カラーパレット_HTML("黄")%'>■반지 판매</font>"
+	LOCALS += "　　　<button value='1102'>■귀걸이 판매</button>"
 ELSEIF 購入_売却モード == 2
-	LOCALS += @"<button value='1100'>■구입</button>"
-	LOCALS += "　　　<button value='1101'>■반지 매각</button>"
-	LOCALS += @"　　　<font color='#%カラーパレット_HTML("黄")%'>■귀걸이 매각</font>"
+	LOCALS += @"<button value='1100'>■구매</button>"
+	LOCALS += "　　　<button value='1101'>■반지 판매</button>"
+	LOCALS += @"　　　<font color='#%カラーパレット_HTML("黄")%'>■귀걸이 판매</font>"
 ENDIF
 IF 購入_売却モード
 	;売却モード時のみボタン出す
 	IF 一括売却フラグ
-		LOCALS += @"　　　<button value='1110'><font color='#%カラーパレット_HTML("黄")%'>[일괄 매각: ON]</font></button>"
+		LOCALS += @"　　　<button value='1110'><font color='#%カラーパレット_HTML("黄")%'>[일괄 판매:ON]</font></button>"
 	ELSE
-		LOCALS += "　　　<button value='1110'>[일괄 매각: OFF]</button>"
+		LOCALS += "　　　<button value='1110'>[일괄 판매:OFF]</button>"
 	ENDIF
 ENDIF
 LOCALS += "</div>"
@@ -141,7 +141,7 @@ ELSEIF 購入_売却モード == 2
 	CALL 所持耳飾りリスト表示(0, ページ番号, 437, ソート条件)
 ELSEIF 購入_売却モード == 0
 	LOCALS += "<div rect='262,437,5662,3625'><nobr>"
-	LOCALS += "　　　 반지 이름　　　　　　　　　　가격　　　　　　ＨＰ　　ＭＰ　　공격력　방어력　회복력　행동 속도　DA율　TA율<br>"
+	LOCALS += "　　　 반지 이름　　　　　　　　　가격　　　　　　ＨＰ　　ＭＰ　　공격력　방어력　회복력　행동 속도　DA율　TA율<br>"
 	LOCALS += "--------------------------------------------------------------------------------------------------------------<br>"
 	LOCAL:1 = 0
 	FOR LOCAL, 0, (指輪品揃え最大数 + 耳飾り品揃え最大数)
@@ -199,7 +199,7 @@ IF 一括売却フラグ
 ELSE
 	LOCALS += "　　　　　　　　　　　　　　　　　　　　　　　"
 ENDIF
-LOCALS += "　<button value='999'>[999] 가게에서 나가기</button></div>"
+LOCALS += "　　<button value='999'>[999] 가게에서 나가기</button></div>"
 HTML_PRINT LOCALS, 1
 
 FOR LOCAL, 0, 37
@@ -268,17 +268,17 @@ SELECTCASE LOCAL
 			TRYCALLFORM 指輪基礎効果文章表示_%DT_CELL_GETS("所持指輪データベース", LOCAL, "指輪名", 1)%(LOCAL)
 			LOCALS += @"%詳細文文字列受け渡し変数%<br>"
 			CALL 指輪価格算出(1, LOCAL)
-			LOCALS += @"판매액:{基礎販売額}루피<br>"
+			LOCALS += @"판매액：{基礎販売額}루피<br>"
 			LOCALS += "<br>"
 			IF DT_CELL_GET("所持指輪データベース", LOCAL, "装備キャラ番号", 1)
 				LOCALS += @"<font color='#%カラーパレット_HTML("真っ赤")%'>%NAME表示(DT_CELL_GET("所持指輪データベース", LOCAL, "装備キャラ番号", 1))%이(가) 장비 중인 반지입니다!</font><br>"
 			ENDIF
-			LOCALS += "이 반지를 판매해도 괜찮겠습니까?<br><button value='0'>[0] 예</button><br><button value='1'>[1] 아니요</button><br>"
+			LOCALS += "이 반지를 판매하시겠습니까?<br><button value='0'>[0] 예</button><br><button value='1'>[1] 아니오</button><br>"
 			HTML_PRINT LOCALS
 			BINPUT
 			IF RESULT == 0
 				PRINTFORML %DT_CELL_GETS("所持指輪データベース", LOCAL, "指輪名", 1)%을(를) 판매했습니다.
-				PRINTFORMW 소지 루피:{MONEY}루피 > {MONEY + 基礎販売額}루피
+				PRINTFORMW 보유 루피:{MONEY}루피 > {MONEY + 基礎販売額}루피
 				MONEY += 基礎販売額
 				CALL 汎用指輪削除処理(LOCAL)
 				VARSET 表示用ステータス格納配列:0:0
@@ -290,17 +290,17 @@ SELECTCASE LOCAL
 			LOCALS = %詳細文文字列受け渡し変数%
 			TRYCALLFORM 耳飾り基礎効果文章表示_%DT_CELL_GETS("所持耳飾りデータベース", LOCAL, "耳飾り名", 1)%(LOCAL)
 			LOCALS += @"%詳細文文字列受け渡し変数%<br>"
-			LOCALS += @"판매액:{基礎販売額}루피<br>"
+			LOCALS += @"판매액：{基礎販売額}루피<br>"
 			LOCALS += "<br>"
 			IF DT_CELL_GET("所持耳飾りデータベース", LOCAL, "装備キャラ番号", 1)
 				LOCALS += @"<font color='#%カラーパレット_HTML("真っ赤")%'>%NAME表示((DT_CELL_GET("所持耳飾りデータベース", LOCAL, "装備キャラ番号", 1)))%이(가) 장비 중인 귀걸이입니다!</font><br>"
 			ENDIF
-			LOCALS += "이 귀걸이를 판매해도 괜찮겠습니까?<br><button value='0'>[0] 예</button><br><button value='1'>[1] 아니요</button><br>"
+			LOCALS += "이 귀걸이를 판매하시겠습니까?<br><button value='0'>[0] 예</button><br><button value='1'>[1] 아니오</button><br>"
 			HTML_PRINT LOCALS
 			BINPUT
 			IF RESULT == 0
 				PRINTFORML %DT_CELL_GETS("所持耳飾りデータベース", LOCAL, "耳飾り名", 1)%을(를) 판매했습니다.
-				PRINTFORMW 소지 루피:{MONEY}루피 > {MONEY + 基礎販売額}루피
+				PRINTFORMW 보유 루피:{MONEY}루피 > {MONEY + 基礎販売額}루피
 				MONEY += 基礎販売額
 				CALL 汎用耳飾り削除処理(LOCAL)
 				VARSET 表示用ステータス格納配列:0:0
@@ -327,7 +327,7 @@ SELECTCASE LOCAL
 			TRYCALLFORM 指輪基礎効果文章表示_%DT_CELL_GETS("所持指輪データベース", LOCAL, "指輪名", 1)%(LOCAL)
 			LOCALS += @"%詳細文文字列受け渡し変数%<br>"
 			CALL 指輪価格算出(1, LOCAL)
-			LOCALS += @"판매액:{基礎販売額}루피<br>"
+			LOCALS += @"판매액：{基礎販売額}루피<br>"
 		ELSEIF 購入_売却モード == 2
 			基礎販売額 = 0
 			TRYCALLFORM 耳飾り個別文章表示_%DT_CELL_GETS("所持耳飾りデータベース", LOCAL - 500, "耳飾り名")%
@@ -336,7 +336,7 @@ SELECTCASE LOCAL
 			LOCALS += @"%詳細文文字列受け渡し変数%<br>"
 			;売値なので半分に
 			基礎販売額 = 基礎販売額 / 2
-			LOCALS += @"판매액:{基礎販売額}루피<br>"
+			LOCALS += @"판매액：{基礎販売額}루피<br>"
 		ENDIF
 		HTML_PRINT LOCALS
 		WAIT
@@ -370,20 +370,20 @@ SELECTCASE LOCAL
 				基礎販売額 = 0
 				LOCALS += @"%DT_CELL_GETS("所持指輪データベース", 選択配列:LOCAL, "指輪名", 1)%　　"
 				CALL 指輪価格算出(1, 選択配列:LOCAL)
-				LOCALS += @"판매액:{基礎販売額}루피<br>"
+				LOCALS += @"판매액：{基礎販売額}루피<br>"
 				一括売却合計額 += 基礎販売額
 				IF DT_CELL_GET("所持指輪データベース", 選択配列:LOCAL, "装備キャラ番号", 1)
 					LOCALS += @"<font color='#%カラーパレット_HTML("真っ赤")%'>%NAME表示((DT_CELL_GET("所持指輪データベース", 選択配列:LOCAL, "装備キャラ番号", 1)))%이(가) 장비 중인 반지입니다!</font><br>"
 				ENDIF
 				LOCAL:1 ++
 			NEXT
-			LOCALS += @"총액:%NUM_FORMAT(一括売却合計額)%루피<br>"
-			LOCALS += "이 반지들을 판매하시겠습니까?<br><button value='0'>[0] 예</button><br><button value='1'>[1] 아니요</button><br>"
+			LOCALS += @"총액：%NUM_FORMAT(一括売却合計額)%루피<br>"
+			LOCALS += "이 반지들을 판매하시겠습니까?<br><button value='0'>[0] 예</button><br><button value='1'>[1] 아니오</button><br>"
 			HTML_PRINT LOCALS
 			BINPUT
 			IF RESULT == 0
 				PRINTFORML {LOCAL:1}개의 반지를 판매했습니다.
-				PRINTFORMW 소지 루피:%NUM_FORMAT(MONEY)%루피 > %NUM_FORMAT(MONEY + 一括売却合計額)%루피
+				PRINTFORMW 보유 루피:%NUM_FORMAT(MONEY)%루피 > %NUM_FORMAT(MONEY + 一括売却合計額)%루피
 				MONEY += 一括売却合計額
 				FOR LOCAL, 0, 指輪所持最大数
 					SIF 選択配列:LOCAL < 1
@@ -404,20 +404,20 @@ SELECTCASE LOCAL
 				基礎販売額 = 0
 				TRYCALLFORM 耳飾り個別文章表示_%DT_CELL_GETS("所持耳飾りデータベース", 選択配列:LOCAL, "耳飾り名", 1)%
 				LOCALS += @"%DT_CELL_GETS("所持耳飾りデータベース", 選択配列:LOCAL, "耳飾り名", 1)%　　"
-				LOCALS += @"판매액:{基礎販売額}루피<br>"
+				LOCALS += @"판매액：{基礎販売額}루피<br>"
 				一括売却合計額 += 基礎販売額
 				IF DT_CELL_GET("所持耳飾りデータベース", 選択配列:LOCAL, "装備キャラ番号", 1)
 					LOCALS += @"<font color='#%カラーパレット_HTML("真っ赤")%'>%NAME表示((DT_CELL_GET("所持耳飾りデータベース", 選択配列:LOCAL, "装備キャラ番号", 1)))%이(가) 장비 중인 귀걸이입니다!</font><br>"
 				ENDIF
 				LOCAL:1 ++
 			NEXT
-			LOCALS += @"총액:%NUM_FORMAT(一括売却合計額)%루피<br>"
-			LOCALS += "이 귀걸이들을 판매하시겠습니까?<br><button value='0'>[0] 예</button><br><button value='1'>[1] 아니요</button><br>"
+			LOCALS += @"총액：%NUM_FORMAT(一括売却合計額)%루피<br>"
+			LOCALS += "이 귀걸이들을 판매하시겠습니까?<br><button value='0'>[0] 예</button><br><button value='1'>[1] 아니오</button><br>"
 			HTML_PRINT LOCALS
 			BINPUT
 			IF RESULT == 0
 				PRINTFORML {LOCAL:1}개의 귀걸이를 판매했습니다.
-				PRINTFORMW 소지 루피:%NUM_FORMAT(MONEY)%루피 > %NUM_FORMAT(MONEY + 一括売却合計額)%루피
+				PRINTFORMW 보유 루피:%NUM_FORMAT(MONEY)%루피 > %NUM_FORMAT(MONEY + 一括売却合計額)%루피
 				MONEY += 一括売却合計額
 				FOR LOCAL, 0, 耳飾り所持最大数
 					SIF 選択配列:LOCAL < 1

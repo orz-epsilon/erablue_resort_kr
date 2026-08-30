@@ -11,9 +11,9 @@ TSTR:コマンド名受渡 = 귀가한다
 TFLAG:コマンドタイプ受渡 = COMTYPE("単独可能")
 
 @COM_TOOLTIP_417
-LOCALS = <br>■帰宅する<br>
-LOCALS += "외출지에서 귀가하여 다음 날로 넘어가는 커맨드."
-LOCALS += "<br>COM 타입: 단독 가능<br>획득 소스: 없음"
+LOCALS = <br>■귀가한다<br>
+LOCALS += "외출지에서 귀가하여, 다음 일로 진행하는 커맨드."
+LOCALS += "<br>COM타입：단독가능<br>획득소스：없음"
 LOCALS += "<br>고유 획득 경험: 없음<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
@@ -43,7 +43,7 @@ SIF SAVESTR:ゲームフェイズ管理 != "通常モード"
 SIF GLOBAL_COMABLE(417)
 	RETURN RESULT
 ;外出時のみ
-SIF FLAG:お出かけ先フラグ < 1
+SIF FLAG:外出先番号 < 1
 	RETURN 0
 SIF CFLAG:うふふ == 2
 	RETURN 0
@@ -53,4 +53,4 @@ RETURN 1
 ;-------------------------------------------------
 @MESSAGE_COM417
 
-PRINTFORML %CALLNAME:PLAYER%은 리조트의 자택으로 귀환했다.
+PRINTFORML %CALLNAME:PLAYER%은(는) 리조트의 자택으로 귀환했다.

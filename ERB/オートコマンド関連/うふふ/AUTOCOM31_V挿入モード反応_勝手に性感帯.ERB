@@ -1,6 +1,9 @@
 ;------------------------------------------------------------------------------
 ;V挿入時、自分で性感帯を刺激しはじめる
 ;------------------------------------------------------------------------------
+@AUTOCOMNAME31
+RESULTS = V挿入モード反応_勝手に性感帯
+
 @AUTOCOM31
 ;-------------------------------------------------
 ;ソース追加処理
@@ -77,13 +80,13 @@ SIF RAND:LOCAL
 RETURN 1
 
 @MESSAGE_AUTOCOM31
-PRINTFORM %CALLNAME:AUTOCOM_実行番号保存%은
+PRINTFORM %CALLNAME:AUTOCOM_実行番号保存%은(는)
 IF 知識素質:AUTOCOM_実行番号保存:性知識 <= 0
-	PRINTFORML 본능적으로 허리를 움직여, 자신의 "좋은" 곳에 %CALLNAME:PLAYER%의 음경을 맞대고 쾌락을 만끽하고 있다…
+	PRINTFORML 본능적으로 허리를 움직여, 자신의 "좋은" 곳에 %CALLNAME:PLAYER%의 음경을 대고 쾌락을 만끽하고 있다…
 ELSEIF TALENT:AUTOCOM_実行番号保存:羞恥心 > 0
 	PRINTFORML %CALLNAME:PLAYER%에게 들키지 않도록, 자신의 성감대에 닿도록 허리를 움직이고 있다
-	PRINTFORML 그것을 지적해 주자, %CALLNAME:AUTOCOM_実行番号保存%은 얼굴을 새빨갛게 물들이고 말았다…
+	PRINTFORML 그것을 지적해주자, %CALLNAME:AUTOCOM_実行番号保存%은(는) 얼굴을 새빨갛게 물들이고 말았다…
 ELSE
-	PRINTFORML 허리 움직임을 조절하여, 자신의 성감대에 음경을 맞대고 쾌락을 만끽하고 있다…
+	PRINTFORML 허리 움직임을 조절하며, 자신의 성감대에 음경을 대고 쾌락을 만끽하고 있다…
 ENDIF
 

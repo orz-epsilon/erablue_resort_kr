@@ -1,9 +1,9 @@
 
 @COMNAME_S20_3
 #FUNCTIONS
-TSTR:コマンド名受渡 = 혀로 접촉한다
+TSTR:コマンド名受渡 = 혀를 맞대다
 SIF MODE_存在判定_順不同("ディープキス", PLAYER, TARGET)
-	TSTR:コマンド名受渡 = 혀를 얽는다
+	TSTR:コマンド名受渡 = 혀를 얽다
 
 ;===================================================
 ;コマンドタイプ
@@ -15,8 +15,8 @@ TFLAG:コマンドタイプ受渡 = COMTYPE("うふふ_被挿入中_セクハラ
 オートコマンド許可 = 1
 
 @COM_TOOLTIP_S20_3
-LOCALS = <br>■舌を絡める<br>
-LOCALS += "키스계 모드 중, 집중해서 상대와 혀를 얽는 커맨드. <br>[혀놀림][고양이혀]에 따라 효과가 증감."
+LOCALS = <br>■혀 얽기<br>
+LOCALS += "키스 계열 모드 중, 집중하여 상대와 혀를 얽는 커맨드. <br>[혀놀림][고양이혀]에 따라 효과가 증감."
 LOCALS += "<br>COM 타입: 우후후or피삽입 중or성희롱<br>획득 소스: 노출・접촉・쾌S・불결・고통(일정 조건 시)"
 LOCALS += "<br>고유 획득 경험: 키스 경험(PLAYER＆TARGET)<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
@@ -187,7 +187,7 @@ ELSE
 ENDIF
 
 SKIPDISP ARG
-PRINTFORML 혀를 얽히게 한다(%CALLNAME:TARGET%)
+PRINTFORML 혀 얽기(%CALLNAME:TARGET%)
 ;-------------------------------------------------
 ;実行できるかの判定
 ;-------------------------------------------------
@@ -212,7 +212,7 @@ IF ABL:奉仕精神
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += ABL:奉仕精神 * 4
-	PRINTFORM 봉사 정신LV{ABL:奉仕精神}({ABL:奉仕精神 * 4})
+	PRINTFORM 봉사정신LV{ABL:奉仕精神}({ABL:奉仕精神 * 4})
 	＋表示フラグ = 1
 ENDIF
 
@@ -220,7 +220,7 @@ IF MARK:快楽刻印
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += MARK:快楽刻印 * 2
-	PRINTFORM 쾌락 각인LV{MARK:快楽刻印}({MARK:快楽刻印 * 2})
+	PRINTFORM 쾌락각인LV{MARK:快楽刻印}({MARK:快楽刻印 * 2})
 	＋表示フラグ = 1
 ENDIF
 
@@ -237,7 +237,7 @@ ENDIF
 IF TALENT:羞恥心 > 0
 	PRINT  - 
 	実行値 -= 1
-	PRINT 수줍음(1)
+	PRINT 수치심(1)
 	＋表示フラグ = 1
 ENDIF
 ;汚臭鈍感
@@ -245,14 +245,14 @@ IF TALENT:汚臭耐性 > 0
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += 3
-	PRINT 오취 둔감(3)
+	PRINT 오취둔감(3)
 	＋表示フラグ = 1
 ENDIF
 ;汚臭敏感
 IF TALENT:汚臭耐性 < 0
 	PRINT  - 
 	実行値 -= 1
-	PRINT 오취 민감(1)
+	PRINT 오취민감(1)
 	＋表示フラグ = 1
 ENDIF
 ;献身的
@@ -297,7 +297,7 @@ ELSEIF TALENT:キス嗜好 == 2
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += 999
-	PRINT 키스 마니아(999)
+	PRINT 키스광(999)
 	＋表示フラグ = 1
 ENDIF
 
@@ -306,7 +306,7 @@ IF TCVAR:言いなり
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += 999
-	PRINT 당신의 뜻대로(999)
+	PRINT 당신의 말대로(999)
 	＋表示フラグ = 1
 ENDIF
 
@@ -359,10 +359,10 @@ RETURN 1
 
 IF MODE_存在判定_順不同("ディープキス", PLAYER, TARGET)
 	IF RFLAG:コマンド結果受渡し変数
-		PRINTFORML %CALLNAME:PLAYER%와 %CALLNAME:TARGET%는 마치 성교처럼 농밀하게 혀를 얽어매었다…
+		PRINTFORML %CALLNAME:PLAYER%과 %CALLNAME:TARGET%는 마치 성교처럼 진하게 혀를 얽어매었다…
 	ELSE
-		PRINTFORML %CALLNAME:PLAYER%는 혀로 %CALLNAME:TARGET%의 혀를 붙잡아 끌어당겨 정성껏 애무했다…
+		PRINTFORML %CALLNAME:PLAYER%은(는) 혀로 %CALLNAME:TARGET%의 혀를 붙잡아 끌어당겨 정성껏 애무했다…
 	ENDIF
 ELSE
-	PRINTFORML %CALLNAME:PLAYER%와 %CALLNAME:TARGET%는 입 밖에서 서로의 혀를 맞대고 핥았다…
+	PRINTFORML %CALLNAME:PLAYER%과 %CALLNAME:TARGET%은(는) 입 밖에서 서로의 혀를 맞대고 핥았다…
 ENDIF

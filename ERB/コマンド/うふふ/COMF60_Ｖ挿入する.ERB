@@ -4,7 +4,7 @@
 ;-------------------------------------------------
 @COMNAME60
 #FUNCTIONS
-TSTR:コマンド名受渡 = V 삽입한다
+TSTR:コマンド名受渡 = Ｖ삽입한다
 SIF MODE_存在判定_順不同("Ｖ挿入系", PLAYER, TARGET)
 	TSTR:コマンド名受渡 = 체위를 바꾼다
 
@@ -12,14 +12,14 @@ SIF MODE_存在判定_順不同("Ｖ挿入系", PLAYER, TARGET)
 弱点コマンド欄表示名 = Ｖ挿入する
 
 SIF 派生名フラグ
-	TSTR:コマンド名受渡 = V 삽입
+	TSTR:コマンド名受渡 = Ｖ삽입
 
 ;許可時の特別文章はここに記入
 IF TFLAG:オートコマンドフラグ >= 4000
 	;反転時、つまりあなたが入れる方
-	許可取り文章 = %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%에게 [V삽입]해 주었으면 하는 것 같다…
+	許可取り文章 = %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%에게 [Ｖ삽입]해 주길 바라는 것 같다…
 ELSE
-	許可取り文章 = %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%에게 [V삽입]하고 싶은 것 같다…
+	許可取り文章 = %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%에게 [Ｖ삽입]하고 싶은 것 같다…
 ENDIF
 
 ;===================================================
@@ -38,10 +38,10 @@ SIF CFLAG:TARGET:睡眠
 反転オート許可 = 3
 
 @COM_TOOLTIP_60
-LOCALS = <br>■V삽입한다<br>
-LOCALS += "상대의 질에 삽입하여 섹스를 하는 커맨드.<br>V 삽입계 모드 시, [체위를 바꾼다]로 변화한다.<br>V 삽입계 모드가 되어, 모드를 변경하거나 성행위를 종료할 때까지 지속적으로 쾌락이 발생한다.<br>[처녀]를 잃는다."
+LOCALS = <br>■Ｖ삽입한다<br>
+LOCALS += "상대의 질에 삽입하여 섹스를 하는 커맨드. <br>Ｖ삽입계 모드 시, [체위를 바꾼다]로 변화한다. <br>Ｖ삽입계 모드가 되어, 모드를 변경하거나 성행위를 종료할 때까지 지속적으로 쾌락이 발생한다. <br>[처녀]를 잃는다."
 LOCALS += "<br>COM 타입: V계<br>획득 소스: 쾌V・노출・접촉・고통・불결(일정 조건 시)"
-LOCALS += "<br>고유 획득 경험: V 성교 경험(TARGET)・C 성교 경험_V 삽입(PLAYER)<br>"
+LOCALS += "<br>고유 획득 경험: V성교 경험(TARGET)・C성교 경험_V삽입(PLAYER)<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
 @COM60
@@ -49,6 +49,7 @@ TSTR:ツールチップ受渡 = %LOCALS%
 #DIM 強さ初期値記録
 #DIM 速さ初期値記録
 #DIMS 体位名
+#DIM 候補数
 
 IF TFLAG:オートコマンドフラグ
 	;オートで実行する場合
@@ -69,16 +70,57 @@ IF TFLAG:オートコマンドフラグ
 	CALL オート体位変更Ｖ
 	RETURN 1
 ELSEIF GETBIT(FLAG:モード管理, モードビット_同時)
-	;同時挿入
-	IF RFLAG:コマンド結果受渡し変数 == 12
-		TRYCALLFORM COM60_12(強さ初期値記録, 速さ初期値記録)
+	;同時挿入、ターン毎にVARSET RFLAGされてるので↓のIF文機能してなさそう
+	IF GROUPMATCH(RFLAG:コマンド結果受渡し変数, 12, 13, 14) && LOCAL == RFLAG:コマンド結果受渡し変数
+		TRYCALLFORM COM60_{RFLAG:コマンド結果受渡し変数}(強さ初期値記録, 速さ初期値記録)
 	ELSE
 		強さ初期値記録 = 0
 		速さ初期値記録 = 0
-		$体位_LOOP2
+		$体位_LOOP_1
 		DRAWLINE
-		PRINTL ■속도・강도 초기값을 선택해주세요
-		PRINT 　　V 삽입 강도:
+		PRINTL ■체위를 선택해 주세요
+		PRINTL
+		;退避用にTARGETの現在値を保存（関数から出る時は忘れずにTARGETを戻すこと）
+		LOCAL:10 = TARGET
+		FOR LOCAL, 12, 20
+			LOCAL:3 = 0
+			FOR LOCAL:2, 0, 同時モード_選択数
+				TARGET = 同時モード_選択キャラ:(LOCAL:2)
+				TRYCCALLFORM COM_ABLE60_{LOCAL}
+				SIF !RESULT
+					LOCAL:3 = 1
+				CATCH
+					LOCAL:3 = 1
+					CONTINUE
+				ENDCATCH
+			NEXT
+			SELECTCASE LOCAL
+				CASE 12
+					体位名 = 正常位-後背位
+				CASE 13
+					体位名 = 側位-側位
+				CASE 14
+					体位名 = 後背位-後背位
+				CASEELSE
+					LOCAL:3 = 1
+			ENDSELECT
+			IF !LOCAL:3
+				LOCAL:1 ++
+				PRINTBUTTONLC @"[{LOCAL}]%体位名%", LOCAL
+				PRINTBUTTON "[?]", LOCAL + 10
+				PRINTL 
+			ENDIF
+		NEXT
+		PRINTL 
+		TARGET = LOCAL:10
+		IF !LOCAL:1
+			PRINTW 현재 선택할 수 있는 체위가 없으므로 취소합니다
+			RETURN -1
+		ENDIF
+	
+		DRAWLINE
+		PRINTL ■속도・강도의 초기값을 선택해 주세요
+		PRINT 　　Ｖ삽입 강도:
 		PRINTBUTTON "[-]", 899
 		FOR LOCAL, 0, 6
 			IF 強さ初期値記録 >= LOCAL
@@ -89,7 +131,7 @@ ELSEIF GETBIT(FLAG:モード管理, モードビット_同時)
 		NEXT
 		PRINTBUTTON "[+]", 906
 		PRINT 　　
-		PRINT V 삽입 속도:
+		PRINT Ｖ삽입 속도:
 		PRINTBUTTON "[-]", 909
 		FOR LOCAL, 0, 6
 			IF 速さ初期値記録 >= LOCAL
@@ -102,7 +144,7 @@ ELSEIF GETBIT(FLAG:モード管理, モードビット_同時)
 		PRINTL
 		PRINTL
 		IF PLAYER == MASTER
-			PRINT ■속도・강도 자동 최적화:
+			PRINT ■속도・강도를 자동 최적화:
 			IF ABL:PLAYER:腰使い < 5
 				HTML_PRINT @"<font color='#%カラーパレット_HTML("グレーアウト")%'>[OFF] (腰使いLv5が必要)</font>",1
 			ELSEIF あなた挿入最適化フラグ
@@ -112,60 +154,129 @@ ELSEIF GETBIT(FLAG:モード管理, モードビット_同時)
 			ENDIF
 			PRINTL
 		ENDIF
-		PRINTBUTTONLC "[998]결정", 998
 		PRINTBUTTONLC "[999]돌아가기", 999
-
+		$INPUT_LOOP_1
 		BINPUT
 
 		LOCAL = RESULT
 		SELECTCASE LOCAL
+			CASE 12 TO 14
+				LOCAL:2 = 1
+				FOR  LOCAL:1, 0, 同時モード_選択数
+					TARGET = 同時モード_選択キャラ:(LOCAL:1)
+					TRYCALLFORM COM_ABLE60_{LOCAL}
+					SIF !RESULT
+						LOCAL:2 = 0
+				NEXT
+				IF LOCAL:2
+					FOR LOCAL:1, 0, 同時モード_選択数
+						TARGET = 同時モード_選択キャラ:(LOCAL:1)
+						IF TARGET == MASTER
+							TARGET = PLAYER
+							PLAYER = MASTER
+							RFLAG:指示モード対象あなたフラグ = 1
+							TRYCALLFORM CAN_体位{LOCAL}(1)
+							IF !RESULT
+								TRYCALLFORM CAN_体位{LOCAL}(0)
+								PLAYER = TARGET
+								TARGET = LOCAL:10
+								GOTO 体位_LOOP_1
+							ENDIF
+							RFLAG:指示モード対象あなたフラグ = 0
+							PLAYER = TARGET
+							TARGET = MASTER
+						ELSE
+							TRYCALLFORM CAN_体位{LOCAL}(1)
+							IF !RESULT
+								TRYCALLFORM CAN_体位{LOCAL}(0)
+								TARGET = LOCAL:10
+								GOTO 体位_LOOP_1
+							ENDIF
+						ENDIF
+					NEXT
+					PRINTL 1
+					FOR LOCAL:1, 0, 同時モード_選択数
+						TARGET = 同時モード_選択キャラ:(LOCAL:1)
+						TRYCALLFORM COM60_{LOCAL}(強さ初期値記録, 速さ初期値記録)
+					NEXT
+
+					TARGET = LOCAL:10
+					;メッセージ用に体位の種類を保存
+					RFLAG:コマンド結果受渡し変数 = LOCAL
+					RETURN 1
+				ENDIF
+				GOTO INPUT_LOOP_1
+			CASE 22
+				PRINTL
+				DRAWLINE
+				VARSET RESULTS
+				PRINTL ・정상위-후배위
+				PRINTL 한쪽 캐릭터를 앙와위로 눕히고, 그 위에 다른 캐릭터가 엎드린 자세입니다.
+				候補数 = ENUMFILES(@"resources/体位サンプル", "正常位-後背位*.*")
+				IF 候補数 > 0
+					PRINTL
+					PRINTL ・샘플 이미지
+					CALL PRINT_STRL(@"IMAGEPATH_%REPLACE(RESULTS:(RAND:候補数), "resources\\\\", "")%")
+				ENDIF
+				PRINTL
+				WAIT
+				GOTO 体位_LOOP_1
+			CASE 23
+				PRINTL
+				DRAWLINE
+				VARSET RESULTS
+				PRINTL ・측위-측위
+				PRINTL 옆으로 누워 두 사람이 마주 보는 자세입니다.
+				候補数 = ENUMFILES(@"resources/体位サンプル", "側位-側位*.*")
+				IF 候補数 > 0
+					PRINTL
+					PRINTL ・샘플 이미지
+					CALL PRINT_STRL(@"IMAGEPATH_%REPLACE(RESULTS:(RAND:候補数), "resources\\\\", "")%")
+				ENDIF
+				PRINTL
+				WAIT
+				GOTO 体位_LOOP_1
+			CASE 24
+				PRINTL
+				DRAWLINE
+				VARSET RESULTS
+				PRINTL ・후배위-후배위
+				PRINTL 모두 엎드린 자세로 옆으로 나란히 늘어선 자세입니다.
+				候補数 = ENUMFILES(@"resources/体位サンプル", "後背位-後背位*.*")
+				IF 候補数 > 0
+					PRINTL
+					PRINTL ・샘플 이미지
+					CALL PRINT_STRL(@"IMAGEPATH_%REPLACE(RESULTS:(RAND:候補数), "resources\\\\", "")%")
+				ENDIF
+				PRINTL
+				WAIT
+				GOTO 体位_LOOP_1
 			CASE 900 TO 905
 				強さ初期値記録 = LOCAL - 900
-				GOTO 体位_LOOP2
+				GOTO 体位_LOOP_1
 			CASE 910 TO 915
 				速さ初期値記録 = LOCAL - 910
-				GOTO 体位_LOOP2
+				GOTO 体位_LOOP_1
 			CASE 899
 				強さ初期値記録 = MAX(強さ初期値記録 - 1, 0)
-				GOTO 体位_LOOP2
+				GOTO 体位_LOOP_1
 			CASE 906
 				強さ初期値記録 = MIN(強さ初期値記録 + 1, 5)
-				GOTO 体位_LOOP2
+				GOTO 体位_LOOP_1
 			CASE 909
 				速さ初期値記録 = MAX(速さ初期値記録 - 1, 0)
-				GOTO 体位_LOOP2
+				GOTO 体位_LOOP_1
 			CASE 916
 				速さ初期値記録 = MIN(速さ初期値記録 + 1, 5)
-				GOTO 体位_LOOP2
+				GOTO 体位_LOOP_1
 			CASE 920
 				INVERTBIT あなた挿入最適化フラグ, 0
-				GOTO 体位_LOOP2
+				GOTO 体位_LOOP_1
 			CASE 999
 				RETURN -1
+			CASEELSE
+				GOTO INPUT_LOOP_1
 		ENDSELECT
-		LOCAL:10 = TARGET
-		FOR LOCAL, 0, 同時モード_選択数
-			SIF 同時モード_選択キャラ:LOCAL < 1
-				BREAK
-			RESULT = 0
-			TARGET = 同時モード_選択キャラ:LOCAL
-			TRYCALLFORM COM_ABLE60_12
-			IF RESULT == 0
-				TARGET = LOCAL:10
-				RETURN -1
-			ENDIF
-			RESULT = 1
-			TRYCALLFORM CAN_体位12(1)
-			IF !RESULT
-				TRYCALLFORM CAN_体位12(0)
-				RETURN -1
-			ENDIF
-		NEXT
-		TARGET = LOCAL:10
-
-		TRYCALLFORM COM60_12(強さ初期値記録, 速さ初期値記録)
-		;メッセージ用に体位の種類を保存
-		RFLAG:コマンド結果受渡し変数 = 12
 	ENDIF
 	RETURN 1
 ELSE
@@ -178,7 +289,7 @@ ELSE
 	ENDIF
 	$体位_LOOP
 	DRAWLINE
-	PRINTL ■체위를 선택해주세요
+	PRINTL ■체위를 선택해 주세요
 	PRINTL
 	LOCAL:1 = 0
 	FOR LOCAL, 0, 20
@@ -222,14 +333,14 @@ ELSE
 		ENDCATCH
 	NEXT
 	IF !LOCAL:1
-		PRINTW 현재 선택 가능한 체위가 없으므로 취소합니다
+		PRINTW 현재 선택할 수 있는 체위가 없으므로 취소합니다
 		RETURN -1
 	ENDIF
 
 	PRINTL
 	PRINTL
-	PRINTL ■속도・강도 초기값을 선택해주세요
-	PRINT 　　V 삽입 강도:
+	PRINTL ■속도・강도의 초기값을 선택해 주세요
+	PRINT 　　Ｖ삽입 강도：
 	PRINTBUTTON "[-]", 899
 	FOR LOCAL, 0, 6
 		IF 強さ初期値記録 >= LOCAL
@@ -240,7 +351,7 @@ ELSE
 	NEXT
 	PRINTBUTTON "[+]", 906
 	PRINT 　　
-	PRINT V 삽입 속도:
+	PRINT Ｖ삽입 속도：
 	PRINTBUTTON "[-]", 909
 	FOR LOCAL, 0, 6
 		IF 速さ初期値記録 >= LOCAL
@@ -263,74 +374,76 @@ ELSE
 		ENDIF
 		PRINTL
 	ENDIF
+ENDIF
 	PRINTBUTTONLC "[999]돌아가기", 999
 
-	$INPUT_LOOP
-	BINPUT
+$INPUT_LOOP
+BINPUT
 
-	LOCAL = RESULT
-	SELECTCASE LOCAL
-		CASE 0 TO 11
-			TRYCALLFORM COM_ABLE60_{LOCAL}
-			IF RESULT
-				IF TARGET == MASTER
-					TARGET = PLAYER
-					PLAYER = MASTER
-					RFLAG:指示モード対象あなたフラグ = 1
-					TRYCALLFORM CAN_体位{LOCAL}(1)
-					IF !RESULT
-						TRYCALLFORM CAN_体位{LOCAL}(0)
-						PLAYER = TARGET
-						TARGET = MASTER
-						GOTO 体位_LOOP
-					ENDIF
-					RFLAG:指示モード対象あなたフラグ = 0
+LOCAL = RESULT
+SELECTCASE LOCAL
+	CASE 0 TO 11
+		
+		TRYCALLFORM COM_ABLE60_{LOCAL}
+		IF RESULT
+			IF TARGET == MASTER
+				TARGET = PLAYER
+				PLAYER = MASTER
+				RFLAG:指示モード対象あなたフラグ = 1
+				TRYCALLFORM CAN_体位{LOCAL}(1)
+				IF !RESULT
+					TRYCALLFORM CAN_体位{LOCAL}(0)
 					PLAYER = TARGET
 					TARGET = MASTER
-				ELSE
-					TRYCALLFORM CAN_体位{LOCAL}(1)
-					IF !RESULT
-						TRYCALLFORM CAN_体位{LOCAL}(0)
-						GOTO 体位_LOOP
-					ENDIF
+					GOTO 体位_LOOP
 				ENDIF
-				TRYCALLFORM COM60_{LOCAL}(強さ初期値記録, 速さ初期値記録)
-				;メッセージ用に体位の種類を保存
-				RFLAG:コマンド結果受渡し変数 = LOCAL
-				
-				CALL オート体位変更Ｖ
-				RETURN 1
+				RFLAG:指示モード対象あなたフラグ = 0
+				PLAYER = TARGET
+				TARGET = MASTER
+			ELSE
+				TRYCALLFORM CAN_体位{LOCAL}(1)
+				IF !RESULT
+					TRYCALLFORM CAN_体位{LOCAL}(0)
+					GOTO 体位_LOOP
+				ENDIF
 			ENDIF
-			GOTO INPUT_LOOP
-		CASE 900 TO 905
-			強さ初期値記録 = LOCAL - 900
-			GOTO 体位_LOOP
-		CASE 910 TO 915
-			速さ初期値記録 = LOCAL - 910
-			GOTO 体位_LOOP
-		CASE 899
-			強さ初期値記録 = MAX(強さ初期値記録 - 1, 0)
-			GOTO 体位_LOOP
-		CASE 906
-			強さ初期値記録 = MIN(強さ初期値記録 + 1, 5)
-			GOTO 体位_LOOP
-		CASE 909
-			速さ初期値記録 = MAX(速さ初期値記録 - 1, 0)
-			GOTO 体位_LOOP
-		CASE 916
-			速さ初期値記録 = MIN(速さ初期値記録 + 1, 5)
-			GOTO 体位_LOOP
-		CASE 920
-			INVERTBIT あなた挿入最適化フラグ, 0
-			GOTO 体位_LOOP
-		CASE 999
-			V挿入強さ = 強さ初期値記録
-			V挿入速さ = 速さ初期値記録
-			RETURN -1
-		CASEELSE
-			GOTO INPUT_LOOP
-	ENDSELECT
-ENDIF
+			TRYCALLFORM COM60_{LOCAL}(強さ初期値記録, 速さ初期値記録)
+			;メッセージ用に体位の種類を保存
+			RFLAG:コマンド結果受渡し変数 = LOCAL
+			
+			CALL オート体位変更Ｖ
+			RETURN 1
+		ENDIF
+		GOTO INPUT_LOOP
+	CASE 900 TO 905
+		強さ初期値記録 = LOCAL - 900
+		GOTO 体位_LOOP
+	CASE 910 TO 915
+		速さ初期値記録 = LOCAL - 910
+		GOTO 体位_LOOP
+	CASE 899
+		強さ初期値記録 = MAX(強さ初期値記録 - 1, 0)
+		GOTO 体位_LOOP
+	CASE 906
+		強さ初期値記録 = MIN(強さ初期値記録 + 1, 5)
+		GOTO 体位_LOOP
+	CASE 909
+		速さ初期値記録 = MAX(速さ初期値記録 - 1, 0)
+		GOTO 体位_LOOP
+	CASE 916
+		速さ初期値記録 = MIN(速さ初期値記録 + 1, 5)
+		GOTO 体位_LOOP
+	CASE 920
+		INVERTBIT あなた挿入最適化フラグ, 0
+		GOTO 体位_LOOP
+	CASE 999
+		V挿入強さ = 強さ初期値記録
+		V挿入速さ = 速さ初期値記録
+		RETURN -1
+	CASEELSE
+		GOTO INPUT_LOOP
+ENDSELECT
+
 
 @オート体位変更Ｖ
 ;Ａ挿入中
@@ -456,7 +569,48 @@ RETURN RESULT
 @COM60_12(強さ初期値記録, 速さ初期値記録)
 #DIM 強さ初期値記録
 #DIM 速さ初期値記録
-;同時挿入
+;正常位-後背位
+;組み合わせ固定になるか判定
+LOCAL:1 = -1
+;既に同じコマンドの対象がいるか判定
+IF TARGET == 同時モード_選択キャラ:1
+	IF MODE_存在判定_ターゲット側("正常位", 同時モード_選択キャラ:0)
+		LOCAL:1 = 1
+	ELSE
+		LOCAL:1 = 0
+	ENDIF
+ELSE
+	;この分岐に来た時点でTARGETは0番
+	;0が後背位側
+	SIF 体格差計算(同時モード_選択キャラ:0, 同時モード_選択キャラ:1) >= 3
+		LOCAL:1 = 1
+	;1が後背位側
+	SIF 体格差計算(同時モード_選択キャラ:1, 同時モード_選択キャラ:0) >= 3
+		LOCAL:1 = 0
+ENDIF
+;ここまで固定されていなければランダム
+SIF LOCAL:1 < 0
+	LOCAL:1 = RAND(2)
+CALL 体位COM(350, 70, 90)
+IF LOCAL:1
+	CALL MODE_CHANGE("後背位", PLAYER, TARGET, , , 強さ初期値記録, 速さ初期値記録)
+ELSE
+	CALL MODE_CHANGE("正常位", PLAYER, TARGET, , , 強さ初期値記録, 速さ初期値記録)
+ENDIF
+RETURN RESULT
+
+@COM60_13(強さ初期値記録, 速さ初期値記録)
+#DIM 強さ初期値記録
+#DIM 速さ初期値記録
+;側位-側位
+CALL 体位COM(350, 70, 90)
+CALL MODE_CHANGE("側位", PLAYER, TARGET, , , 強さ初期値記録, 速さ初期値記録)
+RETURN RESULT
+
+@COM60_14(強さ初期値記録, 速さ初期値記録)
+#DIM 強さ初期値記録
+#DIM 速さ初期値記録
+;後背位-後背位
 CALL 体位COM(350, 70, 90)
 IF BEDROOM(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置)
 	CALL MODE_CHANGE("後背位", PLAYER, TARGET, , , 強さ初期値記録, 速さ初期値記録)
@@ -629,6 +783,24 @@ SKIPDISP 0
 RETURN LOCAL
 
 
+@CAN_体位13(ARG)
+;同時挿入
+;数値は側位に準拠
+SKIPDISP ARG
+CALL CAN_体位(30)
+LOCAL = RESULT
+SKIPDISP 0
+RETURN LOCAL
+
+
+@CAN_体位14(ARG)
+;同時挿入
+;数値は側位に準拠
+SKIPDISP ARG
+CALL CAN_体位(30)
+LOCAL = RESULT
+SKIPDISP 0
+RETURN LOCAL
 
 
 @CAN_体位(必要実行値)
@@ -666,7 +838,7 @@ SIF CFLAG:TARGET:睡眠
 			SIF ＋表示フラグ
 				PRINT  + 
 			実行値 += ABL:Ｃ感覚 * 3
-			PRINTFORM C 감각LV{ABL:Ｃ感覚}({ABL:Ｃ感覚 * 3})
+			PRINTFORM Ｃ감각LV{ABL:Ｃ感覚}({ABL:Ｃ感覚 * 3})
 			＋表示フラグ = 1
 		ENDIF
 	ELSE
@@ -675,7 +847,7 @@ SIF CFLAG:TARGET:睡眠
 			SIF ＋表示フラグ
 				PRINT  + 
 			実行値 += ABL:Ｖ感覚 * 2
-			PRINTFORM V 감각LV{ABL:Ｖ感覚}({ABL:Ｖ感覚 * 2})
+			PRINTFORM Ｖ감각LV{ABL:Ｖ感覚}({ABL:Ｖ感覚 * 2})
 			＋表示フラグ = 1
 		ENDIF
 	ENDIF
@@ -733,14 +905,14 @@ SIF CFLAG:TARGET:睡眠
 		IF TALENT:性別嗜好 & 1 && TALENT:PLAYER:性別 == 2
 			PRINT  - 
 			実行値 -= 12
-			PRINT 남자 혐오(12)
+			PRINT 남성 혐오(12)
 			＋表示フラグ = 1
 		ENDIF
 		;女嫌い（恋慕で無効）
 		IF TALENT:性別嗜好 & 2 && TALENT:PLAYER:性別 == 1
 			PRINT  - 
 			実行値 -= 12
-			PRINT 여자 혐오(12)
+			PRINT 여성 혐오(12)
 			＋表示フラグ = 1
 		ENDIF
 	ENDIF
@@ -749,7 +921,7 @@ SIF CFLAG:TARGET:睡眠
 		SIF ＋表示フラグ
 			PRINT  + 
 		実行値 += 10
-		PRINT 섹파(10)
+		PRINT 섹프(10)
 		＋表示フラグ = 1
 	ENDIF
 	;未陥落
@@ -817,13 +989,22 @@ SIF CFLAG:TARGET:睡眠
 			PRINT  + 
 		実行値 += 999
 		IF TCVAR:TARGET:泥酔眠姦
-		PRINT 정신 혼미(999)
+		PRINT 정신 불각(999)
 	ELSE
 		PRINT 당신의 뜻대로(999)
 	ENDIF
 
 		＋表示フラグ = 1
 	ENDIF
+
+;特殊言いなり
+IF TCVAR:特殊言いなり
+	SIF ＋表示フラグ
+		PRINT  + 
+	実行値 += 999
+	PRINTFORM %特殊言いなり分岐(TARGET)%(999)
+	＋表示フラグ = 1
+ENDIF
 
 
 	;合計を表示(必要実行値以上で実行)
@@ -936,7 +1117,7 @@ ENDIF
 SIF MODE_存在判定_プレイヤー側("ＶＡ挿入系", TARGET)
 	RETURN 0
 ;相手が別人と立位中だとベッドがないとダメ
-SIF MODE_存在判定_プレイヤー側("ＶＡ立位挿入系", TARGET) && !BEDROOM(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置)
+SIF MODE_存在判定_ターゲット側("ＶＡ立位挿入系", TARGET) && !BEDROOM(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置)
 	RETURN 0
 
 RETURN 1
@@ -947,6 +1128,9 @@ RETURN 1
 
 ;睡眠中ダメ
 SIF CFLAG:TARGET:睡眠
+	RETURN 0
+;ダウン中ダメ
+SIF CFLAG:TARGET:体力限界
 	RETURN 0
 ;Ａ挿入中ダメ
 SIF MODE_存在判定_ターゲット側("Ａ挿入系", TARGET)
@@ -971,8 +1155,8 @@ ENDIF
 ;Ａ挿入中ダメ
 SIF MODE_存在判定_ターゲット側("Ａ挿入系", TARGET)
 	RETURN 0
-;相手が別人と立位中だとベッドがないとダメ
-SIF MODE_存在判定_プレイヤー側("ＶＡ立位挿入系", TARGET) && !BEDROOM(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置)
+;相手が別人と立位中だとダメ
+SIF MODE_存在判定_プレイヤー側("ＶＡ立位挿入系", TARGET)
 	RETURN 0
 
 RETURN 1
@@ -982,6 +1166,9 @@ RETURN 1
 
 ;睡眠中ダメ
 SIF CFLAG:TARGET:睡眠
+	RETURN 0
+;ダウン中ダメ
+SIF CFLAG:TARGET:体力限界
 	RETURN 0
 ;お風呂場プレイ中はOK
 IF BATHROOM(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置)
@@ -995,7 +1182,7 @@ ENDIF
 SIF MODE_存在判定_プレイヤー側("ＶＡ挿入系", TARGET)
 	RETURN 0
 ;相手が別人と立位中だとベッドがないとダメ
-SIF MODE_存在判定_プレイヤー側("ＶＡ立位挿入系", TARGET) && !BEDROOM(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置)
+SIF MODE_存在判定_ターゲット側("ＶＡ立位挿入系", TARGET) && !BEDROOM(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置)
 	RETURN 0
 
 RETURN 1
@@ -1005,6 +1192,9 @@ RETURN 1
 
 ;睡眠中ダメ
 SIF CFLAG:TARGET:睡眠
+	RETURN 0
+;ダウン中ダメ
+SIF CFLAG:TARGET:体力限界
 	RETURN 0
 ;お風呂場プレイ中はOK
 IF BATHROOM(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置)
@@ -1029,6 +1219,9 @@ RETURN 1
 ;睡眠中ダメ
 SIF CFLAG:TARGET:睡眠
 	RETURN 0
+;ダウン中ダメ
+SIF CFLAG:TARGET:体力限界
+	RETURN 0
 ;お風呂場プレイ中はプレイマットが無いとダメ
 IF BATHROOM(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置)
 	SIF ITEM:20 == 0 && NOITEM == 0
@@ -1039,7 +1232,7 @@ ELSE
 		RETURN 0
 ENDIF
 ;相手が別人と立位中だとベッドがないとダメ
-SIF MODE_存在判定_プレイヤー側("ＶＡ立位挿入系", TARGET) && !BEDROOM(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置)
+SIF MODE_存在判定_いずれか側("ＶＡ立位挿入系", TARGET) && !BEDROOM(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置)
 	RETURN 0
 
 RETURN 1
@@ -1070,6 +1263,9 @@ RETURN 1
 ;睡眠中ダメ
 SIF CFLAG:TARGET:睡眠
 	RETURN 0
+;ダウン中ダメ
+SIF CFLAG:TARGET:体力限界
+	RETURN 0
 ;お風呂場プレイ中はプレイマットが無いとダメ
 IF BATHROOM(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置)
 	SIF ITEM:20 == 0 && NOITEM == 0
@@ -1093,6 +1289,9 @@ RETURN 1
 ;睡眠中ダメ
 SIF CFLAG:TARGET:睡眠
 	RETURN 0
+;ダウン中ダメ
+SIF CFLAG:TARGET:体力限界
+	RETURN 0
 ;TARGETのほうが3サイズ大きいと抱えきれない
 SIF 体格差計算(PLAYER, TARGET) >= 3
 	RETURN 0
@@ -1100,7 +1299,7 @@ SIF 体格差計算(PLAYER, TARGET) >= 3
 SIF MODE_存在判定_プレイヤー側("ＶＡ挿入系", TARGET)
 	RETURN 0
 ;相手が別人と非立位中だとベッドがないとダメ
-SIF MODE_存在判定_プレイヤー側("ＶＡ非立位挿入系", TARGET) && !BEDROOM(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置)
+SIF MODE_存在判定_ターゲット側("ＶＡ非立位挿入系", TARGET) && !BEDROOM(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置)
 	RETURN 0
 
 RETURN 1
@@ -1110,6 +1309,9 @@ RETURN 1
 
 ;睡眠中ダメ
 SIF CFLAG:TARGET:睡眠
+	RETURN 0
+;ダウン中ダメ
+SIF CFLAG:TARGET:体力限界
 	RETURN 0
 ;TARGETのほうが3サイズ大きいと抱えきれない
 SIF 体格差計算(PLAYER, TARGET) >= 3
@@ -1129,6 +1331,9 @@ RETURN 1
 ;睡眠中ダメ
 SIF CFLAG:TARGET:睡眠
 	RETURN 0
+;ダウン中ダメ
+SIF CFLAG:TARGET:体力限界
+	RETURN 0
 ;TARGETのほうが4サイズ大きいと届かない
 SIF 体格差計算(PLAYER, TARGET) >= 4
 	RETURN 0
@@ -1136,7 +1341,7 @@ SIF 体格差計算(PLAYER, TARGET) >= 4
 SIF MODE_存在判定_プレイヤー側("ＶＡ挿入系", TARGET)
 	RETURN 0
 ;相手が別人と非立位中だとベッドがないとダメ
-SIF MODE_存在判定_プレイヤー側("ＶＡ非立位挿入系", TARGET) && !BEDROOM(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置)
+SIF MODE_存在判定_ターゲット側("ＶＡ非立位挿入系", TARGET) && !BEDROOM(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置)
 	RETURN 0
 
 RETURN 1
@@ -1147,6 +1352,9 @@ RETURN 1
 ;睡眠中ダメ
 SIF CFLAG:TARGET:睡眠
 	RETURN 0
+;ダウン中ダメ
+SIF CFLAG:TARGET:体力限界
+	RETURN 0
 ;TARGETのほうが4サイズ大きいと届かない
 SIF 体格差計算(PLAYER, TARGET) >= 4
 	RETURN 0
@@ -1159,23 +1367,130 @@ SIF MODE_存在判定_プレイヤー側("ＶＡ非立位挿入系", TARGET) && 
 
 RETURN 1
 
+;正常位-後背位
 @COM_ABLE60_12
-;同時挿入
-;TARGETのほうが4サイズ大きいならプレイマットかベッドが必要
-IF 体格差計算(PLAYER, TARGET) >= 4
-	IF BATHROOM(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置)
-		SIF ITEM:20 == 0 && NOITEM == 0
-			RETURN 0
-	ELSE
-		SIF !BEDROOM(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置)
-			RETURN 0
-	ENDIF
+#DIM 対象１
+#DIM 対象２
+;同時モードでないとダメ
+SIF !GETBIT(FLAG:モード管理, モードビット_同時)
+	RETURN 0
+;対象が三人以上だとダメ
+SIF 同時モード_選択数 > 2
+	RETURN 0
+;お風呂場プレイ中はプレイマットが無いとダメ
+IF BATHROOM(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置)
+	SIF ITEM:20 == 0 && NOITEM == 0
+		RETURN 0
+ELSE
+	;ベッドがないとダメ
+	SIF !BEDROOM(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置)
+		RETURN 0
 ENDIF
-;Ａ挿入中ダメ
-SIF MODE_存在判定_ターゲット側("Ａ挿入系", TARGET)
+対象１ = 同時モード_選択キャラ:0
+対象２ = 同時モード_選択キャラ:1
+;どっちも寝てたらダメ
+SIF CFLAG:対象１:睡眠 && CFLAG:対象２:睡眠
+	RETURN 0
+;上下固定時に後背位側が寝てたらダメ
+SIF CFLAG:対象１:睡眠 && 体格差計算(対象１, 対象２) >= 3
+	RETURN 0
+SIF CFLAG:対象２:睡眠 && 体格差計算(対象２, 対象１) >= 3
+	RETURN 0
+;挿入してたりされてたらダメ
+SIF MODE_存在判定_プレイヤー側("ＶＡ挿入系", TARGET) || MODE_存在判定_ターゲット側("ＶＡ挿入系", TARGET) 
+	RETURN 0
+
+
+;処理の関係上、同時挿入の固有体位縛り判定はCOM_ABLE側でやる
+RESULT = 1
+TRYCALLFORM 固有Ｖ体位ABLE_プレイヤー側正常位_{NO:PLAYER}(PLAYER)
+TRYCALLFORM 固有Ｖ体位ABLE_プレイヤー側後背位_{NO:PLAYER}(PLAYER)
+TRYCALLFORM 固有Ｖ体位ABLE_ターゲット側正常位_{NO:対象１}(対象１)
+TRYCALLFORM 固有Ｖ体位ABLE_ターゲット側後背位_{NO:対象１}(対象１)
+TRYCALLFORM 固有Ｖ体位ABLE_ターゲット側正常位_{NO:対象２}(対象２)
+TRYCALLFORM 固有Ｖ体位ABLE_ターゲット側後背位_{NO:対象２}(対象２)
+SIF !RESULT
 	RETURN 0
 
 RETURN 1
+
+;側位-側位
+@COM_ABLE60_13
+#DIM 対象１
+#DIM 対象２
+;同時モードでないとダメ
+SIF !GETBIT(FLAG:モード管理, モードビット_同時)
+	RETURN 0
+;対象が三人以上だとダメ
+SIF 同時モード_選択数 > 2
+	RETURN 0
+;お風呂場プレイ中はプレイマットが無いとダメ
+IF BATHROOM(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置)
+	SIF ITEM:20 == 0 && NOITEM == 0
+		RETURN 0
+ELSE
+	;ベッドがないとダメ
+	SIF !BEDROOM(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置)
+		RETURN 0
+ENDIF
+対象１ = 同時モード_選択キャラ:0
+対象２ = 同時モード_選択キャラ:1
+;どちらか挿入してたりされてたらダメ
+SIF MODE_存在判定_プレイヤー側("ＶＡ挿入系", 対象１) || MODE_存在判定_ターゲット側("ＶＡ挿入系", 対象１) 
+	RETURN 0
+SIF MODE_存在判定_プレイヤー側("ＶＡ挿入系", 対象２) || MODE_存在判定_ターゲット側("ＶＡ挿入系", 対象２) 
+	RETURN 0
+
+;処理の関係上、同時挿入の固有体位縛り判定はCOM_ABLE側でやる
+TRYCALLFORM 固有Ｖ体位ABLE_プレイヤー側側位_{NO:PLAYER}(PLAYER)
+SIF !RESULT
+	RETURN 0
+TRYCALLFORM 固有Ｖ体位ABLE_ターゲット側側位_{NO:対象１}(対象１)
+SIF !RESULT
+	RETURN 0
+TRYCALLFORM 固有Ｖ体位ABLE_ターゲット側側位_{NO:対象２}(対象２)
+SIF !RESULT
+	RETURN 0
+
+RETURN 1
+
+;後背位-後背位
+@COM_ABLE60_14
+;同時モードでないとダメ
+SIF !GETBIT(FLAG:モード管理, モードビット_同時)
+	RETURN 0
+FOR LOCAL, 0, 同時モード_選択数
+	;TARGETのほうが4サイズ大きいならプレイマットかベッドが必要
+	IF 体格差計算(PLAYER,  同時モード_選択キャラ:LOCAL) >= 4
+		IF BATHROOM(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置)
+			SIF ITEM:20 == 0 && NOITEM == 0
+				RETURN 0
+		ELSE
+			SIF !BEDROOM(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置)
+				RETURN 0
+		ENDIF
+	ENDIF
+
+	;Ａ挿入中ダメ
+	SIF MODE_存在判定_ターゲット側("Ａ挿入系", 同時モード_選択キャラ:LOCAL)
+		RETURN 0
+NEXT
+RESULT = 1
+;処理の関係上、同時挿入の固有体位縛り判定はCOM_ABLE側でやる
+FOR LOCAL, 0, 同時モード_選択数
+	IF 体格差計算(PLAYER,  同時モード_選択キャラ:LOCAL) >= 4
+		TRYCALLFORM 固有Ｖ体位ABLE_プレイヤー側立ちバック_{NO:PLAYER}(PLAYER)
+		TRYCALLFORM 固有Ｖ体位ABLE_ターゲット側立ちバック_{NO:(同時モード_選択キャラ:LOCAL)}(同時モード_選択キャラ:LOCAL)
+	ELSE
+		TRYCALLFORM 固有Ｖ体位ABLE_プレイヤー側後背位_{NO:PLAYER}(PLAYER)
+		TRYCALLFORM 固有Ｖ体位ABLE_ターゲット側後背位_{NO:(同時モード_選択キャラ:LOCAL)}(同時モード_選択キャラ:LOCAL)
+	ENDIF
+NEXT
+SIF !RESULT
+	RETURN 0
+
+RETURN 1
+
 
 ;-------------------------------------------------
 ;実行時メッセージ
@@ -1286,65 +1601,250 @@ RETURN 1
 ;ENDIF
 
 IF !MODE_存在判定_ターゲット側("ペニスバンド", PLAYER)
-	LOCALS = 단단하게 솟아오른 음경
+	LOCALS = %TEXTR("단단하게 솟아오른/딱딱해진/단단하게 발기한")%%TEXTR("음경/페니스/자지/육봉")%
 ELSE
 	LOCALS = 페니스 밴드
 ENDIF
 
-SELECTCASE RFLAG:コマンド結果受渡し変数
-	CASE 0
-		;正常位
-		PRINTFORML %CALLNAME:PLAYER%는 똑바로 누운 %CALLNAME:TARGET%의 질 내에 %LOCALS%을 삽입했다
-	CASE 1
-		;後背位
-		PRINTFORML %CALLNAME:PLAYER%는 네 발 자세가 된 %CALLNAME:TARGET%의 질 내에 %LOCALS%을 삽입했다
-	CASE 2
-		;寝バック
-		PRINTFORML %CALLNAME:PLAYER%는 엎드려 누운 %CALLNAME:TARGET%의 질 안에 %LOCALS%를 삽입했다
-	CASE 3
-		;対面座位
-		PRINTFORML %CALLNAME:PLAYER%는 %CALLNAME:TARGET%와 마주 보도록 앉아, 그대로 질 안으로 %LOCALS%를 삽입했다
-	CASE 4
-		;背面座位
-		PRINTFORML %CALLNAME:PLAYER%는 %CALLNAME:TARGET%를 자신 위에 앉히고, 그대로 질 안으로 %LOCALS%를 삽입했다
-	CASE 5
-		;騎乗位
-		PRINTFORML %CALLNAME:PLAYER%는 %CALLNAME:TARGET%에게 스스로 질 안으로 %LOCALS%를 삽입하게 했다
-	CASE 6
-		;側位
-		PRINTFORML %CALLNAME:PLAYER%는 옆으로 누운 %CALLNAME:TARGET%의 질 안에 %LOCALS%를 삽입했다
-	CASE 7
-		;屈曲位
-		PRINTFORML %CALLNAME:PLAYER%는 %CALLNAME:TARGET%의 다리를 모아 올리게 하고, 그대로 질 안으로 %LOCALS%를 삽입했다
-	CASE 8
-		;駅弁
-		PRINTFORML %CALLNAME:PLAYER%는 %CALLNAME:TARGET%를 마주 본 채 들어 올리고, 그대로 질 안으로 %LOCALS%를 삽입했다
-	CASE 9
-		;背面駅弁
-		PRINTFORML %CALLNAME:PLAYER%는 %CALLNAME:TARGET%를 뒤돌아보게 들어 올리고, 그대로 질 안으로 %LOCALS%를 삽입했다
-	CASE 10
-		;対面立位
-		PRINTFORML %CALLNAME:PLAYER%는 선 채로 %CALLNAME:TARGET%와 마주 보고, 질 안으로 %LOCALS%를 삽입했다
-	CASE 11
-		;立ちバック
-		PRINTFORML %CALLNAME:PLAYER%는 뒤돌아 엉덩이를 내민 %CALLNAME:TARGET%의 질 안으로 %LOCALS%를 삽입했다
-	CASE 12
-		;同時挿入
-		PRINTFORM %CALLNAME:PLAYER%는
-		FOR 同時キャラ番号, 0, 同時モード_選択数
-			SIF 同時キャラ番号 > 0
-				PRINT ,
-			PRINTFORM %CALLNAME:(同時モード_選択キャラ:同時キャラ番号)%
-		NEXT
-		PRINTFORML 를 나란히 세우고는, 질 안으로 차례차례 %LOCALS%를 삽입했다
-ENDSELECT
+IF TFLAG:オートコマンドフラグ >= 4000
+	SELECTCASE RFLAG:コマンド結果受渡し変数
+		CASE 0
+			;正常位
+			PRINTFORM %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%에게%TEXTR("졸라대는/재촉받는/요구받는")% 대로, 똑바로 누운 %CALLNAME:TARGET%의 질 안에 %LOCALS%을(를) 삽입해 나갔다
+		CASE 1
+			;後背位
+			PRINTFORM %CALLNAME:PLAYER%은(는) 네 발로 기어%TEXTR("간/엉덩이를 흔들어 유혹하는")% %CALLNAME:TARGET%의 질 안에 %LOCALS%을(를) 삽입해 나갔다
+		CASE 2
+			;寝バック
+			PRINTFORM %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%에게%TEXTR("졸라대는/재촉받는/요구받는")% 대로, 엎드려 누운 %CALLNAME:TARGET%에게 덮쳐 누르듯이 하여 질 안에 %LOCALS%을(를) 삽입해 나갔다
+		CASE 3
+			;対面座位
+			PRINTFORM %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%에게%TEXTR("졸라대는/재촉받는/요구받는")% 대로, 마주 보며 껴안은 그녀의 질 안에 %LOCALS%을(를) 삽입해 나갔다
+		CASE 4
+			;背面座位
+			PRINTFORM %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%에게%TEXTR("졸라대는/재촉받는/요구받는")% 대로, 자신 위에 등을 돌리고 앉은 %CALLNAME:TARGET%을(를) 끌어안으며 질 안으로 %LOCALS%을(를) 삽입해 나갔다
+		CASE 5
+			;騎乗位
+			PRINTFORM %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%의%TEXTR("허리/위")%에 올라타자, %LOCALS%을(를) 자신의 손으로 이끌어 질 안으로%TEXTR("물고 들어갔/삽입했")%다
+		CASE 6
+			;側位
+			PRINTFORM %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%에게%TEXTR("조르자/재촉하자/요구하자")%대로, 옆으로 누운 %CALLNAME:TARGET%의 한쪽 다리를 들어 올리고, 질 안에 %LOCALS%을(를) 삽입해 나갔다
+		CASE 7
+			;屈曲位
+			PRINTFORM %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%에게%TEXTR("조르자/재촉하자/요구하자")%대로, 양 다리를 모아 올리게 한 %CALLNAME:TARGET%의 질 안으로 %LOCALS%을(를) 삽입해 나갔다
+		CASE 8
+			;駅弁
+			PRINTFORM %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%에게%TEXTR("조르자/재촉하자/요구하자")%대로, %CALLNAME:TARGET%을(를) 마주 본 채로 들어 올리고, %LOCALS%을(를) 질 안으로 삽입해 나갔다
+		CASE 9
+			;背面駅弁
+			PRINTFORM %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%에게%TEXTR("조르자/재촉하자/요구하자")%대로, 뒤돌아 안아 올린 %CALLNAME:TARGET%의 질 안으로 %LOCALS%을(를) 삽입해 나갔다
+		CASE 10
+			;対面立位
+			PRINTFORM %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%에게%TEXTR("조르자/재촉하자/요구하자")%대로, 선 채로 마주 본 %CALLNAME:TARGET%의 질 안으로 %LOCALS%을(를) 삽입해 나갔다
+		CASE 11
+			;立ちバック
+			PRINTFORM %CALLNAME:PLAYER%은(는) 서서 뒤돌아 엉덩이를 내밀%TEXTR("았다/며, 살랑살랑 엉덩이를 흔들어 유혹하는")%%CALLNAME:TARGET%의 질 안으로 %LOCALS%을(를) 삽입해 나갔다
+		CASE 12
+			;同時挿入
+			PRINTFORM %CALLNAME:PLAYER%은(는)
+			FOR 同時キャラ番号, 0, 同時モード_選択数
+				SIF 同時キャラ番号 > 0
+					PRINT 、
+				PRINTFORM %CALLNAME:(同時モード_選択キャラ:同時キャラ番号)%
+			NEXT
+			PRINTFORM 을(를) 나열하자, 질 안으로 차례로 %LOCALS%을(를) 삽입했다
+	ENDSELECT
+	PRINTL ……
+ELSE
+	SELECTCASE RFLAG:コマンド結果受渡し変数
+		CASE 0
+			;正常位
+			PRINTFORML %CALLNAME:PLAYER%은(는) 천장을 보고 누운 %CALLNAME:TARGET%의 질 안에 %LOCALS%을(를) 삽입했다
+		CASE 1
+			;後背位
+			PRINTFORML %CALLNAME:PLAYER%은(는) 네 발로 기는 자세를 취한 %CALLNAME:TARGET%의 질 안에 %LOCALS%을(를) 삽입했다
+		CASE 2
+			;寝バック
+			PRINTFORML %CALLNAME:PLAYER%은(는) 엎드려 누운 %CALLNAME:TARGET%의 질 안에 %LOCALS%을(를) 삽입했다
+		CASE 3
+			;対面座位
+			PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%와(과) 마주 보며 앉아, 그대로 질 안으로 %LOCALS%을(를) 삽입했다
+		CASE 4
+			;背面座位
+			PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%을(를) 자신 위에 앉히고, 그대로 질 안으로 %LOCALS%을(를) 삽입했다
+		CASE 5
+			;騎乗位
+			PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%에게 스스로 질 내로 %LOCALS%을(를) 삽입시켰다
+		CASE 6
+			;側位
+			PRINTFORML %CALLNAME:PLAYER%은(는) 옆으로 누운 %CALLNAME:TARGET%의 질 내에 %LOCALS%을(를) 삽입했다
+		CASE 7
+			;屈曲位
+			PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%의 다리를 모아 올리게 한 후, 그대로 질 내로 %LOCALS%을(를) 삽입했다
+		CASE 8
+			;駅弁
+			PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%을(를) 마주 본 채 들어 올린 후, 그대로 질 내로 %LOCALS%을(를) 삽입했다
+		CASE 9
+			;背面駅弁
+			PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%을(를) 뒤로 안아 올린 후, 그대로 질 내로 %LOCALS%을(를) 삽입했다
+		CASE 10
+			;対面立位
+			PRINTFORML %CALLNAME:PLAYER%은(는) 선 채로 %CALLNAME:TARGET%와 마주 보고, 질 내로 %LOCALS%을(를) 삽입했다
+		CASE 11
+			;立ちバック
+			PRINTFORML %CALLNAME:PLAYER%은(는) 뒤로 엉덩이를 내민 %CALLNAME:TARGET%의 질 내로 %LOCALS%을(를) 삽입했다
+		CASE 12
+			;正常位-後背位
+			;どっちが正常位側か判定しておく
+			LOCAL = 0
+			SIF MODE_存在判定_ターゲット側("正常位", 同時モード_選択キャラ:0)
+				LOCAL = 1
+			PRINTFORM  %CALLNAME:PLAYER%은(는) 천장을 보고 누웠다
+			IF LOCAL
+				PRINTFORM %CALLNAME:(同時モード_選択キャラ:0)% 위에 엎드린 채 겹쳐진 %CALLNAME:(同時モード_選択キャラ:1)%
+			ELSE
+				PRINTFORM %CALLNAME:(同時モード_選択キャラ:1)% 위에 엎드린 채 겹쳐진 %CALLNAME:(同時モード_選択キャラ:0)%
+			ENDIF
+			PRINTFORML 의 엉덩이를 잡고, 그대로 두 사람의 질 내에 번갈아 %LOCALS%을(를) 삽입했다
+		CASE 13
+			;側位-側位
+			PRINTFORML %CALLNAME:PLAYER%은(는) 나란히 옆으로 누운 %CALLNAME:(同時モード_選択キャラ:0)%와 %CALLNAME:(同時モード_選択キャラ:1)%의 질 내에 번갈아 %LOCALS%을(를) 삽입했다
+		CASE 14
+			;後背位-後背位
+			PRINTFORM %CALLNAME:PLAYER%은(는)
+			FOR 同時キャラ番号, 0, 同時モード_選択数
+				SIF 同時キャラ番号 > 0
+					PRINT 、
+				PRINTFORM %CALLNAME:(同時モード_選択キャラ:同時キャラ番号)%
+			NEXT
+			PRINTFORML 을(를) 나란히 놓은 후, 질 내로 차례대로 %LOCALS%을(를) 삽입했다
+	ENDSELECT
+ENDIF
 
-IF CFLAG:TARGET:睡眠
-	PRINTFORML %CALLNAME:TARGET%는 작은 신음을 흘리면서도, 아직 꿈속에 있다…
+IF TALENT:TARGET:処女
+;そこそこ書いてから気付いたけど、これ結構死に分岐多いな？？
+;処女だと睡眠姦自体厳しいし泥酔眠姦での和姦処女喪失は勘違い和姦でしか発生しない(それ以外はむりやりうふふになるからコマンド自体が別)からこんなに書く必要なかったな？？？
+	PRINTL
+	IF !MODE_存在判定_ターゲット側("ペニスバンド", PLAYER)
+		IF TALENT:TARGET:恋人持ち == 2
+			IF CFLAG:TARGET:睡眠
+				PRINTFORM %CALLNAME:TARGET%은(는) %TEXTR("숨소리를 내고 있는/꿈속에 있는")% 동안,
+				CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>寝ている%CALLNAME:TARGET%を襲い、%TEXTR("伴侶より先にこっそり処女を/伴侶に捧げられるはずだった処女を")%%TEXTR("捧げてもら/奪ってや/奪")%った</font><img src='えっちハート'>","うふふ")
+				CALL 履歴データベース登録(CFLAG:TARGET:人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>%CALLNAME:PLAYER%に寝込みを襲われ、伴侶に捧げるはずだった%TEXTR("処女/純潔")%を%TEXTR("散らされて/奪われて")%しまった</font><img src='えっちハート'>","うふふ")
+			ELSEIF TCVAR:TARGET:泥酔眠姦
+				;泥酔眠姦中にＶ挿入するとなるのは현재「彼氏/夫のフリして勘違い和姦してるとき」のみ。むりやりからこっち来るにはＶ挿入中派生の首噛みわからせを経由する必要があるため
+				PRINTFORM %TEXTR("술에 취한/만취한")%%CALLNAME:TARGET%이 몽롱한 기분으로 졸고 있는 동안,
+				PRINTFORM %CALLNAME:TARGET%은(는) %TEXTR("숨소리를 내고 있는/꿈속에 있는")% 동안,
+				CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>泥酔した%CALLNAME:TARGET%%TEXTR("が勘違いしたのをいいことに/を襲い")%、彼女の愛する人のふりをしてこっそり%TEXTR("処女を捧げてもらった/ハジメテを奪った/その体に浮気セックスの気持ちよさを教えてあげた/初体験の相手になってやった/初めてのセックスを経験させてあげた/処女を奪ってやった/初体験をさせてやった/処女穴をつまみ食いした/新品処女膣を中古にしてやった")%</font><img src='えっちハート'>","うふふ")
+				CALL 履歴データベース登録(CFLAG:TARGET:人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>泥酔した結果%CALLNAME:PLAYER%を愛する人と%TEXTR("勘違い/誤認")%して、自ら%TEXTR("処女/純潔")%を捧げてしまった</font><img src='えっちハート'>","うふふ")
+			ELSE
+				CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>伴侶よりも先に%CALLNAME:TARGET%と結ばれ、%TEXTR("処女を/その純潔を")%もらった</font><img src='えっちハート'>","うふふ")
+				CALL 履歴データベース登録(CFLAG:TARGET:人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>伴侶%TEXTR("のいる身でありながら/を差し置いて")%%CALLNAME:PLAYER%に%TEXTR("処女/純潔")%を捧げた</font><img src='えっちハート'>","うふふ")
+			ENDIF
+			PRINTFORM 배우자에게 바칠 예정이었던 처녀막은 %CALLNAME:PLAYER%의 귀두에
+			CALL PRINT_STR(@"푸슉_H_푸슉_H_")
+			PRINTFORML 하는 미미한 감촉을 남기고 찢겨 나갔고,
+			PRINTFORML %CALLNAME:TARGET%의 몸 가장 깊은 곳에는, %TEXTR("처음으로 몸을 허락한 상대/첫 경험을 바친 상대/순결을 바친 상대/첫 경험의 증거/「경험 완료」의 증거/「개봉 완료」의 증거/경험 인원 첫 번째 사람/배우자보다 먼저 몸을 허락한 상대/일생에 한 번뿐인 상처")%로서 %CALLNAME:PLAYER%의 형태가 %TEXTR("깊이깊이 새겨졌다/새겨졌다")%……
+		ELSEIF TALENT:TARGET:恋人持ち == 1
+			IF CFLAG:TARGET:睡眠
+				PRINTFORM %CALLNAME:TARGET%은(는) %TEXTR("숨소리를 내고 있는/꿈속에 있는")% 동안,
+				CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>寝ている%CALLNAME:TARGET%を襲い、%TEXTR("恋人より先にこっそり処女を/恋人に捧げられるはずだった処女を")%%TEXTR("捧げてもら/奪ってや/奪")%った</font><img src='えっちハート'>","うふふ")
+				CALL 履歴データベース登録(CFLAG:TARGET:人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>%CALLNAME:PLAYER%に寝込みを襲われ、恋人に捧げるはずだった%TEXTR("処女/純潔")%を%TEXTR("散らされて/奪われて")%しまった</font><img src='えっちハート'>","うふふ")
+			ELSEIF TCVAR:TARGET:泥酔眠姦
+				PRINTFORM %TEXTR("술에 취한/만취한")%%CALLNAME:TARGET%이 몽롱한 기분으로 졸고 있는 동안,
+				CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>泥酔した%CALLNAME:TARGET%%TEXTR("が勘違いしたのをいいことに/を襲い")%、彼女の愛する人のふりをしてこっそり%TEXTR("処女を捧げてもらった/ハジメテを奪った/その体に浮気セックスの気持ちよさを教えてあげた/初体験の相手になってやった/初めてのセックスを経験させてあげた/処女を奪ってやった/初体験をさせてやった/処女穴をつまみ食いした/新品処女膣を中古にしてやった")%</font><img src='えっちハート'>","うふふ")
+				CALL 履歴データベース登録(CFLAG:TARGET:人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>泥酔した結果%CALLNAME:PLAYER%を愛する人と%TEXTR("勘違い/誤認")%して、自ら%TEXTR("処女/純潔")%を捧げてしまった</font><img src='えっちハート'>","うふふ")
+			ELSE
+				CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>恋人よりも先に%CALLNAME:TARGET%と結ばれ、%TEXTR("処女を/その純潔を")%もらった</font><img src='えっちハート'>","うふふ")
+				CALL 履歴データベース登録(CFLAG:TARGET:人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>恋人%TEXTR("のいる身でありながら/を差し置いて")%%CALLNAME:PLAYER%に%TEXTR("処女/純潔")%を捧げた</font><img src='えっちハート'>","うふふ")
+			ENDIF
+			PRINTFORM 연인%TEXTR("에게/과의 달콤한 섹스로")% 바칠%TEXTR(" 예정이었던/ 싶었을")% 처녀막은 %CALLNAME:PLAYER%의 귀두에
+			CALL PRINT_STR(@"푸슉_H_푸슉_H_")
+			PRINTFORML 하는 미미한 감촉을 남기고 찢겨 나갔고,
+			PRINTFORML %CALLNAME:TARGET%의 몸 가장 깊은 곳에는, %TEXTR("처음으로 몸을 허락한 상대/첫 경험을 바친 상대/순결을 바친 상대/첫 경험의 증거/「경험 완료」의 증거/「개봉 완료」의 증거/경험 인원 첫 번째 사람/연인보다 먼저 몸을 허락한 상대/일생에 한 번뿐인 상처")%로서 %CALLNAME:PLAYER%의 형태가 %TEXTR("깊이깊이 새겨졌다/새겨졌다")%……
+		ELSEIF アイドル判定(TARGET)
+			PRINTFORML 지금까지 팬들에게 정조를 지켜%TEXTR("왔던/지켜왔던")% 것으로 보이는 대인기 아이돌・%SUBSTRING(NAME:TARGET, STRFIND(NAME:TARGET, "]") + 1, -1)%의 처녀막은,
+			IF CFLAG:TARGET:睡眠
+				PRINTFORM %CALLNAME:TARGET%은(는) %TEXTR("숨소리를 내고 있는/꿈속에 있는")% 동안,
+				CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>寝ている%CALLNAME:TARGET%を襲い、%TEXTR("誰もが羨む/今をときめく")%アイドルの%TEXTR("処女/バージン")%を%TEXTR("捧げてもら/奪ってや/奪")%った</font><img src='えっちハート'>","うふふ")
+				CALL 履歴データベース登録(CFLAG:TARGET:人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>%CALLNAME:PLAYER%に寝込みを襲われ、アイドルにとって大事な大事な%TEXTR("処女/純潔")%を%TEXTR("散らされて/奪われて")%しまった</font><img src='えっちハート'>","うふふ")
+			ELSEIF TCVAR:TARGET:泥酔眠姦
+			;たぶん死に分岐
+				PRINTFORM %TEXTR("술에 취한/만취한")%%CALLNAME:TARGET%이 꿈결 같은 기분으로 졸고 있는 동안,
+			ELSE
+				CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>大人気アイドル・%SUBSTRING(NAME:TARGET, STRFIND(NAME:TARGET, "]") + 1, -1)%と結ばれ、%TEXTR("処女を/その純潔を")%もらった</font><img src='えっちハート'>","うふふ")
+				CALL 履歴データベース登録(CFLAG:TARGET:人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>%CALLNAME:PLAYER%に%TEXTR("処女/純潔")%を捧げた</font><img src='えっちハート'>","うふふ")
+			ENDIF
+			PRINTFORM %CALLNAME:PLAYER%의%TEXTR("페니스/육봉/귀두")%에
+			CALL PRINT_STR(@"푸슉_H_푸슉_H_")
+			PRINTFORML 하는 미미한 감촉을 남기고 찢어지며,
+			SELECTCASE RAND:4
+			CASE 0
+				PRINTFORM 방금 전까지 흠잡을 데 없는%TEXTR("청순함/청렴함")%을 유지하고 있던
+			CASEELSE
+				PRINTFORM %TEXTR("어떤 팬에게도 손대게 하지 않았던/친하다는 프로듀서에게도 허락하지 않았던/모든 팬이 단 하룻밤만이라도 바라기만 할 수 있었던/팬들이 필사적으로 망상하며 자위 도구로 삼을 수밖에 없었던/이성의 시선을 끊임없이 사로잡는/팬도 프로듀서도 그 누구도 도달할 수 없었던")%
+			ENDSELECT
+			PRINTFORML %CALLNAME:TARGET%의%TEXTR("몸의 가장 깊은 곳/암컷의 핵 가장 깊은 곳/최고의 몸의 가장 깊은 곳/매혹적인 몸의 가장 깊은 곳/여자의 가장 소중한 곳")%에는,%TEXTR("처음으로 몸을 허락한 상대/처음을 바친 상대/순결을 바친 상대/첫 경험의 증거/「경험 있음」의 증거/팬들에게는 비밀인 스캔들의 증거/팬들에게는 말할 수 없는 밀통의 증거/들키면 은퇴가 불가피한 스캔들의 증거/손댄 아이돌의 증거/팬들에 대한 배신의 증거/경험 인원 첫 번째 사람/일생에 한 번뿐인 상처")%으로서%CALLNAME:PLAYER%의 형태가%TEXTR("깊이깊이 새겨졌다/새겨졌다")%……
+		ELSEIF 知識素質:TARGET:高貴 >= 1
+			PRINTFORML 고향에서는%TEXTR("혈통에 정조를 지키고 있었을/굳게 지켜왔을")%것이다%SUBSTRING(NAME:TARGET, STRFIND(NAME:TARGET, "]") + 1, -1)%의%TEXTR("고귀한/지상의 가치를 지닌")%처녀막예ま,
+			IF CFLAG:TARGET:睡眠
+				PRINTFORM %CALLNAME:TARGET%이%TEXTR("잠꼬대를 하고 있는/꿈속에 있는")%동안에,
+				CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>寝ている%CALLNAME:TARGET%を襲い、彼女の%TEXTR("やんごとない/高貴なる")%%TEXTR("処女を/純潔を")%%TEXTR("捧げてもら/奪ってや/奪")%った</font><img src='えっちハート'>","うふふ")
+				CALL 履歴データベース登録(CFLAG:TARGET:人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>%CALLNAME:PLAYER%に寝込みを襲われ、%TEXTR("家/血筋")%のためかたく守ってきた%TEXTR("処女/純潔")%を%TEXTR("散らされて/奪われて")%しまった</font><img src='えっちハート'>","うふふ")
+			ELSEIF TCVAR:TARGET:泥酔眠姦
+			;たぶん死に分岐
+				PRINTFORM %TEXTR("술에 취한/만취한")%%CALLNAME:TARGET%이 꿈결 같은 기분으로 졸고 있는 동안,
+			ELSE
+				CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>%CALLNAME:TARGET%と結ばれ、彼女の%TEXTR("やんごとない/高貴なる")%%TEXTR("処女を/純潔を")%賜った</font><img src='えっちハート'>","うふふ")
+				CALL 履歴データベース登録(CFLAG:TARGET:人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>%CALLNAME:PLAYER%と結ばれ%TEXTR("処女/純潔")%を捧げた</font><img src='えっちハート'>","うふふ")
+			ENDIF
+			PRINTFORM %CALLNAME:PLAYER%의%TEXTR("페니스/육봉/욕망 그대로의 귀두")%에
+			CALL PRINT_STR(@"푸슉_H_푸슉_H_")
+			PRINTFORML 하는 미미한 감촉을 남기고 찢어지며,
+			PRINTFORML 방금 전까지 흠잡을 데 없는%TEXTR("청순함/청렴함/고결함/순결")%을 유지하고 있던%CALLNAME:TARGET%의%TEXTR("고귀한 몸의 가장 깊은 곳/고귀한 암컷의 핵 가장 깊은 곳/고귀한 피를 남길 사명을 띤 비장소/여자로서 가장 귀하고 신성한 곳")%에는,%TEXTR("처음으로 몸을 허락한 상대/처음을 바친 상대/순결을 바친 상대/첫 경험의 증거/「혼전 교섭 완료」의 증거/앞으로 혈통에 새겨질 상처/고귀한 혈통의 정복자/현대의 후계자를 잉태해야 할 상대")%으로서%CALLNAME:PLAYER%의 형태가%TEXTR("깊이깊이 새겨졌다/새겨졌다")%……
+		ELSEIF TALENT:TARGET:恋人持ち == -1
+			IF CFLAG:TARGET:睡眠
+				PRINTFORM %CALLNAME:TARGET%이%TEXTR("잠꼬대를 하고 있는/꿈속에 있는")%동안에,
+				CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>寝ている%CALLNAME:TARGET%を襲い、%TEXTR("想い人より先にこっそり処女を/想い人に捧げられるはずだった処女をこっそり")%%TEXTR("捧げてもら/奪ってや/奪")%った</font><img src='えっちハート'>","うふふ")
+				CALL 履歴データベース登録(CFLAG:TARGET:人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>%CALLNAME:PLAYER%に寝込みを襲われ、想い人に捧げるはずだった%TEXTR("処女/純潔")%を%TEXTR("散らされて/奪われて")%しまった</font><img src='えっちハート'>","うふふ")
+			ELSEIF TCVAR:TARGET:泥酔眠姦
+				PRINTFORM %TEXTR("술에 취한/만취한")%%CALLNAME:TARGET%이 꿈결 같은 기분으로 잠든 사이,
+				CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>泥酔した%CALLNAME:TARGET%%TEXTR("が勘違いしたのをいいことに/を襲い")%、愛する人のふりをしてこっそり%TEXTR("処女を捧げてもらった/ハジメテを奪った/その体に浮気セックスの気持ちよさを教えてあげた/初体験の相手になってやった/初めてのセックスを経験させてあげた/処女を奪ってやった/初体験をさせてやった/処女穴をつまみ食いした/新品処女膣を中古にしてやった")%</font><img src='えっちハート'>","うふふ")
+				CALL 履歴データベース登録(CFLAG:TARGET:人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>泥酔した結果%CALLNAME:PLAYER%を愛する人と%TEXTR("勘違い/誤認")%して、自ら%TEXTR("処女/純潔")%を捧げてしまった</font><img src='えっちハート'>","うふふ")
+			ELSE
+				CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>恋人よりも先に%CALLNAME:TARGET%と結ばれ、%TEXTR("処女を/その純潔を")%もらった</font><img src='えっちハート'>","うふふ")
+				CALL 履歴データベース登録(CFLAG:TARGET:人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>恋人%TEXTR("のいる身でありながら/を差し置いて")%%CALLNAME:PLAYER%に%TEXTR("処女/純潔")%を捧げた</font><img src='えっちハート'>","うふふ")
+			ENDIF
+			PRINTFORM 이루어진다면 연인%TEXTR("에게/과의 달콤한 섹스로")% 바치%TEXTR("려던/고 싶었을")% 처녀막은%CALLNAME:PLAYER%의 귀두에
+			CALL PRINT_STR(@"푸슉_H_푸슉_H_")
+			PRINTFORML 하고 미미한 감촉을 남긴 채 찢어졌고,
+			PRINTFORML %CALLNAME:TARGET%의 몸 가장 깊은 곳에는, %TEXTR("처음으로 몸을 허락한 상대/첫 경험을 바친 상대/순결을 바친 상대/첫 경험의 증거/「경험 있음」의 증거/「개봉됨」의 증거/경험 인원 첫 번째/평생 단 한 번의 상처")%로서%CALLNAME:PLAYER%의 형태가%TEXTR("깊이깊이 새겨졌다/새겨졌다")%……
+		ENDIF
+	ELSE
+		IF CFLAG:TARGET:睡眠
+			PRINTFORM %CALLNAME:TARGET%이(가)%TEXTR("숨소리를 내고 있는/꿈속에 있는")% 동안,
+			PRINTFORM 그녀의 처녀막은%CALLNAME:PLAYER%의 귀두에
+			CALL PRINT_STR(@"푸슉_H_푸슉_H_")
+			PRINTFORML 하고 미미한 감촉을 남긴 채 찢어졌고,
+			PRINTFORML %CALLNAME:TARGET%의 몸 가장 깊은 곳에는, %TEXTR("처음으로 몸을 허락한 상대/첫 경험을 바친 상대/순결을 바친 상대/첫 경험의 증거/「경험 있음」의 증거/「개봉됨」의 증거/경험 인원 첫 번째/배우자보다 먼저 몸을 허락한 상대/평생 단 한 번의 상처")%로서%CALLNAME:PLAYER%의 형태가%TEXTR("깊이깊이 새겨졌다/새겨졌다")%……
+			CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>寝ている%CALLNAME:TARGET%を襲い、こっそり%TEXTR("処女/純潔")%を%TEXTR("捧げてもら/奪ってや/奪")%った</font><img src='えっちハート'>","うふふ")
+			CALL 履歴データベース登録(CFLAG:TARGET:人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>%CALLNAME:PLAYER%に寝込みを襲われ、%TEXTR("処女/純潔")%を%TEXTR("散らされて/奪われて")%しまった</font><img src='えっちハート'>","うふふ")
+		ELSEIF TCVAR:TARGET:泥酔眠姦
+		;たぶん死に分岐
+			PRINTFORM %TEXTR("술에 취한/만취한")%%CALLNAME:TARGET%이 꿈결 같은 기분으로 잠든 사이,
+			PRINTFORM 그녀의 처녀막은%CALLNAME:PLAYER%의 귀두에
+			CALL PRINT_STR(@"푸슉_H_푸슉_H_")
+			PRINTFORML 하고 미미한 감촉을 남긴 채 찢어졌고,
+			PRINTFORML %CALLNAME:TARGET%의 몸 가장 깊은 곳에는, %TEXTR("처음으로 몸을 허락한 상대/첫 경험을 바친 상대/순결을 바친 상대/첫 경험의 증거/「경험 있음」의 증거/「개봉됨」의 증거/경험 인원 첫 번째/배우자보다 먼저 몸을 허락한 상대/평생 단 한 번의 상처")%로서%CALLNAME:PLAYER%의 형태가%TEXTR("깊이깊이 새겨졌다/새겨졌다")%……
+		ELSE
+PRINTFORML %CALLNAME:TARGET%은(는) 파과(처녀막 파열)의 고통을 참으며%CALLNAME:PLAYER%의 이름을%TEXTR("부르고 있다/부르며, 꽉 손을 잡았다")%…
+			CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>%CALLNAME:TARGET%の%TEXTR("処女/純潔")%をもらった</font><img src='えっちハート'>","うふふ")
+			CALL 履歴データベース登録(CFLAG:TARGET:人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>%CALLNAME:PLAYER%に%TEXTR("処女/純潔")%を捧げた</font><img src='えっちハート'>","うふふ")
+		ENDIF
+	ENDIF
+ELSEIF CFLAG:TARGET:睡眠
+	PRINTFORML 하복부의%TEXTR("이물감/쾌감")%에%CALLNAME:TARGET%은(는) 작게%TEXTR("소리/신음")%을 흘리면서도, 아직 꿈속에 있다…
 ELSEIF TCVAR:TARGET:泥酔眠姦
-	PRINTL 
-	PRINTFORML 만취한 %CALLNAME:TARGET%는 무저항으로 %CALLNAME:PLAYER%의 페니스를 머금고, 큥큥하고 조여오고 있다…
-ELSEIF TALENT:処女
-	PRINTFORML %CALLNAME:TARGET%는 고통을 참으며 %CALLNAME:PLAYER%의 이름을 부르고 있다…
+	PRINTFORML 술에 취해 쓰러진%CALLNAME:TARGET%은(는)%TEXTR("무저항/몽롱한 눈/풀린 눈")%으로%CALLNAME:PLAYER%의 페니스를 물고, 꽉꽉 조이고 있다…
 ENDIF
 

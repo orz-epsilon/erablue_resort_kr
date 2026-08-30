@@ -16,10 +16,10 @@ TFLAG:コマンドタイプ受渡 = COMTYPE("単独可能")
 
 @COM_TOOLTIP_383_1_11
 LOCALS = <br>■낡은 장비 재생<br>
-LOCALS += "낡은 반지 또는 낡은 귀걸이를 재생하는 명령어."
-LOCALS += "<br>무작위로 새로운 장비를 얻을 수 있다."
-LOCALS += "<br>낡은 장비의 랭크가 높을수록 좋은 장비를 재생할 수 있다."
-LOCALS += "<br>COM 타입: 단독 가능<br>획득 소스: 없음"
+LOCALS += "낡은 반지 또는 낡은 귀걸이를 재생하는 커맨드."
+LOCALS += "<br>랜덤으로 새로운 장비를 얻을 수 있다."
+LOCALS += "<br>낡은 장비의 랭크가 높을수록 더 좋은 장비를 재생할 수 있다."
+LOCALS += "<br>COM타입：단독가능<br>획득소스：없음"
 LOCALS += "<br>고유 획득 경험: 없음<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
@@ -74,7 +74,7 @@ RETURN 1
 
 
 DRAWLINE
-PRINTL 낡은 장비를 재생합니다. 재생할 낡은 장비를 선택해 주세요.
+PRINTL 낡은 장비를 재생합니다. 재생할 낡은 장비를 선택해주세요.
 PRINTL ※재생 후 장비 랭크 상한은 스토리 진행도에 따라 상승합니다.
 DRAWLINE
 
@@ -161,27 +161,27 @@ SELECTCASE RESULT
 		PRINTW ………
 		PRINTW ……
 		PRINTW …
-		PRINTFORML %RESULTS% 을(를) 손에 넣었다!
+		PRINTFORML %RESULTS% 을(를) 얻었다!
 		FORCEWAIT
 		RESTART
 	CASE 11
 		CALL 古ぼけた耳飾り抽選取得処理(銀ランク)
 		CALL 素材消費処理("古ぼけた耳飾り・銀")
-		PRINTW 낡은 귀걸이・은 재생 중…………
+		PRINTW 낡은 귀걸이・은의 재생 중…………
 		PRINTW ………
 		PRINTW ……
 		PRINTW …
-		PRINTFORML %RESULTS% 을(를) 손에 넣었다!
+		PRINTFORML %RESULTS% 을(를) 얻었다!
 		FORCEWAIT
 		RESTART
 	CASE 12
 		CALL 古ぼけた耳飾り抽選取得処理(金ランク)
 		CALL 素材消費処理("古ぼけた耳飾り・金")
-		PRINTW 낡은 귀걸이・금 재생 중…………
+		PRINTW 낡은 귀걸이・금의 재생 중…………
 		PRINTW ………
 		PRINTW ……
 		PRINTW …
-		PRINTFORML %RESULTS% 을(를) 손에 넣었다!
+		PRINTFORML %RESULTS% 을(를) 얻었다!
 		FORCEWAIT
 		RESTART
 	CASE 999

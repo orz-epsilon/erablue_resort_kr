@@ -13,8 +13,8 @@ TFLAG:コマンドタイプ受渡 = COMTYPE("セクハラ弱")
 @COM_TOOLTIP_311
 LOCALS = <br>■야한 이야기<br>
 LOCALS += "상대에게 야한 이야기를 꺼내는 커맨드."
-LOCALS += "<br>COM 타입：성희롱<br>획득 소스：접촉・노출・환락(일정 조건 시)・불쾌(일정 조건 시)・반감(일정 조건 시)"
-LOCALS += "<br>고유 획득 경험：대화 경험(PLAYER)<br>"
+LOCALS += "<br>COM 타입: 성희롱<br>획득 소스: 접촉・노출・환락(일정 조건 시)・불쾌(일정 조건 시)・반감(일정 조건 시)"
+LOCALS += "<br>고유 획득 경험: 대화 경험(PLAYER)<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
 
@@ -251,12 +251,12 @@ ENDIF
 SELECTCASE RFLAG:コマンド結果受渡し変数２
 	CASE 1
 		;無知、何の話かわからない
-		PRINTFORML 하지만, %CALLNAME:TARGET%에게는 무슨 이야기인지 영 잘 모르겠는 모양이다…
+		PRINTFORML 하지만, %CALLNAME:TARGET%는 무슨 이야기인지 영 잘 모르겠는 모양이다…
 	CASE 2
 		;無反応
 		SELECTCASE RFLAG:コマンド結果受渡し変数
 			CASE 1
-				PRINTFORML %CALLNAME:TARGET%은(는) 듣고 있는지 없는지, 딱히 반응하지 않고 무시하고 있다…
+				PRINTFORML %CALLNAME:TARGET%은(는) 듣고 있는지 아닌지, 딱히 반응하지 않고 무시하고 있다…
 			CASE 2
 				;受け入れ
 				PRINTFORML %CALLNAME:TARGET%은(는) 무반응으로 보이지만, 가끔 맞장구를 쳐주고 있다
@@ -265,13 +265,13 @@ SELECTCASE RFLAG:コマンド結果受渡し変数２
 		;嫌悪
 		SELECTCASE RFLAG:コマンド結果受渡し変数
 			CASE 1
-				PRINTFORML %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%을(를) 벌레를 보는 듯한 눈으로 노려보고 있다…
+				PRINTFORML %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%을 벌레를 보는 듯한 눈으로 노려보고 있다…
 			CASE 2
 				;受け入れ
 				PRINTDATA
 					DATAFORM %CALLNAME:TARGET%에게서 흥미로운 이야기를 들을 수 있었다
-					DATAFORM %CALLNAME:TARGET%와(과) 즐겁게 이야기할 수 있었다
-					DATAFORM 시시한 이야기로%CALLNAME:TARGET%와(과) 서로 웃을 수 있었다
+					DATAFORM %CALLNAME:TARGET%와 즐겁게 이야기할 수 있었다
+					DATAFORM 시시한 이야기로 %CALLNAME:TARGET%와 서로 웃을 수 있었다
 					DATAFORM %CALLNAME:TARGET%의 흥미를 끄는 이야기를 할 수 있었다
 				ENDDATA
 				PRINTL
@@ -280,7 +280,7 @@ SELECTCASE RFLAG:コマンド結果受渡し変数２
 		;拒否
 		SELECTCASE RFLAG:コマンド結果受渡し変数
 			CASE 1
-				PRINTFORML %CALLNAME:TARGET%은(는) 이런 화제는 별로 좋아하지 않는 것 같다…
+				PRINTFORML %CALLNAME:TARGET%은(는) 이런 화제를 별로 좋아하지 않는 것 같다…
 			CASE 2
 				;受け入れ
 				PRINTDATA
@@ -295,7 +295,7 @@ SELECTCASE RFLAG:コマンド結果受渡し変数２
 		;余裕
 		SELECTCASE RFLAG:コマンド結果受渡し変数
 			CASE 1
-				PRINTFORML %CALLNAME:TARGET%은(는) 가볍게 화제를 돌려, 다른 이야기로 바꿨다
+				PRINTFORML %CALLNAME:TARGET%은(는) 자연스럽게 화제를 돌려 다른 이야기로 바꿨다
 			CASE 2
 				;受け入れ
 				PRINTDATA
@@ -317,7 +317,7 @@ SELECTCASE RFLAG:コマンド結果受渡し変数２
 				PRINTDATA
 					DATAFORM %CALLNAME:TARGET%에게서 흥미로운 이야기를 들을 수 있었다
 					DATAFORM %CALLNAME:TARGET%와 즐겁게 이야기할 수 있었다
-					DATAFORM 시시한 이야기로%CALLNAME:TARGET%와(과) 서로 웃을 수 있었다
+					DATAFORM 시시한 이야기로 %CALLNAME:TARGET%와(과) 웃을 수 있었다
 					DATAFORM %CALLNAME:TARGET%의 흥미를 끄는 이야기를 할 수 있었다
 				ENDDATA
 		ENDSELECT
@@ -325,13 +325,13 @@ SELECTCASE RFLAG:コマンド結果受渡し変数２
 		;愉悦
 		SELECTCASE RFLAG:コマンド結果受渡し変数
 			CASE 1
-				PRINTFORML %CALLNAME:TARGET%는 그런 기분이 아니었던 것 같다…
+				PRINTFORML %CALLNAME:TARGET%은(는) 그런 기분은 아니었던 것 같다…
 			CASE 2
 				;受け入れ
 				PRINTDATA
 					DATAFORM %CALLNAME:TARGET%에게서 흥미로운 이야기를 들을 수 있었다
 					DATAFORM %CALLNAME:TARGET%와(과) 즐겁게 이야기할 수 있었다
-					DATAFORM 시시한 이야기로%CALLNAME:TARGET%와(과) 서로 웃을 수 있었다
+					DATAFORM 시시한 이야기로 %CALLNAME:TARGET%와(과) 웃을 수 있었다
 					DATAFORM %CALLNAME:TARGET%의 흥미를 끄는 이야기를 할 수 있었다
 				ENDDATA
 				PRINTL
@@ -340,13 +340,13 @@ SELECTCASE RFLAG:コマンド結果受渡し変数２
 		;汎用
 		SELECTCASE RFLAG:コマンド結果受渡し変数
 			CASE 1
-				PRINTFORML %CALLNAME:TARGET%는 그런 기분이 아니었던 것 같다…
+				PRINTFORML %CALLNAME:TARGET%은(는) 그런 기분은 아니었던 것 같다…
 			CASE 2
 				;受け入れ
 				PRINTDATA
 					DATAFORM %CALLNAME:TARGET%에게서 흥미로운 이야기를 들을 수 있었다
 					DATAFORM %CALLNAME:TARGET%와(과) 즐겁게 이야기할 수 있었다
-					DATAFORM 시시한 이야기로%CALLNAME:TARGET%와(과) 서로 웃을 수 있었다
+					DATAFORM 시시한 이야기로 %CALLNAME:TARGET%와(과) 웃을 수 있었다
 					DATAFORM %CALLNAME:TARGET%의 흥미를 끄는 이야기를 할 수 있었다
 				ENDDATA
 				PRINTL

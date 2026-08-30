@@ -15,7 +15,7 @@ IF ABL:ARG:指テク < 5
 	IF ABL:ARG:指テク - LOCAL:2 > 0
 		PRINTFORMW %CALLNAME:ARG%의 손가락이 능숙해졌다
 		IF ABL:ARG:指テク >= 5
-			PRINTFORMW %CALLNAME:ARG%는 [능숙한 손가락]을 얻었다
+			PRINTFORMW %CALLNAME:ARG%은(는) [능숙한 손가락]을 얻었다
 			TALENT:ARG:器用な指 = 1
 		ENDIF
 	ENDIF
@@ -30,9 +30,9 @@ IF ABL:ARG:舌技 < 5
 			BREAK
 	WEND
 	IF ABL:ARG:舌技 - LOCAL:2 > 0
-		PRINTFORMW %CALLNAME:ARG%의 혀가 능숙해졌다
+		PRINTFORMW %CALLNAME:ARG%의 혀놀림이 능숙해졌다
 		IF ABL:ARG:舌技 >= 5
-			PRINTFORMW %CALLNAME:ARG%는 [혀놀림]을 얻었다
+			PRINTFORMW %CALLNAME:ARG%은(는) [혀놀림]을 얻었다
 			TALENT:ARG:舌使い = 1
 		ENDIF
 	ENDIF

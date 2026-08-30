@@ -35,7 +35,7 @@ ELSE
 	LOCALS:2 = 벗기다
 ENDIF
 LOCALS = <br>■이너를%LOCALS:1%<br>
-LOCALS += @"상대의 상반신 이너를%LOCALS:2% 명령. <br>상하 일체형 타이츠의 경우, [타이츠를%LOCALS:1%]에 합류한다."
+LOCALS += @"상대의 상반신 이너를%LOCALS:2%명령. <br>상하 일체형 타이츠의 경우, [타이츠를%LOCALS:1%]에 합류한다."
 LOCALS += "<br>COM 타입: 우후후<br>획득 소스: 없음"
 LOCALS += "<br>고유 획득 경험: 없음<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
@@ -118,14 +118,14 @@ IF ABL:露出癖
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += ABL:露出癖 * 10
-	PRINTFORM 노출증LV{ABL:露出癖}({ABL:露出癖 * 10})
+PRINTFORM 노출벽LV{ABL:露出癖}({ABL:露出癖 * 10})
 	＋表示フラグ = 1
 ENDIF
 IF MARK:快楽刻印
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += MARK:快楽刻印 * 1
-	PRINTFORM 쾌락 각인LV{MARK:快楽刻印}({MARK:快楽刻印 * 1})
+PRINTFORM 쾌락 각인LV{MARK:快楽刻印}({MARK:快楽刻印 * 1})
 	＋表示フラグ = 1
 ENDIF
 ;PALAM:欲情
@@ -133,21 +133,21 @@ IF GETPALAMLV(PALAM:欲情, 10)
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += GETPALAMLV(PALAM:欲情, 10) * 10
-	PRINTFORM 발정LV{GETPALAMLV(PALAM:欲情, 10)}({GETPALAMLV(PALAM:欲情, 10) * 10})
+PRINTFORM 욕정LV{GETPALAMLV(PALAM:欲情, 10)}({GETPALAMLV(PALAM:欲情, 10) * 10})
 	＋表示フラグ = 1
 ENDIF
 ;恥じらい
 IF TALENT:羞恥心 > 0
 	PRINT  - 
 	実行値 -= 1
-	PRINT 수줍음(1)
+PRINT 수줍음(1)
 	＋表示フラグ = 1
 ENDIF
 ;男嫌い（恋慕、親愛で無効）
 IF TALENT:性別嗜好 & 1 && !(TALENT:PLAYER:性別 & 1) && (!TALENT:恋慕 || PLAYER != MASTER)
 	PRINT  - 
 	実行値 -= 5
-	PRINT 남자 기피(5)
+PRINT 남성 혐오(5)
 	＋表示フラグ = 1
 ENDIF
 ;恋慕
@@ -155,7 +155,7 @@ IF TALENT:恋慕
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += 5
-	PRINT 연모(5)
+PRINT 연모(5)
 	＋表示フラグ = 1
 ENDIF
 ;セフレ
@@ -163,7 +163,7 @@ IF TALENT:セフレ
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += 3
-	PRINT 섹프(3)
+PRINT 섹프(3)
 	＋表示フラグ = 1
 ENDIF
 ;野外
@@ -182,7 +182,7 @@ IF BEDROOM(CFLAG:現在マップ種別, CFLAG:現在位置) == 0 && GET_TARGETNU
 	IF LOCAL:1
 		PRINT  - 
 		実行値 -= 5
-		PRINT 야외 노출(5)
+	PRINT 야외 노출(5)
 		＋表示フラグ = 1
 	ENDIF
 ENDIF
@@ -192,7 +192,16 @@ IF TCVAR:言いなり
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += 999
-	PRINT 당신 뜻대로(999)
+PRINT 당신의 뜻대로(999)
+	＋表示フラグ = 1
+ENDIF
+
+;特殊言いなり
+IF TCVAR:特殊言いなり
+	SIF ＋表示フラグ
+		PRINT  + 
+	実行値 += 999
+	PRINTFORM %特殊言いなり分岐(TARGET)%(999)
 	＋表示フラグ = 1
 ENDIF
 
@@ -276,21 +285,21 @@ RETURN 1
 ;-------------------------------------------------
 @MESSAGE_COM202
 IF TEQUIP:上半身服あり || (EQUIP:上下一体タイツ && (TEQUIP:下腹部後鎧あり || TEQUIP:下腹部前鎧あり || (TEQUIP:下半身服あり && !TEQUIP:下半身下着抜き取り可)))
-	LOCALS = 찢었다
-	LOCALS:1 = 찢겼다
+LOCALS = 찢었다
+LOCALS:1 = 찢겼다
 ELSE
-	LOCALS = 벗겼다
-	LOCALS:1 = 벗었다
+LOCALS = 벗겼다
+LOCALS:1 = 벗었다
 ENDIF
-PRINTFORM %CALLNAME:PLAYER%는
+PRINTFORM %CALLNAME:PLAYER%은(는)
 IF TEQUIP:上下一体タイツ
-	PRINTFORML %CALLNAME:TARGET%의 타이츠를 %LOCALS%…
+PRINTFORML %CALLNAME:TARGET%의 타이츠를%LOCALS%…
 ELSE
-	PRINTFORML %CALLNAME:TARGET%의 속옷을 %LOCALS%…
+PRINTFORML %CALLNAME:TARGET%의 속옷을 %LOCALS%…
 ENDIF
 
 IF RFLAG:コマンド結果受渡し変数
-	PRINTFORML 다른 사람의 눈이 있는 곳에서 %LOCALS:1%한 탓인지, %CALLNAME:TARGET%는 어딘가 불안해 보인다…
+PRINTFORML 사람들의 시선이 있는 곳에서 %LOCALS:1%는 것으로 인해, %CALLNAME:TARGET%은(는) 어딘가 불안해하는 것 같다…
 ENDIF
 
 

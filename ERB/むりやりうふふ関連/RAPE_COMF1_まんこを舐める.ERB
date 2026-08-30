@@ -4,7 +4,7 @@
 ;-------------------------------------------------
 @RAPE_COMNAME1
 #FUNCTIONS
-TSTR:コマンド名受渡 = 보지를 핥다
+TSTR:コマンド名受渡 = 음부를 핥는다
 
 
 ;===================================================
@@ -16,7 +16,7 @@ TFLAG:コマンドタイプ受渡 = RAPE_COMTYPE("うふふ")
 
 
 @RAPE_COM_TOOLTIP_1
-LOCALS = <br>■보지를 핥다<br>
+LOCALS = <br>■음부를 핥는다<br>
 LOCALS += "상대의 가랑이에 얼굴을 묻고, 클리토리스를 중심으로 혀로 자극하며 즐긴다. <br>동의를 얻지 못했으므로 「식스나인」으로는 파생되지 않는다. <br>실행자가 [혀놀림][고양이 혀]를 가지고 있을 경우, 효과가 증감한다."
 LOCALS += "<br>RAPE_COM 타입: 우후후<br>획득 소스: 쾌감C・노출・접촉・액체"
 LOCALS += "<br>고유 획득 경험: 구강성교 경험(당신)<br>"
@@ -131,7 +131,7 @@ RETURN 1
 
 PRINTFORM %CALLNAME:PLAYER%은(는),
 	IF RFLAG:コマンド結果受渡し変数 == 1
-		PRINTFORM 신고 있던 타이츠를 강제로%TEXTR("찢어발겨/찢어")% 노출시켰다
+		PRINTFORM 입고 있던 타이츠를 강제로%TEXTR("찢어발겨/찢어")%노출시켰다
 	ELSEIF RFLAG:コマンド結果受渡し変数２ == 1
 		PRINTFORM 붙어 있던 앞가리개를 강제로 벗겨 노출시켰다
 	ELSEIF !TEQUIP:下半身服あり && TEQUIP:下半身下着あり > 0
@@ -154,9 +154,9 @@ IF GETBIT(TALENT:性別, 1)
 ;ふたなりの場合クリはちんぽだからしゃぶれないんじゃないか？
 	PRINTFORM 애액으로 젖은 음순을 핥아 빨았다
 ELSEIF PALAM:欲情 >= PALAMLV:3
-	PRINTFORM 강간당하고 있음에도 불구하고 욕정으로 팽팽하게 솟아오른 클리토리스를%TEXTR("빨아올렸다/혀로 핥아댔다")%
+	PRINTFORM 강간당하고 있음에도 불구하고 욕정으로 꼿꼿하게 선 클리토리스를%TEXTR("빨아 올렸다/혀로 핥아댔다")%
 ELSE
-	PRINTFORM 클리토리스를%TEXTR("빨아올려/혀로 핥아대며")% 반응을 즐겼다
+	PRINTFORM 클리토리스를%TEXTR("빨아 올리며/혀로 핥아대며")%반응을 즐겼다
 ENDIF
 PRINTFORML …
 

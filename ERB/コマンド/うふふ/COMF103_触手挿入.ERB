@@ -22,8 +22,8 @@ TFLAG:コマンドタイプ受渡 = COMTYPE("触手系&Ｖ系")
 
 
 @COM_TOOLTIP_103
-LOCALS = <br>■触手挿入<br>
-LOCALS += "촉수를 질에 삽입하는 커맨드. <br>V 삽입계 모드가 되어, 모드를 변경하거나 성행위를 종료할 때까지 지속적으로 쾌락이 발생한다. <br>[처녀]를 잃는다."
+LOCALS = <br>■촉수 삽입<br>
+LOCALS += "촉수를 질에 삽입하는 커맨드.<br>V 삽입계 모드가 되어, 모드를 변경하거나 성행위를 종료할 때까지 지속적으로 쾌락이 발생한다.<br>[처녀]를 잃는다."
 LOCALS += "<br>COM 타입: 촉수계<br>획득 소스: 쾌V・접촉・노출・고통・불결(일정 조건 시)"
 LOCALS += "<br>고유 획득 경험: 촉수 조작 경험(PLAYER)<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
@@ -115,7 +115,7 @@ IF ABL:Ｖ感覚
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += ABL:Ｖ感覚 * 2
-	PRINTFORM V감각LV{ABL:Ｖ感覚}({ABL:Ｖ感覚 * 2})
+	PRINTFORM V 감각LV{ABL:Ｖ感覚}({ABL:Ｖ感覚 * 2})
 	＋表示フラグ = 1
 ENDIF
 ;快楽刻印
@@ -138,7 +138,7 @@ IF GETPALAMLV(PALAM:欲情, 5)
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += GETPALAMLV(PALAM:欲情, 5) * 3
-	PRINTFORM 욕정LV{GETPALAMLV(PALAM:欲情, 5)}({GETPALAMLV(PALAM:欲情, 5) * 3})
+	PRINTFORM 발정LV{GETPALAMLV(PALAM:欲情, 5)}({GETPALAMLV(PALAM:欲情, 5) * 3})
 	＋表示フラグ = 1
 ENDIF
 ;恥じらい
@@ -181,20 +181,20 @@ ENDIF
 ;処女
 LOCAL = MAX(10,40 - EXP:Ｖ経験)
 IF TALENT:処女
-	PRINT  -
+	PRINT  - 
 	実行値 -= LOCAL
 	PRINTFORM 처녀({LOCAL})
 	＋表示フラグ = 1
 ;V経験
 ELSEIF EXP:Ｖ経験 < EXPLV:2
-	PRINT  -
+	PRINT  - 
 	実行値 -= 15
-	PRINT 질 경험 부족(15)
+	PRINT Ｖ 경험 부족(15)
 	＋表示フラグ = 1
 ENDIF
 ;触手経験
 IF EXP:触手快楽経験 + EXP:触手絶頂経験 < EXPLV:2
-	PRINT  -
+	PRINT  - 
 	実行値 -= 15
 	PRINT 촉수 경험 부족(15)
 	＋表示フラグ = 1
@@ -203,7 +203,7 @@ ENDIF
 ;媚薬
 IF TEQUIP:媚薬
 	SIF ＋表示フラグ
-		PRINT  +
+		PRINT  + 
 	実行値 += 6
 	PRINT 최음제(6)
 	＋表示フラグ = 1
@@ -212,7 +212,7 @@ ENDIF
 ;発情期
 IF CFLAG:発情期フラグ < 0
 	SIF ＋表示フラグ
-		PRINT  +
+		PRINT  + 
 	実行値 += 6
 	PRINT 발정 중(6)
 	＋表示フラグ = 1
@@ -222,11 +222,11 @@ ENDIF
 PRINTFORM  = {実行値}
 
 SIF 実行値 < 必要実行値
-	PRINT  <
+	PRINT  < 
 SIF 実行値 == 必要実行値
-	PRINT  =
+	PRINT  = 
 SIF 実行値 > 必要実行値
-	PRINT  >
+	PRINT  > 
 PRINTFORM 실행값{必要実行値}
 
 WAIT
@@ -283,20 +283,20 @@ RETURN 1
 ;-------------------------------------------------
 @MESSAGE_COM103
 #DIM 同時キャラ番号
-PRINTFORM %CALLNAME:PLAYER%는
+PRINTFORM %CALLNAME:PLAYER%은(는)
 
 IF GETBIT(FLAG:モード管理, モードビット_同時)
 	PRINT 수많은 촉수를
 	FOR 同時キャラ番号, 0, 同時モード_選択数
 		SIF 同時キャラ番号 > 0
-			PRINT ,
+			PRINT 、
 		PRINTFORM %CALLNAME:(同時モード_選択キャラ:同時キャラ番号)%
 	NEXT
-	PRINT 질 속으로 삽입했다
+	PRINT 의 질에 삽입했다
 	RETURN 0
 ENDIF
 
-PRINTFORM 자신의 촉수를 %CALLNAME:TARGET%의
+PRINTFORM 자신의 촉수를%CALLNAME:TARGET%의
 IF TEQUIP:下腹部前鎧あり || TEQUIP:下腹部後鎧あり
 	PRINT 갑옷 틈새로
 	IF TEQUIP:下タイツあり
@@ -308,15 +308,15 @@ ELSEIF TEQUIP:下半身服あり
 	IF TEQUIP:下タイツあり
 		PRINT 타이츠 아래로
 	ENDIF
-	PRINT 파고들게 하여,
+	PRINT 파고들게 하고,
 ELSEIF TEQUIP:下半身下着あり > 0
 	IF TEQUIP:下タイツあり
 		PRINT 타이츠 아래에서
 	ENDIF
-	PRINT 속옷 안으로 파고들게 하여,
+	PRINT 속옷 안으로 파고들게 하고,
 ENDIF
 IF PALAM:欲情 >= PALAMLV:3 && PALAM:潤滑 < PALAMLV:3
 	PRINT 흥분으로 흠뻑 젖은
 ENDIF
-PRINTFORML 질 속으로 삽입했다
+PRINTFORML 질 안으로 삽입했다
 

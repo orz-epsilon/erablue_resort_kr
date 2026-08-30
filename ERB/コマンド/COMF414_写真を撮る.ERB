@@ -11,8 +11,8 @@ TSTR:コマンド名受渡 = 사진을 찍다
 TFLAG:コマンドタイプ受渡 = COMTYPE("単独可能_うふふ")
 
 @COM_TOOLTIP_414
-LOCALS = <br>■写真を撮る<br>
-LOCALS += "경절경을 사용하여, 경치를 종이에 담는 커맨드.<br>실행했을 때의 상황에 따라 다양한 사진을 찍을 수 있다."
+LOCALS = <br>■사진을 찍다<br>
+LOCALS += "경절경을 사용하여 풍경을 종이에 담는 커맨드. <br>실행한 시의 상황에 따라 다양한 사진을 찍을 수 있다."
 LOCALS += "<br>COM 타입: 단독 가능 or 우후후<br>획득 소스: 없음"
 LOCALS += "<br>고유 획득 경험: 없음<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
@@ -114,7 +114,7 @@ RSTR:コマンド結果受渡し文字列 = %CALLNAME:PLAYER%은(는) 경절경�
 
 ;ハメた場所登録
 IF CFLAG:PLAYER:隠密
-	写真タイトル一時記録 += "물건 뒤에 숨어 몰래,"
+	写真タイトル一時記録 += "그림자 속에서 몰래,"
 ELSEIF BEDROOM(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置)
 	写真タイトル一時記録 += "침대 위에서,"
 ELSE
@@ -139,7 +139,7 @@ IF TCVAR:TARGET:前ターン絶頂
 		SIF TALENT:TARGET:Ｃ感度 > 0
 			写真タイトル一時記録 += "민감한"
 		SIF フレーバー素質:TARGET:クリ大きさ == 3
-			写真タイトル一時記録 +="큼지막한"
+			写真タイトル一時記録 +="꽤 큰"
 		SIF フレーバー素質:TARGET:クリ大きさ == 4
 			写真タイトル一時記録 +="작은 음경 같은"
 		写真タイトル一時記録 += "클리토리스로"
@@ -147,17 +147,17 @@ IF TCVAR:TARGET:前ターン絶頂
 		SIF TALENT:TARGET:Ｂ感度 > 0
 			写真タイトル一時記録 += "민감한"
 		IF TALENT:TARGET:バストサイズ > 1
-			写真タイトル一時記録 += @"%TEXTR("巨乳/おっぱい/デカパイ")%"
+			写真タイトル一時記録 += @"%TEXTR("거유/가슴/왕가슴")%"
 		ELSEIF TALENT:TARGET:バストサイズ < 0
-			写真タイトル一時記録 += @"%TEXTR("小さな胸/微乳/貧乳")%"
+			写真タイトル一時記録 += @"%TEXTR("작은 가슴/미유/빈유")%"
 		ELSE
-			写真タイトル一時記録 += @"%TEXTR("胸/おっぱい/乳房")%"
+			写真タイトル一時記録 += @"%TEXTR("가슴/유방/젖가슴")%"
 		ENDIF
 		写真タイトル一時記録 += "으로"
 	ELSEIF TCVAR:TARGET:前ターンＳ絶頂 == 前ターン絶頂の強度
 		SIF TALENT:TARGET:Ｓ感度 > 0
 			写真タイトル一時記録 += "민감한"
-		写真タイトル一時記録 += "몸에 닿아"
+		写真タイトル一時記録 += "몸에 만져져"
 	ENDIF
 	写真タイトル一時記録 += @"절정하는%CALLNAME:TARGET%"
 	履歴用実績:TARGET:絶頂ハメ撮り回数 += 1
@@ -166,12 +166,12 @@ IF TCVAR:TARGET:前ターン絶頂
 
 	;表情の描写
 	STRDATA 表情描写保存
-		DATAFORM 거친 숨을 내쉬며 절정과 그 여운을 맛보는%TEXTR("姿/顔/表情")%이 찍혀있다…
-		DATAFORM 혀를 내밀며 쾌락에 몸부림치는%TEXTR("姿/顔/表情")%이 찍혀있다…
-		DATAFORM 녹아내린 얼굴로 자신의 절정을 알리는%TEXTR("姿/顔/表情")%이 찍혀있다…
-		DATAFORM 눈을 적시며 붉어진 얼굴로 절정을 맛보는%TEXTR("姿/顔/表情")%이 찍혀있다…
-		DATAFORM 여유로운 표정을 가장하지만, 숨길 수 없는 쾌락으로 뺨을 붉히는 %TEXTR("姿/顔/表情")%가 찍혀있다…
-		DATAFORM 몸을 쭉 펴고 쾌락을 받아들이는 %TEXTR("姿/顔/表情")%가 찍혀있다…
+		DATAFORM 거친 숨을 내쉬며 절정과 그 여운을 맛보는%TEXTR("모습/얼굴/표정")%이 찍혀있다…
+		DATAFORM 혀를 내밀며 쾌락에 몸부림치는%TEXTR("모습/얼굴/표정")%이 찍혀있다…
+		DATAFORM 황홀한 얼굴로 자신의 절정을 알리는%TEXTR("모습/얼굴/표정")%이 찍혀있다…
+		DATAFORM 눈을 글썽이며 붉어진 얼굴로 절정을 맛보는%TEXTR("모습/얼굴/표정")%이 찍혀있다…
+		DATAFORM 여유로운 표정을 지으려 하지만, 숨길 수 없는 쾌락으로 뺨을 물들이는%TEXTR("모습/얼굴/표정")%이 찍혀있다…
+		DATAFORM 몸을 꼿꼿이 펴고 쾌락을 받아들이는%TEXTR("모습/얼굴/표정")%이 찍혀 있다…
 	ENDDATA
 ELSE
 	;絶頂後でないなら服装とモードを判定する
@@ -185,9 +185,9 @@ ELSE
 				写真タイトル一時記録 += @"%CSTR:TARGET:着せ替え服%"
 			ENDIF
 			IF CSTR:TARGET:着せ替え服追加名 != ""
-				写真タイトル一時記録 += @"(%CSTR:TARGET:着せ替え服追加名%)를 입고"
+				写真タイトル一時記録 += @"（%CSTR:TARGET:着せ替え服追加名%）을(를) 입고"
 			ELSE
-				写真タイトル一時記録 += "를 입고"
+				写真タイトル一時記録 += "을(를) 입고"
 			ENDIF
 		ENDIF
 	ELSE
@@ -210,42 +210,42 @@ ELSE
 		IF 詳細文文字列受け渡し変数 != ""
 			写真タイトル一時記録 += @"%詳細文文字列受け渡し変数%"
 		ELSE
-			写真タイトル一時記録 += @"%体位モード一時保存%를 한다"
+			写真タイトル一時記録 += @"%体位モード一時保存%을(를) 하는"
 		ENDIF
 	ELSE
 		SIF TCVAR:TARGET:膣内精液量
-			写真タイトル一時記録 += @"%TEXTR("ナカダシされた精液/精液/たっぷり出されたザーメン")%를 %TEXTR("膣/膣口/秘処")%부터 %TEXTR("こぼし/溢れさせ")%,"
+			写真タイトル一時記録 += @"%TEXTR("질내사정된 정액/정액/가득 나온 정액")%을(를) %TEXTR("질/질구/은밀한 곳")%에서 %TEXTR("흘리며/넘쳐흐르게 하며")%, "
 		SELECTCASE RAND:6
 		CASE 0
-			写真タイトル一時記録 += @"뺨을 %TEXTR("赤く染め/上気させ")%한"
+			写真タイトル一時記録 += @"뺨을 %TEXTR("붉게 물들이고/상기시킨")% 채"
 		CASE 1
 			IF TALENT:TARGET:応答 == 1
 			;生意気
-				写真タイトル一時記録 += @"능글능글하게 도발적으로 바라본다"
+				写真タイトル一時記録 += @"능글맞게 도발적으로 바라보는"
 			ELSE
-				写真タイトル一時記録 += @"촉촉한 눈으로 바라본다"
+				写真タイトル一時記録 += @"촉촉한 눈으로 바라보는"
 			ENDIF
 		CASE 2
 			IF CFLAG:TARGET:発情期フラグ < 0
-				写真タイトル一時記録 += @"발정에 녹아 쾌락에 대한 기대로 가득 찬 얼굴로 바라본다"
+				写真タイトル一時記録 += @"발정에 녹아내려 쾌락에 대한 기대로 가득 찬 얼굴로 바라보는"
 			ELSE
-				写真タイトル一時記録 += @"어딘가 기대하는 듯한 얼굴을 한다"
+				写真タイトル一時記録 += @"어딘가 기대하는 듯한 얼굴을 하는"
 			ENDIF
 		CASE 3
-			写真タイトル一時記録 += @"조금 %TEXTR("恥ずかしそう/恥じらうよう")%에 얼굴을 숙였다"
+			写真タイトル一時記録 += @"조금 %TEXTR("부끄러운 듯/수줍어하는 듯")% 얼굴을 숙인"
 		CASE 4
 			IF TALENT:TARGET:陽気／陰気 == -1
 			;陰気
-				写真タイトル一時記録 += @"부끄러워하며 팔로 얼굴을 가린다"
+				写真タイトル一時記録 += @"부끄러워하며 팔로 얼굴을 가리는"
 			ELSE
-				写真タイトル一時記録 += @"손으로 눈가를 가린다"
+写真タイトル一時記録 += @"손으로 눈가를 가리다"
 			ENDIF
 		CASE 5
 			IF TALENT:TARGET:陽気／陰気 == -1
 			;陰気
-				写真タイトル一時記録 += @"어색하게 %TEXTR("ピースをする/笑う")%"
+写真タイトル一時記録 += @"어색하게%TEXTR("브이 포즈를 취하다/웃다")%"
 			ELSE
-				写真タイトル一時記録 += @"왠지 모르게 브이를 한다"
+写真タイトル一時記録 += @"왠지 모르게 브이 포즈를 취하다"
 			ENDIF
 		ENDSELECT
 	ENDIF
@@ -270,13 +270,13 @@ FOR 配列番号, 0, DT_ROW_LENGTH("体位モードデータベース")
 		CONTINUE
 	ENDIF
 	IF 系統リスト_アイテム系(実行モード名)
-		体位モード一時保存 += @"<font color='#%カラーパレット_HTML("えっちなゲージ有")%'>[%CALLNAME:対象者保存%이(가) %実行モード名% 장착 중"
+		体位モード一時保存 += @"<font color='#%カラーパレット_HTML("えっちなゲージ有")%'>[%CALLNAME:対象者保存%이(가)%実行モード名% 장착 중"
 	ELSEIF 系統リスト_触手系(実行モード名)
-		体位モード一時保存 += @"<font color='#%カラーパレット_HTML("えっちなゲージ有")%'>[촉수가 %CALLNAME:対象者保存%에 %実行モード名% 중"
+		体位モード一時保存 += @"<font color='#%カラーパレット_HTML("えっちなゲージ有")%'>[촉수가%CALLNAME:対象者保存%에%実行モード名% 중"
 	ELSEIF 系統リスト_自慰系(実行モード名)
-		体位モード一時保存 += @"<font color='#%カラーパレット_HTML("えっちなゲージ有")%'>[%CALLNAME:対象者保存%이(가) %実行モード名% 중"
+		体位モード一時保存 += @"<font color='#%カラーパレット_HTML("えっちなゲージ有")%'>[%CALLNAME:対象者保存%이(가)%実行モード名% 중"
 	ELSE
-		体位モード一時保存 += @"<font color='#%カラーパレット_HTML("えっちなゲージ有")%'>[%CALLNAME:実行者保存%이(가) %CALLNAME:対象者保存%에 %実行モード名% 중"
+		体位モード一時保存 += @"<font color='#%カラーパレット_HTML("えっちなゲージ有")%'>[%CALLNAME:実行者保存%이(가)%CALLNAME:対象者保存%에%実行モード名% 중"
 	ENDIF
 	体位モード一時保存 += "<img src='えっちハート'>"
 	体位モード一時保存 += "]</font><br>"
@@ -356,14 +356,14 @@ CALL 履歴登録チェック(TARGET, "被写体_ハメ撮り")
 
 写真タイトル一時記録 = 
 ;実行時メッセージを同時に入れ込む
-RSTR:コマンド結果受渡し文字列 = %CALLNAME:PLAYER%은(는)
+RSTR:コマンド結果受渡し文字列 = %CALLNAME:PLAYER%は
 
 IF GETBIT(覗き_ABLE(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置), 1) && GETBIT(覗き_ABLE(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置), 3)
 	DRAWLINE
-	PRINTFORM %CALLNAME:PLAYER%은 반대편을
-	PRINTL 도촬하려 했지만, 누군가 숨어있는 기척도 느껴졌다…
-	PRINTBUTTONLC "[1]반대편을 엿본다", 1
-	PRINTBUTTONLC "[3]그림자를 엿본다", 3
+	PRINTFORM %CALLNAME:PLAYER%은(는) 반대편
+	PRINTL 을(를) 몰래 촬영하려 했지만, 누군가 숨어 있는 기척도 느꼈다…
+	PRINTBUTTONLC "[1]반대편을 엿보다", 1
+	PRINTBUTTONLC "[3]숨어있는 곳을 엿보다", 3
 	PRINTL
 	$INPUT_LOOP
 	INPUT
@@ -388,7 +388,7 @@ SELECTCASE RFLAG:コマンド結果受渡し変数
 	CASE 1
 		;反対側を覗く
 		RSTR:表示グラ記録 = 
-		RSTR:コマンド結果受渡し文字列 += "반대편을 경절경으로 도촬했다<br>"
+		RSTR:コマンド結果受渡し文字列 += "반대편을 경절경으로 몰래 촬영한<br>"
 		IF RFLAG:コマンド結果受渡し変数２
 			IF CFLAG:PLAYER:現在マップ種別 == 0
 				SELECTCASE CFLAG:PLAYER:現在位置
@@ -396,7 +396,7 @@ SELECTCASE RFLAG:コマンド結果受渡し変数
 						写真タイトル一時記録 += "옷을 벗는 도중의"
 					CASE 9, 11
 						STRDATA ランダム文字列
-							DATA 나체로 욕조에 몸을 담그고 있는
+							DATA 벌거벗고 탕에 몸을 담그고 있는
 							DATA 비누로 몸을 씻고 있는
 						ENDDATA
 						写真タイトル一時記録 += @"%ランダム文字列%"
@@ -405,7 +405,7 @@ SELECTCASE RFLAG:コマンド結果受渡し変数
 				ENDSELECT
 			ENDIF
 		ELSE
-			RSTR:コマンド結果受渡し文字列 += "하지만, 저편에는 아무도 없는 것 같다…"
+			RSTR:コマンド結果受渡し文字列 += "하지만, 저쪽에는 아무도 없는 것 같다…"
 			RETURN 0
 		ENDIF
 		写真タイトル一時記録 += @"%CALLNAME:(RFLAG:コマンド結果受渡し変数２)%"
@@ -421,7 +421,7 @@ SELECTCASE RFLAG:コマンド結果受渡し変数
 		ENDIF
 	CASE 2
 		;隠れて覗く
-		RSTR:コマンド結果受渡し文字列 += @"그림자에 숨어, 경절경으로 몰래 도촬했다…<br>"
+		RSTR:コマンド結果受渡し文字列 += @"그림자에 숨어 경절경으로 몰래 촬영했다…<br>"
 		IF CFLAG:PLAYER:現在マップ種別 == 0
 			SELECTCASE CFLAG:PLAYER:現在位置
 				CASE 7, 8, 2007, 702, 802
@@ -429,18 +429,18 @@ SELECTCASE RFLAG:コマンド結果受渡し変数
 				CASE 703, 803
 					写真タイトル一時記録 += "비누로 몸을 씻고 있는"
 				CASE 704, 804
-					写真タイトル一時記録 += "나체로 욕조에 몸을 담그고 있는"
+					写真タイトル一時記録 += "벌거벗고 탕에 몸을 담그고 있는"
 				CASE 705, 805
-					写真タイトル一時記録 += "나체로 약탕에 몸을 담그고 있는"
+					写真タイトル一時記録 += "벌거벗고 약탕에 몸을 담그고 있는"
 				CASE 706, 806
 					写真タイトル一時記録 += "사우나에서 땀을 흘리고 있는"
 				CASE 707, 807
-					写真タイトル一時記録 += "나체로 노천탕에 몸을 담그고 있는"
+					写真タイトル一時記録 += "벌거벗고 노천탕에 몸을 담그고 있는"
 				CASE 708, 808
-					写真タイトル一時記録 += "나체로 항아리탕에 몸을 담그고 있는"
+					写真タイトル一時記録 += "벌거벗고 항아리탕에 몸을 담그고 있는"
 				CASE 9, 11, 2008
 					STRDATA ランダム文字列
-						DATA 맨몸으로 욕조에 몸을 담그고 있다
+						DATA 벌거벗고 탕에 몸을 담그고 있는
 						DATA 비누로 몸을 씻고 있다
 					ENDDATA
 					写真タイトル一時記録 += @"%ランダム文字列%"
@@ -476,10 +476,10 @@ SELECTCASE RFLAG:コマンド結果受渡し変数
 			
 			IF TCVAR:(RFLAG:コマンド結果受渡し変数２):野外オナニー_絶頂
 				;絶頂シーン
-				写真タイトル一時記録 += @"%GETPLACENAME(CFLAG:(RFLAG:コマンド結果受渡し変数２):現在マップ種別, CFLAG:(RFLAG:コマンド結果受渡し変数２):現在位置)%의 물그림자에서 자신의 %PART_DESCRIPTION(RFLAG:コマンド結果受渡し変数２, TCVAR:(RFLAG:コマンド結果受渡し変数２):野外オナニー_部位)%를 만지며 절정하는 %CALLNAME:(RFLAG:コマンド結果受渡し変数２)%"
+				写真タイトル一時記録 += @"%GETPLACENAME(CFLAG:(RFLAG:コマンド結果受渡し変数２):現在マップ種別, CFLAG:(RFLAG:コマンド結果受渡し変数２):現在位置)%의 물그림자에서 자신의%PART_DESCRIPTION(RFLAG:コマンド結果受渡し変数２, TCVAR:(RFLAG:コマンド結果受渡し変数２):野外オナニー_部位)%을(를) 만지작거리며 절정하는%CALLNAME:(RFLAG:コマンド結果受渡し変数２)%"
 			ELSE
 				;オナニーシーン
-				写真タイトル一時記録 += @"%GETPLACENAME(CFLAG:(RFLAG:コマンド結果受渡し変数２):現在マップ種別, CFLAG:(RFLAG:コマンド結果受渡し変数２):現在位置)%의 물그림자에서 자신의 %PART_DESCRIPTION(RFLAG:コマンド結果受渡し変数２, TCVAR:(RFLAG:コマンド結果受渡し変数２):野外オナニー_部位)%를 만지는 %CALLNAME:(RFLAG:コマンド結果受渡し変数２)%"
+				写真タイトル一時記録 += @"%GETPLACENAME(CFLAG:(RFLAG:コマンド結果受渡し変数２):現在マップ種別, CFLAG:(RFLAG:コマンド結果受渡し変数２):現在位置)%의 물그림자에서 자신의%PART_DESCRIPTION(RFLAG:コマンド結果受渡し変数２, TCVAR:(RFLAG:コマンド結果受渡し変数２):野外オナニー_部位)%을(를) 만지작거리는%CALLNAME:(RFLAG:コマンド結果受渡し変数２)%"
 			ENDIF
 			
 			;履歴用に回数登録
@@ -491,33 +491,33 @@ SELECTCASE RFLAG:コマンド結果受渡し変数
 			
 			;覗きバレしているかで分岐
 			IF TCVAR:(RFLAG:コマンド結果受渡し変数２):覗きバレ
-				写真タイトル一時記録 += @"%GETPLACENAME(CFLAG:(RFLAG:コマンド結果受渡し変数２):現在マップ種別, CFLAG:(RFLAG:コマンド結果受渡し変数２):現在位置)%의 물그림자에서 이쪽을 바라보며 스쳐 지나가는 섹스를 즐기는 %CALLNAME:(RFLAG:コマンド結果受渡し変数２)%"
+				写真タイトル一時記録 += @"%GETPLACENAME(CFLAG:(RFLAG:コマンド結果受渡し変数２):現在マップ種別, CFLAG:(RFLAG:コマンド結果受渡し変数２):現在位置)%의 물그림자에서 이쪽을 바라보며 스쳐 지나가는 섹스를 즐기는%CALLNAME:(RFLAG:コマンド結果受渡し変数２)%"
 			ELSE
-				写真タイトル一時記録 += @"%GETPLACENAME(CFLAG:(RFLAG:コマンド結果受渡し変数２):現在マップ種別, CFLAG:(RFLAG:コマンド結果受渡し変数２):現在位置)%의 물그림자에서 모르는 상대와 스쳐 지나가는 섹스를 즐기는 %CALLNAME:(RFLAG:コマンド結果受渡し変数２)%"
+				写真タイトル一時記録 += @"%GETPLACENAME(CFLAG:(RFLAG:コマンド結果受渡し変数２):現在マップ種別, CFLAG:(RFLAG:コマンド結果受渡し変数２):現在位置)%의 물그림자에서 모르는 상대와 스쳐 지나가는 섹스를 즐기는%CALLNAME:(RFLAG:コマンド結果受渡し変数２)%"
 			ENDIF
 			
 		ENDIF
 	CASE 4
 		;覗き専用場所から覗く
 		RSTR:表示グラ記録 = 
-		RSTR:コマンド結果受渡し文字列 += @"벽의 장치를 통해 %GETPLACENAME(CFLAG:(RFLAG:コマンド結果受渡し変数２):現在マップ種別, CFLAG:(RFLAG:コマンド結果受渡し変数２):現在位置)%을(를) 도촬했다…<br>"
+		RSTR:コマンド結果受渡し文字列 += @"벽의 장치를 통해%GETPLACENAME(CFLAG:(RFLAG:コマンド結果受渡し変数２):現在マップ種別, CFLAG:(RFLAG:コマンド結果受渡し変数２):現在位置)%을(를) 도촬했다…<br>"
 		IF RFLAG:コマンド結果受渡し変数２
 			IF CFLAG:PLAYER:現在マップ種別 == 0
 				SELECTCASE CFLAG:(RFLAG:コマンド結果受渡し変数２):現在位置
 					CASE 702, 802
 						写真タイトル一時記録 += "옷을 벗는 중인"
 					CASE 703, 803
-						写真タイトル一時記録 += "비누로 몸을 씻고 있다"
+						写真タイトル一時記録 += "비누로 몸을 씻고 있는"
 					CASE 704, 804
-						写真タイトル一時記録 += "나체로 욕조에 몸을 담그고 있다"
+						写真タイトル一時記録 += "나체로 탕에 몸을 담그고 있는"
 					CASE 705, 805
-						写真タイトル一時記録 += "나체로 약탕에 몸을 담그고 있다"
+						写真タイトル一時記録 += "나체로 약탕에 몸을 담그고 있는"
 					CASE 706, 806
-						写真タイトル一時記録 += "사우나에서 땀을 흘리고 있다"
+						写真タイトル一時記録 += "사우나에서 땀을 흘리고 있는"
 					CASE 707, 807
-						写真タイトル一時記録 += "나체로 노천탕에 몸을 담그고 있다"
+						写真タイトル一時記録 += "나체로 노천탕에 몸을 담그고 있는"
 					CASE 708, 808
-						写真タイトル一時記録 += "나체로 항아리탕에 몸을 담그고 있다"
+写真タイトル一時記録 += "벌거벗고 항아리탕에 몸을 담그고 있다"
 				ENDSELECT
 			ENDIF
 		ELSE
@@ -536,7 +536,7 @@ SELECTCASE RFLAG:コマンド結果受渡し変数
 		ENDIF
 ENDSELECT
 
-RSTR:コマンド結果受渡し文字列 += @"사진을 확인하니, 『%写真タイトル一時記録%』의 사진이 찍혀 있었다."
+RSTR:コマンド結果受渡し文字列 += @"사진을 확인하니, 『%写真タイトル一時記録%』의 사진이 찍혀 있었다。"
 ;データベース登録
 撮影日時一時記録 = %TOSTR(DAY, "00000")%%TOSTR(TIME, "0000")%
 
@@ -570,25 +570,25 @@ CALL 履歴登録チェック(RFLAG:コマンド結果受渡し変数２, "被�
 
 写真タイトル一時記録 = 
 ;実行時メッセージを同時に入れ込む
-RSTR:コマンド結果受渡し文字列 = %CALLNAME:PLAYER%은(는) 경절경으로
+RSTR:コマンド結果受渡し文字列 = %CALLNAME:PLAYER%은(는) 景切鏡으로
 
 ;仕事内容
 IF 現在仕事:TARGET:0 == 2
 	;ちゃんと仕事場にいるかで分岐
 	IF GETPLACENAME(CFLAG:TARGET:現在マップ種別, CFLAG:TARGET:現在位置) == GETPLACENAME(現在仕事:TARGET:1 / 10000, 現在仕事:TARGET:1 % 10000)
-		写真タイトル一時記録 += @"%GETPLACENAME(CFLAG:TARGET:現在マップ種別, CFLAG:TARGET:現在位置)%에서%MAP_GET("常駐業務名", GETPLACENAME(現在仕事:TARGET:1 / 10000, 現在仕事:TARGET:1 % 10000))%의 일을 하고 있다"
+		写真タイトル一時記録 += @"%GETPLACENAME(CFLAG:TARGET:現在マップ種別, CFLAG:TARGET:現在位置)%에서%MAP_GET("常駐業務名", GETPLACENAME(現在仕事:TARGET:1 / 10000, 現在仕事:TARGET:1 % 10000))%의 일을 하고 있는"
 	ELSE
 		写真タイトル一時記録 += @"%MAP_GET("常駐業務名", GETPLACENAME(現在仕事:TARGET:1 / 10000, 現在仕事:TARGET:1 % 10000))%의 일을 하러 가는 길의,"
 	ENDIF
 ELSEIF 現在仕事:TARGET:0 == 5
 	;ちゃんと仕事場にいるかで分岐
 	IF CFLAG:TARGET:現在マップ種別 == 0 && CFLAG:TARGET:現在位置 == 308
-		写真タイトル一時記録 += @"%GETPLACENAME(CFLAG:TARGET:現在マップ種別, CFLAG:TARGET:現在位置)%에서 훈련을 하고 있다"
+		写真タイトル一時記録 += @"%GETPLACENAME(CFLAG:TARGET:現在マップ種別, CFLAG:TARGET:現在位置)%에서 훈련을 하고 있는"
 	ELSE
 		写真タイトル一時記録 += @"훈련장으로 향하는 길의,"
 	ENDIF
 ELSE
-	写真タイトル一時記録 += @"%GETPLACENAME(CFLAG:TARGET:現在マップ種別, CFLAG:TARGET:現在位置)%에서%現在仕事数字文字列変換(現在仕事:TARGET:0, 0, TARGET)%의 일을 하고 있다"
+	写真タイトル一時記録 += @"%GETPLACENAME(CFLAG:TARGET:現在マップ種別, CFLAG:TARGET:現在位置)%에서%現在仕事数字文字列変換(現在仕事:TARGET:0, 0, TARGET)%의 일을 하고 있는"
 ENDIF
 ;服装
 IF CSTR:TARGET:着せ替え服 != ""
@@ -600,7 +600,7 @@ IF CSTR:TARGET:着せ替え服 != ""
 		ELSE
 			写真タイトル一時記録 += @"%CSTR:TARGET:着せ替え服%"
 			IF CSTR:TARGET:着せ替え服追加名 != ""
-				写真タイトル一時記録 += @"（%CSTR:TARGET:着せ替え服追加名%）을(를) 입은"
+				写真タイトル一時記録 += @"(%CSTR:TARGET:着せ替え服追加名%)을(를) 입은"
 			ELSE
 				写真タイトル一時記録 += "을(를) 입은"
 			ENDIF
@@ -614,7 +614,7 @@ ENDIF
 写真タイトル一時記録 += @"%CALLNAME:TARGET%"
 
 
-RSTR:コマンド結果受渡し文字列 += @"『%写真タイトル一時記録%』의 사진을 찍었다."
+RSTR:コマンド結果受渡し文字列 += @"『%写真タイトル一時記録%』의 사진을 찍었다。"
 ;データベース登録
 撮影日時一時記録 = %TOSTR(DAY, "00000")%%TOSTR(TIME, "0000")%
 
@@ -650,16 +650,16 @@ CALL 履歴登録チェック(TARGET, "被写体")
 
 写真タイトル一時記録 = 
 ;実行時メッセージを同時に入れ込む
-RSTR:コマンド結果受渡し文字列 = %CALLNAME:PLAYER%은(는) 경절경으로
+RSTR:コマンド結果受渡し文字列 = %CALLNAME:PLAYER%は景切鏡で
 
 ;服装を先に取得
 服装一時記録 = 
 IF CSTR:TARGET:着せ替え服 != ""
 	IF CSTR:TARGET:着せ替え服 == "全裸"
-		服装一時記録 += "전라의"
+		服装一時記録 += "알몸의"
 	ELSE
 		IF CSTR:TARGET:着せ替え服 == "浴衣"
-			服装一時記録 += "유카타빌라 차림의"
+			服装一時記録 += "유카타 빌라 차림의"
 		ELSE
 			服装一時記録 += @"%CSTR:TARGET:着せ替え服%"
 		ENDIF
@@ -670,7 +670,7 @@ IF CSTR:TARGET:着せ替え服 != ""
 		ENDIF
 	ENDIF
 ELSE
-	服装一時記録 += "평상복의"
+	服装一時記録 += "평상복 차림의"
 ENDIF
 
 IF CFLAG:TARGET:睡眠
@@ -678,7 +678,7 @@ IF CFLAG:TARGET:睡眠
 ELSE
 	SELECTCASE RAND:3
 		CASE 0
-			写真タイトル一時記録 += @"%服装一時記録%%CALLNAME:TARGET%와 %CALLNAME:PLAYER%의 투샷"
+			写真タイトル一時記録 += @"%服装一時記録%%CALLNAME:TARGET%와(과)%CALLNAME:PLAYER%의 투샷"
 		CASE 1
 			IF ENJOYROOM(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置)
 				写真タイトル一時記録 += @"%GETPLACENAME(CFLAG:TARGET:現在マップ種別, CFLAG:TARGET:現在位置)%에서"
@@ -699,21 +699,21 @@ ELSE
 				写真タイトル一時記録 += "이쪽을 눈치채고"
 				IF TALENT:TARGET:羞恥心 > 0
 					STRDATA ランダム文字列
-						DATA 작게 브이(V)를 하다
-						DATA 조금 부끄러운 듯 수줍게 웃다
-						DATA 무심코 숨어버렸다
+						DATA 작게 브이하는
+DATA 조금 부끄러운 듯 수줍게 웃다
+DATA 무심코 숨어버렸다
 					ENDDATA
 				ELSEIF TALENT:TARGET:目立ちたがり > 0
 					STRDATA ランダム文字列
-						DATA 멋지게 포즈를 취한다
-						DATA 멋진 표정으로 시선을 보낸다
-						DATA 다가와서, 클로즈업되었다
+DATA 멋지게 포즈를 취하다
+DATA 멋진 표정으로 시선을 보내다
+DATA 가까이 다가와 클로즈업되었다
 					ENDDATA
 				ELSE
 					STRDATA ランダム文字列
-						DATA 브이자를 그린다
-						DATA 이쪽으로 손을 흔든다
-						DATA 미소를 지었다
+DATA 브이 포즈를 취하다
+DATA 이쪽으로 손을 흔들다
+DATA 미소를 지었다
 					ENDDATA
 				ENDIF
 				写真タイトル一時記録 += @"%ランダム文字列%%服装一時記録%%CALLNAME:TARGET%"
@@ -764,11 +764,11 @@ SIF RESULT
 #DIMS 削除番号配列, 101
 
 DRAWLINE
-PRINTL 소지하고 있는 사진 목록입니다
+PRINTL 보유 중인 사진 목록입니다
 IF 一括削除モード
-	PRINTL 선택한 사진을 일괄 삭제할 수 있습니다 (100개까지)
+	PRINTL 선택한 사진을 일괄 삭제할 수 있습니다(최대 100장)
 ELSE
-	PRINTL 선택하면 자세히 보기/삭제가 가능합니다
+	PRINTL 선택하면 상세 정보 표시·삭제가 가능합니다
 ENDIF
 DRAWLINE
 
@@ -808,7 +808,7 @@ ELSE
 ENDIF
 PRINTBUTTONLC "[1002] 표시 모드 전환", 1002
 PRINTL
-PRINTBUTTON "[997] 해설", 997
+PRINTBUTTON "[997] 설명", 997
 PRINTL
 
 IF チュートリアルフラグ:写真一覧 == 0
@@ -838,7 +838,7 @@ SELECTCASE ボタン記録
 			FOR 表示数カウント, 1, 一括削除件数 + 1
 				DT_ROW_REMOVE "写真データベース", TOINT(削除番号配列:表示数カウント)
 			NEXT
-			PRINTFORMW {一括削除件数}장의 사진을 삭제했습니다
+			PRINTFORMW 사진 {一括削除件数}장을 삭제했습니다
 			一括削除モード = 0
 			一括削除件数 = 0
 			削除番号 = 
@@ -902,7 +902,7 @@ ENDSELECT
 #DIM ボタン記録
 
 DRAWLINE
-PRINTL 소지한 사진 목록입니다
+PRINTL 보유 중인 사진 목록입니다
 PRINTL 선택하면 캐릭터별 사진을 표시하거나 삭제할 수 있습니다
 
 ;表示候補を整理
@@ -912,7 +912,7 @@ LOCAL = 0
 FOR 表示数カウント, 0, DT_ROW_LENGTH("写真データベース")
 	;NOと名前から現在のキャラ番号を出す
 	キャラ番保存 = 0
-	IF DT_CELL_GET("写真データベース", 表示数カウント, "撮影対象NO") == 999
+	IF ランダムキャラ判定(DT_CELL_GET("写真データベース", 表示数カウント, "撮影対象NO"))
 		キャラ番保存 = FINDCHARA(NAME, @"%DT_CELL_GETS("写真データベース", 表示数カウント, "撮影対象NAME")%")
 		IF キャラ番保存 == -1
 			キャラ番保存 = FINDCHARA(NAME, @"%REPLACE(DT_CELL_GETS("写真データベース", 表示数カウント, "撮影対象NAME"), "[一般人]", "")%")
@@ -957,10 +957,10 @@ IF 表示キャラ配列:(ページ数 * 15 + 15) > 0
 ELSE
 	PRINTC  
 ENDIF
-PRINTBUTTONLC "[999] 뒤로", 999
+PRINTBUTTONLC "[999] 돌아가기", 999
 PRINTBUTTONLC "[1002] 표시 모드 전환", 1002
 PRINTL
-PRINTBUTTON "[997] 해설", 997
+PRINTBUTTON "[997] 설명", 997
 PRINTL
 
 IF チュートリアルフラグ:写真一覧 == 0
@@ -1020,7 +1020,7 @@ FOR 表示数カウント, ページ数 * 15, ページ数 * 15 + 15
 	ENDIF
 	SIF 一括削除モード && STRCOUNT(削除番号, @"_{写真ID配列:表示数カウント}_")
 		SETCOLOR カラーパレット("黄")
-	PRINTBUTTON @"[{表示数カウント, 3}] - 『%DT_CELL_GETS("写真データベース", 写真ID配列:表示数カウント, "写真タイトル", 1)%』", 표시수 카운트
+	PRINTBUTTON @"[{表示数カウント, 3}] - 『%DT_CELL_GETS("写真データベース", 写真ID配列:表示数カウント, "写真タイトル", 1)%』", 表示数カウント
 	RESETCOLOR
 	PRINTL
 NEXT
@@ -1036,7 +1036,7 @@ IF 写真ID配列:(ページ数 * 15 + 15) > 0
 ELSE
 	PRINTC  
 ENDIF
-PRINTBUTTONLC "[999] 뒤로", 999
+PRINTBUTTONLC "[999] 돌아가기", 999
 IF 一括削除モード && 削除番号 != ""
 	PRINTBUTTONLC "[998] 삭제하기", 998
 ELSEIF 一括削除モード
@@ -1077,7 +1077,7 @@ SELECTCASE ボタン記録
 			FOR 表示数カウント, 1, 一括削除件数 + 1
 				DT_ROW_REMOVE "写真データベース", TOINT(削除番号配列:表示数カウント)
 			NEXT
-			PRINTFORMW {일괄 삭제 건수}장의 사진을 삭제했습니다
+			PRINTFORMW 사진 {一括削除件数}장을 삭제했습니다
 			一括削除モード = 0
 			一括削除件数 = 0
 			削除番号 = 
@@ -1224,23 +1224,23 @@ ENDIF
 
 DAY算出 = TOINT(DT_CELL_GETS("写真データベース", ボタン記録, "撮影日時", 1)) / 10000
 TIME算出 = TOINT(DT_CELL_GETS("写真データベース", ボタン記録, "撮影日時", 1)) % 10000
-PRINTFORML 　　촬영 일시: {DAY算出 / 120 + 1}년째　%月登録:((DAY算出 / 30) % 4)%　{DAY算出 % 30 + 1}일(%曜日登録:(DAY算出 % 7)%)　{TIME算出 / 60}시{TIME算出 % 60}분
-PRINTFORML 　　촬영 장소: %DT_CELL_GETS("写真データベース", ボタン記録, "撮影場所名前", 1)%
-PRINTFORML 　　촬영 대상: %DT_CELL_GETS("写真データベース", ボタン記録, "撮影対象NAME", 1)%
+PRINTFORML 　　촬영일시：{DAY算出 / 120 + 1}년째　%月登録:((DAY算出 / 30) % 4)%　{DAY算出 % 30 + 1}일(%曜日登録:(DAY算出 % 7)%)　{TIME算出 / 60}時{TIME算出 % 60}분
+PRINTFORML 　　촬영장소：%DT_CELL_GETS("写真データベース", ボタン記録, "撮影場所名前", 1)%
+PRINTFORML 　　촬영대상：%DT_CELL_GETS("写真データベース", ボタン記録, "撮影対象NAME", 1)%
 IF DT_CELL_GETS("写真データベース", ボタン記録, "写真添付メモ", 1) != ""
-	PRINTFORML 　　사진 메모: %DT_CELL_GETS("写真データベース", ボタン記録, "写真添付メモ", 1)%
+	PRINTFORML 　　사진 메모：%DT_CELL_GETS("写真データベース", ボタン記録, "写真添付メモ", 1)%
 ENDIF
 PRINTL
 
 PRINTBUTTONLC "[999] 돌아가기", 999
 IF DT_CELL_GETS("写真データベース", ボタン記録, "写真添付メモ", 1) != ""
 	PRINTBUTTONLC "[1010] 메모 변경", 1010
-	PRINTBUTTONLC "[1011] 메모 삭제", 1011
+PRINTBUTTONLC "[1011] 메모 삭제", 1011
 ELSE
-PRINTBUTTONLC "[1010] 메모 추가", 1010
+PRINTBUTTONLC "[1010] 메모를 남기다", 1010
 ENDIF
 PRINTL
-PRINTBUTTONLC "[1000] 이 사진을 삭제하기", 1000
+PRINTBUTTONLC "[1000] 이 사진을 삭제한다", 1000
 PRINTL 
 IF 前フラグ
 	PRINTBUTTONLC "[4] 이전 사진으로", 4
@@ -1255,7 +1255,7 @@ BINPUT
 SELECTCASE RESULT
 	CASE 1000
 		DRAWLINE
-		PRINTFORML 『%DT_CELL_GETS("写真データベース", ボタン記録, "写真タイトル", 1)%』을(를) 삭제하시겠습니까?
+		PRINTFORML 『%DT_CELL_GETS("写真データベース", ボタン記録, "写真タイトル", 1)%』을(를) 삭제해도 괜찮습니까?
 		PRINTBUTTONLC "[0] 예", 0
 		PRINTBUTTONLC "[1] 아니오", 1
 		BINPUT
@@ -1267,17 +1267,17 @@ SELECTCASE RESULT
 		ENDIF
 	CASE 1010
 		DRAWLINE
-		PRINTL 사진에 추가할 메모를 입력해 주세요. (한 줄만)
-		PRINTBUTTONLC "[입력 취소]", ""
+		PRINTL 사진에 남길 메모를 입력해주세요. (한 줄만)
+		PRINTBUTTONLC "[입력을 취소한다]", ""
 		INPUTS
 		SIF RESULTS == ""
 			GOTO 写真表示
 		DT_CELL_SET "写真データベース", ボタン記録, "写真添付メモ", RESULTS, 1
-		PRINTFORMW 사진에 『%RESULTS%』라고 메모를 추가했습니다.
+		PRINTFORMW 사진에 『%RESULTS%』이라고 메모를 남겼습니다.
 		GOTO 写真表示
 	CASE 1011
-		PRINTFORML 사진 메모: %DT_CELL_GETS("写真データベース", ボタン記録, "写真添付メモ", 1)%
-		PRINTL 이 메모를 삭제하시겠습니까?
+		PRINTFORML 사진 메모:%DT_CELL_GETS("写真データベース", ボタン記録, "写真添付メモ", 1)%
+		PRINTL 이 메모를 삭제해도 괜찮습니까?
 		PRINTBUTTONLC "[0] 예", 0
 		PRINTBUTTONLC "[1] 아니오", 1
 		BINPUT

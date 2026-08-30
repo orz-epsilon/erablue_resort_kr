@@ -13,9 +13,9 @@ TFLAG:コマンドタイプ受渡 = COMTYPE("Ｖ系")
 オートコマンド許可 = 1
 
 @COM_TOOLTIP_S60_6
-LOCALS = <br>■首筋甘噛み交尾<br>
-LOCALS += "목덜미를 물고, 이를 세우면서 허리를 흔드는 커맨드.<br>드라프, 엘룬 및 마조 기질에 효과가 크다."
-LOCALS += "<br>체격 차이가 없는 경우의 정상위, 후배위, 대면좌위, 누워서 후배위, 서서 후배위 시에만 실행 가능."
+LOCALS = <br>■목덜미 깨물기 교미<br>
+LOCALS += "목덜미를 물고, 이를 세우면서 허리를 흔드는 커맨드. <br>드라프, 엘룬 및 마조 기질에 효과가 크다."
+LOCALS += "<br>체격 차이가 없는 경우의 정상위, 후배위, 대면좌위, 누운 후배위, 선 후배위 시에만 실행 가능."
 LOCALS += "<br>COM 타입: V계<br>획득 소스: 정복・쾌V・접촉・고통・불결(일정 조건 시)"
 LOCALS += "<br>고유 획득 경험: V성교 경험(TARGET)・C성교 경험_V삽입(PLAYER)<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
@@ -117,10 +117,10 @@ RETURN 1
 ;-------------------------------------------------
 @MESSAGE_COM_S60_6
 #DIM 同時キャラ番号
-PRINTFORM %CALLNAME:PLAYER%는
-PRINTFORML %CALLNAME:TARGET%의 목덜미에 %TEXTR("물어뜯으며/이를 박으며")% %TEXTR("강하게/격렬하게")% 허리를 박아 넣었다
+PRINTFORM %CALLNAME:PLAYER%은(는)
+PRINTFORML %CALLNAME:TARGET%의 목덜미에%TEXTR("물어뜯으며/이를 세우며")% %TEXTR("강하게/격렬하게")% 허리를 부딪쳤다
 
 IF ABL:TARGET:マゾ性感 > 2 || TALENT:TARGET:種族 == 2 || TALENT:TARGET:種族 == 3 || TALENT:種族 == 5 || 小等部魔法少女判定(TARGET) || 首噛み弱点判定(TARGET)
-	PRINTFORM 고통에 교성을 지르는 %CALLNAME:TARGET%의 몸은 %TEXTR("피지배의 마조 성감에 전율하며,/누가 '주인님'인지를 고분고분하게 이해하고,/이 상황에서의 상하 관계를 본능적으로 이해하고,")%
-	PRINTFORML %TEXTR("질육을 강하게 조여/반사적으로 허리를 비벼 대듯이/무의식중에 엉덩이를 흔들며/페니스를 깊숙이 머금고, 자궁을 바치며")% 아양떨고 있다
+	PRINTFORM 고통에 교성을 지르는%CALLNAME:TARGET%의 몸은%TEXTR("피지배의 마조 성감에 몸을 떨며,/누가 『주인님』인지를 순종적으로 이해하고,/이 상황에서의 상하 관계를 본능적으로 이해하여,")%
+	PRINTFORML %TEXTR("질육의 조임을 강하게 하여/반사적으로 허리를 비비는 듯이 하여/무의식적으로 엉덩이를 흔들며/페니스를 깊숙이 물고, 자궁을 바치며")% 아양을 떨고 있다
 ENDIF

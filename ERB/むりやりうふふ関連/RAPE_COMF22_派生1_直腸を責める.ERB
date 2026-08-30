@@ -1,10 +1,10 @@
 
 @RAPE_COMNAME_S22_1
 #FUNCTIONS
-TSTR:コマンド名受渡 = 직장을 괴롭히다
+TSTR:コマンド名受渡 = 직장을 공략한다
 ;男・ふたなり相手だと前立腺責めになる
 SIF GETBIT(TALENT:TARGET:性別, 2)
-	TSTR:コマンド名受渡 = 전립선을 괴롭히다
+	TSTR:コマンド名受渡 = 전립선을 공략한다
 
 ;===================================================
 ;コマンドタイプ
@@ -14,7 +14,7 @@ SIF GETBIT(TALENT:TARGET:性別, 2)
 TFLAG:コマンドタイプ受渡 = RAPE_COMTYPE("Ａ系")
 
 @RAPE_COM_TOOLTIP_S22_1
-LOCALS = <br>■직장을 괴롭히다<br>
+LOCALS = <br>■직장을 공략한다<br>
 LOCALS += "장내 입구 부근에 페니스로 강한 자극을 주는 커맨드. <br>상대가 남자·후타나리일 때, [전립선을 괴롭히다]로 변화한다. <br>A삽입계 모드일 때만 실행 가능."
 LOCALS += "<br>RAPE_COM 타입: A계<br>획득 소스: 쾌A·접촉·고통"
 LOCALS += "<br>고유 획득 경험: A성교 경험(TARGET)·전립선 개발(TARGET·일정 조건 시)·C성교 경험_A삽입(PLAYER)<br>"

@@ -16,16 +16,16 @@ TFLAG:コマンドタイプ受渡 = RAPE_COMTYPE("Ａ系")
 
 @RAPE_COM_TOOLTIP_23
 LOCALS = <br>■항문으로 성기를 범하다<br>
-LOCALS += "항문에 상대의 페니스를 삽입하여 애널 섹스를 하는 커맨드. <br>억지로 하는 것이므로 기승위밖에 할 수 없다. <br>A삽입계 모드가 되어, 모드를 변경하거나 성행위를 종료할 때까지 지속적으로 쾌락이 발생한다."
+LOCALS += "상대의 페니스를 항문에 삽입하여 애널 섹스를 하는 커맨드。<br>강제적인 행위이므로 기승위만 가능하다。<br>A삽입계 모드가 되며, 모드를 변경하거나 성행위를 종료할 때까지 지속적으로 쾌락이 발생한다。"
 LOCALS += "<br>RAPE_COM 타입: A계<br>획득 소스: 쾌A・노출・접촉・고통"
-LOCALS += "<br>고유 획득 경험: C성교 경험_A삽입(TARGET)・A성교 경험(PLAYER)<br>"
+LOCALS += "<br>고유 획득 경험: C성교경험_A삽입(TARGET)・A성교경험(PLAYER)<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
 @RAPE_COM23
 
 	$体位_LOOP
 	DRAWLINE
-	PRINTL ■체위를 선택해주세요
+	PRINTL ■체위를 선택해 주세요
 	PRINTL
 	FOR LOCAL, 0, 20
 		TRYCCALLFORM RAPE_COM_ABLE23_{LOCAL}
@@ -120,8 +120,8 @@ CALL SOURCE_CALC_苦痛(PLAYER, TARGET, LOCAL)
 ;経験の処理
 ;-------------------------------------------------
 IF EXP:Ａ性交経験 == 0
-	CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>%CALLNAME:TARGET%에게 Ａ처녀를 바쳤다.</font><img src='えっちハート'>","うふふ")
-	CALL 履歴データベース登録(CFLAG:TARGET:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>%CALLNAME:PLAYER%의 Ａ처녀를 빼앗았다.</font><img src='えっちハート'>","うふふ")
+	CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>%CALLNAME:TARGET%にＡ処女を捧げた</font><img src='えっちハート'>","うふふ")
+	CALL 履歴データベース登録(CFLAG:TARGET:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>%CALLNAME:PLAYER%のＡ処女を奪わされた</font><img src='えっちハート'>","うふふ")
 ENDIF
 EXP:TARGET:Ｃ性交経験_Ａ挿入 ++
 EXP:Ａ性交経験 ++
@@ -227,7 +227,7 @@ RETURN 1
 @RAPE_MESSAGE_COM23
 
 
-PRINTFORM %CALLNAME:PLAYER%은(는)%CALLNAME:TARGET%%TEXTR("위에 올라타/허리에 올라타/허리에 올라앉아/위에 올라타")%,
+PRINTFORM %CALLNAME:PLAYER%는%CALLNAME:TARGET%%TEXTR("위에 올라타/의 허리에 올라타/의 허리에 올라앉아/위에 올라타")%、
 
 IF MODE_確認_ターゲット側("ペニスバンド", TARGET) < 0
 
@@ -237,12 +237,12 @@ IF MODE_確認_ターゲット側("ペニスバンド", TARGET) < 0
 
 	IF TALENT:男性器サイズ <= -1
 	;短小以下
-		PRINTFORM 팽팽하게 굳어진%TEXTR("작은/한입 크기의/자그마한")%
+		PRINTFORM 꼿꼿하게 굳어진%TEXTR("작은/한입 크기의/자그마한")%
 	ELSEIF TALENT:男性器サイズ == 2
 	;デカい
 		PRINTFORM %TEXTR("/바싹 발기한/단단하게 솟아 위용을 뽐내는")%규격 외 사이즈의
 	ELSE
-		PRINTFORM %TEXTR("단단하게 발기하고/단단하게 솟아오른")%
+		PRINTFORM %TEXTR("단단하게 발기한/굳게 솟아오른")%
 	ENDIF
 	
 	SIF CFLAG:TARGET:発情期フラグ < 0
@@ -253,25 +253,25 @@ IF MODE_確認_ターゲット側("ペニスバンド", TARGET) < 0
 		PRINTFORM 동정
 	
 	IF TALENT:イキやすさ == 1
-		PRINTFORM %TEXTR("하찮은/나약한")%
+		PRINTFORM %TEXTR("하찮은/약해빠진")%
 	ELSEIF TALENT:Ｃ感度 == 1
 		PRINTFORM 민감
 	ENDIF
 	
 	IF TALENT:男性器サイズ <= -1
-		PRINTFORM %TEXTR("자지/고추/작은 자지")%
+		PRINTFORM %TEXTR("고추/꼬추/미니 고추")%
 	ELSEIF TALENT:男性器サイズ == 0
-		PRINTFORM %TEXTR("자지/고추/페니스")%
+		PRINTFORM %TEXTR("성기/고추/페니스")%
 	ELSEIF TALENT:男性器サイズ == 1
-		PRINTFORM %TEXTR("큰 자지/큰 자지")%
+		PRINTFORM %TEXTR("큰 성기/큰 고추")%
 	ELSEIF TALENT:男性器サイズ == 2
-		PRINTFORM %TEXTR("큰 자지/큰 자지")%
+		PRINTFORM %TEXTR("큰 성기/큰 고추")%
 	ENDIF
 ELSE
 	PRINTFORM 페니스 밴드
 ENDIF
 
-PRINTFORM 을(를)%TEXTR("항문/애널")%에 대고, 그대로%TEXTR("천천히/푹/질퍽질퍽")%하고%TEXTR("물고/허리를 내리고/")%갔다…
+PRINTFORM 을(를)%TEXTR("항문/애널")%에 대고, 그대로%TEXTR("천천히/푹/질척질척")%%TEXTR("물고/허리를 내리며/")% 들어갔다…
 
 ;ここまでを全て繋げると
 ;「%CALLNAME:PLAYER%は%CALLNAME:TARGET%%TEXTRに馬乗りになり"、硬くそそり立ったよわよわちんちんをアナルにあてがって、そのままゆっくりと咥えこんでいった…」

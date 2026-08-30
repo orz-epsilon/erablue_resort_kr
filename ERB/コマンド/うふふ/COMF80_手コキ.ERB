@@ -13,20 +13,22 @@ TSTR:コマンド名受渡 = 핸드잡
 @COMTYPE_80
 #FUNCTION
 TFLAG:コマンドタイプ受渡 = COMTYPE("うふふ&奉仕")
-;同時モードはムリじゃねえかなコレ
 オートコマンド許可 = 3
+同時モード許可 = 2
+同時モード反転許可 = 2
 反転オート許可 = 3
+ダウン中許可_PLAYER = 1
 
 
 @COM_TOOLTIP_80
 IF RFLAG:奉仕逆転時ツールチップフラグ
-	LOCALS = <br>■수음하다<br>
-	LOCALS += "자신이 손으로 상대의 페니스를 애무하는 커맨드.<br>핸드잡 모드가 되어, 모드를 변경하거나 성행위를 종료할 때까지 지속적으로 특정 소스가 발생한다."
+	LOCALS = <br>■핸드잡 해주기<br>
+	LOCALS += "자신이 손으로 상대의 페니스를 애무하는 커맨드. <br>핸드잡 모드가 되어, 모드를 변경하거나 성행위를 종료할 때까지 지속적으로 특정 소스가 발생한다."
 ELSE
-	LOCALS = <br>■수음<br>
-	LOCALS += "상대에게 손으로 자신의 페니스를 애무하게 하는 커맨드.<br>핸드잡 모드가 되어, 모드를 변경하거나 성행위를 종료할 때까지 지속적으로 특정 소스가 발생한다."
+	LOCALS = <br>■핸드잡<br>
+	LOCALS += "상대에게 손으로 자신의 페니스를 애무하게 하는 커맨드. <br>핸드잡 모드가 되어, 모드를 변경하거나 성행위를 종료할 때까지 지속적으로 특정 소스가 발생한다."
 ENDIF
-LOCALS += "<br>COM 타입: 우후후<br>획득 소스: 노출·접촉·봉사·불결"
+LOCALS += "<br>COM 타입: 우후후<br>획득 소스: 노출・접촉・봉사・불결"
 LOCALS += "<br>고유 획득 경험: 수음 경험(TARGET)<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
@@ -79,7 +81,7 @@ RETURN 1
 #DIM ＋表示フラグ
 
 SKIPDISP ARG
-PRINTFORML 수음(%CALLNAME:TARGET%)
+PRINTFORML 핸드잡(%CALLNAME:TARGET%)
 ;-------------------------------------------------
 ;実行判定処理
 ;-------------------------------------------------
@@ -104,7 +106,7 @@ IF ABL:奉仕精神
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += ABL:奉仕精神 * 4
-	PRINTFORM 봉사 정신LV{ABL:奉仕精神}({ABL:奉仕精神 * 4})
+	PRINTFORM 봉사정신LV{ABL:奉仕精神}({ABL:奉仕精神 * 4})
 	＋表示フラグ = 1
 ENDIF
 ;ABL:精液中毒
@@ -112,7 +114,7 @@ IF ABL:精液中毒
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += ABL:精液中毒 * 1
-	PRINTFORM 정액 중독LV{ABL:精液中毒}({ABL:精液中毒 * 1})
+	PRINTFORM 정액중독LV{ABL:精液中毒}({ABL:精液中毒 * 1})
 	＋表示フラグ = 1
 ENDIF
 
@@ -120,7 +122,7 @@ IF MARK:快楽刻印
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += MARK:快楽刻印 * 1
-	PRINTFORM 쾌락 각인LV{MARK:快楽刻印}({MARK:快楽刻印 * 1})
+	PRINTFORM 쾌락각인LV{MARK:快楽刻印}({MARK:快楽刻印 * 1})
 	＋表示フラグ = 1
 ENDIF
 ;PALAM:欲情
@@ -135,7 +137,7 @@ ENDIF
 IF TALENT:羞恥心 > 0
 	PRINT  - 
 	実行値 -= 1
-	PRINT 부끄러움(1)
+	PRINT 수치심(1)
 	＋表示フラグ = 1
 ENDIF
 ;汚臭鈍感
@@ -143,7 +145,7 @@ IF TALENT:汚臭耐性 > 0
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += 1
-	PRINT 악취 둔감(1)
+	PRINT 악취둔감(1)
 	＋表示フラグ = 1
 ENDIF
 ;汚臭敏感
@@ -165,7 +167,7 @@ ENDIF
 IF TALENT:快感応答 < 0 && !TALENT:淫乱
 	PRINT  - 
 	実行値 -= 1
-	PRINT 쾌감의 부정(1)
+	PRINT 쾌감 부정(1)
 	＋表示フラグ = 1
 ENDIF
 ;男嫌い（恋慕、親愛で無効）
@@ -206,7 +208,16 @@ IF TCVAR:言いなり
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += 999
-	PRINT 당신이 시키는 대로(999)
+	PRINT 당신의 뜻대로(999)
+	＋表示フラグ = 1
+ENDIF
+
+;特殊言いなり
+IF TCVAR:特殊言いなり
+	SIF ＋表示フラグ
+		PRINT  + 
+	実行値 += 999
+	PRINTFORM %特殊言いなり分岐(TARGET)%(999)
 	＋表示フラグ = 1
 ENDIF
 
@@ -219,7 +230,7 @@ SIF 実行値 == 必要実行値
 	PRINT  = 
 SIF 実行値 > 必要実行値
 	PRINT  > 
-PRINTFORM 실행치{必要実行値}
+PRINTFORM 실행값{必要実行値}
 
 WAIT
 SKIPDISP 0
@@ -268,7 +279,7 @@ RETURN 1
 ;実行時メッセージ
 ;-------------------------------------------------
 @MESSAGE_COM80
-PRINTFORM %CALLNAME:TARGET%는
+PRINTFORM %CALLNAME:TARGET%은(는)
 ;恋慕か親愛
 IF TALENT:恋慕 && PLAYER == MASTER
 	PRINT 사랑스러운 표정으로,
@@ -276,8 +287,8 @@ IF TALENT:恋慕 && PLAYER == MASTER
 	SIF TALENT:淫乱
 		PRINT 스스로
 ELSEIF 知識素質:性知識 < 0
-	PRINTFORM %CALLNAME:PLAYER%가 시키는 대로,
+	PRINTFORM %CALLNAME:PLAYER%이(가) 시키는 대로,
 ENDIF
-PRINTFORML %CALLNAME:PLAYER%의 페니스에 손가락을 얽어쥐고 쓸어 올리고 있다…
+PRINTFORML %CALLNAME:PLAYER%의 페니스에 손가락을 얽어 문지르고 있다…
 
 

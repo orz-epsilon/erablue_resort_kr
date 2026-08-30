@@ -17,9 +17,9 @@ TFLAG:コマンドタイプ受渡 = RAPE_COMTYPE("うふふ_被挿入中")
 
 @RAPE_COM_TOOLTIP_7
 LOCALS = <br>■젖꼭지를 빨다<br>
-LOCALS += "상대의 젖꼭지를 빨고 맛본다."
-LOCALS += "<br>RAPE_COM 타입：우후후or피삽입중<br>획득 소스：쾌B・노출・접촉・고통"
-LOCALS += "<br>고유 획득 경험：젖꼭지 개발(TARGET)<br>"
+LOCALS += "상대의 젖꼭지를 빨아붙이고, 맛본다."
+LOCALS += "<br>RAPE_COM 타입: 우후후or피삽입중<br>획득 소스: 쾌B・노출・접촉・고통"
+LOCALS += "<br>고유 획득 경험: 젖꼭지 개발(TARGET)<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
 
@@ -113,11 +113,11 @@ RETURN 1
 @RAPE_MESSAGE_COM7
 PRINTFORM %CALLNAME:PLAYER%은(는)
 IF MODE_確認_完全一致("Ｖ挿入系", PLAYER, TARGET) > -1 || MODE_確認_完全一致("Ａ挿入系", PLAYER, TARGET) > -1 || MODE_確認_完全一致("Ｖ挿入系", TARGET, PLAYER) > -1 || MODE_確認_完全一致("Ａ挿入系", TARGET, PLAYER) > -1
-	PRINTFORM %CALLNAME:TARGET%와 연결된 채, 눈앞에서 유혹하듯이 흔들리는%OPPAI_DESCRIPTION(TARGET)%의
+	PRINTFORM %CALLNAME:TARGET%와 이어진 채, 눈앞에서 유혹하듯이 흔들리는%OPPAI_DESCRIPTION(TARGET)%의
 ELSE
 	PRINTFORM 눈앞에 드러난%CALLNAME:TARGET%의%OPPAI_DESCRIPTION(TARGET)%의
 ENDIF
 
 
-PRINTFORML %TEXTR("、그 음란한 끝부분/、그 끝부분에 열린 감미로운 젖꼭지")%에%TEXTR("빨아/핥아")%붙었다…
+PRINTFORML %TEXTR("、그 음란한 끝부분/、그 끝에 맺힌 감미로운 젖꼭지")%에%TEXTR("빨아/핥아")%붙었다…
 

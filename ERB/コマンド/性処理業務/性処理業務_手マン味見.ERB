@@ -7,7 +7,7 @@ TSTR:コマンド名受渡 = 손가락 애무 맛보기
 
 @性処理_TOOLTIP_手マン味見
 LOCALS = <br>■손가락 애무 맛보기<br>
-LOCALS += @"%CALLNAME:TARGET%의 질구와 클리를%CALLNAME:PLAYER%가 애무하는 성처리. <br>"
+LOCALS += @"%CALLNAME:TARGET%의 질 입구나 클리를 %CALLNAME:PLAYER%이(가) 애무하는 성처리. <br>"
 LOCALS += "본격적인 성처리는 아니며, 가벼운 맛보기. <br>"
 LOCALS += "<br>COM 타입: 성처리<br>획득 소스: 노출・접촉・봉사・불결"
 LOCALS += "<br>고유 획득 경험: 수음 경험(TARGET)<br>"
@@ -38,7 +38,7 @@ CALL SOURCE_CALC_不潔(TARGET, PLAYER, 50)
 ;経験の処理
 ;-------------------------------------------------
 ;手淫経験
-EXP:手淫経験 += 3
+EXP:PLAYER:手淫経験 += 3
 
 ;同性愛
 SIF 同性愛性癖判定(PLAYER,TARGET)
@@ -93,7 +93,7 @@ IF NO:TARGET > 1000
 	;5000円のつもり。これでも相場よりちょい高めのつもりで値段交渉してる。
 		値段計算 = 500
 	ENDSELECT
-	PRINTFORML %"基本料金", 25, LEFT%:　%NUM_FORMAT(値段計算), 8%루피
+	PRINTFORML %"基本料金", 25, LEFT%：　%NUM_FORMAT(値段計算), 8%루피
 ELSEIF TALENT:幼稚
 	;幼稚
 	;性知識うんぬん以前に、そもそもお金の価値に対する理解が足りていない。
@@ -103,16 +103,16 @@ ELSEIF TALENT:幼稚
 	SELECTCASE RAND:10
 	;４割で超高額提示
 	CASE 0
-		PRINTFORML %"基本料金", 25, LEFT%:　십만 루피!
+		PRINTFORML %"基本料金", 25, LEFT%：　십만 루피!
 		値段計算 = 100000
 	CASE 1 TO 3
-		PRINTFORML %"基本料金", 25, LEFT%:　일만 루피!
+		PRINTFORML %"基本料金", 25, LEFT%：　일만 루피!
 		値段計算 = 10000
 	CASE 4 TO 6
-		PRINTFORML %"基本料金", 25, LEFT%:　천 루피!
+		PRINTFORML %"基本料金", 25, LEFT%：　천 루피!
 		値段計算 = 1000
 	CASE 7 TO 9
-		PRINTFORML %"基本料金", 25, LEFT%:　백 루피로 괜찮아!
+		PRINTFORML %"基本料金", 25, LEFT%：　백 루피면 돼!
 		値段計算 = 100
 	ENDSELECT
 ELSEIF 知識素質:高貴 > 0
@@ -127,7 +127,7 @@ ELSEIF 知識素質:高貴 > 0
 	;王侯貴族に連なるような高貴なおくちを10万円で堪能できると考えるとこれでも結構リーズナブル。良心的な価格設定でございます。
 		値段計算 = 3000
 	ENDIF
-	PRINTFORML %"基本料金", 25, LEFT%:　%NUM_FORMAT(値段計算), 8%루피
+	PRINTFORML %"基本料金", 25, LEFT%：　%NUM_FORMAT(値段計算), 8%루피
 ELSEIF 知識素質:性知識 < 0
 ;性知識マイナス勢
 ;お金の価値が分からないわけではないが、カラダの価値の相場を知らないので直感的にいま欲しい金額を言ってくる。
@@ -145,11 +145,11 @@ ELSEIF 知識素質:性知識 < 0
 	CASE 4
 		値段計算 = 500
 	ENDSELECT
-	PRINTFORML %"基本料金", 25, LEFT%:　%NUM_FORMAT(値段計算), 8%루피
+	PRINTFORML %"基本料金", 25, LEFT%：　%NUM_FORMAT(値段計算), 8%루피
 ELSEIF TALENT:非戦闘キャラ
 ;非戦闘キャラは、「戦うことで稼げる」キャラより相対的に肉体の価値が安く、「カラダを売って稼ぐ」ことへの抵抗感が戦闘キャラより薄いイメージ
 	値段計算 = 800
-	PRINTFORML %"基本料金", 25, LEFT%:　%NUM_FORMAT(値段計算), 8%루피
+	PRINTFORML %"基本料金", 25, LEFT%：　%NUM_FORMAT(値段計算), 8%루피
 ELSEIF TALENT:性転換 == 1
 ;元女だと嫌がって値段を高めに設定する(でも結局買われてしゃぶらされてしまう)
 	値段計算 = 2000
@@ -262,13 +262,13 @@ IF 同性愛性癖判定(TARGET,PLAYER) == 1
 			;好奇心
 			IF TALENT:性的興味 > 0
 				値段計算 -= 50
-				PRINTFORML %@"好奇心(%재능명%)", 25, LEFT%：－%NUM_FORMAT(50), 8%루피
+				PRINTFORML %@"好奇心(%소질명%)", 25, LEFT%：－%NUM_FORMAT(50), 8%루피
 			ENDIF
 			;保守的
 			IF TALENT:性的興味 < 0
 				値段計算 += 150
 				SETCOLOR カラーパレット("薄ピンク")
-				PRINTFORML %@"保守的(%재능명%)", 25, LEFT%：＋%NUM_FORMAT(150), 8%루피
+				PRINTFORML %@"保守的(%소질명%)", 25, LEFT%：＋%NUM_FORMAT(150), 8%루피
 				RESETCOLOR
 			ENDIF
 	ENDSELECT
@@ -357,7 +357,7 @@ SIF 値段計算 < 0
 	値段計算 = 0
 
 ;割引クーポンはひとつまでです！
-IF TALENT:対象キャラ:恋慕
+IF TALENT:対象キャラ:恋慕 || TALENT:対象キャラ:疑似恋慕
 	DRAWLINE
 	PRINTFORML 할인
 ;恋慕は完全無料
@@ -373,7 +373,7 @@ PRINTFORML 할인
 ;せっかく値段が出るんだしタダで抱かせてもらうよりも「100円で買ってあげた」みたいののほうが尊厳を性的搾取できている感が出るので
 ;本来は30,000ルピ……ですが！なんと！今回に限り！お客様だけに！99%オフの300ルピで！！のほうが絶対にシコれる。古事記にもそう書かれている。
 	SETCOLOR カラーパレット("赤ピンク")
-PRINTFORM %"弱み", 25, LEFT%:　　　　　99% 오프
+PRINTFORM %"弱み", 25, LEFT%：　　　　　99％ 할인
 	CALL PRINT_STRL(@"_H_")
 	RESETCOLOR
 	値段計算 /= 100
@@ -392,9 +392,9 @@ ELSE
 	値段計算 = MAX(0, 値段計算)
 ENDIF
 IF 値段計算 > 0
-PRINTFORML %"合計値段", 25, LEFT%:　%NUM_FORMAT(値段計算), 8%루피
+PRINTFORML %"合計値段", 25, LEFT%：　%NUM_FORMAT(値段計算), 8%루피
 ELSE
-PRINTFORM %"合計値段", 25, LEFT%:　%"無料", 8%
+PRINTFORM %"合計値段", 25, LEFT%：　%"無料", 8%
 	CALL PRINT_STRL(@"_H_")
 ENDIF
 
@@ -446,35 +446,35 @@ RETURN 1
 
 PRINTFORM %CALLNAME:TARGET%은(는)
 IF TALENT:TARGET:恋慕
-PRINTFORM 요구받는 것이 기쁜지 미소로
+PRINTFORM 요구받는 것이 기쁜 건지 웃는 얼굴로
 ELSEIF TALENT:TARGET:弱味 || (TALENT:性別嗜好 == 2 && TALENT:PLAYER:性別 == 1)
 ;これだけ露骨に浮かぶバリエーションが多い……なんでやろな？
-PRINTFORM %TEXTR("마지못해 하는 듯한 느낌으로/싫은 듯 얼굴을 찌푸리면서도 마지못해/불쾌한 듯 눈살을 찌푸리면서도 마지못해/싫은 듯 이쪽을 노려보면서도 마지못해")%
+PRINTFORM %TEXTR("마지못해 하는 듯이/싫은 듯 얼굴을 찌푸리면서도 마지못해/불쾌한 듯 눈살을 찌푸리면서도 마지못해/싫은 듯 이쪽을 노려보면서도 마지못해")%
 ELSEIF TALENT:TARGET:恋人持ち == 3
-PRINTFORM 지금은 고인이 된 반려에게 작게 사죄를 말하면서도
+PRINTFORM 고인이 된 반려에게 작게 사죄를 말하면서도
 ELSEIF TALENT:TARGET:恋人持ち == 2
 PRINTFORM 반려에게 작게 사죄를 말하면서도
 ELSEIF TALENT:TARGET:恋人持ち == 1
 PRINTFORM 연인에게 작게 사죄를 말하면서도
 ELSEIF TALENT:TARGET:恋人持ち == -1
-PRINTFORM 마음에 둔 사람에게 작게 사죄를 말하면서도
+PRINTFORM 마음속 연인에게 작게 사죄를 말하면서도
 ELSEIF TALENT:TARGET:セフレ
-PRINTFORM 히죽히죽 놀리는 듯한 미소를 띠고
+PRINTFORM 능글능글하게 놀리는 듯한 미소를 지으며
 ELSEIF TALENT:TARGET:精神的余裕 == 2
 PRINTFORM 천박하다고 한숨을 쉬면서도
 ELSEIF TALENT:TARGET:ギャル
 PRINTFORM 태연하게
 ELSEIF TALENT:TARGET:羞恥心
-PRINTFORM %TEXTR("얼굴을 새빨갛게 하고/부끄러워 고개를 숙이며")%면서
+PRINTFORM %TEXTR("얼굴을 새빨갛게 붉히고/부끄러워 고개를 숙이며")%면서
 ELSEIF TALENT:TARGET:性的興味
-	PRINTFORM %TEXTR("흥미진진한/기대로 가득 찬")% 모습으로
+	PRINTFORM %TEXTR("호기심 가득한/기대에 찬")% 모습으로
 ELSEIF TALENT:TARGET:性欲 <= -1
 	PRINTFORM 어디까지나 사무적으로
 ELSE
 	PRINTFORM 부끄러워하면서도
 ENDIF
-PRINTFORMW %TEXTR("승낙/승낙")%하고, %CALLNAME:PLAYER%%TEXTR("와 가까운 물그림자로 숨었다/를 가까운 물그림자로 이끌었다/에 이끌려 가까운 물그림자에 숨었다")%……
+PRINTFORMW %TEXTR("승낙/수락")%하고, %CALLNAME:PLAYER%%TEXTR("와 가까운 물그림자로 숨었다/를 가까운 물그림자로 이끌었다/에게 이끌려 가까운 물그림자에 숨었다")%……
 PRINTL
 PRINTFORMW ────
 PRINTL
-PRINTFORMW %CALLNAME:PLAYER%는 한 손으로 %CALLNAME:TARGET%의 비부를 희롱하며, 절정하는 모습을 즐겼다.
+PRINTFORMW %CALLNAME:PLAYER%은(는) 한 손으로 %CALLNAME:TARGET%의 은밀한 곳을 희롱하며, 절정하는 모습을 즐겼다.

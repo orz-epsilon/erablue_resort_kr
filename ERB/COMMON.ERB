@@ -362,49 +362,49 @@ RETURNF 月登録:((DAY / 30) % 4)
 #FUNCTIONS
 SELECTCASE ARG
 	CASE 1
-		RETURNF "サンドイッチ"
+		RETURNF "샌드위치"
 	CASE 2
-		RETURNF "おにぎり"
+		RETURNF "주먹밥"
 	CASE 10
-		RETURNF "ヲムレツ"
+		RETURNF "오믈렛"
 	CASE 11
-		RETURNF "シチュー"
+		RETURNF "스튜"
 	CASE 12
-		RETURNF "ハンバーグ"
+		RETURNF "햄버그"
 	CASE 13
-		RETURNF "グラタン"
+		RETURNF "그라탱"
 	CASE 14
-		RETURNF "カレーライス"
+		RETURNF "카레라이스"
 	CASE 15
-		RETURNF "ステーキ"
+		RETURNF "스테이크"
 	CASE 16
-		RETURNF "ラーメン"
+		RETURNF "라멘"
 	CASE 17
-		RETURNF "うどん"
+		RETURNF "우동"
 	CASE 18
-		RETURNF "素麺"
+		RETURNF "소면"
 	CASE 19
-		RETURNF "蕎麦"
+		RETURNF "소바"
 	CASE 50
-		RETURNF "プリン"
+		RETURNF "푸딩"
 	CASE 51
-		RETURNF "ケーキ"
+		RETURNF "케이크"
 	CASE 52
-		RETURNF "ゼリー"
+		RETURNF "젤리"
 	CASE 53
-		RETURNF "タルト"
+		RETURNF "타르트"
 	CASE 54
-		RETURNF "クッキー"
+		RETURNF "쿠키"
 	CASE 55
-		RETURNF "パイ"
+		RETURNF "파이"
 	CASE 56
-		RETURNF "羊羹"
+		RETURNF "양갱"
 	CASE 57
-		RETURNF "大福"
+		RETURNF "다이후쿠"
 	CASE 58
-		RETURNF "カステラ"
+		RETURNF "카스텔라"
 	CASE 59
-		RETURNF "団子"
+		RETURNF "당고"
 ENDSELECT
 
 ;-------------------------------------------------
@@ -553,9 +553,9 @@ RETURNF 返り文字列
 時間保存 = 時間数値 % 1440
 
 IF 日付のみフラグ
-	PRINTFORM %@"{日付保存 / 120 + 1}년째 %月登録:((日付保存 / 30) % 4)% {日付保存 % 30 + 1}일(%曜日登録:(日付保存 % 7)%)", 22, LEFT%
+PRINTFORM %@"{日付保存 / 120 + 1}年目 %월 등록:((日付保存 / 30) % 4)% {日付保存 % 30 + 1}일(%曜日登録:(日付保存 % 7)%)", 22, LEFT%
 ELSE
-	PRINTFORM %@"{日付保存 / 120 + 1}년째 %月登録:((日付保存 / 30) % 4)% {日付保存 % 30 + 1}일(%曜日登録:(日付保存 % 7)%){時間保存 / 60}시{時間保存 % 60}분", 30, LEFT%
+PRINTFORM %@"{日付保存 / 120 + 1}年目 %월 등록:((日付保存 / 30) % 4)% {日付保存 % 30 + 1}일(%曜日登録:(日付保存 % 7)%){時間保存 / 60}時{時間保存 % 60}분", 30, LEFT%
 ENDIF
 
 

@@ -39,7 +39,7 @@ RESETCOLOR
 PRINTC 능력 표시(마스터)[804]
 PRINTC 　　억지로 우후후를 끝내다[999]
 SIF CSTR:TARGET:うふふシチュ記録 == "むりやりうふふごっこ"
-	PRINTC 　　통상 우후후로 돌아가다[998]
+	PRINTC 　　통상 우후후로 돌아가기[998]
 
 PRINTL
 PRINTC OPTION[809]
@@ -449,6 +449,9 @@ ELSEIF RESULT == 804
 ELSEIF RESULT == 809
 	CALL OPTION
 	RETURN 1
+ELSEIF RESULT == 889
+	INVERTBIT 画像サイズ切り替えOPTION記憶, 0
+	RETURN 1
 ELSEIF RESULT == 890
 	INVERTBIT あなた射精我慢フラグ, 0
 	RETURN 1
@@ -463,6 +466,8 @@ ELSEIF RESULT == 895
 	RETURN 1
 ELSEIF RESULT == 999
 	CALL ゲームフェイズ変更("通常モード")
+	SIF FLAG:イベントうふふ中フラグ
+		FLAG:イベントうふふ終了 = 1
 	RETURN 1
 ELSEIF RESULT == 998
 	;通常に戻る
@@ -566,7 +571,7 @@ IF FLAG:汎用文章表示切り替えオプション > 0
 		IF TCVAR:PLAYER:弱点コマンドフラグ
 			DRAWLINE
 			SETCOLOR カラーパレット("えっちな色")
-			PRINTFORMW <<<약점 커맨드!!（%CALLNAME:PLAYER%）>>>
+			PRINTFORMW <<<약점 커맨드！！（%CALLNAME:PLAYER%）>>>
 			RESETCOLOR
 		ELSEIF TCVAR:PLAYER:弱点シチュフラグ
 			SETCOLOR カラーパレット("えっちな色")
@@ -582,7 +587,7 @@ IF FLAG:汎用文章表示切り替えオプション > 0
 		IF TCVAR:(TARGET:LOCAL):弱点コマンドフラグ
 			DRAWLINE
 			SETCOLOR カラーパレット("えっちな色")
-			PRINTFORMW <<<약점 커맨드!!（%CALLNAME:(TARGET:LOCAL)%）>>>
+PRINTFORMW <<<약점 커맨드!!（%CALLNAME:(TARGET:LOCAL)%）>>>
 			RESETCOLOR
 		ELSEIF TCVAR:(TARGET:LOCAL):弱点シチュフラグ
 			SETCOLOR カラーパレット("えっちな色")
@@ -706,6 +711,7 @@ ENDIF
 #DIM 回数保存
 #DIM 表示候補, 1000
 #DIM わからせフラグ
+#DIM COM保存
 
 IF TFLAG:オートコマンドフラグ || TFLAG:オートコマンド連続発動
 ELSE
@@ -764,11 +770,11 @@ CALL TURN_RESET
 COM_RAND = RAND:1000
 
 ;泥酔眠姦中一定確率で目覚める
-IF TCVAR:TARGET:泥酔眠姦 == 1 && TCVAR:TARGET:言いなり == 1 && CFLAG:TARGET:睡眠 >= 1 && RAND:10 <= 1
+IF TCVAR:TARGET:泥酔眠姦 == 1 && TCVAR:TARGET:言いなり == 1 && CFLAG:TARGET:睡眠 >= 1 && RAND:20 == 0
 	CFLAG:TARGET:睡眠 = 0
 	PRINTFORMW %CALLNAME:TARGET%이(가) 눈을 뜬 것 같다.
 	PRINTL
-	PRINTFORMW ……하지만, 취기에서 벗어나지 못한%CALLNAME:TARGET%은(는) 무엇을 당하고 있는지도 모르는 채 당하고 있는 것 같다…….
+	PRINTFORMW ……하지만, 취기에서 벗어나지 못한 %CALLNAME:TARGET%은(는) 무엇을 당하고 있는지도 모르는 채 당하는 대로 내버려두고 있다……。
 ENDIF
 
 ;脱衣コマンド
@@ -862,8 +868,26 @@ IF わからせフラグ
 	
 	SAVESTR:ゲームフェイズ管理 = 通常モード
 
-	;言いなり付与
-	TCVAR:TARGET:言いなり = 1
+	; ;通常モードに移行してうふふへ
+	; LOCALS '= CSTR:TARGET:コスプレ前の服
+	; LOCALS:1 '= CSTR:TARGET:着せ替え服
+	; TARGET保存 = TARGET
+	; ;ゲームフェイズ変更でリセットされるのでSELECTCOM保存
+	; SWAP SELECTCOM, COM保存
+	; CALL ゲームフェイズ変更("通常モード")
+	; ;SELECTCOM復帰
+	; SWAP SELECTCOM, COM保存
+	; ;食いしばり時などはうふふに入らない
+	; IF CFLAG:TARGET:体力限界 == 0
+	; 	TARGET = TARGET保存
+	; 	CSTR:TARGET:コスプレ前の服 '= LOCALS
+	; 	CALL CLOTHES_CHANGE(TARGET, LOCALS:1)
+	; 	;うふふに移行
+	; 	CALL うふふ開始キャラ処理(TARGET, "わからせ")
+	; 	CFLAG:PLAYER:うふふ = 1
+	; 	;言いなり付与
+	; 	TCVAR:TARGET:言いなり = 1
+	; ENDIF
 ENDIF
 
 ;設定している食事メニューによって回復量設定
@@ -887,10 +911,10 @@ FOR LOCAL, 0, CHARANUM
 NEXT
 
 ;寝落ち
-IF FLAG:お出かけ先フラグ > 0 && TIME > 1260
+IF FLAG:外出先番号 > 0 && TIME > 1260
 	TFLAG:オートコマンドフラグ = 0
 
-	PRINTW (슬슬 귀가할 시간이다… 하루를 종료합니다)
+	PRINTW （슬슬 귀가할 시간이다… 하루를 종료합니다）
 	;二日酔い処理のため、酩酊が残ってたら絶対値を負に
 	BASE:MASTER:酩酊 = BASE:MASTER:酩酊 * -1
 
@@ -900,10 +924,10 @@ IF FLAG:お出かけ先フラグ > 0 && TIME > 1260
 	CFLAG:MASTER:現在マップ種別 = 0
 	CALL ゲームフェイズ変更("通常モード")
 	FLAG:一日終了 = 1
-ELSEIF CFLAG:MASTER:起床予定時刻 > TIME && CFLAG:MASTER:起床予定時刻 - 120 < TIME
+ELSEIF CFLAG:MASTER:起床予定時刻 > TIME && CFLAG:MASTER:起床予定時刻 - 120 < TIME && FLAG:イベントうふふ中フラグ == 0
 	TFLAG:オートコマンドフラグ = 0
 
-	PRINTW (졸음이 한계다… 하루를 종료합니다)
+	PRINTW （졸음이 한계다… 하루를 종료합니다）
 	;二日酔い処理のため、酩酊が残ってたら絶対値を負に
 	BASE:MASTER:酩酊 = BASE:MASTER:酩酊 * -1
 
@@ -921,7 +945,7 @@ FOR LOCAL, 1, CHARANUM
 		BASE:(TARGET:LOCAL):体力 = 1
 		TCVAR:(TARGET:LOCAL):食いしばりフラグ --
 	ELSEIF BASE:(TARGET:LOCAL):体力 < 1 && !CFLAG:(TARGET:LOCAL):体力限界
-		PRINTFORML (%CALLNAME:(TARGET:LOCAL)%의 체력이 한계에 다다랐습니다)
+		PRINTFORML （%CALLNAME:(TARGET:LOCAL)%의 체력이 한계에 도달했습니다）
 		TRYCALLFORM KOJO_EVENT_むりやりうふふ体力限界_{NO:(TARGET:LOCAL)}(TARGET:LOCAL)
 		FORCEWAIT
 		IF CFLAG:(TARGET:LOCAL):デート == MASTER + 100
@@ -978,7 +1002,7 @@ IF LOCAL > 0
 	PRINTL
 	PRINTFORML \@ LOCAL / 60 > 0?{LOCAL / 60}시간# \@{LOCAL % 60}분 경과
 ENDIF
-TIME:2 = TIME > 1440 ? TIME - 1440 # TIME
+TIME:2 = TIME >= 1440 ? TIME - 1440 # TIME
 
 WAIT
 

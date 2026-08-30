@@ -9,18 +9,18 @@ SELECTCASE ARGS
 		LOCALS = <div rect='2125,500,3762,2812'>
 		LOCALS += "■세단제<br>"
 		LOCALS += "<br>"
-		LOCALS += "특설 회장에서 신년을 축하하는 축제입니다.<br>"
-		LOCALS += "엄숙한 분위기를 공유함으로써 참가자들의 거리는 더욱 가까워질 것입니다.<br>"
+		LOCALS += "특설 회장에서 신년을 축하하는 축제입니다. <br>"
+		LOCALS += "엄숙한 분위기를 공유함으로써 참가자들의 거리는 더욱 가까워질 것입니다. <br>"
 		LOCALS += "<br>"
-		LOCALS += "활기찬 장소에서는 호감도 요소: 우정의 상승률이 1.3배가 됩니다.<br>"
-		LOCALS += "조용한 장소에서는 호감도 요소: 신뢰의 상승률이 1.3배가 됩니다.<br>"
-		LOCALS += "여성 종업원의 제복이 무녀 복장이 됩니다.<br>"
-		LOCALS += "일정 조건을 만족한 캐릭터가 하레기(명절 옷)를 입을 수 있습니다.<br>"
+		LOCALS += "활기찬장소에서는호감도要素：友情의 상승률이 1.3배가 됩니다. <br>"
+		LOCALS += "조용한장소에서는호감도要素：信頼의 상승률이 1.3배가 됩니다. <br>"
+		LOCALS += "여성 종업원의 제복이 무녀 복장이 됩니다. <br>"
+		LOCALS += "일정 조건을 만족한 캐릭터가 하레기(명절 옷)를 입을 수 있습니다. <br>"
 		LOCALS += "<br>"
 		IF 開催費用 > MONEY
-			LOCALS += @"루피가 부족합니다. (필요 루피：%NUM_FORMAT(開催費用)%）<br>"
+			LOCALS += @"루피가 부족합니다. (필요 루피:%NUM_FORMAT(開催費用)%)<br>"
 		ELSE
-			LOCALS += @"<button value='0'>[0] 이 축제를 기획한다 (필요 루피：%NUM_FORMAT(開催費用)%）</button><br>"
+			LOCALS += @"<button value='0'>[0] 이 축제를 기획한다 (필요 루피:%NUM_FORMAT(開催費用)%)</button><br>"
 		ENDIF
 		LOCALS += "</div>"
 		HTML_PRINT LOCALS, 1
@@ -44,8 +44,8 @@ SELECTCASE ARGS
 	CASE "就寝場所"
 		RETURN 0
 	CASE "初期位置"
-		CFLAG:キャラ番号:現在位置 = 6
-		CFLAG:キャラ番号:現在マップ種別 = 0
+		CFLAG:キャラ番号:現在位置 = キャラクター部屋検索(キャラ番号)
+		CFLAG:キャラ番号:現在マップ種別 = 部屋検索_マップ種別
 	CASE "お祭り補正条件"
 		;歳旦祭マップに居る時
 		IF CFLAG:キャラ番号:現在マップ種別 == 100
@@ -65,7 +65,9 @@ SELECTCASE ARGS
 		;お祭り開催で服入手
 		CALL 制服登録処理("巫女装束")
 		CALL 制服登録処理("晴れ着")
-		IF TALENT:キャラ番号:従業員 && GETBIT(TALENT:キャラ番号:性別, 0)
+		RESULT = 0
+		TRYCALLFORMF 性別処理制御_{NO:キャラ番号}(キャラ番号, "服着用性別")
+		IF TALENT:キャラ番号:従業員 && (GETBIT(TALENT:キャラ番号:性別, 0) || RESULT == 1)
 			;制服がセクシー巫女服の場合、そのまま
 			SIF 現在制服:キャラ番号:0 == "セクシー巫女服"
 				RETURN

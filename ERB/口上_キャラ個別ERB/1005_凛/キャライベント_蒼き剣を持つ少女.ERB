@@ -1,4 +1,4 @@
-﻿
+
 @イベント発生条件_キャライベント_蒼き剣を持つ少女
 ;開放条件を満たしたら1を返すこと
 LOCAL = GETCHARA(1005)
@@ -8,34 +8,39 @@ ENDIF
 RETURN 0
 
 @イベント関数_キャライベント_蒼き剣を持つ少女(ARG)
+#DIM キャラ番号取得
+
+キャラ番号取得 = GETCHARA(1005)
+
 DRAWLINE
-PRINTL ［蒼き剣を持つ少女］
+PRINTL ［푸른 검을 든 소녀］
 DRAWLINE
 PRINTW
-PRINTFORMW %CALLNAME:PLAYER%が門にZPを注ぐ。
-PRINTFORMW すると門が光り輝き、平行世界への道を開いて────中から一人の少女が転がり出てきた。
-PRINTFORMW 少女は蒼を基調とした軽装の剣士服で、服と同じく蒼の剣を持っている。騎空士の類だろうか。
+PRINTFORMW %CALLNAME:PLAYER%이(가) 문에 ZP를 쏟아붓는다.
+PRINTFORMW 그러자 문이 빛나며 평행세계로 가는 길을 열고────그 안에서 한 소녀가 굴러 나왔다.
+PRINTFORMW 소녀는 푸른색을 기조로 한 경무장 검사복을 입고 있었고, 옷과 마찬가지로 푸른 검을 들고 있었다. 기공사 종류일까.
+CALL PRINT_STRL(@"IMAGEPATH_%CSTR:キャラ番号取得:画像フォルダ%/短冊_凛のビキニアーマー")
 PRINTL
-PRINTL 凛：
-PRINTFORMW 「……ここは？　さっきまで控室にいたはずなのに……」
+PRINTL 린:
+PRINTFORMW 「……여기는? 방금 전까지 대기실에 있었을 텐데……」
 PRINTL
-PRINTFORMW 戸惑い驚く少女に%CALLNAME:PLAYER%は簡単な説明を行う。
-PRINTFORMW ここは元いた世界とは別の世界であること。
-PRINTFORMW いつでも元の世界には戻れること。
-PRINTFORMW リゾートの顧客開拓のために道を繋げたので、良ければ楽しんで行って欲しいということ。
-PRINTFORMW 実際に門の中に戻ってみた少女は納得したのか、落ち着きを取り戻している。
+PRINTFORMW 당황하며 놀라는 소녀에게 %CALLNAME:PLAYER%은(는) 간단한 설명을 해준다.
+PRINTFORMW 이곳은 원래 있던 세계와는 다른 세계라는 것.
+PRINTFORMW 언제든지 원래 세계로 돌아갈 수 있다는 것.
+PRINTFORMW 리조트 고객 개척을 위해 길을 연결했으니, 괜찮다면 즐겁게 지내다 가줬으면 한다는 것.
+PRINTFORMW 실제로 문 안으로 돌아가 본 소녀는 납득했는지, 안정을 되찾고 있다.
 PRINTL
-PRINTL 凛：
-PRINTFORMW 「剣と魔法のファンタジーなんて、物語の中だけだと思ってたけど
-PRINTFORMW 　ふーん……まあ、悪くないかな。異世界の経験もステージに活かせるかもしれないし
-PRINTFORMW 　だけど今は本番前だから一回戻りたいんだけど、いい？」
+PRINTL 린:
+PRINTFORMW 「검과 마법의 판타지 같은 건 이야기 속에만 있는 줄 알았는데
+PRINTFORMW 　흐음…… 뭐, 나쁘지 않네. 이세계 경험도 무대에 활용할 수 있을지도 모르고
+PRINTFORMW 　하지만 지금은 본방 전이니까 한 번 돌아가고 싶은데, 괜찮을까?」
 PRINTL
-PRINTFORMW もちろん、と%CALLNAME:PLAYER%は頷いて少女に魔法を掛ける。
-PRINTFORMW 念じればいつでもこちらの世界へ移動出来る魔法だ。と少女に説明する。
+PRINTFORMW 물론, 하고%CALLNAME:PLAYER%은(는) 고개를 끄덕이며 소녀에게 마법을 건다.
+PRINTFORMW 마음속으로 생각하면 언제든지 이 세계로 이동할 수 있는 마법이야. 라고 소녀에게 설명한다.
 PRINTL
-PRINTL 凛：
-PRINTFORMW 「わかった、ありがとね
-PRINTFORMW 　私は渋谷凛。よろしく、管理人さん」
+PRINTL 린:
+PRINTFORMW 「알았어, 고마워
+PRINTFORMW 　나는 시부야 린. 잘 부탁해, 관리인 씨」
 
 CALL イベント完了フラグ汎用処理("蒼き剣を持つ少女")
 

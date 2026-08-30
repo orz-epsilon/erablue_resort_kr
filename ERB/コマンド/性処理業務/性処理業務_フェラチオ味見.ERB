@@ -7,10 +7,10 @@ TSTR:コマンド名受渡 = 펠라치오 맛보기
 
 @性処理_TOOLTIP_フェラチオ味見
 LOCALS = <br>■펠라치오 맛보기<br>
-LOCALS += @"%CALLNAME:TARGET%의 페니스를%CALLNAME:PLAYER%가 빨아주는 성처리. <br>"
-LOCALS += "말 그대로 맛보기. <br>"
-LOCALS += "악취 민감·결벽증의 경우, 요구 호감도·요구 금액이 대폭 상승한다. <br>"
-LOCALS += "<br>COM 타입: 성처리<br>획득 소스: 노출·접촉·봉사·불결"
+LOCALS += @"%CALLNAME:TARGET%의 페니스를%CALLNAME:PLAYER%가 빨아주는 성처리.<br>"
+LOCALS += "말 그대로의 맛보기.<br>"
+LOCALS += "악취 민감・결벽증의 경우, 요구호감도・요구금액이 대폭 상승한다.<br>"
+LOCALS += "<br>COM 타입：성처리<br>획득 소스：노출・접촉・봉사・불결"
 LOCALS += "<br>고유 획득 경험: 구강성교 경험(PLAYER)<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
@@ -259,7 +259,7 @@ IF 同性愛性癖判定(TARGET,PLAYER) == 1
 			;補正なし
 		CASE 2
 			値段計算 -= 100
-			PRINTFORML %@"%재능명%(愛好)", 25, LEFT%：－%NUM_FORMAT(100), 8%루피
+			PRINTFORML %@"%소질명%(愛好)", 25, LEFT%：－%NUM_FORMAT(100), 8%루피
 		CASE 3
 			値段計算 -= 250
 			PRINTFORML %@"%소질명%(中毒)", 25, LEFT%：－%NUM_FORMAT(250), 8%루피
@@ -364,12 +364,12 @@ SIF 値段計算 < 0
 	値段計算 = 0
 
 ;割引クーポンはひとつまでです！
-IF TALENT:対象キャラ:恋慕
+IF TALENT:対象キャラ:恋慕 || TALENT:対象キャラ:疑似恋慕
 	DRAWLINE
 	PRINTFORML 할인
 ;恋慕は完全無料
 	SETCOLOR カラーパレット("ピンク")
-	PRINTFORM %"だいすき割", 25, LEFT%：　　　　　%CALLNAME:PLAYER%한정 100％ 할인
+	PRINTFORM %"だいすき割", 25, LEFT%：　　　　　%CALLNAME:PLAYER%한정100％ 할인
 	CALL PRINT_STRL(@"_H_")
 	RESETCOLOR
 	値段計算 *= 0
@@ -380,7 +380,7 @@ ELSEIF TALENT:対象キャラ:弱味
 ;せっかく値段が出るんだしタダで抱かせてもらうよりも「100円で買ってあげた」みたいののほうが尊厳を性的搾取できている感が出るので
 ;本来は30,000ルピ……ですが！なんと！今回に限り！お客様だけに！99%オフの300ルピで！！のほうが絶対にシコれる。古事記にもそう書かれている。
 	SETCOLOR カラーパレット("赤ピンク")
-	PRINTFORM %"弱み", 25, LEFT%：　　　　　99% 할인
+	PRINTFORM %"弱み", 25, LEFT%：　　　　　99％ 할인
 	CALL PRINT_STRL(@"_H_")
 	RESETCOLOR
 	値段計算 /= 100
@@ -397,14 +397,14 @@ ELSEIF CFLAG:TARGET:発情期フラグ < 0 && BASE:TARGET:性欲 >= 500
 ;発情期
 	IF BASE:TARGET:性欲 >= 1000
 		SETCOLOR カラーパレット("ピンク")
-		PRINTFORM %"発情期でムラムラ中", 25, LEFT%：　　　　　30% 할인
+		PRINTFORM %"発情期でムラムラ中", 25, LEFT%：　　　　　30％ 할인
 		CALL PRINT_STRL(@"_H_")
 		RESETCOLOR
 		値段計算 /= 10
 		値段計算 *= 7
 	ELSE
 		SETCOLOR カラーパレット("ピンク")
-		PRINTFORM %"発情期でムラムラ中", 25, LEFT%：　　　　　10% 할인
+		PRINTFORM %"発情期でムラムラ中", 25, LEFT%：　　　　　10％ 할인
 		CALL PRINT_STRL(@"_H_")
 		RESETCOLOR
 		値段計算 /= 10
@@ -477,7 +477,7 @@ RETURN 1
 
 PRINTFORM %CALLNAME:TARGET%은(는)
 IF TALENT:TARGET:恋慕
-	PRINTFORM 요구받는 것이 기쁜지 미소 지으며
+	PRINTFORM 요구받는 것이 기쁜지 웃는 얼굴로
 ELSEIF TALENT:TARGET:弱味 || (TALENT:性別嗜好 == 2 && TALENT:PLAYER:性別 == 1)
 ;これだけ露骨に浮かぶバリエーションが多い……なんでやろな？
 	PRINTFORM %TEXTR("마지못해 하는 듯한 느낌으로/싫은 듯 얼굴을 찌푸리면서도 마지못해/불쾌한 듯 눈살을 찌푸리면서도 마지못해/싫은 듯 이쪽을 노려보면서도 마지못해")%
@@ -488,15 +488,15 @@ ELSEIF TALENT:TARGET:恋人持ち == 2
 ELSEIF TALENT:TARGET:恋人持ち == 1
 	PRINTFORM 연인에게 작게 사죄를 말하면서도
 ELSEIF TALENT:TARGET:恋人持ち == -1
-	PRINTFORM 마음에 둔 사람에게 작게 사죄를 말하면서도
+	PRINTFORM 마음속 사람에게 작게 사죄를 말하면서도
 ELSEIF TALENT:TARGET:セフレ
-	PRINTFORM 히죽히죽 놀리듯이 웃음을 띠며
+	PRINTFORM 능글능글하게 놀리는 듯한 미소를 지으며
 ELSEIF TALENT:TARGET:精神的余裕 == 2
-	PRINTFORM 천박하다며 한숨을 쉬면서도
+	PRINTFORM 천박하다는 듯 한숨을 쉬면서도
 ELSEIF TALENT:TARGET:ギャル
 	PRINTFORM 태연하게
 ELSEIF TALENT:TARGET:羞恥心
-	PRINTFORM %TEXTR("얼굴을 새빨갛게 하고/부끄러워 고개를 숙이며")%면서
+	PRINTFORM %TEXTR("얼굴을 새빨갛게 붉히며/부끄러워 고개를 숙이며")%면서
 ELSEIF TALENT:TARGET:性的興味
 	PRINTFORM %TEXTR("흥미진진한/기대에 찬")% 모습으로
 ELSEIF TALENT:TARGET:性欲 <= -1
@@ -504,7 +504,7 @@ ELSEIF TALENT:TARGET:性欲 <= -1
 ELSE
 	PRINTFORM 부끄러워하면서도
 ENDIF
-PRINTFORMW %TEXTR("승낙/수락")%하고, %CALLNAME:PLAYER%%TEXTR("와 가까운 물그림자로 숨었다/를 가까운 물그림자로 이끌었다/에게 이끌려 가까운 물그림자에 숨었다")%……
+PRINTFORMW %TEXTR("승낙/수락")%하고, %CALLNAME:PLAYER%%TEXTR("와 가까운 그림자 속으로 숨었다/를 가까운 그림자 속으로 이끌었다/에게 이끌려 가까운 그림자 속에 숨었다")%……
 PRINTL
 PRINTFORMW ────
 PRINTL

@@ -4,6 +4,8 @@
 #DIM 関数総数
 #DIM 服値段
 #DIMS 衣装関数登録, 500
+#DIM DYNAMIC 現在ページ
+#DIM 表示数
 
 LOCALS = 
 DRAWLINE
@@ -11,12 +13,13 @@ PRINTL 이세계 디자인으로 만들어진 희귀한 옷을 판매하고 있�
 PRINTL ※그렇지 않은 옷도 진열되어 있습니다
 DRAWLINE
 LOCALS += "<div rect='4469,0,1562,625' border='31' bcolor='#C0C0C0'></div>"
-LOCALS += @"<div rect='4531,62,1562,625'>소지 루피:%NUM_FORMAT(MONEY)%루피<br>소지 ZP　:%ZP所持量全文字列()%</div>"
+LOCALS += @"<div rect='4531,62,1562,625'>보유 루피:%NUM_FORMAT(MONEY)%루피<br>보유 ZP　:%ZP所持量全文字列()%</div>"
 LOCALS += "<div rect='62,0,4375,3000' padding='50, 25, 50' border='31' bcolor='#C0C0C0'>"
 ;許可があり、かつ入手してない服を並べる
 VARSET RESULTS
 関数総数 = ENUMFUNCBEGINSWITH("CLOTHES_衣装説明_")
 ARRAYCOPY "RESULTS", "衣装関数登録"
+表示数 = 0
 FOR LOCAL, 0, 関数総数
 	SIF STRFIND(所持制服文字列, @"汎用/%REPLACE(衣装関数登録:LOCAL, "CLOTHES_衣装説明_", "")%_") > -1
 		CONTINUE
@@ -25,17 +28,34 @@ FOR LOCAL, 0, 関数総数
 	VARSET RESULTS
 	販売禁止フラグ = 0
 	CALLFORM %衣装関数登録:LOCAL%()
+	服値段 = RESULT
 	SIF 販売禁止フラグ
 		CONTINUE
-	服値段 = RESULT
-	LOCALS += @"<button value='{LOCAL}'>[{LOCAL, 2}] %RESULTS:2%:%REPLACE(衣装関数登録:LOCAL, "CLOTHES_衣装説明_", ""), 30, LEFT%을(를) 구매한다</button>　　"
-	LOCALS += @"가격:%NUM_FORMAT(服値段), 10%루피"
+	表示数 ++
+	SIF 現在ページ != 表示数 / 22
+		CONTINUE
+	LOCALS += @"<button value='{LOCAL}'>[{LOCAL, 2}] %RESULTS:2%：%REPLACE(衣装関数登録:LOCAL, "CLOTHES_衣装説明_", ""), 30, LEFT%을(를) 구매한다</button>　　"
+	LOCALS += @"가격：%NUM_FORMAT(服値段), 10%루피"
 	LOCALS += "<br>"
 NEXT
 
 LOCALS += "</div>"
 
 
+LOCALS += "<div rect='1000,2712,4375,281'>"
+IF 現在ページ > 0
+	LOCALS += "<button value='1000'>[1000] 이전 페이지로</button>"
+ELSE
+	LOCALS += @"<font color='#%カラーパレット_HTML("グレーアウト")%'>[1000] 이전 페이지로</font>"
+ENDIF
+LOCALS += @"　　　- {現在ページ + 1} -　　　"
+IF 表示数 >= (現在ページ + 1) * 22
+	LOCALS += "<button value='1001'>[1001] 다음 페이지로</button>"
+ELSE
+	LOCALS += @"<font color='#%カラーパレット_HTML("グレーアウト")%'>[1001] 다음 페이지로</font>"
+ENDIF
+LOCALS += "<br>"
+LOCALS += "</div>"
 LOCALS += "<div rect='1550,2812,5125,281'>"
 LOCALS += "<button value='998'>[998] 시스템 설명</button>　　"
 LOCALS += "<button value='999'>[999] 돌아가기</button>"
@@ -57,7 +77,7 @@ SELECTCASE LOCAL
 		RETURN -1
 	CASE 998
 		DRAWLINE
-		PRINTL ［이세계 재봉점: 튜토리얼］
+		PRINTL ［이세계 재봉점：튜토리얼］
 		DRAWLINE
 		HTML_PRINT "<img src='顔エラ' height='900' width='900'>"
 		PRINTL 
@@ -70,6 +90,12 @@ SELECTCASE LOCAL
 		CALL 異世界裁店システムチュートリアル
 		DRAWLINE
 		RESTART
+	CASE 1000
+		現在ページ --
+		RESTART
+	CASE 1001
+		現在ページ ++
+		RESTART
 	CASEELSE
 		;詳細表示
 		DRAWLINE
@@ -78,12 +104,12 @@ SELECTCASE LOCAL
 		PRINTFORML ■%REPLACE(衣装関数登録:LOCAL, "CLOTHES_衣装説明_", "")%
 		HTML_PRINT RESULTS
 		PRINTL
-		PRINTFORML 출처:%RESULTS:1%
+		PRINTFORML 출처：%RESULTS:1%
 		DRAWLINE
 		PRINTL 이 의상을 구매하시겠습니까?
 		PRINTBUTTON "[0] 예", 0
 		PRINTL
-		PRINTBUTTON "[1] 아니요", 1
+		PRINTBUTTON "[1] 아니오", 1
 		PRINTL
 		BINPUT
 		IF RESULT == 0
@@ -95,7 +121,7 @@ SELECTCASE LOCAL
 				RESTART
 			ENDIF
 			MONEY -= RESULT
-			PRINTFORMW %REPLACE(衣装関数登録:LOCAL, "CLOTHES_衣装説明_", "")%을(를) 구매했습니다.
+PRINTFORMW %REPLACE(衣装関数登録:LOCAL, "CLOTHES_衣装説明_", "")%을(를) 구매했습니다.
 			IF RESULTS:2 == "通常衣装"
 				CALL 制服登録処理(REPLACE(衣装関数登録:LOCAL, "CLOTHES_衣装説明_", ""))
 			ELSE

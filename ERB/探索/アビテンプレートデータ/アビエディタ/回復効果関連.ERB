@@ -1,0 +1,239 @@
+
+@アビエディタ_回復効果追加(変更ID = 0, アビ段階 = 0, 取得条件)
+;アビ文字列１ 回復倍率に使用する能力値
+;アビ文字列２
+;アビ文字列３
+;アビ文字列４
+;アビ文字列５
+;アビ数値１ 回復倍率
+;アビ数値２ 回復固定値
+;アビ数値３ 
+;アビ数値４ 回復回数
+;アビ数値５
+#DIM 効果順番
+#DIM DYNAMIC 回復倍率
+#DIM DYNAMIC 回復固定値
+#DIMS DYNAMIC 回復能力値
+#DIMS DYNAMIC 回復対象
+#DIM DYNAMIC 回復回数
+#DIM アビ段階
+#DIM 回復モード
+#DIM 変更ID
+#DIMS HTML文字列
+#DIMS 取得条件
+
+#DIM 取得条件_Lv
+#DIMS 取得条件_陥落
+
+;効果の最初かどうかを判定
+IF 変更ID == 0
+	;アビ段階が同じ効果がある、かつ新規効果追加状態＝最初ではない
+	LOCAL = DT_SELECT("アビエディタデータベース", @"アビ段階 = {アビ段階}")
+	効果順番 = LOCAL
+ELSE
+	;既存効果変更の場合、行数を見る
+	FOR LOCAL, 0, DT_ROW_LENGTH("アビエディタデータベース")
+		IF DT_CELL_GET("アビエディタデータベース", LOCAL, "id") == 変更ID
+			効果順番 = LOCAL
+			BREAK
+		ENDIF
+	NEXT
+ENDIF
+
+IF 変更ID
+	回復対象 '= DT_CELL_GETS("アビエディタデータベース", 変更ID, "アビ対象", 1)
+	回復倍率 = DT_CELL_GET("アビエディタデータベース", 変更ID, "アビ数値１", 1)
+	回復固定値 = DT_CELL_GET("アビエディタデータベース", 変更ID, "アビ数値２", 1)
+	回復回数 = DT_CELL_GET("アビエディタデータベース", 変更ID, "アビ数値４", 1)
+	回復能力値 '= DT_CELL_GETS("アビエディタデータベース", 変更ID, "アビ文字列１", 1)
+	アビ段階 = DT_CELL_GET("アビエディタデータベース", 変更ID, "アビ段階", 1)
+ENDIF
+IF 回復対象 == ""
+	IF 効果順番 < 1
+		回復対象 = 敵単体
+	ELSE
+		回復対象 = 上と同じ相手
+	ENDIF
+ENDIF
+SIF 回復回数 < 1
+	回復回数 = 1
+SIF 回復能力値 == ""
+	回復能力値 = 回復力
+SIF 回復倍率 == 0
+	回復倍率 = 100
+
+$動作LOOP
+
+DRAWLINE
+PRINTL 회복 효과 설정을 선택해주세요.
+DRAWLINE
+
+PRINTL ・현재 효과
+PRINT 　　
+PRINTFORM %回復対象%에게
+IF 回復モード == 0
+	PRINTFORM ［%回復能力値%✕{回復倍率}％］의
+ELSE
+	PRINTFORM ［{回復固定値}］의
+ENDIF
+PRINT ＨＰ 회복을
+IF 回復回数 < 2
+	PRINT 부여한다.
+ELSE
+	PRINTFORM {回復回数}회 부여한다.
+ENDIF
+PRINTL
+DRAWLINE
+
+HTML文字列 = 
+HTML文字列 += "<div rect='50, 0, 5000, 3000' padding='50,25,50' color='#101010' border='31' bcolor='#C0C0C0'><nobr>"
+HTML文字列 += @"<button value='1'>[1] 회복 대상 변경</button>　　　　현재:%回復対象%<br>"
+IF 回復モード == 0
+	HTML文字列 += @"<button value='2'>[2] 사용 능력치 변경</button>　　　현재:%回復能力値%<br>"
+	HTML文字列 += @"<button value='3'>[3] 회복 배율 변경</button>　　　　현재:{回復倍率}％<br>"
+ELSE
+	HTML文字列 += @"<button value='3'>[3] 회복값 변경</button>　　　　　현재:{回復固定値}<br>"
+ENDIF
+HTML文字列 += @"<button value='5'>[5] 회복 횟수 변경</button>　　　현재:{回復回数}회<br>"
+HTML文字列 += "<br>"
+HTML文字列 += "<br>"
+HTML文字列 += @"<button value='998'>[998] 이 설정으로 효과 결정</button><br>"
+HTML文字列 += @"<button value='999'>[999] 저장하지 않고 돌아가기</button><br>"
+HTML文字列 += "</div>"
+
+;効果目安
+VARSET RESULTS
+取得条件_Lv = 0
+取得条件_陥落 = 
+SPLIT 取得条件, "***", RESULTS
+FOR LOCAL, 0, RESULT
+	IF STRFIND(RESULTS:LOCAL, "Lv") >= 0
+		取得条件_Lv = TOINT(REPLACE(RESULTS:LOCAL, "Lv_", ""))
+	ELSEIF STRFIND(RESULTS:LOCAL, "陥落") >= 0
+		取得条件_陥落 '= REPLACE(RESULTS:LOCAL, "陥落_", "")
+	ENDIF
+NEXT
+HTML文字列 += "<div rect='5100, 0, 3000, 3000' padding='50,25,50' color='#101010' border='31' bcolor='#C0C0C0'><nobr>"
+HTML文字列 += "■참고 정보　　<br>　　작성 중"
+
+; IF 取得条件_Lv > 0 || 取得条件_陥落 != ""
+; 	SELECTCASE 取得条件_Lv
+; 		CASE 1 TO 10
+; 			LOCAL = 200
+; 		CASE 10 TO 20
+; 			LOCAL = 250
+; 		CASE 20 TO 30
+; 			LOCAL = 300
+; 		CASE 30 TO 40
+; 			LOCAL = 350
+; 		CASE 40 TO 50
+; 			LOCAL = 400
+; 		CASE 50 TO 60
+; 			LOCAL = 430
+; 		CASE 60 TO 70
+; 			LOCAL = 460
+; 		CASEELSE
+; 			LOCAL = 500
+; 	ENDSELECT
+; 	HTML文字列 += @"Lv<font color='#%カラーパレット_HTML("黄")%'>{MAX(1, 取得条件_Lv), 2}"
+; 	IF 取得条件_陥落 != ""
+; 		HTML文字列 += "＋陥落時"
+; 		LOCAL += 50
+; 	ENDIF
+; 	HTML文字列 += "</font> 時点<br>"
+; 	HTML文字列 += @"　　単体対象　回復目安：<font color='#%カラーパレット_HTML("黄")%'>{LOCAL, 4}</font>％<br>"
+; 	HTML文字列 += @"　　横列対象　回復目安：<font color='#%カラーパレット_HTML("黄")%'>{LOCAL * 8 / 10, 4}</font>％<br>"
+; 	HTML文字列 += @"　　縦列対象　回復目安：<font color='#%カラーパレット_HTML("黄")%'>{LOCAL * 6 / 10, 4}</font>％<br>"
+; 	HTML文字列 += @"　　全体対象　回復目安：<font color='#%カラーパレット_HTML("黄")%'>{LOCAL * 5 / 10, 4}</font>％<br>"
+; ELSE
+; 	HTML文字列 += @"Lv<font color='#%カラーパレット_HTML("黄")%'>1"
+; 	HTML文字列 += "</font> 時点<br>"
+; 	HTML文字列 += @"　　単体対象　回復目安：<font color='#%カラーパレット_HTML("黄")%'> 200</font>％<br>"
+; 	HTML文字列 += @"　　横列対象　回復目安：<font color='#%カラーパレット_HTML("黄")%'> 160</font>％<br>"
+; 	HTML文字列 += @"　　縦列対象　回復目安：<font color='#%カラーパレット_HTML("黄")%'> 120</font>％<br>"
+; 	HTML文字列 += @"　　全体対象　回復目安：<font color='#%カラーパレット_HTML("黄")%'> 100</font>％<br>"
+; ENDIF
+; HTML文字列 += "<br>"
+; HTML文字列 += "　　複数回攻撃の場合、合計を回復目安と同程度にすることを推奨します。<br>"
+HTML文字列 += "</div>"
+
+
+HTML_PRINT HTML文字列, 1
+FOR LOCAL, 0, 35
+	PRINTL
+NEXT
+
+BINPUT
+PRINTL
+PRINTL
+SELECTCASE RESULT
+	CASE 1
+		CALL アビエディタ_対象選択(回復対象, 効果順番)
+	CASE 2
+		DRAWLINE
+		PRINTFORML 사용할 능력치를 선택해 주세요. 현재：%回復能力値%
+		PRINTL
+		FOR LOCAL, 6, 10
+			PRINTBUTTON @"[{LOCAL}] %ERDNAME(基礎BATTLE_STATE, LOCAL)%", LOCAL
+			PRINTL
+		NEXT
+		BINPUT
+		PRINTL
+		PRINTL
+		回復能力値 '= ERDNAME(基礎BATTLE_STATE, RESULT)
+	CASE 3
+		DRAWLINE
+		IF 回復モード == 0
+			PRINTFORML 회복 배율을 입력해 주세요. 현재：{回復倍率}
+		ELSE
+			PRINTFORML 회복 값을 입력해 주세요. 현재：{回復固定値}
+		ENDIF
+		PRINTL
+		INPUT
+		IF RESULT < 1
+			PRINTW 0이나 음수 값은 지정할 수 없습니다.
+		ENDIF
+		IF 回復モード == 0
+			回復倍率 = RESULT
+		ELSE
+			回復固定値 = RESULT
+		ENDIF
+	CASE 5
+		DRAWLINE
+		PRINTFORML 회복 횟수를 입력해 주세요. 현재：{回復回数}회
+		PRINTL
+		INPUT
+		IF RESULT < 1
+			PRINTW 0이나 음수 값은 지정할 수 없습니다.
+		ENDIF
+		回復回数 = RESULT
+	CASE 998
+		IF 変更ID
+			;既存効果変更
+			DT_CELL_SET "アビエディタデータベース", 変更ID, "アビ対象", 回復対象, 1
+			DT_CELL_SET "アビエディタデータベース", 変更ID, "アビ数値４", 回復回数, 1
+			IF 回復モード == 0
+				DT_CELL_SET "アビエディタデータベース", 変更ID, "アビ文字列１", 回復能力値, 1
+				DT_CELL_SET "アビエディタデータベース", 変更ID, "アビ数値１", 回復倍率, 1
+				DT_CELL_SET "アビエディタデータベース", 変更ID, "アビ数値２", 0, 1
+			ELSE
+				DT_CELL_SET "アビエディタデータベース", 変更ID, "アビ数値２", 回復固定値, 1
+				DT_CELL_SET "アビエディタデータベース", 変更ID, "アビ文字列１", "", 1
+				DT_CELL_SET "アビエディタデータベース", 変更ID, "アビ数値１", 0, 1
+			ENDIF
+			PRINTW 회복 효과를 변경했습니다.
+		ELSE
+			;新規効果追加
+			IF 回復モード == 0
+				DT_ROW_ADD "アビエディタデータベース", "効果順番", 効果順番, "アビ段階", アビ段階, "アビ効果種別", "回復効果", "アビ対象", 回復対象, "アビ文字列１", 回復能力値, "アビ数値１", 回復倍率, "アビ数値４", 回復回数
+			ELSE
+				DT_ROW_ADD "アビエディタデータベース", "効果順番", 効果順番, "アビ段階", アビ段階, "アビ効果種別", "回復効果", "アビ対象", 回復対象, "アビ数値２", 回復固定値, "アビ数値４", 回復回数
+			ENDIF
+			PRINTW 새로운 회복 효과를 추가했습니다.
+		ENDIF
+		RETURN 1
+	CASE 999
+		RETURN 0
+ENDSELECT
+
+GOTO 動作LOOP

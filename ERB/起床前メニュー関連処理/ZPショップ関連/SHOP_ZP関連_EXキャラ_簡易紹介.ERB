@@ -76,7 +76,7 @@ PRINTL
 
 ; デバッグ用追加情報：各種番号
 [IF_DEBUG]
-PRINTPLAINFORM 　%"[DEBUG]", 8%：등록 번호[{対象キャラ}] / CSV 번호[{NO:対象キャラ}]
+PRINTPLAINFORM 　%"[DEBUG]", 8%：등록번호[{対象キャラ}] / CSV번호[{NO:対象キャラ}]
 PRINTL
 [ENDIF]
 
@@ -98,7 +98,7 @@ ELSE
 ENDIF
 
 ;- 身体情報
-見出し = □ プロフィール □
+見出し = □ 프로필 □
 PRINTSL 見出し + "-" * (LINE_LEN - STRLENS(見出し))
 
 ; 1行目：種族
@@ -110,6 +110,8 @@ PRINTL
 PRINT 　
 PRINTFORM %性別テキスト:0, LEN1:0%：%性別テキスト:1, LEN1:1, LEFT%
 PRINTFORM %年齢テキスト:0, LEN2:0%：%年齢テキスト:1, LEN2:1, LEFT%
+SIF SUMARRAY(LEN1) + SUMARRAY(LEN2) + SUMARRAY(LEN3) > 80
+	PRINTL 　
 PRINTFORM %身長テキスト:0, LEN3:0%：%身長テキスト:1, LEN3:1, LEFT%
 PRINTL
 
@@ -118,6 +120,8 @@ IF スリーサイズ表示
 	PRINT 　
 	PRINTFORM %Ｂテキスト:0, LEN1:0%：%Ｂテキスト:1, LEN1:1, LEFT%
 	PRINTFORM %Ｗテキスト:0, LEN2:0%：%Ｗテキスト:1, LEN2:1, LEFT%
+	SIF SUMARRAY(LEN1) + SUMARRAY(LEN2) + SUMARRAY(LEN3) > 80
+		PRINTL 　
 	PRINTFORM %Ｈテキスト:0, LEN3:0%：%Ｈテキスト:1, LEN3:1, LEFT%
 	PRINTL
 ELSE
@@ -126,7 +130,7 @@ ENDIF
 PRINTL
 
 ;- 個別ファイル情報
-見出し = □ 個別ファイル □
+見出し = □ 개별 파일 □
 PRINTSL 見出し + "-" * (LINE_LEN - STRLENS(見出し))
 ; 固有アビ/奥義有無
 PRINT 　
@@ -141,7 +145,7 @@ PRINTL
 
 ;- 画像
 IF HAS_RESOURCES(対象キャラ)
-	見出し = □ 画像 □
+	見出し = □ 이미지 □
 	PRINTSL 見出し + "-" * (LINE_LEN - STRLENS(見出し))
 	PRINT 　
 	画像フォルダ名 '= CSTR:対象キャラ:画像フォルダ
@@ -149,14 +153,14 @@ IF HAS_RESOURCES(対象キャラ)
 	CALL ランダム画像表示(画像フォルダ名, 画像フォルダ数, 0)
 	対象画像数 = RESULT
 	IF 対象画像数 > 5
-		PRINTL ※샘플로 기본 이미지 + 무작위 이미지를 4개 표시 중
+		PRINTL ※샘플로 기본 이미지＋무작위 이미지 4개를 표시 중
 	ELSE
 		PRINTL
 	ENDIF
 ELSE
-	見出し = □ 画像 □
+	見出し = □ 이미지 □
 	PRINTSL 見出し + "-" * (LINE_LEN - STRLENS(見出し))
-	PRINTL 　이미지 수: 얼굴  0장 / 단책  0장 / 기타  0장
+	PRINTL 　이미지 수：얼굴  0장 / 탄자쿠  0장 / 기타  0장
 	対象画像数 = 0
 	; 画像分の余白
 	FOR L_CNT, 0, 14
@@ -192,7 +196,7 @@ POS_Y -= 100
 SIF !HAS_INTRODUCTION(対象キャラ)
 	RETURN 0
 
-見出し = □ 解説 □
+見出し = □ 해설 □
 SELECTCASE 表示位置
 	CASE 表示位置_左
 		PRINTSL 見出し + "-" * (LINE_LEN_L - STRLENS(見出し))

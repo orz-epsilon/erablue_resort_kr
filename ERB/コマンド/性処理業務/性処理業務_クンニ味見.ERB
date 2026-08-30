@@ -7,9 +7,9 @@ TSTR:コマンド名受渡 = 쿠니 맛보기
 
 @性処理_TOOLTIP_クンニ味見
 LOCALS = <br>■쿠니 맛보기<br>
-LOCALS += @"%CALLNAME:TARGET%의 질구와 클리를%CALLNAME:PLAYER%이(가) 핥는 성처리. <br>"
-LOCALS += "악취 민감·결벽증의 경우, 요구 호감도·요구 금액이 대폭 상승한다. <br>"
-LOCALS += "<br>COM 타입: 성처리<br>획득 소스: 노출·접촉·봉사·불결"
+LOCALS += @"%CALLNAME:TARGET%의 질구와 클리를 %CALLNAME:PLAYER%가 핥는 성처리. <br>"
+LOCALS += "악취 민감・결벽증의 경우, 요구 호감도・요구 금액이 대폭 상승한다. <br>"
+LOCALS += "<br>COM 타입: 성처리<br>획득 소스: 노출・접촉・봉사・불결"
 LOCALS += "<br>고유 획득 경험: 구강성교 경험(TARGET)<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
@@ -37,7 +37,7 @@ CALL SOURCE_CALC_不潔(TARGET, PLAYER, 250)
 ;経験の処理
 ;-------------------------------------------------
 ;手淫経験
-EXP:口淫経験 += 3
+EXP:PLAYER:口淫経験 += 3
 
 ;同性愛
 SIF 同性愛性癖判定(PLAYER,TARGET)
@@ -81,7 +81,7 @@ RETURN 1
 #DIM 値段計算
 #DIMS 素質名
 
-PRINTFORML 쿠니 맛보기 계산(%CALLNAME:TARGET%)
+PRINTFORML クンニ味見計算(%CALLNAME:TARGET%)
 DRAWLINE
 
 ;基礎値段
@@ -259,10 +259,10 @@ IF 同性愛性癖判定(TARGET,PLAYER) == 1
 			;補正なし
 		CASE 2
 			値段計算 -= 100
-			PRINTFORML %@"%소질명%(愛好)", 25, LEFT%：－%NUM_FORMAT(100), 8%루피
+			PRINTFORML %@"%재능명%(愛好)", 25, LEFT%：－%NUM_FORMAT(100), 8%루피
 		CASE 3
 			値段計算 -= 250
-			PRINTFORML %@"%소질명%(中毒)", 25, LEFT%：－%NUM_FORMAT(250), 8%루피
+			PRINTFORML %@"%재능명%(中毒)", 25, LEFT%：－%NUM_FORMAT(250), 8%루피
 		CASEELSE
 			;好奇心
 			IF TALENT:性的興味 > 0
@@ -273,7 +273,7 @@ IF 同性愛性癖判定(TARGET,PLAYER) == 1
 			IF TALENT:性的興味 < 0
 				値段計算 += 150
 				SETCOLOR カラーパレット("薄ピンク")
-				PRINTFORML %@"保守的(%재능명%)", 25, LEFT%：＋%NUM_FORMAT(150), 8%루피
+				PRINTFORML %@"保守的(%소질명%)", 25, LEFT%：＋%NUM_FORMAT(150), 8%루피
 				RESETCOLOR
 			ENDIF
 	ENDSELECT
@@ -362,12 +362,12 @@ SIF 値段計算 < 0
 	値段計算 = 0
 
 ;割引クーポンはひとつまでです！
-IF TALENT:対象キャラ:恋慕
+IF TALENT:対象キャラ:恋慕 || TALENT:対象キャラ:疑似恋慕
 	DRAWLINE
 	PRINTFORML 할인
 ;恋慕は完全無料
 	SETCOLOR カラーパレット("ピンク")
-	PRINTFORM %"だいすき割", 25, LEFT%：　　　　　%CALLNAME:PLAYER%한정100％할인
+	PRINTFORM %"だいすき割", 25, LEFT%：　　　　　%CALLNAME:PLAYER%한정100％ 할인
 	CALL PRINT_STRL(@"_H_")
 	RESETCOLOR
 	値段計算 *= 0
@@ -478,7 +478,7 @@ IF TALENT:TARGET:恋慕
 	PRINTFORM 요구받는 것이 기쁜지 웃는 얼굴로
 ELSEIF TALENT:TARGET:弱味 || (TALENT:性別嗜好 == 2 && TALENT:PLAYER:性別 == 1)
 ;これだけ露骨に浮かぶバリエーションが多い……なんでやろな？
-	PRINTFORM %TEXTR("마지못해 하는 듯한 느낌으로/싫은 듯 얼굴을 찌푸리면서도 마지못해/불쾌한 듯 눈살을 찌푸리면서도 마지못해/싫은 듯 이쪽을 노려보면서도 마지못해")%
+	PRINTFORM %TEXTR("마지못해 하는 듯이/싫은 듯 얼굴을 찌푸리면서도 마지못해/불쾌한 듯 눈살을 찌푸리면서도 마지못해/싫은 듯 이쪽을 노려보면서도 마지못해")%
 ELSEIF TALENT:TARGET:恋人持ち == 3
 	PRINTFORM 지금은 고인이 된 반려에게 작게 사죄를 말하면서도
 ELSEIF TALENT:TARGET:恋人持ち == 2
@@ -486,25 +486,25 @@ ELSEIF TALENT:TARGET:恋人持ち == 2
 ELSEIF TALENT:TARGET:恋人持ち == 1
 	PRINTFORM 연인에게 작게 사죄를 말하면서도
 ELSEIF TALENT:TARGET:恋人持ち == -1
-	PRINTFORM 마음에 둔 사람에게 작게 사죄를 말하면서도
+	PRINTFORM 마음속 사람에게 작게 사죄를 말하면서도
 ELSEIF TALENT:TARGET:セフレ
-	PRINTFORM 히죽히죽 놀리는 듯한 미소를 띠고
+	PRINTFORM 능글능글하게 놀리듯이 웃음을 띠고
 ELSEIF TALENT:TARGET:精神的余裕 == 2
 	PRINTFORM 천박하다고 한숨을 쉬면서도
 ELSEIF TALENT:TARGET:ギャル
 	PRINTFORM 태연하게
 ELSEIF TALENT:TARGET:羞恥心
-	PRINTFORM %TEXTR("얼굴을 새빨갛게 하고/부끄러워 고개를 숙이며")%면서
+	PRINTFORM %TEXTR("얼굴을 새빨갛게 붉히며/부끄러워 고개를 숙이며")%면서
 ELSEIF TALENT:TARGET:性的興味
-	PRINTFORM %TEXTR("흥미진진한/기대로 가득 찬")% 모습으로
+	PRINTFORM %TEXTR("흥미진진한/기대에 찬")% 모습으로
 ELSEIF TALENT:TARGET:性欲 <= -1
 	PRINTFORM 어디까지나 사무적으로
 ELSE
 	PRINTFORM 부끄러워하면서도
 ENDIF
-PRINTFORMW %TEXTR("승낙/승낙")%하고, %CALLNAME:PLAYER%%TEXTR("와 가까운 물그림자로 숨었다/를 가까운 물그림자로 이끌었다/에게 이끌려 가까운 물그림자에 숨었다")%……
+PRINTFORMW %TEXTR("승낙/승낙")%하고, %CALLNAME:PLAYER%%TEXTR("와 함께 가까운 곳에 몸을 숨겼다/를 가까운 곳으로 이끌었다/에게 이끌려 가까운 곳에 몸을 숨겼다")%……
 PRINTL
 PRINTFORMW ────
 PRINTL
-PRINTFORMW %CALLNAME:PLAYER%은(는) 혀로 %CALLNAME:TARGET%의 비부를 핥아 희롱하며, 절정하는 모습을 즐겼다.
+PRINTFORMW %CALLNAME:PLAYER%은(는) 혀로 %CALLNAME:TARGET%의 은밀한 곳을 핥아 희롱하며, 절정하는 모습을 즐겼다.
 

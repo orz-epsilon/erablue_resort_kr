@@ -3,9 +3,9 @@
 ;-------------------------------------------------
 @COMNAME603
 #FUNCTIONS
-TSTR:コマンド名受渡 = 직원 초대
+TSTR:コマンド名受渡 = 직원 고용 제안
 IF TALENT:TARGET:店持ち
-	TSTR:コマンド名受渡 = 공식 점포 초대
+	TSTR:コマンド名受渡 = 공식 점포 제안
 ENDIF
 
 ;===================================================
@@ -16,11 +16,11 @@ ENDIF
 TFLAG:コマンドタイプ受渡 = COMTYPE("探索")
 
 @COM_TOOLTIP_603
-LOCALS = <br>■직원 초대<br>
-LOCALS += "상대를 고용하여, 본격적으로 리조트에서 일하게 하는 계약을 맺는다. <br>"
-LOCALS += "상대는 리조트의 정식 직원이 된다. <br>"
-LOCALS += "상대가 점포를 가지고 있는 경우, 열려 있는 점포는 리조트 공식 점포가 되어, 제복을 설정할 수 있게 된다. <br>"
-LOCALS += "<br>COM 타입: 탐색<br>획득 소스: 없음"
+LOCALS = <br>■직원 고용 제안<br>
+LOCALS += "상대를 고용하여, 본격적으로 리조트에서 일하게 하는 계약을 맺는다.<br>"
+LOCALS += "상대는 리조트의 정식 직원이 된다.<br>"
+LOCALS += "상대가 점포를 가지고 있는 경우, 열려 있는 점포는 리조트 공식 점포가 되며, 제복을 설정할 수 있게 된다.<br>"
+LOCALS += "<br>COM 타입: 탐색<br>취득 소스:없음"
 LOCALS += "<br>고유 획득 경험: 없음<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
@@ -30,14 +30,7 @@ TSTR:ツールチップ受渡 = %LOCALS%
 #DIMS 制服記録
 
 IF TALENT:TARGET:定住者 < 1
-	LOCAL:2 = 0
-	FOR LOCAL, 0, 従業員部屋数
-		IF 従業員部屋割り配列:LOCAL < 1
-			LOCAL:2 = 1
-			BREAK
-		ENDIF
-	NEXT
-	IF LOCAL:2 == 0
+	IF 従業員部屋満杯()
 		PRINTW 직원 방이 가득 찼습니다.
 		RETURN -1
 	ENDIF
@@ -45,17 +38,17 @@ ENDIF
 
 DRAWLINE
 IF TALENT:TARGET:店持ち
-	PRINTFORML %CALLNAME:TARGET%의 가게 「%商業区店割り配列:(店持ちキャラ店検索(TARGET)):店舗名%」을(를) 리조트의 공식 점포로 하시겠습니까?
-	PRINTL ※공식 점포로 하면, 그 가게에 소속된 캐릭터의 제복을 설정할 수 있게 됩니다. (필요 루피: 1일 / 2000루피)
+	PRINTFORML %CALLNAME:TARGET%의 가게 「%商業区店割り配列:(店持ちキャラ店検索(TARGET)):店舗名%」를 리조트의 공식 점포로 만드시겠습니까?
+	PRINTL ※공식 점포로 만들면, 해당 가게에 소속된 캐릭터의 제복을 설정할 수 있게 됩니다.　（필요 루피: 1일 / 2000루피）
 ELSE
-	PRINTFORML %CALLNAME:TARGET%을(를) 정식 직원으로 고용하시겠습니까? (필요 루피: 1일 / 2000루피)
+	PRINTFORML %CALLNAME:TARGET%을(를) 정식 직원으로 고용하시겠습니까?　（필요 루피: 1일 / 2000루피）
 ENDIF
 
 
 
 PRINTBUTTON "[0]예", 0
 PRINTL
-PRINTBUTTON "[1]아니요", 1
+PRINTBUTTON "[1]아니오", 1
 PRINTL
 $INPUT_LOOP
 INPUT

@@ -20,8 +20,8 @@ TFLAG:コマンドタイプ受渡 = COMTYPE("日常")
 
 @COM_TOOLTIP_380_0_503
 LOCALS = <br>■카드로 놀다<br>
-LOCALS += "상대와 간이 포커로 함께 노는 커맨드. 미니게임 『간이 포커』가 발생. <br>일정 확률로 벌칙 게임이나 루피를 건 도박을 할 수 있다."
-LOCALS += "<br>COM 타입: 일상<br>획득 소스: 환락・정복(일정 조건 시)"
+LOCALS += "상대와 간이 포커를 함께 하는 커맨드. 미니게임 『간이 포커』가 발생. <br>일정 확률로 벌칙 게임이나 루피를 건 도박을 할 수 있다."
+LOCALS += "<br>COM 타입：일常<br>획득 소스：환락・정복(일정 조건 시)"
 LOCALS += "<br>고유 획득 경험: 없음<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
@@ -47,9 +47,9 @@ ENDIF
 ;賭け内容の決定
 IF RFLAG:コマンド結果受渡し変数
 	PRINTFORML %CALLNAME:TARGET%이(가) 뭔가 걸지 않겠냐고 권유했다.
-	PRINTBUTTON "[0]1000 루피를 걸다", 0
+	PRINTBUTTON "[0]1000 루피를 건다", 0
 	PRINTL 
-	PRINTBUTTON "[1]벌칙 게임을 걸다", 1
+	PRINTBUTTON "[1]벌칙 게임을 건다", 1
 	PRINTL 
 	PRINTBUTTON "[9]걸지 않는다", 9
 	PRINTL 
@@ -67,7 +67,7 @@ IF RFLAG:コマンド結果受渡し変数
 		CASEELSE
 			RFLAG:コマンド結果受渡し変数３ = 0
 			RFLAG:コマンド結果受渡し変数 = 0
-			PRINTFORML %CALLNAME:TARGET%은(는) 조금 아쉬운 얼굴로 내기를 철회했다
+			PRINTFORML %CALLNAME:TARGET%은(는) 조금 아쉬운 듯한 얼굴로 내기를 철회했다.
 	ENDSELECT
 ENDIF
 
@@ -135,14 +135,14 @@ IF RFLAG:コマンド結果受渡し変数
 	SELECTCASE RFLAG:コマンド結果受渡し変数３
 		CASE 0
 			;引き分け時は何もなし
-			PRINTFORML 내기는 무승부였다…
+			PRINTFORML 내기는 비겼다…
 		CASE 1
 			;ルピ増加
 			PRINTFORML 내기에서 승리하여, %CALLNAME:TARGET%에게서 1000 루피를 받았다
 			MONEY += 1000
 		CASE -1
 			;ルピ減少
-			PRINTFORML 내기에서 패배하여, %CALLNAME:TARGET%에게 1000루피를 지불했다…
+			PRINTFORML 내기에서 패배하여, %CALLNAME:TARGET%에게 1000 루피를 지불했다…
 			MONEY -= 1000
 		CASE 2
 			;罰ゲーム処理を呼ぶ

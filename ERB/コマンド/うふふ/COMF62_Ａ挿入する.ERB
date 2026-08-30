@@ -3,22 +3,22 @@
 ;-------------------------------------------------
 @COMNAME62
 #FUNCTIONS
-TSTR:コマンド名受渡 = A 삽입한다
+TSTR:コマンド名受渡 = Ａ삽입한다
 SIF MODE_存在判定_順不同("Ａ挿入系", PLAYER, TARGET)
-	TSTR:コマンド名受渡 = A 체위를 바꾼다
+	TSTR:コマンド名受渡 = Ａ체위를 바꾼다
 
 ;弱点コマンド欄に専用の文字列を表示したい場合、これを設定すること
 弱点コマンド欄表示名 = Ａ挿入する
 
 SIF 派生名フラグ
-	TSTR:コマンド名受渡 = A 삽입
+	TSTR:コマンド名受渡 = Ａ삽입
 
 ;許可時の特別文章はここに記入
 IF TFLAG:オートコマンドフラグ >= 4000
 	;反転時、つまりあなたが入れる方
-	許可取り文章 = %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%에게 [A삽입]해 주었으면 하는 것 같다…
+	許可取り文章 = %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%에게 [Ａ삽입]해 주길 바라는 것 같다…
 ELSE
-	許可取り文章 = %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%에게 [A삽입]하고 싶은 것 같다…
+	許可取り文章 = %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%에게 [Ａ삽입]하고 싶은 것 같다…
 ENDIF
 
 ;===================================================
@@ -35,12 +35,13 @@ SIF CFLAG:TARGET:睡眠
 同時モード拡張許可 = 1
 オートコマンド許可 = 3
 反転オート許可 = 3
+ダウン中許可 = 1
 
 @COM_TOOLTIP_62
-LOCALS = <br>■A삽입한다<br>
-LOCALS += "상대의 항문에 삽입하여 애널 섹스를 하는 커맨드.<br>A 삽입계 모드 시, [A 체위를 바꾼다]로 변화한다.<br>A 삽입계 모드가 되어, 모드를 변경하거나 성행위를 종료할 때까지 지속적으로 쾌락이 발생한다."
+LOCALS = <br>■Ａ삽입한다<br>
+LOCALS += "상대의 항문에 삽입하여 애널 섹스를 하는 커맨드. <br>Ａ삽입계 모드 시, [Ａ체위를 바꾼다]로 변화한다. <br>Ａ삽입계 모드가 되어, 모드를 변경하거나 성행위를 종료할 때까지 지속적으로 쾌락이 발생한다."
 LOCALS += "<br>COM 타입: A계<br>획득 소스: 쾌A・노출・접촉・고통"
-LOCALS += "<br>고유 획득 경험: C성교경험_A삽입(PLAYER)・A성교경험(TARGET)<br>"
+LOCALS += "<br>고유 획득 경험: Ｃ性交経験_Ａ挿入(PLAYER)・Ａ性交経験(TARGET)<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
 @COM62
@@ -75,8 +76,8 @@ ELSEIF GETBIT(FLAG:モード管理, モードビット_同時)
 		速さ初期値記録 = 0
 		$体位_LOOP2
 		DRAWLINE
-		PRINTL ■속도·강도 초기값을 선택해주세요
-		PRINT 　　A 삽입 강도:
+		PRINTL ■속도・강도의 초기값을 선택해 주세요
+		PRINT 　　Ａ삽입 강도:
 		PRINTBUTTON "[-]", 899
 		FOR LOCAL, 0, 6
 			IF 強さ初期値記録 >= LOCAL
@@ -87,7 +88,7 @@ ELSEIF GETBIT(FLAG:モード管理, モードビット_同時)
 		NEXT
 		PRINTBUTTON "[+]", 906
 		PRINT 　　
-		PRINT Ａ 삽입 속도：
+		PRINT Ａ삽입 속도:
 		PRINTBUTTON "[-]", 909
 		FOR LOCAL, 0, 6
 			IF 速さ初期値記録 >= LOCAL
@@ -100,7 +101,7 @@ ELSEIF GETBIT(FLAG:モード管理, モードビット_同時)
 		PRINTL
 		PRINTL
 		IF PLAYER == MASTER
-			PRINT ■速さ・強さの自動最適化:
+			PRINT ■속도・강도 자동 최적화:
 			IF ABL:PLAYER:腰使い < 5
 				HTML_PRINT @"<font color='#%カラーパレット_HTML("グレーアウト")%'>[OFF] (腰使いLv5が必要)</font>",1
 			ELSEIF あなた挿入最適化フラグ
@@ -110,8 +111,8 @@ ELSEIF GETBIT(FLAG:モード管理, モードビット_同時)
 			ENDIF
 			PRINTL
 		ENDIF
-		PRINTBUTTONLC "[998]決定", 998
-		PRINTBUTTONLC "[999]戻る", 999
+		PRINTBUTTONLC "[998]결정", 998
+		PRINTBUTTONLC "[999]돌아가기", 999
 
 		BINPUT
 
@@ -176,7 +177,7 @@ ELSE
 	ENDIF
 	$体位_LOOP
 	DRAWLINE
-	PRINTL ■체위를 선택해주세요
+	PRINTL ■체위를 선택해 주세요
 	PRINTL
 	LOCAL:1 = 0
 	FOR LOCAL, 0, 20
@@ -220,14 +221,14 @@ ELSE
 		ENDCATCH
 	NEXT
 	IF !LOCAL:1
-		PRINTW 현재 선택할 수있는 위치가 없으므로 취소합니다.
+		PRINTW 현재 선택할 수 있는 체위가 없으므로 취소합니다
 		RETURN -1
 	ENDIF
 
 	PRINTL
 	PRINTL
-	PRINTL ■속도・강도의 초기치를 선택해 주세요
-	PRINT 　　Ａ삽입 강도:
+	PRINTL ■속도・강도의 초기값을 선택해 주세요
+	PRINT 　　A삽입 강도：
 	PRINTBUTTON "[-]", 899
 	FOR LOCAL, 0, 6
 		IF 強さ初期値記録 >= LOCAL
@@ -238,7 +239,7 @@ ELSE
 	NEXT
 	PRINTBUTTON "[+]", 906
 	PRINT 　　
-	PRINT A 삽입 속도:
+	PRINT A삽입 속도：
 	PRINTBUTTON "[-]", 909
 	FOR LOCAL, 0, 6
 		IF 速さ初期値記録 >= LOCAL
@@ -261,7 +262,7 @@ ELSE
 		ENDIF
 		PRINTL
 	ENDIF
-	PRINTBUTTONLC "[999]뒤로", 999
+	PRINTBUTTONLC "[999]돌아가기", 999
 
 	$INPUT_LOOP
 	INPUT
@@ -491,8 +492,8 @@ CALL SOURCE_CALC_苦痛(TARGET, PLAYER, LOCAL)
 ;経験の処理
 ;-------------------------------------------------
 IF EXP:Ａ性交経験 == 0
-	CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>%CALLNAME:TARGET%의 Ａ처녀를 빼앗았다.</font><img src='えっちハート'>","うふふ")
-	CALL 履歴データベース登録(CFLAG:TARGET:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>%CALLNAME:PLAYER%에게 Ａ처녀를 바쳤다.</font><img src='えっちハート'>","うふふ")
+	CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>%CALLNAME:TARGET%のＡ処女を奪った</font><img src='えっちハート'>","うふふ")
+	CALL 履歴データベース登録(CFLAG:TARGET:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>%CALLNAME:PLAYER%にＡ処女を捧げた</font><img src='えっちハート'>","うふふ")
 ENDIF
 EXP:PLAYER:Ｃ性交経験_Ａ挿入 ++
 EXP:Ａ性交経験 ++
@@ -652,7 +653,7 @@ SIF CFLAG:TARGET:睡眠
 			SIF ＋表示フラグ
 				PRINT  + 
 			実行値 += ABL:Ｃ感覚 * 3
-			PRINTFORM C 감각LV{ABL:Ｃ感覚}({ABL:Ｃ感覚 * 3})
+			PRINTFORM C감각LV{ABL:Ｃ感覚}({ABL:Ｃ感覚 * 3})
 			＋表示フラグ = 1
 		ENDIF
 	ELSE
@@ -661,7 +662,7 @@ SIF CFLAG:TARGET:睡眠
 			SIF ＋表示フラグ
 				PRINT  + 
 			実行値 += ABL:Ａ感覚 * 2
-			PRINTFORM A 감각LV{ABL:Ａ感覚}({ABL:Ａ感覚 * 2})
+			PRINTFORM A감각LV{ABL:Ａ感覚}({ABL:Ａ感覚 * 2})
 			＋表示フラグ = 1
 		ENDIF
 	ENDIF
@@ -670,7 +671,7 @@ SIF CFLAG:TARGET:睡眠
 		SIF ＋表示フラグ
 			PRINT  + 
 		実行値 += MARK:快楽刻印 * 3
-		PRINTFORM 쾌락 각인LV{MARK:快楽刻印}({MARK:快楽刻印 * 3})
+		PRINTFORM 쾌락각인LV{MARK:快楽刻印}({MARK:快楽刻印 * 3})
 		＋表示フラグ = 1
 	ENDIF
 	;PALAM:潤滑（の不足）
@@ -780,9 +781,18 @@ SIF CFLAG:TARGET:睡眠
 		SIF ＋表示フラグ
 			PRINT  + 
 		実行値 += 999
-		PRINT 당신의 꼭두각시(999)
+		PRINT 당신의 말대로(999)
 		＋表示フラグ = 1
 	ENDIF
+
+;特殊言いなり
+IF TCVAR:特殊言いなり
+	SIF ＋表示フラグ
+		PRINT  + 
+	実行値 += 999
+	PRINTFORM %特殊言いなり分岐(TARGET)%(999)
+	＋表示フラグ = 1
+ENDIF
 
 	;合計を表示(必要実行値以上で実行)
 	PRINTFORM  = {実行値}
@@ -897,9 +907,6 @@ SIF MODE_存在判定_ターゲット側("Ｖ挿入系", TARGET)
 ;相手が挿入しているとダメ
 SIF MODE_存在判定_プレイヤー側("ＶＡ挿入系", TARGET)
 	RETURN 0
-;相手が別人と立位中だとベッドがないとダメ
-SIF MODE_存在判定_プレイヤー側("ＶＡ立位挿入系", TARGET) && !BEDROOM(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置)
-	RETURN 0
 
 RETURN 1
 
@@ -910,8 +917,11 @@ RETURN 1
 ;睡眠中ダメ
 SIF CFLAG:TARGET:睡眠
 	RETURN 0
+;ダウン中ダメ
+SIF CFLAG:TARGET:体力限界
+	RETURN 0
 ;相手が別人と立位中だとベッドがないとダメ
-SIF MODE_存在判定_プレイヤー側("ＶＡ立位挿入系", TARGET) && !BEDROOM(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置)
+SIF MODE_存在判定_いずれか側("ＶＡ立位挿入系", TARGET) && !BEDROOM(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置)
 	RETURN 0
 
 RETURN 1
@@ -930,8 +940,8 @@ ENDIF
 ;Ｖ挿入中ダメ
 SIF MODE_存在判定_ターゲット側("Ｖ挿入系", TARGET)
 	RETURN 0
-;相手が別人と立位中だとベッドがないとダメ
-SIF MODE_存在判定_プレイヤー側("ＶＡ立位挿入系", TARGET) && !BEDROOM(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置)
+;相手が別人と立位中だとダメ
+SIF MODE_存在判定_プレイヤー側("ＶＡ立位挿入系", TARGET)
 	RETURN 0
 
 RETURN 1
@@ -941,6 +951,9 @@ RETURN 1
 
 ;睡眠中ダメ
 SIF CFLAG:TARGET:睡眠
+	RETURN 0
+;ダウン中ダメ
+SIF CFLAG:TARGET:体力限界
 	RETURN 0
 ;お風呂場プレイ中はOK
 IF BATHROOM(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置)
@@ -956,9 +969,6 @@ SIF MODE_存在判定_ターゲット側("Ｖ挿入系", TARGET)
 ;相手が挿入しているとダメ
 SIF MODE_存在判定_プレイヤー側("ＶＡ挿入系", TARGET)
 	RETURN 0
-;相手が別人と立位中だとベッドがないとダメ
-SIF MODE_存在判定_プレイヤー側("ＶＡ立位挿入系", TARGET) && !BEDROOM(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置)
-	RETURN 0
 
 RETURN 1
 
@@ -967,6 +977,9 @@ RETURN 1
 
 ;睡眠中ダメ
 SIF CFLAG:TARGET:睡眠
+	RETURN 0
+;ダウン中ダメ
+SIF CFLAG:TARGET:体力限界
 	RETURN 0
 ;お風呂場プレイ中はOK
 IF BATHROOM(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置)
@@ -977,7 +990,7 @@ ELSE
 		RETURN 0
 ENDIF
 ;相手が別人と立位中だとベッドがないとダメ
-SIF MODE_存在判定_プレイヤー側("ＶＡ立位挿入系", TARGET) && !BEDROOM(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置)
+SIF MODE_存在判定_いずれか側("ＶＡ立位挿入系", TARGET) && !BEDROOM(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置)
 	RETURN 0
 
 RETURN 1
@@ -987,6 +1000,9 @@ RETURN 1
 
 ;睡眠中ダメ
 SIF CFLAG:TARGET:睡眠
+	RETURN 0
+;ダウン中ダメ
+SIF CFLAG:TARGET:体力限界
 	RETURN 0
 ;お風呂場プレイ中はプレイマットが無いとダメ
 IF BATHROOM(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置)
@@ -998,7 +1014,7 @@ ELSE
 		RETURN 0
 ENDIF
 ;相手が別人と立位中だとベッドがないとダメ
-SIF MODE_存在判定_プレイヤー側("ＶＡ立位挿入系", TARGET) && !BEDROOM(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置)
+SIF MODE_存在判定_いずれか側("ＶＡ立位挿入系", TARGET) && !BEDROOM(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置)
 	RETURN 0
 
 RETURN 1
@@ -1029,6 +1045,9 @@ RETURN 1
 ;睡眠中ダメ
 SIF CFLAG:TARGET:睡眠
 	RETURN 0
+;ダウン中ダメ
+SIF CFLAG:TARGET:体力限界
+	RETURN 0
 ;お風呂場プレイ中はプレイマットが無いとダメ
 IF BATHROOM(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置)
 	SIF ITEM:20 == 0 && NOITEM == 0
@@ -1053,6 +1072,9 @@ RETURN 1
 ;睡眠中ダメ
 SIF CFLAG:TARGET:睡眠
 	RETURN 0
+;ダウン中ダメ
+SIF CFLAG:TARGET:体力限界
+	RETURN 0
 ;TARGETのほうが3サイズ大きいと抱えきれない
 SIF 体格差計算(PLAYER, TARGET) >= 3
 	RETURN 0
@@ -1061,9 +1083,6 @@ SIF MODE_存在判定_ターゲット側("Ｖ挿入系", TARGET)
 	RETURN 0
 ;相手が挿入しているとダメ
 SIF MODE_存在判定_プレイヤー側("ＶＡ挿入系", TARGET)
-	RETURN 0
-;相手が別人と非立位中だとベッドがないとダメ
-SIF MODE_存在判定_プレイヤー側("ＶＡ非立位挿入系", TARGET) && !BEDROOM(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置)
 	RETURN 0
 
 RETURN 1
@@ -1074,11 +1093,14 @@ RETURN 1
 ;睡眠中ダメ
 SIF CFLAG:TARGET:睡眠
 	RETURN 0
+;ダウン中ダメ
+SIF CFLAG:TARGET:体力限界
+	RETURN 0
 ;TARGETのほうが3サイズ大きいと抱えきれない
 SIF 体格差計算(PLAYER, TARGET) >= 3
 	RETURN 0
 ;相手が別人と非立位中だとベッドがないとダメ
-SIF MODE_存在判定_プレイヤー側("ＶＡ非立位挿入系", TARGET) && !BEDROOM(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置)
+SIF MODE_存在判定_いずれか側("ＶＡ非立位挿入系", TARGET) && !BEDROOM(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置)
 	RETURN 0
 
 RETURN 1
@@ -1089,6 +1111,9 @@ RETURN 1
 ;睡眠中ダメ
 SIF CFLAG:TARGET:睡眠
 	RETURN 0
+;ダウン中ダメ
+SIF CFLAG:TARGET:体力限界
+	RETURN 0
 ;TARGETのほうが4サイズ大きいと届かない
 SIF 体格差計算(PLAYER, TARGET) >= 4
 	RETURN 0
@@ -1097,9 +1122,6 @@ SIF MODE_存在判定_ターゲット側("Ｖ挿入系", TARGET)
 	RETURN 0
 ;相手が挿入しているとダメ
 SIF MODE_存在判定_プレイヤー側("ＶＡ挿入系", TARGET)
-	RETURN 0
-;相手が別人と非立位中だとベッドがないとダメ
-SIF MODE_存在判定_プレイヤー側("ＶＡ非立位挿入系", TARGET) && !BEDROOM(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置)
 	RETURN 0
 
 RETURN 1
@@ -1110,11 +1132,14 @@ RETURN 1
 ;睡眠中ダメ
 SIF CFLAG:TARGET:睡眠
 	RETURN 0
+;ダウン中ダメ
+SIF CFLAG:TARGET:体力限界
+	RETURN 0
 ;TARGETのほうが4サイズ大きいと届かない
 SIF 体格差計算(PLAYER, TARGET) >= 4
 	RETURN 0
 ;相手が別人と非立位中だとベッドがないとダメ
-SIF MODE_存在判定_プレイヤー側("ＶＡ非立位挿入系", TARGET) && !BEDROOM(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置)
+SIF MODE_存在判定_いずれか側("ＶＡ非立位挿入系", TARGET) && !BEDROOM(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置)
 	RETURN 0
 
 RETURN 1
@@ -1124,6 +1149,9 @@ RETURN 1
 
 ;睡眠中ダメ
 SIF CFLAG:TARGET:睡眠
+	RETURN 0
+;ダウン中ダメ
+SIF CFLAG:TARGET:体力限界
 	RETURN 0
 ;TARGETのほうが4サイズ大きいならプレイマットかベッドが必要
 IF 体格差計算(PLAYER, TARGET) >= 4
@@ -1151,7 +1179,7 @@ RETURN 1
 
 
 IF !MODE_存在判定_ターゲット側("ペニスバンド", PLAYER)
-	LOCALS = 단단하게 솟아오른 음경
+	LOCALS = 단단히 솟아오른 음경
 ELSE
 	LOCALS = 페니스 밴드
 ENDIF
@@ -1159,54 +1187,54 @@ ENDIF
 SELECTCASE RFLAG:コマンド結果受渡し変数
 	CASE 0
 		;正常位
-		PRINTFORML %CALLNAME:PLAYER%는 똑바로 누운 %CALLNAME:TARGET%의 항문에 %LOCALS%를 삽입했다
+		PRINTFORML %CALLNAME:PLAYER%은(는) 똑바로 누운 %CALLNAME:TARGET%의 항문에 %LOCALS%을(를) 삽입했다
 	CASE 1
 		;後背位
-		PRINTFORML %CALLNAME:PLAYER%는 네 발로 기는 자세를 한 %CALLNAME:TARGET%의 항문에 %LOCALS%를 삽입했다
+		PRINTFORML %CALLNAME:PLAYER%은(는) 엎드린 %CALLNAME:TARGET%의 항문에 %LOCALS%을(를) 삽입했다
 	CASE 2
 		;寝バック
-		PRINTFORML %CALLNAME:PLAYER%는 엎드려 누운 %CALLNAME:TARGET%의 항문에 %LOCALS%를 삽입했다
+		PRINTFORML %CALLNAME:PLAYER%은(는) 엎드려 누운 %CALLNAME:TARGET%의 항문에 %LOCALS%을(를) 삽입했다
 	CASE 3
 		;対面座位
-		PRINTFORML %CALLNAME:PLAYER%는 %CALLNAME:TARGET%과 마주 보며 앉아, 그대로 항문에 %LOCALS%를 삽입했다
+		PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%과 마주 보고 앉아, 그대로 항문에 %LOCALS%을(를) 삽입했다
 	CASE 4
 		;背面座位
-		PRINTFORML %CALLNAME:PLAYER%는 %CALLNAME:TARGET%을 자신 위에 앉히고, 그대로 항문에 %LOCALS%를 삽입했다
+		PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%을(를) 자신 위에 앉히고, 그대로 항문에 %LOCALS%을(를) 삽입했다
 	CASE 5
 		;騎乗位
-		PRINTFORML %CALLNAME:PLAYER%는 %CALLNAME:TARGET%에게 직접 항문에 %LOCALS%를 삽입하게 했다
+		PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%에게 스스로 항문에 %LOCALS%을(를) 삽입하게 했다
 	CASE 6
 		;側位
-		PRINTFORML %CALLNAME:PLAYER%는 옆으로 누운 %CALLNAME:TARGET%의 항문에 %LOCALS%를 삽입했다
+		PRINTFORML %CALLNAME:PLAYER%은(는) 옆으로 누운 %CALLNAME:TARGET%의 항문에 %LOCALS%을(를) 삽입했다
 	CASE 7
 		;屈曲位
-		PRINTFORML %CALLNAME:PLAYER%는 %CALLNAME:TARGET%의 다리를 모아 올리게 한 뒤, 그대로 항문에 %LOCALS%를 삽입했다
+		PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%의 다리를 모아 올리게 하고, 그대로 항문에 %LOCALS%을(를) 삽입했다
 	CASE 8
 		;駅弁
-		PRINTFORML %CALLNAME:PLAYER%는 %CALLNAME:TARGET%을 마주 본 채로 들어 올리고, 그대로 항문에 %LOCALS%를 삽입했다
+		PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%을(를) 마주 본 채 들어 올리고, 그대로 항문에 %LOCALS%을(를) 삽입했다
 	CASE 9
 		;背面駅弁
-		PRINTFORML %CALLNAME:PLAYER%는 %CALLNAME:TARGET%를 뒤로 안아 올린 채 그대로 항문에 %LOCALS%를 삽입했다
+		PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%을(를) 뒤돌아 들어 올리고, 그대로 항문에 %LOCALS%을(를) 삽입했다
 	CASE 10
 		;対面立位
-		PRINTFORML %CALLNAME:PLAYER%는 선 채로 %CALLNAME:TARGET%와 마주 보고 항문에 %LOCALS%를 삽입했다
+		PRINTFORML %CALLNAME:PLAYER%은(는) 선 채로 %CALLNAME:TARGET%와 마주 보고, 항문에 %LOCALS%을(를) 삽입했다
 	CASE 11
 		;立ちバック
-		PRINTFORML %CALLNAME:PLAYER%는 뒤로 엉덩이를 내민 %CALLNAME:TARGET%의 항문에 %LOCALS%를 삽입했다
+		PRINTFORML %CALLNAME:PLAYER%은(는) 뒤돌아 엉덩이를 내민 %CALLNAME:TARGET%의 항문에 %LOCALS%을(를) 삽입했다
 	CASE 12
 		;同時導入
-		PRINTFORM %CALLNAME:PLAYER%는
+		PRINTFORM %CALLNAME:PLAYER%은(는)
 		FOR 同時キャラ番号, 0, 同時モード_選択数
 			SIF 同時キャラ番号 > 0
-				PRINT ,
+				PRINT 、
 			PRINTFORM %CALLNAME:(同時モード_選択キャラ:同時キャラ番号)%
 		NEXT
-		PRINTFORML 를 나란히 세운 다음, 항문에 차례로 %LOCALS%를 삽입했다
+		PRINTFORML 을(를) 늘어놓고, 항문에 차례로 %LOCALS%을(를) 삽입했다
 ENDSELECT
 
 IF CFLAG:TARGET:睡眠
-	PRINTFORML %CALLNAME:TARGET%는 작게 신음을 흘리면서도, 아직 꿈속에 있는 것 같다…
+	PRINTFORML %CALLNAME:TARGET%은(는) 작게 신음하면서도, 아직 꿈속에 있다…
 ELSEIF TCVAR:TARGET:泥酔眠姦
-	PRINTFORML %CALLNAME:PLAYER%가 한 번 찌를 때마다 몸이 흔들흔들 %TEXTR("흔들려도/흔들려대도")%,
-	PRINTFORML 술에 취해 곯아떨어진 %CALLNAME:TARGET%는 뭘 당하고 있는지 모르는 것 같다…
+	PRINTFORML %CALLNAME:PLAYER%이(가) 한 번 찌를 때마다 흔들흔들 몸을 %TEXTR("흔들려도/흔들려도")%도,
+	PRINTFORML 술에 취해 쓰러진 %CALLNAME:TARGET%은(는) 무엇을 당하고 있는지 모르는 것 같다…
 ENDIF

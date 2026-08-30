@@ -1,8 +1,11 @@
 
 @食堂メニュー設定処理
+#DIM 増加ルピ
+#DIM 増加ZP
+#DIM 食材ID
 
 DRAWLINE
-PRINTL 소지하고 있는 메뉴 중에서, 어떤 것을 제공할지 선택합니다.
+PRINTL 보유하고 있는 메뉴 중에서 어떤 것을 제공할지 선택합니다.
 DRAWLINE
 
 
@@ -13,9 +16,9 @@ FOR LOCAL, 1, 6
 	IF 現在設定メニュー:LOCAL
 		LOCALS:2 = %属性数値文字色変換_HTML(DT_CELL_GET("料理メニューデータベース", 現在設定メニュー:LOCAL, "料理属性", 1))%
 		IF DT_CELL_GET("料理メニューデータベース", 現在設定メニュー:LOCAL, "特殊料理フラグ", 1)
-			LOCALS:1 = 랭크
+			LOCALS:1 = ランク
 		ELSE
-			LOCALS:1 = 범용 요리 랭크
+			LOCALS:1 = 汎用料理ランク
 		ENDIF
 		LOCALS:1 += @"%TOFULL(TOSTR(DT_CELL_GET("料理メニューデータベース", 現在設定メニュー:LOCAL, "料理ランク", 1)))%：<font color='#%LOCALS:2%'>%DT_CELL_GETS("料理メニューデータベース",  現在設定メニュー:LOCAL, "メニュー名", 1)%</font>"
 	ELSE
@@ -23,6 +26,34 @@ FOR LOCAL, 1, 6
 	ENDIF
 	LOCALS += @"　<button value='{LOCAL}'>메뉴%TOFULL(TOSTR(LOCAL))%「%LOCALS:1%」</button><br>"
 NEXT
+LOCALS += @"<br>"
+増加ルピ = 0
+増加ZP = 0
+FOR LOCAL, 1, 6
+	IF 現在設定メニュー:LOCAL
+		増加ルピ += DT_CELL_GET("料理メニューデータベース", 現在設定メニュー:LOCAL, "ルピ収入補正", 1) * 滞在キャラ数算出関数() / 5
+		食材ID = DT_CELL_GET("料理メニューデータベース", 現在設定メニュー:LOCAL, "メイン食材ID", 1)
+		増加ルピ -= DT_CELL_GET("所持素材データベース", 食材ID, "素材ランク", 1) * 滞在キャラ数算出関数() / 5 * DT_CELL_GET("所持素材データベース", 食材ID, "素材値相場", 1) / 100
+		食材ID = DT_CELL_GET("料理メニューデータベース", 現在設定メニュー:LOCAL, "追加食材１ID", 1)
+		SIF 食材ID
+			増加ルピ -= DT_CELL_GET("所持素材データベース", 食材ID, "素材ランク", 1) * 滞在キャラ数算出関数() / 5 * DT_CELL_GET("所持素材データベース", 食材ID, "素材値相場", 1) / 100
+		食材ID = DT_CELL_GET("料理メニューデータベース", 現在設定メニュー:LOCAL, "追加食材２ID", 1)
+		SIF 食材ID
+			増加ルピ -= DT_CELL_GET("所持素材データベース", 食材ID, "素材ランク", 1) * 滞在キャラ数算出関数() / 5 * DT_CELL_GET("所持素材データベース", 食材ID, "素材値相場", 1) / 100
+		食材ID = DT_CELL_GET("料理メニューデータベース", 現在設定メニュー:LOCAL, "追加食材３ID", 1)
+		SIF 食材ID
+			増加ルピ -= DT_CELL_GET("所持素材データベース", 食材ID, "素材ランク", 1) * 滞在キャラ数算出関数() / 5 * DT_CELL_GET("所持素材データベース", 食材ID, "素材値相場", 1) / 100
+		増加ZP += DT_CELL_GET("料理メニューデータベース", 現在設定メニュー:LOCAL, "ZP収入補正", 1) * 滞在キャラ数算出関数() / 5
+	ENDIF
+NEXT
+LOCALS:1 = {増加ZP / 1000}.{(増加ZP % 1000) / 100}{(増加ZP % 100) / 10}{(増加ZP % 10)}
+LOCALS += @"　루피 수입 예상：%NUM_FORMAT(増加ルピ), 8%루피<br>　　ZP 수입 예상：%LOCALS:1, 8%ZP"
+LOCALS += @"<br>"
+;食材ゲージ
+LOCALS += "　　　식재료 재고："
+CALL PRINT_COLORBAR_HTML, FLAG:食材在庫量, 1000, 600, 100, BARCOLORSET_HTML("黄"), RESULTS:1
+LOCALS += @"%RESULTS%({FLAG:食材在庫量}/1000)"
+LOCALS += @"<br>"
 LOCALS += @"<br><button value='996'>[996] 시스템 설명</button>"
 LOCALS += @"<br><button value='999'>[999] 돌아가기</button>"
 LOCALS += "</div>"
@@ -44,7 +75,7 @@ NEXT
 LOCALS += "</div>"
 LOCALS += "<div rect='156,2800,2950,970' border='20' bcolor='#C0C0C0'></div>"
 LOCALS += "<div rect='231,2875,2800,900'>"
-LOCALS += "■메뉴의 콤보 효과<br>"
+LOCALS += "■메뉴 콤보 효과<br>"
 発動中コンボ名 = 
 詳細文文字列受け渡し変数 = 
 CALL 料理メニューコンボ判定処理

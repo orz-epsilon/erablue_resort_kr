@@ -3,7 +3,7 @@
 ;-------------------------------------------------
 @MASSAGE_COMNAME28
 #FUNCTIONS
-TSTR:コマンド名受渡 = 항문 괄약근 마사지
+TSTR:コマンド名受渡 = 항문괄약근 마사지
 
 
 ;===================================================
@@ -14,10 +14,10 @@ TSTR:コマンド名受渡 = 항문 괄약근 마사지
 TFLAG:コマンドタイプ受渡 = MASSAGE_COMTYPE("エロマッサージ")
 
 @MASSAGE_COM_TOOLTIP_28
-LOCALS = <br>■항문 괄약근 마사지<br>
-LOCALS += "엉덩이를 벌리고, 오일을 바른 손가락으로 항문 괄약근을 바깥쪽에서 주물러 풀어준다."
-LOCALS += "<br>사용 빈도에 비해 관리되지 않는 근육이므로, 전문가의 시술이 필요하다…는 것으로 되어 있다."
-LOCALS += "<br>COM 타입: 에로 마사지<br>획득 소스: 쾌A・접촉・환락・액체"
+LOCALS = <br>■항문괄약근 마사지<br>
+LOCALS += "엉덩이살을 벌려 열고, 오일을 바른 손가락 끝으로 항문괄약근을 바깥쪽에서 주물러 풀어준다."
+LOCALS += "<br>사용 빈도에 비해 관리되지 않는 근육이므로, 전문가에 의한 시술이 필요…하다고 되어 있다."
+LOCALS += "<br>COM 타입：에로 마사지<br>획득 소스：쾌락A・접촉・환락・액체"
 LOCALS += "<br>고유 획득 경험: 없음<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
@@ -120,10 +120,10 @@ PRINTFORM %CALLNAME:PLAYER%은(는),
 		PRINTFORM %CALLNAME:TARGET%의
 			;Ｖがあり欲情している場合
 			SIF TALENT:TARGET:Ｖ感度 >= -1 && PALAM:欲情  >= PALAMLV:3
-				PRINTFORM 흠뻑 애액을 머금은
+				PRINTFORM 흠뻑 애액을 흡수한
 		PRINTFORM 시술복을 벗기고,
 	ENDIF
-	PRINTFORML 오일을 듬뿍 바른 손가락으로%CALLNAME:TARGET%의%TEXTR("항문/엉덩이 구멍/아누스")%을(를) 부드럽게 주물러 풀어주었다.
+	PRINTFORML 오일을 듬뿍 바른 손가락으로%CALLNAME:TARGET%의%TEXTR("항문/엉덩이 구멍/아누스")%을 부드럽게 주물러 풀어주었다.
 
 	
 ;削りが十分な時は追加のメッセージ
@@ -131,9 +131,9 @@ IF (BASE:TARGET:理性 + BASE:TARGET:警戒) < 650
 	PRINTW 
 	SELECTCASE RAND:2
 	CASE 0
-		PRINTFORM %CALLNAME:TARGET%은(는)%TEXTR("황홀하게 눈가를 녹이며/녹아내린 얼굴로 헤프게 입을 벌리고/법열에 눈가를 녹이며")%,
+		PRINTFORM %CALLNAME:TARGET%은(는)%TEXTR("황홀하게 눈가를 녹이며/녹아내린 얼굴로 헤프게 입을 벌리고/법열에 눈가를 녹이며")%、
 	CASE 1
-		PRINTFORM %CALLNAME:TARGET%은(는)헤프게 풀린 입에서%TEXTR("망측한 소리/쾌락에 물든 교성/음란한 소리")%을(를)%TEXTR("내며/흘리며/흘리면서")%,
+		PRINTFORM %CALLNAME:TARGET%은(는) 헤프게 풀어진 입에서%TEXTR("상스러운 소리/쾌락에 물든 교성/음란한 소리")%를%TEXTR("내며/흘리며/흘리면서")%、
 	ENDSELECT
-	PRINTFORML %CALLNAME:PLAYER%%TEXTR("의 『마사지』/의 수기/가 주는 쾌락")%%TEXTR("에 항문을 내주고 있다/에 취해 있다/에 당하는 대로 되어 있다/을 받아들이고 있다/을 감수하고 있다")%…
+	PRINTFORML %CALLNAME:PLAYER%%TEXTR("의 '마사지'/의 손기술/이 주는 쾌락")%%TEXTR("에 항문을 내주고 있다/에 취해 있다/에 당하는 대로 되어 있다/을 받아들이고 있다/을 감수하고 있다")%…
 ENDIF

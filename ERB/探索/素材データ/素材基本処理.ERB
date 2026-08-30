@@ -204,7 +204,7 @@ DO
 		LOCALS += "　　　　　　　　　　"
 	ENDIF
 	IF 選択解除フラグ
-		LOCALS += "　　　　　　　　　　　　　　　　　　　<button value='998'>[998] 선택 해제</button>"
+		LOCALS += "　　　　　　　　　　　　　　　　　　　<button value='998'>[998] 선택 제외</button>"
 	ELSE
 		LOCALS += "　　　　　　　　　　　　　　　　　　　　　　　　　"
 	ENDIF
@@ -413,21 +413,21 @@ IF 売却モード == 0
 		LOCALS += "<div rect='2050,31,3125,381' border='31' bcolor='#C0C0C0'></div>"
 		LOCALS += "<div rect='2125,125,3125,381'>"
 		;購入画面
-		LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'>■구입</font>"
-		LOCALS += "　　　<button value='1100'>■매각</button>"
+		LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'>■구매</font>"
+		LOCALS += "　　　<button value='1100'>■판매</button>"
 		LOCALS += "</div>"
 	ENDIF
 ELSE
 	LOCALS += "<div rect='2050,31,3125,381' border='31' bcolor='#C0C0C0'></div>"
 	LOCALS += "<div rect='2125,125,3125,381'>"
 	;売却画面
-	LOCALS += @"<button value='1100'>■구입</button>"
-	LOCALS += @"　　　<font color='#%カラーパレット_HTML("黄")%'>■매각</font>"
+	LOCALS += @"<button value='1100'>■구매</button>"
+	LOCALS += @"　　　<font color='#%カラーパレット_HTML("黄")%'>■판매</font>"
 	LOCALS += "</div>"
 ENDIF
 
-LOCALS:2 = 소지 루피：%NUM_FORMAT(MONEY)%<br>
-LOCALS:2 += @"소지 ZP　：%ZP所持量全文字列()%"
+LOCALS:2 = 보유 루피:%NUM_FORMAT(MONEY)%<br>
+LOCALS:2 += @"보유 ZP　:%ZP所持量全文字列()%"
 LOCALS += @"<div rect='156,125,1862,312'>%LOCALS:2%</div>"
 
 IF 売却モード == 0
@@ -444,7 +444,7 @@ IF 売却モード == 0
 			CALLFORM 素材性能記述_%商売文字列保存:0%
 			売価 = (素材性能_素材ランク) * (素材性能_素材ランク) * 500 + 300
 			商売文字列保存:1 = %NUM_FORMAT(売価)%
-			商売文字列保存:2 = 루피
+			商売文字列保存:2 = ルピ
 		ELSE
 			売価 = TOINT(商売文字列保存:1)
 			商売文字列保存:1 = %NUM_FORMAT(売価)%
@@ -575,14 +575,14 @@ ELSE
 	LOCALS += "<div rect='1100,3881,5025,125'>"
 	LOCALS += "<button value='998'>[998] 선택 해제</button>　　　"
 	IF ページ番号 > 0
-		LOCALS += "<button value='1101'>[1101] 이전 페이지로</button>　　　"
+		LOCALS += "<button value='1101'>[1101] 이전 페이지</button>　　　"
 	ELSE
 		LOCALS += "　　　 　　　　　　　　　"
 	ENDIF
 	IF MAXARRAY(ソート後ページ登録) > ページ番号
-		LOCALS += "<button value='1102'>[1102] 다음 페이지로</button>　　　"
+		LOCALS += "<button value='1102'>[1102] 다음 페이지</button>　　　"
 	ELSE
-		LOCALS += "　　　 　　　　　　　　"
+		LOCALS += "　　　 　　　　　　　　　"
 	ENDIF
 	LOCALS += "<button value='999'>[999] 가게에서 나가기</button></div>"
 
@@ -662,7 +662,7 @@ SELECTCASE RESULT
 				MONEY -= 売価 * 購入個数
 			ENDIF
 			CALL 素材入手処理(商売文字列保存:0, 購入個数)
-			PRINTFORMW %商売文字列保存:0%을(를)%TOFULL(TOSTR(購入個数)), 4%개 구매했습니다.
+			PRINTFORMW %商売文字列保存:0%을(를) %TOFULL(TOSTR(購入個数)), 4%개 구매했습니다.
 			購入個数 = 1
 		ELSE
 			CALL 素材入手処理(DT_CELL_GETS("所持素材データベース", ソート後素材順:選択アイテム番号, "素材アイテム名", 1), 購入個数 * -1, 1)
@@ -671,7 +671,7 @@ SELECTCASE RESULT
 			LOCALS:11 = %DT_CELL_GETS("所持素材データベース", ソート後素材順:選択アイテム番号, "プレゼントカテゴリ", 1)%
 			PRINTFORM %LOCALS:11%：%DT_CELL_GETS("所持素材データベース", ソート後素材順:選択アイテム番号, "素材アイテム名", 1)%
 			RESETCOLOR
-			PRINTFORMW 을(를)%TOFULL(TOSTR(購入個数)), 4%개 매각했습니다.
+			PRINTFORMW 을(를) %TOFULL(TOSTR(購入個数)), 4%개 매각했습니다.
 
 			TRYCALLFORM 素材性能記述_%DT_CELL_GETS("所持素材データベース", ソート後素材順:選択アイテム番号, "素材アイテム名", 1)%
 			売価 = ((素材性能_素材ランク) * (素材性能_素材ランク) * 500 + 300) / 2

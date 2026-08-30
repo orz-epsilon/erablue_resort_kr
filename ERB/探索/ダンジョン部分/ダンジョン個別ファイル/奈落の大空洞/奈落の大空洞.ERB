@@ -190,7 +190,7 @@ SELECTCASE ARGS
 		IF GETBIT(ダンジョン構造配列_奈落の大空洞:マス深度:マス分岐, 4) == 0
 			;最初に訪れた時
 			WSTR:(K++) = 마물이 자리 잡고 있어서, 피해서 안쪽으로 나아갈 수 없을 것 같다.
-			KSTR:(K++) = 강적에게 싸움을 걸겠습니까?
+			KSTR:(K++) = 강적에게 싸움을 거시겠습니까?
 			KSTR:(K++) = BUTTON_[예]
 			KSTR:(K++) = BUTTON_[아니요]
 			CALL メッセージ欄表示用関数(,,,0)
@@ -240,7 +240,7 @@ SELECTCASE ARGS
 		IF GETBIT(ダンジョン構造配列_奈落の大空洞:マス深度:マス分岐, 4) == 0
 			;最初に訪れた時
 			WSTR:(K++) = 마물이 버티고 있어서, 피해서 안쪽으로는 나아갈 수 없을 것 같다.
-			KSTR:(K++) = 강적에게 싸움을 걸겠습니까?
+			KSTR:(K++) = 강적에게 싸움을 거시겠습니까?
 			KSTR:(K++) = BUTTON_[예]
 			KSTR:(K++) = BUTTON_[아니요]
 			CALL メッセージ欄表示用関数(,,,0)
@@ -289,8 +289,8 @@ SELECTCASE ARGS
 	CASE "マスイベント"
 		IF GETBIT(ダンジョン構造配列_奈落の大空洞:マス深度:マス分岐, 4) == 0
 			;最初に訪れた時
-			WSTR:(K++) = 마물이 자리 잡고 있어서, 피해서 안쪽으로는 나아갈 수 없을 것 같다.
-			KSTR:(K++) = 강적에게 싸움을 걸겠습니까?
+			WSTR:(K++) = 마물이 버티고 있어서, 피해서 안쪽으로는 나아갈 수 없을 것 같다.
+			KSTR:(K++) = 강적에게 싸움을 거시겠습니까?
 			KSTR:(K++) = BUTTON_[예]
 			KSTR:(K++) = BUTTON_[아니요]
 			CALL メッセージ欄表示用関数(,,,0)
@@ -298,7 +298,7 @@ SELECTCASE ARGS
 			SELECTCASE RESULTS
 				CASE "[예]"
 					CALL 口上変数初期化
-					WSTR:(K++) = %CALLNAME:PLAYER%들은 무기를 들고, 강적에게 도전한다!
+					WSTR:(K++) = %CALLNAME:PLAYER%들은 무기를 들고 강적에게 도전한다!
 					CALL 奈落の大空洞_追加レベル補正算出
 					CALLFORM 奈落の大空洞_エネミーセット_{ダンジョン階層記録 * -1}_{ウェーブ番号}(RESULT)
 					CALL 雑魚敵遭遇汎用処理
@@ -313,7 +313,7 @@ SELECTCASE ARGS
 					ENDIF
 				CASE "[아니요]"
 					CALL 口上変数初期化
-					WSTR:(K++) = 상대는 강적이다. 준비를 철저히 하고 도전하자.
+					WSTR:(K++) = 상대는 강적이다. 준비를 철저히 한 후에 도전하자.
 					CALL メッセージ欄表示用関数(,,,0)
 			ENDSELECT
 		ELSE
@@ -339,8 +339,8 @@ SELECTCASE ARGS
 	CASE "マスイベント"
 		IF GETBIT(ダンジョン構造配列_奈落の大空洞:マス深度:マス分岐, 4) == 0
 			;最初に訪れた時
-			WSTR:(K++) = 마물이 자리 잡고 있어서, 피해서 안쪽으로는 나아갈 수 없을 것 같다.
-			KSTR:(K++) = 강적에게 싸움을 걸겠습니까?
+			WSTR:(K++) = 마물이 버티고 있어서, 피해서 안쪽으로 나아갈 수 없을 것 같다.
+			KSTR:(K++) = 강적에게 싸움을 거시겠습니까?
 			KSTR:(K++) = BUTTON_[예]
 			KSTR:(K++) = BUTTON_[아니요]
 			CALL メッセージ欄表示用関数(,,,0)
@@ -348,7 +348,7 @@ SELECTCASE ARGS
 			SELECTCASE RESULTS
 				CASE "[예]"
 					CALL 口上変数初期化
-					WSTR:(K++) = %CALLNAME:PLAYER%들은 무기를 들고, 강적에게 도전한다!
+					WSTR:(K++) = %CALLNAME:PLAYER%들은 무기를 들고 강적에게 도전한다!
 					CALL 奈落の大空洞_追加レベル補正算出
 					CALLFORM 奈落の大空洞_エネミーセット_{ダンジョン階層記録 * -1}_{ウェーブ番号}(RESULT)
 					CALL 雑魚敵遭遇汎用処理
@@ -363,7 +363,7 @@ SELECTCASE ARGS
 					ENDIF
 				CASE "[아니요]"
 					CALL 口上変数初期化
-					WSTR:(K++) = 상대는 강적이다. 준비를 철저히 하고 도전하자.
+					WSTR:(K++) = 상대는 강적이다. 준비를 철저히 한 후에 도전하자.
 					CALL メッセージ欄表示用関数(,,,0)
 			ENDSELECT
 		ELSE
@@ -386,7 +386,7 @@ SELECTCASE ARGS
 		ダンジョンマス画像URL_重ね表示 = エネミーアイコン_赤
 	CASE "接続先"
 	CASE "マスイベント"
-		WSTR:(K++) = 다음 계층으로 나아갈 수 있을 것 같은 암벽 앞에, 매우 강대한 마물이 버티고 있다.
+		WSTR:(K++) = 다음 계층으로 나아갈 수 있을 것 같은 암벽 앞에, 매우 강력한 마물이 자리 잡고 있다.
 		WSTR:(K++) = 아마 이 계층에서 가장 강한 마물일 것이다. 물론 피해서 안쪽으로 나아갈 수는 없을 것 같다.
 		KSTR:(K++) = 강적에게 싸움을 거시겠습니까?
 		KSTR:(K++) = BUTTON_[예]
@@ -412,7 +412,7 @@ SELECTCASE ARGS
 						CALL メッセージ欄表示用関数(,,,0)
 
 						CALL 口上変数初期化
-						WSTR:(K++) = %CALLNAME:PLAYER%들은 더욱 깊은 곳으로 가는 길을 나아간다…
+						WSTR:(K++) = %CALLNAME:PLAYER%들은 더욱 깊은 곳으로 향하는 길을 나아간다…
 						CALL メッセージ欄表示用関数(,,,0)
 						;次階層生成
 						ダンジョン階層記録 = 1
@@ -433,7 +433,7 @@ SELECTCASE ARGS
 				ENDIF
 			CASE "[아니요]"
 				CALL 口上変数初期化
-				WSTR:(K++) = 상대는 강적이다. 준비를 철저히 하고 도전하자.
+				WSTR:(K++) = 상대는 강적이다. 준비를 철저히 한 후에 도전하자.
 				CALL メッセージ欄表示用関数(,,,0)
 		ENDSELECT
 		CALL 画面再描画

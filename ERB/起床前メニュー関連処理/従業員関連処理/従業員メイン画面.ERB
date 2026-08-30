@@ -2,16 +2,24 @@
 
 
 DRAWLINE
-PRINTL 리조트에서 일하는 직원의 고용 및 업무 배정을 합니다.
-PRINTL ※소질 지정의 경우 지정한 양에 따라 루피가 소모됩니다.
+PRINTL 리조트에서 일하는 직원을 고용하거나 업무를 배정합니다.
+PRINTL ※소질 지정 시에는 지정한 양에 따라 루피가 소모됩니다.
 DRAWLINE
 LOCALS = <div rect='81,31,1937,2812' border='31' bcolor='#C0C0C0'></div><div rect='2050,31,3875,2812' border='31' bcolor='#C0C0C0'></div>
 LOCALS += "<div rect='156,156,1937,2812'>"
-LOCALS += "<button value='100'>[100] 직원 무작위 고용</button>"
-LOCALS += "<br>"
-LOCALS += "<button value='101'>[101] 직원 소질 지정 고용</button>"
+IF 従業員部屋満杯()
+	LOCALS += "<font color='#666666'>[---] 직원 방은 만원입니다</font>"
+	LOCALS += "<br>"
+	LOCALS += "<font color='#666666'>[---] 직원 방은 만원입니다</font>"
+ELSE
+	LOCALS += "<button value='100'>[100] 직원 무작위 고용</button>"
+	LOCALS += "<br>"
+	LOCALS += "<button value='101'>[101] 직원 소질 지정 고용</button>"
+ENDIF
 LOCALS += "<br>"
 LOCALS += "<button value='110'>[110] 업무 배정</button>"
+LOCALS += "<br>"
+LOCALS += "<button value='111'>[111] 교대 근무 설정</button>"
 LOCALS += "<br>"
 LOCALS += "<button value='120'>[120] 제복 설정</button>"
 LOCALS += "<br>"
@@ -49,6 +57,8 @@ SELECTCASE LOCAL
 		CALL 従業員解雇
 	CASE 110
 		CALL 従業員仕事割り振り
+	CASE 111
+		CALL 従業員シフト設定
 	CASE 120
 		CALL 従業員制服設定
 	CASE 130
@@ -63,3 +73,34 @@ ENDSELECT
 
 RESTART
 
+
+;従業員部屋のうち使用されている部屋の数を返す
+@従業員部屋_部屋使用数()
+#FUNCTION
+#LOCALSIZE 2
+
+LOCAL:1 = 0
+FOR LOCAL, 0, 従業員部屋数
+	SIF 従業員部屋割り配列:LOCAL > 0
+		LOCAL:1 ++
+NEXT
+RETURNF LOCAL:1
+
+
+;従業員部屋に空きがあればその配列番号(一番若いもの)、なければ-1を返す
+@従業員部屋_空きチェック()
+#FUNCTION
+#LOCALSIZE 1
+
+FOR LOCAL, 0, 従業員部屋数
+	SIF 従業員部屋割り配列:LOCAL <= 0
+		RETURNF LOCAL
+NEXT
+RETURNF -1
+
+
+;従業員部屋が満杯なら1、それ以外は0を返す
+@従業員部屋満杯()
+#FUNCTION
+
+RETURNF 従業員部屋_空きチェック() < 0

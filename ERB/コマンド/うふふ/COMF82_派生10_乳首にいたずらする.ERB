@@ -21,10 +21,10 @@ TFLAG:コマンドタイプ受渡 = COMTYPE("うふふ")
 オートコマンド許可 = 1
 
 @COM_TOOLTIP_S82_10
-LOCALS = <br>■젖꼭지에 장난치다<br>
-LOCALS += "파이즈리 중인 상대의 젖꼭지를 애무한다."
-LOCALS += "<br>COM타입：우후후<br>취득 소스：쾌B・노출・접촉"
-LOCALS += "<br>고유 취득 경험：없음<br>"
+LOCALS = <br>■젖꼭지에 장난치기<br>
+LOCALS += "가슴치기 중인 상대의 젖꼭지를 애무한다."
+LOCALS += "<br>COM 타입: 우후후<br>획득 소스: 쾌B・노출・접촉"
+LOCALS += "<br>고유 획득 경험: 없음<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
 @COM_S82_10
@@ -99,9 +99,9 @@ RETURN 1
 
 SELECTCASE RAND:3
 	CASE 0
-		PRINTFORML %CALLNAME:PLAYER%는 파이즈리 중인 %CALLNAME:TARGET%의 유두를 건드리며 장난을 쳤다.
+		PRINTFORML %CALLNAME:PLAYER%은(는) 가슴치기 중인%CALLNAME:TARGET%의 젖꼭지를 만지작거리며 장난을 걸었다.
 	CASE 1
-		PRINTFORML %CALLNAME:PLAYER%는 파이즈리 중인 %CALLNAME:TARGET%의 유두를 만지작거리며 장난치고 있다.
+		PRINTFORML %CALLNAME:PLAYER%은(는) 가슴치기 중인%CALLNAME:TARGET%의 젖꼭지를 만지작거리며 장난치고 있다.
 	CASE 2
-		PRINTFORML %CALLNAME:PLAYER%는 움직이는 %CALLNAME:TARGET%의 유두를 가볍게 건드려 파이즈리를 방해하고 있다…….
+		PRINTFORML %CALLNAME:PLAYER%은(는) 움직이는%CALLNAME:TARGET%의 젖꼭지를 가볍게 만지작거리며, 가슴치기를 방해하고 있다……。
 ENDSELECT

@@ -1,4 +1,4 @@
-﻿@PALAMUP_CHARAEVENT_28(PALAM種類変数, 変化量)
+@PALAMUP_CHARAEVENT_28(PALAM種類変数, 変化量)
 #DIM キャラ番号
 #DIM PALAM種類変数
 #DIM 変化量
@@ -6,7 +6,7 @@
 ;より正確に言えばSOURCE_CALC_系関数から飛んでくるので、直接PALAMをいじっても飛んで来ない
 
 
-キャラ番号 = キャラ検索("[푸르고 아름다운 십천의 휘성]지타")
+キャラ番号 = キャラ検索("[碧く麗しき十天の輝星]ジータ")
 IF TALENT:キャラ番号:命のリンク && CFLAG:キャラ番号:滞在期間 > 0
 	SELECTCASE PALAM種類変数
 		CASE 0
@@ -27,7 +27,7 @@ IF TALENT:キャラ番号:命のリンク && CFLAG:キャラ番号:滞在期間 
 	ENDSELECT
 ENDIF
 
-キャラ番号 = キャラ検索("[꿈꾸는 자]그랑")
+キャラ番号 = キャラ検索("[夢抱く者]グラン")
 IF TALENT:キャラ番号:命のリンク && CFLAG:キャラ番号:滞在期間 > 0
 	SELECTCASE PALAM種類変数
 		CASE 0

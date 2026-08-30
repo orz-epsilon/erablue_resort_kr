@@ -18,11 +18,11 @@
 #DIM クイック行動フラグ_TARGET
 #DIM 表示用ステータス格納配列, 500, 10
 #DIMS SAVEDATA メンバーリスト表示欄, 5
-#DIMS アビ関数名保存, 10
+#DIMS アビ関数名保存, 20
 #DIMS 証アビ関数名保存, 10
 #DIMS 兵装関数名保存, 10
 #DIM アビ汎用変数, 100
-#DIMS アビ汎用文字列, 30
+#DIMS アビ汎用文字列, 50
 #DIM 消費MP一時保存
 #DIM 奥義対象指定先
 #DIMS リザルト後特殊処理_処理キー
@@ -58,6 +58,7 @@
 #DIMS アビテンプレート用_反応口上モード記録
 #DIM アビテンプレート用_反応口上対象記録, 10
 #DIM アビテンプレート用_反応口上管理番号
+#DIMS カットイン用口上保存
 
 #DIMS 展開中フィールド名格納
 
@@ -106,6 +107,7 @@
 #DIM 一時ステータス補正保存, 200
 #DIMS CHARADATA SAVEDATA 表示奥義, 3
 #DIMS CHARADATA SAVEDATA 陥落奥義, 3
+#DIMS CHARADATA SAVEDATA 基礎BATTLE_STATE_STR, 1
 
 #DIMS CONST 成長タイプ, 8 = "バランス", "攻撃", "防御", "回復", "サポート", "連撃", "回避", "奥義"
 

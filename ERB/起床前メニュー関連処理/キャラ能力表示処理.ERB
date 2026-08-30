@@ -72,7 +72,7 @@ FOR LOCAL, ページ数 * 項目表示数, 候補人数
 		ELSEIF CFLAG:(表示候補:LOCAL):滞在期間 == 999
 			LOCALS += "　　　상시 체류　"
 		ELSEIF CFLAG:(表示候補:LOCAL):滞在期間 > 1
-			LOCALS += @"　남은 체류：{CFLAG:(表示候補:LOCAL):滞在期間 - 1, 2}일　"
+			LOCALS += @"　남은 체류: {CFLAG:(表示候補:LOCAL):滞在期間 - 1, 2}일　"
 		ELSE
 			LOCALS += "　　　　　　　　"
 		ENDIF
@@ -115,7 +115,7 @@ ELSE
 	LOCALS:2 += " 　　　"
 ENDIF
 LOCALS:2 += " " * 26
-LOCALS:2 += @"<button value='9007'>항목 표시 수：{項目表示数, 3}명/page</button>"
+LOCALS:2 += @"<button value='9007'>항목 표시 수:{項目表示数, 3}명/페이지</button>"
 LOCALS:2 += " " * (56-20-20)
 IF ページ数 <= ページ数:1 - 5
 	LOCALS:2 += "<button value='9004'>[＋５] </button>"
@@ -134,7 +134,7 @@ DRAWLINE
 IF 滞在者のみフィルタ
 	ボタンテキスト '= "滞在者と非滞在者を表示する"
 ELSE
-	ボタンテキスト '= "滞在者のみ表示する"
+	ボタンテキスト '= "체류자만 표시"
 ENDIF
 CALL フィルタソートボタンセット表示(2000, 3000, 3100, 4000, 2001, ボタンテキスト)
 DRAWLINE
@@ -154,7 +154,7 @@ IF RESULT == 9999
 ELSEIF RESULT == 9998
 	CALL 能力表示チュートリアル()
 	GOTO 表示処理_LOOP
-ELSEIF GROUPMATCH(RESULT, 2000, 3000, 3100, 4000)
+ELSEIF GROUPMATCH(RESULT, 2000, 3000, 3100, 3101, 3102, 4000)
 	CALL フィルタソートボタンセット実行部(RESULT, 2000, 3000, 3100, 4000)
 	ページ数 = 0
 	RESTART
@@ -185,13 +185,13 @@ ELSEIF RESULT == 9005
 	ページ数 = ページ数:1
 	GOTO 表示処理_LOOP
 ELSEIF RESULT == 9006
-	PRINTFORML 이동할 페이지 수를 입력해주세요 (1～{1+ページ数:1})
+	PRINTFORML 이동할 페이지 수를 입력해주세요（1～{1+ページ数:1}）
 	INPUT
 	SIF INRANGE(RESULT, 1, 1+ページ数:1)
 		ページ数 = RESULT - 1
 	GOTO 表示処理_LOOP
 ELSEIF RESULT == 9007
-	PRINTFORML 한 페이지당 표시할 인원수를 입력해주세요 (1～100)
+	PRINTFORML 한 페이지당 표시할 인원수를 입력해주세요（1～100）
 	INPUT
 	IF INRANGE(RESULT, 1, 100)
 		項目表示数 = RESULT

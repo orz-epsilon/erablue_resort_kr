@@ -44,19 +44,19 @@ ENDSELECT
 
 SELECTCASE ARG
 	CASE 0
-		RETURNF "火"
+		RETURNF "불"
 	CASE 1
-		RETURNF "水"
+		RETURNF "물"
 	CASE 2
-		RETURNF "風"
+		RETURNF "바람"
 	CASE 3
-		RETURNF "土"
+		RETURNF "흙"
 	CASE 4
-		RETURNF "光"
+		RETURNF "빛"
 	CASE 5
-		RETURNF "闇"
+		RETURNF "어둠"
 	CASE 6
-		RETURNF "無"
+		RETURNF "무"
 ENDSELECT
 
 @有利属性変換(ARG)
@@ -130,25 +130,25 @@ ENDSELECT
 
 SELECTCASE ARG
 	CASE 0
-		RETURNF "剣"
+		RETURNF "검"
 	CASE 1
-		RETURNF "短剣"
+		RETURNF "단검"
 	CASE 2
-		RETURNF "槍"
+		RETURNF "창"
 	CASE 3
-		RETURNF "斧"
+		RETURNF "도끼"
 	CASE 4
-		RETURNF "杖"
+		RETURNF "지팡이"
 	CASE 5
-		RETURNF "銃"
+		RETURNF "총"
 	CASE 6
-		RETURNF "格闘"
+		RETURNF "격투"
 	CASE 7
-		RETURNF "弓"
+		RETURNF "활"
 	CASE 8
-		RETURNF "楽器"
+		RETURNF "악기"
 	CASE 9
-		RETURNF "刀"
+		RETURNF "도"
 ENDSELECT
 
 @得意武器表示文字列数値変換(表示文字列)
@@ -200,28 +200,39 @@ FOR ループ用, 0, 10
 NEXT
 RETURNF 表示文字列
 
+@タイプ表示関数(対象キャラ)
+#FUNCTIONS
+#DIM 対象キャラ
+
+IF 基礎BATTLE_STATE:対象キャラ:ステータスタイプ保存 == -1 && 基礎BATTLE_STATE_STR:対象キャラ:固有ステータスタイプ名 != ""
+	RETURNF 基礎BATTLE_STATE_STR:対象キャラ:固有ステータスタイプ名
+ENDIF
+
+RETURNF タイプ数値文字列変換(基礎BATTLE_STATE:対象キャラ:ステータスタイプ保存)
+
+
 @タイプ数値文字列変換(ARG)
 #FUNCTIONS
 
 SELECTCASE ARG
 	CASE -1
-		RETURNF "固有"
+		RETURNF "고유"
 	CASE 0
-		RETURNF "バランス"
+		RETURNF "밸런스"
 	CASE 1
-		RETURNF "攻撃"
+		RETURNF "공격"
 	CASE 2
-		RETURNF "防御"
+		RETURNF "방어"
 	CASE 3
-		RETURNF "回復"
+		RETURNF "회복"
 	CASE 4
-		RETURNF "サポート"
+		RETURNF "서포트"
 	CASE 5
-		RETURNF "連撃"
+		RETURNF "연격"
 	CASE 6
-		RETURNF "回避"
+		RETURNF "회피"
 	CASE 7
-		RETURNF "奥義"
+		RETURNF "오의"
 ENDSELECT
 
 @タイプ文字列数値変換(ARGS)
@@ -246,6 +257,8 @@ SELECTCASE ARGS
 		RETURNF 6
 	CASE "奥義"
 		RETURNF 7
+	CASEELSE
+		RETURNF -1
 ENDSELECT
 
 
@@ -388,8 +401,8 @@ IF GETNUM(BATTLE_STATE, バフ・デバフ種類, 2) > 0
 				LOCAL += DT_CELL_GET("戦闘効果データベース", ループ用, "効果量_割合")
 				LOCAL:1 += DT_CELL_GET("戦闘効果データベース", ループ用, "効果量_固定値")
 				IF DT_CELL_GETS("戦闘効果データベース", ループ用, "付随効果枠") != ""
-					LOCAL += 付随依存変動算出(ループ用, 観測隊列, "비율")
-					LOCAL:1 += 付随依存変動算出(ループ用, 観測隊列, "고정값")
+					LOCAL += 付随依存変動算出(ループ用, 観測隊列, "割合")
+					LOCAL:1 += 付随依存変動算出(ループ用, 観測隊列, "固定値")
 				ENDIF
 			ELSEIF DT_CELL_GETS("戦闘効果データベース", ループ用, "バフ・デバフフラグ") == "デバフ"
 				LOCAL -= DT_CELL_GET("戦闘効果データベース", ループ用, "効果量_割合")
@@ -418,13 +431,13 @@ IF GETNUM(BATTLE_STATE, バフ・デバフ種類, 2) > 0
 		バフ・デバフ補正後数値 = MAX(敵BATTLE_STATE:(観測隊列 - 10):バフ・デバフ種類 / 2, バフ・デバフ補正後数値)
 	ENDIF
 ELSEIF バフ・デバフ種類 == "連続攻撃率"
-	;連撃率はステータスになく、かつDA율TA율と基本的に加算するので基本値を無視して補正値のみ
+	;連撃率はステータスになく、かつDA率TA率と基本的に加算するので基本値を無視して補正値のみ
 	FOR ループ用, 0, DT_ROW_LENGTH("戦闘効果データベース")
 		IF バフ・デバフ効果適用判定_行指定(ループ用, "ALL", バフ・デバフ種類, 観測隊列)
 			IF DT_CELL_GETS("戦闘効果データベース", ループ用, "バフ・デバフフラグ") == "バフ"
 				LOCAL:1 += DT_CELL_GET("戦闘効果データベース", ループ用, "効果量_固定値")
 				IF DT_CELL_GETS("戦闘効果データベース", ループ用, "付随効果枠") != ""
-					LOCAL:1 += 付随依存変動算出(ループ用, 観測隊列, "고정값")
+					LOCAL:1 += 付随依存変動算出(ループ用, 観測隊列, "固定値")
 				ENDIF
 			ELSEIF DT_CELL_GETS("戦闘効果データベース", ループ用, "バフ・デバフフラグ") == "デバフ"
 				LOCAL:1 -= DT_CELL_GET("戦闘効果データベース", ループ用, "効果量_固定値")
@@ -448,8 +461,8 @@ ELSEIF バフ・デバフ種類 == "与ダメージ"
 				LOCAL += DT_CELL_GET("戦闘効果データベース", ループ用, "効果量_割合")
 				LOCAL:1 += DT_CELL_GET("戦闘効果データベース", ループ用, "効果量_固定値")
 				IF DT_CELL_GETS("戦闘効果データベース", ループ用, "付随効果枠") != ""
-					LOCAL += 付随依存変動算出(ループ用, 観測隊列, "비율")
-					LOCAL:1 += 付随依存変動算出(ループ用, 観測隊列, "고정값")
+					LOCAL += 付随依存変動算出(ループ用, 観測隊列, "割合")
+					LOCAL:1 += 付随依存変動算出(ループ用, 観測隊列, "固定値")
 				ENDIF
 			ELSEIF DT_CELL_GETS("戦闘効果データベース", ループ用, "バフ・デバフフラグ") == "デバフ"
 				LOCAL -= DT_CELL_GET("戦闘効果データベース", ループ用, "効果量_割合")
@@ -479,8 +492,8 @@ ELSEIF バフ・デバフ種類 == "被ダメージ"
 				LOCAL += DT_CELL_GET("戦闘効果データベース", ループ用, "効果量_割合")
 				LOCAL:1 += DT_CELL_GET("戦闘効果データベース", ループ用, "効果量_固定値")
 				IF DT_CELL_GETS("戦闘効果データベース", ループ用, "付随効果枠") != ""
-					LOCAL += 付随依存変動算出(ループ用, 観測隊列, "비율")
-					LOCAL:1 += 付随依存変動算出(ループ用, 観測隊列, "고정값")
+					LOCAL += 付随依存変動算出(ループ用, 観測隊列, "割合")
+					LOCAL:1 += 付随依存変動算出(ループ用, 観測隊列, "固定値")
 				ENDIF
 			ELSEIF DT_CELL_GETS("戦闘効果データベース", ループ用, "バフ・デバフフラグ") == "デバフ"
 				LOCAL -= DT_CELL_GET("戦闘効果データベース", ループ用, "効果量_割合")
@@ -509,7 +522,7 @@ ELSEIF バフ・デバフ種類 == "テンション"
 			IF DT_CELL_GETS("戦闘効果データベース", ループ用, "バフ・デバフフラグ") == "バフ"
 				LOCAL += DT_CELL_GET("戦闘効果データベース", ループ用, "効果量_固定値")
 				IF DT_CELL_GETS("戦闘効果データベース", ループ用, "付随効果枠") != ""
-					LOCAL += 付随依存変動算出(ループ用, 観測隊列, "고정값")
+					LOCAL += 付随依存変動算出(ループ用, 観測隊列, "固定値")
 				ENDIF
 			ELSEIF DT_CELL_GETS("戦闘効果データベース", ループ用, "バフ・デバフフラグ") == "デバフ"
 				LOCAL -= DT_CELL_GET("戦闘効果データベース", ループ用, "効果量_固定値")
@@ -543,7 +556,7 @@ ELSEIF バフ・デバフ種類 == "ストレングス"
 			IF DT_CELL_GETS("戦闘効果データベース", ループ用, "バフ・デバフフラグ") == "バフ"
 				LOCAL += DT_CELL_GET("戦闘効果データベース", ループ用, "効果量_割合")
 				IF DT_CELL_GETS("戦闘効果データベース", ループ用, "付随効果枠") != ""
-					LOCAL += 付随依存変動算出(ループ用, 観測隊列, "비율")
+					LOCAL += 付随依存変動算出(ループ用, 観測隊列, "割合")
 				ENDIF
 			ELSEIF DT_CELL_GETS("戦闘効果データベース", ループ用, "バフ・デバフフラグ") == "デバフ"
 				LOCAL -= DT_CELL_GET("戦闘効果データベース", ループ用, "効果量_割合")
@@ -558,7 +571,7 @@ ELSEIF バフ・デバフ種類 == "ストレングス"
 		CALL バフ回数経過処理(観測隊列, "ストレングス")
 	ENDIF
 	IF LOCAL > 0
-		バフ・デバフ補正後数値 = (((BATTLE_STATE:観測隊列:ＨＰ * 200 / BATTLE_STATE:観測隊列:최대HP + 100) * (LOCAL/3) / 100) + 100)
+		バフ・デバフ補正後数値 = (((BATTLE_STATE:観測隊列:ＨＰ * 200 / BATTLE_STATE:観測隊列:最大ＨＰ + 100) * (LOCAL/3) / 100) + 100)
 	ELSE
 		バフ・デバフ補正後数値 = 100
 	ENDIF
@@ -568,7 +581,7 @@ ELSEIF バフ・デバフ種類 == "逆境"
 			IF DT_CELL_GETS("戦闘効果データベース", ループ用, "バフ・デバフフラグ") == "バフ"
 				LOCAL += DT_CELL_GET("戦闘効果データベース", ループ用, "効果量_割合")
 				IF DT_CELL_GETS("戦闘効果データベース", ループ用, "付随効果枠") != ""
-					LOCAL += 付随依存変動算出(ループ用, 観測隊列, "비율")
+					LOCAL += 付随依存変動算出(ループ用, 観測隊列, "割合")
 				ENDIF
 			ELSEIF DT_CELL_GETS("戦闘効果データベース", ループ用, "バフ・デバフフラグ") == "デバフ"
 				LOCAL -= DT_CELL_GET("戦闘効果データベース", ループ用, "効果量_割合")
@@ -583,7 +596,7 @@ ELSEIF バフ・デバフ種類 == "逆境"
 		CALL バフ回数経過処理(観測隊列, "逆境")
 	ENDIF
 	IF LOCAL > 0
-		バフ・デバフ補正後数値 = ((((BATTLE_STATE:観測隊列:최대HP - BATTLE_STATE:観測隊列:ＨＰ) * 200 / BATTLE_STATE:観測隊列:최대HP + 100) * (LOCAL/3) / 100) + 100)
+		バフ・デバフ補正後数値 = ((((BATTLE_STATE:観測隊列:最大ＨＰ - BATTLE_STATE:観測隊列:ＨＰ) * 200 / BATTLE_STATE:観測隊列:最大ＨＰ + 100) * (LOCAL/3) / 100) + 100)
 	ELSE
 		バフ・デバフ補正後数値 = 100
 	ENDIF
@@ -592,7 +605,7 @@ ELSEIF バフ・デバフ種類 == "暗闇"
 		IF バフ・デバフ効果適用判定_行指定(ループ用, "デバフ", バフ・デバフ種類, 観測隊列)
 			バフ・デバフ補正後数値 = DT_CELL_GET("戦闘効果データベース", ループ用, "効果量_割合")
 			IF DT_CELL_GETS("戦闘効果データベース", ループ用, "付随効果枠") != ""
-				バフ・デバフ補正後数値 += 付随依存変動算出(ループ用, 観測隊列, "비율")
+				バフ・デバフ補正後数値 += 付随依存変動算出(ループ用, 観測隊列, "割合")
 			ENDIF
 			BREAK
 		ENDIF
@@ -606,7 +619,7 @@ ELSEIF バフ・デバフ種類 == "最大ＣＴ増加"
 		IF バフ・デバフ効果適用判定_行指定(ループ用, "デバフ", バフ・デバフ種類, 観測隊列)
 			バフ・デバフ補正後数値 = DT_CELL_GET("戦闘効果データベース", ループ用, "効果量_固定値")
 			IF DT_CELL_GETS("戦闘効果データベース", ループ用, "付随効果枠") != ""
-				バフ・デバフ補正後数値 += 付随依存変動算出(ループ用, 観測隊列, "고정값")
+				バフ・デバフ補正後数値 += 付随依存変動算出(ループ用, 観測隊列, "固定値")
 			ENDIF
 			BREAK
 		ENDIF
@@ -622,7 +635,7 @@ ELSEIF GROUPMATCH(バフ・デバフ種類, "全強化", "全耐性")
 			IF DT_CELL_GETS("戦闘効果データベース", ループ用, "バフ・デバフフラグ") == "バフ"
 				LOCAL:1 += DT_CELL_GET("戦闘効果データベース", ループ用, "効果量_固定値")
 				IF DT_CELL_GETS("戦闘効果データベース", ループ用, "付随効果枠") != ""
-					LOCAL:1 += 付随依存変動算出(ループ用, 観測隊列, "고정값")
+					LOCAL:1 += 付随依存変動算出(ループ用, 観測隊列, "固定値")
 				ENDIF
 			ELSEIF DT_CELL_GETS("戦闘効果データベース", ループ用, "バフ・デバフフラグ") == "デバフ"
 				LOCAL:1 -= DT_CELL_GET("戦闘効果データベース", ループ用, "効果量_固定値")
@@ -646,8 +659,8 @@ ELSEIF GROUPMATCH(バフ・デバフ種類, "ダメージ補正_通常攻撃ダ�
 			LOCAL += DT_CELL_GET("戦闘効果データベース", ループ用, "効果量_割合")
 			LOCAL:1 += DT_CELL_GET("戦闘効果データベース", ループ用, "効果量_固定値")
 			IF DT_CELL_GETS("戦闘効果データベース", ループ用, "付随効果枠") != ""
-				LOCAL += 付随依存変動算出(ループ用, 観測隊列, "비율")
-				LOCAL:1 += 付随依存変動算出(ループ用, 観測隊列, "고정값")
+				LOCAL += 付随依存変動算出(ループ用, 観測隊列, "割合")
+				LOCAL:1 += 付随依存変動算出(ループ用, 観測隊列, "固定値")
 			ENDIF
 		ENDIF
 	NEXT
@@ -668,15 +681,15 @@ ELSEIF REGEXPMATCH(バフ・デバフ種類, "^ダメージ補正_.*$") > 0
 			LOCAL += DT_CELL_GET("戦闘効果データベース", ループ用, "効果量_割合")
 			LOCAL:1 += DT_CELL_GET("戦闘効果データベース", ループ用, "効果量_固定値")
 			IF DT_CELL_GETS("戦闘効果データベース", ループ用, "付随効果枠") != ""
-				LOCAL += 付随依存変動算出(ループ用, 관측대열, "비율")
-				LOCAL:1 += 付随依存変動算出(ループ用, 관측대열, "고정값")
+				LOCAL += 付随依存変動算出(ループ用, 観測隊列, "割合")
+				LOCAL:1 += 付随依存変動算出(ループ用, 観測隊列, "固定値")
 			ENDIF
 		ELSEIF バフ・デバフ効果適用判定_行指定(ループ用, "バフ", "ダメージ補正_アビリティダメージ", 観測隊列)
 			LOCAL += DT_CELL_GET("戦闘効果データベース", ループ用, "効果量_割合")
 			LOCAL:1 += DT_CELL_GET("戦闘効果データベース", ループ用, "効果量_固定値")
 			IF DT_CELL_GETS("戦闘効果データベース", ループ用, "付随効果枠") != ""
-				LOCAL += 付随依存変動算出(ループ用, 관측대열, "비율")
-				LOCAL:1 += 付随依存変動算出(ループ用, 관측대열, "고정값")
+				LOCAL += 付随依存変動算出(ループ用, 観測隊列, "割合")
+				LOCAL:1 += 付随依存変動算出(ループ用, 観測隊列, "固定値")
 			ENDIF
 		ENDIF
 	NEXT
@@ -700,7 +713,7 @@ ELSEIF REGEXPMATCH(バフ・デバフ種類, "^状態異常耐性_.*$") > 0
 			IF DT_CELL_GETS("戦闘効果データベース", ループ用, "バフ・デバフフラグ") == "バフ"
 				LOCAL:1 += DT_CELL_GET("戦闘効果データベース", ループ用, "効果量_固定値")
 				IF DT_CELL_GETS("戦闘効果データベース", ループ用, "付随効果枠") != ""
-					LOCAL:1 += 付随依存変動算出(ループ用, 관측대열, "고정값")
+					LOCAL:1 += 付随依存変動算出(ループ用, 観測隊列, "固定値")
 				ENDIF
 			ELSEIF DT_CELL_GETS("戦闘効果データベース", ループ用, "バフ・デバフフラグ") == "デバフ"
 				LOCAL:1 -= DT_CELL_GET("戦闘効果データベース", ループ用, "効果量_固定値")
@@ -724,8 +737,8 @@ ELSEIF バフ・デバフ種類 == "通常攻撃_ゲージ上昇率"
 				LOCAL += DT_CELL_GET("戦闘効果データベース", ループ用, "効果量_割合")
 				LOCAL:1 += DT_CELL_GET("戦闘効果データベース", ループ用, "効果量_固定値")
 				IF DT_CELL_GETS("戦闘効果データベース", ループ用, "付随効果枠") != ""
-					LOCAL += 付随依存変動算出(ループ用, 관측대열, "비율")
-					LOCAL:1 += 付随依存変動算出(ループ用, 관측대열, "고정값")
+					LOCAL += 付随依存変動算出(ループ用, 観測隊列, "割合")
+					LOCAL:1 += 付随依存変動算出(ループ用, 観測隊列, "固定値")
 				ENDIF
 			ELSEIF DT_CELL_GETS("戦闘効果データベース", ループ用, "バフ・デバフフラグ") == "デバフ"
 				LOCAL -= DT_CELL_GET("戦闘効果データベース", ループ用, "効果量_割合")
@@ -749,8 +762,8 @@ ELSEIF REGEXPMATCH(バフ・デバフ種類, "^属性与ダメージ_.*") > 0
 				LOCAL += DT_CELL_GET("戦闘効果データベース", ループ用, "効果量_割合")
 				LOCAL:1 += DT_CELL_GET("戦闘効果データベース", ループ用, "効果量_固定値")
 				IF DT_CELL_GETS("戦闘効果データベース", ループ用, "付随効果枠") != ""
-					LOCAL += 付随依存変動算出(ループ用, 観測隊列, "비율")
-					LOCAL:1 += 付随依存変動算出(ループ用, 観測隊列, "고정값")
+					LOCAL += 付随依存変動算出(ループ用, 観測隊列, "割合")
+					LOCAL:1 += 付随依存変動算出(ループ用, 観測隊列, "固定値")
 				ENDIF
 			ELSEIF DT_CELL_GETS("戦闘効果データベース", ループ用, "バフ・デバフフラグ") == "デバフ"
 				LOCAL -= DT_CELL_GET("戦闘効果データベース", ループ用, "効果量_割合")
@@ -780,8 +793,8 @@ ELSEIF REGEXPMATCH(バフ・デバフ種類, "^属性被ダメージ_.*") > 0
 				LOCAL += DT_CELL_GET("戦闘効果データベース", ループ用, "効果量_割合")
 				LOCAL:1 += DT_CELL_GET("戦闘効果データベース", ループ用, "効果量_固定値")
 				IF DT_CELL_GETS("戦闘効果データベース", ループ用, "付随効果枠") != ""
-					LOCAL += 付随依存変動算出(ループ用, 観測隊列, "비율")
-					LOCAL:1 += 付随依存変動算出(ループ用, 観測隊列, "고정값")
+					LOCAL += 付随依存変動算出(ループ用, 観測隊列, "割合")
+					LOCAL:1 += 付随依存変動算出(ループ用, 観測隊列, "固定値")
 				ENDIF
 			ELSEIF DT_CELL_GETS("戦闘効果データベース", ループ用, "バフ・デバフフラグ") == "デバフ"
 				LOCAL -= DT_CELL_GET("戦闘効果データベース", ループ用, "効果量_割合")
@@ -811,8 +824,8 @@ ELSEIF バフ・デバフ種類 == "与回復量"
 				LOCAL += DT_CELL_GET("戦闘効果データベース", ループ用, "効果量_割合")
 				LOCAL:1 += DT_CELL_GET("戦闘効果データベース", ループ用, "効果量_固定値")
 				IF DT_CELL_GETS("戦闘効果データベース", ループ用, "付随効果枠") != ""
-					LOCAL += 付随依存変動算出(ループ用, 観測隊列, "비율")
-					LOCAL:1 += 付随依存変動算出(ループ用, 観測隊列, "고정값")
+					LOCAL += 付随依存変動算出(ループ用, 観測隊列, "割合")
+					LOCAL:1 += 付随依存変動算出(ループ用, 観測隊列, "固定値")
 				ENDIF
 			ELSEIF DT_CELL_GETS("戦闘効果データベース", ループ用, "バフ・デバフフラグ") == "デバフ"
 				LOCAL -= DT_CELL_GET("戦闘効果データベース", ループ用, "効果量_割合")
@@ -842,8 +855,8 @@ ELSEIF バフ・デバフ種類 == "被回復量"
 				LOCAL += DT_CELL_GET("戦闘効果データベース", ループ用, "効果量_割合")
 				LOCAL:1 += DT_CELL_GET("戦闘効果データベース", ループ用, "効果量_固定値")
 				IF DT_CELL_GETS("戦闘効果データベース", ループ用, "付随効果枠") != ""
-					LOCAL += 付随依存変動算出(ループ用, 観測隊列, "비율")
-					LOCAL:1 += 付随依存変動算出(ループ用, 観測隊列, "고정값")
+					LOCAL += 付随依存変動算出(ループ用, 観測隊列, "割合")
+					LOCAL:1 += 付随依存変動算出(ループ用, 観測隊列, "固定値")
 				ENDIF
 			ELSEIF DT_CELL_GETS("戦闘効果データベース", ループ用, "バフ・デバフフラグ") == "デバフ"
 				LOCAL -= DT_CELL_GET("戦闘効果データベース", ループ用, "効果量_割合")
@@ -884,7 +897,7 @@ IF RESULT == 0
 ELSEIF RESULT == 1
 	;全滅時
 	CALL 口上変数初期化
-	KSTR:(K++) = %CALLNAME:PLAYER%은(는) 힘이 다한 동료들을 데리고, 어떻게든 도망쳤다…
+	KSTR:(K++) = %CALLNAME:PLAYER%은(는) 힘이 다한 동료들을 데리고, 간신히 도망쳤다…
 	CALL メッセージ欄表示用関数()
 	ダンジョン終了状況 = 全滅
 	RETURN 1
@@ -1017,7 +1030,7 @@ ENDIF
 RETURNF 0
 
 
-@戦闘中최대HPＭＰ変動処理()
+@戦闘中最大ＨＰＭＰ変動処理()
 #DIM 対象配列, 10
 #DIM 対象数
 
@@ -1040,10 +1053,10 @@ FOR LOCAL, 10, 14
 		CONTINUE
 	SIF BATTLE_STATE:LOCAL:ＨＰ < 1
 		CONTINUE
-	BATTLE_STATE:LOCAL:최대HP = 基礎BATTLE_STATE:(BATTLE_STATE:LOCAL:キャラ登録番号):최대HP + 装備ステータス補正保存:(BATTLE_STATE:LOCAL:キャラ登録番号):최대HP
-	BATTLE_STATE:LOCAL:ＨＰ = MIN(BATTLE_STATE:LOCAL:ＨＰ, BATTLE_STATE:LOCAL:최대HP)
-	BATTLE_STATE:LOCAL:최대MP = 基礎BATTLE_STATE:(BATTLE_STATE:LOCAL:キャラ登録番号):최대MP + 装備ステータス補正保存:(BATTLE_STATE:LOCAL:キャラ登録番号):최대MP
-	BATTLE_STATE:LOCAL:ＭＰ = MIN(BATTLE_STATE:LOCAL:ＭＰ, BATTLE_STATE:LOCAL:최대MP)
+	BATTLE_STATE:LOCAL:最大ＨＰ = MAX(1, 基礎BATTLE_STATE:(BATTLE_STATE:LOCAL:キャラ登録番号):最大ＨＰ + 装備ステータス補正保存:(BATTLE_STATE:LOCAL:キャラ登録番号):最大ＨＰ)
+	BATTLE_STATE:LOCAL:ＨＰ = MIN(BATTLE_STATE:LOCAL:ＨＰ, BATTLE_STATE:LOCAL:最大ＨＰ)
+	BATTLE_STATE:LOCAL:最大ＭＰ = MAX(1, 基礎BATTLE_STATE:(BATTLE_STATE:LOCAL:キャラ登録番号):最大ＭＰ + 装備ステータス補正保存:(BATTLE_STATE:LOCAL:キャラ登録番号):最大ＭＰ)
+	BATTLE_STATE:LOCAL:ＭＰ = MIN(BATTLE_STATE:LOCAL:ＭＰ, BATTLE_STATE:LOCAL:最大ＭＰ)
 NEXT
 
 FOR LOCAL, 0, 対象数
@@ -1052,18 +1065,18 @@ FOR LOCAL, 0, 対象数
 		CONTINUE
 
 	;一旦初期化
-	BATTLE_STATE:(対象配列:LOCAL):최대HP = 基礎BATTLE_STATE:(BATTLE_STATE:(対象配列:LOCAL):キャラ登録番号):최대HP + 装備ステータス補正保存:(BATTLE_STATE:(対象配列:LOCAL):キャラ登録番号):최대HP
+	BATTLE_STATE:(対象配列:LOCAL):最大ＨＰ = 基礎BATTLE_STATE:(BATTLE_STATE:(対象配列:LOCAL):キャラ登録番号):最大ＨＰ + 装備ステータス補正保存:(BATTLE_STATE:(対象配列:LOCAL):キャラ登録番号):最大ＨＰ
 	;バフ測定
-	CALL バフ・デバフ測定(対象配列:LOCAL, "최대HP", 0, 1)
-	BATTLE_STATE:(対象配列:LOCAL):최대HP = RESULT
-	BATTLE_STATE:(対象配列:LOCAL):ＨＰ = MIN(BATTLE_STATE:(対象配列:LOCAL):ＨＰ, BATTLE_STATE:(対象配列:LOCAL):최대HP)
+	CALL バフ・デバフ測定(対象配列:LOCAL, "最大ＨＰ", 0, 1)
+	BATTLE_STATE:(対象配列:LOCAL):最大ＨＰ = MAX(1, RESULT)
+	BATTLE_STATE:(対象配列:LOCAL):ＨＰ = MIN(BATTLE_STATE:(対象配列:LOCAL):ＨＰ, BATTLE_STATE:(対象配列:LOCAL):最大ＨＰ)
 
 	;一旦初期化
-	BATTLE_STATE:(対象配列:LOCAL):최대MP = 基礎BATTLE_STATE:(BATTLE_STATE:(対象配列:LOCAL):キャラ登録番号):최대MP + 装備ステータス補正保存:(BATTLE_STATE:(対象配列:LOCAL):キャラ登録番号):최대MP
+	BATTLE_STATE:(対象配列:LOCAL):最大ＭＰ = 基礎BATTLE_STATE:(BATTLE_STATE:(対象配列:LOCAL):キャラ登録番号):最大ＭＰ + 装備ステータス補正保存:(BATTLE_STATE:(対象配列:LOCAL):キャラ登録番号):最大ＭＰ
 	;バフ測定
-	CALL バフ・デバフ測定(対象配列:LOCAL, "최대MP", 0, 1)
-	BATTLE_STATE:(対象配列:LOCAL):최대MP = RESULT
-	BATTLE_STATE:(対象配列:LOCAL):ＭＰ = MIN(BATTLE_STATE:(対象配列:LOCAL):ＭＰ, BATTLE_STATE:(対象配列:LOCAL):최대MP)
+	CALL バフ・デバフ測定(対象配列:LOCAL, "最大ＭＰ", 0, 1)
+	BATTLE_STATE:(対象配列:LOCAL):最大ＭＰ = MAX(1, RESULT)
+	BATTLE_STATE:(対象配列:LOCAL):ＭＰ = MIN(BATTLE_STATE:(対象配列:LOCAL):ＭＰ, BATTLE_STATE:(対象配列:LOCAL):最大ＭＰ)
 NEXT
 
 @チェンバ組み合わせ確認(キャラNAME1, キャラNAME2 = "", キャラNAME3 = "", キャラNAME4 = "", キャラNAME5 = "")

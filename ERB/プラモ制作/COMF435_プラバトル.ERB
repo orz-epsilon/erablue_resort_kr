@@ -5,7 +5,7 @@
 @COMNAME435
 #FUNCTIONS
 
-TSTR:コマンド名受渡 = 프라 배틀
+TSTR:コマンド名受渡 = プラバトル
 
 ;===================================================
 ;コマンドタイプ
@@ -15,9 +15,9 @@ TSTR:コマンド名受渡 = 프라 배틀
 TFLAG:コマンドタイプ受渡 = COMTYPE("単独可能")
 
 @COM_TOOLTIP_435
-LOCALS = <br>프라 배틀<br>
-LOCALS += "<br>내 프라모델로 대전을 진행한다"
-LOCALS += "<br>COM 타입: 일상<br>획득 소스: 없음"
+LOCALS = <br>プラバトル<br>
+LOCALS += "<br>내 프라모델로 대전한다"
+LOCALS += "<br>COM 타입：일상<br>획득 소스：없음"
 LOCALS += "<br>고유 획득 경험: 없음<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
@@ -111,12 +111,12 @@ VARSET LOCAL
 VARSET LOCALS
 
 DRAWLINEFORM =
-PRINTFORML 　시제품 버전2
+PRINTFORML 　시작판ver2
 DRAWLINEFORM =
-PRINTFORML 　YOUR 프라모델:%プラモ愛機名称:1%
+PRINTFORML 　YOUR 프라모델：%プラモ愛機名称:1%
 DRAWLINEFORM -
-PRINTFORML 거리:50000
-PRINTFORML 참가 보상:500PP　승리 보상:1위5000PP　2위3000PP　3위2000PP
+PRINTFORML 거리：50000
+PRINTFORML 참가 보상：500PP　승리 보상：1위5000PP　2위3000PP　3위2000PP
 PRINTFORML 　[1]START　　　　　[999]돌아가기
 PRINTFORML 　
 ;PRINTFORML 【どうしよう】プラモーグバトル：チャージ3回、フリーエントリー、ノーオプションバトル！！
@@ -154,7 +154,7 @@ CALL COMNAME435_キャラ選択
 
 
 DRAWLINEFORM =
-PRINTFORML 　%プラバ_ユーザー名:1%이(가) 방을 만들었습니다【%プラバ_機体名:1%】{プラバ_スピード:1}　{プラバ_スタミナ:1}　{プラバ_パワー:1}　{プラバ_ガッツ:1}　{プラバ_テクニック:1}
+PRINTFORML 　%プラバ_ユーザー名:1%이(가) 룸을 생성했습니다【%プラバ_機体名:1%】{プラバ_スピード:1}　{プラバ_スタミナ:1}　{プラバ_パワー:1}　{プラバ_ガッツ:1}　{プラバ_テクニック:1}
 PRINTFORML 　%プラバ_ユーザー名:2%이(가) 입장했습니다【%プラバ_機体名:2%】{プラバ_スピード:2}　{プラバ_スタミナ:2}　{プラバ_パワー:2}　{プラバ_ガッツ:2}　{プラバ_テクニック:2}
 PRINTFORML 　%プラバ_ユーザー名:3%이(가) 입장했습니다【%プラバ_機体名:3%】{プラバ_スピード:3}　{プラバ_スタミナ:3}　{プラバ_パワー:3}　{プラバ_ガッツ:3}　{プラバ_テクニック:3}
 PRINTFORML 　%プラバ_ユーザー名:4%이(가) 입장했습니다【%プラバ_機体名:4%】{プラバ_スピード:4}　{プラバ_スタミナ:4}　{プラバ_パワー:4}　{プラバ_ガッツ:4}　{プラバ_テクニック:4}
@@ -180,49 +180,49 @@ VARSET プラモデータ文字列
 
 
 DRAWLINEFORM =
-PRINTFORML 　1번 레인은『%プラバ_ユーザー名:1%』군! 머신 이름은【%プラバ_機体名:1%】！！
+PRINTFORML 　1번 레인은『%プラバ_ユーザー名:1%』군! 머신의 이름은【%プラバ_機体名:1%】！！
 DRAWLINEFORM -
-PRINTFORML 　2번 레인은『%プラバ_ユーザー名:2%』군! 머신 이름은【%プラバ_機体名:2%】！！
+PRINTFORML 　2번 레인은『%プラバ_ユーザー名:2%』군! 머신의 이름은【%プラバ_機体名:2%】！！
 VARSET プラモデータ文字列
 TRYCALLFORM レース_キャラ{プラバ_レーサー番号:2}
 PRINTFORML 　%プラモデータ文字列:10%
 DRAWLINEFORM -
-PRINTFORML 　3번 레인은『%プラバ_ユーザー名:3%』군! 머신 이름은【%プラバ_機体名:3%】！！
+PRINTFORML 　3번 레인은『%プラバ_ユーザー名:3%』군! 머신의 이름은【%プラバ_機体名:3%】！！
 VARSET プラモデータ文字列
 TRYCALLFORM レース_キャラ{プラバ_レーサー番号:3}
 PRINTFORML 　%プラモデータ文字列:10%
 DRAWLINEFORM -
-PRINTFORML 　4번 레인은『%プラバ_ユーザー名:4%』군! 머신 이름은【%プラバ_機体名:4%】！！
+PRINTFORML 　4번 레인은『%プラバ_ユーザー名:4%』군! 머신의 이름은【%プラバ_機体名:4%】！！
 VARSET プラモデータ文字列
 TRYCALLFORM レース_キャラ{プラバ_レーサー番号:4}
 PRINTFORML 　%プラモデータ文字列:10%
 DRAWLINEFORM -
-PRINTFORML 　5번 레인은『%プラバ_ユーザー名:5%』군! 머신 이름은【%プラバ_機体名:5%】！！
+PRINTFORML 　5번 레인은『%プラバ_ユーザー名:5%』군! 머신의 이름은【%プラバ_機体名:5%】！！
 VARSET プラモデータ文字列
 TRYCALLFORM レース_キャラ{プラバ_レーサー番号:5}
 PRINTFORML 　%プラモデータ文字列:10%
 DRAWLINEFORM -
-PRINTFORML 　6번 레인은『%プラバ_ユーザー名:6%』군! 머신 이름은【%プラバ_機体名:6%】！！
+PRINTFORML 　6번 레인은『%プラバ_ユーザー名:6%』군! 머신의 이름은【%プラバ_機体名:6%】！！
 VARSET プラモデータ文字列
 TRYCALLFORM レース_キャラ{プラバ_レーサー番号:6}
 PRINTFORML 　%プラモデータ文字列:10%
 DRAWLINEFORM -
-PRINTFORML 　7번 레인은『%プラバ_ユーザー名:7%』군! 머신 이름은【%プラバ_機体名:7%】！！
+PRINTFORML 　7번 레인은 『%プラバ_ユーザー名:7%』군! 머신의이름은【%プラバ_機体名:7%】！！
 VARSET プラモデータ文字列
 TRYCALLFORM レース_キャラ{プラバ_レーサー番号:7}
 PRINTFORML 　%プラモデータ文字列:10%
 DRAWLINEFORM -
-PRINTFORML 　8번 레인은『%プラバ_ユーザー名:8%』군! 머신 이름은【%プラバ_機体名:8%】！！
+PRINTFORML 　8번 레인은 『%プラバ_ユーザー名:8%』군! 머신의이름은【%プラバ_機体名:8%】！！
 VARSET プラモデータ文字列
 TRYCALLFORM レース_キャラ{プラバ_レーサー番号:8}
 PRINTFORML 　%プラモデータ文字列:10%
 DRAWLINEFORM -
 PRINTFORML 　이상 8명이 참가자다! 모두! 힘내라!!
 DRAWLINEFORM -
-PRINTFORML 　그럼 레이서 제군! 출발 위치에 서라!!
+PRINTFORML 　그럼 레이서 제군! 스타트 위치에 서라!!
 PRINTFORML 　레디……고ーーーーーー!!!
 DRAWLINEFORM -
-PRINTFORML [1]가자ー!!
+PRINTFORML [1]가랏ー!!
 DRAWLINEFORM =
 INPUT 
 CLEARLINE 1
@@ -563,20 +563,20 @@ IF プラバ_ゴールフラグ == 0
 	DRAWLINEFORM =
 	PRINTFORML 　모니터：TIME{LOCAL:20}：00　LAST→【%LOCALS:19%】←TOP　　　GOAL:{プラバ_レースゴール距離}({(プラバ_レースゴール距離 / 10)})
 	DRAWLINEFORM -
-	PRINTFORML 　%LOCALS:11%　{プラバ_現在位置:1}m　{プラバ_現在順位:1}위：【%プラバ_機体名:1%】
-	PRINTFORML 　%LOCALS:12%　{プラバ_現在位置:2}m　{プラバ_現在順位:2}위：【%プラバ_機体名:2%】
-	PRINTFORML 　%LOCALS:13%　{プラバ_現在位置:3}m　{プラバ_現在順位:3}위：【%プラバ_機体名:3%】
-	PRINTFORML 　%LOCALS:14%　{プラバ_現在位置:4}m　{プラバ_現在順位:4}위：【%プラバ_機体名:4%】
-	PRINTFORML 　%LOCALS:15%　{プラバ_現在位置:5}m　{プラバ_現在順位:5}위：【%プラバ_機体名:5%】
-	PRINTFORML 　%LOCALS:16%　{プラバ_現在位置:6}m　{プラバ_現在順位:6}위：【%プラバ_機体名:6%】
-	PRINTFORML 　%LOCALS:17%　{プラバ_現在位置:7}m　{プラバ_現在順位:7}위：【%プラバ_機体名:7%】
-	PRINTFORML 　%LOCALS:18%　{プラバ_現在位置:8}m　{プラバ_現在順位:8}위：【%プラバ_機体名:8%】
+	PRINTFORML 　%LOCALS:11%　{プラバ_現在位置:1}m　{プラバ_현재順位:1}위：【%プラバ_機体名:1%】
+	PRINTFORML 　%LOCALS:12%　{プラバ_現在位置:2}m　{プラバ_현재順位:2}위：【%プラバ_機体名:2%】
+	PRINTFORML 　%LOCALS:13%　{プラバ_現在位置:3}m　{プラバ_현재順位:3}위：【%プラバ_機体名:3%】
+	PRINTFORML 　%LOCALS:14%　{プラバ_現在位置:4}m　{プラバ_현재順位:4}위：【%プラバ_機体名:4%】
+	PRINTFORML 　%LOCALS:15%　{プラバ_現在位置:5}m　{プラバ_현재順位:5}위：【%プラバ_機体名:5%】
+	PRINTFORML 　%LOCALS:16%　{プラバ_現在位置:6}m　{プラバ_현재順位:6}위：【%プラバ_機体名:6%】
+	PRINTFORML 　%LOCALS:17%　{プラバ_現在位置:7}m　{プラバ_현재順位:7}위：【%プラバ_機体名:7%】
+	PRINTFORML 　%LOCALS:18%　{プラバ_現在位置:8}m　{プラバ_현재順位:8}위：【%プラバ_機体名:8%】
 	DRAWLINEFORM =
-	PRINTFORML 　『레이스는 이제 막 시작했을 뿐! 아직 멀었다! 포기하지 말고 도전해 줘!!
+	PRINTFORML 　『레이스는 이제 막 시작했을 뿐! 아직 갈 길이 멀다! 포기하지 말고 도전해 줘!!
 	DRAWLINEFORM =
 	PRINTFORML 　레이서：%プラバ_ユーザー名:1%　머신：%プラバ_機体名:1%【EN：{プラバ_体力:1}】【SPD：{プラバ_速度:1}】
 	PRINTFORML 　
-	PRINTFORML 　[100]가라ー！！　[200]날려버려！！　[300]거기다！！　[400]아직 멀었어！！
+	PRINTFORML 　[100]가랏ー!!　[200]날아올라라!!　[300]거기다!!　[400]아직 멀었다!!
 	DRAWLINEFORM =
 	PRINTFORML 　레이서：%プラバ_ユーザー名:2%　머신：%プラバ_機体名:2%【EN：{プラバ_体力:2}】【SPD：{プラバ_速度:2}】
 	PRINTFORML 　%プラバ_レース台詞:2%
@@ -606,27 +606,27 @@ IF プラバ_ゴールフラグ == 0
 ELSEIF プラバ_ゴールフラグ
 	LOCAL:10 = 0
 	DRAWLINEFORM =
-	PRINTFORML 골ーーーーーーー인！！！！
+	PRINTFORML 골!!!!
 	DRAWLINEFORM =
-	PRINTFORML 1
-	PRINTFORML 　%プラバ_ユーザー名:(プラバ_一位:1)%【%プラバ_機体名:(プラバ_一位:1)%】+5000PP
-	PRINTFORML 　TIME：{(LOCAL:20 - 1)}：{LOCAL:10 + RAND:60}
+PRINTFORML １
+PRINTFORML 　%プラバ_ユーザー名:(プラバ_一位:1)%【%プラバ_機体名:(プラバ_一位:1)%】+5000PP
+PRINTFORML 　TIME：{(LOCAL:20 - 1)}：{LOCAL:10 + RAND:60}
 	DRAWLINEFORM =
-	PRINTFORML 2
-	PRINTFORML 　%プラバ_ユーザー名:(プラバ_一位:2)%【%プラバ_機体名:(プラバ_一位:2)%】+3000PP
-	PRINTFORML 　
+PRINTFORML ２
+PRINTFORML 　%プラバ_ユーザー名:(プラバ_一位:2)%【%プラバ_機体名:(プラバ_一位:2)%】+3000PP
+PRINTFORML 　
 	DRAWLINEFORM =
-	PRINTFORML 3
-	PRINTFORML 　%プラバ_ユーザー名:(プラバ_一位:3)%【%プラバ_機体名:(プラバ_一位:3)%】+2000PP
-	PRINTFORML 　
+PRINTFORML ３
+PRINTFORML 　%プラバ_ユーザー名:(プラバ_一位:3)%【%プラバ_機体名:(プラバ_一位:3)%】+2000PP
+PRINTFORML 　
 	DRAWLINEFORM =
-	PRINTFORML 4：%プラバ_ユーザー名:(プラバ_一位:4)%【%プラバ_機体名:(プラバ_一位:4)%】+500PP
-	PRINTFORML 5：%プラバ_ユーザー名:(プラバ_一位:5)%【%プラバ_機体名:(プラバ_一位:5)%】+500PP
-	PRINTFORML 6：%プラバ_ユーザー名:(プラバ_一位:6)%【%プラバ_機体名:(プラバ_一位:6)%】+500PP
-	PRINTFORML 7：%プラバ_ユーザー名:(プラバ_一位:7)%【%プラバ_機体名:(プラバ_一位:7)%】+500PP
-	PRINTFORML 8：%プラバ_ユーザー名:(プラバ_一位:8)%【%プラバ_機体名:(プラバ_一位:8)%】+500PP
+PRINTFORML ４：%プラバ_ユーザー名:(プラバ_一位:4)%【%プラバ_機体名:(プラバ_一位:4)%】+500PP
+PRINTFORML ５：%プラバ_ユーザー名:(プラバ_一位:5)%【%プラバ_機体名:(プラバ_一位:5)%】+500PP
+PRINTFORML ６：%プラバ_ユーザー名:(プラバ_一位:6)%【%プラバ_機体名:(プラバ_一位:6)%】+500PP
+PRINTFORML ７：%プラバ_ユーザー名:(プラバ_一位:7)%【%プラバ_機体名:(プラバ_一位:7)%】+500PP
+PRINTFORML ８：%プラバ_ユーザー名:(プラバ_一位:8)%【%プラバ_機体名:(プラバ_一位:8)%】+500PP
 	DRAWLINEFORM -
-	PRINTFORML [1]END　　
+PRINTFORML [1]END　　
 	DRAWLINEFORM =
 	INPUT 
 	CLEARLINE 1
@@ -1083,9 +1083,9 @@ ENDIF
 
 
 IF プラバ_現在位置:2 < 500
-	LOCALS:12 = S｜②　　　　　　　　　　　　　　　　　　　｜
+	LOCALS:12 = Ｓ｜②　　　　　　　　　　　　　　　　　　　｜
 ELSEIF プラバ_現在位置:2 < 1000
-	LOCALS:12 = S｜ ② 　　　　　　　　　　　　　　　　　　｜
+	LOCALS:12 = Ｓ｜ ② 　　　　　　　　　　　　　　　　　　｜
 ELSEIF プラバ_現在位置:2 < 1500
 	LOCALS:12 = Ｓ｜　②　　　　　　　　　　　　　　　　　　｜
 ELSEIF プラバ_現在位置:2 < 2000
@@ -1113,35 +1113,35 @@ ELSEIF プラバ_現在位置:2 < 7000
 ELSEIF プラバ_現在位置:2 < 7500
 	LOCALS:12 = Ｓ｜　　　　　　　②　　　　　　　　　　　　｜
 ELSEIF プラバ_現在位置:2 < 8000
-	LOCALS:12 = Ｓ｜　　　　　　　 ② 　　　　　　　　　　　｜
+LOCALS:12 = Ｓ｜　　　　　　　 ② 　　　　　　　　　　　｜
 ELSEIF プラバ_現在位置:2 < 8500
-	LOCALS:12 = Ｓ｜　　　　　　　　②　　　　　　　　　　　｜
+LOCALS:12 = Ｓ｜　　　　　　　　②　　　　　　　　　　　｜
 ELSEIF プラバ_現在位置:2 < 9000
-	LOCALS:12 = Ｓ｜　　　　　　　　 ② 　　　　　　　　　　｜
+LOCALS:12 = Ｓ｜　　　　　　　　 ② 　　　　　　　　　　｜
 ELSEIF プラバ_現在位置:2 < 9500
-	LOCALS:12 = Ｓ｜　　　　　　　　　②　　　　　　　　　　｜
+LOCALS:12 = Ｓ｜　　　　　　　　　②　　　　　　　　　　｜
 ELSEIF プラバ_現在位置:2 < 10000
-	LOCALS:12 = Ｓ｜　　　　　　　　　 ② 　　　　　　　　　｜
+LOCALS:12 = Ｓ｜　　　　　　　　　 ② 　　　　　　　　　｜
 ELSEIF プラバ_現在位置:2 < 10500
-	LOCALS:12 = Ｓ｜　　　　　　　　　　②　　　　　　　　　｜
+LOCALS:12 = Ｓ｜　　　　　　　　　　②　　　　　　　　　｜
 ELSEIF プラバ_現在位置:2 < 11000
-	LOCALS:12 = Ｓ｜　　　　　　　　　　 ② 　　　　　　　　｜
+LOCALS:12 = Ｓ｜　　　　　　　　　　 ② 　　　　　　　　｜
 ELSEIF プラバ_現在位置:2 < 11500
-	LOCALS:12 = Ｓ｜　②　　　　　　　　　②　　　　　　　　｜
+LOCALS:12 = Ｓ｜　②　　　　　　　　　②　　　　　　　　｜
 ELSEIF プラバ_現在位置:2 < 12000
-	LOCALS:12 = Ｓ｜　　　　　　　　　　　 ② 　　　　　　　｜
+LOCALS:12 = Ｓ｜　　　　　　　　　　　 ② 　　　　　　　｜
 ELSEIF プラバ_現在位置:2 < 12500
-	LOCALS:12 = Ｓ｜　　②　　　　　　　　　②　　　　　　　｜
+LOCALS:12 = Ｓ｜　　②　　　　　　　　　②　　　　　　　｜
 ELSEIF プラバ_現在位置:2 < 13000
-	LOCALS:12 = Ｓ｜　　　　　　　　　　　　 ② 　　　　　　｜
+LOCALS:12 = Ｓ｜　　　　　　　　　　　　 ② 　　　　　　｜
 ELSEIF プラバ_現在位置:2 < 13500
-	LOCALS:12 = Ｓ｜　　　　　　　　　　　　　②　　　　　　｜
+LOCALS:12 = Ｓ｜　　　　　　　　　　　　　②　　　　　　｜
 ELSEIF プラバ_現在位置:2 < 14000
-	LOCALS:12 = Ｓ｜　　　　　　　　　　　　　　②　　　　　｜
+LOCALS:12 = Ｓ｜　　　　　　　　　　　　　　②　　　　　｜
 ELSEIF プラバ_現在位置:2 < 14500
-	LOCALS:12 = Ｓ｜　　　　　　　　　　　　　　 ② 　　　　｜
+LOCALS:12 = Ｓ｜　　　　　　　　　　　　　　 ② 　　　　｜
 ELSEIF プラバ_現在位置:2 < 15000
-	LOCALS:12 = Ｓ｜　　　　　　　　　　　　　　　②　　　　｜
+LOCALS:12 = Ｓ｜　　　　　　　　　　　　　　　②　　　　｜
 ELSEIF プラバ_現在位置:2 < 15500
 	LOCALS:12 = Ｓ｜　　　　　　　　　　　　　　　 ② 　　　｜
 ELSEIF プラバ_現在位置:2 < 16000

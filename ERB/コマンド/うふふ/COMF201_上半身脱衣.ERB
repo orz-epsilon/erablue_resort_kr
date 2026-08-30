@@ -21,8 +21,8 @@ SIF CFLAG:TARGET:睡眠
 オートコマンド許可 = 3
 
 @COM_TOOLTIP_201
-LOCALS = <br>■上の服を脱がす<br>
-LOCALS += "상대의 상반신 옷을 벗기는 커맨드。<br>상하 일체형 옷의 경우, [옷을 벗기다]로 변화한다。"
+LOCALS = <br>■상의를 벗기다<br>
+LOCALS += "상대의 상의를 벗기는 커맨드。<br>상하 일체형 옷의 경우, [옷을 벗기다]로 변화한다."
 LOCALS += "<br>COM 타입: 우후후<br>획득 소스: 없음"
 LOCALS += "<br>고유 획득 경험: 없음<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
@@ -180,6 +180,15 @@ IF TCVAR:言いなり
 	＋表示フラグ = 1
 ENDIF
 
+;特殊言いなり
+IF TCVAR:特殊言いなり
+	SIF ＋表示フラグ
+		PRINT  + 
+	実行値 += 999
+	PRINTFORM %特殊言いなり分岐(TARGET)%(999)
+	＋表示フラグ = 1
+ENDIF
+
 ;合計を表示(20以上で実行)
 PRINTFORM  = {実行値}
 
@@ -261,7 +270,7 @@ RETURN 1
 ;実行時メッセージ
 ;-------------------------------------------------
 @MESSAGE_COM201
-PRINTFORM %CALLNAME:PLAYER%는
+PRINTFORM %CALLNAME:PLAYER%은(는)
 IF TEQUIP:上下一体服
 	PRINTFORML %CALLNAME:TARGET%의 옷을 벗겼다…
 ELSE
@@ -269,18 +278,36 @@ ELSE
 ENDIF
 IF GROUPMATCH(TEQUIP:上半身下着あり, 1, 3, -1)
 	IF TALENT:TARGET:バストサイズ == 3
-		PRINT 꿀렁!
+		PRINT 출렁
 		PRINT_IMG "えっちハート"
 		PRINT 하고, 풍만한 유방이 크게 흔들리며 튀어나왔다
 	ELSEIF TALENT:TARGET:バストサイズ == 2
-		PRINT 철렁, 하고 커다란 유방이 튀어나왔다
+		PRINT 출렁, 하고 커다란 유방이 튀어나왔다
 	ENDIF
 ENDIF
 
 
 IF RFLAG:コマンド結果受渡し変数
-	PRINTFORML 사람들 눈이 있는 곳에서 벗은 탓에, %CALLNAME:TARGET%은/는 어딘가 불안해하는 듯하다…
+	PRINTFORML 사람들의 시선이 있는 곳에서 벗은 탓에, %CALLNAME:TARGET%은(는) 어딘가 불안해하는 것 같다…
 ENDIF
 
 
+IF 特定状況口上用フラグ:TARGET:0 == 2
+	PRINTL
+	SETCOLOR カラーパレット("えっちな色")
+	PRINTFORM 벗긴 %CALLNAME:TARGET%의 가슴팍에
+	PRINT_IMG "デレマス_マーク"
+	CALL PRINT_STRL(@"마크를 발견했다_H_")
+	PRINTFORMW %CALLNAME:TARGET%은(는) 오늘의 『신데렐라』였던 것 같다
+	特定状況口上用フラグ:TARGET:0 = 1
+	RESETCOLOR
+ELSEIF 特定状況口上用フラグ:TARGET:0 == 3
+	PRINTL
+	SETCOLOR カラーパレット("えっちな色")
+	PRINTFORM 벗긴 %CALLNAME:TARGET%의 배꼽 아래에
+	PRINT_IMG "デレマス_マーク"
+	CALL PRINT_STRL(@"마크를 발견했다_H_")
+	PRINTFORMW %CALLNAME:TARGET%은(는) 오늘의 『신데렐라』였던 것 같다
+	特定状況口上用フラグ:TARGET:0 = 1
+ENDIF
 

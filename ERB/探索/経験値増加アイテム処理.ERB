@@ -9,8 +9,8 @@
 
 CALL 戦闘能力表示画面(キャラ番号)
 DRAWLINE
-PRINTL 아이템을 사용하여, 캐릭터의 경험치를 증가시킬 수 있습니다.
-PRINTFORML ※존재하는 캐릭터 중, 가장 높은 레벨이 상한.
+PRINTL 아이템을 사용하여 캐릭터의 경험치를 증가시킬 수 있습니다.
+PRINTFORML ※존재하는 캐릭터 중 가장 높은 레벨이 상한입니다.
 PRINTFORML 현재 한계: Lv{最大レベル保存, 2}
 DRAWLINE
 星晶系所持数:0 = 素材アイテム数量算出("星晶の破片")
@@ -27,7 +27,7 @@ NEXT
 
 IF SUMARRAY(星晶系所持数) > 0
 	IF 星晶系所持数:0 > 0
-		PRINTFORM ■성정의 파편　　소지 수:{星晶系所持数:0, 3}　　사용 수:{星晶系使用数:0, 3}　　
+		PRINTFORM ■성정의 파편　　소지 수: {星晶系所持数:0, 3}　　사용 수: {星晶系使用数:0, 3}　　
 		PRINTBUTTON "[-10]", 1
 		PRINTBUTTON "[-1]", 2
 		IF 予測レベル >= 最大レベル保存
@@ -42,7 +42,7 @@ IF SUMARRAY(星晶系所持数) > 0
 		PRINTL
 	ENDIF
 	IF 星晶系所持数:1 > 0
-		PRINTFORM ■성정의 조각　　소지 수:{星晶系所持数:1, 3}　　사용 수:{星晶系使用数:1, 3}　　
+		PRINTFORM ■성정의 조각　　소지 수: {星晶系所持数:1, 3}　　사용 수: {星晶系使用数:1, 3}　　
 		PRINTBUTTON "[-10]", 101
 		PRINTBUTTON "[-1]", 102
 		IF 予測レベル >= 最大レベル保存
@@ -57,7 +57,7 @@ IF SUMARRAY(星晶系所持数) > 0
 		PRINTL
 	ENDIF
 	IF 星晶系所持数:2 > 0
-		PRINTFORM ■성정괴　　　소지 수:{星晶系所持数:2, 3}　　사용 수:{星晶系使用数:2, 3}　　
+		PRINTFORM ■성정괴　　　소지 수: {星晶系所持数:2, 3}　　사용 수: {星晶系使用数:2, 3}　　
 		PRINTBUTTON "[-10]", 201
 		PRINTBUTTON "[-1]", 202
 		IF 予測レベル >= 最大レベル保存
@@ -83,14 +83,14 @@ IF SUMARRAY(星晶系所持数) > 0
 		PRINTL
 	ENDIF
 ELSE
-	PRINTL ※대상 아이템을 소지하고 있지 않습니다.
+	PRINTL ※해당 아이템을 소지하고 있지 않습니다.
 ENDIF
 [IF_DEBUG]
 	PRINTBUTTON "[997] 지정 레벨까지 올린다", 997
 	PRINTL
 [ENDIF]
 DRAWLINE
-PRINTBUTTON "[999] 돌아간다", 999
+PRINTBUTTON "[999] 돌아가기", 999
 PRINTL
 
 BINPUT
@@ -109,7 +109,7 @@ SELECTCASE LOCAL
 			PRINTFORML 성정괴를 {星晶系使用数:2, 3}개 사용했다!
 			CALL 素材消費処理("星晶塊", 星晶系使用数:2)
 		ENDIF
-		PRINTFORMW 경험치를{増加経験値量, 6}획득!
+		PRINTFORMW 경험치를 {増加経験値量, 6} 획득!
 		基礎BATTLE_STATE:キャラ番号:蓄積EXP += 増加経験値量
 		CALL 口上変数初期化
 		CALL レベルアップ処理(キャラ番号)
@@ -121,7 +121,7 @@ SELECTCASE LOCAL
 		VARSET 星晶系使用数
 		RETURN 0
 	CASE 997
-		PRINTL 설정하고 싶은 레벨을 입력해 주세요(최대 80, 레벨 다운은 할 수 없습니다)
+		PRINTL 설정하고 싶은 레벨을 입력해주세요（최대80, 레벨 다운은 불가능합니다）
 		INPUT
 		IF INRANGE(RESULT, 基礎BATTLE_STATE:キャラ番号:Lv+2, 80)
 			基礎BATTLE_STATE:キャラ番号:蓄積EXP = 戦闘経験値テーブル:(RESULT - 1)

@@ -10,6 +10,23 @@
 
 
 VARSET TARGET
+IF OPTION変数:自動広告停止 == 0
+	IF 通常キャラ招待:0 <= 0 && 自動広告文字列 != ""
+		PRINT 자동 광고 실행:
+		VARSET RESULTS
+		SPLIT 自動広告文字列, "-", RESULTS
+		IF RESULTS:0 == "일반 광고"
+			表示キー_右 = %RESULTS:1%
+			CALL 通常広告
+		ELSE
+			表示キー_左 = %RESULTS:0%
+			表示キー_右 = %RESULTS:1%
+			TRYCALLFORM 特殊広告_%RESULTS:0%("自動実行")
+		ENDIF
+		表示キー_左 = 
+		表示キー_右 = 
+	ENDIF
+ENDIF
 DRAWLINE
 CALL 招待キャラ来訪処理
 CALL 常連キャラ来訪処理
@@ -17,11 +34,15 @@ WAIT
 DRAWLINE
 ;１００以上になった関係を完了させる
 CALL 縁結び完了処理()
+DAY_RAND = RAND:1000
 
 ;初期化・滞在期間処理
 FOR LOCAL,0,CHARANUM
 	;危険日などを設定する
 	CALL SET_PREGNANCY_PALAM(LOCAL)
+
+	;乱数のセット
+	CFLAG:LOCAL:C_DAY_RAND = RAND:1000
 
 	;同棲処理
 	IF TALENT:LOCAL:定住者 == 1 && RAND:10 == 0
@@ -54,20 +75,20 @@ FOR LOCAL,0,CHARANUM
 				;素質とかで確率を変動させたいけど、とりあえずは25％くらいで
 				IF RAND:4 == 0
 					$引っ越し希望
-PRINTFORML %CALLNAME:LOCAL%은(는) 지금 방을 비우고, %CALLNAME:(同行候補キャラ番号:LOCAL:同行配列番号)%과(와) 같은 방으로 옮기기를 희망하는 것 같다.
-PRINTL 이사하는 것을 허락하시겠습니까?
-PRINTBUTTON "[0] 예", 0
+					PRINTFORML %CALLNAME:LOCAL%은(는) 지금 방을 비우고, %CALLNAME:(同行候補キャラ番号:LOCAL:同行配列番号)%과(와) 같은 방으로 옮기기를 희망하는 것 같다.
+					PRINTL 이사를 허락하시겠습니까?
+					PRINTBUTTON "[0] 예", 0
 					PRINTL
-PRINTBUTTON "[1] 아니요", 1
+					PRINTBUTTON "[1] 아니오", 1
 					PRINTL
-PRINTBUTTON @"[2] %CALLNAME:LOCAL%의 정보를 본다", 2
+					PRINTBUTTON @"[2] %CALLNAME:LOCAL%의 정보 보기", 2
 					PRINTL
-PRINTBUTTON @"[3] %CALLNAME:(同行候補キャラ番号:LOCAL:同行配列番号)%의 정보를 본다", 3
+					PRINTBUTTON @"[3] %CALLNAME:(同行候補キャラ番号:LOCAL:同行配列番号)%의 정보 보기", 3
 					PRINTL
 					BINPUT
 					IF RESULT == 0
-PRINTFORML %CALLNAME:LOCAL%의 이사를 허락했습니다!
-PRINTFORMW %CALLNAME:LOCAL%은(는) %CALLNAME:(同行候補キャラ番号:LOCAL:同行配列番号)%과(와) 같은 방에서 살기 시작했습니다
+						PRINTFORML %CALLNAME:LOCAL%의 이사를 허락했습니다!
+						PRINTFORMW %CALLNAME:LOCAL%은(는) %CALLNAME:(同行候補キャラ番号:LOCAL:同行配列番号)%과(와) 같은 방에서 살기 시작했습니다
 						;部屋から削除
 						RESULT = キャラクター部屋検索(LOCAL)
 						IF STRFIND(定住者部屋割り配列:(RESULT - 1000), @"_{LOCAL}_") > -1
@@ -87,7 +108,7 @@ PRINTFORMW %CALLNAME:LOCAL%은(는) %CALLNAME:(同行候補キャラ番号:LOCAL
 						WAIT
 						GOTO 引っ越し希望
 					ELSE
-PRINTFORMW %CALLNAME:LOCAL%의 이사를 거절했습니다
+						PRINTFORMW %CALLNAME:LOCAL%의 이사를 거절했습니다
 					ENDIF
 					BREAK
 				ENDIF
@@ -109,24 +130,24 @@ PRINTFORMW %CALLNAME:LOCAL%의 이사를 거절했습니다
 						;陥落以外申し出てこない
 					ELSEIF RAND:4 == 0
 						$定住希望
-PRINTFORML %CALLNAME:LOCAL%은(는) 이 리조트 섬에 정착하기를 희망하는 것 같다.
+						PRINTFORML %CALLNAME:LOCAL%은(는) 이 리조트 섬에 정착하기를 희망하는 것 같다.
 						IF OPTION変数:キャラ自動移住 == 3
 							;申し出スキップ
 							RESULT = 0
 						ELSE
-PRINTL 정착하는 것을 허락하시겠습니까?
-PRINTFORML 남은 방 수：{RFLAG:定住枠残りカウント, 3}개
+							PRINTL 정착을 허락하시겠습니까?
+							PRINTFORML 남은 방 수: {RFLAG:定住枠残りカウント, 3}개
 							DRAWLINE
-PRINTBUTTON "[0] 예", 0
+							PRINTBUTTON "[0] 예", 0
 							PRINTL
-PRINTBUTTON "[1] 아니요", 1
+							PRINTBUTTON "[1] 아니오", 1
 							PRINTL
-PRINTBUTTON @"[2] %CALLNAME:LOCAL%의 정보를 본다", 2
+							PRINTBUTTON @"[2] %CALLNAME:LOCAL%의 정보 보기", 2
 							PRINTL
 							BINPUT
 						ENDIF
 						IF RESULT == 0
-							PRINTFORML %CALLNAME:LOCAL%의 정주를 허가했습니다!
+							PRINTFORML %CALLNAME:LOCAL%의 정착을 허락했습니다!
 							PRINTFORMW %CALLNAME:LOCAL%은(는) 주거 구역의 주택가에서 살기 시작했습니다
 							CALL 滞在者部屋割り配列削除処理(LOCAL)
 							TALENT:LOCAL:定住者 = 1
@@ -143,16 +164,16 @@ PRINTBUTTON @"[2] %CALLNAME:LOCAL%의 정보를 본다", 2
 							WAIT
 							GOTO 定住希望
 						ELSE
-							PRINTFORMW %CALLNAME:LOCAL%의 정주를 거절했습니다
+							PRINTFORMW %CALLNAME:LOCAL%의 정착을 거절했습니다
 						ENDIF
 					ENDIF
 				ENDIF
 			ENDIF
 			IF 定住フラグ == 0
 				;0になったら帰宅し滞在期間をマイナスに
-				PRINTFORML %CALLNAME:LOCAL%은(는) 체류를 마치고 돌아갔습니다
+				PRINTFORML %CALLNAME:LOCAL%은(는) 체류를 마치고 돌아갔다
 				IF CFLAG:LOCAL:リゾート来訪回数 >= 3 && TALENT:LOCAL:常連 == 0
-					PRINTFORMW %CALLNAME:LOCAL%은(는) 리조트 방문을 거듭하여, [단골]이 되었습니다!
+					PRINTFORMW %CALLNAME:LOCAL%은(는) 리조트 방문을 거듭하여, [단골]이 되었다!
 					TALENT:LOCAL:常連 = 1
 				ENDIF
 				CALL 滞在終了時初期化(LOCAL)
@@ -163,6 +184,8 @@ PRINTBUTTON @"[2] %CALLNAME:LOCAL%의 정보를 본다", 2
 
 	;キャラ個別処理があれば呼び出す
 	TRYCALLFORM DAYFIRST_CHARAEVENT_{NO:LOCAL}
+	;その他の固有処理を呼び出す
+	TRYCALLFORM DAYFIRST_CHARAEVENT_ETC(LOCAL)
 	;滞在してないキャラはスルー
 	IF CFLAG:LOCAL:滞在期間 == -1
 		RCVAR:LOCAL:表示カット = 1
@@ -313,9 +336,9 @@ IF 港改造度:0:0
 					属性登録 = 釣具店
 				CASE 11
 					STRDATA RESULTS
-						DATA 작은 요리집
+						DATA 작은 요리점
 						DATA 레스토랑
-						DATA 식당
+DATA 식당
 					ENDDATA
 					属性登録 = 食事施設
 			ENDSELECT
@@ -331,7 +354,7 @@ IF 港改造度:0:0
 			TALENT:LOCAL:店持ち = 1
 			SIF 店増加数 == 0
 				DRAWLINE
-			PRINTFORML 상업 지구에%CALLNAME:LOCAL%이(가) 『%RESULTS%』을(를) 열었다!
+PRINTFORML 상업 지구에 %CALLNAME:LOCAL%이(가) 『%RESULTS%』을(를) 열었다!
 		ENDIF
 		
 		;一日に出来る店は３つまで
@@ -344,11 +367,11 @@ IF 港改造度:0:0
 	IF RAND:4 == 0
 		属性登録 = 
 		店増加数 ++ 
-		LOCAL = RAND(-4, -1)
+		LOCAL = RAND(-4, 0)
 		STRDATA RESULTS
-			DATA 잡화점
-			DATA 식당
-			DATA 도구점
+DATA 잡화점
+DATA 식당
+DATA 도구점
 		ENDDATA
 		IF RESULTS == "食堂"
 			属性登録 = 食事施設
@@ -357,17 +380,17 @@ IF 港改造度:0:0
 		IF RESULT
 			SELECTCASE LOCAL
 				CASE -1
-					LOCALS = 엑스트라 아저씨
+LOCALS = 모브 아저씨
 				CASE -2
-					LOCALS = 엑스트라 아주머니
+LOCALS = 모브 아주머니
 				CASE -3
-					LOCALS = 엑스트라 청년
+LOCALS = 모브 청년
 				CASE -4
-					LOCALS = 엑스트라 여성
+LOCALS = 모브 여성
 			ENDSELECT
 			SIF 店増加数 == 0
 				DRAWLINE
-			PRINTFORML 상업 지구에%LOCALS%이(가) 『%RESULTS%』을(를) 열었다!
+PRINTFORML 상업 지구에 %LOCALS%이(가) 『%RESULTS%』을(를) 열었다!
 		ENDIF
 	ENDIF
 	
@@ -413,7 +436,7 @@ CFLAG:MASTER:起床時刻 = 1440 * DAY + TIME
 ;調教者は誰か
 PLAYER = MASTER
 
-IF FLAG:お出かけ先フラグ > 0
+IF FLAG:外出先番号 > 0
 	CALL 外出共通初期処理()
 ENDIF
 
@@ -423,9 +446,12 @@ ENDIF
 #DIM 秘書人数
 #DIM 対象キャラ
 #DIM 告白キャラ
+#DIM プロポーズキャラ
 #DIM 起こしに来る秘書
 #DIM レイヤー記録
 #DIM PLAYER記録
+#DIM 精液量保存
+#DIM 起こし方
 
 VARSET LOCAL
 VARSET 秘書一覧
@@ -435,6 +461,7 @@ FOR LOCAL,1,CHARANUM
 		TARGET = LOCAL
 NEXT
 告白キャラ = 起床時告白キャラ判定()
+プロポーズキャラ = 起床時プロポーズキャラ判定()
 秘書人数 = 0
 FOR LOCAL, 1, CHARANUM
 	SIF TALENT:LOCAL:従業員 == 0
@@ -445,6 +472,16 @@ FOR LOCAL, 1, CHARANUM
 		;秘書に従事してるキャラを一覧化
 		秘書一覧:(秘書人数) = LOCAL
 		秘書人数 += 1
+		IF 陥落チェック(LOCAL)
+			;どの状態であれ、陥落済みだと選ばれやすい
+			秘書一覧:(秘書人数) = LOCAL
+			秘書人数 += 1
+		ENDIF
+		IF 秘書起床業務:LOCAL:0
+			;起こし方を指定した秘書は（陥落済みならより）選ばれやすい
+			秘書一覧:(秘書人数) = LOCAL
+			秘書人数 += 1
+		ENDIF
 	ENDIF
 NEXT
 ;疑似恋慕の恋慕化は他のものにかかわらず全員発動する
@@ -453,13 +490,13 @@ CALL 起床時_疑似恋慕成長処理()
 IF FLAG:挿入睡眠相手記録
 	TCVAR:(FLAG:挿入睡眠相手記録):挨拶フラグ = 1
 	;ハーヴィンオナホとか挿入歩きしたまま寝たパターン
-	PRINTFORMW %CALLNAME:MASTER%이(가) 잠들어 있는데, 왠지 사타구니가 따뜻한 것 같은 느낌이 들었다.
+PRINTFORMW %CALLNAME:MASTER%이(가) 잠들어 있는데, 왠지 사타구니가 따뜻한 느낌이 들었다.
 	IF STRFIND(SAVESTR:挿入睡眠モード記録, "ハーヴィン") > -1
 		;ハーヴィンオナホ、ディルドパターン
 		CALL PRINT_STRL(@"IMAGEPATH_%CSTR:(FLAG:挿入睡眠相手記録):画像フォルダ%/起床時_ハーヴィンオナホ系")
-		PRINTFORMW 이불을 들춰보니, 밤새도록 고정된 채였던%CALLNAME:(FLAG:挿入睡眠相手記録)%의 모습이 보인다.
-		PRINTFORMW 몇 번이고 절정하여 체력이 다한%CALLNAME:(FLAG:挿入睡眠相手記録)%은(는) 아직 의식을 잃고 있는 것 같다…
-		PRINTFORMW %CALLNAME:MASTER%은(는)%CALLNAME:(FLAG:挿入睡眠相手記録)%의 구속을 풀고, 자기 방까지 옮겨주었다.
+PRINTFORMW 이불을 들춰보니, 밤새도록 고정된 채였던 %CALLNAME:(FLAG:挿入睡眠相手記録)%의 모습이 보인다.
+PRINTFORMW 몇 번이고 절정하여 체력이 다한 %CALLNAME:(FLAG:挿入睡眠相手記録)%은(는) 아직 의식을 잃고 있는 듯하다…
+PRINTFORMW %CALLNAME:MASTER%은(는) %CALLNAME:(FLAG:挿入睡眠相手記録)%의 구속을 풀고, 자신의 방까지 옮겨주었다.
 
 		BASE:(FLAG:挿入睡眠相手記録):体力 = 0
 		CFLAG:(FLAG:挿入睡眠相手記録):体力限界 = 1
@@ -469,95 +506,189 @@ IF FLAG:挿入睡眠相手記録
 		CFLAG:(FLAG:挿入睡眠相手記録):現在マップ種別 = 部屋検索_マップ種別
 		;経験取得表示スキップ用
 		TCVAR:(FLAG:挿入睡眠相手記録):436 = EXP:(FLAG:挿入睡眠相手記録):ダウン経験
+
+		IF STRFIND(SAVESTR:挿入睡眠モード記録, "Ｖ") > -1
+			;精液処理
+			IF TALENT:MASTER:射精不可 == 2
+				;未精通は空打ち扱い
+			ELSEIF TALENT:MASTER:射精不可
+			ELSE
+				;射精量は固定でいいか
+				精液量保存 = 最大射精量(MASTER)
+				IF GETBIT(CFLAG:(FLAG:挿入睡眠相手記録):妊娠個別設定フラグ, 0)
+					SIF GETBIT(CFLAG:(FLAG:挿入睡眠相手記録):妊娠個別設定フラグ, 3) == 0
+						CALL TAKE_SPERM((FLAG:挿入睡眠相手記録), MASTER, 精液量保存)
+				ELSE
+					SELECTCASE OPTION変数:夜這い時妊娠
+						CASE 0
+							CALL TAKE_SPERM((FLAG:挿入睡眠相手記録), MASTER, 精液量保存)
+						CASE 1
+							CALL TAKE_SPERM((FLAG:挿入睡眠相手記録), MASTER, 精液量保存)
+					ENDSELECT
+				ENDIF
+			ENDIF
+		ENDIF
 	ELSE
 		;挿入歩きパターン
 		CALL PRINT_STRL(@"IMAGEPATH_%CSTR:(FLAG:挿入睡眠相手記録):画像フォルダ%/起床時_挿入歩き系")
-		PRINTFORMW 옆을 보니, 삽입된 채의%CALLNAME:(FLAG:挿入睡眠相手記録)%의 모습이 보였다.
+PRINTFORMW 옆을 보니, 삽입된 채인 %CALLNAME:(FLAG:挿入睡眠相手記録)%의 모습이 보였다.
 		PRINTFORM 먼저 일어나 있던%CALLNAME:(FLAG:挿入睡眠相手記録)%은(는) 천천히
 		IF STRFIND(SAVESTR:挿入睡眠モード記録, "Ｖ") > -1
 			PRINT 질 안에서
+
+			;精液処理
+			IF TALENT:MASTER:射精不可 == 2
+				;未精通は空打ち扱い
+			ELSEIF TALENT:MASTER:射精不可
+			ELSE
+				;射精量は固定でいいか
+				精液量保存 = 最大射精量(MASTER)
+				IF GETBIT(CFLAG:(FLAG:挿入睡眠相手記録):妊娠個別設定フラグ, 0)
+					SIF GETBIT(CFLAG:(FLAG:挿入睡眠相手記録):妊娠個別設定フラグ, 3) == 0
+						CALL TAKE_SPERM((FLAG:挿入睡眠相手記録), MASTER, 精液量保存)
+				ELSE
+					SELECTCASE OPTION変数:夜這い時妊娠
+						CASE 0
+							CALL TAKE_SPERM((FLAG:挿入睡眠相手記録), MASTER, 精液量保存)
+						CASE 1
+							CALL TAKE_SPERM((FLAG:挿入睡眠相手記録), MASTER, 精液量保存)
+					ENDSELECT
+				ENDIF
+			ENDIF
 		ELSE
-			PRINT 항문에서
+			PRINT 엉덩이 구멍에서
 		ENDIF
 		PRINTFORMW %CALLNAME:MASTER%의 것을 빼내고, 이불에서 일어난다.
 		PRINTFORMW 그대로%CALLNAME:(FLAG:挿入睡眠相手記録)%은(는) 옷을 다시 입고 먼저 방을 나갔다…
 	ENDIF
 	FLAG:挿入睡眠相手記録 = 0
 	SAVESTR:挿入睡眠モード記録 = 
-ELSEIF TARGET
+ELSEIF TARGET && !MATCH(秘書一覧, TARGET)
 	IF CFLAG:TARGET:睡眠
 		CALL PRINT_STRL(@"IMAGEPATH_%CSTR:TARGET:画像フォルダ%/起床時_睡眠")
 		PRINTFORMW %CALLNAME:MASTER%이(가) 눈을 뜨자 옆에서는 아직%CALLNAME:TARGET%이(가) 새근새근 잠들어 있었다
-		PRINTFORMW %CALLNAME:MASTER%은(는)%CALLNAME:TARGET%을(를) 깨우지 않도록\@ BEDROOM(CFLAG:MASTER:現在マップ種別, CFLAG:MASTER:現在位置) && !BATHROOM(CFLAG:MASTER:現在マップ種別, CFLAG:MASTER:現在位置) ? 침대 # 그 옆 \@을(를) 빠져나와 하루를 준비하기 시작했다
+		PRINTFORMW %CALLNAME:MASTER%은(는) %CALLNAME:TARGET%을(를) 깨우지 않도록\@ BEDROOM(CFLAG:MASTER:現在マップ種別, CFLAG:MASTER:現在位置) && !BATHROOM(CFLAG:MASTER:現在マップ種別, CFLAG:MASTER:現在位置) ? 침대 # 그 옆 \@을(를) 빠져나와 하루의 준비를 시작했다
 	ELSE
 		CALL PRINT_STRL(@"IMAGEPATH_%CSTR:TARGET:画像フォルダ%/起床時_同時起床")
 		IF 陥落チェック(TARGET)
 			PRINTFORMW %CALLNAME:MASTER%이(가) 눈을 뜨자%CALLNAME:TARGET%와 눈이 마주쳤다
-			PRINTFORMW 잠시%CALLNAME:TARGET%와 시선을 교환한 후\@ BEDROOM(CFLAG:MASTER:現在マップ種別, CFLAG:MASTER:現在位置) && !BATHROOM(CFLAG:MASTER:現在マップ種別, CFLAG:MASTER:現在位置) ? 침대 # 그 옆 \@을(를) 빠져나와 하루를 준비하기 시작했다
+			PRINTFORMW 잠시%CALLNAME:TARGET%와 시선을 주고받은 후\@ BEDROOM(CFLAG:MASTER:現在マップ種別, CFLAG:MASTER:現在位置) && !BATHROOM(CFLAG:MASTER:現在マップ種別, CFLAG:MASTER:現在位置) ? 침대 # 그 옆 \@을(를) 빠져나와 하루의 준비를 시작했다
 		ELSE
 			PRINTFORMW %CALLNAME:MASTER%이(가) 눈을 뜨자%CALLNAME:TARGET%와 눈이 마주쳤다
-			PRINTFORMW 왜%CALLNAME:TARGET%이(가)\@ BEDROOM(CFLAG:MASTER:現在マップ種別, CFLAG:MASTER:現在位置) && !BATHROOM(CFLAG:MASTER:現在マップ種別, CFLAG:MASTER:現在位置) ? 방에 있는 걸까 하고 수상하게 생각하면서도 침대 # 옆에 있는 걸까 하고 수상하게 생각하면서도 그 옆 \@을(를) 빠져나와 하루를 준비하기 시작했다
+			PRINTFORMW 왜%CALLNAME:TARGET%이(가)\@ BEDROOM(CFLAG:MASTER:現在マップ種別, CFLAG:MASTER:現在位置) && !BATHROOM(CFLAG:MASTER:現在マップ種別, CFLAG:MASTER:現在位置) ? 방에 있는 걸까 하고 의아해하면서도 침대 # 옆에 있는 걸까 하고 의아해하면서도 그 옆 \@을(를) 빠져나와 하루의 준비를 시작했다
 		ENDIF
 		TRYCALLFORM KOJO_EVENT_逆おはよう_{NO:TARGET}(TARGET)
 	ENDIF
+ELSEIF プロポーズキャラ > 0
+	CALL 起床時プロポーズ処理(プロポーズキャラ)
 ELSEIF 告白キャラ > 0
 	CALL 起床時告白処理(告白キャラ)
 ELSEIF 秘書人数 > 0
 	起こしに来る秘書 = 秘書一覧:(RAND:秘書人数)
-	TCVAR:起こしに来る秘書:挨拶フラグ = 1
 	;秘書がいるなら起こしに来る、秘書業務なら先に起きてるはずなのでキャラの起床処理は入れない
-	TRYCCALLFORM KOJO_EVENT_秘書業務_朝起こし_{NO:起こしに来る秘書}(起こしに来る秘書)
-	CATCH
-		;朝起こしの口上が無い場合に汎用文章を出す
-		IF 陥落チェック_性的(起こしに来る秘書) && GETBIT(TALENT:起こしに来る秘書:性別, 0) && 射精可能(MASTER) && EXP:起こしに来る秘書:膣内射精絶頂経験 && EXP:起こしに来る秘書:Ｖ性交経験 > 10 && 初体験済みチェック("Ｖ挿入初体験", 起こしに来る秘書) && RAND:3 == 0
-			PRINTFORMW %CALLNAME:MASTER%이(가) 잠들어 있는데, 왠지 허리 부근에 무게를 느꼈다.
-			レイヤー記録 = TFLAG:口上用画像表示番号
-			CALL 汎用一枚絵画像_名称算出(起こしに来る秘書, "秘書朝起こし_", "Ｖ挿入")
-			CALL PRINT_STRL(@"IMAGEPATH_%CSTR:起こしに来る秘書:画像フォルダ%/%RESULTS%")
-			IF レイヤー記録 == TFLAG:口上用画像表示番号
-				;専用画像が表示されてないということなので、現在の服のV挿入画像を見る
-				LOCALS '= CSTR:起こしに来る秘書:短冊グラ表示切り替え用文字列
-				IF LOCALS == ""
-					SIF CSTR:起こしに来る秘書:表示グラフィックカテゴリ == ""
-						CSTR:起こしに来る秘書:表示グラフィックカテゴリ = デフォルト
-					LOCALS = %"短冊_" + CSTR:起こしに来る秘書:表示グラフィックカテゴリ%
-				ENDIF
-				SIF 差分抽出(起こしに来る秘書, "短冊_", LOCALS, "騎乗位", "")
-					CALL PRINT_STRL(@"IMAGEPATH_%CSTR:起こしに来る秘書:画像フォルダ%/%RESULTS%")
+	;同室で寝ているキャラの業務が秘書だと確定で選ばれる
+	SIF TARGET && MATCH(秘書一覧, TARGET)
+		起こしに来る秘書 = TARGET
+	TCVAR:起こしに来る秘書:挨拶フラグ = 1
+	;母乳体質は消えることがあるので、その場合は授乳はキャンセル
+	SIF GETBIT(秘書起床業務:起こしに来る秘書:0, 起こし方_授乳) && !TALENT:起こしに来る秘書:母乳体質
+		CLEARBIT 秘書起床業務:起こしに来る秘書:0, 起こし方_授乳
+	;MASTERが性転換する場合があるので、その場合はペニス絡みのはキャンセル
+	IF !射精可能(MASTER)
+		CLEARBIT 秘書起床業務:起こしに来る秘書:0, 起こし方_騎乗位
+		CLEARBIT 秘書起床業務:起こしに来る秘書:0, 起こし方_Ａ騎乗位
+		CLEARBIT 秘書起床業務:起こしに来る秘書:0, 起こし方_フェラチオ
+		CLEARBIT 秘書起床業務:起こしに来る秘書:0, 起こし方_パイズリ
+		CLEARBIT 秘書起床業務:起こしに来る秘書:0, 起こし方_手コキ
+	ENDIF
+	;起こし方を事前に決定し口上へ投げる。使用するかどうかは口上書きさんにお任せ
+	IF 秘書起床業務:起こしに来る秘書:0 && RAND:10
+		LOCALS '= ""
+		FOR LOCAL, 0, 10
+			SIF GETBIT(秘書起床業務:起こしに来る秘書:0, LOCAL)
+				LOCALS += TOSTR(LOCAL)
+		NEXT
+		起こし方 = TOINT(RANDSTR(LOCALS))
+	ELSE
+		IF 陥落チェック_性的(起こしに来る秘書)
+			IF GETBIT(TALENT:起こしに来る秘書:性別, 0) && 射精可能(MASTER) && EXP:起こしに来る秘書:膣内射精絶頂経験 && EXP:起こしに来る秘書:Ｖ性交経験 > 10 && 初体験済みチェック("Ｖ挿入初体験", 起こしに来る秘書) && RAND:3 == 0
+				起こし方 = 起こし方_騎乗位
+			ELSEIF 射精可能(MASTER) && EXP:起こしに来る秘書:腸内射精絶頂経験 && EXP:起こしに来る秘書:Ａ性交経験 > 10 && 初体験済みチェック("Ａ挿入初体験", 起こしに来る秘書) && RAND:3 == 0
+				起こし方 = 起こし方_Ａ騎乗位
+			ELSEIF TALENT:起こしに来る秘書:母乳体質 && EXP:起こしに来る秘書:噴乳経験 > 10 && RAND:3 == 0
+				起こし方 = 起こし方_授乳
+			ELSEIF EXP:起こしに来る秘書:口淫経験 > 20 && EXP:起こしに来る秘書:精飲経験 > 10 && 射精可能(MASTER) && RAND:3 == 0
+				起こし方 = 起こし方_フェラチオ
+			ELSEIF EXP:起こしに来る秘書:パイズリ経験 > 20 && ABL:起こしに来る秘書:技巧 > 2 - (TALENT:起こしに来る秘書:バストサイズ) && 射精可能(MASTER) && RAND:3 == 0
+				起こし方 = 起こし方_パイズリ
+			ELSEIF EXP:起こしに来る秘書:手淫経験 > 10 && ABL:起こしに来る秘書:技巧 > 1 && 射精可能(MASTER) && RAND:3 == 0
+				起こし方 = 起こし方_手コキ
+			ELSEIF EXP:起こしに来る秘書:手淫経験 > 10 && ABL:起こしに来る秘書:技巧 > 0 && RAND:3 == 0
+				起こし方 = 起こし方_ペッティング
+			ELSEIF 初体験日取得("キス", MASTER, 起こしに来る秘書) && RAND:3 == 0
+				起こし方 = 起こし方_キス
+			ELSE
+				起こし方 = 起こし方_ノーマル
 			ENDIF
-			PRINTFORM 目を覚ますと、%CALLNAME:起こしに来る秘書%が\@ PREGNANCY_SIZE(起こしに来る秘書) > 2 && CFLAG:起こしに来る秘書:妊娠発覚 ? 膨らんだお腹を揺らしながら # \@膣で%CALLNAME:MASTER%の
+		ELSE
+			起こし方 = 起こし方_ノーマル
+		ENDIF
+	ENDIF
+	CALL 口上変数初期化
+	TRYCALLFORM KOJO_EVENT_秘書業務_朝起こし_{NO:起こしに来る秘書}(起こしに来る秘書, 起こし方)
+	IF !口上有無確認(0, 1)
+		;朝起こしの口上が無い場合に汎用文章を出す
+		IF 起こし方 == 起こし方_騎乗位
+			PRINTFORMW %CALLNAME:MASTER%이(가) 잠들어 있는데, 왠지 허리 부근에 무게가 느껴졌다.
+			CALL 秘書起床業務画像出力(起こしに来る秘書, "Ｖ挿入", "騎乗位", 0)
+;			レイヤー記録 = TFLAG:口上用画像表示番号
+;			CALL 汎用一枚絵画像_名称算出(起こしに来る秘書, "秘書朝起こし_", "Ｖ挿入")
+;			CALL PRINT_STRL(@"IMAGEPATH_%CSTR:起こしに来る秘書:画像フォルダ%/%RESULTS%")
+;			IF レイヤー記録 == TFLAG:口上用画像表示番号
+;				;専用画像が表示されてないということなので、現在の服のV挿入画像を見る
+;				LOCALS '= CSTR:起こしに来る秘書:短冊グラ表示切り替え用文字列
+;				IF LOCALS == ""
+;					SIF CSTR:起こしに来る秘書:表示グラフィックカテゴリ == ""
+;						CSTR:起こしに来る秘書:表示グラフィックカテゴリ = デフォルト
+;					LOCALS = %"短冊_" + CSTR:起こしに来る秘書:表示グラフィックカテゴリ%
+;				ENDIF
+;				IF 差分抽出(起こしに来る秘書, "短冊_", LOCALS, "騎乗位", "")
+;					CALL PRINT_STRL(@"IMAGEPATH_%CSTR:起こしに来る秘書:画像フォルダ%/%RESULTS%")
+;				ENDIF
+;			ENDIF
+			PRINTFORM 눈을 뜨자, %CALLNAME:起こしに来る秘書%이(가)\@ PREGNANCY_SIZE(起こしに来る秘書) > 2 && CFLAG:起こしに来る秘書:妊娠発覚 ? 불룩해진 배를 흔들면서 # \@질로%CALLNAME:MASTER%의
 			SELECTCASE TALENT:MASTER:男性器サイズ
 				CASE IS <= -1
-					PRINT 小さな
+					PRINT 작은
 				CASE 0
 				CASEELSE
-					PRINT 大きな
+					PRINT 큰
 			ENDSELECT
-			PRINTW ペニスを咥え込んでいた…
+			PRINTW 페니스를 물고 있었다…
 			SIF TALENT:起こしに来る秘書:母乳体質
-				PRINTFORMW そのさらけ出した%OPPAI_DESCRIPTION(起こしに来る秘書)%の先端からは、母乳がゆっくりと垂れ落ちている。
-			PRINTFORMW これも秘書の務めと、朝騎乗位で起こしにきてくれたようだ。
+				PRINTFORMW 그 드러낸%OPPAI_DESCRIPTION(起こしに来る秘書)%의 끝에서는 모유가 천천히 흘러내리고 있다.
+			PRINTFORMW \@ GETBIT(秘書起床業務:起こしに来る秘書:0, 起こし方_騎乗位) ? 요청한 대로 # 이것도 비서의 임무라며 \@, 아침부터 기승위로 깨우러 와준 모양이다.
 			IF TALENT:起こしに来る秘書:妊娠 && CFLAG:起こしに来る秘書:妊娠発覚 && CFLAG:起こしに来る秘書:子の父親 == MASTER
-				PRINTFORMW 朝から盛り上がっている%CALLNAME:起こしに来る秘書%に、身重の体を労るように伝えると、
-				PRINTFORMW %CALLNAME:起こしに来る秘書%は\@ TALENT:起こしに来る秘書:恋慕 ? 嬉しそうに微笑ながら、赤ちゃんもパパの愛 # 、赤ちゃんもパパのミルク \@が欲しいと呟き、前よりも激しく腰を動かしてきた…
+				PRINTFORMW 아침부터 달아오른%CALLNAME:起こしに来る秘書%에게, 몸이 무거운 몸을 아끼라고 전하자,
+				PRINTFORMW %CALLNAME:起こしに来る秘書%은(는)\@ TALENT:起こしに来る秘書:恋慕 ? 기쁜 듯 미소 지으며, 아기도 아빠의 사랑 # , 아기도 아빠의 젖 \@이 필요하다고 중얼거리며, 전보다 격렬하게 허리를 움직여왔다…
 			ENDIF
-			PRINTFORMW %CALLNAME:MASTER%がそのまま射精すると、\@ TALENT:起こしに来る秘書:性転換 == 2 && !キャラ一致チェック(起こしに来る秘書, "[개벽의 연금술사]칼리오스트로") ? 女性の体にもすっかり慣れた # \@%CALLNAME:起こしに来る秘書%は腰をより強く押し付けて、うっとりとした顔でその瞬間を待っている。
-			PRINTFORMW 子宮で子種の熱を感じながら、絶頂の余韻に浸る%CALLNAME:起こしに来る秘書%は嬉しそうに目を細め、%CALLNAME:MASTER%と繋がったまま今日のスケジュールを喘ぎ声まじりで報告させた。
-			PRINTFORML Ｃ経験 + 10（%CALLNAME:MASTER%）
-			PRINTFORML 絶頂経験 + 3（%CALLNAME:MASTER%）
-			PRINTFORML Ｃ絶頂経験 + 3（%CALLNAME:MASTER%）
+			PRINTFORMW %CALLNAME:MASTER%이 그대로 사정하자, \@ TALENT:起こしに来る秘書:性転換 == 2 && !キャラ一致チェック(起こしに来る秘書, "[開闢の錬金術師]カリオストロ") ? 여성의 몸에도 완전히 익숙해진 # \@%CALLNAME:起こしに来る秘書%은(는) 허리를 더욱 강하게 밀착시키고, 황홀한 얼굴로 그 순간을 기다리고 있다.
+			PRINTFORMW 자궁에서 씨앗의 열기를 느끼며, 절정의 여운에 잠긴%CALLNAME:起こしに来る秘書%은(는) 기쁜 듯 눈을 가늘게 뜨고, %CALLNAME:MASTER%와 연결된 채 오늘의 스케줄을 신음 섞인 목소리로 보고했다.
+			PRINTFORML C 경험 + 10（%CALLNAME:MASTER%）
+			PRINTFORML 절정 경험 + 3（%CALLNAME:MASTER%）
+			PRINTFORML C 절정 경험 + 3（%CALLNAME:MASTER%）
 			PRINTFORML 사정 경험 + 3（%CALLNAME:MASTER%）
-			PRINTFORML Ｖ 경험 + 5（%CALLNAME:起こしに来る秘書%）
-			PRINTFORML Ｖ 절정 경험 + 3（%CALLNAME:起こしに来る秘書%）
+			PRINTFORML V 경험 + 5（%CALLNAME:起こしに来る秘書%）
+			PRINTFORML V 절정 경험 + 3（%CALLNAME:起こしに来る秘書%）
 			PRINTFORML 절정 경험 + 3（%CALLNAME:起こしに来る秘書%）
 			IF TALENT:起こしに来る秘書:母乳体質
 				PRINTFORML 분유 경험 + 3（%CALLNAME:起こしに来る秘書%）
 				EXP:起こしに来る秘書:噴乳経験 += 3
 			ENDIF
-			PRINTFORML 정액 경험 + 3（%CALLNAME:起こしに来る秘書%）
-			PRINTFORML 질내 사정 절정 경험 + 3（%CALLNAME:起こしに来る秘書%）
-			PRINTFORML Ｖ 성교 경험 + 5（%CALLNAME:起こしに来る秘書%）
-			PRINTFORML 봉사 쾌락 경험 + 3（%CALLNAME:起こしに来る秘書%）
+PRINTFORML 정액 경험 + 3（%CALLNAME:起こしに来る秘書%）
+PRINTFORML 질내 사정 절정 경험 + 3（%CALLNAME:起こしに来る秘書%）
+PRINTFORML V 성교 경험 + 5（%CALLNAME:起こしに来る秘書%）
+PRINTFORML 봉사 쾌락 경험 + 3（%CALLNAME:起こしに来る秘書%）
 			WAIT
 			EXP:MASTER:Ｃ経験 += 5
 			EXP:MASTER:絶頂経験 += 3
@@ -577,38 +708,40 @@ ELSEIF 秘書人数 > 0
 			CALL TAKE_SPERM(起こしに来る秘書, MASTER, 最大射精量(MASTER) * 3)
 			CALL EXP変動記録処理(MASTER)
 			CALL EXP変動記録処理(起こしに来る秘書)
-		ELSEIF 陥落チェック_性的(起こしに来る秘書) && 射精可能(MASTER) && EXP:起こしに来る秘書:腸内射精絶頂経験 && EXP:起こしに来る秘書:Ａ性交経験 > 10 && 初体験済みチェック("Ａ挿入初体験", 起こしに来る秘書) && RAND:3 == 0
-			PRINTFORMW %CALLNAME:MASTER%이(가) 잠들어 있는데, 왠지 허리 부근에 묵직함을 느꼈다.
-			レイヤー記録 = TFLAG:口上用画像表示番号
-			CALL 汎用一枚絵画像_名称算出(起こしに来る秘書, "秘書朝起こし_", "Ａ挿入")
-			CALL PRINT_STRL(@"IMAGEPATH_%CSTR:起こしに来る秘書:画像フォルダ%/%RESULTS%")
-			IF レイヤー記録 == TFLAG:口上用画像表示番号
-				;専用画像が表示されてないということなので、現在の服のV挿入画像を見る
-				LOCALS '= CSTR:起こしに来る秘書:短冊グラ表示切り替え用文字列
-				IF LOCALS == ""
-					SIF CSTR:起こしに来る秘書:表示グラフィックカテゴリ == ""
-						CSTR:起こしに来る秘書:表示グラフィックカテゴリ = 기본
-					LOCALS = %"短冊_" + CSTR:起こしに来る秘書:表示グラフィックカテゴリ%
-				ENDIF
-				SIF 差分抽出(起こしに来る秘書, "短冊_", LOCALS, "Ａ騎乗位", "")
-					CALL PRINT_STRL(@"IMAGEPATH_%CSTR:起こしに来る秘書:画像フォルダ%/%RESULTS%")
-			ENDIF
-			PRINTFORM 눈을 뜨자, %CALLNAME:起こしに来る秘書%이(가) 항문으로 %CALLNAME:MASTER%의
+			SETBIT 秘書起床経験:起こしに来る秘書:0, 起こし方_騎乗位
+		ELSEIF 起こし方 == 起こし方_Ａ騎乗位
+PRINTFORMW %CALLNAME:MASTER%이(가) 잠들어 있는데, 왠지 허리 부근에 무게를 느꼈다.
+			CALL 秘書起床業務画像出力(起こしに来る秘書, "Ａ挿入", "Ａ騎乗位", 0)
+;			レイヤー記録 = TFLAG:口上用画像表示番号
+;			CALL 汎用一枚絵画像_名称算出(起こしに来る秘書, "秘書朝起こし_", "Ａ挿入")
+;			CALL PRINT_STRL(@"IMAGEPATH_%CSTR:起こしに来る秘書:画像フォルダ%/%RESULTS%")
+;			IF レイヤー記録 == TFLAG:口上用画像表示番号
+;				;専用画像が表示されてないということなので、現在の服のA挿入画像を見る
+;				LOCALS '= CSTR:起こしに来る秘書:短冊グラ表示切り替え用文字列
+;				IF LOCALS == ""
+;					SIF CSTR:起こしに来る秘書:表示グラフィックカテゴリ == ""
+;						CSTR:起こしに来る秘書:表示グラフィックカテゴリ = デフォルト
+;					LOCALS = %"短冊_" + CSTR:起こしに来る秘書:表示グラフィックカテゴリ%
+;				ENDIF
+;				SIF 差分抽出(起こしに来る秘書, "短冊_", LOCALS, "Ａ騎乗位", "")
+;					CALL PRINT_STRL(@"IMAGEPATH_%CSTR:起こしに来る秘書:画像フォルダ%/%RESULTS%")
+;			ENDIF
+PRINTFORM 눈을 뜨자, %CALLNAME:起こしに来る秘書%이(가) 엉덩이 구멍으로 %CALLNAME:MASTER%의
 			SELECTCASE TALENT:MASTER:男性器サイズ
 				CASE IS <= -1
-					PRINT 작은
+		PRINT 작은
 				CASE 0
 				CASEELSE
-					PRINT 큰
+		PRINT 커다란
 			ENDSELECT
-			PRINTW 페니스를 물고 있었다…
+PRINTW 페니스를 물고 있었다…
 			SIF TALENT:起こしに来る秘書:母乳体質
-				PRINTFORMW 그 드러낸%OPPAI_DESCRIPTION(起こしに来る秘書)%의 끝에서는 모유가 천천히 흘러내리고 있다.
-			PRINTFORMW 이것도 비서의 임무라며, 아침 A 기승위로 깨우러 와준 것 같다.
-			PRINTFORMW %CALLNAME:MASTER%이 그대로 사정하자, %CALLNAME:起こしに来る秘書%은(는) 허리를 더욱 강하게 밀어붙이며, 황홀한 얼굴로 그 순간을 기다리고 있다.
-			PRINTFORMW 장내에서 씨앗의 열기를 느끼며, 절정의 여운에 잠기는%CALLNAME:起こしに来る秘書%은(는) 기쁜 듯 눈을 가늘게 뜨고, %CALLNAME:MASTER%와 연결된 채 오늘의 스케줄을 신음 소리 섞인 목소리로 보고하게 했다.
-			PRINTFORML C 경험 + 10（%CALLNAME:MASTER%）
-			PRINTFORML 절정 경험 + 3（%CALLNAME:MASTER%）
+	PRINTFORMW 그 드러낸 %OPPAI_DESCRIPTION(起こしに来る秘書)%의 끝에서는, 모유가 천천히 흘러내리고 있다.
+PRINTFORMW \@ GETBIT(秘書起床業務:起こしに来る秘書:0, 起こし方_Ａ騎乗位) ? 의뢰한 대로 # 이것도 비서의 임무라고 \@, 아침 A 기승위로 깨우러 와준 것 같다.
+PRINTFORMW %CALLNAME:MASTER%이(가) 그대로 사정하자, %CALLNAME:起こしに来る秘書%은(는) 허리를 더욱 강하게 밀어붙이며, 황홀한 얼굴로 그 순간을 기다리고 있다.
+PRINTFORMW 장내에서 씨앗의 열기를 느끼며, 절정의 여운에 잠긴 %CALLNAME:起こしに来る秘書%은(는) 기쁜 듯 눈을 가늘게 뜨고, %CALLNAME:MASTER%와 이어진 채 오늘 일정을 신음 섞인 목소리로 보고했다.
+PRINTFORML C 경험 + 10（%CALLNAME:MASTER%）
+PRINTFORML 절정 경험 + 3（%CALLNAME:MASTER%）
 			PRINTFORML C 절정 경험 + 3（%CALLNAME:MASTER%）
 			PRINTFORML 사정 경험 + 5（%CALLNAME:MASTER%）
 			PRINTFORML A 경험 + 5（%CALLNAME:起こしに来る秘書%）
@@ -636,26 +769,28 @@ ELSEIF 秘書人数 > 0
 			EXP:起こしに来る秘書:奉仕快楽経験 += 3
 			CALL EXP変動記録処理(MASTER)
 			CALL EXP変動記録処理(起こしに来る秘書)
-		ELSEIF 陥落チェック_性的(起こしに来る秘書) && TALENT:起こしに来る秘書:母乳体質 && EXP:起こしに来る秘書:噴乳経験 > 10 && RAND:3 == 0
-			PRINTFORMW %CALLNAME:MASTER%이(가) 잠들어 있는데, 왠지 입안에서 우유 같은 맛이 났다.
-			レイヤー記録 = TFLAG:口上用画像表示番号
-			CALL 汎用一枚絵画像_名称算出(起こしに来る秘書, "秘書朝起こし_", "授乳")
-			CALL PRINT_STRL(@"IMAGEPATH_%CSTR:起こしに来る秘書:画像フォルダ%/%RESULTS%")
-			IF レイヤー記録 == TFLAG:口上用画像表示番号
-				;専用画像が表示されてないということなので、現在の服のV挿入画像を見る
-				LOCALS '= CSTR:起こしに来る秘書:短冊グラ表示切り替え用文字列
-				IF LOCALS == ""
-					SIF CSTR:起こしに来る秘書:表示グラフィックカテゴリ == ""
-						CSTR:起こしに来る秘書:表示グラフィックカテゴリ = 기본
-					LOCALS = %"短冊_" + CSTR:起こしに来る秘書:表示グラフィックカテゴリ%
-				ENDIF
-				SIF 差分抽出(起こしに来る秘書, "短冊_", LOCALS, "授乳手コキ", "")
-					CALL PRINT_STRL(@"IMAGEPATH_%CSTR:起こしに来る秘書:画像フォルダ%/%RESULTS%")
-			ENDIF
-			PRINTFORMW 눈을 떠보니, %CALLNAME:起こしに来る秘書%이(가) 모유가 흐르는%OPPAI_DESCRIPTION(起こしに来る秘書)%의 끝을 %CALLNAME:MASTER%의 입에 밀어 넣고 있었다.
-			PRINTFORMW 이것도 비서의 임무라며, 아침 수유로 깨우러 와준 것 같았다.
-			PRINTFORMW %CALLNAME:MASTER%이(가) 그것에 응하듯이 젖꼭지를 빨아올리자, %CALLNAME:起こしに来る秘書%은(는) 표정을 녹이며, 모유를 마시는%CALLNAME:MASTER%의 머리를 부드럽게 안아주었다.
-			PRINTFORMW 충분히 수유 플레이를 한 후, %CALLNAME:起こしに来る秘書%은(는) 미소 지으며 일로 돌아갔다.
+			SETBIT 秘書起床経験:起こしに来る秘書:0, 起こし方_Ａ騎乗位
+		ELSEIF 起こし方 == 起こし方_授乳
+			PRINTFORMW %CALLNAME:MASTER%이(가) 잠들어 있자, 왠지 모르게 입안에 우유 같은 맛이 퍼졌다.
+			CALL 秘書起床業務画像出力(起こしに来る秘書, "授乳", "授乳手コキ", 0)
+;			レイヤー記録 = TFLAG:口上用画像表示番号
+;			CALL 汎用一枚絵画像_名称算出(起こしに来る秘書, "秘書朝起こし_", "授乳")
+;			CALL PRINT_STRL(@"IMAGEPATH_%CSTR:起こしに来る秘書:画像フォルダ%/%RESULTS%")
+;			IF レイヤー記録 == TFLAG:口上用画像表示番号
+;				;専用画像が表示されてないということなので、現在の服の授乳手コキ画像を見る
+;				LOCALS '= CSTR:起こしに来る秘書:短冊グラ表示切り替え用文字列
+;				IF LOCALS == ""
+;					SIF CSTR:起こしに来る秘書:表示グラフィックカテゴリ == ""
+;						CSTR:起こしに来る秘書:表示グラフィックカテゴリ = デフォルト
+;					LOCALS = %"短冊_" + CSTR:起こしに来る秘書:表示グラフィックカテゴリ%
+;				ENDIF
+;				SIF 差分抽出(起こしに来る秘書, "短冊_", LOCALS, "授乳手コキ", "")
+;					CALL PRINT_STRL(@"IMAGEPATH_%CSTR:起こしに来る秘書:画像フォルダ%/%RESULTS%")
+;			ENDIF
+			PRINTFORMW 눈을 떠보니, %CALLNAME:起こしに来る秘書%이(가) 모유가 흐르는 %OPPAI_DESCRIPTION(起こしに来る秘書)%의 끝을 %CALLNAME:MASTER%의 입에 밀어 넣고 있었다.
+			PRINTFORMW \@ GETBIT(秘書起床業務:起こしに来る秘書:0, 起こし方_授乳) ? 부탁한 대로 # 이것도 비서의 임무라며 \@, 아침 수유로 깨우러 와준 모양이다.
+			PRINTFORMW %CALLNAME:MASTER%이(가) 그에 응하듯 젖꼭지를 빨아 올리자, %CALLNAME:起こしに来る秘書%은(는) 표정을 녹이며, 모유를 마시는 %CALLNAME:MASTER%의 머리를 부드럽게 안아주었다.
+			PRINTFORMW 충분히 수유 플레이를 한 후, %CALLNAME:起こしに来る秘書%은(는) 미소 지으며 일터로 돌아갔다.
 			EXP:起こしに来る秘書:Ｂ経験 += 5
 			EXP:起こしに来る秘書:Ｂ絶頂経験 += 3
 			EXP:起こしに来る秘書:噴乳経験 += 3
@@ -665,61 +800,211 @@ ELSEIF 秘書人数 > 0
 			PRINTFORML 분유 경험 + 3（%CALLNAME:起こしに来る秘書%）
 			PRINTFORML 착유 쾌락 경험 + 3（%CALLNAME:起こしに来る秘書%）
 			CALL EXP変動記録処理(起こしに来る秘書)
-		ELSEIF 陥落チェック_性的(起こしに来る秘書) && EXP:起こしに来る秘書:精飲経験 > 10 && 射精可能(MASTER) && RAND:3 == 0
-			レイヤー記録 = TFLAG:口上用画像表示番号
-			CALL 汎用一枚絵画像_名称算出(起こしに来る秘書, "秘書朝起こし_", "フェラチオ")
-			CALL PRINT_STRL(@"IMAGEPATH_%CSTR:起こしに来る秘書:画像フォルダ%/%RESULTS%")
-			IF レイヤー記録 == TFLAG:口上用画像表示番号
-				;専用画像が表示されてないということなので、現在の服のV挿入画像を見る
-				LOCALS '= CSTR:起こしに来る秘書:短冊グラ表示切り替え用文字列
-				IF LOCALS == ""
-					SIF CSTR:起こしに来る秘書:表示グラフィックカテゴリ == ""
-						CSTR:起こしに来る秘書:表示グラフィックカテゴリ = 기본
-					LOCALS = %"短冊_" + CSTR:起こしに来る秘書:表示グラフィックカテゴリ%
-				ENDIF
-				SIF 差分抽出(起こしに来る秘書, "短冊_", LOCALS, "フェラチオ", "")
-					CALL PRINT_STRL(@"IMAGEPATH_%CSTR:起こしに来る秘書:画像フォルダ%/%RESULTS%")
-			ENDIF
-			PRINTFORMW %CALLNAME:MASTER%가 잠들어 있는데, 왠지 사타구니가 따뜻한 느낌이 들었다.
-			PRINTFORM 이불을 들춰보니, %CALLNAME:起こしに来る秘書%이 %CALLNAME:MASTER%의
+			SETBIT 秘書起床経験:起こしに来る秘書:0, 起こし方_授乳
+		ELSEIF 起こし方 == 起こし方_フェラチオ
+			PRINTFORMW %CALLNAME:MASTER%이(가) 잠들어 있는데, 왠지 사타구니가 따뜻한 느낌이 들었다.
+			CALL 秘書起床業務画像出力(起こしに来る秘書, "フェラチオ")
+;			レイヤー記録 = TFLAG:口上用画像表示番号
+;			CALL 汎用一枚絵画像_名称算出(起こしに来る秘書, "秘書朝起こし_", "フェラチオ")
+;			CALL PRINT_STRL(@"IMAGEPATH_%CSTR:起こしに来る秘書:画像フォルダ%/%RESULTS%")
+;			IF レイヤー記録 == TFLAG:口上用画像表示番号
+;				;専用画像が表示されてないということなので、現在の服のフェラチオ画像を見る
+;				LOCALS '= CSTR:起こしに来る秘書:短冊グラ表示切り替え用文字列
+;				IF LOCALS == ""
+;					SIF CSTR:起こしに来る秘書:表示グラフィックカテゴリ == ""
+;						CSTR:起こしに来る秘書:表示グラフィックカテゴリ = デフォルト
+;					LOCALS = %"短冊_" + CSTR:起こしに来る秘書:表示グラフィックカテゴリ%
+;				ENDIF
+;				SIF 差分抽出(起こしに来る秘書, "短冊_", LOCALS, "フェラチオ", "")
+;					CALL PRINT_STRL(@"IMAGEPATH_%CSTR:起こしに来る秘書:画像フォルダ%/%RESULTS%")
+;			ENDIF
+			PRINTFORM 이불을 들춰보니, %CALLNAME:起こしに来る秘書%이(가) %CALLNAME:MASTER%의
 			SELECTCASE TALENT:MASTER:男性器サイズ
 				CASE IS <= -1
 					PRINTL 작은 페니스를 완전히 물고 혀로 굴리고 있다……
 				CASE 0
 					PRINTL 페니스를 빨고, 혀로 귀두를 핥고 있다……
 				CASEELSE
-					PRINTL 큰 페니스를 겨우 입에 넣고, 빨아 올리고 있다……
+					PRINTL 큰 페니스를 겨우 입에 넣고 빨아들이고 있다……
 			ENDSELECT
-			PRINTFORMW 이것도 비서의 임무라며, 아침 펠라로 깨우러 와준 것 같다.
-			PRINTFORMW %CALLNAME:MASTER%가 그대로 사정하자, %CALLNAME:起こしに来る秘書%는 흘리지 않고 삼키고 일로 돌아갔다.
+			PRINTFORMW \@ GETBIT(秘書起床業務:起こしに来る秘書:0, 起こし方_フェラチオ) ? 의뢰한 대로 # 이것도 비서의 임무라며 \@, 아침 펠라로 깨우러 와준 것 같다.
+			PRINTFORM %CALLNAME:MASTER%이(가) 그대로 사정하자, %CALLNAME:起こしに来る秘書%은(는)
+			;精飲フラグ(起こしに来る秘書)で分岐
+			SELECTCASE 精飲フラグ(起こしに来る秘書)
+				CASE 2
+					PRINTL 목구멍 깊숙이 쏟아지는 정액을 모두 받아내 맛있게 마셔버리더니
+					PRINTW 혀로 페니스를 남김없이 핥아 깨끗하게 한 다음 요도구에 가볍게 키스하고, 기분 좋게 일하러 돌아갔다.
+				CASE 1
+					PRINTW 입안에 퍼지는 정액 맛에 눈살을 찌푸리면서도, 한 방울도 흘리지 않고 삼키고 일하러 돌아갔다.
+				CASEELSE
+					PRINTW 입에 나온 정액을 준비해둔 휴지에 뱉어 쓰레기통에 버리고 일하러 돌아갔다.
+			ENDSELECT
 			PRINTFORML C 경험 + 10（%CALLNAME:MASTER%）
 			PRINTFORML 절정 경험 + 1（%CALLNAME:MASTER%）
 			PRINTFORML C 절정 경험 + 1（%CALLNAME:MASTER%）
 			PRINTFORML 사정 경험 + 1（%CALLNAME:MASTER%）
-			PRINTFORML 구강성교 경험 + 3（%CALLNAME:起こしに来る秘書%）
-			PRINTFORML 정액 음용 경험 + 1（%CALLNAME:起こしに来る秘書%）
+			PRINTFORML 구강 성교 경험 + 3（%CALLNAME:起こしに来る秘書%）
+			IF 精飲フラグ(起こしに来る秘書)
+				PRINTFORML 정액 음용 경험 + 1（%CALLNAME:起こしに来る秘書%）
+				EXP:起こしに来る秘書:精飲経験 += 1
+			ENDIF
 			WAIT
 			EXP:MASTER:Ｃ経験 += 10
 			EXP:MASTER:絶頂経験 += 1
 			EXP:MASTER:Ｃ絶頂経験 += 1
 			EXP:起こしに来る秘書:口淫経験 += 3
-			EXP:起こしに来る秘書:精飲経験 += 1
 			CALL EXP変動記録処理(MASTER)
 			CALL EXP変動記録処理(起こしに来る秘書)
-		ELSEIF GETBIT(陥落チェック_性的(起こしに来る秘書), 1) && RAND:3 == 0
-			PRINTFORMW %CALLNAME:MASTER%가 잠들어 있는데, 몸 전체가 쾌락에 휩싸인 듯한 감촉이 든다……。
-			レイヤー記録 = TFLAG:口上用画像表示番号
-			CALL 汎用一枚絵画像_名称算出(起こしに来る秘書, "秘書朝起こし_", "ペッティング")
-			CALL PRINT_STRL(@"IMAGEPATH_%CSTR:起こしに来る秘書:画像フォルダ%/%RESULTS%")
-			IF レイヤー記録 == TFLAG:口上用画像表示番号
-				;専用画像が表示されてないということなので、現在の服のV挿入画像を見る
-				PLAYER記録 = PLAYER
-				PLAYER = 起こしに来る秘書
-				CALL PRINT_STRL(@"IMAGEPATH_%CSTR:起こしに来る秘書:画像フォルダ%/%コマンド実行時画像名称変換処理(起こしに来る秘書, "愛撫")%")
-				PLAYER = PLAYER記録
+			SETBIT 秘書起床経験:起こしに来る秘書:0, 起こし方_フェラチオ
+		ELSEIF 起こし方 == 起こし方_パイズリ
+;			レイヤー記録 = TFLAG:口上用画像表示番号
+;			CALL 汎用一枚絵画像_名称算出(起こしに来る秘書, "秘書朝起こし_", "パイズリ")
+;			CALL PRINT_STRL(@"IMAGEPATH_%CSTR:起こしに来る秘書:画像フォルダ%/%RESULTS%")
+;			IF レイヤー記録 == TFLAG:口上用画像表示番号
+;				;専用画像が表示されてないということなので、現在の服のパイズリ画像を見る
+;				LOCALS '= CSTR:起こしに来る秘書:短冊グラ表示切り替え用文字列
+;				IF LOCALS == ""
+;					SIF CSTR:起こしに来る秘書:表示グラフィックカテゴリ == ""
+;						CSTR:起こしに来る秘書:表示グラフィックカテゴリ = デフォルト
+;					LOCALS = %"短冊_" + CSTR:起こしに来る秘書:表示グラフィックカテゴリ%
+;				ENDIF
+;				SIF 差分抽出(起こしに来る秘書, "短冊_", LOCALS, "パイズリ", "")
+;					CALL PRINT_STRL(@"IMAGEPATH_%CSTR:起こしに来る秘書:画像フォルダ%/%RESULTS%")
+;			ENDIF
+			PRINTFORM %CALLNAME:MASTER%이(가) 잠들어 있는데, 왠지
+			SELECTCASE TALENT:MASTER:男性器サイズ
+				CASE IS <= -1
+					LOCALS = 작은 페니스
+				CASE 0
+					LOCALS = 페니스
+				CASEELSE
+					LOCALS = 큰 페니스
+			ENDSELECT
+			SELECTCASE TALENT:起こしに来る秘書:バストサイズ
+				CASE IS < 0
+					PRINTW 페니스에 딱딱한 것이 닿는 느낌이 들었다
+					PRINTFORML 이불을 들춰보니, %CALLNAME:起こしに来る秘書%이 얇은 가슴으로 %CALLNAME:MASTER%의 %LOCALS%을(를) 열심히 비벼 올리고 있다……
+				CASE IS > 1
+					PRINTW 페니스가 부드러운 것으로 감싸이는 느낌이 들었다
+					PRINTFORML 이불을 들춰보니, %CALLNAME:起こしに来る秘書%이 풍만한 가슴으로 %CALLNAME:MASTER%의 %LOCALS%을(를) 감싸 안고 비벼 올리고 있다……
+				CASEELSE
+					PRINTW 가랑이에 부드러운 감촉을 느꼈다
+					PRINTFORML 이불을 들춰보니, %CALLNAME:起こしに来る秘書%이(가) 가슴으로 %CALLNAME:MASTER%의 %LOCALS%를 끼워 문지르고 있다……
+			ENDSELECT
+			CALL 秘書起床業務画像出力(起こしに来る秘書, "パイズリ")
+			PRINTFORMW \@ GETBIT(秘書起床業務:起こしに来る秘書:0, 起こし方_パイズリ) ? 의뢰한 대로 # 이것도 비서의 임무라 \@, 아침 파이즈리로 깨우러 와준 모양이다.
+			PRINTFORML %CALLNAME:MASTER%이(가) 그대로 사정하자, %CALLNAME:起こしに来る秘書%은(는)
+			;精飲フラグ(起こしに来る秘書)で分岐
+			SELECTCASE 精飲フラグ(起こしに来る秘書)
+				CASE 2
+					IF TALENT:起こしに来る秘書:バストサイズ < 2 || !RAND:3
+						PRINTL 사정 직전에 페니스를 입에 물고 받아내
+						PRINTW 요도에 남은분까지 빨아올려 마셔버리자, 기쁜 듯이 일로 돌아갔다.
+					ELSE
+						PRINTL 만족스러운 미소를 지으며
+						PRINTW 가슴골에 고인 정액을 손으로 떠 마시고, 가슴팍에서 풍기는 정액 냄새를 그대로 둔 채 일로 돌아갔다.
+					ENDIF
+				CASE 1
+					PRINTL 가슴에 쏟아진 정액을 손가락으로 떠 한 모금 핥아 마신 후
+					PRINTW 준비해둔 물수건으로 몸을 깨끗이 닦고 나서 일로 돌아갔다.
+				CASEELSE
+					PRINTW 가슴팍에 쏟아진 정액을 티슈로 닦아내자, 냄새를 신경 쓰면서 일로 돌아갔다.
+			ENDSELECT
+			PRINTFORML C 경험 + 10（%CALLNAME:MASTER%）
+			PRINTFORML 절정 경험 + 1（%CALLNAME:MASTER%）
+			PRINTFORML C 절정 경험 + 1（%CALLNAME:MASTER%）
+			PRINTFORML 사정 경험 + 1（%CALLNAME:MASTER%）
+			PRINTFORML 파이즈리 경험 + 1（%CALLNAME:起こしに来る秘書%）
+			IF 精飲フラグ(起こしに来る秘書) == 2
+				PRINTFORML 정액 음용 경험 + 1（%CALLNAME:起こしに来る秘書%）
+				EXP:起こしに来る秘書:精飲経験 += 1
+				SETBIT 秘書起床経験:起こしに来る秘書:0, 起こし方_フェラチオ
 			ENDIF
-			PRINTFORMW 눈을 떠보니, %CALLNAME:起こしに来る秘書%가 %CALLNAME:MASTER%의 몸을 애무하고 있었다.
-			PRINTFORMW 아무래도 아침 페팅으로 깨우러 와준 것 같다.
+			WAIT
+			EXP:MASTER:Ｃ経験 += 10
+			EXP:MASTER:絶頂経験 += 1
+			EXP:MASTER:Ｃ絶頂経験 += 1
+			EXP:起こしに来る秘書:パイズリ経験 += 1
+			CALL EXP変動記録処理(MASTER)
+			CALL EXP変動記録処理(起こしに来る秘書)
+			SETBIT 秘書起床経験:起こしに来る秘書:0, 起こし方_パイズリ
+		ELSEIF 起こし方 == 起こし方_手コキ
+			SELECTCASE TALENT:MASTER:男性器サイズ
+				CASE IS <= -1
+					LOCALS = 작은 페니스
+				CASE 0
+					LOCALS = 페니스
+				CASEELSE
+					LOCALS = 큰 페니스
+			ENDSELECT
+			PRINTFORMW %CALLNAME:MASTER%이(가) 잠들어 있는데, 왠지 사타구니가 따뜻한 느낌이 들었다.
+			CALL 秘書起床業務画像出力(起こしに来る秘書, "手コキ")
+;			レイヤー記録 = TFLAG:口上用画像表示番号
+;			CALL 汎用一枚絵画像_名称算出(起こしに来る秘書, "秘書朝起こし_", "手コキ")
+;			CALL PRINT_STRL(@"IMAGEPATH_%CSTR:起こしに来る秘書:画像フォルダ%/%RESULTS%")
+;			IF レイヤー記録 == TFLAG:口上用画像表示番号
+;				;専用画像が表示されてないということなので、現在の服の手コキ画像を見る
+;				LOCALS '= CSTR:起こしに来る秘書:短冊グラ表示切り替え用文字列
+;				IF LOCALS == ""
+;					SIF CSTR:起こしに来る秘書:表示グラフィックカテゴリ == ""
+;						CSTR:起こしに来る秘書:表示グラフィックカテゴリ = デフォルト
+;					LOCALS = %"短冊_" + CSTR:起こしに来る秘書:表示グラフィックカテゴリ%
+;				ENDIF
+;				SIF 差分抽出(起こしに来る秘書, "短冊_", LOCALS, "手コキ", "")
+;					CALL PRINT_STRL(@"IMAGEPATH_%CSTR:起こしに来る秘書:画像フォルダ%/%RESULTS%")
+;			ENDIF
+			PRINTFORM 이불을 들춰보니, %CALLNAME:起こしに来る秘書%이(가) %CALLNAME:MASTER%의 %LOCALS%을(를) 유연한 손가락으로 감싸 위아래로 미끄러뜨리고 있다……
+			PRINTFORMW \@ GETBIT(秘書起床業務:起こしに来る秘書:0, 起こし方_手コキ) ? 요청한 대로 # 이것도 비서의 임무라고 \@, 아침 핸드잡으로 깨우러 와준 것 같다.
+			PRINTFORML %CALLNAME:MASTER%이(가) 그대로 사정하자, %CALLNAME:起こしに来る秘書%은(는)
+			;精飲フラグ(起こしに来る秘書)で分岐
+			SELECTCASE 精飲フラグ(起こしに来る秘書)
+				CASE 2
+					PRINTL 사정 직전에 페니스를 입에 물고 받아 삼키자
+					PRINTW 요도구에 키스하여 마지막 한 방울까지 빨아올린 후, 만족스러운 듯이 일로 돌아갔다.
+				CASE 1
+					PRINTL 황급히 페니스 끝을 물고 정액을 받아내자
+					PRINTW 미간에 주름을 잡으며 삼키고, 한숨을 내쉰 후 일로 돌아갔다.
+				CASEELSE
+					PRINTL 솟구치는 정액을 손바닥으로 받아내고, 살짝 냄새를 맡은 후
+					PRINTW 준비되어 있던 젖은 수건으로 닦아내고 일로 돌아갔다.
+			ENDSELECT
+			PRINTFORML C 경험 + 10（%CALLNAME:MASTER%）
+			PRINTFORML 절정 경험 + 1（%CALLNAME:MASTER%）
+			PRINTFORML C 절정 경험 + 1（%CALLNAME:MASTER%）
+			PRINTFORML 사정 경험 + 1（%CALLNAME:MASTER%）
+			PRINTFORML 수음 경험 + 1（%CALLNAME:起こしに来る秘書%）
+			IF 精飲フラグ(起こしに来る秘書) == 2
+				PRINTFORML 정액 음용 경험 + 1（%CALLNAME:起こしに来る秘書%）
+				EXP:起こしに来る秘書:精飲経験 += 1
+			ENDIF
+			WAIT
+			EXP:MASTER:Ｃ経験 += 10
+			EXP:MASTER:絶頂経験 += 1
+			EXP:MASTER:Ｃ絶頂経験 += 1
+			EXP:起こしに来る秘書:手淫経験 += 1
+			CALL EXP変動記録処理(MASTER)
+			CALL EXP変動記録処理(起こしに来る秘書)
+			SETBIT 秘書起床経験:起こしに来る秘書:0, 起こし方_手コキ
+		ELSEIF 起こし方 == 起こし方_ペッティング
+			PRINTFORMW %CALLNAME:MASTER%이(가) 잠들어 있자, 몸 전체가 쾌락에 휩싸이는 듯한 감촉이 든다…….
+			CALL 秘書起床業務画像出力(起こしに来る秘書, "ペッティング", "愛撫", 1)
+;			レイヤー記録 = TFLAG:口上用画像表示番号
+;			CALL 汎用一枚絵画像_名称算出(起こしに来る秘書, "秘書朝起こし_", "ペッティング")
+;			CALL PRINT_STRL(@"IMAGEPATH_%CSTR:起こしに来る秘書:画像フォルダ%/%RESULTS%")
+;			IF レイヤー記録 == TFLAG:口上用画像表示番号
+;				;専用画像が表示されてないということなので、現在の服のコマンド実行時_プレイヤー側_愛撫.画像を探す
+;				PLAYER記録 = PLAYER
+;				PLAYER = 起こしに来る秘書
+;				TFLAG:TARGET保存用 = PLAYER
+;				CALL 汎用一枚絵画像_名称算出(起こしに来る秘書, "コマンド実行時_プレイヤー側_", "愛撫")
+;				;現在の服の画像が無いので、デフォルト衣装の画像を探す
+;				SIF RESULTS == ""
+;					CALL 汎用一枚絵画像_名称算出(起こしに来る秘書, "コマンド実行時_プレイヤー側_", "愛撫", "デフォルト")
+;				CALL PRINT_STRL(@"IMAGEPATH_%CSTR:起こしに来る秘書:画像フォルダ%/コマンド実行時_プレイヤー側_%RESULTS%")
+;				PLAYER = PLAYER記録
+;			ENDIF
+			PRINTFORMW 눈을 떠보니, %CALLNAME:起こしに来る秘書%이(가) %CALLNAME:MASTER%의 몸을 애무하고 있었다.
+			PRINTFORMW \@ GETBIT(秘書起床業務:起こしに来る秘書:0, 起こし方_ペッティング) ? 의뢰한 대로 # 아무래도 \@아침 펫팅으로 깨우러 와준 모양이다.
 			PRINTFORMW %CALLNAME:MASTER%이(가) 일어난 것을 깨닫자, %CALLNAME:起こしに来る秘書%은(는) 애무의 손길을 빠르게 하여 %CALLNAME:MASTER%을(를) 절정시킨다.
 			PRINTFORMW 이것도 비서의 임무라며 미소 짓고, %CALLNAME:起こしに来る秘書%은(는) 일로 돌아갔다.
 			LOCAL = 1
@@ -756,18 +1041,24 @@ ELSEIF 秘書人数 > 0
 				EXP:MASTER:絶頂経験 += LOCAL
 			WAIT
 			CALL EXP変動記録処理(MASTER)
-		ELSEIF 陥落チェック_性的(起こしに来る秘書) && 初体験日取得("キス", MASTER, 起こしに来る秘書) && RAND:3 == 0
-			PRINTFORMW %CALLNAME:MASTER%이(가) 잠들어 있는데, 입술에 부드러운 감촉을 느꼈다.
-			レイヤー記録 = TFLAG:口上用画像表示番号
-			CALL 汎用一枚絵画像_名称算出(起こしに来る秘書, "秘書朝起こし_", "キス")
-			CALL PRINT_STRL(@"IMAGEPATH_%CSTR:起こしに来る秘書:画像フォルダ%/%RESULTS%")
-			IF レイヤー記録 == TFLAG:口上用画像表示番号
-				;専用画像が表示されてないということなので、現在の服のV挿入画像を見る
-				CALL PRINT_STRL(@"IMAGEPATH_%CSTR:起こしに来る秘書:画像フォルダ%/%コマンド実行時画像名称変換処理(起こしに来る秘書, "キス")%")
-			ENDIF
+			SETBIT 秘書起床経験:起こしに来る秘書:0, 起こし方_ペッティング
+		ELSEIF 起こし方 == 起こし方_キス
+			PRINTFORMW %CALLNAME:MASTER%이(가) 잠들어 있을 때, 입술에 부드러운 감촉을 느꼈다.
+			CALL 秘書起床業務画像出力(起こしに来る秘書, "キス")
+;			レイヤー記録 = TFLAG:口上用画像表示番号
+;			CALL 汎用一枚絵画像_名称算出(起こしに来る秘書, "秘書朝起こし_", "キス")
+;			CALL PRINT_STRL(@"IMAGEPATH_%CSTR:起こしに来る秘書:画像フォルダ%/%RESULTS%")
+;			IF レイヤー記録 == TFLAG:口上用画像表示番号
+;				;専用画像が表示されてないということなので、現在の服のコマンド実行時_キス.画像を探す
+;				LOCALS '= コマンド実行時画像名称変換処理(起こしに来る秘書, "キス")
+;				;現在の服の画像が無いので、デフォルト衣装の画像を探す
+;				SIF LOCALS == ""
+;					LOCALS '= コマンド実行時画像名称変換処理(起こしに来る秘書, "キス", "デフォルト")
+;				CALL PRINT_STRL(@"IMAGEPATH_%CSTR:起こしに来る秘書:画像フォルダ%/コマンド実行時_%LOCALS%")
+;			ENDIF
 			PRINTFORMW 눈을 떠보니, %CALLNAME:起こしに来る秘書%이(가) %CALLNAME:MASTER%의 입술에 키스하고 있다.
-			PRINTFORMW 이것도 비서의 임무라며, 아침 키스로 깨우러 와준 것 같다.
-			PRINTFORMW %CALLNAME:MASTER%이(가) 일어난 것을 깨닫자, %CALLNAME:起こしに来る秘書%은(는) 미소 지으며 일로 돌아갔다.
+			PRINTFORMW \@ GETBIT(秘書起床業務:起こしに来る秘書:0, 起こし方_キス) ? 의뢰한 대로 # 이것도 비서의 임무라고 \@, 아침 키스로 깨우러 와준 모양이다.
+			PRINTFORMW %CALLNAME:MASTER%이(가) 일어난 것을 깨닫자, %CALLNAME:起こしに来る秘書%은(는) 미소 지으며 일터로 돌아갔다.
 			PRINTFORML 키스 경험 + 2（%CALLNAME:MASTER%）
 			PRINTFORML 키스 경험 + 2（%CALLNAME:起こしに来る秘書%）
 			WAIT
@@ -775,14 +1066,17 @@ ELSEIF 秘書人数 > 0
 			EXP:起こしに来る秘書:キス経験 += 2
 			CALL EXP変動記録処理(MASTER)
 			CALL EXP変動記録処理(起こしに来る秘書)
+			SETBIT 秘書起床経験:起こしに来る秘書:0, 起こし方_キス
 		ELSE
-			CALL 汎用一枚絵画像_名称算出(起こしに来る秘書, "秘書朝起こし_", "通常")
-			CALL PRINT_STRL(@"IMAGEPATH_%CSTR:起こしに来る秘書:画像フォルダ%/%RESULTS%")
-			PRINTFORMW %CALLNAME:MASTER%이(가) 잠들어 있자, 이름을 부르는 소리가 들린다.
-			PRINTFORMW %CALLNAME:起こしに来る秘書%이(가) 시간 맞춰 깨우러 와준 것 같다.
-			PRINTFORMW %CALLNAME:MASTER%이(가) 몸을 일으켜 감사를 표하자, %CALLNAME:起こしに来る秘書%은(는) 일로 돌아갔다.
+			CALL 秘書起床業務画像出力(起こしに来る秘書, "通常", "ノーマル", 0)
+;			CALL 汎用一枚絵画像_名称算出(起こしに来る秘書, "秘書朝起こし_", "通常")
+;			CALL PRINT_STRL(@"IMAGEPATH_%CSTR:起こしに来る秘書:画像フォルダ%/%RESULTS%")
+			PRINTFORMW %CALLNAME:MASTER%이(가) 잠들어 있을 때, 이름을 부르는 소리가 들린다.
+			PRINTFORMW %CALLNAME:起こしに来る秘書%이(가) 시間대로 깨우러 와준 모양이다.
+			PRINTFORMW %CALLNAME:MASTER%이(가) 몸을 일으켜 감사를 표하자, %CALLNAME:起こしに来る秘書%은(는) 일터로 돌아갔다.
+			SETBIT 秘書起床経験:起こしに来る秘書:0, 起こし方_ノーマル
 		ENDIF
-	ENDCATCH
+	ENDIF
 ENDIF
 
 ;起床後特殊イベ
@@ -814,12 +1108,13 @@ BASE:ARG:体力 = MAXBASE:ARG:体力
 
 IF OPTION変数:編成解除時の装備解除
 	;装備解除
-	装備ステータス補正保存:ARG:装備証番号 = 0
-	IF 装備ステータス補正保存:ARG:装備指輪番号
+	SIF CFLAG:ARG:ジョブ証変更禁止 == 0
+		装備ステータス補正保存:ARG:装備証番号 = 0
+	IF 装備ステータス補正保存:ARG:装備指輪番号 && CFLAG:ARG:指輪変更禁止 == 0
 		DT_CELL_SET "所持指輪データベース", 装備ステータス補正保存:ARG:装備指輪番号, "装備キャラ番号", 0, 1
 		装備ステータス補正保存:ARG:装備指輪番号 = 0
 	ENDIF
-	IF 装備ステータス補正保存:ARG:装備耳飾り番号
+	IF 装備ステータス補正保存:ARG:装備耳飾り番号 && CFLAG:ARG:耳飾り変更禁止 == 0
 		DT_CELL_SET "所持耳飾りデータベース", 装備ステータス補正保存:ARG:装備耳飾り番号, "装備キャラ番号", 0, 1
 		装備ステータス補正保存:ARG:装備耳飾り番号 = 0
 	ENDIF
@@ -874,8 +1169,11 @@ FOR LOCAL:1,0,200
 	TCVAR:ARG:(400 + LOCAL:1) = EXP:ARG:(LOCAL:1)
 NEXT
 
-@発情期判定(ARG)
+
+@発情期存在判定(ARG)
 #FUNCTION
+SIF TALENT:ARG:性欲 == -2
+	RETURNF 0
 SIF TALENT:ARG:発情期あり < 0
 	RETURNF 0
 SELECTCASE TALENT:ARG:性別
@@ -897,19 +1195,146 @@ SIF TALENT:ARG:種族 == 2 && TALENT:ARG:性別 != 2 && GETBIT(OPTION変数:発�
 	RETURNF 1
 SIF TALENT:ARG:種族 == 2 && TALENT:ARG:性別 == 2 && GETBIT(OPTION変数:発情期切り替え, 1) == 0
 	RETURNF 1
-SIF (TALENT:ARG:種族 == 3|| キャラ一致チェック(ARG, "[六竜の『金』]ガレヲン")) && TALENT:ARG:性別 != 2 && GETBIT(OPTION変数:発情期切り替え, 2) == 0
+SIF (TALENT:ARG:種族 == 3 || キャラ一致チェック(ARG, "[六竜の『金』]ガレヲン")) && TALENT:ARG:性別 != 2 && GETBIT(OPTION変数:発情期切り替え, 2) == 0
 	RETURNF 1
-SIF (TALENT:ARG:種族 == 3|| キャラ一致チェック(ARG, "[六竜の『金』]ガレヲン")) && TALENT:ARG:性別 == 2 && GETBIT(OPTION変数:発情期切り替え, 3) == 0
+SIF (TALENT:ARG:種族 == 3 || キャラ一致チェック(ARG, "[六竜の『金』]ガレヲン")) && TALENT:ARG:性別 == 2 && GETBIT(OPTION変数:発情期切り替え, 3) == 0
 	RETURNF 1
 SIF TALENT:ARG:発情期あり > 0 && TALENT:ARG:性別 != 2 && GETBIT(OPTION変数:発情期切り替え, 4) == 0
 	RETURNF 1
 SIF TALENT:ARG:発情期あり > 0 && TALENT:ARG:性別 == 2 && GETBIT(OPTION変数:発情期切り替え, 5) == 0
 	RETURNF 1
 
-
 RETURNF 0
 
 
+@DAYFIRST_CHARAEVENT_ETC(対象キャラ)
+#DIM 対象キャラ
+
+;キャラ個別ではないが、特定の条件を満たしたキャラの処理を分ける場所
+;延々とループが長くなるのを防ぐ意図
+
+;デレマス処理
+IF CSTR:対象キャラ:出演作品 == "アイドルマスターシンデレラガールズ"
+	CALL 舞踏会イベ判定(対象キャラ)
+ENDIF
 
 
+@DAYEND_CHARAEVENT_ETC(対象キャラ)
+#DIM 対象キャラ
+
+;キャラ個別ではないが、特定の条件を満たしたキャラの処理を分ける場所
+;延々とループが長くなるのを防ぐ意図
+
+@LOCADEND_CHARAEVENT_ETC(対象キャラ)
+#DIM 対象キャラ
+
+;キャラ個別ではないが、特定の条件を満たしたキャラの処理を分ける場所
+;延々とループが長くなるのを防ぐ意図
+
+@舞踏会イベ判定(対象キャラ)
+#DIM 対象キャラ
+
+;個別口上の外でこれ使いたくないけど、CFLAGに新設するよりはマシなので……
+特定状況口上用フラグ:対象キャラ:0 = 0
+IF イベント完了フラグ確認("『シンデレラ』と『舞踏会』") > 0
+	IF CFLAG:対象キャラ:C_DAY_RAND % 17 == 0 || DAY_RAND % 192 == 0 ;192
+		SELECTCASE RAND:3
+			CASE 0 ;需观察大腿4 太腿の付け根など、スカート等で隠れる部分
+				特定状況口上用フラグ:対象キャラ:0 = 4
+			CASE 1 ;需观察胸部2 胸元。胸チラで見えたり、水着になったら見えたりする
+				特定状況口上用フラグ:対象キャラ:0 = 2
+;			CASE 2 ;需观察身上3 その他。へそ下とか。へそ出ししてると見える
+;				特定状況口上用フラグ:対象キャラ:0 = 3
+			CASEELSE
+			;直接1 着衣状態で普通に目視できる位置にマークがある
+			;全体確率のうち、最低でも50%はあって欲しい。そうすれば見かけ上は3%となるため
+				特定状況口上用フラグ:対象キャラ:0 = 1
+		ENDSELECT
+		;本人は「その日いちにちシンデレラであること」を把握しているので、あなたがマークを目視したか否かに関わらず特殊言いなり状態
+		TCVAR:対象キャラ:特殊言いなり = 1
+	ENDIF
+
+	IF NAME:対象キャラ == "[346プロアイドル事業部統括]美城常務" || NAME:対象キャラ == "[佐々木千枝の母]佐々木百枝"
+		特定状況口上用フラグ:対象キャラ:0 = 0
+			TCVAR:対象キャラ:特殊言いなり = 0
+	ENDIF
+	IF NAME:対象キャラ == "[アイドル事務所のアシスタント]千川ちひろ"
+		特定状況口上用フラグ:対象キャラ:0 = 1
+			TCVAR:対象キャラ:特殊言いなり = 1
+	ENDIF
+ENDIF
+
+@秘書起床業務画像出力(対象キャラ, 行為画像, 代替画像, 実行側フラグ = 0)
+#DIM 対象キャラ
+#DIMS DYNAMIC 行為画像
+#DIMS DYNAMIC 代替画像
+#DIM 実行側フラグ
+#DIM レイヤー記録
+#DIMS 衣装一時保存
+#DIMS 行為画像保存
+
+衣装一時保存 '= CSTR:対象キャラ:顔グラ表示切り替え用文字列
+行為画像保存 '= 行為画像
+
+SIF 代替画像 == ""
+	代替画像 '= 行為画像
+
+レイヤー記録 = TFLAG:口上用画像表示番号
+
+DEBUGCLEAR
+DO
+	;まず秘書朝起こし_衣装_行為画像を探す
+	DEBUGPRINTFORML ＊%CALLNAME:対象キャラ%の衣装：%REPLACE(CSTR:対象キャラ:顔グラ表示切り替え用文字列, "顔_", "")%のコマンド：%行為画像%でチャレンジ＊
+	CALL 汎用一枚絵画像_名称算出(対象キャラ, "秘書朝起こし_", 行為画像)
+	DEBUGPRINTFORM 秘書朝起こし_%RESULTS%が
+	CALL PRINT_STRL(@"IMAGEPATH_%CSTR:対象キャラ:画像フォルダ%/秘書朝起こし_%RESULTS%")
+	IF レイヤー記録 == TFLAG:口上用画像表示番号
+		CLEARLINE 1
+		;秘書朝起こし_衣装_行為画像が表示されてないということなので、コマンド実行時_衣装_行為画像を探す
+		LOCALS '= コマンド実行時画像名称変換処理(対象キャラ, 行為画像)
+		SIF 実行側フラグ
+			LOCALS '= "プレイヤー側_" + LOCALS
+		DEBUGPRINTFORML 無いので、コマンド実行時_%LOCALS%を探すよ…
+		CALL PRINT_STRL(@"IMAGEPATH_%CSTR:対象キャラ:画像フォルダ%/コマンド実行時_%LOCALS%")
+		IF レイヤー記録 == TFLAG:口上用画像表示番号
+			CLEARLINE 1
+			;コマンド実行時_衣装_行為画像も表示されてないということなので、短冊_衣装_差分_行為画像を探す
+			LOCALS '= "差分_" + 行為画像
+			SIF 行為画像 == "ノーマル"
+				LOCALS '= ""
+			DEBUGPRINTFORM 無いので、短冊_%REPLACE(CSTR:対象キャラ:顔グラ表示切り替え用文字列, "顔_", "")%_%LOCALS%を探すよ…
+			IF LOCALS == ""
+				SWAP CSTR:対象キャラ:顔グラ表示切り替え用文字列, CSTR:対象キャラ:短冊グラ表示切り替え用文字列
+				RESULTS '= REPLACE(グラ表示用文字列算出(対象キャラ, "短冊_"), "顔_|短冊_", "")
+				SWAP CSTR:対象キャラ:顔グラ表示切り替え用文字列, CSTR:対象キャラ:短冊グラ表示切り替え用文字列
+			ELSE
+				CALL 汎用一枚絵画像_名称算出(対象キャラ, "短冊_", LOCALS)
+			ENDIF
+			DEBUGPRINTFORM [%RESULTS%]が帰ってきたよ。
+			CALL PRINT_STRL(@"IMAGEPATH_%CSTR:対象キャラ:画像フォルダ%/短冊_%RESULTS%")
+			IF レイヤー記録 == TFLAG:口上用画像表示番号
+				CLEARLINE 1
+				;短冊_衣装_差分_行為画像も表示されていないとのことなので、条件を変えて探し直す
+				IF 代替画像 != 行為画像
+					;代替画像でサーチ再開
+					行為画像 '= 代替画像
+					DEBUGPRINTFORML 無いので行為：%行為画像%で再挑戦
+				ELSEIF CSTR:対象キャラ:顔グラ表示切り替え用文字列 != "顔_デフォルト"
+					CSTR:対象キャラ:顔グラ表示切り替え用文字列 '= "顔_デフォルト"
+					;行為画像にセットし直し、衣装をデフォルトにセットしてサーチ再開
+					SIF 行為画像 != 行為画像保存
+						行為画像 '= 行為画像保存
+					DEBUGPRINTFORML 無いので衣装：デフォルト、行為：%行為画像%で再チャレンジ
+				ELSE
+					DEBUGPRINTFORML 無いのでギブアップ
+					BREAK
+				ENDIF
+			ENDIF
+		ENDIF
+	ENDIF
+	SIF レイヤー記録 != TFLAG:口上用画像表示番号
+		DEBUGPRINTL あったよ
+LOOP レイヤー記録 == TFLAG:口上用画像表示番号
+
+CSTR:対象キャラ:顔グラ表示切り替え用文字列 '= 衣装一時保存
 

@@ -35,7 +35,7 @@ AA:04 += マス情報入力(34)
 FOR LOCAL, 20, 27
 	AA:04 += マス情報入力(LOCAL)
 NEXT
-AA:04 += "고"
+AA:04 += "ゴ"
 
 AA:05 = 
 AA:05 += "　　　　　　　　　　27"
@@ -71,7 +71,7 @@ AA:14 = 37■■■■■■■■■■■■■25
 AA:15 = 　　3635343332313029282726　　
 
 AA:02 = 
-AA:02 += "　스"
+AA:02 += "　ス"
 FOR LOCAL, 2, 14
 	AA:02 += マス情報入力(LOCAL)
 NEXT
@@ -84,7 +84,7 @@ AA:03 += マス情報入力(14)
 AA:03 += "14"
 
 AA:04 = 
-AA:04 += "47고　　　　　　　"
+AA:04 += "47ゴ　　　　　　　"
 AA:04 += マス情報入力(49)
 AA:04 += "49　　"
 AA:04 += マス情報入力(15)
@@ -373,13 +373,13 @@ AA:15 += "02"
 #FUNCTIONS
 SELECTCASE すごろくマス情報:ARG
 	CASE 0
-		RETURNF "ダ"
+		RETURNF "다"
 	CASE 1
-		RETURNF "回"
+		RETURNF "회"
 	CASE 2
-		RETURNF "バ"
+		RETURNF "바"
 	CASE 3
-		RETURNF "弱"
+		RETURNF "약"
 ENDSELECT
 
 @DRAW_すごろくMAP_1(SLICED)

@@ -16,8 +16,8 @@ TFLAG:コマンドタイプ受渡 = MASSAGE_COMTYPE("エロマッサージ")
 @MASSAGE_COM_TOOLTIP_26
 LOCALS = <br>■외음부 성감 마사지<br>
 LOCALS += "오일로 미끈거리는 손으로, 외음부를 마사지한다."
-LOCALS += "<br>대상에게 남성기가 있는 경우는 핸드잡, 없는 경우는 클리 애무."
-LOCALS += "<br>COM 타입: 에로 마사지<br>획득 소스: 쾌C・노출・접촉・환락・액체"
+LOCALS += "<br>대상에게 남성기가 있는 경우에는 수음, 없는 경우에는 클리 애무."
+LOCALS += "<br>COM 타입：에로 마사지<br>획득 소스：쾌Ｃ・노출・접촉・환락・액체"
 LOCALS += "<br>고유 획득 경험: 없음<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
@@ -127,17 +127,17 @@ PRINTFORM %CALLNAME:TARGET%의
 		;巨根以上
 		IF TALENT:TARGET:男性器サイズ >= 1
 				IF BASE:TARGET:勃起 >= 1000
-					PRINTFORM 바싹 발기한
+					PRINTFORM 꼿꼿하게 발기한
 				ELSEIF BASE:TARGET:勃起 >= 500
 					PRINTFORM 단단해지고 있는
 				ELSE
 					PRINTFORM 아직 발기하지 않은
 				ENDIF
-			PRINTFORM %TEXTR("큰 자지/거근")%
+			PRINTFORM %TEXTR("거대한 자지/거근")%
 		ELSEIF TALENT:TARGET:男性器サイズ <= -1
 		;短小以下
 				IF BASE:TARGET:勃起 >= 1000
-					PRINTFORM 딱딱하게 굳은
+					PRINTFORM 딱딱하게 굳어진
 				ELSEIF BASE:TARGET:勃起 >= 500
 					PRINTFORM 단단해지고 있는
 				ELSE
@@ -147,7 +147,7 @@ PRINTFORM %CALLNAME:TARGET%의
 		ELSE
 		;普通サイズ
 				IF BASE:TARGET:勃起 >= 1000
-					PRINTFORM 바싹 발기한
+					PRINTFORM 단단하게 발기한
 				ELSEIF BASE:TARGET:勃起 >= 500
 					PRINTFORM 단단해지고 있는
 				ELSE
@@ -155,10 +155,10 @@ PRINTFORM %CALLNAME:TARGET%의
 				ENDIF
 			PRINTFORM %TEXTR("육봉/자지")%
 		ENDIF
-		PRINTFORML 을(를), %TEXTR("오일로 미끈거리는 손으로 주물러 올리며/오일로 미끈거리는 양손바닥으로 주무르듯이")% 마사지했다.
+		PRINTFORML 을(를),%TEXTR("오일로 미끈거리는 손으로 주무르듯이/오일로 미끈거리는 양손바닥으로 주무르듯이")%마사지했다.
 	ELSE
 	;クリ愛撫
-		PRINTFORML %TEXTR("클리토리스/클리/음핵")%를, 오일로 미끈거리는 %TEXTR("손가락 끝으로 부드럽게 주무르고/손가락으로 원을 그리듯이 주무르고/손가락 끝으로 으깨듯이 눌러")% 마사지했다.
+		PRINTFORML %TEXTR("클리토리스/클리/음핵")%을(를), 오일로 미끈거리는%TEXTR("손가락 끝으로 부드럽게 주물러서/손가락 끝으로 원을 그리듯이 주물러서/손가락 끝으로 으깨듯이 눌러서")%마사지했다.
 	ENDIF
 
 ;削りが十分な時は追加のメッセージ
@@ -166,9 +166,9 @@ IF (BASE:TARGET:理性 + BASE:TARGET:警戒) < 470
 	PRINTW 
 	SELECTCASE RAND:2
 	CASE 0
-		PRINTFORM %CALLNAME:TARGET%은(는) %TEXTR("황홀하게 눈가를 녹이고/녹아내린 얼굴로 헤프게 입을 벌리고/법열에 눈가를 녹이며")%,
+		PRINTFORM %CALLNAME:TARGET%은(는)%TEXTR("황홀하게 눈가를 녹이며/녹아내린 얼굴로 헤프게 입을 벌리고/법열에 눈가를 녹이며")%、
 	CASE 1
-		PRINTFORM %CALLNAME:TARGET%은(는) 헤프게 풀린 입에서 %TEXTR("아무것도 아닌 소리/쾌락에 물든 교성/음란한 소리")%를 %TEXTR("내고/흘리고/흘리면서")%,
+		PRINTFORM %CALLNAME:TARGET%은(는) 헤프게 풀린 입에서%TEXTR("망측한 소리/쾌락에 물든 교성/음란한 소리")%를%TEXTR("내며/흘리며/흘리면서")%、
 	ENDSELECT
-	PRINTFORML %CALLNAME:PLAYER%%TEXTR("의 '마사지'/의 수기/가 주는 쾌락")%%TEXTR("에 취해 있다/에 당하는 대로 되어 있다/을 받아들이고 있다/을 감수하고 있다")%…
+	PRINTFORML %CALLNAME:PLAYER%%TEXTR("의 『마사지』/의 손기술/가 주는 쾌락")%%TEXTR("에 취해 있다/에 당하는 대로 되어 있다/을(를) 받아들이고 있다/을(를) 감수하고 있다")%…
 ENDIF

@@ -9,7 +9,7 @@ IF 施設改造度:3:0 == 0
 	TSTR:コマンド名受渡 = 
 	RETURNF 0
 ENDIF
-TSTR:コマンド名受渡 = 함께 놀다
+TSTR:コマンド名受渡 = 함께 놀기
 RETURNF 1
 
 ;===================================================
@@ -20,8 +20,8 @@ RETURNF 1
 TFLAG:コマンドタイプ受渡 = COMTYPE("日常")
 
 @COM_TOOLTIP_380_0_303
-LOCALS = <br>■함께 놀다<br>
-LOCALS += "그 자리에 있는 캐릭터 전원과 메인 텐트 부근에서 함께 노는 커맨드. 일정 확률로 대성공, 성공, 실패로 분기. <br>공놀이, 모의전, 산책 세 가지 중 무작위로 선택된다."
+LOCALS = <br>■함께 놀기<br>
+LOCALS += "그 자리에 있는 모든 캐릭터와 메인 텐트 부근에서 함께 노는 커맨드. 일정 확률로 대성공, 성공, 실패로 분기. <br>공놀이, 모의전, 산책 세 가지 중 무작위로 선택된다."
 LOCALS += "<br>COM 타입: 일상<br>획득 소스: 환락・정복(일정 조건 시)・고통(일정 조건 시)"
 LOCALS += "<br>고유 획득 경험: 없음<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
@@ -144,7 +144,7 @@ RETURN 1
 ;-------------------------------------------------
 @MESSAGE_COM380_0_303
 
-PRINTFORM %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%\@ GET_TARGETNUM() > 1 ? 들 # \@과(와)
+PRINTFORM %CALLNAME:PLAYER%은(는)%CALLNAME:TARGET%\@ GET_TARGETNUM() > 1 ? 들 # \@과(와)
 SELECTCASE RFLAG:コマンド結果受渡し変数３
 	CASE 1
 		;ボール遊び
@@ -154,7 +154,7 @@ SELECTCASE RFLAG:コマンド結果受渡し変数３
 		PRINT 모의전으로 몸을 움직였다
 	CASE 3
 		;お散歩
-		PRINT 느긋하게 걸으며 수다를 떨었다
+		PRINT 느긋하게 걸으며 이야기를 나눴다
 ENDSELECT
 
 SELECTCASE RFLAG:コマンド結果受渡し変数
@@ -165,11 +165,11 @@ SELECTCASE RFLAG:コマンド結果受渡し変数
 	CASE IS <= 9
 		;成功時
 		PRINTL 
-		PRINTFORMW \@ GET_TARGETNUM() > 1 ? 모두 함께 # 둘이서\@ 즐거운 시간을 보낼 수 있었다…
+		PRINTFORMW \@ GET_TARGETNUM() > 1 ? 모두 함께 # 둘이서\@즐거운 시간을 보낼 수 있었다…
 	CASEELSE
 		;大成功時
 		PRINTL 
-		PRINTFORMW \@ GET_TARGETNUM() > 1 ? 모두 함께 # 둘이서\@ 정말 분위기가 달아올랐다!
+		PRINTFORMW \@ GET_TARGETNUM() > 1 ? 모두 함께 # 둘이서\@정말 분위기가 달아올랐다!
 ENDSELECT
 
 

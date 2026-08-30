@@ -13,9 +13,9 @@ ENDIF
 ;許可時の特別文章はここに記入
 IF TFLAG:オートコマンドフラグ >= 4000
 	;反転時、つまりあなたが舐める方
-	許可取り文章 = %CALLNAME:TARGET%이(가)%CALLNAME:PLAYER%에게[%TSTR:コマンド名受渡%]을(를) 요구하고 있는 것 같다.
+	許可取り文章 = %CALLNAME:TARGET%이(가) %CALLNAME:PLAYER%에게 [%TSTR:コマンド名受渡%]을(를) 요구하고 있는 것 같다.
 ELSE
-	許可取り文章 = %CALLNAME:PLAYER%이(가)%CALLNAME:TARGET%에게[%TSTR:コマンド名受渡%]을(를) 실행하려고 하는 것 같다.
+	許可取り文章 = %CALLNAME:PLAYER%이(가) %CALLNAME:TARGET%에게 [%TSTR:コマンド名受渡%]을(를) 실행하려고 하는 것 같다.
 ENDIF
 
 
@@ -31,9 +31,9 @@ TFLAG:コマンドタイプ受渡 = COMTYPE("うふふ")
 
 
 @COM_TOOLTIP_1
-LOCALS = <br>■커닐링구스<br>
+LOCALS = <br>■쿤니<br>
 LOCALS += "상대의 클리토리스를 중심으로 혀로 애무를 하는 커맨드. <br>쿤니 모드가 되어, 모드를 변경하거나 성행위를 종료할 때까지 지속적으로 특정 소스가 발생한다."
-LOCALS += "<br>실행자가[혀놀림][고양이 혀]를 가지고 있을 경우, 효과가 증감한다."
+LOCALS += "<br>실행자가 [혀놀림][고양이 혀]를 가지고 있을 경우, 효과가 증감한다."
 LOCALS += "<br>COM 타입: 우후후<br>획득 소스: 쾌C・노출・접촉・액체"
 LOCALS += "<br>고유 획득 경험: 구강성교 경험(PLAYER)<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
@@ -144,49 +144,49 @@ RETURN 1
 ;実行時メッセージ
 ;-------------------------------------------------
 @MESSAGE_COM1
-PRINTFORM %CALLNAME:PLAYER%는
+PRINTFORM %CALLNAME:PLAYER%은(는)
 
 IF RFLAG:コマンド結果受渡し変数
-	PRINTFORML %CALLNAME:TARGET%와 머리 위치가 서로 엇갈리도록 자세를 바꿔서,
+	PRINTFORML %CALLNAME:TARGET%와 머리 위치가 엇갈리도록 자세를 바꾸고,
 	PRINTFORM %CALLNAME:TARGET%의
 ELSEIF MODE_シックスナイン中_完全一致(TARGET, PLAYER)
 	PRINTFORM 눈앞에 있는 %CALLNAME:TARGET%의
 ELSEIF !TEQUIP:下半身服あり && TEQUIP:下半身下着あり > 0
 	IF TALENT:恋慕 && PLAYER == MASTER
-		PRINTFORM 스스로 속옷을 내려 준비하고 있는
+		PRINTFORM 스스로 속옷을 벗어 준비하고 있는
 	ELSE
-		PRINTFORM 속옷을 내려 노출시킨
+		PRINTFORM 속옷을 벗겨 노출시켰다
 	ENDIF
 	PRINTFORM %CALLNAME:TARGET%의
 ELSEIF TEQUIP:ずらし可
 	IF TALENT:恋慕 && PLAYER == MASTER
-		PRINTFORM 스스로 옷을 내려 준비하고 있는
+		PRINTFORM 스스로 옷을 벗어 준비하고 있는
 	ELSE
-		PRINTFORM 옷을 내려 노출시킨
+		PRINTFORM 옷을 벗겨 노출시켰다
 	ENDIF
 	PRINTFORM %CALLNAME:TARGET%의
 ELSEIF TEQUIP:スカートめくり可
 	IF TALENT:恋慕 && PLAYER == MASTER
 		PRINTFORM 스스로 옷을 걷어 올려 준비하고 있는
 	ELSE
-		PRINTFORM 옷을 걷어 올려 노출시킨
+		PRINTFORM 옷을 걷어 올려 노출시켰다
 	ENDIF
 	PRINTFORM %CALLNAME:TARGET%의
 ELSE
 	SIF TALENT:恋慕 && PLAYER == MASTER
-		PRINT 다리를 벌려 준비하고 있는
+		PRINT 다리를 벌리고 준비하고 있는
 	PRINTFORM %CALLNAME:TARGET%의
 ENDIF
-PRINTFORM 비밀스러운 입술을 정성껏 핥아 풀고
+PRINTFORM 음순을 정성스럽게 핥아 풀고
 ;ふたなり＋欲情のPLAMLV3以上
 IF GETBIT(TALENT:性別, 1) && PALAM:欲情 >= PALAMLV:3
-	PRINT , 꼿꼿이 선 페니스에 혀를 훑어 올리며 핥아 올리고
+	PRINT 、솟아오른 페니스에 혀를 훑어 올리며 핥아 올리고
 ;ふたなり
 ELSEIF GETBIT(TALENT:性別, 1)
-	PRINT , 페니스 뿌리 부분을 혀로 핥아 올리고
+	PRINT 、페니스 뿌리 부분을 혀로 핥아 올리고
 ;欲情のPALAMLV3以上
 ELSEIF PALAM:欲情 >= PALAMLV:3
-	PRINT , 잔뜩 부푼 클리토리스를 혀로 빨아 올렸
+	PRINT 、뾰족하게 솟아오른 클리토리스를 혀로 빨아 올리
 ENDIF
-PRINTL 다…
+PRINTL 였다…
 

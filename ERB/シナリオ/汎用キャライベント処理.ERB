@@ -20,20 +20,20 @@ ELSE
 ENDIF
 
 DRAWLINE
-PRINTFORML ［【범용】%NAME:対象キャラ%[연모 불가]해제］
+PRINTFORML ［【범용】%NAME:対象キャラ%[연모불가]해제］
 DRAWLINE
 PRINTW
 PRINTFORMW %CALLNAME:対象キャラ%의 상태가 어딘가 이상하다.
-PRINTFORMW 말을 걸자 살짝 얼굴을 붉히고, %CALLNAME:PLAYER%을(를) 촉촉한 눈동자로 바라보고 있다…
+PRINTFORMW 말을 걸면 조금얼굴을 붉히고, %CALLNAME:PLAYER%을(를) 촉촉한 눈으로 바라보고 있다…
 PRINTL 
 PRINTFORMW 교류를 거듭한 결과, 계속 거부하던 연심이 넘쳐흐른 것 같다.
 PRINTFORMW 앞으로는 더욱 관계를 깊게 할 수 있을지도 모른다.
 PRINTL 
 SETCOLOR 0xFFFF00
 IF GETBIT(TALENT:対象キャラ:陥落不可, 1)
-	PRINTFORML %CALLNAME:対象キャラ%의[함락 불가]이(가)[섹프 불가]으로 변화했습니다.
+	PRINTFORML %CALLNAME:対象キャラ%의[함락불가]가[섹프불가]로 변화했습니다.
 ELSE
-	PRINTFORML %CALLNAME:対象キャラ%의[연모 불가]이(가) 소멸했습니다.
+	PRINTFORML %CALLNAME:対象キャラ%의[연모불가]가 소멸했습니다.
 ENDIF
 CLEARBIT TALENT:対象キャラ:陥落不可, 0
 RESETCOLOR
@@ -67,20 +67,20 @@ ELSE
 ENDIF
 
 DRAWLINE
-PRINTFORML ［【범용】%NAME:対象キャラ%[섹프 불가]해제］
+PRINTFORML ［【범용】%NAME:対象キャラ%[섹프불가]해제］
 DRAWLINE
 PRINTW
 PRINTFORMW %CALLNAME:対象キャラ%의 상태가 어딘가 이상하다.
-PRINTFORMW 말을 걸자 살짝 얼굴을 붉히고, %CALLNAME:PLAYER%을(를) 요염한 미소로 바라보고 있다…
+PRINTFORMW 말을 걸면 조금얼굴을 붉히고, %CALLNAME:PLAYER%을(를) 요염한 미소로 바라보고 있다…
 PRINTL 
-PRINTFORMW 교류를 거듭한 결과, 계속 억누르던 성욕이 넘쳐흐른 것 같다.
+PRINTFORMW 교류를 거듭한 결과, 계속 억눌러왔던 성욕이 넘쳐흐른 것 같다.
 PRINTFORMW 앞으로는 더욱 관계를 깊게 할 수 있을지도 모른다.
 PRINTL 
 SETCOLOR 0xFFFF00
 IF GETBIT(TALENT:対象キャラ:陥落不可, 0)
-	PRINTFORML %CALLNAME:対象キャラ%의[함락 불가]이(가)[연모 불가]으로 변화했습니다.
+	PRINTFORML %CALLNAME:対象キャラ%의[함락불가]가[연모불가]로 변화했습니다.
 ELSE
-	PRINTFORML %CALLNAME:対象キャラ%의[섹프 불가]이(가) 소멸했습니다.
+	PRINTFORML %CALLNAME:対象キャラ%의[섹프불가]가 소멸했습니다.
 ENDIF
 CLEARBIT TALENT:対象キャラ:陥落不可, 1
 RESETCOLOR
@@ -156,17 +156,17 @@ DRAWLINE
 PRINTFORML ［【범용】%NAME:対象キャラ%결혼 이벤트］
 DRAWLINE
 PRINTW
-PRINTFORMW 맑게 갠 길일, 오전 햇살 속.
-PRINTFORMW 결혼식장 문이 열리자, %CALLNAME:花嫁キャラ%이(가) 하얀 드레스를 입고 부드러운 빛 속을 걷기 시작했다.
+PRINTFORMW 쾌청한 길일, 오전의 햇살 속에서.
+PRINTFORMW 결혼식장 문이 열리자, %CALLNAME:花嫁キャラ%이(가) 하얀 드레스를 입고, 부드러운 빛 속을 걷기 시작했다.
 PRINTFORMW 제단에는 %CALLNAME:花婿キャラ%이(가) 미소 지으며, 긴장과 기쁨이 뒤섞인 표정으로 상대를 바라본다.
 レイヤー記録 = TFLAG:口上用画像表示番号
 CALL PRINT_STRL(@"IMAGEPATH_%CSTR:花嫁キャラ:画像フォルダ%/汎用結婚イベント一枚絵")
 IF レイヤー記録 == TFLAG:口上用画像表示番号
 	;専用画像が表示されてないということなので、ドレス画像を見る
 	IF TALENT:花嫁キャラ:性別 == 2
-		CALL PRINT_STRL(@"IMAGEPATH_%CSTR:花嫁キャラ:画像フォルダ%/短冊_ホワイトタキシード")
+		CALL PRINT_STRL(@"IMAGEPATH_%CSTR:花嫁キャラ:画像フォルダ%/세로 イメージ_ホワイトタキシード")
 	ELSE
-		CALL PRINT_STRL(@"IMAGEPATH_%CSTR:花嫁キャラ:画像フォルダ%/短冊_ウエディングドレス")
+		CALL PRINT_STRL(@"IMAGEPATH_%CSTR:花嫁キャラ:画像フォルダ%/세로 イメージ_ウエディングドレス")
 	ENDIF
 ENDIF
 レイヤー記録 = TFLAG:口上用画像表示番号
@@ -174,22 +174,22 @@ CALL PRINT_STRL(@"IMAGEPATH_%CSTR:花婿キャラ:画像フォルダ%/汎用結�
 IF レイヤー記録 == TFLAG:口上用画像表示番号
 	;専用画像が表示されてないということなので、ドレス画像を見る
 	IF TALENT:花婿キャラ:性別 == 2
-		CALL PRINT_STRL(@"IMAGEPATH_%CSTR:花婿キャラ:画像フォルダ%/短冊_ホワイトタキシード")
+		CALL PRINT_STRL(@"IMAGEPATH_%CSTR:花婿キャラ:画像フォルダ%/세로 イメージ_ホワイトタキシード")
 	ELSE
-		CALL PRINT_STRL(@"IMAGEPATH_%CSTR:花婿キャラ:画像フォルダ%/短冊_ウエディングドレス")
+		CALL PRINT_STRL(@"IMAGEPATH_%CSTR:花婿キャラ:画像フォルダ%/세로 イメージ_ウエディングドレス")
 	ENDIF
 ENDIF
 PRINTL 
-PRINTFORMW 스테인드글라스의 다채로운 빛이 나무 벤치에 앉은 하객들을 따뜻하게 비춘다.
-PRINTFORMW 오르간의 장엄한 음색이 울려 퍼지고, %CALLNAME:花嫁キャラ%의 베일이 산들바람에 흔들린다.
-PRINTFORMW %CALLNAME:花嫁キャラ%의 손에는 순백의 장미와 연분홍 작약 부케.
+PRINTFORMW 스테인드글라스의 다채로운 빛이, 나무 벤치에 앉은 하객들을 따뜻하게 비춘다.
+PRINTFORMW 오르간의 웅장한 음색이 울려 퍼지고, %CALLNAME:花嫁キャラ%의 베일이 산들바람에 흔들리고 있다.
+PRINTFORMW %CALLNAME:花嫁キャラ%의 손에는, 순백의 장미와 연분홍 작약 부케.
 PRINTL 
 PRINTFORMW 목사의 온화한 목소리가 맹세의 말을 이끌고, 두 사람의 사랑을 축복한다.
-PRINTFORMW 반지 교환의 순간, 식장은 정적에 휩싸이고, 오직 두 사람의 숨소리만이 들린다.
-PRINTFORMW %CALLNAME:花婿キャラ%이(가) %CALLNAME:花嫁キャラ%의 손을 잡고 부드럽게 입을 맞추자, 박수와 환호가 일제히 터져 나왔다.
+PRINTFORMW 반지 교환의 순간, 식장은 정적에 휩싸였고, 오직 두 사람의 숨소리만이 들린다.
+PRINTFORMW %CALLNAME:花婿キャラ%이(가) %CALLNAME:花嫁キャラ%의 손을 잡고, 부드럽게 입을 맞추자, 박수와 환호성이 일제히 터져 나왔다.
 PRINTL 
-PRINTFORMW 꽃잎이 흩날리고, 종소리가 울려 퍼지며, 새로운 시작을 알린다.
-PRINTFORMW %CALLNAME:花婿キャラ%와 %CALLNAME:花嫁キャラ%은(는) 영원히 행복한 미래를 만들어갈 것이다────.
+PRINTFORMW 꽃잎이 흩날리고, 종소리가 울려 퍼지며, 새로운 출발을 알린다.
+PRINTFORMW %CALLNAME:花婿キャラ%와(과) %CALLNAME:花嫁キャラ%은(는), 오래도록 행복한 미래를 만들어갈 것이다────。
 PRINTL 
 
 IF !FLAG:クリア済み視聴フラグ
@@ -202,7 +202,7 @@ IF !FLAG:クリア済み視聴フラグ
 		CSTR:対象キャラ:擬似恋慕陥落名称 = 
 		TRYCALLFORM 固有擬似恋慕陥落_陥落名変更_結婚_{NO:対象キャラ}(対象キャラ)
 		IF CSTR:対象キャラ:擬似恋慕陥落名称 == ""
-			CSTR:対象キャラ:擬似恋慕陥落名称 = 신부
+			CSTR:対象キャラ:擬似恋慕陥落名称 = 아내
 		ENDIF
 	ENDIF
 	初体験日:対象キャラ:伴侶 = DAY
@@ -213,6 +213,12 @@ IF !FLAG:クリア済み視聴フラグ
 		CALL 履歴データベース登録(CFLAG:MASTER:人物番号, @"<img src='えっちハート'><font color='#%カラーパレット_HTML("赤ピンク")%'>%CALLNAME:対象キャラ%を[伴侶]陥落させた</font><img src='えっちハート'>","うふふ実績")
 		CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"<img src='えっちハート'><font color='#%カラーパレット_HTML("赤ピンク")%'>陥落素質[伴侶]を得た</font><img src='えっちハート'>","うふふ実績")
 	ENDIF
+	IF TALENT:対象キャラ:浮気 > 0
+		TALENT:対象キャラ:浮気 = 0
+	ENDIF
+	; IF TALENT:対象キャラ:恋人持ち != 2
+	; 	TALENT:対象キャラ:恋人持ち = 2
+	; ENDIF
 ENDIF
 
 SETCOLOR 0xFFFF00
@@ -229,26 +235,19 @@ IF TALENT:対象キャラ:浮気 > 0
 	RESETCOLOR
 	PRINT 을(를) 잃었다……
 ENDIF
-IF TALENT:対象キャラ:恋人持ち != 2
-	SIF TALENT:対象キャラ:浮気 > 0
-		WAIT
-	PRINTFORM %CALLNAME:対象キャラ%은(는)
-	SETCOLOR カラーパレット("えっちな色")
-	IF TALENT:対象キャラ:性別 == 1 || TALENT:対象キャラ:性別 == 3
-		PRINT [유부녀]
-	ELSE
-		PRINT [기혼자]
-	ENDIF
-	RESETCOLOR
-	PRINT 을(를) 얻었다!
-ENDIF
-
-IF TALENT:対象キャラ:浮気 > 0
-	TALENT:対象キャラ:浮気 = 0
-ENDIF
-IF TALENT:対象キャラ:恋人持ち != 2
-	TALENT:対象キャラ:恋人持ち = 2
-ENDIF
+; IF TALENT:対象キャラ:恋人持ち != 2
+; 	SIF TALENT:対象キャラ:浮気 > 0
+; 		WAIT
+; 	PRINTFORM %CALLNAME:対象キャラ%は
+; 	SETCOLOR カラーパレット("えっちな色")
+; 	IF TALENT:対象キャラ:性別 == 1 || TALENT:対象キャラ:性別 == 3
+; 		PRINT [人妻]
+; 	ELSE
+; 		PRINT [既婚者]
+; 	ENDIF
+; 	RESETCOLOR
+; 	PRINT を得た！
+; ENDIF
 
 PRINTL
 PRINTL

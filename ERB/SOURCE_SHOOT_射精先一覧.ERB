@@ -4,23 +4,32 @@
 @オート射精先設定
 ;射精先をいちいち選ばなくてもいいように設定する
 DRAWLINE
-PRINTL 사정 시, 선택 없이 사정하는 설정을 합니다.
-PRINTL 설정된 사정처가 선택 가능한 경우, 자동으로 그 사정처를 선택합니다.
-PRINTL 여러 개의 선택 가능한 사정처가 설정된 경우, 우선도 숫자가 작은 쪽이 우선적으로 선택됩니다.
+PRINTL 사정 시 선택 없이 사정하도록 설정합니다.
+PRINTL 설정된 사정 위치를 선택할 수 있는 경우 자동으로 그 위치를 선택합니다.
+PRINTL 선택 가능한 사정 위치가 여러 개 설정되어 있으면 우선도 숫자가 작은 쪽을 우선 선택합니다.
+PRINTL 우선도를 공유하면 같은 우선도 안에서 무작위로 사정 위치가 선택됩니다.
 DRAWLINE
 
 FOR LOCAL, 0, 31
 	IF オート射精先オプション:LOCAL == -1
-		PRINTBUTTON @"[{LOCAL}] 자동 사정처를 설정한다", LOCAL
+		PRINTBUTTON @"[{LOCAL}] 자동 사정 대상을 추가한다", LOCAL
 		PRINTL
 		BREAK
 	ELSE
 		TSTR:コマンド名受渡 = 
-		TRYCALLFORM SHOOT_NAME_{オート射精先オプション:LOCAL}(-1)
-		SIF TSTR:コマンド名受渡 == ""
-			CONTINUE
+		IF オート射精先オプション:LOCAL >= 10000
+			TRYCALLFORM SHOOT_NAME_{オート射精先オプション:LOCAL - 10000}(-1)
+			SIF TSTR:コマンド名受渡 == ""
+				CONTINUE
 
-		PRINTFORM 우선도{LOCAL}：%TSTR:コマンド名受渡, 20, LEFT%　　
+			PRINTFORM └우선도-: %TSTR:コマンド名受渡, 18, LEFT%　　
+		ELSE
+			TRYCALLFORM SHOOT_NAME_{オート射精先オプション:LOCAL}(-1)
+			SIF TSTR:コマンド名受渡 == ""
+				CONTINUE
+
+			PRINTFORM 우선도 {LOCAL}: %TSTR:コマンド名受渡, 20, LEFT%　　
+		ENDIF
 		IF LOCAL > 0
 			PRINTBUTTON "[↑]", LOCAL + 100
 		ELSE
@@ -35,11 +44,19 @@ FOR LOCAL, 0, 31
 		PRINTBUTTON "[변경]", LOCAL
 		PRINT   
 		PRINTBUTTON "[해제]", LOCAL + 300
+		IF LOCAL > 0
+			PRINT 　　
+			IF オート射精先オプション:LOCAL >= 10000
+				PRINTBUTTON "[우선도 공유 해제]", LOCAL + 400
+			ELSE
+				PRINTBUTTON "[위 항목과 우선도 공유]", LOCAL + 400
+			ENDIF
+		ENDIF
 		PRINTL
 	ENDIF
 NEXT
 PRINTL
-PRINTBUTTON @"[999] 돌아간다", 999
+PRINTBUTTON @"[999] 돌아가기", 999
 PRINTL
 DRAWLINE
 BINPUT
@@ -58,7 +75,7 @@ SELECTCASE LOCAL
 			PRINTL
 		NEXT
 		PRINTL
-		PRINTBUTTON @"[999] 돌아간다", 999
+		PRINTBUTTON @"[999] 돌아가기", 999
 		PRINTL
 		DRAWLINE
 		BINPUT
@@ -71,9 +88,22 @@ SELECTCASE LOCAL
 	CASE IS < 300
 		;下に移動
 		SWAP オート射精先オプション:(LOCAL - 200), オート射精先オプション:(LOCAL - 199)
-	CASEELSE
+	CASE IS < 400
+		;削除
 		ARRAYSHIFT オート射精先オプション, -1, -1, LOCAL - 300
+	CASEELSE
+		;優先度共有
+		IF オート射精先オプション:(LOCAL - 400) >= 10000
+			オート射精先オプション:(LOCAL - 400) = オート射精先オプション:(LOCAL - 400) - 10000
+		ELSE
+			オート射精先オプション:(LOCAL - 400) = オート射精先オプション:(LOCAL - 400) + 10000
+		ENDIF
 ENDSELECT
+
+;一番上が優先度共有になってたら戻す
+IF オート射精先オプション:0 >= 10000
+	オート射精先オプション:0 = オート射精先オプション:0 - 10000
+ENDIF
 
 RESTART
 
@@ -83,7 +113,7 @@ RESTART
 ;-------------------------------------------------------------------------------------------
 @SHOOT_NAME_0(対象キャラ)
 #DIM 対象キャラ
-TSTR:コマンド名受渡 = 膣内射精
+TSTR:コマンド名受渡 = 질내사정
 RETURN 1
 
 
@@ -130,11 +160,13 @@ RETURN 1
 #DIM 対象キャラ
 ;PRINTFORM %CALLNAME:実行キャラ%は%CALLNAME:(対象キャラ)%の膣奥で
 ;以上元部分 以下加筆部分
-PRINTFORM %CALLNAME:実行キャラ%는
+PRINTFORM %CALLNAME:実行キャラ%은(는)
 IF CFLAG:対象キャラ:睡眠
-	PRINTFORM 잠들었다
+	PRINTFORM 잠든
 ELSEIF TCVAR:対象キャラ:泥酔眠姦
-	PRINTFORM 취해 쓰러졌다
+	PRINTFORM 만취해 쓰러진
+ELSEIF SAVESTR:ゲームフェイズ管理 == "むりやりうふふモード"
+	PRINTFORM 싫어하는
 ENDIF
 PRINTFORM %CALLNAME:(対象キャラ)%의
 PRINTDATA
@@ -142,49 +174,79 @@ PRINTDATA
 ;	DATA 最奥
 ;	DATA 肉穴の最奥
 ;教えの最奥がチラつく
-	DATA 질의 가장 안쪽
+	DATA 질 구멍 가장 안쪽
 	DATA 가장 깊은 곳
-	DATA 제일 깊은 곳
+	DATA 가장 깊은 곳
+	DATA 암컷 구멍 안쪽
 ENDDATA
-SELECTCASE RAND:2
-	CASE 0
-		PRINT 에
-		IF RAND:2 == 0
-			PRINTDATA
-				DATA 귀두를
-				DATA 페니스의 끝을
-			ENDDATA
-			PRINTDATA
-				DATA 끈적하게
-				DATA 딱 붙여
-				DATA 꾹꾹
-				DATA 뱅글뱅글
-				DATA 
-			ENDDATA
-			PRINT 밀어붙이며
-		ENDIF
-	CASEELSE
-		PRINT 로
-ENDSELECT
+PRINT 에
+PRINTDATA
+	DATA 귀두를
+	DATA 페니스의 끝을
+ENDDATA
+PRINTDATA
+	DATA 찰싹 달라붙어
+	DATA 딱 맞게
+	DATA 꾸욱꾸욱
+	DATA 부비부비
+	DATA 
+ENDDATA
+PRINTFORM %TEXTR("밀어붙이며/문지르며/눌러 대며/밀착시키면서")%
+
+IF 高貴知識_初期所持判定((対象キャラ)) >= 1
+	IF RISKY_DAY((対象キャラ)) >= 1
+		SELECTCASE RAND:4
+		CASE 0
+			PRINTFORM 、위험일의 %TEXTR("자궁/태")%에게
+		CASE 1
+			PRINTFORM %TEXTR("고귀한/고급스러운/혈통서 있는/양혈의")%알을 품은 %TEXTR("고급/")%%TEXTR("자궁/태")%에게
+		CASE 2
+			PRINTFORM 임신하기 딱 좋은 시기의 %TEXTR("고급 자궁/로열 자궁/노블 자궁/고급 태/고급 자궁/양혈 자궁/영애 자궁/숙녀 자궁")%에게
+		CASE 3
+			PRINTFORM 후계자를 임신시키기 딱 좋은 시기의 %TEXTR("자궁/태")%에게
+		ENDSELECT
+	ELSE
+		PRINTFORM 、%TEXTR("고귀한/혈통서 있는/격식 높은/노블한/귀한/유서 깊은/청아한/품위 있는/럭셔리한/고귀한")%%TEXTR("자궁/태")%에게
+	ENDIF
+ELSEIF アイドル判定((対象キャラ))
+	IF RISKY_DAY(対象キャラ) >= 1
+		PRINTFORM 、%TEXTR("위험일의/알을 품은/딱 임신하기 좋은 시기의/절호의 임신 스캔들 날씨인")% 아이돌 자궁에
+	ELSE
+		PRINTFORM 、%TEXTR("팬들이 침 흘리는/스캔들 엄금의/청순을 가장하는/고고한/팬 모두가 동경하는/")%%TEXTR("아이돌/극상의")%자궁에
+	ENDIF
+ELSE
+	SIF RISKY_DAY((対象キャラ)) >= 1
+		PRINTFORM 、%TEXTR("위험일의/알을 품은/딱 임신하기 좋은 시기의")% 자궁에
+ENDIF
 IF RFLAG:フィニッシュフラグ > 1
 	PRINTDATA
 		DATA 대량의
 		DATA 농후한
 		DATA 엄청난 양의
+		DATA 끈적이는
+		;DATA 生きのいい
 	ENDDATA
 ENDIF
+SIF TALENT:(対象キャラ):恋人持ち == 1 || TALENT:(対象キャラ):恋人持ち == 2
+	PRINTFORM %TEXTR("바람/불륜/간통/밀통")%
 PRINTDATA
 	DATA 정액
-	DATA 씨앗
+	DATA 정액
 ;	DATA 種汁
 ;オラッ！APとBP満タンにしてやる！
-	DATA 백탁
+	DATA 정액
 ENDDATA
-PRINT 을
+PRINT 을(를)
+IF CFLAG:(対象キャラ):睡眠 || TCVAR:(対象キャラ):泥酔眠姦 || SAVESTR:ゲームフェイズ管理 == "むりやりうふふモード"
+	PRINT 무책임하게
+ENDIF
+PRINTFORM %TEXTR("끈적하게/끈적하게/철퍽철퍽/듬뿍//")%
 PRINTDATA
-	DATA 토해냈다
+	DATA 뱉어냈다
 	DATA 흩뿌렸다
-	DATA 뿜어냈다
+	DATA 내뿜었다
+	DATA 쏟아부었다
+	DATA 쏟아넣었다
 ENDDATA
 PRINT …
 PRINTL 
@@ -198,7 +260,7 @@ TCVAR:(対象キャラ):被射精位置 = 1
 ;-------------------------------------------------------------------------------------------
 @SHOOT_NAME_1(対象キャラ)
 #DIM 対象キャラ
-TSTR:コマンド名受渡 = 腸内射精
+TSTR:コマンド名受渡 = 장내사정
 RETURN 1
 
 
@@ -244,7 +306,15 @@ RETURN 1
 #DIM 実行キャラ
 #DIM 対象キャラ
 
-PRINTFORM %CALLNAME:実行キャラ%는%CALLNAME:(対象キャラ)%의 장내에
+PRINTFORM %CALLNAME:実行キャラ%은(는)
+IF CFLAG:対象キャラ:睡眠
+	PRINTFORM 잠든
+ELSEIF TCVAR:対象キャラ:泥酔眠姦
+	PRINTFORM 만취해 쓰러진
+ELSEIF SAVESTR:ゲームフェイズ管理 == "むりやりうふふモード"
+	PRINTFORM 싫어하는
+ENDIF
+PRINTFORM %CALLNAME:(対象キャラ)%의 장 안에서
 SIF RFLAG:フィニッシュフラグ > 1
 	PRINT 대량의
 PRINTL 정액을 토해냈다…
@@ -258,7 +328,7 @@ TCVAR:(対象キャラ):被射精位置 = 2
 ;-------------------------------------------------------------------------------------------
 @SHOOT_NAME_2(対象キャラ)
 #DIM 対象キャラ
-TSTR:コマンド名受渡 = 口内射精
+TSTR:コマンド名受渡 = 구내사정
 RETURN 1
 
 
@@ -312,13 +382,17 @@ RETURN 0
 #DIM 実行キャラ
 #DIM 対象キャラ
 
-IF TCVAR:対象キャラ:泥酔眠姦
-	PRINTFORM %CALLNAME:実行キャラ%는 취해 쓰러진 %CALLNAME:(対象キャラ)%의 입에 페니스를 밀어 넣고,
+IF CFLAG:対象キャラ:睡眠
+	PRINTFORM %CALLNAME:実行キャラ%은(는) 잠든 %CALLNAME:(対象キャラ)%의 입에 음경을 밀어 넣고,
+ELSEIF TCVAR:対象キャラ:泥酔眠姦
+	PRINTFORM %CALLNAME:実行キャラ%은(는) 만취해 쓰러진 %CALLNAME:(対象キャラ)%의 입에 음경을 밀어 넣고,
+ELSEIF SAVESTR:ゲームフェイズ管理 == "むりやりうふふモード"
+	PRINTFORM  %CALLNAME:実行キャラ%은(는) 싫어하는 %CALLNAME:(対象キャラ)%의 목구멍 깊숙이 음경을 억지로 밀어 넣고,
 ELSEIF MODE_存在判定_完全一致("パイズリ系", 対象キャラ, 実行キャラ)
-	PRINTFORML %CALLNAME:(対象キャラ)%는 사정의 징후를 감지하자마자 %CALLNAME:実行キャラ%의 페니스를 물었다
-	PRINTFORM %CALLNAME:実行キャラ%는 그대로 %CALLNAME:(対象キャラ)%의 입에
+	PRINTFORML %CALLNAME:(対象キャラ)%은(는) 사정의 조짐을 느끼자 곧바로 %CALLNAME:実行キャラ%의 음경을 입에 물었습니다.
+	PRINTFORM %CALLNAME:実行キャラ%은(는) 그대로 %CALLNAME:(対象キャラ)%의 입에
 ELSE
-	PRINTFORM %CALLNAME:実行キャラ%는 %CALLNAME:(対象キャラ)%의 입에
+	PRINTFORM %CALLNAME:実行キャラ%은(는) %CALLNAME:(対象キャラ)%의 입에
 ENDIF
 SIF RFLAG:フィニッシュフラグ > 1
 	PRINT 대량의
@@ -327,21 +401,28 @@ SELECTCASE RCVAR:(対象キャラ):精飲フラグ
 	CASE 0
 		IF ABL:対象キャラ:技巧 > 2
 			IF TFLAG:マッサージ_鬼灯の香使用時間 > 0 && TFLAG:マッサージ_鬼灯の香使用時間 + 20 < DAY * 1440 + TIME
-				PRINTFORML 몽롱해하는 %CALLNAME:対象キャラ%는, 입안에 나온 정액을 그대로 토해버렸다
+				PRINTFORML 몽롱한 %CALLNAME:対象キャラ%은(는) 입 안에 나온 정액을 그대로 뱉어버렸습니다.
 			ELSE
-				PRINTFORML %CALLNAME:対象キャラ%는 익숙한 모습으로 입안의 정액을 휴지에 토해냈다
+				PRINTFORML %CALLNAME:対象キャラ%은(는) 익숙한 모습으로 입 안의 정액을 휴지에 뱉었습니다.
 			ENDIF
+		ELSEIF SAVESTR:ゲームフェイズ管理 == "むりやりうふふモード"
+			PRINTFORML %CALLNAME:対象キャラ%은(는) %TEXTR("기침하며/싫다는 듯 얼굴을 찌푸리며")%、%TEXTR("입안/입안")%에게 받은 정액을 뱉어내고 %CALLNAME:PLAYER%을 노려보았습니다.
 		ELSE
-			PRINTFORML %CALLNAME:対象キャラ%는 기침하며, 입안에 나온 정액을 토해버렸다
+			PRINTFORML %CALLNAME:対象キャラ%은(는) 기침하며 입 안에 나온 정액을 뱉어버렸습니다.
 		ENDIF
 	CASE 1
-		PRINTFORML %CALLNAME:対象キャラ%는 익숙지 않은 모습으로 입안의 정액을 조금씩 삼켰다
+		IF SAVESTR:ゲームフェイズ管理 == "むりやりうふふモード"
+			PRINTFORML 음경으로 입이 막힌 %CALLNAME:対象キャラ%은(는) %TEXTR("입안/입안/목구멍 안쪽")%에게 받은 정액을 뱉어낼 수 없어서,
+			PRINTFORML 싫다는 듯 %TEXTR("눈살을 찌푸리며/얼굴을 찌푸리며")%목을 울리며 정액을 삼켰습니다……
+		ELSE
+			PRINTFORML %CALLNAME:対象キャラ%은(는) 익숙하지 않은 모습으로 입 안의 정액을 조금씩 삼켰습니다.
+		ENDIF
 	CASE 2
 		IF 知識素質:対象キャラ:性知識 > 1
-			PRINTFORM %CALLNAME:対象キャラ%는 입에 나온 정액을 삼켰다는 증거를 보여주듯이,
-			PRINTL 입을 열어 전부 삼킨 입안을 보여주었다
+			PRINTFORM %CALLNAME:対象キャラ%은(는) 입에 나온 정액을 삼켰다는 증거를 보여주듯,
+			PRINTL 입을 벌려 전부 삼킨 입 안을 보여주었습니다.
 		ELSE
-			PRINTFORML %CALLNAME:対象キャラ%는 목을 울리며 입안의 정액을 삼켰다
+			PRINTFORML %CALLNAME:対象キャラ%은(는) 목을 울리며 입 안의 정액을 삼켰습니다.
 		ENDIF
 ENDSELECT
 TCVAR:(対象キャラ):被射精位置 = 3
@@ -351,9 +432,9 @@ TCVAR:(対象キャラ):被射精位置 = 3
 ;-------------------------------------------------------------------------------------------
 @SHOOT_NAME_3(対象キャラ)
 #DIM 対象キャラ
-TSTR:コマンド名受渡 = 乳内射精
+TSTR:コマンド名受渡 = 가슴 안에 사정
 SIF 対象キャラ < 0 || TALENT:対象キャラ:バストサイズ < 1
-	TSTR:コマンド名受渡 = 胸に射精
+	TSTR:コマンド名受渡 = 가슴에 사정
 RETURN 1
 
 
@@ -387,14 +468,22 @@ RETURN 1
 #DIM 実行キャラ
 #DIM 対象キャラ
 
-PRINTFORM %CALLNAME:実行キャラ%는%CALLNAME:(対象キャラ)%의
+PRINTFORM %CALLNAME:実行キャラ%은(는)
+IF CFLAG:対象キャラ:睡眠
+	PRINTFORM 잠든
+ELSEIF TCVAR:対象キャラ:泥酔眠姦
+	PRINTFORM 만취해 쓰러진
+ELSEIF SAVESTR:ゲームフェイズ管理 == "むりやりうふふモード"
+	PRINTFORM 싫어하는
+ENDIF
+PRINTFORM % CALLNAME:(対象キャラ)%의
 SELECTCASE TALENT:(対象キャラ):バストサイズ
 	CASE IS < 1
 		PRINT 가슴에
 	CASE 1
 		PRINT 가슴골에
 	CASE 2
-		PRINT 커다란 가슴골에
+		PRINT 큰 가슴골에
 	CASE 3
 		PRINT 매우 풍만하게 자란 가슴골에
 ENDSELECT
@@ -408,7 +497,7 @@ TCVAR:(対象キャラ):被射精位置 = 4
 ;-------------------------------------------------------------------------------------------
 @SHOOT_NAME_5(対象キャラ)
 #DIM 対象キャラ
-TSTR:コマンド名受渡 = 顔射
+TSTR:コマンド名受渡 = 얼굴에 사정
 RETURN 1
 
 
@@ -444,7 +533,15 @@ RETURN 1
 #DIM 実行キャラ
 #DIM 対象キャラ
 
-PRINTFORM %CALLNAME:実行キャラ%는 %CALLNAME:(対象キャラ)%의 얼굴을 향해
+PRINTFORM %CALLNAME:実行キャラ%은(는)
+IF CFLAG:対象キャラ:睡眠
+	PRINTFORM 잠든
+ELSEIF TCVAR:対象キャラ:泥酔眠姦
+	PRINTFORM 만취해 쓰러진
+ELSEIF SAVESTR:ゲームフェイズ管理 == "むりやりうふふモード"
+	PRINTFORM 싫어하는
+ENDIF
+PRINTFORM %CALLNAME:(対象キャラ)%의 얼굴을 향해
 SIF RFLAG:フィニッシュフラグ > 1
 	PRINT 대량의
 PRINTL 정액을 토해냈다…
@@ -455,7 +552,7 @@ TCVAR:(対象キャラ):被射精位置 = 5
 ;-------------------------------------------------------------------------------------------
 @SHOOT_NAME_6(対象キャラ)
 #DIM 対象キャラ
-TSTR:コマンド名受渡 = お腹に出す
+TSTR:コマンド名受渡 = 배에 싸기
 RETURN 1
 
 
@@ -514,7 +611,15 @@ RETURN 1
 #DIM 実行キャラ
 #DIM 対象キャラ
 
-PRINTFORM %CALLNAME:実行キャラ%는 %CALLNAME:(対象キャラ)%의\@PREGNANCY_SIZE(対象キャラ) >= 3?불룩한 배#배꼽\@을 향해
+PRINTFORM %CALLNAME:実行キャラ%은(는)
+IF CFLAG:対象キャラ:睡眠
+	PRINTFORM 잠든
+ELSEIF TCVAR:対象キャラ:泥酔眠姦
+	PRINTFORM 만취해 쓰러진
+ELSEIF SAVESTR:ゲームフェイズ管理 == "むりやりうふふモード"
+	PRINTFORM 싫어하는
+ENDIF
+PRINTFORM %CALLNAME:(対象キャラ)%의 \@PREGNANCY_SIZE(対象キャラ) >= 3?불룩한 배#배꼽\@을 향해
 SIF RFLAG:フィニッシュフラグ > 1
 	PRINT 대량의
 PRINTL 정액을 토해냈다…
@@ -525,7 +630,7 @@ TCVAR:(対象キャラ):被射精位置 = 6
 ;-------------------------------------------------------------------------------------------
 @SHOOT_NAME_7(対象キャラ)
 #DIM 対象キャラ
-TSTR:コマンド名受渡 = 背中に出す
+TSTR:コマンド名受渡 = 등에 싸기
 RETURN 1
 
 
@@ -578,7 +683,15 @@ RETURN 1
 #DIM 実行キャラ
 #DIM 対象キャラ
 
-PRINTFORM %CALLNAME:実行キャラ%는 %CALLNAME:(対象キャラ)%의 등에 대고
+PRINTFORM %CALLNAME:実行キャラ%은(는)
+IF CFLAG:対象キャラ:睡眠
+	PRINTFORM 잠든
+ELSEIF TCVAR:対象キャラ:泥酔眠姦
+	PRINTFORM 만취해 쓰러진
+ELSEIF SAVESTR:ゲームフェイズ管理 == "むりやりうふふモード"
+	PRINTFORM 싫어하는
+ENDIF
+PRINTFORM %CALLNAME:(対象キャラ)%의 등을 향해
 SIF RFLAG:フィニッシュフラグ > 1
 	PRINT 대량의
 PRINTL 정액을 토해냈다…
@@ -590,9 +703,9 @@ TCVAR:(対象キャラ):被射精位置 = 7
 
 @SHOOT_NAME_8(対象キャラ)
 #DIM 対象キャラ
-TSTR:コマンド名受渡 = 太ももに射精
+TSTR:コマンド名受渡 = 허벅지에 사정
 SIF 対象キャラ >= 0 && 下半身体型(対象キャラ) >= 2
-	TSTR:コマンド名受渡 = 太ももに中出し
+	TSTR:コマンド名受渡 = 허벅지 사이에 사정
 RETURN 1
 
 
@@ -637,9 +750,17 @@ RETURN 1
 #DIM 実行キャラ
 #DIM 対象キャラ
 
-PRINTFORM %CALLNAME:実行キャラ%는 %CALLNAME:対象キャラ%의
+PRINTFORM %CALLNAME:実行キャラ%은(는)
+IF CFLAG:対象キャラ:睡眠
+	PRINTFORM 잠든
+ELSEIF TCVAR:対象キャラ:泥酔眠姦
+	PRINTFORM 만취해 쓰러진
+ELSEIF SAVESTR:ゲームフェイズ管理 == "むりやりうふふモード"
+	PRINTFORM 싫어하는
+ENDIF
+PRINTFORM %CALLNAME:対象キャラ%의
 IF 対象キャラ >= 0 && 下半身体型(対象キャラ) >= 2
-	PRINT 통통한 허벅지를 딱 붙이게 하자, 그 안에
+	PRINT 통통한 허벅지를 꼭 붙이고 그 사이에
 ELSE
 	PRINT 허벅지를 향해
 ENDIF
@@ -653,7 +774,7 @@ TCVAR:(対象キャラ):被射精位置 = 8
 ;-------------------------------------------------------------------------------------------
 @SHOOT_NAME_9(対象キャラ)
 #DIM 対象キャラ
-TSTR:コマンド名受渡 = 手のひらに出す
+TSTR:コマンド名受渡 = 손바닥에 싸기
 RETURN 1
 
 
@@ -687,24 +808,24 @@ RETURN 1
 #DIM 対象キャラ
 
 IF MODE_存在判定_完全一致("手コキ系", 対象キャラ, 実行キャラ) && ABL:対象キャラ:技巧 > 2 && TCVAR:対象キャラ:泥酔眠姦 != 1
-	PRINTFORM %CALLNAME:(対象キャラ)%는 사정의 징후를 감지하자, %CALLNAME:実行キャラ%의
+	PRINTFORM %CALLNAME:(対象キャラ)%은(는) 사정의 조짐을 느끼자 %CALLNAME:実行キャラ%의
 	PRINTDATA
 		DATA 귀두를
 		DATA 페니스 끝을
 	ENDDATA
 	PRINTL 손바닥으로 감쌌다
-	PRINTFORM %CALLNAME:実行キャラ%는 그대로 %CALLNAME:(対象キャラ)%의 손바닥 안에
+	PRINTFORM %CALLNAME:実行キャラ%은(는) 그대로 %CALLNAME:(対象キャラ)%의 손바닥 안에
 ELSE
-	PRINTFORM %CALLNAME:実行キャラ%는 %CALLNAME:(対象キャラ)%의 손바닥에
+	PRINTFORM %CALLNAME:実行キャラ%은(는) %CALLNAME:(対象キャラ)%의 손바닥에
 ENDIF
 SIF RFLAG:フィニッシュフラグ > 1
 	PRINT 대량의
 PRINTL 정액을 토해냈다…
 
 IF !CFLAG:対象キャラ:睡眠 && 対象キャラ != MASTER
-	PRINTFORM %CALLNAME:対象キャラ%는 손바닥을 펼치자,
+	PRINTFORM %CALLNAME:対象キャラ%은(는) 손바닥을 펼쳐,
 	IF RFLAG:フィニッシュフラグ >= 3
-		PRINT 손에서 넘쳐흐를 정도로 엄청난 양의
+		PRINT 손에서 넘칠 만큼 엄청난 양의
 	ELSEIF RFLAG:フィニッシュフラグ > 1
 		PRINT 끈적하게 들러붙은
 	ELSE
@@ -713,7 +834,7 @@ IF !CFLAG:対象キャラ:睡眠 && 対象キャラ != MASTER
 	IF TCVAR:対象キャラ:泥酔眠姦 == 1
 		PRINT 정액을 초점 없는 눈으로 멍하니 바라보고 있다…
 	ELSEIF RFLAG:フィニッシュフラグ > 1 && ABL:対象キャラ:サド性感 > 2
-		PRINTFORML 정액을 즐거운 듯이 %CALLNAME:実行キャラ%에게 보여주었다
+		PRINTFORML 정액을 즐거운 듯 %CALLNAME:実行キャラ%에게 보여주었다
 	ELSEIF RFLAG:フィニッシュフラグ > 1 && ABL:対象キャラ:奉仕精神 > 5
 		PRINTFORML 정액을 자랑스럽게 %CALLNAME:実行キャラ%에게 보여주었다
 	ELSEIF CFLAG:対象キャラ:発情期フラグ < 0
@@ -722,13 +843,13 @@ IF !CFLAG:対象キャラ:睡眠 && 対象キャラ != MASTER
 		ELSE
 			PRINT 정액을
 		ENDIF
-		PRINTL 열띤 표정으로 바라보고 있다
+		PRINTL 달아오른 표정으로 바라보고 있다
 	ELSEIF 実行キャラ == MASTER && TALENT:対象キャラ:恋慕
-		PRINTL 정액을 사랑스럽게 바라보고 있다
+		PRINTL 정액을 사랑스럽다는 듯 바라보고 있다
 	ELSEIF (TALENT:対象キャラ:性的興味 > 0 && 知識素質:対象キャラ:性知識 == 0) || 知識素質:対象キャラ:性知識 == -2
-		PRINTL 정액을 흥미진진한 모습으로 만지고 있다
+		PRINTL 정액을 흥미진진한 듯 만지작거리고 있다
 	ELSE
-		PRINT 정액을 휴지로
+		PRINT 정액을 티슈로
 		IF TALENT:対象キャラ:汚臭耐性 < 0
 			PRINTDATA
 				DATA 몇 번이고
@@ -746,7 +867,7 @@ TCVAR:(対象キャラ):被射精位置 = 9
 ;-------------------------------------------------------------------------------------------
 @SHOOT_NAME_10(対象キャラ)
 #DIM 対象キャラ
-TSTR:コマンド名受渡 = 足に出す
+TSTR:コマンド名受渡 = 발에 싸기
 RETURN 1
 
 
@@ -779,48 +900,48 @@ RETURN 1
 IF MODE_存在判定_完全一致("足コキ", 対象キャラ, 実行キャラ) && ABL:対象キャラ:技巧 > 2 && TCVAR:対象キャラ:泥酔眠姦 != 1
 	IF ABL:対象キャラ:サド性感 > 2
 		フィニッシュ反応 = 2
-		PRINTFORML %CALLNAME:対象キャラ%은 사정의 징후를 감지하자, %CALLNAME:実行キャラ%의 페니스를 힘껏 밟았다
+		PRINTFORML %CALLNAME:対象キャラ%은(는) 사정의 조짐을 느끼자 %CALLNAME:実行キャラ%의 음경을 힘껏 밟았습니다.
 	ELSEIF ABL:対象キャラ:奉仕精神 > 5
 		フィニッシュ反応 = 1
-		PRINTFORML %CALLNAME:対象キャラ%은 사정의 징후를 감지하자, %CALLNAME:実行キャラ%의 페니스를 양발로 감쌌다
+		PRINTFORML %CALLNAME:対象キャラ%은(는) 사정의 조짐을 느끼자 %CALLNAME:実行キャラ%의 음경을 두 발로 감쌌습니다.
 	ENDIF
 ENDIF
-PRINTFORM %CALLNAME:実行キャラ%은 \@ フィニッシュ反応 ? 그대로 # \@%CALLNAME:対象キャラ%의 발에
+PRINTFORM %CALLNAME:実行キャラ%은(는) \@ フィニッシュ反応 ? 그대로 # \@%CALLNAME:対象キャラ%의 발에
 SIF RFLAG:フィニッシュフラグ > 1
 	PRINT 대량의
-PRINTL 정액을 뿜어냈다…
+PRINTL 정액을 토해냈다…
 
 IF !CFLAG:対象キャラ:睡眠 && 対象キャラ != MASTER && TCVAR:対象キャラ:泥酔眠姦 != 1
 	IF フィニッシュ反応 == 1
-		PRINTFORM %CALLNAME:対象キャラ%은 양발을 페니스에서 떼어내고, 그 사이에
+		PRINTFORM %CALLNAME:対象キャラ%은(는) 양발을 음경에서 떼고 그 사이에
 		IF RFLAG:フィニッシュフラグ > 1
-			PRINT 끈적하게 하얀 다리를 놓는 정액을 자랑스럽게
+			PRINT 끈적하게 하얀 다리를 만든 정액을 자랑스럽게
 		ELSE
 			PRINT 퍼진 정액을
 		ENDIF
 		PRINTFORML %CALLNAME:実行キャラ%에게 보여주었다
 	ELSEIF フィニッシュ反応 != 2 && 実行キャラ == MASTER && TALENT:対象キャラ:恋慕
-		PRINTFORM %CALLNAME:実行キャラ%이 사정하는 동안, %CALLNAME:対象キャラ%은 발에
+		PRINTFORM %CALLNAME:実行キャラ%이 사정하는 동안, %CALLNAME:対象キャラ%은(는) 발에
 		SIF RFLAG:フィニッシュフラグ > 1
 			PRINT 대량의
 		PRINTL 정액이 쏟아지는 감촉을 즐기고 있다
 	ELSE
-		PRINTFORM %CALLNAME:対象キャラ%은 발을 페니스에서 떼어내고,
+		PRINTFORM %CALLNAME:対象キャラ%은(는) 발을 음경에서 떼고,
 		IF RFLAG:フィニッシュフラグ > 1
 			PRINT 끈적하게 들러붙은
 		ELSE
 			PRINT 묻은
 		ENDIF
 		IF フィニッシュ反応 == 2
-			PRINTFORML 정액을 심술궂게 웃으며 %CALLNAME:実行キャラ%에게 보여주었다
+			PRINTFORML 정액을 짓궂게 웃으며 %CALLNAME:実行キャラ%에게 보여주었다
 		ELSEIF (TALENT:対象キャラ:性的興味 > 0 && 知識素質:対象キャラ:性知識 == 0) || 知識素質:対象キャラ:性知識 == -2
-			PRINTL 정액을 흥미진진한 모습으로 양발로 가지고 놀고 있다
+			PRINTL 정액을 흥미진진한 듯 양발로 만지작거리고 있다
 		ELSE
 			PRINT 정액을 티슈로
 			IF TALENT:対象キャラ:汚臭耐性 < 0
 				PRINTDATA
 					DATA 몇 번이고
-					DATA 정성껏
+					DATA 정성스럽게
 					DATA 깨끗하게
 				ENDDATA
 			ENDIF
@@ -835,7 +956,7 @@ TCVAR:(対象キャラ):被射精位置 = 10
 ;-------------------------------------------------------------------------------------------
 @SHOOT_NAME_30(対象キャラ)
 #DIM 対象キャラ
-TSTR:コマンド名受渡 = 何もない場所に射精
+TSTR:コマンド名受渡 = 아무것도 없는 곳에 사정
 RETURN 1
 
 
@@ -858,17 +979,17 @@ IF 対象キャラ == -1
 	;非うふふ時射精
 	IF RFLAG:コマンド結果受渡し変数 == 23 && 実行キャラ == MASTER
 		;モブ逆レイプ
-		PRINTFORML %CALLNAME:実行キャラ%은 누구인지 모르는 상대의 질에 정액을 뿜어내며 절정했다…
+		PRINTFORML %CALLNAME:実行キャラ%은(는) 누군지도 모르는 상대의 질에 정액을 쏟아내며 절정했습니다…
 	ELSEIF RFLAG:コマンド結果受渡し変数 == 24 && 実行キャラ == MASTER
 		;モブA逆レイプ
-		PRINTFORML %CALLNAME:実行キャラ%은 누구인지 모르는 상대의 항문에 정액을 뿜어내며 절정했다…
+		PRINTFORML %CALLNAME:実行キャラ%은(는) 정체 모를 상대의 항문에 정액을 쏟아내며 절정했다…
 	ELSEIF TEQUIP:実行キャラ:下半身下着あり > 0
-		PRINTFORML %CALLNAME:実行キャラ%은 속옷 안에 정액을 뿜어내며 절정했다…
+		PRINTFORML %CALLNAME:実行キャラ%은(는) 속옷 안에 정액을 쏟아내며 절정했다…
 	ELSEIF TEQUIP:実行キャラ:下半身服あり
-		PRINTFORML %CALLNAME:実行キャラ%은 옷 안에 정액을 뿜어내며 절정했다…
+		PRINTFORML %CALLNAME:実行キャラ%은(는) 옷 안에 정액을 쏟아내며 절정했다…
 	ELSE
-		PRINTFORML %CALLNAME:実行キャラ%은 음경에서 정액을 뿜어내며 절정했다…
+		PRINTFORML %CALLNAME:実行キャラ%은(는) 음경에서 정액을 쏟아내며 절정했다…
 	ENDIF
 ELSE
-	PRINTFORML %CALLNAME:実行キャラ%은 음경에서 정액을 뿜어내며 절정했다…
+	PRINTFORML %CALLNAME:実行キャラ%은(는) 음경에서 정액을 쏟아내며 절정했다…
 ENDIF

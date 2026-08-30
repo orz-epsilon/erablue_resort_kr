@@ -12,6 +12,7 @@ CALL TURN_RESET
 サイド描画_ダンジョンログ保存 = 
 サイド描画縦スクロール保存 = 0
 サイド描画横スクロール保存 = 0
+イベント画像表示文字列 = 
 
 VARSET 探索中顔グラキー
 VARSET 探索中顔グラ保存:0:0
@@ -40,6 +41,7 @@ IF 突入時アニメーション封印フラグ == 0
 	CALL ダンジョン突入アニメ
 ENDIF
 DO
+	イベント画像表示文字列 = 
 	CALL 口上変数初期化
 	CALL 画面再描画
 
@@ -48,8 +50,8 @@ DO
 		CALL 踏破マス開放処理
 		CALL ダンジョンマス処理受け渡し関数(ダンジョン現在位置:0, ダンジョン現在位置:1, "マスイベント")
 		IF RESULT == -1
-			PRINTW 칸의 지정 대상이 잘못되었습니다.
-			PRINTW 던전 개발자에게 연락해 주세요.
+			PRINTW 칸의 지정이 잘못되었습니다.
+			PRINTW 던전 개발자에게 연락해주세요.
 		ENDIF
 		; TRYCCALLFORM ダンジョンマス情報_%ダンジョン名%_{ダンジョン現在位置:0}_{ダンジョン現在位置:1}("マスイベント")
 		; CATCH
@@ -71,7 +73,7 @@ DO
 	NEXT
 	IF 味方生存チェック == 0
 		CALL 口上変数初期化
-		WSTR:(K++) = 메인 멤버가 전멸해 버렸다….
+		WSTR:(K++) = 메인 멤버가 전멸해버렸다….
 		WSTR:(K++) = 던전에서 탈출합니다.
 		CALL メッセージ欄表示用関数(,,,0)
 		ダンジョン終了状況 = 全滅
@@ -152,10 +154,10 @@ SELECTCASE LOCALS
 	CASE "0"
 		CALL 戦闘能力表示画面(BATTLE_STATE:0:キャラ登録番号)
 		CALL ダンジョン能力表示キャラ切り替え(0)
-		SIF BATTLE_STATE:0:ＨＰ > BATTLE_STATE:0:최대HP
-			BATTLE_STATE:0:ＨＰ = BATTLE_STATE:0:최대HP
-		SIF BATTLE_STATE:0:ＭＰ > BATTLE_STATE:0:최대MP
-			BATTLE_STATE:0:ＭＰ = BATTLE_STATE:0:최대MP
+		SIF BATTLE_STATE:0:ＨＰ > BATTLE_STATE:0:最大ＨＰ
+			BATTLE_STATE:0:ＨＰ = BATTLE_STATE:0:最大ＨＰ
+		SIF BATTLE_STATE:0:ＭＰ > BATTLE_STATE:0:最大ＭＰ
+			BATTLE_STATE:0:ＭＰ = BATTLE_STATE:0:最大ＭＰ
 		IF RESULT >= 0
 			LOCALS = %TOSTR(RESULT)%
 			GOTO 切り替え_LOOP
@@ -164,10 +166,10 @@ SELECTCASE LOCALS
 	CASE "1"
 		CALL 戦闘能力表示画面(BATTLE_STATE:1:キャラ登録番号)
 		CALL ダンジョン能力表示キャラ切り替え(1)
-		SIF BATTLE_STATE:1:ＨＰ > BATTLE_STATE:1:최대HP
-			BATTLE_STATE:1:ＨＰ = BATTLE_STATE:1:최대HP
-		SIF BATTLE_STATE:1:ＭＰ > BATTLE_STATE:1:최대MP
-			BATTLE_STATE:1:ＭＰ = BATTLE_STATE:1:최대MP
+		SIF BATTLE_STATE:1:ＨＰ > BATTLE_STATE:1:最大ＨＰ
+			BATTLE_STATE:1:ＨＰ = BATTLE_STATE:1:最大ＨＰ
+		SIF BATTLE_STATE:1:ＭＰ > BATTLE_STATE:1:最大ＭＰ
+			BATTLE_STATE:1:ＭＰ = BATTLE_STATE:1:最大ＭＰ
 		IF RESULT >= 0
 			LOCALS = %TOSTR(RESULT)%
 			GOTO 切り替え_LOOP
@@ -176,10 +178,10 @@ SELECTCASE LOCALS
 	CASE "2"
 		CALL 戦闘能力表示画面(BATTLE_STATE:2:キャラ登録番号)
 		CALL ダンジョン能力表示キャラ切り替え(2)
-		SIF BATTLE_STATE:2:ＨＰ > BATTLE_STATE:2:최대HP
-			BATTLE_STATE:2:ＨＰ = BATTLE_STATE:2:최대HP
-		SIF BATTLE_STATE:2:ＭＰ > BATTLE_STATE:2:최대MP
-			BATTLE_STATE:2:ＭＰ = BATTLE_STATE:2:최대MP
+		SIF BATTLE_STATE:2:ＨＰ > BATTLE_STATE:2:最大ＨＰ
+			BATTLE_STATE:2:ＨＰ = BATTLE_STATE:2:最大ＨＰ
+		SIF BATTLE_STATE:2:ＭＰ > BATTLE_STATE:2:最大ＭＰ
+			BATTLE_STATE:2:ＭＰ = BATTLE_STATE:2:最大ＭＰ
 		IF RESULT >= 0
 			LOCALS = %TOSTR(RESULT)%
 			GOTO 切り替え_LOOP
@@ -188,10 +190,10 @@ SELECTCASE LOCALS
 	CASE "3"
 		CALL 戦闘能力表示画面(BATTLE_STATE:3:キャラ登録番号)
 		CALL ダンジョン能力表示キャラ切り替え(3)
-		SIF BATTLE_STATE:3:ＨＰ > BATTLE_STATE:3:최대HP
-			BATTLE_STATE:3:ＨＰ = BATTLE_STATE:3:최대HP
-		SIF BATTLE_STATE:3:ＭＰ > BATTLE_STATE:3:최대MP
-			BATTLE_STATE:3:ＭＰ = BATTLE_STATE:3:최대MP
+		SIF BATTLE_STATE:3:ＨＰ > BATTLE_STATE:3:最大ＨＰ
+			BATTLE_STATE:3:ＨＰ = BATTLE_STATE:3:最大ＨＰ
+		SIF BATTLE_STATE:3:ＭＰ > BATTLE_STATE:3:最大ＭＰ
+			BATTLE_STATE:3:ＭＰ = BATTLE_STATE:3:最大ＭＰ
 		IF RESULT >= 0
 			LOCALS = %TOSTR(RESULT)%
 			GOTO 切り替え_LOOP
@@ -330,6 +332,10 @@ ENDIF
 
 @ダンジョン内_SOURCE_CHECK(ARG)
 ;-------------------------------------------------
+;特定部位への刺激による補正
+;-------------------------------------------------
+CALL SOURCE_部位補正(ARG)
+;-------------------------------------------------
 ;経験加算
 ;-------------------------------------------------
 CALL SOURCE_EXP(ARG)
@@ -408,7 +414,7 @@ IF NOWEX:ARG:多重絶頂
 	CALL KOJO_ORGASM_絶頂(ARG)
 	PRINTL
 ELSEIF NOWEX:ARG:噴乳
-	PRINTFORML %CALLNAME:ARG%은(는) 유두에서\@ NOWEX:ARG:噴乳 > 1 ? 대량의 # \@모유를 분출했다
+	PRINTFORML %CALLNAME:ARG%은(는) 젖꼭지에서\@ NOWEX:ARG:噴乳 > 1 ? 대량의 # \@모유를 뿜어냈다
 	PRINTL 
 ENDIF
 ;-------------------------------------------------
@@ -619,16 +625,16 @@ SELECTCASE RAND:10
 		KSTR:(K++) = %CALLNAME:ARG%은(는) 주위를 경계하고 있다.
 	CASE 1
 		WSTR:(K++) = %CALLNAME:ARG%은(는) 품에서 작은 과자를 몇 개 꺼냈다.
-		KSTR:(K++) = 파티의 모두에게 그것을 나눠주고 있다.
+		KSTR:(K++) = 파티원들에게 그것을 나눠주고 있다.
 	CASE 2
-WSTR:(K++) = %CALLNAME:ARG%은(는) 길가에서 유용한 약초를 발견했다!
-KSTR:(K++) = ……라고 생각했더니, 아주 닮은 잡초였다.
+		WSTR:(K++) = %CALLNAME:ARG%은(는) 길가에서 유용한 약초를 발견했다!
+		KSTR:(K++) = ……라고 생각했더니, 그냥 흔한 잡초였다.
 	CASE 3
-KSTR:(K++) = %CALLNAME:ARG%은(는) 즐겁게 담소하고 있다.
+		KSTR:(K++) = %CALLNAME:ARG%은(는) 즐겁게 담소하고 있다.
 	CASE 4
-KSTR:(K++) = %CALLNAME:PLAYER%이(가) 지도를 보며 나아갈 길을 고민하고 있자, %CALLNAME:ARG%이(가) 조언해 주었다.
+KSTR:(K++) = %CALLNAME:PLAYER%가 지도를 보며 나아갈 길을 고민하고 있자, %CALLNAME:ARG%이 조언해 주었다.
 	CASE 5
-KSTR:(K++) = 길을 가는 도중, %CALLNAME:ARG%이(가) 땔감을 주워주고 있다.
+KSTR:(K++) = 길을 가는 도중, %CALLNAME:ARG%가 땔감을 주워주고 있다.
 	CASE 6
 KSTR:(K++) = %CALLNAME:ARG%은(는) 물통을 꺼내 물을 마시고 있다.
 	CASE 7
@@ -637,7 +643,7 @@ KSTR:(K++) = ……하지만, 안의 마력이 텅 빈 쓰레기 마석이었다
 	CASE 8
 		SIF BATTLE_STATE:1:キャラ登録番号 < 1
 			RESTART
-KSTR:(K++) = 탐색이 끝나면 무엇을 할까, 라며 %CALLNAME:ARG%이(가) 동료들과 담소하고 있다.
+KSTR:(K++) = 탐색이 끝나면 무엇을 할까, 하고 %CALLNAME:ARG%가 동료들과 담소하고 있다.
 	CASE 9
 KSTR:(K++) = %CALLNAME:ARG%은(는) 간단히 무기를 손질하고 있다.
 ENDSELECT
@@ -912,9 +918,9 @@ SIF 追加ボタン6 == ""
 
 KSTR:(K++) = 이 칸의 이벤트를 다시 시청하시겠습니까?
 IF 再戦闘なしフラグ
-	KSTR:(K++) = BUTTON_[예 (재전투 없음)]
+KSTR:(K++) = BUTTON_[예 (재전투 없음)]
 ELSE
-	KSTR:(K++) = BUTTON_[예 (재전투 있음)]_　　　_BUTTON_[예 (재전투 없음)]
+KSTR:(K++) = BUTTON_[예 (재전투 있음)]_　　　_BUTTON_[예 (재전투 없음)]
 ENDIF
 KSTR:(K++) = BUTTON_[아니요]
 CALL メッセージ欄表示用関数(,,,0)

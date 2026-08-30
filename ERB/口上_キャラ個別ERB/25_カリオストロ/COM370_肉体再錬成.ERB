@@ -7,7 +7,7 @@
 @CHARACOMNAME370_25
 #FUNCTION
 LOCAL = GETCHARA(25)
-TSTR:コマンド名受渡 = 육체 재연성
+TSTR:コマンド名受渡 = 육체 재련성
 ;===================================================
 ;コマンドタイプ
 ;===================================================
@@ -16,9 +16,9 @@ TSTR:コマンド名受渡 = 육체 재연성
 TFLAG:コマンドタイプ受渡 = COMTYPE("日常")
 
 @COM_TOOLTIP_370_25
-LOCALS = <br>■육체 재연성<br>
-LOCALS += "칼리오스트로에게 부탁하여, ZP를 사용하지 않고 육체의 외형을 변화시켜 다시 연성하게 한다"
-LOCALS += "<br>경과 시간:60분"
+LOCALS = <br>■육체 재련성<br>
+LOCALS += "칼리오스트로에게 부탁해서, ZP를 사용하지 않고 육체의 외형을 변화시켜 재련성한다"
+LOCALS += "<br>경과 시간：60분"
 TSTR:ツールチップ受渡 = %LOCALS%
 
 ;-------------------------------------------------
@@ -50,13 +50,13 @@ $LOOP_START
 CLEARLINE LINECOUNT - L_COUNT
 PRINT 「
 FONTITALIC
-PRINT 그래서, 어떤 설계로 할 건가?
+PRINT 그럼, 어떤 설계로 할 건가?
 FONTSTYLE 0
 PRINTL 」
 PRINTL 어떤 소질을 변화시키겠습니까?
 DRAWLINE
 
-PRINT 성별:　
+PRINT 성별：　
 FOR LOCAL , 1, 4
 	SIF 素質切り替えOPTION記憶:ふたなり_女性 && LOCAL == 3
 		CONTINUE
@@ -76,7 +76,7 @@ FOR LOCAL , 1, 4
 NEXT
 PRINTL 
 
-PRINT 종족:　
+PRINT 종족：　
 FOR LOCAL , 1, 7
 	IF TALENT:種族 == LOCAL && (変更フラグ:人種 == LOCAL || 変更フラグ:人種 == -5)
 		SETCOLOR 0x666666
@@ -94,7 +94,7 @@ FOR LOCAL , 1, 7
 NEXT
 PRINTL 
 
-PRINT 체격:　
+PRINT 체격：　
 FOR LOCAL, -3, 3
 	IF TALENT:体格 == LOCAL && (変更フラグ:全長 == LOCAL || 変更フラグ:全長 == -5)
 		SETCOLOR 0x666666
@@ -112,7 +112,7 @@ FOR LOCAL, -3, 3
 NEXT
 PRINTL
 
-PRINT 체형:　
+PRINT 체형：　
 FOR LOCAL, -3, 4
 	IF TALENT:体型 == LOCAL && (変更フラグ:腹囲 == LOCAL || 変更フラグ:腹囲 == -5)
 		SETCOLOR 0x666666
@@ -130,7 +130,7 @@ FOR LOCAL, -3, 4
 NEXT
 PRINTL
 
-PRINT 하반신:
+PRINT 하반신：
 FOR LOCAL, -1, 2
 	IF TALENT:下半身 == LOCAL && (変更フラグ:臀囲 == LOCAL || 変更フラグ:臀囲 == -5)
 		SETCOLOR 0x666666
@@ -149,7 +149,7 @@ NEXT
 PRINTL
 
 IF GETBIT(TALENT:性別, 0) || (変更フラグ:雌雄 > -1 && GETBIT(変更フラグ:雌雄, 0))
-	PRINTL 가슴 크기:
+	PRINTL 가슴 크기：
 	PRINT 　　　　
 	FOR LOCAL, -2, 4
 		IF TALENT:バストサイズ == LOCAL && (変更フラグ:胸囲 == LOCAL || 変更フラグ:胸囲 == -5)
@@ -170,7 +170,7 @@ ENDIF
 PRINTL 
 
 IF GETBIT(TALENT:性別, 1) || (変更フラグ:雌雄 > -1 && GETBIT(変更フラグ:雌雄, 1))
-	PRINTL 남성기 크기:
+	PRINTL 남성기의 크기：
 	PRINT 　　　　
 	FOR LOCAL , -2, 3
 		IF TALENT:男性器サイズ == LOCAL && (変更フラグ:竿長 == LOCAL || 変更フラグ:竿長 == -5)
@@ -192,7 +192,7 @@ PRINTL
 
 PRINTBUTTONC "[900] 변경 취소", 900
 PRINTBUTTONC "[910] 원래 상태로 되돌리기", 910
-PRINTBUTTONC "[999] 종료한다", 999
+PRINTBUTTONC "[999] 종료하기", 999
 PRINTL
 
 BINPUT
@@ -275,7 +275,7 @@ ENDSELECT
 PRINTL
 PRINT 「
 FONTITALIC
-PRINT 이걸로 괜찮은가?
+PRINT 이걸로 괜찮겠나?
 FONTSTYLE 0
 PRINTL 」
 
@@ -288,7 +288,7 @@ PRINTFORM 하반신【%GET_TALENTNAME(変更箇所:臀囲, (変更フラグ:臀�
 SIF GETBIT(TALENT:性別, 0) || (変更フラグ:雌雄 > -1 && GETBIT(変更フラグ:雌雄, 0))
 	PRINTFORM 가슴 크기【%GET_TALENTNAME(変更箇所:胸囲, (変更フラグ:胸囲 > -5 ? 変更フラグ:胸囲# TALENT:バストサイズ), 0,TARGET)%】
 SIF GETBIT(TALENT:性別, 1) || (変更フラグ:雌雄 > -1 && GETBIT(変更フラグ:雌雄, 1))
-	PRINTFORM 남성기 크기【%GET_TALENTNAME(変更箇所:竿長, (変更フラグ:竿長 > -5 ? 変更フラグ:竿長# TALENT:男性器サイズ), 0,TARGET)%】
+	PRINTFORM 남성기의 크기【%GET_TALENTNAME(変更箇所:竿長, (変更フラグ:竿長 > -5 ? 変更フラグ:竿長# TALENT:男性器サイズ), 0,TARGET)%】
 PRINTL
 
 DEBUGPRINTFORM 処理前
@@ -304,7 +304,7 @@ SIF RESULT == 1
 IF RESULT == 2
 	PRINT 「
 	FONTITALIC
-	PRINT 그런가…… 그럼, 좀 더 이 모습에서의 '귀여움'을 추구해 볼까
+	PRINT 그렇군…… 그럼, 이 모습으로 『귀여움』을 좀 더 추구해 볼까
 	FONTSTYLE 0
 	PRINTL 」
 	RETURN -1
@@ -332,13 +332,13 @@ FOR LOCAL, 0, 7
 				SELECTCASE RESULT
 					CASE 0
 						;クリスタリア
-						CSTR:特殊種族 = 크리스탈리아
+						CSTR:特殊種族 = クリスタリア
 					CASE 1
 						;ヴァンパイア
-						CSTR:特殊種族 = 뱀파이어
+						CSTR:特殊種族 = ヴァンパイア
 					CASE 2
 						;ワーウルフ
-						CSTR:特殊種族 = 워울프
+						CSTR:特殊種族 = ワーウルフ
 					CASE 3
 						;自由選択（名前のみ）
 						PRINT 「
@@ -406,7 +406,7 @@ IF GROUPMATCH(TALENT:性別, 性別_女性, 性別_ふたなり) && TALENT:種�
 	;肉体条件を満たした場合、大人スタイル
 	IF CSTR:スタイル管理文字列 != "[天才美人錬金術師]カリオストロ"
 		;スタイル変更していない場合、変更させる
-		CSTR:スタイル管理文字列 '= "[천재 미인 연금술사]칼리오스트로"
+		CSTR:スタイル管理文字列 '= "[天才美人錬金術師]カリオストロ"
 		CALL スタイル変更_25(TARGET, "変更後処理", 1)
 	ENDIF
 	IF GETBIT(口上フラグ_25:1, 0)
@@ -420,22 +420,22 @@ IF GROUPMATCH(TALENT:性別, 性別_女性, 性別_ふたなり) && TALENT:種�
 		FONTITALIC
 		PRINT 과연, 즉……
 		FONTSTYLE 0
-		PRINT 이런 게 취향이라는 거네
+		PRINT 이런 걸 좋아한다는 거네
 		PRINT_IMG "えっちハート"
 		PRINTL 」
-		PRINTFORMW 그렇게 말하자, %CALLNAME:TARGET%는 옛 모습을 간직한 채, 어른의 매력을 품은 모습으로 변모했다
+		PRINTFORMW 그렇게 말하며, %CALLNAME:TARGET%은(는) 옛 모습을 간직한 채, 어른의 매력을 품은 모습으로 변모했다
 		CALL 口上変数初期化
 		KSTR:(K++) = IMAGEPATH_%CSTR:画像フォルダ%/短冊_デフォルト
 		CALL 口上変数表示(, 0)
 		PRINTL
-		PRINTFORML 「어때? 이게 칼리오스트로의 새로운 측면, 연장자로서의 자애와 포용력의 구현이야☆
+		PRINTFORML 「어때? 이게 칼리오스트로의 새로운 모습, 연장자로서의 자애와 포용력의 구현이야☆
 		PRINTFORML 　의상도 큐트하면서도 우아함을 기본으로, 약간 코케티시한 면도 넣어봤는데……
 		PRINTFORM 　(싱긋) %CSTR:二人称%님도 마음에 드신 것 같네
 		PRINT_IMG "えっちハート"
 		PRINTW 」
 		PRINTL
-		PRINTFORML %CALLNAME:TARGET%가 『[천재 미인 연금술사] 칼리오스트로』로 스타일을 변경했습니다.
-		PRINTFORML 기상 전 메뉴의 [121]능력 표시→[92]전투 능력 표시 화면→[115]스타일 변경에서도 변경할 수 있습니다 (전투 능력에는 변화가 없습니다).
+		PRINTFORML %CALLNAME:TARGET%이(가) 『[천재 미인 연금술사]칼리오스트로』로 스타일을 변경했습니다.
+		PRINTFORML 기상 전 메뉴의　[121]능력 표시→[92]전투 능력 표시 화면→[115]스타일 변경　에서도 변경할 수 있습니다 (전투 능력에는 변화가 없습니다).
 	ENDIF
 ELSE
 	IF CSTR:スタイル管理文字列 != ""
@@ -453,7 +453,7 @@ ELSE
 		BASE:ウエスト = 0
 		BASE:ヒップ = 0
 		CALL INIT_BODYSIZE(TARGET)
-		PRINTL 「역시, 평소의 칼리오스트로가 최고지☆ 라는 거겠지♪」
+		PRINTL 「역시, 평소의 칼리오스트로가 최고지☆ 라는 거네♪」
 	ELSE
 		IF CSTR:スタイル管理文字列 != ""
 			;別スタイルの維持条件を満たさない場合、デフォルトスタイルに戻る
@@ -465,12 +465,12 @@ ELSE
 		ENDIF
 		PRINT 「
 		FONTITALIC
-		PRINT 이번에는 이 모습으로 실증 실험이라는 건가. 좋아, 어울려주지
+		PRINT 이번엔 이 모습으로 실증 실험이라는 건가. 좋아, 어울려주지
 		FONTSTYLE 0
 		PRINTL 」
 	ENDIF
 ENDIF
-PRINT 칼리오스트로는 현재의 육체를
+PRINT 칼리오스트로는 현재 육체를
 PRINTFORM 성별【%GET_TALENTNAME(2, TALENT:性別, 0,TARGET)%】　
 PRINTFORM 종족【%GET_TALENTNAME(変更箇所:人種, TALENT:種族, 0,TARGET)%\@ TALENT:種族 == 6? (%CSTR:特殊種族%)# \@】　
 PRINTFORM 체격【%GET_TALENTNAME(変更箇所:全長, TALENT:体格, 0,TARGET)%】　

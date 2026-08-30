@@ -15,11 +15,11 @@ TFLAG:コマンドタイプ受渡 = MASSAGE_COMTYPE("エロマッサージ")
 
 @MASSAGE_COM_TOOLTIP_34
 LOCALS = <br>■유선 개발 마사지<br>
-LOCALS += "유선을 정성껏 자극하여, 모유의 생산·분출을 서포트하는 마사지."
+LOCALS += "유선을 정성껏 자극하여 모유 생산 및 분출을 돕는 마사지."
 LOCALS += "<br>가슴 확대 효과도 기대할 수 있다."
-LOCALS += "<br>[모유 체질]을 가진 캐릭터에게 사용했을 때, 그날 하루의 모유 생산량이 상승한다."
+LOCALS += "<br>[모유 체질]을(를) 가진 캐릭터에게 사용했을 시, 그 일일 모유 생산량이 상승한다."
 LOCALS += "<br>또한, 모유가 진해지기 쉬워진다."
-LOCALS += "<br>COM 타입: 에로 마사지<br>획득 소스: 쾌B·노출·접촉·환락"
+LOCALS += "<br>COM 타입: 에로 마사지<br>획득 소스: 쾌B・노출・접촉・환락"
 LOCALS += "<br>고유 획득 경험: 없음<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
@@ -138,6 +138,6 @@ RETURN 1
 @MASSAGE_MESSAGE_COM34
 PRINTFORM %CALLNAME:PLAYER%은(는), %CALLNAME:TARGET%의
 SIF RFLAG:コマンド結果受渡し変数 == 1
-	PRINTFORM 가슴의 시술복을 벗기고,
+	PRINTFORM 가슴 시술복을 벗기고,
 PRINTFORML 유방 전체를 주무르듯이 유선을 자극했다.
 

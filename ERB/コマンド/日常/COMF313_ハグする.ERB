@@ -2,7 +2,7 @@
 
 @COMNAME313
 #FUNCTIONS
-TSTR:コマンド名受渡 = 포옹하다
+TSTR:コマンド名受渡 = 포옹한다
 
 ;===================================================
 ;コマンドタイプ
@@ -12,9 +12,9 @@ TSTR:コマンド名受渡 = 포옹하다
 TFLAG:コマンドタイプ受渡 = COMTYPE("日常")
 
 @COM_TOOLTIP_313
-LOCALS = <br>■포옹하다<br>
+LOCALS = <br>■포옹한다<br>
 LOCALS += "상대를 가볍게 안아주는 커맨드. 일정 확률로 대성공, 성공, 실패로 분기."
-LOCALS += "<br>COM 타입: 일상<br>획득 소스: 환락・정복・접촉・노출・불쾌(실패 시)"
+LOCALS += "<br>COM타입:일상<br>획득 소스:환락・정복・접촉・노출・불쾌(실패 시)"
 LOCALS += "<br>고유 획득 경험: 없음<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
@@ -94,13 +94,13 @@ RETURN 1
 ;-------------------------------------------------
 @MESSAGE_COM313
 
-PRINTFORML %CALLNAME:PLAYER%은(는)%CALLNAME:TARGET%을(를) 가볍게 포옹했다.
+PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%을(를) 가볍게 포옹했다.
 
 IF RFLAG:コマンド結果受渡し変数 == 1
 	PRINTFORML %CALLNAME:TARGET%은(는) 왠지 기뻐하는 것 같다…
 ELSEIF RFLAG:コマンド結果受渡し変数 == 0
 	PRINTFORML %CALLNAME:TARGET%도 싫지 않은 모양이다…
 ELSEIF RFLAG:コマンド結果受渡し変数 == -1
-	PRINTFORML …아무래도, 조금 너무 친한 척한 것 같다…
+	PRINTFORML …아무래도, 조금 지나치게 친한 척한 것 같다…
 ENDIF
 

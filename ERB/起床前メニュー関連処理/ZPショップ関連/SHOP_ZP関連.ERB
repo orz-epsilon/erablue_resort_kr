@@ -6,11 +6,11 @@
 #DIM ZP取得値
 #DIM 表示するか
 
-;あなたはZP算出しない
-SIF キャラ番号 < 1
+;産出しないキャラだと戻す
+SIF NO_ZP_CHARA(キャラ番号)
 	RETURN 0
-;eraはZP算出しない
-SIF NO:キャラ番号 == 998
+;あなたの分身はZP算出しない
+SIF TALENT:キャラ番号:分身 == 2
 	RETURN 0
 
 ;キャラの素質などにより補正予定
@@ -29,30 +29,49 @@ FLAG:ZP所持量 += ZP取得値
 
 RETURN ZP取得値
 
+@NO_ZP_CHARA(キャラ番号)
+;あなたとeraはZPを算出しない
+;今後追加刷るキャラがいるかもしれないので関数化
+#FUNCTION
+#DIM キャラ番号
+
+;あなたはZP算出しない
+SIF キャラ番号 < 1
+	RETURNF 1
+;eraはZP算出しない
+SIF NO:キャラ番号 == 998
+	RETURNF 1
+
+RETURNF 0
+
 
 @ZP_SHOP
 PRINTL
 DRAWLINE
 PRINTL ■ZP 상점에 오신 것을 환영합니다
-PRINTFORML 보유 ZP:{FLAG:ZP所持量}.{(ZP小数点以下所持量 % 1000) / 100}{(ZP小数点以下所持量 % 100) / 10}{(ZP小数点以下所持量 % 10)}
+PRINTFORML 소지ZP:{FLAG:ZP所持量}.{(ZP小数点以下所持量 % 1000) / 100}{(ZP小数点以下所持量 % 100) / 10}{(ZP小数点以下所持量 % 10)}
 DRAWLINE
-PRINTBUTTON "[0]특별한 능력을 얻다", 0
+PRINTBUTTON "[0]특별한 능력을 얻는다", 0
 PRINTL 
-PRINTBUTTON "[1]특별한 아이템을 얻다", 1
+PRINTBUTTON "[1]특별한 아이템을 얻는다", 1
+PRINTL 
+IF エンディングイベント完了フラグ確認("空と星の家族") > 0
+	PRINTBUTTON "[2]ZP를 루피로 변환한다", 2
+	PRINTL 
+ENDIF
+PRINTL 
+PRINTBUTTON "[10]특별한 캐릭터를 초대 후보에 추가한다", 10
+PRINTL 
+PRINTBUTTON "[11]특별한 시나리오를 해방한다", 11
 PRINTL 
 PRINTL 
-PRINTBUTTON "[10]특별한 캐릭터를 초대 후보에 추가하다", 10
+PRINTBUTTON "[20]캐릭터의 소질을 변화시킨다", 20
 PRINTL 
-PRINTBUTTON "[11]특별한 시나리오를 해방하다", 11
-PRINTL 
-PRINTL 
-PRINTBUTTON "[20]캐릭터의 소질을 변화시키다", 20
-PRINTL 
-PRINTBUTTON "[21]리조트 전체의 환경을 변화시키다", 21
+PRINTBUTTON "[21]리조트 전체의 환경을 변화시킨다", 21
 PRINTL 
 PRINTL 
 IF MATCH(開拓エリア開発番号, 大規模番号_居住区エリア) > 0 && 居住区初来訪イベントフラグ
-	PRINTBUTTON "[22]보육원의 아이를 성장시키다", 22
+	PRINTBUTTON "[22]보육원의 아이를 성장시킨다", 22
 	PRINTL 
 	PRINTL
 ENDIF
@@ -73,6 +92,9 @@ SELECTCASE RESULT
 		RESTART
 	CASE 1
 		CALL ZP_SHOP_アイテム
+		RESTART
+	CASE 2
+		CALL ZP_SHOP_ルピ
 		RESTART
 	CASE 10
 		CALL ZP_SHOP_EXキャラ
@@ -139,9 +161,9 @@ ENDIF
 
 PRINTL
 DRAWLINE
-PRINTL ZP를 소비하여, 특별한 아이템을 입수할 수 있습니다.
+PRINTL ZP를 소비하여 특별한 아이템을 얻을 수 있습니다.
 PRINTL 어떤 아이템을 구매하시겠습니까?
-PRINTFORML 보유 ZP:%TOSTR(FLAG:ZP所持量, "#,##0")%
+PRINTFORML 소지ZP:%TOSTR(FLAG:ZP所持量, "#,##0")%
 ; PRINTBUTTON "[0]サプチケを購入する", 0
 ; PRINTL 　　　　　値段：20ZP
 ; PRINTL 　　　　　…任意のキャラを必ず招待するチケット。開発中Ver専用の特売品です。
@@ -153,7 +175,7 @@ PRINTFORML 보유 ZP:%TOSTR(FLAG:ZP所持量, "#,##0")%
 ; PRINTL 　　　　　　発情期が存在しないキャラに対しては使用出来ません。
 ; PRINTL
 PRINTSL "-" * 90
-PRINTFORML 　위험일 변동약　가격: 1개{価格_危険日変動薬}ZP　소지 수:{ITEM:危険日変動薬}
+PRINTFORML 　위험일 변동약　가격：1개{価格_危険日変動薬}ZP　소지 수：{ITEM:危険日変動薬}
 PRINTL 　　　　　…위험일을 약을 복용한 날로 변화시키는 약. 소모품.
 PRINTL 　　　　　　함락된 캐릭터에게만 사용 가능.
 PRINTL 　　　　　　발정기가 존재하는 캐릭터의 경우, 발정기도 변동한다.
@@ -175,10 +197,10 @@ PRINTBUTTON "[+10]", 4
 PRINTL
 
 PRINTSL "-" * 90
-PRINTFORML 　꽈리 향　가격: 1개{価格_鬼灯の香}ZP　소지 수:{ITEM:鬼灯の香}
-PRINTL 　　　　　…상대의 인식을 속이는 향을 내뿜는 향. 소모품.
+PRINTFORML 　귀등의 향　가격：1개{価格_鬼灯の香}ZP　소지수：{ITEM:鬼灯の香}
+PRINTL 　　　　　…상대의 인식을 속이는 향기를 내뿜는 향. 소모품.
 PRINTL 　　　　　　마사지 중에 사용해두면, 이성의 자동 회복이 무효가 된다.
-PRINTL 　　　　　　또한 효과가 충분히 침투했을 때, 강하게 거부당할 만한 행위를 실행할 수 있게 된다.
+PRINTL 　　　　　　또한 효과가 충분히 침투했을 시, 강하게 거부당하는 듯한 행위를 실행할 수 있게 된다.
 PRINTL
 PRINT 　
 PRINTBUTTON "[-10]", 11
@@ -197,8 +219,8 @@ PRINTBUTTON "[+10]", 14
 PRINTL
 
 PRINTSL "-" * 90
-PRINTFORML 　혼인 아이템 (가칭)　가격: 1개100ZP　소지 수:{ITEM:婚姻アイテムカッコカリ}
-PRINTL 　　　　　…혼인 함락을 위한 아이템. 한 명당 한 개 필요.
+PRINTFORML 　혼인 아이템 (가칭)　가격: 1개 100ZP　소지 개수:{ITEM:婚姻アイテムカッコカリ}
+PRINTL 　　　　　…혼인 함락을 진행하기 위한 아이템. 한 명당 한 개 필요.
 PRINTL 　　　　　　혼인 아이템 생성 관련 처리를 만들기 전까지의 잠정 조치.
 PRINTL 　　　　　　장래적으로 폐지될 아이템이므로, 너무 많이 구매하지 않도록 주의.
 PRINTL
@@ -208,10 +230,10 @@ PRINTBUTTON "[-1]", 22
 PRINT 　　
 IF 婚姻アイテムカッコカリ購入数 * 100 > FLAG:ZP所持量
 	SETCOLOR カラーパレット("グレーアウト")
-	PRINTPLAINFORM [20]{婚姻アイテムカッコカリ購入数}개 구입한다(%TOSTR(婚姻アイテムカッコカリ購入数 * 100, "#,##0")%ZP)
+	PRINTPLAINFORM [20]{婚姻アイテムカッコカリ購入数}개 구매한다(%TOSTR(婚姻アイテムカッコカリ購入数 * 100, "#,##0")%ZP)
 	RESETCOLOR
 ELSE
-	PRINTBUTTON @"[20]{婚姻アイテムカッコカリ購入数}개 구입한다(%TOSTR(婚姻アイテムカッコカリ購入数 * 100, "#,##0")%ZP)", 20
+	PRINTBUTTON @"[20]{婚姻アイテムカッコカリ購入数}개 구매한다(%TOSTR(婚姻アイテムカッコカリ購入数 * 100, "#,##0")%ZP)", 20
 ENDIF
 PRINT 　　
 PRINTBUTTON "[+1]", 23
@@ -219,9 +241,9 @@ PRINTBUTTON "[+10]", 24
 PRINTL
 
 PRINTSL "-" * 90
-PRINTFORML 　레이디 킬러　가격: 1개{価格_レディキラー}ZP　소지 수:{ITEM:レディキラー}
-PRINTL 　　　　　…깔끔하고 달콤하며 마시기 쉽지만 도수가 높은 각종 술. 레이디 킬러는 어디까지나 통칭. 소모품.
-PRINTL 　　　　　　ZP를 사용해 약간의 가공을 해두었으며, 이 술에 취하면 정신을 잃기 쉽다.
+PRINTFORML 　레이디 킬러　가격: 1개{価格_レディキラー}ZP　소지 개수:{ITEM:レディキラー}
+PRINTL 　　　　　…깔끔하고 달콤하여 마시기 쉽지만 도수가 높은 각종 술. 레이디 킬러는 어디까지나 통칭. 소모품.
+PRINTL 　　　　　　ZP를 사용하여 약간의 가공을 해두었으며, 이 술에 취하면 정신을 잃기 쉽다.
 PRINTL
 PRINT 　
 PRINTBUTTON "[-10]", 31
@@ -229,10 +251,10 @@ PRINTBUTTON "[-1]", 32
 PRINT 　　
 IF レディキラー購入数 * 価格_レディキラー > FLAG:ZP所持量
 	SETCOLOR カラーパレット("グレーアウト")
-	PRINTPLAINFORM [30]{レディキラー購入数}개 구입한다(%TOSTR(レディキラー購入数 * 価格_レディキラー, "#,##0")%ZP)
+PRINTPLAINFORM [30]{レディキラー購入数}개 구매한다(%TOSTR(レディキラー購入数 * 価格_レディキラー, "#,##0")%ZP)
 	RESETCOLOR
 ELSE
-	PRINTBUTTON @"[30]{レディキラー購入数}개 구입한다(%TOSTR(レディキラー購入数 * 価格_レディキラー, "#,##0")%ZP)", 30
+PRINTBUTTON @"[30]{レディキラー購入数}개 구매한다(%TOSTR(レディキラー購入数 * 価格_レディキラー, "#,##0")%ZP)", 30
 ENDIF
 PRINT 　　
 PRINTBUTTON "[+1]", 33
@@ -251,8 +273,8 @@ SELECTCASE RESULT
 	; 		RESTART
 	; 	ENDIF
 	; 	PRINTL 20ZPを支払い、サプチケを一枚取得しますか？
-	; 	PRINTBUTTONLC "[0]はい", 0
-	; 	PRINTBUTTONLC "[1]いいえ", 1
+	; 	PRINTBUTTONLC "[0]예", 0
+	; 	PRINTBUTTONLC "[1]아니오", 1
 	; 	$INPUT_LOOP2
 	; 	INPUT
 	; 	SELECTCASE RESULT
@@ -272,8 +294,8 @@ SELECTCASE RESULT
 	; 		RESTART
 	; 	ENDIF
 	; 	PRINTL 5ZPを支払い、発情誘発剤を取得しますか？
-	; 	PRINTBUTTONLC "[0]はい", 0
-	; 	PRINTBUTTONLC "[1]いいえ", 1
+	; 	PRINTBUTTONLC "[0]예", 0
+	; 	PRINTBUTTONLC "[1]아니오", 1
 	; 	INPUT
 	; 	IF RESULT == 0
 	; 		FLAG:ZP所持量 -= 5
@@ -288,14 +310,14 @@ SELECTCASE RESULT
 		危険日変動薬購入数 -= 1
 		RESTART
 	CASE 0
-		PRINTFORML {危険日変動薬購入数 * 価格_危険日変動薬}ZP를 지불하고, 위험일 변동약을{危険日変動薬購入数}개 획득하시겠습니까?
+		PRINTFORML {危険日変動薬購入数 * 価格_危険日変動薬}ZP을(를) 지불하고, 위험일 변동약을 {危険日変動薬購入数}개 획득하시겠습니까?
 		PRINTBUTTONLC "[0]예", 0
 		PRINTBUTTONLC "[1]아니오", 1
 		INPUT
 		IF RESULT == 0
 			FLAG:ZP所持量 -= 危険日変動薬購入数 * 価格_危険日変動薬
 			ITEM:危険日変動薬 += 危険日変動薬購入数
-			PRINTFORMW 위험일 변동약을{危険日変動薬購入数}개 구입했습니다.
+			PRINTFORMW 위험일 변동약을 {危険日変動薬購入数}개 구매했습니다.
 		ENDIF
 		危険日変動薬購入数 = 1
 		RESTART
@@ -312,14 +334,14 @@ SELECTCASE RESULT
 		鬼灯の香購入数 -= 1
 		RESTART
 	CASE 10
-		PRINTFORML {鬼灯の香購入数 * 価格_鬼灯の香}ZP를 지불하고, 호오즈키 향을{鬼灯の香購入数}개 획득하시겠습니까?
+		PRINTFORML {鬼灯の香購入数 * 価格_鬼灯の香}ZP을(를) 지불하고, 귀등의 향을 {鬼灯の香購入数}개 획득하시겠습니까?
 		PRINTBUTTONLC "[0]예", 0
-		PRINTBUTTONLC "[1]아니요", 1
+		PRINTBUTTONLC "[1]아니오", 1
 		INPUT
 		IF RESULT == 0
 			FLAG:ZP所持量 -= 鬼灯の香購入数 * 価格_鬼灯の香
 			ITEM:鬼灯の香 += 鬼灯の香購入数
-			PRINTFORMW 꽈리 향을{鬼灯の香購入数}개 구입했습니다.
+			PRINTFORMW 귀등의 향을 {鬼灯の香購入数}개 구매했습니다.
 		ENDIF
 		鬼灯の香購入数 = 1
 		RESTART
@@ -336,14 +358,14 @@ SELECTCASE RESULT
 		婚姻アイテムカッコカリ購入数 -= 1
 		RESTART
 	CASE 20
-		PRINTFORML {婚姻アイテムカッコカリ購入数 * 100}ZP를 지불하고, 혼인 아이템(가칭)을{婚姻アイテムカッコカリ購入数}개 취득하시겠습니까?
+		PRINTFORML {婚姻アイテムカッコカリ購入数 * 100}ZP을(를) 지불하고, 혼인 아이템 (가칭)을 {婚姻アイテムカッコカリ購入数}개 획득하시겠습니까?
 		PRINTBUTTONLC "[0]예", 0
-		PRINTBUTTONLC "[1]아니요", 1
+		PRINTBUTTONLC "[1]아니오", 1
 		INPUT
 		IF RESULT == 0
 			FLAG:ZP所持量 -= 婚姻アイテムカッコカリ購入数 * 100
 			ITEM:婚姻アイテムカッコカリ += 婚姻アイテムカッコカリ購入数
-			PRINTFORMW 혼인 아이템(가칭)을{婚姻アイテムカッコカリ購入数}개 구입했습니다.
+			PRINTFORMW 혼인 아이템 (가칭)을 {婚姻アイテムカッコカリ購入数}개 구매했습니다.
 		ENDIF
 		婚姻アイテムカッコカリ購入数 = 1
 		RESTART
@@ -360,14 +382,14 @@ SELECTCASE RESULT
 		レディキラー購入数 -= 1
 		RESTART
 	CASE 30
-		PRINTFORML {レディキラー購入数 * 価格_レディキラー}ZP를 지불하고, 레이디 킬러를{レディキラー購入数}개 취득하시겠습니까?
+		PRINTFORML {レディキラー購入数 * 価格_レディキラー}ZP을(를) 지불하고, 레디 킬러를 {レディキラー購入数}개 획득하시겠습니까?
 		PRINTBUTTONLC "[0]예", 0
-		PRINTBUTTONLC "[1]아니요", 1
+		PRINTBUTTONLC "[1]아니오", 1
 		INPUT
 		IF RESULT == 0
 			FLAG:ZP所持量 -= レディキラー購入数 * 価格_レディキラー
 			ITEM:レディキラー += レディキラー購入数
-			PRINTFORMW 레이디 킬러를{レディキラー購入数}개 구입했습니다.
+			PRINTFORMW 레디 킬러를 {レディキラー購入数}개 구매했습니다.
 		ENDIF
 		レディキラー購入数 = 1
 		RESTART
@@ -382,6 +404,74 @@ SELECTCASE RESULT
 		RETURN 0
 ENDSELECT
 
+
+@ZP_SHOP_ルピ
+#DIM 生成量
+
+PRINTL
+DRAWLINE
+PRINTL ZP을(를) 소비하여, 루피를 생성할 수 있습니다. 생성되는 양은 소비마다 편차가 있습니다.
+PRINTL 어느 정도 소비하시겠습니까?
+PRINTFORML 소지ZP:%TOSTR(FLAG:ZP所持量, "#,##0")%
+PRINTFORML 소지 루피:%TOSTR(MONEY, "#,##0")%
+DRAWLINE
+
+IF FLAG:ZP所持量 < 100
+	SETCOLOR カラーパレット("グレーアウト")
+	PRINTPLAIN [0] 100ZP를 소비하여 50,000~60,000루피를 얻는다
+	RESETCOLOR
+ELSE
+	PRINTBUTTON "[0] 100ZP를 소비하여 50,000~60,000루피를 얻는다", 0
+ENDIF
+PRINTL
+IF FLAG:ZP所持量 < 1000
+	SETCOLOR カラーパレット("グレーアウト")
+	PRINTPLAIN [1] 1,000ZP를 소비하여 750,000~900,000루피를 얻는다
+	RESETCOLOR
+ELSE
+	PRINTBUTTON "[1] 1,000ZP를 소비하여 750,000~900,000루피를 얻는다", 1
+ENDIF
+PRINTL
+IF FLAG:ZP所持量 < 10000
+	SETCOLOR カラーパレット("グレーアウト")
+	PRINTPLAIN [2] 10,000ZP를 소비하여 10,000,000~15,000,000루피를 얻는다
+	RESETCOLOR
+ELSE
+	PRINTBUTTON "[2] 10,000ZP를 소비하여 10,000,000~15,000,000루피를 얻는다", 2
+ENDIF
+PRINTL
+PRINTL
+PRINTBUTTON "[999] 돌아가기", 999
+PRINTL
+PRINTL
+
+BINPUT
+LOCAL = RESULT
+SELECTCASE LOCAL
+	CASE 0
+		生成量 = RAND(50000, 60000)
+		FLAG:ZP所持量 -= 100
+		MONEY += 生成量
+		PRINTFORMW ZP를 100 소비하여 루피를 %NUM_FORMAT(生成量)% 생성했습니다.
+	CASE 1
+		生成量 = RAND(750000, 900000)
+		FLAG:ZP所持量 -= 1000
+		MONEY += 生成量
+		PRINTFORMW ZP를 1,000 소비하여 루피를 %NUM_FORMAT(生成量)% 생성했습니다.
+	CASE 2
+		生成量 = RAND(10000000, 15000000)
+		FLAG:ZP所持量 -= 10000
+		MONEY += 生成量
+		PRINTFORMW ZP를 10,000 소비하여 루피를 %NUM_FORMAT(生成量)% 생성했습니다.
+	CASE 999
+		RETURN 0
+ENDSELECT
+
+PRINTL
+PRINTL
+PRINTL
+RESTART
+
 @ZP_SHOP_環境変化
 #DIM 妊娠期間変化値
 #DIM フィールド期間変化値
@@ -392,7 +482,7 @@ ENDSELECT
 
 PRINTL
 DRAWLINE
-PRINTL ZP를 소비하여, 리조트 내의 체류자 전원에게 특수한 영향을 줄 수 있습니다.
+PRINTL ZP를 소비하여 리조트 내의 모든 체류자에게 특수한 영향을 줄 수 있습니다.
 PRINTL 어떤 기능을 도입하시겠습니까?
 PRINTFORML 소지ZP:%TOSTR(FLAG:ZP所持量, "#,##0")%
 DRAWLINE
@@ -402,14 +492,14 @@ ELSE
 	SETCOLOR 0x666666
 	PRINTPLAINFORM [0]임신 기간을 변동시킨다
 ENDIF
-PRINTL 　　　　　가격: (변동시키는 일수 ×1)ZP
-PRINTL 　　　　　…리조트 내에서, 아이를 출산하기까지 걸리는 시간을 변동시킵니다.
+PRINTL 　　　　　가격: (변동시키는 일수×1)ZP
+PRINTL 　　　　　…리조트 내에서 아이를 출산하기까지 걸리는 시간을 변동시킵니다.
 PRINTL
 RESETCOLOR
 
 ;フィールド効果のONOFFを並べて表示
 DRAWLINE
-PRINTL 필드 효과 일람:
+PRINTL 필드 효과 목록:
 LOCALS =
 消費ZP = 0
 FOR LOCAL, 0, 50
@@ -418,20 +508,20 @@ FOR LOCAL, 0, 50
 	CALLFORM フィールド効果解説_%ERDNAME(フィールド展開, LOCAL)%
 	LOCAL:1 = RESULT
 	IF フィールド展開:LOCAL <= 0
-		LOCALS += @"<button value='{LOCAL + 10}'>[{LOCAL + 10}] %ERDNAME(フィールド展開, LOCAL), 30, LEFT%:"
+		LOCALS += @"<button value='{LOCAL + 10}'>[{LOCAL + 10}] %ERDNAME(フィールド展開, LOCAL), 30, LEFT%："
 		LOCALS += @"<font color='#%カラーパレット_HTML("グレーアウト")%'>ON</font> / OFF"
 	ELSE
 		LOCALS += @"<font color='#%カラーパレット_HTML("えっちな色")%'>"
-		LOCALS += @"<button value='{LOCAL + 10}'>[{LOCAL + 10}] %ERDNAME(フィールド展開, LOCAL), 30, LEFT%</font>:"
+		LOCALS += @"<button value='{LOCAL + 10}'>[{LOCAL + 10}] %ERDNAME(フィールド展開, LOCAL), 30, LEFT%</font>："
 		LOCALS += @"ON / <font color='#%カラーパレット_HTML("グレーアウト")%'>OFF</font>"
 		消費ZP += LOCAL:1
 	ENDIF
-	LOCALS += @"　　　하루당 소비ZP: {LOCAL:1, 2} ZP<br>"
+	LOCALS += @"　　　일일 소비 ZP：{LOCAL:1, 2} ZP<br>"
 	LOCALS += @"　　　%REPLACE(TSTR:ツールチップ受渡, "<br>", "<br>　　　")%<br><br>"
 	LOCALS += "</button>"
 NEXT
 HTML_PRINT LOCALS
-PRINTFORML 現在の消費ZP / 1日 = {消費ZP, 3}ZP
+PRINTFORML 현재 소비 ZP / 1일 = {消費ZP, 3}ZP
 PRINTL
 PRINTL 
 PRINTBUTTON "[999]돌아가기", 999
@@ -443,7 +533,7 @@ SELECTCASE RESULT
 		$INPUT_BEFORE2
 		PRINTL
 		DRAWLINE
-		PRINTFORML 임신 기간으로 적용하고 싶은 수치를 입력해 주세요. (현재 임신 기간: {妊娠期間}일)
+		PRINTFORML 임신 기간으로 적용할 수치를 입력해 주세요. (현재 임신 기간:{妊娠期間}일)
 		PRINTFORML 소지ZP:%TOSTR(FLAG:ZP所持量, "#,##0")%
 		PRINTBUTTON "[<< -10] ",-999
 		PRINTBUTTON "[< -1] ",-998
@@ -494,9 +584,9 @@ SELECTCASE RESULT
 			REDRAW 1
 			PRINTL
 			PRINTFORML {消費ZP}ZP를 지불하고, 출산까지 걸리는 기간을 {妊娠期間}일에서 {妊娠期間変化値}일로 변동시키겠습니까?
-			PRINTL (현 상황의 캐릭터별 임신 진행도는 재계산되어 계승되지만, 다소 오차가 발생할 수 있습니다)
-PRINTBUTTONLC "[0]예", 0
-PRINTBUTTONLC "[1]아니요", 1
+			PRINTL (현재 캐릭터별 임신 진행도는 재계산되어 계승되지만, 다소 오차가 발생할 수 있습니다)
+			PRINTBUTTONLC "[0]예", 0
+			PRINTBUTTONLC "[1]아니오", 1
 			REDRAW 0
 			$INPUT_LOOP2_2
 			INPUT
@@ -567,3 +657,5 @@ FOR LOCAL, 1, CHARANUM
 		ENDIF
 	NEXT
 NEXT
+
+

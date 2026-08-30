@@ -1,4 +1,4 @@
-﻿
+
 ;----------------------------------------------------
 ;キャラ固有コマンド処理
 ;----------------------------------------------------
@@ -6,7 +6,7 @@
 ;----------------------------------------------------
 @CHARACOMNAME371_2
 #FUNCTIONS
-	TSTR:コマンド名受渡 = 身外身の法
+	TSTR:コマンド名受渡 = 신외신의 법
 
 ;===================================================
 ;コマンドタイプ
@@ -17,21 +17,23 @@ TFLAG:コマンドタイプ受渡 = COMTYPE("うふふ")
 
 
 @COM_TOOLTIP_371_2
-LOCALS = <br>■身外身の法<br>
-LOCALS += "自身の分身を作りだし、個別に活動する術。<br>うふふ中のみ、複数人いるかのように振る舞うことが出来る。<br>分身が得た経験は本体に還元される。"
-LOCALS += "<br>COMタイプ：うふふ<br>取得ソース：なし"
-LOCALS += "<br>固有の取得経験：なし<br>"
+LOCALS = <br>■신외신의 법<br>
+LOCALS += "자신의 분신을 만들어내어 개별적으로 활동하는 기술.<br>우후후 중일 때만, 여러 명이 있는 것처럼 행동할 수 있다.<br>분신이 얻은 경험은 본체에 환원된다."
+LOCALS += "<br>COM 타입: 우후후<br>획득 출처: 없음"
+LOCALS += "<br>고유 획득 경험: 없음<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
 @CHARACOM371_2
+#DIM 分身番号
 
 ADDCOPYCHARA TARGET
+分身番号 = 2
 FOR LOCAL, 0, 分身最大数
 	IF 分身登録:LOCAL:0 < 1
 		分身登録:LOCAL:0 = CHARANUM - 1
 		分身登録:LOCAL:1 = TARGET
-		NAME:(分身登録:LOCAL:0) = %NAME表示((分身登録:LOCAL:0))%%TOFULL(TOSTR(LOCAL + 2))%
-		CALLNAME:(分身登録:LOCAL:0) = %CALLNAME:(分身登録:LOCAL:0)%%TOFULL(TOSTR(LOCAL + 2))%
+		NAME:(分身登録:LOCAL:0) = %NAME表示((分身登録:LOCAL:0))%%TOFULL(TOSTR(分身番号))%
+		CALLNAME:(分身登録:LOCAL:0) = %CALLNAME:(分身登録:LOCAL:0)%%TOFULL(TOSTR(分身番号))%
 		TALENT:(分身登録:LOCAL:0):分身 = 1
 		CFLAG:(分身登録:LOCAL:0):人物番号 = -1
 		FOR LOCAL:1, 101, 111
@@ -43,6 +45,8 @@ FOR LOCAL, 0, 分身最大数
 			分身EXP保存:LOCAL:(LOCAL:1) = EXP:TARGET:(LOCAL:1)
 		NEXT
 		BREAK
+	ELSEIF 分身登録:LOCAL:1 == TARGET
+		分身番号 ++
 	ENDIF
 NEXT
 CALL SORT_CHARALIST()
@@ -87,4 +91,4 @@ RETURN 1
 ;実行時メッセージ
 ;-------------------------------------------------
 @MESSAGE_COM371_2
-PRINTFORML アンチラは身外身の法で分身を作り出した。
+PRINTFORML 안티라는 신외신의 법으로 분신을 만들어냈다.

@@ -1,7 +1,7 @@
 
 @COMNAME_S9_5
 #FUNCTIONS
-TSTR:コマンド名受渡 = 치쿠니
+TSTR:コマンド名受渡 = チクニー
 
 ;===================================================
 ;コマンドタイプ
@@ -15,10 +15,10 @@ TFLAG:コマンドタイプ受渡 = COMTYPE("うふふ")
 
 
 @COM_TOOLTIP_S9_5
-LOCALS = <br>■치쿠니<br>
-LOCALS += "상대가 보는 앞에서 젖꼭지를 희롱하며 자위하는 커맨드."
-LOCALS += "<br>COM 타입: 우후후<br>획득 소스: 노출・쾌락B・환락(일정 조건 시)・반감(일정 조건 시)"
-LOCALS += "<br>고유 획득 경험: 자위 경험(자위 실행자), 조교 자위 경험(자위 실행자)<br>"
+LOCALS = <br>■チクニー<br>
+LOCALS += "상대가 보는 앞에서 젖꼭지를 만지며 자위하는 커맨드."
+LOCALS += "<br>COM타입：우후후<br>획득 소스：노출・쾌Ｂ・환락(일정 조건 시)・반감(일정 조건 시)"
+LOCALS += "<br>고유 획득 경험：자위 경험(자위 실행자)、조교 자위 경험(자위 실행자)<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
 
@@ -91,9 +91,9 @@ ELSEIF TEQUIP:(自慰ターゲット保存):上半身下着あり > 0
 ELSEIF TEQUIP:(自慰ターゲット保存):上半身下着あり == -2
 	PRINT 피어스를 손가락으로 튕기며
 ELSEIF TEQUIP:(自慰ターゲット保存):上半身下着あり == -3
-	PRINT 명찰을 잡아당겨
+	PRINT 명찰을 잡아당기며
 ENDIF
-PRINTL 유두를 손가락으로 굴리며 자극하기 시작했다…
+PRINTL 젖꼭지를 손가락으로 굴리며 자극하기 시작했다…
 
 
 @MESSAGE_COM_S9_5_非口上時
@@ -103,9 +103,9 @@ SIF TFLAG:オートコマンドフラグ > 0
 	RETURN 0
 
 IF EXP:(自慰ターゲット保存):調教自慰経験 <= 10
-	PRINTFORML 누군가에게 보여지는 자위에는 익숙하지 않은 듯, %CALLNAME:(自慰ターゲット保存)%은(는) 얼굴을 붉히며 %CALLNAME:MASTER%을(를) 노려보고 있다…
+	PRINTFORML 누군가에게 보여지면서 하는 자위에는 익숙하지 않은 듯, %CALLNAME:(自慰ターゲット保存)%은(는)얼굴을 붉히고 %CALLNAME:MASTER%을(를) 노려보고 있다…
 ELSEIF EXP:(自慰ターゲット保存):調教自慰経験 <= 50
 	PRINTFORML 조금 익숙해진 듯하지만, 아직 %CALLNAME:MASTER%의 시선이 신경 쓰이는 듯하다…
 ELSE
-	PRINTFORML %CALLNAME:(自慰ターゲット保存)%은(는) %CALLNAME:MASTER%에게 보여지는 자위에, 묘한 고양감을 느끼고 있다…
+	PRINTFORML %CALLNAME:(自慰ターゲット保存)%은(는) %CALLNAME:MASTER%에게 보여지면서 하는 자위에, 묘한 고양감을 느끼고 있다…
 ENDIF

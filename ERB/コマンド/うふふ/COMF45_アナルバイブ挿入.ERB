@@ -4,7 +4,7 @@
 ;-------------------------------------------------
 @COMNAME45
 #FUNCTIONS
-TSTR:コマンド名受渡 = 애널 바이브 삽입
+TSTR:コマンド名受渡 = 항문 바이브 삽입
 
 ;弱点コマンド欄に専用の文字列を表示したい場合、これを設定すること
 弱点コマンド欄表示名 = アナルバイブ挿入
@@ -22,10 +22,10 @@ TFLAG:コマンドタイプ受渡 = COMTYPE("道具系&Ａ系")
 
 
 @COM_TOOLTIP_45
-LOCALS = <br>■アナルバイブ<br>
-LOCALS += "전동 애널 바이브를 삽입하여 장내를 자극하는 커맨드. <br>애널 바이브 장비 상태가 되어, 빼거나 성행위를 종료할 때까지 지속적으로 쾌락이 발생한다."
-LOCALS += "<br>COM 타입: 도구계<br>획득 소스: 쾌A·노출·접촉·고통"
-LOCALS += "<br>고유 획득 경험: 도구 사용 경험(PLAYER)·A 경험(TARGET)<br>"
+LOCALS = <br>■항문 바이브<br>
+LOCALS += "전동 항문 바이브를 삽입하여 장내를 자극하는 커맨드。<br>항문 바이브 장비 상태가 되어, 제외하거나 성행위를 종료할 때까지 지속적으로 쾌락이 발생한다."
+LOCALS += "<br>COM 타입: 도구 계열<br>획득 소스: 쾌락A・노출・접촉・고통"
+LOCALS += "<br>고유 획득 경험: 도구 사용 경험(PLAYER)・A 경험(TARGET)<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
 @COM45
@@ -37,8 +37,8 @@ IF OPTION変数:アナルバイブ強さ初期値 == -1
 	PRINTL
 	PRINTL
 	DRAWLINE
-	PRINTL ■강도 초기값을 선택해 주세요
-	PRINT 　　애널 바이브 강도:
+	PRINTL ■강도의 초기값을 선택해 주세요
+	PRINT 　　항문 바이브 강도:
 	PRINTBUTTON "[-]", -1
 	FOR LOCAL, 0, 6
 		IF 強さ初期値記録 >= LOCAL
@@ -50,8 +50,8 @@ IF OPTION変数:アナルバイブ強さ初期値 == -1
 	PRINTBUTTON "[+]", "6"
 	PRINTL
 	PRINTL
-	PRINTBUTTONLC "[900] 애널 바이브를 장착한다", 900
-	PRINTBUTTONLC "[999] 돌아간다", 999
+	PRINTBUTTONLC "[900] 항문 바이브를 장착한다", 900
+	PRINTBUTTONLC "[999] 돌아가기", 999
 
 	BINPUT
 	LOCAL = RESULT
@@ -144,48 +144,48 @@ RETURN 1
 ;-------------------------------------------------
 @MESSAGE_COM45
 #DIM 同時キャラ番号
-PRINTFORM %CALLNAME:PLAYER%은
+PRINTFORM %CALLNAME:PLAYER%은(는)
 IF GETBIT(FLAG:モード管理, モードビット_同時)
 	FOR 同時キャラ番号, 0, 同時モード_選択数
 		SIF 同時キャラ番号 > 0
-			PRINT ,
+			PRINT 、
 		PRINTFORM %CALLNAME:(同時モード_選択キャラ:同時キャラ番号)%
 	NEXT
-	PRINT 모두에게 애널 바이브 끝을 대고 삽입했다
+	PRINT 모두에게 항문 바이브의 끝을 대고 삽입했다
 	RETURN 0
 ENDIF
 
 PRINTFORM %CALLNAME:TARGET%의
 SIF TEQUIP:下半身下着あり > 0
 	PRINTFORM 속옷을 내리고,
-PRINTFORML 국화 구멍에 애널 바이브를 댔다…
-PRINTFORM %CALLNAME:TARGET%은
+PRINTFORML 항문에 항문 바이브를 댔다…
+PRINTFORM %CALLNAME:TARGET%은(는)
 ;Ａ経験180以上＋淫乱か娼婦
 IF EXP:Ａ経験 > 180 && TALENT:淫乱
 	PRINT 녹아내린 표정으로, 스스로 엉덩이를 벌리고
 ;Ａ経験140以上＋淫乱か娼婦
 ELSEIF EXP:Ａ経験 > 140 && TALENT:淫乱
-	PRINT 삽입을 애타게 기다리는 듯 허리를 비틀며
+	PRINT 삽입을 애타게 기다리는 듯 허리를 흔들었다
 ;Ａ経験100以上＋淫乱か娼婦
 ELSEIF EXP:Ａ経験 > 100 && TALENT:淫乱
-	PRINT 뺨을 붉히고, 기대감에 엉덩이를 흔들며
+	PRINT 뺨을 붉히고, 기대에 엉덩이를 흔들며
 ;Ａ経験70以上＋淫乱か娼婦
 ELSEIF EXP:Ａ経験 > 70 && TALENT:淫乱
-	PRINT 움츠러든 곳에 가해지는 바이브의 자극에 몸을 떨며
+	PRINT 오므라든 곳에 주어지는 바이브의 자극에 몸을 떨며
 ;Ａ経験40以上
 ELSEIF EXP:Ａ経験 > 40
-	PRINT 기대와 부정이 뒤섞인 듯한 복잡한 표정을 지으며
+	PRINT 기대와 부정의 뒤섞인 듯한 복잡한 표정을 지으며
 ;Ａ経験20以上
 ELSEIF EXP:Ａ経験 > 20
-	PRINT 수치심으로 물든 얼굴을 숙이고
+	PRINT 수줍음으로 물든 얼굴을 숙이고
 ;それ以外
 ELSE
-	PRINT 부정한 구멍을 침범당하는 치욕과 굴욕감에 물든 표정을 짓고
+	PRINT 부정한 구멍을 침범당하는 치욕과 굴욕감에 젖은 표정을 지으며
 ENDIF
 PRINTL 있다…
 PRINTFORM %CALLNAME:TARGET%의
 ;潤滑LV4以上
 SIF PALAM:潤滑 >= PALAMLV:4
 	PRINT 점액으로 뒤덮인
-PRINTFORML 애널에 바이브를 삽입했다
+PRINTFORML 아누스에 바이브를 삽입했다
 

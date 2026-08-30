@@ -5,7 +5,7 @@
 @COMNAME40
 #FUNCTIONS
 
-	TSTR:コマンド名受渡 = 로터
+	TSTR:コマンド名受渡 = ローター
 
 
 
@@ -22,9 +22,9 @@ TFLAG:コマンドタイプ受渡 = COMTYPE("道具系")
 
 
 @COM_TOOLTIP_40
-LOCALS = <br>■ローター<br>
-LOCALS += "로터를 사용하여 상대의 클리토리스나 페니스에 자극을 주는 커맨드."
-LOCALS += "<br>COM 타입: 도구계<br>획득 소스: 쾌C・노출・접촉"
+LOCALS = <br>■로터<br>
+LOCALS += "로터를 사용하여, 상대의 클리토리스나 페니스에 자극을 주는 커맨드。"
+LOCALS += "<br>COM 타입: 도구 계열<br>획득 소스: 쾌감C・노출・접촉"
 LOCALS += "<br>고유 획득 경험: 도구 사용 경험(PLAYER)<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
@@ -96,17 +96,17 @@ RETURN 1
 ;実行時メッセージ
 ;-------------------------------------------------
 @MESSAGE_COM40
-PRINTFORM %CALLNAME:PLAYER%은/는
+PRINTFORM %CALLNAME:PLAYER%은(는)
 IF TEQUIP:下タイツあり && !TEQUIP:下タイツ破れ
 	PRINTFORM %CALLNAME:TARGET%의
-	PRINTL 하반신에 타이츠 위로 떨리는 로터를 갖다 댔다…
+	PRINTL 하반신에 타이츠 위로 떨리는 로터를 눌러 댔다…
 	RETURN 0
 ENDIF
 IF TEQUIP:下半身下着あり > 0
 	IF TALENT:恋慕
 		PRINTFORM 스스로 속옷을 내리고 준비하고 있다
 	ELSE
-		PRINTFORM 속옷을 내려 노출시켰다
+		PRINTFORM 속옷을 벗겨 노출시켰다
 	ENDIF
 ELSEIF TEQUIP:下半身服あり && TEQUIP:スカートめくり可
 	IF TALENT:恋慕
@@ -116,28 +116,28 @@ ELSEIF TEQUIP:下半身服あり && TEQUIP:スカートめくり可
 	ENDIF
 ELSEIF TEQUIP:下半身服あり && TEQUIP:ずらし可
 	IF TALENT:恋慕
-		PRINTFORM 스스로 옷을 내려 준비하고 있다
+		PRINTFORM 스스로 옷을 내리고 준비하고 있다
 	ELSE
-		PRINTFORM 옷을 내려 노출시켰다
+		PRINTFORM 옷을 벗겨 노출시켰다
 	ENDIF
 ENDIF
 PRINTFORM %CALLNAME:TARGET%의
 ;オトコ＋欲情のPALAMLV3以上
 IF !(TALENT:性別 & 1) && (PALAM:欲情 >= PALAMLV:3)
-	PRINTL 단단하게 솟아오른 페니스에 떨리는 로터를 갖다 댔다…
+	PRINTL 단단하게 발기한 페니스에 떨리는 로터를 눌러 댔다…
 ;オトコ
 ELSEIF !(TALENT:性別 & 1)
-	PRINTL 페니스에 떨리는 로터를 갖다 댔다…
+	PRINTL 페니스에 떨리는 로터를 눌러 댔다…
 ;ふたなり＋欲情のPALAMLV3以上
 ELSEIF (TALENT:性別 & 3) == 3 && PALAM:欲情 >= PALAMLV:3
-	PRINTL 축축한 은밀한 입술에 떨리는 로터를 갖다 댔다…
+	PRINTL 축축한 음순에 떨리는 로터를 눌러 댔다…
 ;ふたなり
 ELSEIF (TALENT:性別 & 3) == 3
-	PRINTL 은밀한 입술에 떨리는 로터를 갖다 댔다…
+	PRINTL 음순에 떨리는 로터를 눌러 댔다…
 ;欲情のPALAMLV3以上
 ELSEIF PALAM:欲情 >= PALAMLV:3
-	PRINTL 단단하고 뾰족한 클리토리스에 떨리는 로터를 갖다 댔다…
+	PRINTL 단단하게 솟아오른 클리토리스에 떨리는 로터를 눌러 댔다…
 ELSE
-	PRINTL 클리토리스에 떨리는 로터를 갖다 댔다…
+	PRINTL 클리토리스에 떨리는 로터를 눌러 댔다…
 ENDIF
 

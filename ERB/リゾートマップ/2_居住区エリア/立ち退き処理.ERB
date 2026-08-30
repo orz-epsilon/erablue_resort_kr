@@ -13,7 +13,7 @@ VARSET 定住者一覧
 
 DRAWLINE
 PRINTL 정착자를 퇴거시킵니다.
-PRINTL 퇴거시킨 캐릭터는 호감도 요소: 우정 및 신뢰도가 크게 하락하므로 주의하십시오.
+PRINTL 퇴거시킨 캐릭터는호감도要素：우정_H_도와 신뢰도가 크게 하락하니 주의해 주세요.
 PRINTL
 DRAWLINE
 IF 動作モード
@@ -21,12 +21,12 @@ IF 動作モード
 	PRINTBUTTON "[정착자를 퇴거시키기]", 1003
 	RESETCOLOR
 	PRINT  / 
-	PRINTPLAIN [동거를 해제한다]
+	PRINTPLAIN [동거를 해제하기]
 ELSE
 	PRINTPLAIN [정착자를 퇴거시키기]
 	PRINT  / 
 	SETCOLOR カラーパレット("グレーアウト")
-	PRINTBUTTON "[동거를 해제한다]", 1003
+	PRINTBUTTON "[동거를 해제하기]", 1003
 	RESETCOLOR
 ENDIF
 PRINTL
@@ -74,7 +74,7 @@ FOR LOCAL, ページ数 * 17, ページ数 * 17 + 17
 		IF TALENT:(定住者一覧:LOCAL):恋慕
 			LOCALS += @"<font color='#%カラーパレット_HTML("えっちな色")%'>연</font>"
 		ELSEIF TALENT:(定住者一覧:LOCAL):セフレ
-			LOCALS += @"<font color='#%カラーパレット_HTML("ピンク")%'>세</font>"
+			LOCALS += @"<font color='#%カラーパレット_HTML("ピンク")%'>섹</font>"
 		ENDIF
 		LOCALS += "</font>"
 	ELSE
@@ -82,7 +82,7 @@ FOR LOCAL, ページ数 * 17, ページ数 * 17 + 17
 		IF TALENT:(定住者一覧:LOCAL):恋慕
 			LOCALS += @"<font color='#%カラーパレット_HTML("えっちな色")%'>연</font>"
 		ELSEIF TALENT:(定住者一覧:LOCAL):セフレ
-			LOCALS += @"<font color='#%カラーパレット_HTML("ピンク")%'>세</font>"
+			LOCALS += @"<font color='#%カラーパレット_HTML("ピンク")%'>섹</font>"
 		ENDIF
 		LOCALS += "</button>"
 	ENDIF
@@ -112,7 +112,7 @@ IF 選択定住者番号 > -1
 		LOCALS += @"　타입：%成長タイプ:(基礎BATTLE_STATE:(定住者一覧:選択定住者番号):ステータスタイプ保存)%"
 	LOCALS += "<br><br>"
 	LOCALS += "□ 정보 □---------------------------------------------------------------<br>"
-	LOCALS += @"　종족：%GET_TALENTNAME(200, TALENT:(定住者一覧:選択定住者番号):種族,,定住者一覧:選択定住者番号)%"
+	LOCALS += @"　종족:%GET_TALENTNAME(200, TALENT:(定住者一覧:選択定住者番号):種族,,定住者一覧:選択定住者番号)%"
 	IF TALENT:(定住者一覧:選択定住者番号):エルーン耳
 		LOCALS += "（엘룬 귀）"
 	ENDIF
@@ -126,7 +126,7 @@ IF 選択定住者番号 > -1
 		LOCALS += "（하빈 귀）"
 	ENDIF
 	LOCALS += "<br>"
-	LOCALS += "　성별："
+	LOCALS += "　성별:"
 	SELECTCASE TALENT:(定住者一覧:選択定住者番号):性別
 		CASE 1
 			LOCALS += "여성"
@@ -148,10 +148,13 @@ IF 選択定住者番号 > -1
 				LOCALS += "（동정）　"
 			ENDIF
 	ENDSELECT
-	LOCALS += @"가슴 사이즈：%GET_TALENTNAME(205, TALENT:(定住者一覧:選択定住者番号):バストサイズ,,定住者一覧:選択定住者番号)%"
+	LOCALS += @"가슴사이즈：%GET_TALENTNAME(205, TALENT:(定住者一覧:選択定住者番号):バストサイズ,,定住者一覧:選択定住者番号)%"
 	LOCALS += "<br>"
 	LOCALS += @"　성지식 레벨：%性知識段階表示(知識素質:(定住者一覧:選択定住者番号):性知識, 定住者一覧:選択定住者番号)%"
-	IF TALENT:(定住者一覧:選択定住者番号):ランダムキャラ
+	IF CFLAG:(定住者一覧:選択定住者番号):性知識成長禁止
+		LOCALS += "（성장✕）"
+	ENDIF
+	IF ランダムキャラ判定(NO:(定住者一覧:選択定住者番号))
 		LOCALS += @"<br>　용모：%GET_TALENTNAME(160, TALENT:(定住者一覧:選択定住者番号):容姿,,定住者一覧:選択定住者番号)%　　"
 		LOCALS += @"체격：%GET_TALENTNAME(161,TALENT:(定住者一覧:選択定住者番号):体格,,定住者一覧:選択定住者番号)%"
 		IF TALENT:(定住者一覧:選択定住者番号):性別 == 3
@@ -243,9 +246,9 @@ IF 選択定住者番号 > -1
 			LOCAL:2 = 0
 		ENDIF
 	NEXT
-	LOCALS += "<br>"
-	LOCALS += "<br>"
-	LOCALS += "<button value='1000'>[1000]이 캐릭터를 퇴거시킨다</button>"
+	LOCALS += "</div>"
+	LOCALS += "<div rect='2125,2600,3675,200' color='#101010'>"
+	LOCALS += "<button value='1000'>[1000]이 캐릭터를 퇴거시키기</button>"
 ENDIF
 LOCALS += "</div>"
 
@@ -273,17 +276,20 @@ SELECTCASE LOCAL
 		RESTART
 	CASE 1003
 		INVERTBIT 動作モード, 0
+		ページ数 = 0
 		RESTART
 	CASE 1000
+		SIF 選択定住者番号 < 0
+			RESTART
 		PRINTL
 		IF 動作モード == 0
 			PRINTFORML 정말로 %NAME表示((定住者一覧:選択定住者番号))%을(를) 퇴거시키겠습니까?
 		ELSE
 			PRINTFORML 정말로 %NAME表示((定住者一覧:選択定住者番号))%와의 동거를 해제하시겠습니까?
 		ENDIF
-		PRINTBUTTON "[0]예", 0
+		PRINTBUTTON "[0]네", 0
 		PRINTL
-		PRINTBUTTON "[1]아니요", 1
+		PRINTBUTTON "[1]아니오", 1
 		PRINTL
 		BINPUT
 		SELECTCASE RESULT
@@ -364,6 +370,14 @@ ELSE
 	CFLAG:キャラ番号:定住追い出しフラグ = 1
 ENDIF
 
+;店も消しておく
+CALL 商業区退職処理(キャラ番号)
+IF RESULT >= 10000
+	PRINTL 소속되어 있던 상업 지구의 점포를 퇴직했습니다.
+ELSE
+	PRINTL 운영하던 상업 지구의 점포를 폐업했습니다.
+ENDIF
+
 ;信頼度低下30000
 CFLAG:キャラ番号:信頼度 = MAX(CFLAG:キャラ番号:信頼度 - 30000, 0)
 CFLAG:キャラ番号:友情度 = MAX(CFLAG:キャラ番号:友情度 - 30000, 0)
@@ -371,12 +385,13 @@ PRINTFORML %CALLNAME:キャラ番号%의 우정・신뢰도가 하락했습니�
 ;好感度レベルの再計算
 
 要素最大値 = MAX(CFLAG:キャラ番号:友情度, CFLAG:キャラ番号:信頼度, CFLAG:キャラ番号:恋心度, CFLAG:キャラ番号:性愛度)
+計算後レベル = 0
 FOR ループ用, 0, 100
 	IF 経験値テーブル:ループ用 >= 要素最大値
 		BREAK
 	ENDIF
+	計算後レベル ++
 NEXT
-計算後レベル = ループ用
 
 IF CFLAG:キャラ番号:好感度レベル > 計算後レベル
 	IF あなた特殊能力:フレンドリーセンス

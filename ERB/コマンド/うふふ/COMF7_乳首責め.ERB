@@ -5,9 +5,9 @@
 @COMNAME7
 #FUNCTIONS
 IF TALENT:陥没乳首 && !TCVAR:陥没乳首露出フラグ
-	TSTR:コマンド名受渡 = 젖꼭지 파기
+	TSTR:コマンド名受渡 = 젖꼭지 희롱
 	SIF GETBIT(FLAG:モード管理, モードビット_同時)
-		TSTR:コマンド名受渡 = 동시에 젖꼭지 파기
+		TSTR:コマンド名受渡 = 동시에 젖꼭지 희롱
 ELSE
 	TSTR:コマンド名受渡 = 젖꼭지 괴롭히기
 	SIF GETBIT(FLAG:モード管理, モードビット_同時)
@@ -29,9 +29,9 @@ TFLAG:コマンドタイプ受渡 = COMTYPE("うふふ_被挿入中")
 連続オート許可 = 1
 
 @COM_TOOLTIP_7
-LOCALS = <br>■유두 괴롭힘<br>
+LOCALS = <br>■젖꼭지 괴롭히기<br>
 LOCALS += "상대의 젖꼭지를 괴롭히고 애무하는 커맨드."
-LOCALS += "<br>COM타입: 우후후or피삽입중<br>획득 소스: 쾌B・노출・접촉・고통"
+LOCALS += "<br>COM 타입: 우후후or피삽입중<br>획득 소스: 쾌B・노출・접촉・고통"
 LOCALS += "<br>고유 획득 경험: 젖꼭지 개발(TARGET)<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
@@ -121,72 +121,72 @@ RETURN 1
 ;-------------------------------------------------
 @MESSAGE_COM7
 #DIM 同時キャラ番号
-PRINTFORM %CALLNAME:PLAYER%는
+PRINTFORM %CALLNAME:PLAYER%은(는)
 IF GETBIT(FLAG:モード管理, モードビット_同時)
 	FOR 同時キャラ番号, 0, 同時モード_選択数
 		SIF 同時キャラ番号 > 0
 			PRINT ,
 		PRINTFORM %CALLNAME:(同時モード_選択キャラ:同時キャラ番号)%
 	NEXT
-	PRINT 의 끝부분의 돌기를 손가락으로 굴렸다…
+	PRINT 의 끝부분 돌기를 손가락으로 굴렸다…
 	RETURN 0
 ENDIF
 
 IF MODE_存在判定_順不同("ＶＡ挿入系", PLAYER, TARGET)
-	PRINTFORM %CALLNAME:TARGET%와 이어진 채 %OPPAI_DESCRIPTION(TARGET)%
+	PRINTFORM %CALLNAME:TARGET%와 연결된 채%OPPAI_DESCRIPTION(TARGET)%
 ELSE
-	PRINTFORM %CALLNAME:TARGET%의 %OPPAI_DESCRIPTION(TARGET)%
+	PRINTFORM %CALLNAME:TARGET%의%OPPAI_DESCRIPTION(TARGET)%
 ENDIF
 SELECTCASE TALENT:陥没乳首
 	CASE 0
 		;欲情のPALAMLV3以上
 		IF PALAM:欲情 >= PALAMLV:3
-			PRINT 의 끝부분의, 완전히 단단해진 돌기를
+			PRINT 의 끝부분, 완전히 단단해진 돌기를
 			IF MODE_存在判定_完全一致("授乳手コキ", TARGET, PLAYER) || MODE_存在判定_完全一致("乳首吸い", PLAYER, TARGET)
 				PRINTL 혀로 굴렸다…
 			ELSEIF TEQUIP:上半身下着あり == -2 && RAND:3
-				PRINTL 장식된 피어스째로 쥐어짜 올렸다…
+				PRINTL 장식된 피어스째로 쥐어짰다…
 			ELSEIF TEQUIP:上半身下着あり == -3 && RAND:3
-				PRINTL 장식된 명찰을 잡아당겨, 괴롭혔다…
+				PRINTL 장식된 명찰을 잡아당겨 괴롭혀 주었다…
 			ELSE
 				PRINTL 집어 올렸다…
 			ENDIF
 		ELSE
-			PRINT 의 끝부분의, 아직 부드러운 돌기를
+			PRINT 의 끝에 있는, 아직 부드러운 돌기를
 			IF MODE_存在判定_完全一致("授乳手コキ", TARGET, PLAYER) || MODE_存在判定_完全一致("乳首吸い", PLAYER, TARGET)
 				PRINTL 혀로 굴렸다…
 			ELSEIF TEQUIP:上半身下着あり == -2 && RAND:3
 				PRINTL 장식된 피어스째로 쥐어짜 올렸다…
 			ELSEIF TEQUIP:上半身下着あり == -3 && RAND:3
-				PRINTL 장식된 명찰을 잡아당겨, 괴롭혔다…
+				PRINTL 장식된 명찰을 잡아당겨 괴롭혀 주었다…
 			ELSE
 				PRINTL 집어 올렸다…
 			ENDIF
 		ENDIF
 	CASE 1
 		IF !TCVAR:陥没乳首露出フラグ
-			PRINT 의 움푹 들어간 곳에 손가락을 넣어, 숨겨진 유두를
+			PRINT 의 오목한 곳에 손가락을 넣어, 숨겨진 유두를
 			SIF MODE_存在判定_完全一致("授乳手コキ", TARGET, PLAYER) || MODE_存在判定_完全一致("乳首吸い", PLAYER, TARGET)
 				PRINT 혀로
-			PRINTL 후벼 파고, 주물렀다…
+			PRINTL 파고들어, 희롱했다…
 		ELSEIF RFLAG:コマンド結果受渡し変数
 			;勃起直後パターン
-			PRINT 의 움푹 들어간 곳에
+			PRINT 의 오목한 곳에
 			IF MODE_存在判定_完全一致("授乳手コキ", TARGET, PLAYER) || MODE_存在判定_完全一致("乳首吸い", PLAYER, TARGET)
 				PRINT 혀
 			ELSE
 				PRINT 손가락
 			ENDIF
-			PRINTL 을 넣어 휘젓자,
-			PRINTFORML 딱딱하게 굳은 %CALLNAME:TARGET%의 젖꼭지가 밖으로 모습을 드러냈다
+			PRINTL 을(를) 넣어 파고들자,
+			PRINTFORML 오독오독하게 단단해진 %CALLNAME:TARGET%의 유두가 밖으로 얼굴을 내밀었다
 		ELSE
-			PRINT 끝에 달린, 완전히 딱딱해진 돌기를
+			PRINT 끝에, 완전히 단단해진 돌기를
 			IF MODE_存在判定_完全一致("授乳手コキ", TARGET, PLAYER) || MODE_存在判定_完全一致("乳首吸い", PLAYER, TARGET)
 				PRINTL 혀로 굴렸다…
 			ELSEIF TEQUIP:上半身下着あり == -2 && RAND:3
-				PRINTL 장식된 피어스째로 쥐어짜 올렸다…
+				PRINTL 장식된 피어스째로 쥐어짰다…
 			ELSEIF TEQUIP:上半身下着あり == -3 && RAND:3
-				PRINTL 꾸며진 명찰을 잡아당겨, 괴롭혀 주었다…
+				PRINTL 장식된 명찰을 잡아당겨 괴롭혔다…
 			ELSE
 				PRINTL 집어 올렸다…
 			ENDIF

@@ -1,4 +1,4 @@
-﻿
+
 @イベント発生条件_キャライベント_未央ちゃん異世界に行く！
 ;開放条件を満たしたら1を返すこと
 LOCAL = GETCHARA(1006)
@@ -9,33 +9,33 @@ RETURN 0
 
 @イベント関数_キャライベント_未央ちゃん異世界に行く！(ARG)
 DRAWLINE
-PRINTL ［未央ちゃん異世界に行く！］
+PRINTL ［미오쨩 이세계에 가다!］
 DRAWLINE
 PRINTW
-PRINTFORMW %CALLNAME:PLAYER%が門にZPを注ぐ。
-PRINTFORMW すると門が光り輝き、平行世界への道を開いて────中から一人の少女が転がり出てきた。
-PRINTFORMW 少女は華美な白い服装をして、手には銃を持っている。騎空士の類だろうか。
+PRINTFORMW %CALLNAME:PLAYER%이(가) 문에 ZP를 쏟아붓는다.
+PRINTFORMW 그러자 문이 빛나며 평행 세계로 가는 길을 열고────그 안에서 한 소녀가 굴러 나왔다.
+PRINTFORMW 소녀는 화려한 흰색 복장을 하고 손에는 총을 들고 있었다. 기공사 종류일까.
 PRINTL
-PRINTL 未央：
-PRINTFORMW 「わわっ、洞窟！？　もしかしてもう本番始まってる！？」
+PRINTL 미오：
+PRINTFORMW 「와왓, 동굴!? 혹시 벌써 본방 시작된 거야!?」
 PRINTL
-PRINTFORMW 戸惑い驚く少女に%CALLNAME:PLAYER%は簡単な説明を行う。
-PRINTFORMW ここは元いた世界とは別の世界であること。
-PRINTFORMW いつでも元の世界には戻れること。
-PRINTFORMW リゾートの顧客開拓のために道を繋げたので、良ければ楽しんで行って欲しいということ。
-PRINTFORMW 実際に門の中に戻ってみた少女は納得したのか、落ち着きを取り戻している。
+PRINTFORMW 당황하고 놀라는 소녀에게 %CALLNAME:PLAYER%은(는) 간단한 설명을 해준다.
+PRINTFORMW 이곳은 원래 있던 세계와는 다른 세계라는 것.
+PRINTFORMW 언제든지 원래 세계로 돌아갈 수 있다는 것.
+PRINTFORMW 리조트 고객 개척을 위해 길을 연결했으니, 괜찮다면 즐기고 가줬으면 한다는 것.
+PRINTFORMW 실제로 문 안으로 돌아가 본 소녀는 납득했는지, 안정을 되찾고 있었다.
 PRINTL
-PRINTL 未央：
-PRINTFORMW 「異世界ってホントにあったんだ……
-PRINTFORMW 　凄い凄い！　じゃあ早速異世界リゾートで探検だぁ！
-PRINTFORMW 　……って、本番前だったんだ私！　ごめん、一回戻っても大丈夫かな？」
+PRINTL 미오：
+PRINTFORMW 「이세계가 정말로 있었네……
+PRINTFORMW 　대단해 대단해! 그럼 바로 이세계 리조트에서 탐험이다!
+PRINTFORMW 　……어라, 나 본방 전이었지! 미안, 한 번 돌아가도 괜찮을까?」
 PRINTL
-PRINTFORMW もちろん、と%CALLNAME:PLAYER%は頷いて少女に魔法を掛ける。
-PRINTFORMW 念じればいつでもこちらの世界へ移動出来る魔法だ。と少女に説明する。
+PRINTFORMW 물론, 하고%CALLNAME:PLAYER%은(는) 고개를 끄덕이며 소녀에게 마법을 건다.
+PRINTFORMW 마음속으로 생각하면 언제든지 이 세계로 이동할 수 있는 마법이라고 소녀에게 설명한다.
 PRINTL
-PRINTL 未央：
-PRINTFORMW 「ありがとう！　オフの日になったらまた来るから！
-PRINTFORMW 　私、本田未央。よろしくね、リゾートの管理人さん」
+PRINTL 미오:
+PRINTFORMW 「고마워! 쉬는 날이 되면 또 올게!
+PRINTFORMW 　나는 혼다 미오. 잘 부탁해, 리조트 관리인님」
 
 CALL イベント完了フラグ汎用処理("未央ちゃん異世界に行く！")
 

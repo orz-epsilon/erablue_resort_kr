@@ -28,14 +28,14 @@ SPLIT TSTR:NEWイベントフラグ, "_", NEWフラグ用リスト
 
 DRAWLINE
 IF FLAG:クリア済み視聴フラグ
-	PRINTL 다시 시청할 클리어한 엔딩 이벤트를 선택해 주세요.
-	PRINTL ※기본적으로 다시 시청할 때는 보상 등을 얻을 수 없습니다. 이벤트 중에 「◯◯을(를) 입수했다」고 나와도 얻을 수 없습니다.
-	PRINTL ※다시 시청할 때는 엔딩 처리가 되지 않습니다. 강하게 뉴 게임의 조건도 충족하지 않습니다.
+PRINTL 재시청할 클리어한 엔딩 이벤트를 선택해주세요.
+PRINTL ※기본적으로 재시청 시에는 보상 등을 획득할 수 없습니다. 이벤트 중에 「◯◯을(를) 입수했다」고 표시되어도 획득되지 않습니다.
+PRINTL ※재시청 시에는 엔딩 처리가 되지 않습니다. 강하게 뉴 게임의 조건도 충족하지 않습니다.
 ELSE
 	PRINTL 시작할 이벤트를 선택해 주세요.
 ENDIF
 DRAWLINE
-PRINT 표시 카테고리:
+PRINT 표시 카테고리：
 SIF 表示カテゴリ == 0
 	SETCOLOR カラーパレット("黄")
 PRINTBUTTON "[ALL]", 10001
@@ -114,24 +114,24 @@ LOCALS = <div rect='81,31,1937,2812' border='31' bcolor='#C0C0C0'></div><div rec
 LOCALS += "<div width='1050' height='125' xpos='337' ypos='0' color='#101010'>엔딩 이벤트</div>"
 LOCALS += "<div rect='2081,31,3937,2812' border='31' bcolor='#C0C0C0' padding='50,25,50'>"
 IF FLAG:エンディング後フラグ && !FLAG:クリア済み視聴フラグ
-	LOCALS += "이번 회차에서는 이미 엔딩에 도달했습니다。<br>"
-	LOCALS += "다른 결말을 원할 경우, 「강하게 NEWGAME」에서 회차를 진행해 주세요。<br>"
+	LOCALS += "이번 회차에서는 이미 엔딩에 도달했습니다.<br>"
+	LOCALS += "다른 결말을 원하시면 「강하게 NEWGAME」으로 회차를 진행해주세요.<br>"
 ELSEIF 表示キー == -1
-	LOCALS += "왼쪽 목록에서 원하는 엔딩을 선택해 주세요。<br>"
-	LOCALS += "이 칸에는 엔딩의 상세 내용과, 엔딩을 시청할지 여부의 확인 버튼이 표시됩니다。<br>"
+	LOCALS += "왼쪽 목록에서 원하는 엔딩을 선택해주세요.<br>"
+	LOCALS += "이 칸에는 엔딩의 상세 정보와, 엔딩을 시청할지 여부를 확인하는 버튼이 표시됩니다.<br>"
 ELSE
 	CALLFORM イベント関数_エンディングイベント_%DT_CELL_GETS("エンディング用変数配列", 表示用リスト:表示キー, "イベント名", 1)%("設定取得", 表示用リスト:表示キー)
 	LOCALS += TSTR:ツールチップ受渡
 	LOCALS += "<br>"
 	IF FLAG:クリア済み視聴フラグ
-		LOCALS += "<button value='10000'>[10000]이 엔딩을 다시 시청하기</button><br>"
+		LOCALS += "<button value='10000'>[10000]이 엔딩을 재시청하기</button><br>"
 	ELSE
 		RESULT = 0
 		CALLFORM イベント関数_エンディングイベント_%DT_CELL_GETS("エンディング用変数配列", 表示用リスト:表示キー, "イベント名", 1)%("実行条件", 表示用リスト:表示キー)
 		IF RESULT
-			LOCALS += "<button value='10000'>[10000]이 엔딩으로 결정한다</button><br>"
+			LOCALS += "<button value='10000'>[10000]이 엔딩으로 결정하기</button><br>"
 		ELSE
-			LOCALS += @"<font color='#%カラーパレット_HTML("グレーアウト")%'>[10000]이 엔딩으로 결정한다　　※실행 조건 미달</font><br>"
+			LOCALS += @"<font color='#%カラーパレット_HTML("グレーアウト")%'>[10000]이 엔딩으로 결정하기　　※실행 조건 미달</font><br>"
 		ENDIF
 	ENDIF
 ENDIF
@@ -176,10 +176,10 @@ SELECTCASE LOCAL
 	CASE 10000
 		DRAWLINE
 		IF !FLAG:クリア済み視聴フラグ
-			PRINTFORML 『%DT_CELL_GETS("エンディング用変数配列", 表示用リスト:表示キー, "イベント名", 1)%』의 엔딩을 맞이합니다.
-			PRINTL 괜찮습니까?
+PRINTFORML 『%DT_CELL_GETS("エンディング用変数配列", 表示用リスト:表示キー, "イベント名", 1)%』의 엔딩을 맞이합니다.
+			PRINTL 괜찮으시겠습니까?
 			PRINTBUTTONLC "[0] 예", 0
-			PRINTBUTTONLC "[1] 아니요", 1
+			PRINTBUTTONLC "[1] 아니오", 1
 			PRINTL
 			BINPUT
 			SIF RESULT != 0

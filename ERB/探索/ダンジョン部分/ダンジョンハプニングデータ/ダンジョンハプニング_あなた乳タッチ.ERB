@@ -2,14 +2,15 @@
 #DIM 対象キャラ番号
 
 WSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 무언가에 걸려 넘어졌다!
-KSTR:(K++) = 다행히도%CALLNAME:PLAYER%이(가) 받아주었지만,
+KSTR:(K++) = 다행히도 %CALLNAME:PLAYER%이(가) 받아주었지만,
 SELECTCASE TALENT:PLAYER:バストサイズ
 	CASE IS <= 0
-		KSTR:(K++) = 그 순간, 가슴 부분에 손이 닿아버렸다._PAGE
+		KSTR:(K++) = 그 바람에, 가슴 부분에 손이 닿아버렸다._PAGE
 	CASEELSE
-		KSTR:(K++) = 그 순간, 풍만한 가슴을 움켜쥐어 버렸다._PAGE
+		KSTR:(K++) = 그 바람에, 풍만한 가슴을 움켜쥐고 말았다._PAGE
 ENDSELECT
 
+CALL ダンジョンハプニング時画像表示処理(対象キャラ番号, "あなた乳タッチ")
 CALL メッセージ欄表示用関数()
 CALL 口上変数初期化
 
@@ -35,11 +36,11 @@ IF 口上有無確認(0, 1) == 0
 						KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 황급히 떨어져, 얼굴을 새빨갛게 물들이며 사과를 반복하고 있다…
 					CASE 2
 						;受入れ
-						KSTR:(K++) = %CALLNAME:PLAYER%은(는)%CALLNAME:対象キャラ番号%에게 다친 곳은 없는지 걱정하자,
+						KSTR:(K++) = %CALLNAME:PLAYER%은(는) %CALLNAME:対象キャラ番号%에게 다친 곳은 없는지 걱정하자,
 						KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 얼굴을 새빨갛게 물들이며 과장되게 사과했다
 					CASE 3
 						;喜び
-						KSTR:(K++) = %CALLNAME:PLAYER%은(는)%CALLNAME:対象キャラ番号%에게 다친 곳은 없는지 걱정하자,
+						KSTR:(K++) = %CALLNAME:PLAYER%은(는) %CALLNAME:対象キャラ番号%에게 다친 곳은 없는지 걱정하자,
 						KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 얼굴을 새빨갛게 물들이며 사과와 도와준 것에 대한 감사를 표했다.
 				ENDSELECT
 			ENDIF
@@ -55,12 +56,12 @@ IF 口上有無確認(0, 1) == 0
 						KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 황급히 떨어져, %CALLNAME:PLAYER%에게 사과와 도와준 것에 대한 감사를 표했다
 					CASE 2
 						;受入れ
-						KSTR:(K++) = %CALLNAME:PLAYER%은(는)%CALLNAME:対象キャラ番号%에게 다친 곳은 없는지 걱정하자,
-						KSTR:(K++) = %CALLNAME:対象キャラ番号%는 괜찮다고 말하면서 사과와 도와준 것에 대한 감사를 표했다.
+						KSTR:(K++) = %CALLNAME:PLAYER%은(는) %CALLNAME:対象キャラ番号%에게 다친 곳은 없는지 걱정하자,
+KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 괜찮다고 말하며 사과와 도와준 것에 대한 감사를 표했다.
 					CASE 3
 						;喜び
-						KSTR:(K++) = %CALLNAME:PLAYER%는 %CALLNAME:対象キャラ番号%에게 다친 곳은 없는지 걱정하자,
-						KSTR:(K++) = %CALLNAME:対象キャラ番号%는 괜찮다고 말하면서 사과와 도와준 것에 대한 감사를 표했다
+KSTR:(K++) = %CALLNAME:PLAYER%은(는) %CALLNAME:対象キャラ番号%에게 다친 곳은 없는지 걱정하자,
+KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 괜찮다고 말하며 사과와 도와준 것에 대한 감사를 표했다
 				ENDSELECT
 			ENDIF
 	ENDSELECT

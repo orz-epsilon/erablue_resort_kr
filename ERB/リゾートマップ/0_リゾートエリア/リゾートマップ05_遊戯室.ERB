@@ -1,4 +1,4 @@
-
+﻿
 
 @マップ紹介_5
 ;とりあえず5行
@@ -39,14 +39,16 @@ AA:23 = ■　　　　　　　　　　　　　　　　　　　　　　　
 AA:24 = ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■　　↓　　■■■■
 AA:25 = 　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　02
 AA:26 = 
-AA:27 = 二：ロビーへ　　　　　三：バーエリア　　　　四：ボードゲームエリア
-AA:28 = 五：卓球場　　　　　　
+AA:27 = 二：로비로　　　　　　三：바 에리어　　　　　四：보드게임 에리어
+AA:28 = 五：탁구장　
+; AA:27 = 二：ロビーへ　　　　　三：バーエリア　　　　四：ボードゲームエリア
+; AA:28 = 五：卓球場　　　　　　
 
 IF 施設改造度:5:6
 	AA:19 += "　"
 	AA:20 += "　→06"
 	AA:21 += "　"
-	AA:28 += "육:도서실"
+	AA:28 += "육：도서실"
 ELSE
 	AA:19 += "■"
 	AA:20 += "■"
@@ -57,19 +59,17 @@ ENDIF
 #FUNCTION
 SELECTCASE ARG
 	CASE 502
-		TSTR:場所名受渡 = 로비
+		TSTR:場所名受渡 = ロビー
 	CASE 503
-		TSTR:場所名受渡 = 바
+		TSTR:場所名受渡 = バーエリア
 	CASE 504
-		TSTR:場所名受渡 = 보드게임 구역
+		TSTR:場所名受渡 = ボードゲームエリア
 	CASE 505
-		TSTR:場所名受渡 = 탁구장
+		TSTR:場所名受渡 = 卓球場
 	CASE 506
 		SIF 施設改造度:5:6
-			TSTR:場所名受渡 = 도서실
+			TSTR:場所名受渡 = 図書室
 ENDSELECT
-
-
 @DRAW_MAP_BG_0_5(SLICED, 表示文字列)
 #DIMS REF 表示文字列
 #DIMS SLICED
@@ -101,12 +101,12 @@ ENDSELECT
 
 LOCALS = 리조트 하우스 내부의 유희실을 개조합니다.<br><br>
 IF 施設改造度:5:0 < 1
-	LOCALS += @"■<button value='200'>[유희실 개조]</button> Lv{施設改造度:5:0}>{施設改造度:5:0 + 1} (필요:100,000루피)<br>"
+	LOCALS += @"■<button value='200'>[유희실 개조]</button> Lv{施設改造度:5:0}>{施設改造度:5:0 + 1} （필요:100,000루피）<br>"
 ELSE
-	LOCALS += @"■[유희실 개조] Lv{施設改造度:5:0}:상한<br>"
+	LOCALS += @"■[유희실 개조] Lv{施設改造度:5:0}：상한<br>"
 ENDIF
 IF 施設改造度:5:0 > 0 && 施設改造度:5:6 < 1
-	LOCALS += @"└■<button value='201'>[도서실을 증축한다]</button> (필요:70,000루피)<br>"
+	LOCALS += @"└■<button value='201'>[도서실을 증축한다]</button> （필요:70,000루피）<br>"
 ELSEIF 施設改造度:5:6 > 0
 	LOCALS += @"└■[도서실을 증축한다] 증축 완료<br>"
 ENDIF
@@ -121,9 +121,9 @@ SELECTCASE ARG
 		PRINTL 유희실에 다음 시설이 도입됩니다.
 		PRINTBUTTON "■유희실 개별 맵 해방", 500
 		PRINTL 
-		PRINTBUTTON "■바 도입", 501
+		PRINTBUTTON "■바 에리어 도입", 501
 		PRINTL 
-		PRINTBUTTON "■보드게임 구역 도입", 502
+		PRINTBUTTON "■보드게임 에리어 도입", 502
 		PRINTL 
 		PRINTBUTTON "■탁구실 도입", 503
 		PRINTL 
@@ -141,7 +141,7 @@ SELECTCASE ARG
 				施設改造度:5:0 = 1
 				MONEY -= 100000
 				PRINTL 유희실을 개조했습니다!
-				PRINTW (滞在キャラ上限＋５)
+				PRINTW (체류 캐릭터 상한＋５)
 				CALL 滞在可能キャラ数再計算
 				CALL RESET_GRAPH_0
 				CALL 履歴データベース登録(CFLAG:MASTER:人物番号, @"遊戯室をLv1に改造した","実績")
@@ -155,13 +155,13 @@ SELECTCASE ARG
 				PRINTW
 			CASE 501
 				DRAWLINE
-				PRINTL 가벼운 식사와 술을 즐기는 바와 다트, 당구 등 어른스러운 게임을 제공하는 구역입니다.
-				PRINTL 느긋하게 시간을 보내면서 친구들과 친목을 다질 수 있습니다.
+				PRINTL 간단한 식사와 술을 즐길 수 있는 바와, 다트나 당구 등 어른스러운 게임을 제공하는 구역입니다.
+				PRINTL 느긋하게 시간을 보내면서, 친구들과 친목을 다질 수 있습니다.
 				PRINTW
 			CASE 502
 				DRAWLINE
 				PRINTL 다양한 보드게임이 준비된 구역입니다.
-				PRINTL 룻!에 등장했던 TRPG나 왐두스가 좋아하는 주사위 놀이 등으로 놀 수 있습니다. (일부 미구현)
+				PRINTL 룻!에 등장했던 TRPG나, 왐듀스가 좋아하는 주사위 게임 등으로 놀 수 있습니다. (일부 미구현)
 				PRINTW
 			CASE 503
 				DRAWLINE
@@ -175,7 +175,7 @@ SELECTCASE ARG
 		DRAWLINE
 		PRINTL 유희실에 도서실이 도입됩니다.
 		PRINTL 에로 서적 관련 시스템이 해금되어, 임의의 캐릭터에게 특정 성벽을 부여할 수 있게 됩니다.
-		PRINTL 또한 보건 체육 교과서를 사용함으로써, 성지식 능력이 1 미만인 캐릭터의 성지식 능력을 성장시킬 수 있습니다.
+		PRINTL 또한 보건 체육 교과서를 사용함으로써, 성 지식 능력이 1 미만인 캐릭터의 성 지식 능력을 성장시킬 수 있습니다.
 		PRINTL 
 		PRINTL 도서실을 증축하시겠습니까? (필요:70,000루피)
 		PRINTBUTTONLC "[0] 예", 0
@@ -190,7 +190,7 @@ SELECTCASE ARG
 				施設改造度:5:6 = 1
 				MONEY -= 70000
 				PRINTL 도서실을 증축했습니다!
-				PRINTW (滞在キャラ上限＋５)
+				PRINTW (체류 캐릭터 상한 +5)
 				CALL 滞在可能キャラ数再計算
 				CALL RESET_GRAPH_0
 				CALL 履歴データベース登録(CFLAG:MASTER:人物番号, @"遊戯室に図書室を増築した","実績")

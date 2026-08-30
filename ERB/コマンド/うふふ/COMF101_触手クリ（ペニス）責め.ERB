@@ -5,9 +5,9 @@
 @COMNAME101
 #FUNCTIONS
 IF GETBIT(TALENT:TARGET:性別, 1)
-	TSTR:コマンド名受渡 = 촉수 페니스 괴롭힘
+TSTR:コマンド名受渡 = 촉수 페니스 괴롭힘
 ELSE
-	TSTR:コマンド名受渡 = 촉수 클리 괴롭힘
+TSTR:コマンド名受渡 = 촉수 클리 괴롭힘
 ENDIF
 
 
@@ -24,7 +24,7 @@ TFLAG:コマンドタイプ受渡 = COMTYPE("触手系")
 
 @COM_TOOLTIP_101
 LOCALS = <br>■촉수 클리(페니스) 괴롭힘<br>
-LOCALS += "클리 괴롭힘에 특화된 촉수를 내어 강한 쾌락을 주는 커맨드. <br>상대에게 남성기가 있을 경우, 페니스 괴롭힘으로 변화"
+LOCALS += "클리 괴롭힘에 특화된 촉수를 내어, 강한 쾌락을 주는 커맨드. <br>상대에게 남성기가 있는 경우, 페니스 괴롭힘으로 변화"
 LOCALS += "<br>COM 타입: 촉수계<br>획득 소스: 쾌C・노출・접촉"
 LOCALS += "<br>고유 획득 경험: 촉수 조작 경험(PLAYER)<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
@@ -97,45 +97,45 @@ RETURN 1
 #DIM 同時キャラ番号
 
 IF GETBIT(TALENT:TARGET:性別, 1)
-	LOCALS = 페니스
+LOCALS = 페니스
 ELSE
-	LOCALS = 클리
+LOCALS = 클리
 ENDIF
 
-PRINTFORM %CALLNAME:PLAYER%는
+PRINTFORM %CALLNAME:PLAYER%은(는)
 
 IF GETBIT(FLAG:モード管理, モードビット_同時)
-	PRINT 수많은 촉수를
+PRINT 수많은 촉수를
 	FOR 同時キャラ番号, 0, 同時モード_選択数
 		SIF 同時キャラ番号 > 0
-			PRINT ,
-		PRINTFORM %CALLNAME:(同時モード_選択キャラ:同時キャラ番号)%의
+PRINT ,
+		PRINTFORM %CALLNAME:(同時モード_選択キャラ:同時キャラ番号)%
 	NEXT
-	PRINTFORM 은밀한 부위에 달라붙게 했다
+PRINTFORM 의 은밀한 곳에 달라붙게 했다
 	RETURN 0
 ENDIF
 
-PRINTFORM 자신의 촉수를 %CALLNAME:TARGET%의
+PRINTFORM 자신의 촉수를%CALLNAME:TARGET%의
 IF TEQUIP:下腹部前鎧あり || TEQUIP:下腹部後鎧あり
-	PRINT 갑옷 틈새로
+PRINT 갑옷 틈새로
 	IF TEQUIP:下タイツあり
-		PRINT 타이츠 아래로
+PRINT 타이츠 아래로
 	ENDIF
-	PRINT 파고들게 한 다음,
+PRINT 파고들게 하여,
 ELSEIF TEQUIP:下半身服あり
 	PRINT 옷 틈새로
 	IF TEQUIP:下タイツあり
 		PRINT 타이츠 아래로
 	ENDIF
-	PRINT 파고들게 한 다음,
+	PRINT 파고들게 하고,
 ELSEIF TEQUIP:下半身下着あり > 0
 	IF TEQUIP:下タイツあり
 		PRINT 타이츠 아래에서
 	ENDIF
-	PRINT 속옷으로 파고들게 한 다음,
+	PRINT 속옷 안으로 파고들게 하고,
 ENDIF
 IF PALAM:欲情 >= PALAMLV:3
-	PRINT 단단히 치솟아 선
+	PRINT 단단하게 솟아오른
 ENDIF
 PRINTFORML %LOCALS%에 달라붙게 했다
 

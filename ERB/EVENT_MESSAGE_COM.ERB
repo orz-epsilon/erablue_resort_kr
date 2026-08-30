@@ -1,4 +1,4 @@
-﻿;調教時テキスト
+;調教時テキスト
 @TRAIN_MESSAGE
 
 DRAWLINE
@@ -103,7 +103,6 @@ RETURN 0
 
 @TRAIN_MESSAGE_非口上時
 
-DRAWLINE
 RESULT = 1
 IF RFLAG:サイドボタン操作
 ELSEIF TFLAG:オートコマンドフラグ >= 4000
@@ -203,4 +202,44 @@ ELSE
 	ENDCATCH
 ENDIF
 
+SIF LINEISEMPTY() == 0
+	PRINTL 
+
 RETURN 0
+
+
+@TRAIN_MESSAGE_体力限界時(対象キャラ)
+#DIM 対象キャラ
+;特に必要ないけど一応分離して将来的に改造しやすくしておく
+
+;コマンドにダウン時があるかどうかを見る
+IF TFLAG:オートコマンドフラグ == 0
+	IF SELECTCOM_S != ""
+		地の文MOD_関数名 = %SELECTCOM_S%_ダウン時
+		SIF EXISTFUNCTION(@"MESSAGE_COM_S%地の文MOD_関数名%_MOD") > 0
+			地の文MOD_関数名 '= 地の文MOD_関数名 + "_MOD"
+		TRYCCALLFORM MESSAGE_COM_S%地の文MOD_関数名%
+			RETURN  1
+		CATCH
+		ENDCATCH
+	ELSE
+		地の文MOD_関数名 = {SELECTCOM}_ダウン時
+		SIF EXISTFUNCTION(@"MESSAGE_COM%地の文MOD_関数名%_MOD") > 0
+			地の文MOD_関数名 '= 地の文MOD_関数名 + "_MOD"
+		TRYCCALLFORM MESSAGE_COM%地の文MOD_関数名%
+			RETURN  1
+		CATCH
+		ENDCATCH
+	ENDIF
+ENDIF
+
+PRINTDATAL
+DATAFORM %CALLNAME:対象キャラ%은(는) 축 늘어진 모습으로 당하는 대로 있다…
+DATAFORM %CALLNAME:対象キャラ%은(는) 가끔 작게 떨면서도, 당하는 대로 있다…
+DATAFORM 의식이 몽롱한 채, %CALLNAME:対象キャラ%은(는) 당하는 대로 있다…
+DATAFORM %CALLNAME:対象キャラ%은(는) 이제는 신음 소리를 낼 뿐이다…
+DATAFORM 축 늘어진 %CALLNAME:対象キャラ%은(는), %CALLNAME:PLAYER%이(가) 하는 대로 있다…
+DATAFORM %CALLNAME:対象キャラ%은(는), 내던져진 인형 같은 자세에서 움직이지 않는다……
+DATAFORM %CALLNAME:対象キャラ%의 호흡은, 피리 같은 소리를 내며, 아직 가다듬어질 기미가 없다…
+DATAFORM 피로로 인해 정신을 잃은 %CALLNAME:対象キャラ%은(는), 당분간 무엇을 해도 저항할 수 없을 것 같다…
+ENDDATA

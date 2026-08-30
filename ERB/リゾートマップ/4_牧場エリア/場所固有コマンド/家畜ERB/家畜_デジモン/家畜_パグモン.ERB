@@ -1,0 +1,232 @@
+
+
+@家畜情報_パグモン（デジモンシリーズ）(動作モード, 家畜番号 = -1)
+#DIMS 動作モード
+#DIMS 入手名
+#DIM 家畜番号
+#DIM 候補数
+#DIM 進化先No
+
+SELECTCASE 動作モード
+	CASE "出現条件"
+		;出現する場合は１を返す
+		;デジタマからの進化なので出現しない
+		RETURN 0
+	CASE "基礎情報"
+		;フレーバーの解説
+		詳細文文字列受け渡し変数 = 유년기 디지몬의 일종. 둥근 몸으로 활발하게 움직인다. <br>
+		詳細文文字列受け渡し変数 += "5일간 키우면 무작위 디지몬으로 진화한다. <br>"
+		詳細文文字列受け渡し変数 += "（바이러스 종 디지몬으로 진화하기 쉽다）<br>"
+		詳細文文字列受け渡し変数 += "진화 전에 전환하면 기간이 리셋되니 주의. <br>"
+
+		;特殊効果の解説
+		詳細文文字列受け渡し変数２ = 5일간 키우면 다른 가축으로 변화한다.
+		IF 家畜番号 >= 0
+			詳細文文字列受け渡し変数２ += @"（현재 {家畜_記録変数:家畜番号}일 경과）"
+		ENDIF
+		詳細文文字列受け渡し変数２ += "<br>"
+		RETURN 1000
+	CASE "通常_一日終了時効果"
+		;一日終了時レポート処理_その他報告で呼ばれる
+		;５日カウント
+		家畜_記録変数:家畜番号 ++
+		IF 家畜_記録変数:家畜番号 >= 5
+			;進化する
+			RSTR:その他報告_記録文字列 += "　　가축: 파그몬(디지몬 시리즈)이 진화할 것 같다……! <br>"
+			レポート強調フラグ:その他報告 = 1
+		ENDIF
+	CASE "重要_一日終了時効果"
+		;レポート閉じた後に一つずつ呼ばれる
+		IF 家畜_記録変数:家畜番号 >= 5
+			;進化する処理
+			家畜_記録変数:家畜番号 = 0
+
+			;進化先決定
+			IF RAND:2
+				;50%で特定種のデジモンへ
+				候補数 = DT_SELECT("ランダムCSVデータベース", "ランダムキャラ設定 = 'デジモン' And フリー文字列１ = 'ウィルス種'")
+			ELSE
+				;それ以外は全部から抽選
+				候補数 = DT_SELECT("ランダムCSVデータベース", "ランダムキャラ設定 = 'デジモン'")
+			ENDIF
+			IF 候補数 < 1
+				DRAWLINE
+				PRINTFORMW 파그몬은 진화하지 못했다……
+				RETURN 0
+			ENDIF
+
+			進化先No = DT_CELL_GET("ランダムCSVデータベース", RESULT:(RAND:候補数 + 1), "CSV番号", 1)
+
+			DRAWLINE
+			PRINTFORMW 파그몬은 %CSVCALLNAME(進化先No)%으로 진화했다!
+			DRAWLINE
+			CALL ランダムキャラ加入確認_デジモンシリーズ(進化先No)
+		ENDIF
+ENDSELECT
+
+
+@ランダムキャラ加入確認_デジモンシリーズ(進化先No)
+#DIM 進化先No
+#DIM 管理番号
+#DIM キャラ番号
+
+CALL ランダムデジモン生成(進化先No)
+管理番号 = RESULT
+
+$選択部分
+
+PRINTL 진화한 디지몬을 어떻게 하시겠습니까?
+
+;特別飼育区が一杯
+IF 特別飼育区満杯()
+	SETCOLOR カラーパレット("グレーアウト")
+	PRINTPLAIN [0] 계속해서 리조트에서 돌본다 (특별 사육 구역이 가득 찼습니다)
+	RESETCOLOR
+ELSE
+	PRINTBUTTON "[0] 계속해서 리조트에서 돌본다", 0
+ENDIF
+PRINTL
+PRINTBUTTON "[1] 원래 세계로 돌려보낸다", 1
+PRINTL
+PRINTBUTTON "[100] 선택지에 대해 설명", 100
+BINPUT
+
+SELECTCASE RESULT
+	CASE 0
+		;キャラを正式追加
+		CALL 特別飼育区_ランダムキャラ追加(管理番号, 進化先No)
+	CASE 1
+		PRINTFORML %ランダムキャラデータ_GETS(Ｒキャラ追加候補記録, 管理番号, "呼び名")%은(는) 야성을 되찾고, 고향인 디지털 월드로 돌아갔다.
+	CASE 100
+		DRAWLINE
+		PRINTL 계속해서 리조트에서 돌본다: 진화한 디지몬이 캐릭터화되어 리조트에 정착합니다.
+		PRINTL 　　　　　　　　　　　　　　　그 후의 행동에 대해 제한은 없습니다.
+		PRINTL
+		PRINTL 원래 세계로 돌려보낸다: 진화한 디지몬이 야성을 되찾고, 자유를 찾아 디지털 월드로 돌아갑니다.
+		PRINTL 　　　　　　　　이 디지몬과는 다시는 만날 수 없게 됩니다.
+		PRINTL 
+		WAIT
+		DRAWLINE
+		GOTO 選択部分
+ENDSELECT
+
+
+
+@ランダムデジモン生成(進化先No)
+#LOCALSIZE 1
+#DIM 進化先No
+#DIM Ｒキャラ属性
+#DIM Ｒキャラ種族
+#DIMS Ｒキャラ特殊種族
+#DIM Ｒキャラ年齢層
+#DIM Ｒキャラ外見年齢
+#DIMS 表示文字列
+#DIMS 追加表示格納
+#DIM 管理番号
+#DIM 特殊種族フラグ
+#DIMS 戦闘設定配列, 5
+#DIMS CSTR切り分け文字列格納, 2
+#DIM 得意武器記録
+
+;次の候補を確認する際にリセットしない処理群
+
+;キャラ生成処理
+CALL ランダムキャラ生成準備開始(Ｒキャラ追加候補記録, 1)
+管理番号 = RESULT
+
+;性別：固定
+CALL ランダムキャラデータ_SET_B(Ｒキャラ追加候補記録, 管理番号, "素質", "性別", CSVTALENT(進化先No, GETNUM(TALENT, "性別")))
+
+;得意武器：固定
+SUBSTRING CSVCSTR(進化先No, GETNUM(CSTR, "戦闘基礎ステータス設定")), 1, -1
+SPLIT RESULTS, " ", 戦闘設定配列
+SPLIT 戦闘設定配列:1, "_", CSTR切り分け文字列格納
+VARSET RESULTS
+得意武器記録 = 0
+SPLIT CSTR切り分け文字列格納:1, "・", RESULTS
+FOR LOCAL, 0, RESULT
+	SETBIT 得意武器記録, 得意武器文字列数値変換(RESULTS:LOCAL)
+NEXT
+CALL ランダムキャラデータ_SET_B(Ｒキャラ追加候補記録, 管理番号, "基礎BATTLE_STATE", "得意武器", 得意武器記録)
+
+;種族：固定
+CALL ランダムキャラデータ_SET_B(Ｒキャラ追加候補記録, 管理番号, "素質", "種族", 種族_その他)
+CALL ランダムキャラデータ_SETS_B(Ｒキャラ追加候補記録, 管理番号, "CSTR", "特殊種族", "デジモン")
+CALL ランダムキャラデータ_SETS_B(Ｒキャラ追加候補記録, 管理番号, "CSTR", "固有素質0", CSVCSTR(進化先No, GETNUM(CSTR, "固有素質0")))
+CALL ランダムキャラデータ_SETS_B(Ｒキャラ追加候補記録, 管理番号, "CSTR", "固有素質1", CSVCSTR(進化先No, GETNUM(CSTR, "固有素質1")))
+CALL ランダムキャラデータ_SETS_B(Ｒキャラ追加候補記録, 管理番号, "CSTR", "固有素質2", CSVCSTR(進化先No, GETNUM(CSTR, "固有素質2")))
+CALL ランダムキャラデータ_SETS_B(Ｒキャラ追加候補記録, 管理番号, "CSTR", "固有素質3", CSVCSTR(進化先No, GETNUM(CSTR, "固有素質3")))
+CALL ランダムキャラデータ_SETS_B(Ｒキャラ追加候補記録, 管理番号, "CSTR", "固有素質4", CSVCSTR(進化先No, GETNUM(CSTR, "固有素質4")))
+CALL ランダムキャラデータ_SETS_B(Ｒキャラ追加候補記録, 管理番号, "CSTR", "固有素質5", CSVCSTR(進化先No, GETNUM(CSTR, "固有素質5")))
+CALL ランダムキャラデータ_SETS_B(Ｒキャラ追加候補記録, 管理番号, "CSTR", "固有素質6", CSVCSTR(進化先No, GETNUM(CSTR, "固有素質6")))
+CALL ランダムキャラデータ_SETS_B(Ｒキャラ追加候補記録, 管理番号, "CSTR", "固有素質7", CSVCSTR(進化先No, GETNUM(CSTR, "固有素質7")))
+CALL ランダムキャラデータ_SETS_B(Ｒキャラ追加候補記録, 管理番号, "CSTR", "固有素質8", CSVCSTR(進化先No, GETNUM(CSTR, "固有素質8")))
+CALL ランダムキャラデータ_SETS_B(Ｒキャラ追加候補記録, 管理番号, "CSTR", "固有素質9", CSVCSTR(進化先No, GETNUM(CSTR, "固有素質9")))
+
+;年齢層/外見年齢：固定
+CALL ランダムキャラデータ_SET_B(Ｒキャラ追加候補記録, 管理番号, "素質", "年齢層", CSVTALENT(進化先No, GETNUM(TALENT, "年齢層")))
+CALL ランダムキャラデータ_SET_B(Ｒキャラ追加候補記録, 管理番号, "素質", "外見年齢", CSVTALENT(進化先No, GETNUM(TALENT, "外見年齢")))
+
+;処女確定
+CALL ランダムキャラデータ_SET_B(Ｒキャラ追加候補記録, 管理番号, "素質", "処女", 1)
+CALL ランダムキャラデータ_SET_B(Ｒキャラ追加候補記録, 管理番号, "素質", "Ａ処女", 1)
+CALL ランダムキャラデータ_SET_B(Ｒキャラ追加候補記録, 管理番号, "素質", "非童貞", 0)
+
+;その他身体的特徴
+CALL ランダムキャラデータ_SET_B(Ｒキャラ追加候補記録, 管理番号, "素質", "尻尾あり", CSVTALENT(進化先No, GETNUM(TALENT, "尻尾あり")))
+CALL ランダムキャラデータ_SET_B(Ｒキャラ追加候補記録, 管理番号, "素質", "角あり", CSVTALENT(進化先No, GETNUM(TALENT, "角あり")))
+CALL ランダムキャラデータ_SET_B(Ｒキャラ追加候補記録, 管理番号, "素質", "エルーン耳", CSVTALENT(進化先No, GETNUM(TALENT, "エルーン耳")))
+CALL ランダムキャラデータ_SET_B(Ｒキャラ追加候補記録, 管理番号, "素質", "ハーヴィン耳", CSVTALENT(進化先No, GETNUM(TALENT, "ハーヴィン耳")))
+CALL ランダムキャラデータ_SET_B(Ｒキャラ追加候補記録, 管理番号, "素質", "毛皮", CSVTALENT(進化先No, GETNUM(TALENT, "毛皮")))
+CALL ランダムキャラデータ_SET_B(Ｒキャラ追加候補記録, 管理番号, "素質", "脱衣不可", CSVTALENT(進化先No, GETNUM(TALENT, "脱衣不可")))
+CALL ランダムキャラデータ_SET_B(Ｒキャラ追加候補記録, 管理番号, "素質", "妊娠不可", CSVTALENT(進化先No, GETNUM(TALENT, "妊娠不可")))
+CALL ランダムキャラデータ_SET_B(Ｒキャラ追加候補記録, 管理番号, "素質", "髪の毛なし", CSVTALENT(進化先No, GETNUM(TALENT, "髪の毛なし")))
+CALL ランダムキャラデータ_SET_B(Ｒキャラ追加候補記録, 管理番号, "素質", "射精不可", CSVTALENT(進化先No, GETNUM(TALENT, "射精不可")))
+CALL ランダムキャラデータ_SET_B(Ｒキャラ追加候補記録, 管理番号, "素質", "飲食不可", CSVTALENT(進化先No, GETNUM(TALENT, "飲食不可")))
+CALL ランダムキャラデータ_SET_B(Ｒキャラ追加候補記録, 管理番号, "素質", "体型固定", CSVTALENT(進化先No, GETNUM(TALENT, "体型固定")))
+
+;立ち絵フォルダ
+CALL ランダムキャラデータ_SETS_B(Ｒキャラ追加候補記録, 管理番号, "CSTR", "汎用立ち絵登録文字列", @"そっくりさん設定_{進化先No}%CSVCALLNAME(進化先No)%")
+CALL ランダムキャラデータ_SETS_B(Ｒキャラ追加候補記録, 管理番号, "CSTR", "フォルダ判定キー", @"%CSVCALLNAME(進化先No)%")
+
+;残りは標準設定でランダム生成実行
+CALL ランダムキャラ生成(Ｒキャラ追加候補記録, 管理番号, CSVCALLNAME(進化先No))
+
+$表示_LOOP
+
+;左パネル (メニュー)
+追加表示格納 '= "<button value='100'>[100] 確認</button>"
+追加表示格納 += "<br>"
+追加表示格納 += "<br>"
+追加表示格納 += "<button value='118'>[118] 이름을 변경한다</button>"
+追加表示格納 += "<br>"
+表示文字列 '= ランダムキャラ表示_左パネル(追加表示格納)
+
+;メインパネル (キャラデータ表示処理)
+表示文字列 += ランダムキャラ表示_メインパネル(Ｒキャラ追加候補記録, 管理番号)
+
+;上パネル (汎用立ち絵表示)
+CALL ランダムキャラ表示_上パネル(Ｒキャラ追加候補記録, 管理番号, 0, 0)
+追加表示格納 '= RESULTS
+
+HTML_PRINT 追加表示格納
+FOR LOCAL, 0, 10
+	PRINTL
+NEXT
+
+HTML_PRINT 表示文字列
+FOR LOCAL, 0, 25
+	PRINTL
+NEXT
+DRAWLINE
+
+$INPUT_LOOP
+BINPUT
+
+SELECTCASE RESULT
+	CASE 100
+		RETURN 管理番号
+	CASE 118
+		CALL ランダムキャラ名前変更(Ｒキャラ追加候補記録, 管理番号, CSVCALLNAME(進化先No))
+		GOTO 表示_LOOP
+ENDSELECT

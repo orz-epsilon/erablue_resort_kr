@@ -129,7 +129,7 @@ FOR ループ用, 0, 5
 NEXT
 PRINTL 
 
-PRINTBUTTON "[999]교환한다", 999
+PRINTBUTTON "[999] 교환한다", 999
 PRINTL
 PRINTBUTTON "[설명]", 998
 
@@ -143,7 +143,7 @@ SELECTCASE RESULT
 	CASE 999
 	CASE 998
 		DRAWLINE
-		PRINTL 받은 패를 한 번 교환하고, 만들어진 족보로 승패를 결정하는 포커 미니게임입니다.
+		PRINTL 배부된 패를 한 번 교환하고, 만들어진 족보로 승패를 결정하는 포커 미니게임입니다.
 		PRINTL 족보는 원 페어, 투 페어, 스리 카드, 스트레이트, 플러시
 		PRINTL 풀 하우스, 포 카드, 스트레이트 플러시, 파이브 카드
 		PRINTL 로열 스트레이트 플러시 순으로 강해집니다.
@@ -408,7 +408,7 @@ SELECTCASE ARG
 	CASE 2
 		PRINT 투 페어
 	CASE 3
-		PRINT 쓰리 카드
+		PRINT 스리 카드
 	CASE 4
 		PRINT 스트레이트
 	CASE 5

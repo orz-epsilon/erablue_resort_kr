@@ -260,7 +260,7 @@ SELECTCASE 選択乗機番号
 					TRYCALLFORM 乗機兵装関数_%DT_CELL_GETS("所持乗機データベース", 表示id, "乗機名", 1)%_{表示アビ番号}("残弾セット")
 				ENDIF
 				TRYCALLFORM 乗機兵装関数_%DT_CELL_GETS("所持乗機データベース", 表示id, "乗機名", 1)%_{表示アビ番号}("アビ名")
-				LOCALS += @"■%TSTR:コマンド名受渡%(고유 무장)<br>"
+				LOCALS += @"■%TSTR:コマンド名受渡%（고유 무장）<br>"
 				TRYCALLFORM 乗機兵装関数_%DT_CELL_GETS("所持乗機データベース", 表示id, "乗機名", 1)%_{表示アビ番号}("アビ説明文")
 				LOCALS += @"%詳細文文字列受け渡し変数%<br>"
 			ELSEIF ISNUMERIC(DT_CELL_GETS("所持乗機データベース", 表示id, @"武装{表示アビ番号}", 1))
@@ -270,13 +270,13 @@ SELECTCASE 選択乗機番号
 					TRYCALLFORM 乗機兵装関数_%DT_CELL_GETS("所持乗機データベース", 表示id, "乗機名", 1)%_{表示アビ番号}("残弾セット", 兵器id)
 				ENDIF
 				TRYCALLFORM 乗機兵装関数_%DT_CELL_GETS("所持乗機データベース", 表示id, "乗機名", 1)%_{表示アビ番号}("アビ名", 兵器id)
-				LOCALS += @"■%TSTR:コマンド名受渡%　　<button value='{表示アビ番号}'>[탑재 병기 변경]</button>　<button value='{表示アビ番号 + 100}'>[제거]</button><br>"
+				LOCALS += @"■%TSTR:コマンド名受渡%　　<button value='{表示アビ番号}'>[탑재 병기 변경]</button>　<button value='{表示アビ番号 + 100}'>[제외]</button><br>"
 				TRYCALLFORM 乗機兵装関数_%DT_CELL_GETS("所持乗機データベース", 表示id, "乗機名", 1)%_{表示アビ番号}("アビ説明文", 兵器id)
 				LOCALS += @"%詳細文文字列受け渡し変数%<br>"
 				TRYCALLFORM 乗機兵装関数_%DT_CELL_GETS("所持乗機データベース", 表示id, "乗機名", 1)%_{表示アビ番号}("装備条件説明文")
 				LOCALS += @"%詳細文文字列受け渡し変数%<br>"
 			ELSE
-				LOCALS += @"■장비 변경 가능 슬롯　　<button value='{表示アビ番号}'>[탑재 병기 변경]</button>　<button value='{表示アビ番号 + 100}'>[제거]</button><br>"
+				LOCALS += @"■장비 변경 가능 슬롯　　<button value='{表示アビ番号}'>[탑재 병기 변경]</button>　<button value='{表示アビ番号 + 100}'>[제외]</button><br>"
 				TRYCALLFORM 乗機兵装関数_%DT_CELL_GETS("所持乗機データベース", 表示id, "乗機名", 1)%_{表示アビ番号}("装備条件説明文")
 				LOCALS += @"%詳細文文字列受け渡し変数%<br>"
 			ENDIF
@@ -297,7 +297,7 @@ SELECTCASE 選択乗機番号
 			CASE 100 TO 105
 				IF DT_CELL_GETS("所持乗機データベース", 表示id, @"武装{LOCAL}", 1) != "固有" && DT_CELL_GETS("所持乗機データベース", 表示id, @"武装{LOCAL}", 1) != "不可"
 					;装備を外す
-					PRINTFORMW %DT_CELL_GETS("所持乗機データベース", 表示id, "乗機名", 1)%의 무장%TOFULL(TOSTR(LOCAL - 100))%에 장비되어 있던%DT_CELL_GETS("所持兵器データベース", TOINT(DT_CELL_GETS("所持乗機データベース", 表示id, @"武装{LOCAL - 100}", 1)), "兵器名", 1)%을(를) 제거했습니다.
+					PRINTFORMW %DT_CELL_GETS("所持乗機データベース", 表示id, "乗機名", 1)%의 무장%TOFULL(TOSTR(LOCAL - 100))%에 장비되어 있던 %DT_CELL_GETS("所持兵器データベース", TOINT(DT_CELL_GETS("所持乗機データベース", 表示id, @"武装{LOCAL - 100}", 1)), "兵器名", 1)%을(를) 해제했습니다.
 					DT_CELL_SET "所持兵器データベース", TOINT(DT_CELL_GETS("所持乗機データベース", 表示id, @"武装{LOCAL - 100}", 1)), "装備乗機id", 0, 1
 					DT_CELL_SET "所持乗機データベース", 表示id, @"武装{LOCAL - 100}", "", 1
 				ENDIF
@@ -412,7 +412,7 @@ SELECTCASE 選択乗機番号
 				ENDIF
 			NEXT
 			IF 素材id:LOCAL == 0
-				PRINTW 소재명이 올바르지 않습니다.
+				PRINTW 소재 이름이 올바르지 않습니다.
 				RETURN -1
 			ENDIF
 			SETCOLOR 属性数値文字色変換(DT_CELL_GET("所持素材データベース", 素材id:LOCAL, "素材属性", 1))
@@ -430,7 +430,7 @@ SELECTCASE 選択乗機番号
 		IF 素材不足フラグ
 			PRINTL 소재가 부족합니다.
 		ELSE
-			PRINTBUTTON "[0] 작성하기", 0
+			PRINTBUTTON "[0] 생성하기", 0
 		ENDIF
 		PRINTL
 		PRINTBUTTON "[999] 돌아가기", 999
@@ -454,7 +454,7 @@ SELECTCASE 選択乗機番号
 				NEXT
 				;設計フラグを0にする
 				DT_CELL_SET "所持乗機データベース", 表示id, "設計状態フラグ", 0, 1
-				PRINTFORMW %DT_CELL_GETS("所持乗機データベース", 表示id, "乗機名", 1)%을(를) 작성했습니다.
+				PRINTFORMW %DT_CELL_GETS("所持乗機データベース", 表示id, "乗機名", 1)%을(를) 생성했습니다.
 		ENDSELECT
 	CASE IS < 1000
 		表示id = 表示用ステータス格納配列:(選択乗機番号 - 500):0
@@ -506,8 +506,8 @@ LOOP 1
 @乗機兵装使用実処理
 #DIM 表示兵装数
 #DIM 兵装番号
-#DIM 공격력_一時保存
-#DIM 명중률_一時保存
+#DIM 攻撃力_一時保存
+#DIM 命中率_一時保存
 #DIM INPUT保存
 #DIMS 兵器名保存
 ;使用兵装表示から兵装実行処理まで全部ここで完結させる
@@ -535,12 +535,12 @@ FOR LOCAL, 0, 表示兵装数
 	IF TSTR:コマンド名受渡 != ""
 		IF アビテンプレート用_アビ封印用フラグ || (乗機残弾種別:兵装番号 == 2 && 乗機残弾数:兵装番号 > 0) || (乗機残弾種別:兵装番号 != 2 && 乗機残弾数:兵装番号 < 1)
 			IF アビ使用確認スキップフラグ == 0
-				NSTR:(K++) = <font color='#%カラーパレット_HTML("グレーアウト")%'><button value = '{LOCAL}'>[{LOCAL}] %TSTR:コマンド名受渡, 26, LEFT%</button>　　%残弾種別名:(乗機残弾種別:兵装番号)%남은 수:{乗機残弾数:兵装番号, 2}</font>　　
+				NSTR:(K++) = <font color='#%カラーパレット_HTML("グレーアウト")%'><button value = '{LOCAL}'>[{LOCAL}] %TSTR:コマンド名受渡, 26, LEFT%</button>　　%残弾種別名:(乗機残弾種別:兵装番号)%남은 수：{乗機残弾数:兵装番号, 2}</font>　　
 			ELSE
-				NSTR:(K++) = <font color='#%カラーパレット_HTML("グレーアウト")%'>[{LOCAL}] %TSTR:コマンド名受渡, 26, LEFT%　　%残弾種別名:(乗機残弾種別:兵装番号)%남은 수:{乗機残弾数:兵装番号, 2}</font>　　
+				NSTR:(K++) = <font color='#%カラーパレット_HTML("グレーアウト")%'>[{LOCAL}] %TSTR:コマンド名受渡, 26, LEFT%　　%残弾種別名:(乗機残弾種別:兵装番号)%남은 수：{乗機残弾数:兵装番号, 2}</font>　　
 			ENDIF
 		ELSE
-			NSTR:(K++) = <button value = '{LOCAL}'>[{LOCAL}] %TSTR:コマンド名受渡, 26, LEFT%　　%残弾種別名:(乗機残弾種別:兵装番号)%남은 수:{乗機残弾数:兵装番号, 2}</button>　　
+NSTR:(K++) = <button value = '{LOCAL}'>[{LOCAL}] %TSTR:コマンド名受渡, 26, LEFT%　　%残弾種別名:(乗機残弾種別:兵装番号)%남은 수량:{乗機残弾数:兵装番号, 2}</button>　　
 		ENDIF
 		兵装関数名保存:LOCAL = %RESULTS:LOCAL%
 		LOCAL:1 += 1
@@ -596,7 +596,7 @@ SELECTCASE INPUT保存
 			ELSEIF (乗機残弾種別:兵装番号 == 2 && 乗機残弾数:兵装番号 > 0) || (乗機残弾種別:兵装番号 != 2 && 乗機残弾数:兵装番号 < 1)
 				KSTR:(K++) = <nonbutton>사용 조건을 충족하지 않습니다.</nonbutton> 　　<button value='999'>[999]돌아가기</button>
 			ELSE
-				KSTR:(K++) = <button value='0'>[0]사용한다</button>　　　　　<button value='999'>[999]돌아가기</button>
+				KSTR:(K++) = <button value='0'>[0]사용하기</button>　　　　　<button value='999'>[999]돌아가기</button>
 			ENDIF
 				CALL メッセージ欄表示用関数(,,,0,1)
 			$INPUT_LOOP3
@@ -628,21 +628,21 @@ SELECTCASE INPUT保存
 		ENDIF
 		CALL 口上変数初期化
 		IF アビテンプレート用_アビ名 == 兵器名保存
-			アビ汎用文字列:実行時メッセージ１ = %CALLNAME:PLAYER%은(는)%DT_CELL_GETS("所持乗機データベース", 装備乗機ID, "乗機名", 1)%의%アビテンプレート用_アビ名%을(를) 사용했다！
+			アビ汎用文字列:実行時メッセージ１ = %CALLNAME:PLAYER%은(는)%DT_CELL_GETS("所持乗機データベース", 装備乗機ID, "乗機名", 1)%의%アビテンプレート用_アビ名%을(를) 사용했다!
 		ELSE
-			アビ汎用文字列:実行時メッセージ１ = %CALLNAME:PLAYER%은(는)%DT_CELL_GETS("所持乗機データベース", 装備乗機ID, "乗機名", 1)%의%DT_CELL_GETS("所持兵器データベース", TOINT(DT_CELL_GETS("所持乗機データベース", 装備乗機ID, @"武装{兵装番号}", 1)), "兵器名", 1)%을(를) 사용했다！
+			アビ汎用文字列:実行時メッセージ１ = %CALLNAME:PLAYER%은(는)%DT_CELL_GETS("所持乗機データベース", 装備乗機ID, "乗機名", 1)%의%DT_CELL_GETS("所持兵器データベース", TOINT(DT_CELL_GETS("所持乗機データベース", 装備乗機ID, @"武装{兵装番号}", 1)), "兵器名", 1)%을(를) 사용했다!
 			アビ汎用文字列:実行時メッセージ２ = %アビテンプレート用_アビ名%！
 		ENDIF
 		;搭載兵器の補正を載せる
 		IF ISNUMERIC(DT_CELL_GETS("所持乗機データベース", 装備乗機ID, @"武装{兵装番号}", 1))
 			;数字が入るのは搭載兵器装備時だけ
-			공격력_一時保存 = BATTLE_STATE:9:공격력
-			명중률_一時保存 = BATTLE_STATE:9:명중률
-			BATTLE_STATE:9:공격력 += DT_CELL_GET("所持兵器データベース", TOINT(DT_CELL_GETS("所持乗機データベース", 装備乗機ID, @"武装{兵装番号}", 1)), "공격력 보정_강화 후", 1)
-			BATTLE_STATE:9:명중률 += DT_CELL_GET("所持兵器データベース", TOINT(DT_CELL_GETS("所持乗機データベース", 装備乗機ID, @"武装{兵装番号}", 1)), "명중률 보정_강화 후", 1)
+			攻撃力_一時保存 = BATTLE_STATE:9:攻撃力
+			命中率_一時保存 = BATTLE_STATE:9:命中率
+			BATTLE_STATE:9:攻撃力 += DT_CELL_GET("所持兵器データベース", TOINT(DT_CELL_GETS("所持乗機データベース", 装備乗機ID, @"武装{兵装番号}", 1)), "攻撃力補正_強化後", 1)
+			BATTLE_STATE:9:命中率 += DT_CELL_GET("所持兵器データベース", TOINT(DT_CELL_GETS("所持乗機データベース", 装備乗機ID, @"武装{兵装番号}", 1)), "命中率補正_強化後", 1)
 			CALLFORM %兵装関数名保存:INPUT保存%("アビ効果", TOINT(DT_CELL_GETS("所持乗機データベース", 装備乗機ID, @"武装{兵装番号}", 1)))
-			BATTLE_STATE:9:공격력 = 공격력_一時保存
-			BATTLE_STATE:9:명중률 = 명중률_一時保存
+			BATTLE_STATE:9:攻撃力 = 攻撃力_一時保存
+			BATTLE_STATE:9:命中率 = 命中率_一時保存
 		ELSE
 			CALLFORM %兵装関数名保存:INPUT保存%("アビ効果")
 		ENDIF

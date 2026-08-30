@@ -5,8 +5,8 @@
 DRAWLINE
 LOCALS = <div rect='200,0,5662,1250' border='31' bcolor='#C0C0C0'></div>
 LOCALS += "<div rect='262, 62, 5537, 1125'>"
-LOCALS += "탐색계 정보를 선택하여 볼 수 있습니다.<br>"
-LOCALS += "장비 변경은 「■탐색 멤버 표시」에서 각 캐릭터의 이미지 또는 이름을 클릭하여 상세 화면으로 이동하십시오.<br>"
+LOCALS += "탐색 관련 정보를 선택하여 볼 수 있습니다.<br>"
+LOCALS += "장비 변경은 「■탐색 멤버 표시」에서 각 캐릭터의 이미지or이름을 클릭하여 상세 화면으로 이동해 주십시오.<br>"
 LOCALS += "--------------------------------------------------------------------------------------------------------------<br>"
 IF 表示切り替え文字列 == "探索集約_探索メンバー"
 	LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'>■탐색 멤버 표시</font>　　"
@@ -37,9 +37,9 @@ ELSE
 	LOCALS += "<button value='探索集約_耳飾り'>■귀걸이 목록 표시</button>　　"
 ENDIF
 IF 表示切り替え文字列 == "探索集約_証"
-	LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'>■직업 증명 목록 표시</font>　　"
+	LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'>■직업의 증표 목록 표시</font>　　"
 ELSE
-	LOCALS += "<button value='探索集約_証'>■직업 증명 목록 표시</button>　　"
+	LOCALS += "<button value='探索集約_証'>■직업의 증표 목록 표시</button>　　"
 ENDIF
 LOCALS += "<br>"
 IF 表示切り替え文字列 == "探索集約_アイテム"
@@ -70,7 +70,7 @@ LOCALS += "</div>"
 LOCALS += ""
 LOCALS += "<div rect='2200, 900, 3700, 300'>"
 IF 表示切り替え文字列 == "探索集約_探索メンバー" || 表示切り替え文字列 == ""
-	LOCALS += "　　　　　　　　　　　　　　　　　　 　　　<button value='9998'>[9998]멤버 장비 전체 해제</button><br>"
+	LOCALS += "　　　　　　　　　　　　　　　　　　 　　　<button value='9998'>[9998]멤버 장비 전부 해제</button><br>"
 ELSE
 	LOCALS += "<br>"
 ENDIF
@@ -199,7 +199,7 @@ ELSE
 			CONTINUE
 		IF DT_CELL_GETS("所持乗機データベース", 表示id, @"武装{表示アビ番号}", 1) == "固有"
 			TRYCALLFORM 乗機兵装関数_%DT_CELL_GETS("所持乗機データベース", 表示id, "乗機名", 1)%_{表示アビ番号}("アビ名")
-			LOCALS += @"　<button value='{表示アビ番号 + 10}'>[%TSTR:コマンド名受渡%](고유 무장)</button><br>"
+			LOCALS += @"　<button value='{表示アビ番号 + 10}'>[%TSTR:コマンド名受渡%]（고유 무장）</button><br>"
 		ELSEIF ISNUMERIC(DT_CELL_GETS("所持乗機データベース", 表示id, @"武装{表示アビ番号}", 1))
 			兵器id = TOINT(DT_CELL_GETS("所持乗機データベース", 表示id, @"武装{表示アビ番号}", 1))
 			TRYCALLFORM 乗機兵装関数_%DT_CELL_GETS("所持乗機データベース", 表示id, "乗機名", 1)%_{表示アビ番号}("アビ名", 兵器id)
@@ -271,7 +271,7 @@ SELECTCASE LOCAL
 			LOCALS += @"%詳細文文字列受け渡し変数%<br>"
 			TRYCALLFORM 乗機兵装関数_%DT_CELL_GETS("所持乗機データベース", 表示id, "乗機名", 1)%_{LOCAL - 10}("装備条件説明文")
 			LOCALS += @"%詳細文文字列受け渡し変数%<br>"
-			LOCALS += @"<button value='0'>[0] 탑재 병기를 변경한다</button>　　　　　<button value='1'>[1] 탑재 병기를 해제한다</button>　　　　　<button value='999'>[999] 돌아가기</button><br>"
+			LOCALS += @"<button value='0'>[0] 탑재 병기를 변경한다</button>　　　　　<button value='1'>[1] 搭載兵器を제외</button>　　　　　<button value='999'>[999] 돌아가기</button><br>"
 		ELSE
 			LOCALS += @"■미장비<br>"
 			TRYCALLFORM 乗機兵装関数_%DT_CELL_GETS("所持乗機データベース", 表示id, "乗機名", 1)%_{LOCAL - 10}("装備条件説明文")
@@ -284,7 +284,7 @@ SELECTCASE LOCAL
 			CASE 0
 				CALL 搭載兵器装備処理(表示id, LOCAL - 10)
 			CASE 1
-				PRINTFORMW %DT_CELL_GETS("所持乗機データベース", 表示id, "乗機名", 1)%의 무장%TOFULL(TOSTR(LOCAL - 10))%에 장비되어 있던%DT_CELL_GETS("所持兵器データベース", TOINT(DT_CELL_GETS("所持乗機データベース", 表示id, @"武装{LOCAL - 10}", 1)), "兵器名", 1)%을(를) 해제했습니다.
+				PRINTFORMW %DT_CELL_GETS("所持乗機データベース", 表示id, "乗機名", 1)%의 무장%TOFULL(TOSTR(LOCAL - 10))%에 장비되어 있던 %DT_CELL_GETS("所持兵器データベース", TOINT(DT_CELL_GETS("所持乗機データベース", 表示id, @"武装{LOCAL - 10}", 1)), "兵器名", 1)%을(를) 해제했습니다.
 				DT_CELL_SET "所持兵器データベース", TOINT(DT_CELL_GETS("所持乗機データベース", 表示id, @"武装{LOCAL - 10}", 1)), "装備乗機id", 0, 1
 				DT_CELL_SET "所持乗機データベース", 表示id, @"武装{LOCAL - 10}", "", 1
 		ENDSELECT
@@ -304,13 +304,13 @@ SELECTCASE LOCAL
 		DRAWLINE
 		PRINTL 편성 멤버의 장비를 일괄 해제합니다.
 		DRAWLINE
-		PRINTBUTTON "[ 0] 모든 멤버의 장비 전체 해제", 0
+		PRINTBUTTON "[ 0] 全멤버 장비 전부 해제", 0
 		PRINT 　　　　
-		PRINTBUTTON "[ 1] 모든 멤버의 반지・귀걸이 전체 해제", 1
+		PRINTBUTTON "[ 1] 모든 멤버의 반지・귀걸이 전부 해제", 1
 		PRINTL
-		PRINTBUTTON "[10] 메인 멤버의 장비 전체 해제", 10
+		PRINTBUTTON "[10] 메인 멤버 장비 전부 해제", 10
 		PRINT 　　
-		PRINTBUTTON "[11] 메인 멤버의 반지・귀걸이 전체 해제", 11
+		PRINTBUTTON "[11] 메인 멤버의 반지・귀걸이 전부 해제", 11
 		PRINTL
 		PRINTL
 		PRINTBUTTON "[999] 돌아가기", 999
@@ -319,7 +319,7 @@ SELECTCASE LOCAL
 			CASE 999
 				RETURN 0
 			CASE 0
-				PRINTW 모든 멤버의 장비를 모두 해제했습니다.
+				PRINTW 모든 멤버의 장비를 전부 해제했습니다.
 				FOR LOCAL, 0, 14
 					SIF LOCAL > 3 && LOCAL < 10
 						CONTINUE
@@ -338,7 +338,7 @@ SELECTCASE LOCAL
 					CALL 装備再計算処理(BATTLE_STATE:LOCAL:キャラ登録番号)
 				NEXT
 			CASE 1
-				PRINTW 모든 멤버의 반지・귀걸이를 모두 해제했습니다.
+				PRINTW 모든 멤버의 반지・귀걸이를 전부 해제했습니다.
 				FOR LOCAL, 0, 14
 					SIF LOCAL > 3 && LOCAL < 10
 						CONTINUE
@@ -356,7 +356,7 @@ SELECTCASE LOCAL
 					CALL 装備再計算処理(BATTLE_STATE:LOCAL:キャラ登録番号)
 				NEXT
 			CASE 10
-				PRINTW 메인 멤버의 장비를 모두 해제했습니다.
+				PRINTW 메인 멤버의 장비를 전부 해제했습니다.
 				FOR LOCAL, 0, 4
 					SIF BATTLE_STATE:LOCAL:キャラ登録番号 < 1
 						CONTINUE
@@ -373,7 +373,7 @@ SELECTCASE LOCAL
 					CALL 装備再計算処理(BATTLE_STATE:LOCAL:キャラ登録番号)
 				NEXT
 			CASE 11
-				PRINTW 메인 멤버의 반지・귀걸이를 모두 해제했습니다.
+				PRINTW 메인 멤버의 반지・귀걸이를 전부 해제했습니다.
 				FOR LOCAL, 0, 4
 					SIF BATTLE_STATE:LOCAL:キャラ登録番号 < 1
 						CONTINUE
@@ -412,9 +412,12 @@ ELSE
 ENDIF
 PRINTL
 PRINTL
-PRINTBUTTONLC "[110]반지 장비 변경", 110
-PRINTBUTTONLC "[111]귀걸이 장비 변경", 111
-PRINTBUTTONLC "[112]직업의 증표 장비 변경", 112
+SIF CFLAG:(BATTLE_STATE:ARG:キャラ登録番号):指輪変更禁止 == 0
+	PRINTBUTTONLC "[110]반지 장비 변경", 110
+SIF CFLAG:(BATTLE_STATE:ARG:キャラ登録番号):耳飾り変更禁止 == 0
+	PRINTBUTTONLC "[111]귀걸이 장비 변경", 111
+SIF CFLAG:(BATTLE_STATE:ARG:キャラ登録番号):ジョブ証変更禁止 == 0
+	PRINTBUTTONLC "[112]직업의 증표 장비 변경", 112
 PRINTL
 PRINTBUTTONLC "[113]경험치 증가 아이템 사용", 113
 PRINTL
@@ -489,7 +492,7 @@ SELECTCASE RESULT
 	CASE 998
 		PRINTFORML %CALLNAME:(BATTLE_STATE:ARG:キャラ登録番号)%을(를) 탐색 멤버에서 제외하시겠습니까?
 		PRINTBUTTONLC "[0]예", 0
-		PRINTBUTTONLC "[1]아니요", 1
+		PRINTBUTTONLC "[1]아니오", 1
 
 		$INPUT_LOOP2
 		INPUT
@@ -641,49 +644,49 @@ FOR LOCAL, 1, CHARANUM
 					表示用ステータス格納配列:(LOCAL:1):リスト表示位置 = 0
 				ENDIF
 			CASE "ＨＰ"
-				表示用ステータス格納配列:(LOCAL:1):リスト表示位置 = 基礎BATTLE_STATE:LOCAL:최대HP + 装備ステータス補正保存:LOCAL:최대HP
+				表示用ステータス格納配列:(LOCAL:1):リスト表示位置 = 基礎BATTLE_STATE:LOCAL:最大ＨＰ + 装備ステータス補正保存:LOCAL:最大ＨＰ
 			CASE "ＭＰ"
-				表示用ステータス格納配列:(LOCAL:1):リスト表示位置 = 基礎BATTLE_STATE:LOCAL:최대MP + 装備ステータス補正保存:LOCAL:최대MP
+				表示用ステータス格納配列:(LOCAL:1):リスト表示位置 = 基礎BATTLE_STATE:LOCAL:最大ＭＰ + 装備ステータス補正保存:LOCAL:最大ＭＰ
 			CASE "攻撃"
-				表示用ステータス格納配列:(LOCAL:1):リスト表示位置 = 基礎BATTLE_STATE:LOCAL:공격력 + 装備ステータス補正保存:LOCAL:공격력
+				表示用ステータス格納配列:(LOCAL:1):リスト表示位置 = 基礎BATTLE_STATE:LOCAL:攻撃力 + 装備ステータス補正保存:LOCAL:攻撃力
 			CASE "防御"
-				表示用ステータス格納配列:(LOCAL:1):リスト表示位置 = 基礎BATTLE_STATE:LOCAL:방어력 + 装備ステータス補正保存:LOCAL:방어력
+				表示用ステータス格納配列:(LOCAL:1):リスト表示位置 = 基礎BATTLE_STATE:LOCAL:防御力 + 装備ステータス補正保存:LOCAL:防御力
 			CASE "回復"
-				表示用ステータス格納配列:(LOCAL:1):リスト表示位置 = 基礎BATTLE_STATE:LOCAL:회복력 + 装備ステータス補正保存:LOCAL:회복력
+				表示用ステータス格納配列:(LOCAL:1):リスト表示位置 = 基礎BATTLE_STATE:LOCAL:回復力 + 装備ステータス補正保存:LOCAL:回復力
 			CASE "速度"
-				表示用ステータス格納配列:(LOCAL:1):リスト表示位置 = 基礎BATTLE_STATE:LOCAL:행동속도 + 装備ステータス補正保存:LOCAL:행동속도
-			CASE "DA율"
-				表示用ステータス格納配列:(LOCAL:1):リスト表示位置 = 基礎BATTLE_STATE:LOCAL:DA율 + 装備ステータス補正保存:LOCAL:DA율
-			CASE "TA율"
-				表示用ステータス格納配列:(LOCAL:1):リスト表示位置 = 基礎BATTLE_STATE:LOCAL:TA율 + 装備ステータス補正保存:LOCAL:TA율
+				表示用ステータス格納配列:(LOCAL:1):リスト表示位置 = 基礎BATTLE_STATE:LOCAL:行動速度 + 装備ステータス補正保存:LOCAL:行動速度
+			CASE "DA率"
+				表示用ステータス格納配列:(LOCAL:1):リスト表示位置 = 基礎BATTLE_STATE:LOCAL:DA率 + 装備ステータス補正保存:LOCAL:DA率
+			CASE "TA率"
+				表示用ステータス格納配列:(LOCAL:1):リスト表示位置 = 基礎BATTLE_STATE:LOCAL:TA率 + 装備ステータス補正保存:LOCAL:TA率
 			CASE "命中"
-				表示用ステータス格納配列:(LOCAL:1):リスト表示位置 = 基礎BATTLE_STATE:LOCAL:명중률 + 装備ステータス補正保存:LOCAL:명중률
+				表示用ステータス格納配列:(LOCAL:1):リスト表示位置 = 基礎BATTLE_STATE:LOCAL:命中率 + 装備ステータス補正保存:LOCAL:命中率
 			CASE "回避"
-				表示用ステータス格納配列:(LOCAL:1):リスト表示位置 = 基礎BATTLE_STATE:LOCAL:회피율 + 装備ステータス補正保存:LOCAL:회피율
+				表示用ステータス格納配列:(LOCAL:1):リスト表示位置 = 基礎BATTLE_STATE:LOCAL:回避率 + 装備ステータス補正保存:LOCAL:回避率
 			CASE "火耐"
-				表示用ステータス格納配列:(LOCAL:1):リスト表示位置 = 基礎BATTLE_STATE:LOCAL:화내성 + 装備ステータス補正保存:LOCAL:화내성
+				表示用ステータス格納配列:(LOCAL:1):リスト表示位置 = 基礎BATTLE_STATE:LOCAL:火耐性 + 装備ステータス補正保存:LOCAL:火耐性
 			CASE "水耐"
-				表示用ステータス格納配列:(LOCAL:1):リスト表示位置 = 基礎BATTLE_STATE:LOCAL:수내성 + 装備ステータス補正保存:LOCAL:수내성
+				表示用ステータス格納配列:(LOCAL:1):リスト表示位置 = 基礎BATTLE_STATE:LOCAL:水耐性 + 装備ステータス補正保存:LOCAL:水耐性
 			CASE "風耐"
-				表示用ステータス格納配列:(LOCAL:1):リスト表示位置 = 基礎BATTLE_STATE:LOCAL:풍내성 + 装備ステータス補正保存:LOCAL:풍내성
+				表示用ステータス格納配列:(LOCAL:1):リスト表示位置 = 基礎BATTLE_STATE:LOCAL:風耐性 + 装備ステータス補正保存:LOCAL:風耐性
 			CASE "土耐"
-				表示用ステータス格納配列:(LOCAL:1):リスト表示位置 = 基礎BATTLE_STATE:LOCAL:토내성 + 装備ステータス補正保存:LOCAL:토내성
+				表示用ステータス格納配列:(LOCAL:1):リスト表示位置 = 基礎BATTLE_STATE:LOCAL:土耐性 + 装備ステータス補正保存:LOCAL:土耐性
 			CASE "光耐"
-				表示用ステータス格納配列:(LOCAL:1):リスト表示位置 = 基礎BATTLE_STATE:LOCAL:광내성 + 装備ステータス補正保存:LOCAL:광내성
+				表示用ステータス格納配列:(LOCAL:1):リスト表示位置 = 基礎BATTLE_STATE:LOCAL:光耐性 + 装備ステータス補正保存:LOCAL:光耐性
 			CASE "闇耐"
-				表示用ステータス格納配列:(LOCAL:1):リスト表示位置 = 基礎BATTLE_STATE:LOCAL:암내성 + 装備ステータス補正保存:LOCAL:암내성
+				表示用ステータス格納配列:(LOCAL:1):リスト表示位置 = 基礎BATTLE_STATE:LOCAL:闇耐性 + 装備ステータス補正保存:LOCAL:闇耐性
 			CASE "火強"
-				表示用ステータス格納配列:(LOCAL:1):リスト表示位置 = 基礎BATTLE_STATE:LOCAL:화강화 + 装備ステータス補正保存:LOCAL:화강화
+				表示用ステータス格納配列:(LOCAL:1):リスト表示位置 = 基礎BATTLE_STATE:LOCAL:火強化 + 装備ステータス補正保存:LOCAL:火強化
 			CASE "水強"
-				表示用ステータス格納配列:(LOCAL:1):リスト表示位置 = 基礎BATTLE_STATE:LOCAL:수강화 + 装備ステータス補正保存:LOCAL:수강화
+				表示用ステータス格納配列:(LOCAL:1):リスト表示位置 = 基礎BATTLE_STATE:LOCAL:水強化 + 装備ステータス補正保存:LOCAL:水強化
 			CASE "風強"
-				表示用ステータス格納配列:(LOCAL:1):リスト表示位置 = 基礎BATTLE_STATE:LOCAL:풍강화 + 装備ステータス補正保存:LOCAL:풍강화
+				表示用ステータス格納配列:(LOCAL:1):リスト表示位置 = 基礎BATTLE_STATE:LOCAL:風強化 + 装備ステータス補正保存:LOCAL:風強化
 			CASE "土強"
-				表示用ステータス格納配列:(LOCAL:1):リスト表示位置 = 基礎BATTLE_STATE:LOCAL:토강화 + 装備ステータス補正保存:LOCAL:토강화
+				表示用ステータス格納配列:(LOCAL:1):リスト表示位置 = 基礎BATTLE_STATE:LOCAL:土強化 + 装備ステータス補正保存:LOCAL:土強化
 			CASE "光強"
-				表示用ステータス格納配列:(LOCAL:1):リスト表示位置 = 基礎BATTLE_STATE:LOCAL:광강화 + 装備ステータス補正保存:LOCAL:광강화
+				表示用ステータス格納配列:(LOCAL:1):リスト表示位置 = 基礎BATTLE_STATE:LOCAL:光強化 + 装備ステータス補正保存:LOCAL:光強化
 			CASE "闇強"
-				表示用ステータス格納配列:(LOCAL:1):リスト表示位置 = 基礎BATTLE_STATE:LOCAL:암강화 + 装備ステータス補正保存:LOCAL:암강화
+				表示用ステータス格納配列:(LOCAL:1):リスト表示位置 = 基礎BATTLE_STATE:LOCAL:闇強化 + 装備ステータス補正保存:LOCAL:闇強化
 			CASE "調合"
 				表示用ステータス格納配列:(LOCAL:1):リスト表示位置 = 知識素質:LOCAL:調合知識
 			CASE "魔法"
@@ -728,13 +731,13 @@ FOR LOCAL, ページ番号 * 28, ページ番号 * 28 + 28
 		BREAK
 	IF メインサブ == 0
 		IF GROUPMATCH(表示用ステータス格納配列:LOCAL:0, BATTLE_STATE:10:キャラ登録番号, BATTLE_STATE:11:キャラ登録番号, BATTLE_STATE:12:キャラ登録番号, BATTLE_STATE:13:キャラ登録番号)
-			LOCALS:1 = %NAME表示((表示用ステータス格納配列:LOCAL:0))%(서브 편성)
+			LOCALS:1 = %NAME表示((表示用ステータス格納配列:LOCAL:0))%（서브 편성）
 		ELSE
 			LOCALS:1 = %NAME表示((表示用ステータス格納配列:LOCAL:0))%
 		ENDIF
 	ELSE
 		IF GROUPMATCH(表示用ステータス格納配列:LOCAL:0, BATTLE_STATE:0:キャラ登録番号, BATTLE_STATE:1:キャラ登録番号, BATTLE_STATE:2:キャラ登録番号, BATTLE_STATE:3:キャラ登録番号)
-			LOCALS:1 = %NAME表示((表示用ステータス格納配列:LOCAL:0))%(메인 편성)
+			LOCALS:1 = %NAME表示((表示用ステータス格納配列:LOCAL:0))%（메인 편성）
 		ELSE
 			LOCALS:1 = %NAME表示((表示用ステータス格納配列:LOCAL:0))%
 		ENDIF
@@ -780,13 +783,13 @@ LOCALS += "<br>"
 LOCALS += "<button value='9002'>[9002]표시 정보 변경</button>　"
 LOCALS += "<br>"
 IF OPTION変数:編成解除時の装備解除
-	LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'><button value='9003'>[9003]편성 해제 시 장비 해제: ON</button></font>"
+	LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'><button value='9003'>[9003]편성 해제 시 장비 해제：ON</button></font>"
 ELSE
-	LOCALS += "<button value='9003'>[9003]편성 해제 시 장비 해제: OFF</button>"
+	LOCALS += "<button value='9003'>[9003]편성 해제 시 장비 해제：OFF</button>"
 ENDIF
 LOCALS += "<br>"
 IF OPTION変数:編成枠に装備紐づけ
-	LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'><button value='9004'>[9004]교체 시 장비 계승: ON</button></font>"
+	LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'><button value='9004'>[9004]교체 시 장비 계승：ON</button></font>"
 ELSE
 	LOCALS += "<button value='9004'>[9004]교체 시 장비 계승: OFF</button>"
 ENDIF
@@ -1018,15 +1021,15 @@ ENDSELECT
 #DIM ソート法則
 #DIM 昇順降順
 {
-#DIMS CONST 表示キー = "属性", "Ｌｖ", "固有", "ＨＰ", "ＭＰ", "攻撃", "防御", "回復", "速度", "DA율",
-					"TA율", "命中", "回避", "火耐", "水耐", "風耐", "土耐", "光耐", "闇耐", "火強",
+#DIMS CONST 表示キー = "属性", "Ｌｖ", "固有", "ＨＰ", "ＭＰ", "攻撃", "防御", "回復", "速度", "DA率",
+					"TA率", "命中", "回避", "火耐", "水耐", "風耐", "土耐", "光耐", "闇耐", "火強",
 					"水強", "風強", "土強", "光強", "闇強", "調合", "魔法", "機械", "錬金", "魔物",
 					"絵師", "高貴", "釣好", "踊子", "歌唱", "料理", "歴史", "経営", "水泳", "農業"
 }
 {
-#DIMS CONST 表示名 = "属性", "Ｌｖ", "固有スキル・奥義", "최대HP", "최대MP", "공격력", "방어력", "회복력", "행동속도", "DA율",
-				"TA율", "명중률", "회피율", "화내성", "수내성", "풍내성", "토내성", "광내성", "암내성", "화강화",
-				"수강화", "풍강화", "토강화", "광강화", "암강화", "調合知識", "魔法知識", "機械知識", "錬金知識", "魔物知識",
+#DIMS CONST 表示名 = "属性", "Ｌｖ", "固有スキル・奥義", "最大ＨＰ", "最大ＭＰ", "攻撃力", "防御力", "回復力", "行動速度", "DA率",
+				"TA率", "命中率", "回避率", "火耐性", "水耐性", "風耐性", "土耐性", "光耐性", "闇耐性", "火強化",
+				"水強化", "風強化", "土強化", "光強化", "闇強化", "調合知識", "魔法知識", "機械知識", "錬金知識", "魔物知識",
 				"絵師", "高貴", "釣り好き", "踊り子", "歌唱技能", "料理人", "歴史知識", "経営知識", "水泳技能", "農業知識"
 }
 
@@ -1042,7 +1045,7 @@ PRINTL 멤버 교체 화면에서 표시할 정보를 전환합니다.
 DRAWLINE
 LOCALS = 
 SIF 選択位置記録:1 > -1
-	LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'>・교체할 칸을 선택해 주십시오.</font><br>"
+	LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'>・교체할 칸을 선택해 주세요.</font><br>"
 IF 選択位置記録:0 == 1
 	LOCALS += @"１：<font color='#%カラーパレット_HTML("黄")%'><button value='1'>%表示名:(FINDELEMENT(表示キー, メンバーリスト表示欄:1)), 20, LEFT%</button></font>"
 ELSE
@@ -1060,9 +1063,9 @@ ELSE
 ENDIF
 
 IF 選択位置記録:0 == 2
-	LOCALS += @"2:<font color='#%カラーパレット_HTML("黄")%'><button value='2'>%表示名:(FINDELEMENT(表示キー, メンバーリスト表示欄:2)), 20, LEFT%</button></font>"
+	LOCALS += @"２：<font color='#%カラーパレット_HTML("黄")%'><button value='2'>%表示名:(FINDELEMENT(表示キー, メンバーリスト表示欄:2)), 20, LEFT%</button></font>"
 ELSE
-	LOCALS += @"2:<button value='2'>%表示名:(FINDELEMENT(表示キー, メンバーリスト表示欄:2)), 20, LEFT%</button>"
+	LOCALS += @"２：<button value='2'>%表示名:(FINDELEMENT(表示キー, メンバーリスト表示欄:2)), 20, LEFT%</button>"
 ENDIF
 IF ソート法則 == 2 && 昇順降順 == 1
 	LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'><button value='1003'>[오름차순]</button></font> / "
@@ -1076,9 +1079,9 @@ ELSE
 ENDIF
 
 IF 選択位置記録:0 == 3
-	LOCALS += @"3:<font color='#%カラーパレット_HTML("黄")%'><button value='3'>%表示名:(FINDELEMENT(表示キー, メンバーリスト表示欄:3)), 20, LEFT%</button></font>"
+	LOCALS += @"３：<font color='#%カラーパレット_HTML("黄")%'><button value='3'>%表示名:(FINDELEMENT(表示キー, メンバーリスト表示欄:3)), 20, LEFT%</button></font>"
 ELSE
-	LOCALS += @"3:<button value='3'>%表示名:(FINDELEMENT(表示キー, メンバーリスト表示欄:3)), 20, LEFT%</button>"
+	LOCALS += @"３：<button value='3'>%表示名:(FINDELEMENT(表示キー, メンバーリスト表示欄:3)), 20, LEFT%</button>"
 ENDIF
 IF ソート法則 == 3 && 昇順降順 == 1
 	LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'><button value='1005'>[오름차순]</button></font> / "
@@ -1095,7 +1098,7 @@ HTML_PRINT LOCALS
 DRAWLINE
 LOCALS = <div rect='0,0,6000,2000'>
 SIF 選択位置記録:0 > -1
-	LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'>・교체할 정보를 선택해 주세요. </font><br>"
+	LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'>・교체할 정보를 선택해 주세요.</font><br>"
 FOR LOCAL, 0, VARSIZE("表示名")
 	IF MATCH(メンバーリスト表示欄, 表示キー:LOCAL)
 		LOCALS += @"<font color='#%カラーパレット_HTML("薄ピンク")%'><button value='{LOCAL + 10}'>[{LOCAL + 10}] %表示名:LOCAL, 20, LEFT%</button></font>"
@@ -1176,6 +1179,9 @@ ENDSELECT
 #DIM DYNAMIC 初回起動
 #DIM 表示キー
 
+SIF 対象キャラ == MASTER
+	NO:MASTER = FLAG:あなたキャラ化記録
+
 IF 初回起動 == 0
 	CALLFORM スタイル変更_{NO:対象キャラ}(対象キャラ, "スタイル名取得")
 	ARRAYCOPY "RESULTS", "表示配列"
@@ -1209,15 +1215,15 @@ LOCALS += "</nobr></div>"
 LOCALS += "<div rect='2081,31,3937,2812' border='31' bcolor='#C0C0C0' padding='50,25,50'>"
 ;右側
 IF 表示キー == -1
-	LOCALS += "여기에 스타일의 해설이 표시됩니다."
+	LOCALS += "여기에 스타일 설명이 표시됩니다."
 ELSE
 	CALLFORM スタイル変更_{NO:対象キャラ}(対象キャラ, @"スタイル解説_%表示配列:表示キー%")
 	LOCALS += TSTR:スタイル解説
 	LOCALS += "<br>"
 	IF CSTR:対象キャラ:スタイル管理文字列 == 表示配列:表示キー || (CSTR:対象キャラ:スタイル管理文字列 == "" && 表示キー == 0)
-		LOCALS += @"<font color='#%カラーパレット_HTML("グレーアウト")%'>[100] 이 스타일로 변경한다</font>　　※현재 스타일입니다"
+		LOCALS += @"<font color='#%カラーパレット_HTML("グレーアウト")%'>[100] 이 스타일로 변경하기</font>　　※현재 스타일입니다"
 	ELSE
-		LOCALS += "<button value='100'>[100] 이 스타일로 변경한다</button>"
+		LOCALS += "<button value='100'>[100] 이 스타일로 변경하기</button>"
 	ENDIF
 ENDIF
 LOCALS += "</div>"
@@ -1231,20 +1237,26 @@ BINPUT
 LOCAL = RESULT
 SELECTCASE LOCAL
 	CASE 999
+		SIF 対象キャラ == MASTER
+			NO:MASTER = 0
 		RETURN 
 	CASE 100
 		IF 表示配列:表示キー == NAME:対象キャラ
 			CSTR:対象キャラ:スタイル管理文字列 = 
+			CSTR:対象キャラ:スタイル種別 = 
 		ELSE
 			CSTR:対象キャラ:スタイル管理文字列 = %表示配列:表示キー%
+			CSTR:対象キャラ:スタイル種別 = %表示配列:(表示キー + 10)%
 		ENDIF
 		CALLFORM スタイル変更_{NO:対象キャラ}(対象キャラ, "変更後処理")
 		CALL 装備再計算処理(対象キャラ)
-		PRINTFORMW %表示配列:表示キー%(%表示配列:(表示キー + 10)%) (으)로 스타일을 변경했습니다
+		PRINTFORMW %表示配列:表示キー%(%表示配列:(表示キー + 10)%)으로 스타일을 변경했습니다
 	CASEELSE
 		表示キー = LOCAL
 		RESTART
 ENDSELECT
+SIF 対象キャラ == MASTER
+	NO:MASTER = 0
 
 
 @スタイル奥義アビ表示_汎用文章(対象キャラ, スタイル名)
@@ -1273,7 +1285,7 @@ IF CSTR:対象キャラ:スタイル管理文字列 != スタイル名
 	IF スタイル名 == NAME:対象キャラ
 		CSTR:対象キャラ:スタイル管理文字列 = 
 	ELSE
-		CSTR:対象キャラ:スタイル管理文字列 '= スタイル名
+		CSTR:対象キャラ:スタイル管理文字列 '= 스타일명
 	ENDIF
 	スタイル一時フラグ = 1
 ENDIF
@@ -1307,7 +1319,7 @@ IF CSTR:対象キャラ:スタイル管理文字列 != スタイル名
 	IF スタイル名 == NAME:対象キャラ
 		CSTR:対象キャラ:スタイル管理文字列 = 
 	ELSE
-		CSTR:対象キャラ:スタイル管理文字列 '= スタイル名
+		CSTR:対象キャラ:スタイル管理文字列 '= 스타일명
 	ENDIF
 	スタイル一時フラグ = 1
 ENDIF
@@ -1369,8 +1381,12 @@ RETURN 0
 IF スタイル名 == "デフォルト"
 	SIF CSTR:対象キャラ:スタイル管理文字列 == ""
 		RETURNF 1
+	SIF CSTR:対象キャラ:スタイル種別 == "ノーマル" || CSTR:対象キャラ:スタイル種別 == ""
+		RETURNF 1
 ELSE
 	SIF CSTR:対象キャラ:スタイル管理文字列 == スタイル名
+		RETURNF 1
+	SIF CSTR:対象キャラ:スタイル種別 == スタイル名
 		RETURNF 1
 ENDIF
 

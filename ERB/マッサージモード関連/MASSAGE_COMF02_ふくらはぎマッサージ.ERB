@@ -15,7 +15,7 @@ TFLAG:コマンドタイプ受渡 = MASSAGE_COMTYPE("通常マッサージ")
 
 @MASSAGE_COM_TOOLTIP_2
 LOCALS = <br>■종아리 마사지<br>
-LOCALS += "종아리를 주물러 풀어준다. 혈액순환 촉진 효과가 있으며, 부기도 해소된다."
+LOCALS += "종아리를 주물러 풀어준다. 혈액순환 촉진 효과가 있으며, 부기도 해소한다."
 LOCALS += "<br>COM 타입: 일반 마사지<br>획득 소스: 쾌S・접촉・고통・환락"
 LOCALS += "<br>고유 획득 경험: 고통 쾌락 경험(TARGET)<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
@@ -70,7 +70,7 @@ RETURN 1
 ;実行時メッセージ
 ;-------------------------------------------------
 @MASSAGE_MESSAGE_COM2
-PRINTFORM %CALLNAME:PLAYER%은(는) 마사지 오일을 바른 손바닥으로%CALLNAME:TARGET%의
+PRINTFORM %CALLNAME:PLAYER%은(는) 마사지 오일을 바른 손바닥으로 %CALLNAME:TARGET%의
 	IF 下半身体型(TARGET) >= 1
 	;肉感的以上
 		PRINTFORM 통통한
@@ -78,5 +78,5 @@ PRINTFORM %CALLNAME:PLAYER%은(는) 마사지 오일을 바른 손바닥으로%C
 	;細身以下
 		PRINTFORM 가늘고 가녀린
 	ENDIF
-PRINTFORML 종아리를 정성스럽게 주물러 풀어주었다.
+PRINTFORML 종아리를 정성껏 주물러 풀어주었다.
 

@@ -1,7 +1,7 @@
 
 @COMNAME_S82_2
 #FUNCTIONS
-TSTR:コマンド名受渡 = 유두 귀두 괴롭히기
+TSTR:コマンド名受渡 = 젖꼭지 귀두 괴롭히기
 
 
 ;===================================================
@@ -21,10 +21,10 @@ TFLAG:コマンドタイプ受渡 = COMTYPE("うふふ")
 オートコマンド許可 = 1
 
 @COM_TOOLTIP_S82_2
-LOCALS = <br>■젖꼭지 귀두 자극<br>
-LOCALS += "유두를 사용하여 상대의 귀두에 자극을 주는 커맨드."
-LOCALS += "<br>COM 타입: 우후후<br>획득 소스: 쾌C・노출・접촉"
-LOCALS += "<br>고유 획득 경험: 파이즈리 경험(PLAYER)<br>"
+LOCALS = <br>■젖꼭지 귀두 괴롭히기<br>
+LOCALS += "젖꼭지를 사용하여 상대의 귀두에 자극을 주는 커맨드."
+LOCALS += "<br>COM 타입：우후후<br>획득 소스：쾌감C・노출・접촉"
+LOCALS += "<br>고유 획득 경험：가슴애무 경험(PLAYER)<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
 @COM_S82_2
@@ -76,7 +76,7 @@ RETURN 1
 @MESSAGE_COM_S82_2
 
 IF TALENT:PLAYER:バストサイズ > 0
-	PRINTFORML %CALLNAME:PLAYER%는 양쪽 유두를 %CALLNAME:TARGET%의 페니스에 비비며 귀두나 요도구를 자극하기 시작했다…
+	PRINTFORML %CALLNAME:PLAYER%은(는) 양쪽 젖꼭지를 %CALLNAME:TARGET%의 페니스에 대고, 귀두나 요도를 자극하기 시작했다…
 ELSE
-	PRINTFORML %CALLNAME:PLAYER%는 유두를 %CALLNAME:TARGET%의 페니스에 비비며 귀두나 요도구를 자극하기 시작했다…
+	PRINTFORML %CALLNAME:PLAYER%은(는) 젖꼭지를 %CALLNAME:TARGET%의 페니스에 대고, 귀두나 요도를 자극하기 시작했다…
 ENDIF

@@ -3,7 +3,7 @@
 #FUNCTIONS
 TSTR:コマンド名受渡 = 동행 해제
 IF CFLAG:TARGET:デート == MASTER + 100
-	TSTR:コマンド名受渡 = 데이트를 끝낸다
+	TSTR:コマンド名受渡 = 데이트를 끝내다
 ENDIF
 
 ;===================================================
@@ -14,25 +14,25 @@ ENDIF
 TFLAG:コマンドタイプ受渡 = COMTYPE("日常")
 
 @COM_TOOLTIP_356
-LOCALS = <br>■同行解除<br>
-LOCALS += "캐릭터의 동행을 해제하는 커맨드.<br>함께 은밀 중・우후후 중에는 동행이 해제되지 않는다.<br>데이트 중에는 [데이트를 끝낸다]로 변화."
-LOCALS += "<br>COM 타입: 일상<br>획득 소스: 없음"
+LOCALS = <br>■동행 해제<br>
+LOCALS += "캐릭터의 동행을 해제하는 명령어. <br>함께 은밀 중・우후후 중에는 동행이 해제되지 않는다. <br>데이트 중에는 [데이트를 끝내다]로 변화."
+LOCALS += "<br>COM타입：일상<br>취득 소스：없음"
 LOCALS += "<br>고유 획득 경험: 없음<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
 @COM356
 IF CFLAG:TARGET:デート == MASTER + 100
 	;将来的にデートの内容に応じて好感度上昇とかしたいが未実装
-	PRINTFORMW %CALLNAME:TARGET%와의 데이트를 마치고 헤어졌다
+	PRINTFORMW %CALLNAME:TARGET%와의 데이트를 끝내고 헤어졌다
 ELSEIF TCVAR:TARGET:デートちょっかい値 > 0
-	PRINTFORM %CALLNAME:TARGET%는
+	PRINTFORM %CALLNAME:TARGET%은(는)
 	IF CHECK_SPERM(TARGET, MASTER) > 0
-		PRINTFORM %CALLNAME:MASTER%의 정액을 태 안에 남긴 채,
+		PRINTFORM %CALLNAME:MASTER%의 정액을 태내에 남긴 채,
 	ENDIF
 	PRINTFORMW %CALLNAME:(ABS(CFLAG:TARGET:デート) - 100)%와의 데이트로 돌아갔다
 	CALL デートちょっかい終了処理(TARGET)
 ELSE
-	PRINTFORMW %CALLNAME:TARGET%와의 동행을 마치고 헤어졌다
+	PRINTFORMW %CALLNAME:TARGET%와의 동행을 끝내고 헤어졌다
 ENDIF
 
 ;SOURCEまで回さないのでここで口上を表示させる

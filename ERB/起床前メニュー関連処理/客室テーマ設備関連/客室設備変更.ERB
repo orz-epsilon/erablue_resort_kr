@@ -1,0 +1,180 @@
+
+@客室設備変更(配置番号)
+#DIM 配置番号
+
+DRAWLINE
+PRINTL 설치할 설비를 선택해 주세요.
+PRINT 설정 중인 설비:
+IF 配置客室設備:配置番号 > 0
+	TSTR:コマンド名受渡 = 
+	TSTR:ツールチップ受渡 = 
+	CALLFORM 客室設備_%ERDNAME(客室設備, 配置客室設備:配置番号)%("名前取得", 客室設備:(配置客室設備:配置番号))
+	IF TSTR:ツールチップ受渡 != ""
+		HTML_PRINT @"<nonbutton  title='%TSTR:ツールチップ受渡%'>%TSTR:コマンド名受渡%</nonbutton>", 1
+		PRINTL
+	ELSE
+		PRINTFORML %TSTR:コマンド名受渡%
+	ENDIF
+ELSE
+	PRINTL ----------
+ENDIF
+DRAWLINE
+FOR LOCAL, 1, VARSIZE("客室設備")
+	SIF 客室設備:LOCAL < 1
+		CONTINUE
+	SIF MATCH(配置客室設備, LOCAL)
+		CONTINUE
+	TSTR:コマンド名受渡 = 
+	TSTR:ツールチップ受渡 = 
+	CALLFORM 客室設備_%ERDNAME(客室設備, LOCAL)%("名前取得", 客室設備:LOCAL)
+	IF TSTR:ツールチップ受渡 != ""
+		HTML_PRINT @"<button value='{LOCAL}' title='%TSTR:ツールチップ受渡%'>[{LOCAL}] %TSTR:コマンド名受渡%</button>", 1
+		PRINTL
+	ELSE
+		HTML_PRINT @"<button value='{LOCAL}'>[{LOCAL}] %TSTR:コマンド名受渡%</button>"
+	ENDIF
+NEXT
+PRINTL
+IF 配置客室設備:配置番号 > 0
+	PRINTBUTTON "[998] 설정 중인 설비를 제외", 998
+	PRINTL
+ELSE
+	SETCOLOR カラーパレット("グレーアウト")
+	PRINTPLAIN [998] 설정 중인 설비를 제외
+	RESETCOLOR
+	PRINTL
+ENDIF
+PRINTBUTTON "[999] 돌아가기", 999
+PRINTL
+PRINTL
+BINPUT
+PRINTL
+PRINTL
+SELECTCASE RESULT
+	CASE 999
+		RETURN 0
+	CASE 998
+		TSTR:コマンド名受渡 = 
+		TSTR:ツールチップ受渡 = 
+		CALLFORM 客室設備_%ERDNAME(客室設備, 配置客室設備:配置番号)%("名前取得", 客室設備:(配置客室設備:配置番号))
+		PRINTFORMW 객실 설비「%TSTR:コマンド名受渡%」를 해제했습니다.
+		配置客室設備:配置番号 = 0
+	CASEELSE
+		配置客室設備:配置番号 = RESULT
+		TSTR:コマンド名受渡 = 
+		TSTR:ツールチップ受渡 = 
+		CALLFORM 客室設備_%ERDNAME(客室設備, 配置客室設備:配置番号)%("名前取得", 客室設備:(配置客室設備:配置番号))
+		DRAWLINE
+		PRINTFORML 객실 설비「%TSTR:コマンド名受渡%」를 설치했습니다.
+		IF TSTR:ツールチップ受渡 != ""
+			DRAWLINE
+			HTML_PRINT TSTR:ツールチップ受渡
+			DRAWLINE
+		ENDIF
+		WAIT
+ENDSELECT
+
+
+@客室設備_ベッド_通常系列(動作モード, Lv指定 = 1)
+#DIMS 動作モード
+#DIM Lv指定
+
+SELECTCASE Lv指定
+	CASE 1
+		SELECTCASE 動作モード
+			CASE "名前取得"
+				TSTR:コマンド名受渡 = 간소한 침대
+				TSTR:ツールチップ受渡 = 일반 가정에서 사용하는 평범한 침대. <br>
+				TSTR:ツールチップ受渡 += "잠자리는 조금 딱딱하지만, 오히려 이것이 편안하다는 사람도 있다. <br>"
+				;価格を返す
+				RETURN 10000
+		ENDSELECT
+	CASE 2
+		SELECTCASE 動作モード
+			CASE "名前取得"
+				TSTR:コマンド名受渡 = 푹신푹신 침대
+				TSTR:ツールチップ受渡 = 고급 솜을 듬뿍 사용한 푹신푹신한 침대. <br>
+				TSTR:ツールチップ受渡 += "조금 비싼 여관에서 자주 사용된다. <br>"
+				TSTR:ツールチップ受渡 += "촉감과 잠자리가 좋고, 푹 잘 수 있다고 평판이 좋은 침대. <br>"
+				;価格を返す
+				RETURN 50000
+		ENDSELECT
+	CASE 3
+		SELECTCASE 動作モード
+			CASE "名前取得"
+				TSTR:コマンド名受渡 = 마법의 침대
+				TSTR:ツールチップ受渡 = 상태 유지 마법이 걸린 침대. <br>
+				TSTR:ツールチップ受渡 += "한번 말리면 일주일은 갓 말린 듯한 따뜻함과 폭신폭신함이 지속된다.<br>"
+				TSTR:ツールチップ受渡 += "특히 장기 투숙 고객들에게 평판이 좋다.<br>"
+				;価格を返す
+				RETURN 150000
+		ENDSELECT
+	CASE 4
+		SELECTCASE 動作モード
+			CASE "名前取得"
+				TSTR:コマンド名受渡 = 호화로운 침대
+				TSTR:ツールチップ受渡 = 금세공 장식과 최고급 실크 시트로 감싸인 일급품 침대.<br>
+				TSTR:ツールチップ受渡 += "외관뿐만 아니라 촉감과 잠자리도 최상급인 일품.<br>"
+				TSTR:ツールチップ受渡 += "마치 왕후귀족의 기분을 맛볼 수 있다는 평판이 자자하다.<br>"
+				;価格を返す
+				RETURN 500000
+		ENDSELECT
+	CASE 5
+		SELECTCASE 動作モード
+			CASE "名前取得"
+				TSTR:コマンド名受渡 = 지고의 침대
+				TSTR:ツールチップ受渡 = 과학, 마법, 연금술 등 모든 기술을 구사하여 만들어진 지고의 침대.<br>
+				TSTR:ツールチップ受渡 += "어떤 불면증 환자라도 한번 누우면 10초 만에 꿈속으로 빠져든다고 한다.<br>"
+				TSTR:ツールチップ受渡 += "이 침대에서 잠들기 위해 일부러 찾아오는 관광객도 많다.<br>"
+				;価格を返す
+				RETURN 2000000
+		ENDSELECT
+ENDSELECT
+
+RETURN -1
+
+@客室設備_家具_テーブル系列(動作モード, Lv指定 = 1)
+#DIMS 動作モード
+#DIM Lv指定
+
+SELECTCASE Lv指定
+	CASE 1
+		SELECTCASE 動作モード
+			CASE "名前取得"
+				TSTR:コマンド名受渡 = 평범한 테이블
+				;価格を返す
+				RETURN 8000
+		ENDSELECT
+	CASE 2
+		SELECTCASE 動作モード
+			CASE "名前取得"
+				TSTR:コマンド名受渡 = 큼직한 테이블
+				;価格を返す
+				RETURN 40000
+		ENDSELECT
+	CASE 3
+		SELECTCASE 動作モード
+			CASE "名前取得"
+				TSTR:コマンド名受渡 = 다기능 테이블
+				;価格を返す
+				RETURN 120000
+		ENDSELECT
+ENDSELECT
+
+RETURN -1
+
+@客室設備_家具_冷蔵庫(動作モード, Lv指定 = 1)
+#DIMS 動作モード
+#DIM Lv指定
+
+SELECTCASE Lv指定
+	CASE 1
+		SELECTCASE 動作モード
+			CASE "名前取得"
+				TSTR:コマンド名受渡 = 마도 냉장고
+				;価格を返す
+				RETURN 65000
+		ENDSELECT
+ENDSELECT
+
+RETURN -1

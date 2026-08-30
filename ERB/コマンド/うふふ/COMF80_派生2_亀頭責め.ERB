@@ -1,7 +1,7 @@
 
 @COMNAME_S80_2
 #FUNCTIONS
-TSTR:コマンド名受渡 = 귀두 괴롭히기
+TSTR:コマンド名受渡 = 귀두 애무
 
 ;===================================================
 ;コマンドタイプ
@@ -13,10 +13,10 @@ TFLAG:コマンドタイプ受渡 = COMTYPE("うふふ")
 オートコマンド許可 = 1
 
 @COM_TOOLTIP_S80_2
-LOCALS = <br>■귀두 괴롭힘<br>
-LOCALS += "핸드잡 중, 상대의 귀두를 집중적으로 괴롭히는 커맨드."
-LOCALS += "<br>COM 타입: 우후후<br>획득 소스: 쾌C・노출・접촉"
-LOCALS += "<br>고유 획득 경험: 수음 경험(PLAYER)<br>"
+LOCALS = <br>■귀두 애무<br>
+LOCALS += "수음 중, 상대의 귀두를 집중적으로 애무하는 커맨드."
+LOCALS += "<br>COM타입：우후후<br>획득 출처：快Ｃ・노출・접촉"
+LOCALS += "<br>고유 획득 경험：수음 경험(PLAYER)<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
 @COM_S80_2
@@ -80,6 +80,6 @@ RETURN 1
 ;実行時メッセージ
 ;-------------------------------------------------
 @MESSAGE_COM_S80_2
-PRINTFORML %CALLNAME:PLAYER%은 %CALLNAME:TARGET%의 귀두를 손바닥으로 집중적으로 애무했다…
+PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%의 귀두를 손바닥으로 집중적으로 애무했다…
 
 

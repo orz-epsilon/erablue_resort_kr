@@ -4,7 +4,7 @@
 ;-------------------------------------------------
 @COMNAME83
 #FUNCTIONS
-TSTR:コマンド名受渡 = 노출 애무
+TSTR:コマンド名受渡 = 스마타
 
 
 
@@ -20,14 +20,14 @@ TFLAG:コマンドタイプ受渡 = COMTYPE("うふふ&奉仕")
 
 @COM_TOOLTIP_83
 IF RFLAG:奉仕逆転時ツールチップフラグ
-	LOCALS = <br>■스마타한다<br>
-	LOCALS += "자신의 가랑이로 상대의 페니스를 끼워 앞뒤로 움직여 자극을 주는 커맨드. <br>노출 애무 모드가 되어, 모드를 변경하거나 성행위를 종료할 때까지 지속적으로 특정 소스가 발생한다."
+	LOCALS = <br>■스마타 하기<br>
+	LOCALS += "자신의 허벅지로 상대의 페니스를 끼워 앞뒤로 움직여 자극을 주는 커맨드. <br>스마타 모드가 되어, 모드를 변경하거나 성행위를 종료할 때까지 지속적으로 특정 소스가 발생한다."
 ELSE
 	LOCALS = <br>■스마타<br>
-	LOCALS += "상대의 가랑이로 페니스를 끼워 앞뒤로 움직여 자극을 받게 되는 커맨드. <br>노출 애무 모드가 되어, 모드를 변경하거나 성행위를 종료할 때까지 지속적으로 특정 소스가 발생한다."
+	LOCALS += "상대의 허벅지로 페니스를 끼워 앞뒤로 움직여 자극을 받게 되는 커맨드. <br>스마타 모드가 되어, 모드를 변경하거나 성행위를 종료할 때까지 지속적으로 특정 소스가 발생한다."
 ENDIF
 LOCALS = <br>■스마타<br>
-LOCALS += "상대의 가랑이로 페니스를 끼워 앞뒤로 움직여 자극을 받게 되는 커맨드. <br>노출 애무 모드가 되어, 모드를 변경하거나 성행위를 종료할 때까지 지속적으로 특정 소스가 발생한다."
+LOCALS += "상대의 허벅지로 페니스를 끼워 앞뒤로 움직여 자극을 받게 되는 커맨드. <br>스마타 모드가 되어, 모드를 변경하거나 성행위를 종료할 때까지 지속적으로 특정 소스가 발생한다."
 LOCALS += "<br>COM 타입: 우후후<br>획득 소스: 쾌C・노출・접촉・봉사・불결"
 LOCALS += "<br>고유 획득 경험: 없음<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
@@ -102,7 +102,7 @@ IF ABL:奉仕精神
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += ABL:奉仕精神 * 4
-	PRINTFORM 봉사 정신LV{ABL:奉仕精神}({ABL:奉仕精神 * 4})
+	PRINTFORM 봉사정신LV{ABL:奉仕精神}({ABL:奉仕精神 * 4})
 	＋表示フラグ = 1
 ENDIF
 ;ABL:精液中毒
@@ -110,7 +110,7 @@ IF ABL:精液中毒
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += ABL:精液中毒 * 1
-	PRINTFORM 정액 중독LV{ABL:精液中毒}({ABL:精液中毒 * 1})
+	PRINTFORM 정액중독LV{ABL:精液中毒}({ABL:精液中毒 * 1})
 	＋表示フラグ = 1
 ENDIF
 
@@ -118,7 +118,7 @@ IF MARK:快楽刻印
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += MARK:快楽刻印 * 2
-	PRINTFORM 쾌락 각인LV{MARK:快楽刻印}({MARK:快楽刻印 * 2})
+	PRINTFORM 쾌락각인LV{MARK:快楽刻印}({MARK:快楽刻印 * 2})
 	＋表示フラグ = 1
 ENDIF
 ;PALAM:欲情
@@ -133,14 +133,14 @@ ENDIF
 IF TALENT:羞恥心 > 0
 	PRINT  - 
 	実行値 -= 1
-	PRINT 수줍음(1)
+	PRINT 수치심(1)
 	＋表示フラグ = 1
 ENDIF
 ;快感の否定（淫乱、娼婦で無効）
 IF TALENT:快感応答 < 0 && !TALENT:淫乱
 	PRINT  - 
 	実行値 -= 3
-	PRINT 쾌감 부정(3)
+	PRINT 쾌감의 부정(3)
 	＋表示フラグ = 1
 ENDIF
 ;男嫌い（恋慕、親愛で無効）
@@ -163,7 +163,7 @@ IF TALENT:セフレ
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += 2
-	PRINT 섹프(2)
+	PRINT 섹스 파트너(2)
 	＋表示フラグ = 1
 ENDIF
 
@@ -190,7 +190,16 @@ IF TCVAR:言いなり
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += 999
-	PRINT 당신 말이라면 뭐든지(999)
+	PRINT 당신의 말대로(999)
+	＋表示フラグ = 1
+ENDIF
+
+;特殊言いなり
+IF TCVAR:特殊言いなり
+	SIF ＋表示フラグ
+		PRINT  + 
+	実行値 += 999
+	PRINTFORM %特殊言いなり分岐(TARGET)%(999)
 	＋表示フラグ = 1
 ENDIF
 
@@ -248,11 +257,11 @@ RETURN 1
 ;実行時メッセージ
 ;-------------------------------------------------
 @MESSAGE_COM83
-PRINTFORM %CALLNAME:TARGET%은/는
+PRINTFORM %CALLNAME:TARGET%은(는)
 IF 知識素質:性知識 < 0
-	PRINTFORM %CALLNAME:PLAYER%이 시키는 대로
+	PRINTFORM %CALLNAME:PLAYER%에게 말하는 대로
 ENDIF
-PRINTFORM %CALLNAME:PLAYER%의 페니스를 가랑이에 끼우고,
+PRINTFORM %CALLNAME:PLAYER%의 페니스를 가랑이에 끼고,
 ;淫乱＋欲情のPALAMLV5以上
 ;IF TALENT:淫乱 && PALAM:欲情 >= PALAMLV:5
 ;	PRINTFORM 快楽に溺れきった表情で%CALLNAME:PLAYER%を見つめながら
@@ -261,21 +270,21 @@ IF TALENT:恋慕 && PALAM:欲情 >= PALAMLV:5 && PLAYER == MASTER
 	PRINT 금방이라도 녹아내릴 듯한 표정을 지으며
 ;欲情のPALAMLV4以上
 ELSEIF PALAM:欲情 >= PALAMLV:4
-	PRINT 입가에서 침을 흘리면서
+	PRINT 입가에서 침을 흘리며
 ;恋慕
 ELSEIF TALENT:恋慕 && PLAYER == MASTER
-	PRINTFORM 도취된 눈으로 %CALLNAME:PLAYER%을/를 응시하며
+	PRINTFORM 도취된 눈으로%CALLNAME:PLAYER%을(를) 응시하며
 ;淫乱
 ;ELSEIF TALENT:淫乱
 ;	PRINTFORM 淫猥な目つきで挑発しながら
 ;恥薄い
 ELSEIF TALENT:羞恥心 < 0
-	PRINTFORM 대담하게 허리를 움직이면서
+	PRINTFORM 대담하게 허리를 움직이며
 ;感情乏しい
 ELSEIF TALENT:感情乏しい
 	PRINTFORM 살짝 상기된 얼굴로
 ELSEIF 知識素質:性知識 >= 0
-	PRINT 수줍어하며
+	PRINT 부끄러운 듯
 ENDIF
 
 ;小柄体型
@@ -284,4 +293,4 @@ ENDIF
 ;ELSE
 	PRINT 음순을
 ;ENDIF
-PRINTL 페니스에 비비고 있다…
+PRINTL 페니스에 문지르고 있다…

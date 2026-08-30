@@ -32,15 +32,15 @@ TOOLTIP_SETFONT "Ariel"
 $入力_LOOP
 SETTEXTBOX コメント
 L_COUNT = LINECOUNT
-PRINTFORML \@ MODE == "コメント_解説"? 해설문# 코멘트\@를 입력해 주세요 (반각의 「,」「/」「|」「(」「)」는 사용하지 마세요.
-PRINT 반각의 「
+PRINTFORML \@ MODE == "コメント_解説"? 解説文# コメント\@을(를) 입력해 주세요 (반각 문자 「,」「/」「|」「(」「)」는 사용하지 마세요.
+PRINT 반각 문자 「
 FONTBOLD
 PRINT ＿
 FONTREGULAR
-PRINTL 」(언더바)는 아래에 나타내는 특수 구문으로만 사용해 주세요)
+PRINTL 」(언더바)는 아래에 제시된 특수 구문으로만 사용해 주세요)
 
 SIF MODE == "コメント_解説"
-	PRINTL (해설문 중에 공백으로 줄 바꿈을 넣고 싶은 경우, 그 줄에는 전각 스페이스를 입력해 주세요)
+	PRINTL (설명문 중에 공백으로 줄 바꿈을 하고 싶을 경우, 해당 줄에는 전각 스페이스를 입력해 주세요)
 
 IF 入力補助 == 0
 	Column_M '= "<clearbutton>"
@@ -48,19 +48,19 @@ ELSE
 	Column_M '= @"<font color='#%カラーパレット_HTML("黄")%'>　＊＊＊ボタンをクリックする前にはEnterキーを押して入力を確定してください。入力内容が消える場合があります。＊＊＊</font><br>"
 ENDIF
 
-Column_M += "　　문자를 수식：　"
+Column_M += "　　문자 꾸미기:　"
 FOR LOCAL, 0, VARSIZE("修飾_K")
 	Column_M += @"<button title='<br>　%修飾_K:LOCAL%　<br>' value='%修飾_K:LOCAL%'>[%修飾_H:LOCAL%]</button>　"
 NEXT
 
 FOR LOCAL, 0, VARSIZE("L_COLOR")
-	Column_M += @"<button title='<br>　%L_COLOR_K:LOCAL%　<br>' value='%L_COLOR_K:LOCAL%'>"
+	Column_M += @"<button title='<br>　%L_COLOR_K:LOCAL%　<br>' value='%L_COLOR_K:LOCAL%">"
 	Column_M += @"<font color='#%カラーパレット_HTML(L_COLOR:LOCAL)%'>"
-	Column_M += @"[%L_COLOR:LOCAL%\@ STRLENS(L_COLOR:LOCAL) < 4 ? 색# \@]</font></button>　"
+	Column_M += @"[%L_COLOR:LOCAL%\@ STRLENS(L_COLOR:LOCAL) < 4 ? 色# \@]</font></button>　"
 NEXT
-Column_M += "<button title='<br>　_　<br>' value='_'>수식 종료</button><br>"
+Column_M += "<button title='<br>　_　<br>' value='_'>꾸미기 종료</button><br>"
 
-Column_M += "　　특수 문자　：　"
+Column_M += "　　특수 문자:　"
 FOR LOCAL, 0, VARSIZE("置換_K")
 	Column_M += @"<button title='<br>　%置換_K:LOCAL%　<br>' value='%置換_K:LOCAL%'>[%置換_H:LOCAL%]</button>　"
 NEXT
@@ -68,7 +68,7 @@ NEXT
 IF 入力補助 == 0
 	;INPUTS関数を用いる。ボタンは使用せず、ロールオーバーで構文を表示する
 	Column_M += "</clearbutton>"
-	Column_M += "<br>" + "　" * 30 + "<button title='各種特殊構文をボタン入力可能にする<br>버튼 입력 시, 입력 전 내용의 마지막에 특수 구문이 추가됩니다' value='100'>[100] 입력 보조 전환 (OFF→ON) </button>"
+	Column_M += "<br>" + "　" * 30 + "<button title='各種特殊構文をボタン入力可能にする<br>버튼을 입력하면, 입력 전 내용의 마지막에 특수 구문이 추가됩니다' value='100'>[100] 입력 보조 전환 (OFF→ON) </button>"
 	Column_M += "<button title='入力をキャンセルし、入力前の内容に戻す' value='999'>[999] 취소 </button>"
 	HTML_PRINT Column_M
 	INPUTS
@@ -84,8 +84,8 @@ IF 入力補助 == 0
 	ENDIF
 ELSE
 	;INPUTS関数を用いる。ボタンを使用し、ボタン押下時は入力前の内容の最後尾に追記する
-	Column_M += "<br>" + "　" * 30 + "<button title='各種特殊構文をボタン入力を無効にする<br>특수 구문을 사용하고 싶은 경우, 툴팁에 표시되는 문자열을 직접 입력해 주세요' value='100'>[100] 입력 보조 전환 ( ON → OFF ) </button>"
-	Column_M += "<button title='入力を確定させ、選択に戻る' value='900'>[900] 확정　</button>"
+	Column_M += "<br>" + "　" * 30 + "<button title='各種特殊構文をボタン入力を無効にする<br>특수 구문을 사용하고 싶을 경우, 툴팁에 표시되는 문자열을 직접 입력해 주세요' value='100'>[100] 입력 보조 전환 ( ON → OFF ) </button>"
+	Column_M += "<button title='入力を確定させ、選択に戻る' value='900'>[900] 확정 </button>"
 	Column_M += "<button title='入力をキャンセルし、入力前の内容に戻す' value='999'>[999] 취소</button>"
 	HTML_PRINT Column_M
 	INPUTS

@@ -121,6 +121,9 @@ ENDSELECT
 #FUNCTION
 #DIM 動作モード
 
+SIF ARG == MASTER
+	RETURNF 15
+
 LOCAL = 0
 
 ;性的陥落
@@ -258,7 +261,7 @@ IF 入手アイテム種別 == ""
 	PRINTL
 	PRINTL
 	PRINTL
-	PRINTL 아이템 이름이 올바르지 않습니다. 제작자에게 문의하십시오.
+	PRINTL 아이템 이름이 올바르지 않습니다. 제작자에게 문의해 주세요.
 	PRINTL
 	PRINTL
 	PRINTL
@@ -275,7 +278,7 @@ ENDIF
 IF LOCAL < ドロップ確率
 	IF ダンジョン表示モード != ""
 		;ダンジョン内、っていうか戦闘中ドロップ表示
-		WSTR:(K++) = %入手アイテム名%을(를) 손에 넣었다!
+		WSTR:(K++) = %入手アイテム名%을(를) 손에 넣었다！
 	ELSE
 		;非戦闘中、つまり自動探索ドロップ
 		IF MAP_HAS("自動探索ドロップ", 入手アイテム名)
@@ -317,7 +320,7 @@ PRINTL
 PRINTL
 PRINTL
 PRINTL
-PRINTFORML 아이템 이름（%入手アイテム名%）이(가) 올바르지 않습니다. 제작자에게 문의하십시오.
+PRINTFORML 아이템 이름（%入手アイテム名%）이(가) 올바르지 않습니다. 제작자에게 문의해 주세요.
 PRINTL
 PRINTL
 PRINTL
@@ -344,7 +347,7 @@ ELSE
 	PRINTL
 	PRINTL
 	PRINTL
-	PRINTL 아이템 이름이 올바르지 않습니다. 제작자에게 문의하십시오.
+	PRINTL 아이템 이름이 올바르지 않습니다. 제작자에게 문의해 주세요.
 	PRINTL
 	PRINTL
 	PRINTL
@@ -370,7 +373,7 @@ ELSE
 	PRINTL
 	PRINTL
 	PRINTL
-	PRINTL 아이템 이름이 올바르지 않습니다. 제작자에게 문의하십시오.
+	PRINTL 아이템 이름이 올바르지 않습니다. 제작자에게 문의해 주세요.
 	PRINTL
 	PRINTL
 	PRINTL
@@ -395,7 +398,7 @@ ELSE
 	PRINTL
 	PRINTL
 	PRINTL
-	PRINTL 아이템 이름이 올바르지 않습니다. 제작자에게 문의하십시오.
+	PRINTL 아이템 이름이 올바르지 않습니다. 제작자에게 문의해 주세요.
 	PRINTL
 	PRINTL
 	PRINTL
@@ -420,18 +423,37 @@ RETURNF ((0 <= HOURS && HOURS <= 9) || IS_HALF) ? TOFULL(TOSTR(HOURS)) # TOSTR(H
 ;-------------------------------------------------
 @HAS_PENIS(ARG)
 #FUNCTION
-RETURNF GETBIT(TALENT:ARG:性別, 1)
+IF TALENT:ARG:Ｃ感度 != -2
+	RETURNF GETBIT(TALENT:ARG:性別, 1)
+ELSE
+	RETURNF 0
+ENDIF
+
+;-------------------------------------------------
+;ARG番のキャラにクリがあるかどうかを返す関数
+;-------------------------------------------------
+@HAS_CLITORIS(ARG)
+#FUNCTION
+IF TALENT:ARG:Ｃ感度 != -2
+	RETURNF !GETBIT(TALENT:ARG:性別, 1)
+ELSE
+	RETURNF 0
+ENDIF
 
 ;-------------------------------------------------
 ;ARG番のキャラに女性器があるかどうかを返す関数
 ;-------------------------------------------------
 @HAS_VAGINA(ARG)
 #FUNCTION
-RETURNF GETBIT(TALENT:ARG:性別, 0)
+IF TALENT:ARG:Ｖ感度 != -2
+	RETURNF GETBIT(TALENT:ARG:性別, 0)
+ELSE
+	RETURNF 0
+ENDIF
 
 ;-------------------------------------------------
 ;ARG番のキャラに睾丸があるかどうかを返す関数
-;ふたなりの場合はOPTIONや個別設定に依存する 現状は両方が未設定の場合は玉なしとして扱う
+;ふたなりの場合はOPTIONや個別設定に依存する 현재は両方が未設定の場合は玉なしとして扱う
 ;-------------------------------------------------
 @HAS_TESTICLES(ARG)
 #FUNCTION
@@ -461,10 +483,11 @@ RETURNF HAS_VAGINA(ARG)
 #FUNCTION
 #DIM 対象キャラ
 
-RFLAG:利用性別 = 0
-TRYCALLFORMF 施設利用性別登録_{NO:対象キャラ}(対象キャラ)
-SIF RFLAG:利用性別
-	RETURNF RFLAG:利用性別
+RESULT = 0
+TRYCALLFORMF 性別処理制御_{NO:対象キャラ}(対象キャラ, "入室性別")
+IF RESULT
+	RETURNF RESULT
+ENDIF
 
 ;男は男、それ以外は全部女性側がデフォルト
 IF TALENT:対象キャラ:性別 == 2
@@ -518,7 +541,7 @@ RETURNF !(MAX(TALENT:ARG:Ｂ感度, TALENT:ARG:Ａ感度, TALENT:ARG:Ｃ感度, 
 
 ;-------------------------------------------------
 ;部位をARG番のキャラの感度と敏感で重み付けてランダムに返す関数
-;現状では使いづらいので部位_Ｓは返さない
+;현재では使いづらいので部位_Ｓは返さない
 ;IS_MALE(ARG)の時は部位_Ｖは返さない
 ;Ｖ,Ａ未経験の時はそれぞれ部位_Ｖと部位_Ａは返さない
 ;例外として, ＣＢ性感帯が存在しないかつＶＡ未経験の場合, 性感帯が全く存在しない場合など
@@ -664,17 +687,21 @@ ENDIF
 CALL 初体験日登録処理(対象キャラ, MASTER, "初うふふ", DAY * 1440 + TIME, 場所登録, シチュ記録, "", 1)
 CALL 初体験日登録処理(対象キャラ, MASTER, "うふふ", DAY * 1440 + TIME, 場所登録, シチュ記録, "", 0)
 IF RESULT
-	CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>처음으로 %CALLNAME:MASTER%とえっちをした</font><img src='えっちハート'>","うふふ")
+	CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>初めて%CALLNAME:MASTER%とえっちをした</font><img src='えっちハート'>","うふふ")
 	TCVAR:対象キャラ:初うふふフラグ = 1
 ENDIF
 CALL 初体験日登録処理(MASTER, 対象キャラ, "初うふふ", DAY * 1440 + TIME, 場所登録, シチュ記録, "", 1)
 CALL 初体験日登録処理(MASTER, 対象キャラ, "うふふ", DAY * 1440 + TIME, 場所登録, シチュ記録, "", 0)
 IF RESULT
-	CALL 履歴データベース登録(CFLAG:MASTER:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>처음으로 %CALLNAME:対象キャラ%とえっちをした</font><img src='えっちハート'>","うふふ")
+	CALL 履歴データベース登録(CFLAG:MASTER:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>初めて%CALLNAME:対象キャラ%とえっちをした</font><img src='えっちハート'>","うふふ")
 ENDIF
 
 あなた追跡キャラ = 0
 
+;非うふふ中専用のサイド領域だった場合変更する
+IF サイド描画表示種類 == "クイック触れ合い"
+	サイド描画表示種類 = クイック自慰
+ENDIF
 
 @うふふ終了処理(終了原因 = "")
 #DIM EXP番号
@@ -688,7 +715,7 @@ FOR LOCAL, 1, CHARANUM
 		BREAK
 	IF TCVAR:(TARGET:LOCAL):食いしばりフラグ > 1
 		;食いしばり時にうふふ終了すると、即座に体力限界に移行させる
-		PRINTFORML （%CALLNAME:(TARGET:LOCAL)%의 체력이 한계에 다다랐습니다)
+		PRINTFORML （%CALLNAME:(TARGET:LOCAL)%의 체력이 한계에 도달했습니다）
 		;限界口上
 		TRYCALLFORM KOJO_EVENT_うふふ体力限界_{NO:(TARGET:LOCAL)}(TARGET:LOCAL)
 		FORCEWAIT
@@ -721,6 +748,7 @@ FOR LOCAL, 1, CHARANUM
 		ENDIF
 	ENDIF
 	CFLAG:(TARGET:LOCAL):うふふ = 0
+	TCVAR:(TARGET:LOCAL):ダウン後いたずら = 0
 	CFLAG:(TARGET:LOCAL):うふふ開始時間記録 = 0
 	CALL 性欲ゲージ減少処理(TARGET:LOCAL)
 	TCVAR:(TARGET:LOCAL):初うふふフラグ = 0
@@ -751,9 +779,70 @@ FOR LOCAL, 1, CHARANUM
 		IF 終了原因 == "目撃される"
 			SAVESTR:ゲームフェイズ管理 = 通常モード
 		ELSE
-			PRINTFORM 술에 취해 쓰러진%CALLNAME:(TARGET:LOCAL)%의 몸을%TEXTR("무단으로/")%%TEXTR("마음껏/만족할 때까지/몰래")%%TEXTR("만끽하고/맛보고")%
-			IF TCVAR:(TARGET:LOCAL):膣内精液量
-				PRINTFORM 즐기며, 그녀의
+			PRINTFORM 술에 취해 쓰러진%CALLNAME:(TARGET:LOCAL)%의 몸을%TEXTR("몰래/")%%TEXTR("마음껏/만족할 때까지/몰래")%%TEXTR("만끽하며/음미하며")%
+			IF TCVAR:(TARGET:LOCAL):膣内精液量 > 0
+				PRINTFORM 탐하고, 그녀의
+				SIF あなた特殊能力:朔望鑑定術 >= 2 && RISKY_DAY((TARGET:LOCAL)) >= 1
+					PRINTFORM %TEXTR("위험한 날의/알을 품은/임신하기 딱 좋은")%
+				IF 知識素質:高貴 > 0
+					SELECTCASE RAND:2
+					CASE 0
+						PRINTFORM %TEXTR("로열/혈통서 있는")%%TEXTR("보지/자궁")%
+					CASE 1
+						PRINTFORM 혈통서 있는%TEXTR("아기 침대/고급 오나홀")%
+					ENDSELECT
+				ELSEIF TALENT:(TARGET:LOCAL):恋人持ち == 2 && TALENT:(TARGET:LOCAL):恋慕 != 2
+PRINTFORM 유부녀%TEXTR("보지/자궁")%
+				ELSEIF アイドル判定((TARGET:LOCAL))
+					SIF TALENT:(TARGET:LOCAL):年齢層 == 10 || (BASE:(TARGET:LOCAL):年齢 <= 14 && BASE:(TARGET:LOCAL):年齢 != 0)
+						PRINTFORM %TEXTR("주니어/로리/아이")%
+					PRINTFORM 아이돌%TEXTR("보지/자궁")%
+				ELSEIF 十天衆判定((TARGET:LOCAL))
+					PRINTFORM 전공 최%TEXTR("강한/조이는")%%TEXTR("보지/러브돌/오나홀")%의 가장 깊은 곳
+				ELSEIF TALENT:(TARGET:LOCAL):年齢層 == 10 || (BASE:(TARGET:LOCAL):年齢 <= 14 && BASE:(TARGET:LOCAL):年齢 != 0)
+					PRINTFORM %TEXTR("아이/미숙한")%%TEXTR("보지/자궁")%
+				ELSE
+					PRINTFORM %TEXTR("보지/자궁")%
+				ENDIF
+				SELECTCASE RAND:4
+				CASE 0
+					PRINTFORM 에 듬뿍
+					IF TALENT:(TARGET:LOCAL):恋人持ち == 2 && TALENT:(TARGET:LOCAL):恋慕 != 2
+						PRINTFORM 반려자에 대한 배신의 증거를%TEXTR("새겨 넣고/쏟아부어")%
+					ELSEIF アイドル判定((TARGET:LOCAL))
+						PRINTFORM 팬에 대한 배신의 증거를%TEXTR("새겨 넣고/쏟아부어")%
+					ELSE
+						PRINTFORM 유전자를%TEXTR("주고/쏟아부어")%
+					ENDIF
+				CASE 1
+					PRINTFORM 에%TEXTR("듬뿍 씨앗을 심고/많은 「추억」을 남기고")% 했다
+				CASE 2
+					PRINTFORM 로%TEXTR("최고로 기분 좋은/")%%TEXTR("무허가/무책임한")% 임신 사정을 즐겼다
+				CASEELSE
+					PRINTFORM 을%TEXTR("끈적하게/질척한")%
+					IF TALENT:(TARGET:LOCAL):恋人持ち == 2 && TALENT:(TARGET:LOCAL):恋慕 != 2
+						PRINTFORM 탁란
+					ELSEIF アイドル判定((TARGET:LOCAL))
+						PRINTFORM 만취 스캔들
+					ENDIF
+					PRINTFORM 정액으로%TEXTR("마킹/더럽히고/더럽히고/정복하고/소유 선언")%해줬다
+				ENDSELECT
+				CALL 履歴データベース登録(CFLAG:(TARGET:LOCAL):人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>酔い潰れているあいだに、%CALLNAME:PLAYER%の%TEXTR("精液/遺伝子")%をたっぷりと%TEXTR("お腹/子宮")%に%TEXTR("詰め込まれて/注ぎ込まれて/植えつけられて")%しまった……</font><img src='えっちハート'>","うふふ")
+			ELSE
+				PRINTFORM 만끽했다
+			ENDIF
+			PRINTFORML %CALLNAME:PLAYER%은(는),
+			PRINTFORMW 축 늘어져 몸을 내던지고 잠이 든%CALLNAME:(TARGET:LOCAL)%의 몸을 정성껏 닦아주고, 옷을 입히고, 살며시 이불을 덮어주었다……。
+			PRINTL
+		ENDIF
+	ELSEIF CSTR:(TARGET:LOCAL):うふふシチュ記録 == "マッサージむりやり" && CFLAG:MASTER:うふふ == 1
+	;マッサージ中にお香使って犯した場合。条件これでいいかは不明。他にいいのあったっけ？
+		IF 終了原因 == "目撃される"
+			SAVESTR:ゲームフェイズ管理 = 통상 모드
+		ELSE
+			PRINTFORM 귀등의 향으로 저항력을 빼앗은%CALLNAME:(TARGET:LOCAL)%의 몸을%TEXTR("무단으로/")%%TEXTR("마음껏/만족할 때까지/몰래")%%TEXTR("만끽하고/맛보고")%
+			IF TCVAR:(TARGET:LOCAL):膣内精液量 > 0
+				PRINTFORM 만끽하고, 그녀의
 				SIF あなた特殊能力:朔望鑑定術 >= 2 && RISKY_DAY((TARGET:LOCAL)) >= 1
 					PRINTFORM %TEXTR("위험한 날의/알을 품은/딱 임신하기 좋은")%
 				IF 知識素質:高貴 > 0
@@ -770,40 +859,89 @@ FOR LOCAL, 1, CHARANUM
 						PRINTFORM %TEXTR("주니어/로리/어린이")%
 					PRINTFORM 아이돌%TEXTR("보지/자궁")%
 				ELSEIF 十天衆判定((TARGET:LOCAL))
-					PRINTFORM 전공 최%TEXTR("강/조임")%%TEXTR("보지/러브돌/오나홀")%의 가장 안쪽
+					PRINTFORM 전공 최%TEXTR("강한/조이는")%%TEXTR("보지/러브돌/오나홀")%의 가장 깊은 곳
 				ELSEIF TALENT:(TARGET:LOCAL):年齢層 == 10 || (BASE:(TARGET:LOCAL):年齢 <= 14 && BASE:(TARGET:LOCAL):年齢 != 0)
-					PRINTFORM %TEXTR("어린/미숙한")%%TEXTR("보지/자궁")%
+					PRINTFORM %TEXTR("어린아이/미숙한")%%TEXTR("보지/자궁")%
 				ELSE
-					PRINTFORM %TEXTR("보지/자궁")%
+PRINTFORM %TEXTR("보지/자궁")%
 				ENDIF
 				SELECTCASE RAND:4
 				CASE 0
-					PRINTFORM 에 듬뿍
+PRINTFORM 에 듬뿍
 					IF TALENT:(TARGET:LOCAL):恋人持ち == 2 && TALENT:(TARGET:LOCAL):恋慕 != 2
-						PRINTFORM 반려자에 대한 배신의 증거를 %TEXTR("새겨주고/쏟아부어")%
+PRINTFORM 반려자에 대한 배신의 증거를%TEXTR("새겨 넣고/쏟아부어")%
 					ELSEIF アイドル判定((TARGET:LOCAL))
-						PRINTFORM 팬에 대한 배신의 증거를 %TEXTR("새겨주고/쏟아부어")%
+PRINTFORM 팬에 대한 배신의 증거를%TEXTR("새겨 넣고/쏟아부어")%
 					ELSE
-						PRINTFORM 유전자를 %TEXTR("주고/쏟아부어")%
+PRINTFORM 유전자를%TEXTR("주고/쏟아부어")%
 					ENDIF
 				CASE 1
-					PRINTFORM 에 %TEXTR("씨앗을 심어주고/「추억」을 남겨")%주었다
+PRINTFORM 에%TEXTR("듬뿍 씨앗을 심어주고/많은 「추억」을 남겨주고")% 했다
 				CASE 2
-					PRINTFORM 으로 %TEXTR("최고로 기분 좋은/")%%TEXTR("무허가/무책임한")% 임신 사정을 즐겼다
+PRINTFORM 로%TEXTR("최고로 기분 좋은/")%%TEXTR("무허가/무책임한")% 임신 사정을 즐겼다
 				CASEELSE
-					PRINTFORM 을 %TEXTR("끈적하게/질척한")%
+PRINTFORM 을%TEXTR("끈적하게/걸쭉한")%
 					IF TALENT:(TARGET:LOCAL):恋人持ち == 2 && TALENT:(TARGET:LOCAL):恋慕 != 2
-						PRINTFORM 탁란
-					;ELSEIF アイドル判定((TARGET:LOCAL))
-					;	PRINTFORM 泥酔レイプスキャンダル
+PRINTFORM 탁란
+					ELSEIF アイドル判定((TARGET:LOCAL))
+PRINTFORM 스캔들
 					ENDIF
-					PRINTFORM 정액으로 %TEXTR("마킹/더럽히고/오염시키고/정복하고/소유 선언")%해 주었다
+PRINTFORM 정액으로%TEXTR("마킹/더럽히고/모독하고/정복/소유 선언")%해 주었다
 				ENDSELECT
+				CALL 履歴データベース登録(CFLAG:(TARGET:LOCAL):人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>マッサージ中に媚香を嗅がされ、夢心地の中で%CALLNAME:PLAYER%の%TEXTR("精液/遺伝子")%をたっぷりと%TEXTR("お腹/子宮")%に%TEXTR("詰め込まれて/注ぎ込まれて/植えつけられて")%しまった……</font><img src='えっちハート'>","うふふ")
 			ELSE
-				PRINTFORM 다했다
+PRINTFORM 다했다
 			ENDIF
-			PRINTFORML %CALLNAME:PLAYER%은(는),
-			PRINTFORMW 축 늘어져 몸을 내던지고 숨소리를 내기 시작한 %CALLNAME:(TARGET:LOCAL)%의 몸을 정성스럽게 닦고, 옷을 입히고, 살며시 이불을 덮어주었다……。
+PRINTFORML %CALLNAME:PLAYER%은(는),
+PRINTFORMW 축 늘어져 사지를 내던지고 여운에 몸을%TEXTR("떨게 하는/경련하게 하는")%%CALLNAME:(TARGET:LOCAL)%의 몸을 조심스럽게 닦고, 시술복을 입혀 정돈한 뒤, 정신을 차리게 하는 향을 맡게 해 주었다……。
+			PRINTL
+			PRINTL ────
+			PRINTL
+PRINTFORM 잠시 후 최음향의 효과가 사라진%CALLNAME:(TARGET:LOCAL)%은(는),
+			IF TCVAR:(TARGET:LOCAL):膣内精液量 > 0
+				PRINTFORM %TEXTR("흠뻑/끈적하게/질척이는/번들거리는")%
+				SIF TALENT:(TARGET:LOCAL):恋人持ち == 2 && TALENT:(TARGET:LOCAL):恋慕 != 2 || TALENT:(TARGET:LOCAL):恋人持ち == 1
+					PRINTFORM %TEXTR("부정/외도")%
+				PRINTFORML %TEXTR("정액/정자/자멘")%%TEXTR("을 주입당해/을 채워져/으로 더럽혀져/에 오염되어/을 가득 채워")%%TEXTR("달아오르는/달아오른")%%TEXTR("아랫배/자궁 부근")%%TEXTR("에 약간의 위화감을 느끼는 듯한 모습을 보이거나/을 신기한 듯 쓰다듬으면서")%면서도,
+			ELSE
+				PRINTFORML 성감으로 달아오른 몸을 「마사지 덕분에 혈액순환이 좋아졌다」고 착각하며 기뻐하고,
+			ENDIF
+			PRINTFORMW %CALLNAME:PLAYER%이 시술의 끝을 알리자, %TEXTR("정말 좋았다/기분 좋았다/또 올게/다음 방문 시 사용 가능한 쿠폰을 건네주며")%며 %TEXTR("기쁜 듯이/웃는 얼굴로")% 재방문을 선언했다.
+			PRINTL
+			SELECTCASE RAND:7
+			;しらじらしいコメント
+			CASE 0
+				PRINTFORMW 손님에게 %TEXTR("기쁨을 드릴 수 있어서/이렇게나 기뻐해 주시다니")%, 정말 기뻐요!
+			CASE 1
+				PRINTFORMW 실컷 %TEXTR("박아주고/범하고")% 드린 손님에게, 이런 웃는 얼굴까지 받을 수 있다니! %TEXTR("최고의 일이다/정말 천직이구나/이 얼마나 좋은 일인가")%!
+			CASE 2
+				PRINTFORML 설마 그 몸을 %TEXTR("깊숙한 곳까지/구석구석/몰래")%%CALLNAME:PLAYER%에게 %TEXTR("즐겨지고/만끽당하고/「사용당했다」")%는 생각조차 못 할%CALLNAME:(TARGET:LOCAL)%의 웃는 얼굴에,
+				PRINTFORMW %CALLNAME:PLAYER%에게서도 저절로 미소가 흘러나왔다.
+				;アイドルかつハメ撮り、みたいなやつ
+				;PRINTFORM まさかそのカラダを%TEXTR("奥の奥まで/隅々まで/こっそりと")%%CALLNAME:PLAYER%に%TEXTR("楽しまれ/堪能され/「使われ」")%、
+				;	PRINTFORM ファンには絶対に知られちゃいけないコトをされてしまったなどとはつゆほども知らない
+				;	PRINTFORM %TEXTR("ファンには絶対に見せられない/誰にも見せられない/流出でもしたらアイドルとして終わりの/彼女の世界の週刊誌にでも売れば凄まじい値になるだろう")%%TEXTR("あられもない/スキャンダル/スキャンダラスな/屈辱的な/恥辱にまみれた/")%%TEXTR("写真/映像/ハメ撮り/レイプ実録/強姦記録/ＡＶ")%をたっぷりと撮影されてしまったなどとはつゆほども知らない
+				;PRINTFORML %CALLNAME:(TARGET:LOCAL)%の笑얼굴に、
+				;PRINTFORMW %CALLNAME:PLAYER%からも思わず笑みがこぼれた。
+			CASE 3
+				PRINTFORMW %TEXTR("몰래/억지로/향으로 지운 기억의 이면에서/마음껏/질척해질 때까지")%%TEXTR("강간한/범한/실컷 박아준/강간한")% 상대 %TEXTR("에게/에게서")%, 웃는 얼굴로 감사 인사까지 듣다니……%TEXTR("최고의 일이다/정말 천직이구나/이 얼마나 좋은 일인가")%!
+			CASE 4
+				PRINTFORMW 또 다시 찾아주시길, 기다리고 있겠습니다!
+			CASE 5
+				PRINTFORML 손님의 기쁨이, %CALLNAME:PLAYER%에게 활력을 준다.
+				PRINTFORMW 이 웃는 얼굴을 다시 보기 위해, 다음 방문에서도 또 이 몸을 %TEXTR("맛보도록 할까/실컷 기분 좋게 해줄까")%……
+			CASE 6
+				PRINTFORM 피해 의식의 조각도 없는%CALLNAME:(TARGET:LOCAL)%의 재방문 선언은,
+				SELECTCASE RAND:2
+				CASE 0
+					PRINTFORM 「또 %TEXTR("범/강간")%%TEXTR("당하러/받으러")% 오겠습니다
+				CASE 1
+					PRINTFORM 「다음에도 또, %TEXTR("이 몸으로 실컷 즐겨주세요/이 몸을 당신께 바치겠습니다/마음껏 난폭하게 대해주세요/마음껏 범해주세요")%
+				ENDSELECT
+				CALL PRINT_STR(@"_H_」")
+				PRINTFORML 라는 범해짐 선언으로 %CALLNAME:PLAYER%의 귀에 닿았다……
+				PRINTFORMW 다음에 또 찾아주시길 기다리겠습니다!
+			ENDSELECT
 			PRINTL
 		ENDIF
 	ENDIF
@@ -826,6 +964,7 @@ CSTR:MASTER:オートコマンド履歴３ =
 CSTR:MASTER:オートコマンド履歴４ = 
 連れ込みパターン = 
 FLAG:イベントうふふ終了 = 1
+TFLAG:マッサージ_鬼灯の香使用時間 = 0
 
 ;オートコマンドもリセット
 TFLAG:オートコマンドフラグ = 0
@@ -840,6 +979,10 @@ PLAYER = MASTER
 同時モード_選択数 = 0
 VARSET 同時モード_選択キャラ, -1
 
+;うふふ中専用のサイド領域だった場合変更する
+IF サイド描画表示種類 == "クイック自慰"
+	サイド描画表示種類 = クイック触れ合い
+ENDIF
 
 ;分身を消す
 ;降順に並べないとDELでキャラ番号がズレるのでまずソート
@@ -1159,6 +1302,7 @@ RETURNF LOCAL
 	"業務訪問_装飾品店店員", 
 	"業務訪問_土産物屋店員", 
 	"業務訪問_道具屋店員", 
+	"業務訪問_直売所店員", 
 	"仕事訪問", 
 	"自室訪問簡易承諾", 
 	"自室訪問承諾", 
@@ -1274,18 +1418,21 @@ SIF CSTR:対象キャラ:フォルダ判定キー == ""
 ; 「あなた」だけ特殊
 IF 対象キャラ == MASTER
 	IF SAVESTR:あなたスタイル == "グランくんスタイル"
-		RETURNF "146グラン"
+		RETURNF "146그랑"
 	ELSEIF SAVESTR:あなたスタイル == "ジータちゃんスタイル"
-		RETURNF "27ジータ"
+		RETURNF "27지타"
 	ELSEIF STRFIND(SAVESTR:あなたスタイル, "任意キャラスタイル") >= 0
+		;スタイル変化処理中は一時的にキャラNOが入る
+		SIF NO:対象キャラ > 0
+			RETURNF TOSTR(NO:対象キャラ) + CSTR:対象キャラ:フォルダ判定キー
 		任意キャラNO = TOINT(REPLACE(SAVESTR:あなたスタイル, "任意キャラスタイル_", ""))
 		IF 任意キャラNO > 0
 			RETURNF @"{任意キャラNO}%CSVCALLNAME(任意キャラNO)%"
 		ELSE
-			RETURNF "0あなた"
+			RETURNF "0당신"
 		ENDIF
 	ELSE
-		RETURNF "0あなた"
+		RETURNF "0당신"
 	ENDIF
 ENDIF
 
@@ -1382,7 +1529,11 @@ IF 画像フォルダ数 > 0
 ELSE
 	; 修正候補 = ベースフォルダ
 	;フォルダ判定キーも入れ直す
-	CSTR:対象キャラ:フォルダ判定キー '= CALLNAME:対象キャラ
+	IF ランダムキャラ_独立CSV判定(NO:対象キャラ)
+		CSTR:対象キャラ:フォルダ判定キー '= SUBSTRING(NAME:対象キャラ, 1, STRFIND(NAME:対象キャラ, "]") - 1)
+	ELSE
+		CSTR:対象キャラ:フォルダ判定キー '= CALLNAME:対象キャラ
+	ENDIF
 	修正候補フォルダ '= GET_RESOURCES_BASE_FOLDER(対象キャラ)
 ENDIF
 ;- フォルダ設定の修正
@@ -1449,6 +1600,33 @@ SIF GET_RESOURCES_FILES(対象フォルダ, 対象ファイル, カウントの�
 RETURNF 0
 
 ;-------------------------------------------------
+;対象キャラに妊娠画像があるかどうかを返す
+;-------------------------------------------------
+@HAS_PREGNANCY(対象キャラ)
+#FUNCTION
+; 引数
+#DIM 対象キャラ
+; 内部変数
+#DIMS 対象フォルダ
+#DIMS 対象ファイル
+
+;デフォルト画像がない場合は衣装画像があっても表示されないので「なし」扱い
+SIF !HAS_RESOURCES(対象キャラ)
+	RETURNF 0
+
+;指定衣装の基本画像のチェック(顔画像)
+対象フォルダ '= CSTR:対象キャラ:画像フォルダ
+対象ファイル '= "顔_妊娠*.*"
+SIF GET_RESOURCES_FILES(対象フォルダ, 対象ファイル, 1) > 0
+	RETURNF 1
+;指定衣装の基本画像のチェック(短冊画像)
+対象ファイル '= @"短冊_妊娠*.*"
+SIF GET_RESOURCES_FILES(対象フォルダ, 対象ファイル, 1) > 0
+	RETURNF 1
+;どちらもなかったら指定衣装画像なし
+RETURNF 0
+
+;-------------------------------------------------
 ;対象キャラの現在の状態を取得
 ;-------------------------------------------------
 @NOW_SITUATION(対象キャラ)
@@ -1457,33 +1635,33 @@ RETURNF 0
 
 IF RFLAG:おさわりモード中
 	SIF SAVESTR:ゲームフェイズ管理 == "マッサージモード"
-		RETURNF "マッサージ中_おさわりモード"
+		RETURNF "마사지 중_만지작 모드"
 
 	SIF CFLAG:対象キャラ:うふふ
-		RETURNF "うふふ中_おさわりモード"
+		RETURNF "우후후 중_만지작 모드"
 	
-	RETURNF "通常_おさわりモード"
+	RETURNF "일반_만지작 모드"
 ENDIF
 
 SIF SAVESTR:ゲームフェイズ管理 == "マッサージモード"
-	RETURNF "マッサージ中"
+	RETURNF "마사지 중"
 
 SIF SAVESTR:ゲームフェイズ管理 == "むりやりうふふモード"
-	RETURNF "むりやりうふふ中"
+	RETURNF "억지로 우후후 중"
 
 SIF ダンジョン名 != ""
-	RETURNF "ダンジョンモード"
+	RETURNF "던전 모드"
 
 SIF RFLAG:夜這い処理中フラグ
-	RETURNF "夜這い中"
+	RETURNF "야습 중"
 
 SIF CFLAG:対象キャラ:うふふ
-	RETURNF "うふふ中"
+	RETURNF "우후후 중"
 
 SIF CFLAG:対象キャラ:飲み会
-	RETURNF "飲み会中"
+	RETURNF "회식 중"
 
-RETURNF "通常"
+RETURNF "통상"
 
 
 ;-------------------------------------------------
@@ -1551,11 +1729,11 @@ RETURNF NAME_TEMP
 RESULTS = 
 INPUTS
 IF STRFIND(RESULTS, "<") > -1
-	PRINTL "<"은(는) 사용할 수 없는 기호입니다。
+	PRINTL "<"는 사용할 수 없는 기호입니다.
 	RESTART
 ENDIF
 IF STRFIND(RESULTS, "&") > -1
-	PRINTL "&"은(는) 사용할 수 없는 기호입니다。
+	PRINTL "&"는 사용할 수 없는 기호입니다.
 	RESTART
 ENDIF
 
@@ -1606,3 +1784,128 @@ FOR 対象キャラ, 1, CHARANUM
 NEXT
 
 RETURNF 陥落数
+
+@RAND_EXCLUDE(判定配列, 除外要素, 判定個数)
+#FUNCTION
+#DIM REF 判定配列
+#DIM 除外要素
+#DIM 除外位置
+#DIM 判定個数
+
+;判定配列のうち、除外要素を除いたものからランダムに１つ返す
+VARSET LOCAL
+ARRAYCOPY "判定配列", "LOCAL"
+
+除外位置 = FINDELEMENT(LOCAL, 除外要素)
+IF 除外位置 >= 0
+	ARRAYREMOVE LOCAL, 除外位置, 1
+ENDIF
+
+SIF 判定個数 <= 1
+	RETURNF 0
+
+RETURNF LOCAL:(RAND:(判定個数 - 1))
+
+
+@RAND_EXCLUDE_S(判定配列, 除外要素, 判定個数)
+#FUNCTIONS
+#DIMS REF 判定配列
+#DIMS 除外要素
+#DIM 除外位置
+#DIM 判定個数
+
+;判定配列のうち、除外要素を除いたものからランダムに１つ返す
+VARSET LOCALS
+ARRAYCOPY "判定配列", "LOCALS"
+
+除外位置 = FINDELEMENT(LOCALS, 除外要素)
+IF 除外位置 >= 0
+	ARRAYREMOVE LOCALS, 除外位置, 1
+ENDIF
+
+SIF 判定個数 <= 1
+	RETURNF ""
+
+RETURNF LOCALS:(RAND:(判定個数 - 1))
+
+@ランダムキャラ判定(対象No)
+#FUNCTION
+#DIM 対象No
+
+; IF 対象No == 999
+; 	RETURNF 1
+; ENDIF
+
+;CSVの設定をチェック
+IF CSVCSTR(対象No, GETNUM(CSTR, "ランダムキャラ設定")) != ""
+	RETURNF 1
+ENDIF
+
+
+RETURNF 0
+
+
+@ランダムキャラ_独立CSV判定(対象No)
+#FUNCTION
+#DIM 対象No
+
+;画像関連の設定時に使う
+;999以外のランダムキャラの意味
+
+;CSVの設定をチェック
+IF CSVCSTR(対象No, GETNUM(CSTR, "ランダムキャラ設定")) != "" && 対象No != 999
+	RETURNF 1
+ENDIF
+
+
+RETURNF 0
+
+;-------------------------------------------------
+;ON/OFFによって色が切り替わるボタンをHTML構文で出力する式中関数
+;単ボタン化が0以外の場合、[XXXX] YYYYというボタンではなく[YYYY]というボタンが表示される。押した場合の返り値は同じ。
+;ボタン化条件が0の場合、グレーアウトしてボタンでは無くなる
+;隠蔽フラグが0以外の場合、[----] ----のようにボタンの値や表示文が隠され、ツールチップが表示されなくなる
+;-------------------------------------------------
+@HTMLボタン_条件付き(ONOFF条件, ボタン値 = "", 表示文 = "", 解説文 = "", 単ボタン化 = 0, ボタン化条件 = 1, 隠蔽フラグ = 0)
+#FUNCTIONS
+#DIM ONOFF条件
+#DIMS ボタン値
+#DIMS 表示文
+#DIMS 解説文
+#DIM 単ボタン化
+#DIM ボタン化条件
+#DIM 隠蔽フラグ
+
+SIF ボタン値 == "" || 表示文 == ""
+	RETURNF
+
+VARSET LOCALS, ""
+
+IF 隠蔽フラグ
+	ボタン化条件 = 0
+	解説文 '= ""
+	表示文 = %"-" * STRLENS(表示文)%
+	ボタン値 = %"-" * STRLENS(ボタン値)%
+ENDIF
+
+SIF 解説文 != ""
+	LOCALS:1 '= @" title='%解説文%'"
+
+IF 単ボタン化
+	LOCALS:3 '= @"[%表示文%]"
+ELSE
+	LOCALS:3 '= @"[%ボタン値%] %表示文%"
+ENDIF
+
+IF !ボタン化条件
+	;グレーアウトして押せなくする
+	LOCALS '= @"<nonbutton%LOCALS:1%><font color='#%カラーパレット_HTML("グレーアウト")%'>" + LOCALS:3 + "</font></nonbutton>"
+ELSEIF ONOFF条件
+	;現在ONの時
+	LOCALS '= @"<button value='%ボタン値%'%LOCALS:1%><font color='#%カラーパレット_HTML("黄")%'>" + LOCALS:3 + "</font></button>"
+ELSE
+	;現在OFFの時
+	LOCALS '= @"<button value='%ボタン値%'%LOCALS:1%><font color='#%カラーパレット_HTML("銀")%'>" + LOCALS:3 + "</font></button>"
+ENDIF
+
+RETURNF LOCALS

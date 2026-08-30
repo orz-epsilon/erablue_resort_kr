@@ -2,9 +2,9 @@
 @COMNAME357
 #FUNCTIONS
 
-TSTR:コマンド名受渡 = 하빈 오나홀
+TSTR:コマンド名受渡 = ハーヴィンオナホ
 SIF MODE_存在判定_完全一致("ハーヴィンオナホ系", PLAYER, TARGET)
-	TSTR:コマンド名受渡 = 하빈 오나홀 해제
+	TSTR:コマンド名受渡 = ハーヴィンオナホ解除
 
 	弱点コマンド欄表示名 = ハーヴィンオナホ
 ;===================================================
@@ -15,8 +15,8 @@ SIF MODE_存在判定_完全一致("ハーヴィンオナホ系", PLAYER, TARGET
 TFLAG:コマンドタイプ受渡 = COMTYPE("セクハラ")
 
 @COM_TOOLTIP_357
-LOCALS = <br>■하빈 오나홀<br>
-LOCALS += "이미 동의를 얻었고, 체격이 하빈급인 상대를<br>V, 혹은 A에 삽입한 채 옷 속에 고정하는 커맨드. <br>동실자가 전원 함락되었을 때만 가능하지만, 함께 은밀 중일 때는 같은 장소에 비함락 캐릭터가 있어도 가능."
+LOCALS = <br>■ハーヴィンオナホ<br>
+LOCALS += "이미 합의를 얻었고, 체격이 하빈급인 상대를<br>V, 혹은 A에 삽입한 채 옷 아래에 고정하는 커맨드。<br>동실자가 전원 함락된 경우에만 가능하지만, 함께 은밀히 행동할 때는 같은 장소에 비함락 캐릭터가 있어도 가능."
 LOCALS += "<br>COM 타입: 성희롱<br>획득 소스: 없음"
 LOCALS += "<br>고유 획득 경험: 없음<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
@@ -39,14 +39,14 @@ IF MODE_存在判定_完全一致("ハーヴィンオナホ系", PLAYER, TARGET)
 ENDIF
 
 DRAWLINE
-PRINTL ■삽입할 곳을 선택해 주세요
+PRINTL ■삽입할 곳을 선택해주세요
 PRINTL
 LOCAL = 0
 IF GETBIT(TALENT:TARGET:性別, 0) == 1 && TALENT:TARGET:Ｖ感度 != -2
 	IF TEQUIP:TARGET:膣 == 0
 		LOCALS = V 삽입
 		SIF TALENT:TARGET:処女
-			LOCALS += "(처녀)"
+			LOCALS += "（처녀）"
 		PRINTBUTTONLC @"[1] %LOCALS%", 1
 		LOCAL += 1
 	ENDIF
@@ -55,7 +55,7 @@ IF TALENT:TARGET:Ａ感度 != -2
 	IF TEQUIP:TARGET:アナル == 0
 		LOCALS = A 삽입
 		SIF TALENT:TARGET:Ａ処女
-			LOCALS += "(A 처녀)"
+			LOCALS += "（A 처녀）"
 		PRINTBUTTONLC @"[2] %LOCALS%", 2
 		LOCAL += 1
 	ENDIF
@@ -139,7 +139,7 @@ RETURN 1
 #DIM 部位フラグ
 
 SKIPDISP ARG
-PRINTFORML 하빈 오나홀(%CALLNAME:TARGET%)
+PRINTFORML ハーヴィンオナホ(%CALLNAME:TARGET%)
 ;-------------------------------------------------
 ;実行できるかの判定
 ;-------------------------------------------------
@@ -165,7 +165,7 @@ IF 部位フラグ == 1
 		SIF ＋表示フラグ
 			PRINT  + 
 		実行値 += ABL:Ｖ感覚 * 2
-		PRINTFORM V감각LV{ABL:Ｖ感覚}({ABL:Ｖ感覚 * 2})
+		PRINTFORM V 감각LV{ABL:Ｖ感覚}({ABL:Ｖ感覚 * 2})
 		＋表示フラグ = 1
 	ENDIF
 ELSE
@@ -174,7 +174,7 @@ ELSE
 		SIF ＋表示フラグ
 			PRINT  + 
 		実行値 += ABL:Ａ感覚 * 2
-		PRINTFORM A감각LV{ABL:Ａ感覚}({ABL:Ａ感覚 * 2})
+		PRINTFORM A 감각LV{ABL:Ａ感覚}({ABL:Ａ感覚 * 2})
 		＋表示フラグ = 1
 	ENDIF
 ENDIF
@@ -183,7 +183,7 @@ IF MARK:快楽刻印
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += MARK:快楽刻印 * 3
-	PRINTFORM 쾌락각인LV{MARK:快楽刻印}({MARK:快楽刻印 * 3})
+PRINTFORM 쾌락 각인LV{MARK:快楽刻印}({MARK:快楽刻印 * 3})
 	＋表示フラグ = 1
 ENDIF
 ;PALAM:潤滑（の不足）
@@ -195,7 +195,7 @@ ENDIF
 IF LOCAL < PALAMLV:3
 	PRINT  - 
 	実行値 -= 5
-	PRINT 윤활부족(5)
+PRINT 윤활 부족(5)
 	＋表示フラグ = 1
 ENDIF
 ;PALAM:欲情
@@ -203,21 +203,21 @@ IF GETPALAMLV(PALAM:欲情, 5)
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += GETPALAMLV(PALAM:欲情, 5) * 3
-	PRINTFORM 욕정LV{GETPALAMLV(PALAM:欲情, 5)}({GETPALAMLV(PALAM:欲情, 5) * 3})
+PRINTFORM 욕정LV{GETPALAMLV(PALAM:欲情, 5)}({GETPALAMLV(PALAM:欲情, 5) * 3})
 	＋表示フラグ = 1
 ENDIF
 ;恥じらい
 IF TALENT:羞恥心 > 0
 	PRINT  - 
 	実行値 -= 2
-	PRINT 수치심(2)
+PRINT 수치심(2)
 	＋表示フラグ = 1
 ENDIF
 ;快感の否定
 IF TALENT:快感応答 < 0 && !TALENT:恋慕
 	PRINT  - 
 	実行値 -= 5
-	PRINT 쾌감의 부정(5)
+PRINT 쾌감의 부정(5)
 	＋表示フラグ = 1
 ENDIF
 ;恋慕
@@ -225,21 +225,21 @@ IF TALENT:恋慕
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += 15
-	PRINT 연모(15)
+PRINT 연모(15)
 	＋表示フラグ = 1
 ELSE
 	;男嫌い（恋慕で無効）
 	IF TALENT:性別嗜好 & 1 && TALENT:PLAYER:性別 == 2
 		PRINT  - 
 		実行値 -= 12
-		PRINT 남성혐오(12)
+	PRINT 남성 혐오(12)
 		＋表示フラグ = 1
 	ENDIF
 	;女嫌い（恋慕で無効）
 	IF TALENT:性別嗜好 & 2 && TALENT:PLAYER:性別 == 1
 		PRINT  - 
 		実行値 -= 12
-		PRINT 여성혐오(12)
+	PRINT 여성 혐오(12)
 		＋表示フラグ = 1
 	ENDIF
 ENDIF
@@ -248,14 +248,14 @@ IF TALENT:セフレ
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += 10
-	PRINT 섹스프렌드(10)
+PRINT 섹프(10)
 	＋表示フラグ = 1
 ENDIF
 ;未陥落
 IF 陥落チェック_性的(TARGET) == 0
 	PRINT  - 
 	実行値 -= 10
-	PRINT 미함락(10)
+PRINT 미함락(10)
 	＋表示フラグ = 1
 ENDIF
 IF 部位フラグ == 1
@@ -264,13 +264,13 @@ IF 部位フラグ == 1
 	IF TALENT:処女
 		PRINT  - 
 		実行値 -= LOCAL
-		PRINTFORM 처녀({LOCAL})
+	PRINTFORM 처녀({LOCAL})
 		＋表示フラグ = 1
 	;V経験
 	ELSEIF EXP:Ｖ経験 < EXPLV:2
 		PRINT  - 
 		実行値 -= 15
-		PRINT V경험부족(15)
+	PRINT Ｖ 경험 부족(15)
 		＋表示フラグ = 1
 	ENDIF
 ELSE
@@ -278,7 +278,7 @@ ELSE
 	IF EXP:Ａ経験 < EXPLV:2
 		PRINT  - 
 		実行値 -= 15
-		PRINT A경험부족(15)
+	PRINT Ａ 경험 부족(15)
 		＋表示フラグ = 1
 	ENDIF
 ENDIF
@@ -287,7 +287,7 @@ ENDIF
 IF ABL:マゾ性感 < 3
 	PRINT  - 
 	実行値 -= 15
-	PRINT 마조 성감 부족(15)
+PRINT 마조 성감 부족(15)
 	＋表示フラグ = 1
 ENDIF
 
@@ -296,7 +296,7 @@ IF (TALENT:PLAYER:性別 & 3) == 3
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += 4
-	PRINT 후타나리(4)
+PRINT 후타나리(4)
 	＋表示フラグ = 1
 ENDIF
 
@@ -327,7 +327,7 @@ SIF 実行値 == 必要実行値
 	PRINT  = 
 SIF 実行値 > 必要実行値
 	PRINT  > 
-PRINTFORM 실행값{必要実行値}
+PRINTFORM 실행 값{必要実行値}
 
 WAIT
 SKIPDISP 0
@@ -396,17 +396,17 @@ ENDIF
 
 IF MODE_存在判定_完全一致("ハーヴィンオナホ系", PLAYER, TARGET)
 	;実行時
-	PRINTFORM %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%을(를) 전라로 벗겨 안듯이
+	PRINTFORM %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%을(를) 전라로 벗기고, 안듯이 하여
 	SELECTCASE RFLAG:コマンド結果受渡し変数
 		CASE 1
-			PRINTL 비열에 삽입했다……
+			PRINTL 음부에 삽입했다……
 		CASE 2
 			PRINTL 항문에 삽입했다……
 	ENDSELECT
-	PRINTFORML 그대로%CALLNAME:TARGET%을(를) 밀착시키듯이 몸에 고정하고, 옷 아래에 숨겼다.
+	PRINTFORML 그대로 %CALLNAME:TARGET%을(를) 밀착시키듯이 몸에 고정하고, 옷 속에 숨겼다.
 ELSE
 	;解除時
-	PRINTFORML %CALLNAME:PLAYER%은(는) 옷을 벗고, 고정하고 있던%CALLNAME:TARGET%을(를) 해방했다.
+	PRINTFORML %CALLNAME:PLAYER%은(는) 옷을 벗고, 고정하고 있던 %CALLNAME:TARGET%을(를) 해방했다.
 ENDIF
 
 

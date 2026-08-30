@@ -7,30 +7,32 @@
 ;100~199の範囲でボタン数値を収めること
 
 LOCALS = <div rect='81,0,1912,344' border='31' bcolor='#C0C0C0'></div>
-LOCALS += @"<div rect='156,62,1912,281'>보유 루피：%NUM_FORMAT(MONEY)%<br>보유 ZP　：%ZP所持量全文字列()%</div>"
+LOCALS += @"<div rect='156,62,1912,281'>보유 루피:%NUM_FORMAT(MONEY)%<br>보유 ZP　:%ZP所持量全文字列()%</div>"
 LOCALS += "<div rect='81,375,1937,2812' border='31' bcolor='#C0C0C0'></div><div rect='2050,375,3875,2812' border='31' bcolor='#C0C0C0'></div>"
 LOCALS += "<div rect='156,500,1937,2812'>"
 LOCALS += "<br>"
-LOCALS += "<button value='100'>[100] 정원 계열을 개장</button>"
+LOCALS += "<button value='100'>[100] 정원 계열을 개조</button>"
 LOCALS += "<br>"
-LOCALS += "<button value='101'>[101] 유희실 계열을 개장</button>"
+LOCALS += "<button value='101'>[101] 유희실 계열을 개조</button>"
 LOCALS += "<br>"
-LOCALS += "<button value='102'>[102] 수영장 계열을 개장</button>"
+LOCALS += "<button value='102'>[102] 수영장 계열을 개조</button>"
 LOCALS += "<br>"
 IF 温泉作成許可フラグ
-	LOCALS += "<button value='103'>[103] 온천 계열을 개장</button>"
+	LOCALS += "<button value='103'>[103] 온천 계열을 개조</button>"
 	LOCALS += "<br>"
 ENDIF
-LOCALS += "<button value='104'>[104] 레스토랑 계열을 개장</button>"
+LOCALS += "<button value='104'>[104] 레스토랑 계열을 개조</button>"
+LOCALS += "<br>"
+LOCALS += "<button value='108'>[108] 객실을 증축한다</button>"
 LOCALS += "<br>"
 LOCALS += "<br>"
 IF 施設改造度:20:0
-	LOCALS += "<button value='109'>[109] 자택을 개장</button>"
+	LOCALS += "<button value='109'>[109] 자택을 개조</button>"
 ELSE
 	LOCALS += "<button value='109'>[109] 자택을 건설한다</button>"
 ENDIF
 LOCALS += "<br>"
-LOCALS += "<button value='110'>[110] 직원 방을 증축</button>"
+LOCALS += "<button value='110'>[110] 종업원 방을 증축</button>"
 LOCALS += "<br>"
 IF 鍛冶場作成許可フラグ
 	LOCALS += "<button value='120'>[120] 공정항 에리어를 발전시킨다</button>"
@@ -41,7 +43,7 @@ IF MATCH(開拓エリア開発番号, 大規模番号_居住区エリア) > 0
 	LOCALS += "<br>"
 ENDIF
 IF MATCH(開拓エリア開発番号, 大規模番号_海エリア) > 0
-	LOCALS += "<button value='131'>[131] 바다 에리어를 발전시킨다</button>"
+	LOCALS += "<button value='131'>[131] 해변 에리어를 발전시킨다</button>"
 	LOCALS += "<br>"
 ENDIF
 LOCALS += "<br>"
@@ -53,8 +55,8 @@ LOCALS += "</div>"
 LOCALS += "<div rect='2125,500,3875,2812'>"
 SELECTCASE 画面表示用変数
 	CASE 0
-		LOCALS += "리조트 시설의 개장·개조를 실시합니다.<br>"
-		LOCALS += "개조에는 루피 등의 자원이 필요하지만, <br>"
+		LOCALS += "리조트 시설의 개장・개조를 진행합니다.<br>"
+		LOCALS += "개조에는 루피 등의 자원이 필요하지만,<br>"
 		LOCALS += "체류 가능 인원이나 리조트의 인기 상한 등이 상승합니다. <br>"
 	CASE 100
 		LOCALS += 庭系列改造メニュー()
@@ -66,6 +68,8 @@ SELECTCASE 画面表示用変数
 		LOCALS += 風呂場系列改造メニュー()
 	CASE 104
 		LOCALS += レストラン系列改造メニュー()
+	CASE 108
+		LOCALS += 客室増築改造メニュー()
 	CASE 109
 		LOCALS += 自宅改造メニュー()
 	CASE 110
@@ -116,6 +120,8 @@ SELECTCASE LOCAL
 				CALL 風呂場系列改造実行関数(LOCAL)
 			CASE 104
 				CALL レストラン系列改造実行関数(LOCAL)
+			CASE 108
+				CALL 客室増築実行関数(LOCAL)
 			CASE 109
 				CALL 自宅改造実行関数(LOCAL)
 			CASE 110
@@ -135,11 +141,11 @@ ENDSELECT
 #FUNCTIONS
 ;100~199と999は大本のメニュー操作で使うため、使用しないこと
 
-LOCALS = 직원 방을 증축하여, 더욱 직원을 고용할 수 있도록 합니다. <br><br>
+LOCALS = "직원 방을 증축하여, 더 많은 직원을 고용할 수 있도록 합니다. <br><br>"
 IF 従業員部屋_増築数 < 従業員部屋拡張上限
-	LOCALS += @"현재 직원 방 수:{従業員部屋数}　　증축 상한:{従業員部屋拡張上限 + (従業員部屋数 - 従業員部屋_増築数)}<br>"
+	LOCALS += @"현재 직원 방 수：{従業員部屋数}　　증축 상한：{従業員部屋拡張上限 + (従業員部屋数 - 従業員部屋_増築数)}<br>"
 	IF 従業員部屋_増築数 < 18
-		LOCALS += @"■<button value='200'>[직원 방 증축]</button> (필요:%NUM_FORMAT((従業員部屋_増築数 + 2) * 5000)%루피)<br>"
+		LOCALS += @"■<button value='200'>[직원 방 증축]</button> （필요:%NUM_FORMAT((従業員部屋_増築数 + 2) * 5000)%루피）<br>"
 	ELSE
 		LOCALS += @"■<button value='200'>[직원 방 증축]</button> （필요:%NUM_FORMAT((従業員部屋_増築数 + 2) * 10000)%루피）<br>"
 	ENDIF
@@ -182,3 +188,48 @@ ENDSELECT
 ;セフレエンド分
 SIF エンディングイベント完了フラグ確認("性欲の城") > 0
 	従業員部屋数 += 10
+
+
+@客室増築改造メニュー()
+#FUNCTIONS
+;100~199と999は大本のメニュー操作で使うため、使用しないこと
+
+LOCALS = 관광객이 머무를 방을 늘립니다.<br><br>
+IF 施設改造度:49:0 < 10
+	LOCALS += @"■<button value='200'>[객실 증축]</button> Lv{施設改造度:49:0}>{施設改造度:49:0 + 1} （필요:50,000루피）<br>"
+ELSE
+	LOCALS += @"■[객실 증축] Lv{施設改造度:49:0}：상한<br>"
+ENDIF
+
+RETURNF LOCALS
+
+@客室増築実行関数(ARG)
+
+SELECTCASE ARG
+	CASE 200
+		DRAWLINE
+		PRINTL 객실을 5칸 증축합니다.
+		PRINTL 캐릭터의 체류 가능 칸이 5칸 증가합니다.
+		PRINTL 
+		PRINTL 
+		PRINTL 객실을 증축하시겠습니까?（필요:50,000루피）
+		PRINTBUTTONLC "[0] 예", 0
+		PRINTBUTTONLC "[1] 아니오", 1
+		INPUT
+		SELECTCASE RESULT
+			CASE 0
+				IF MONEY < 50000
+					PRINTW 루피가 부족합니다.
+					RETURN
+				ENDIF
+				MONEY -= 50000
+				PRINTL 객실을 증축했습니다!
+				PRINTFORMW Lv{施設改造度:49:0}>{施設改造度:49:0 + 1}
+				施設改造度:49:0 += 1
+				CALL 滞在可能キャラ数再計算()
+				RETURN
+			CASE 1
+				RETURN
+		ENDSELECT
+		RESTART
+ENDSELECT

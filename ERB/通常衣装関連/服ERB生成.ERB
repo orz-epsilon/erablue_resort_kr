@@ -11,6 +11,12 @@
 #DIMS 連動衣装
 #DIMS CONST 服種別 = "汎用衣装", "エロ衣装", "条件付き汎用", "条件付きエロ"
 #DIMS CONST 入手手段 = "別途設定", "初期制服", "購入", "他の衣装に連動"
+#DIM 服装総数
+#DIMS 一時服装名称
+
+TOOLTIP_CUSTOM 1
+TOOLTIP_SETFONTSIZE 12
+TOOLTIP_SETDURATION 100000
 
 LOCALS = 
 ;左ウインドウ表示
@@ -32,15 +38,17 @@ LOCALS += "<button value='105'>[105] 출전 원본을 설정한다</button><br>"
 LOCALS += "<button value='20'>[ 20] 설명문을 편집한다</button><br>"
 LOCALS += "<br>"
 IF 服名保存 == ""
-	LOCALS += @"<font color='#%カラーパレット_HTML("グレーアウト")%'>[998] 생성 불가능 (명칭 미설정)</font><br>"
+	LOCALS += @"<font color='#%カラーパレット_HTML("グレーアウト")%'>[998] 생성 불가 (이름 미설정)</font><br>"
 ELSEIF MAXARRAY(服構造保存) < 1
-	LOCALS += @"<font color='#%カラーパレット_HTML("グレーアウト")%'>[998] 생성 불가능 (전라 상태)</font><br>"
+	LOCALS += @"<font color='#%カラーパレット_HTML("グレーアウト")%'>[998] 생성 불가 (전라 상태)</font><br>"
 ELSEIF ENUMFUNCENDSWITH(@"CLOTHES_CHANGE_%服名保存%") > 0
-	LOCALS += @"<font color='#%カラーパレット_HTML("グレーアウト")%'>[998] 생성 불가능 (동명의 옷이 존재)</font><br>"
+	LOCALS += @"<font color='#%カラーパレット_HTML("グレーアウト")%'>[998] 생성 불가 (동명의 옷 존재)</font><br>"
 ELSE
 	LOCALS += "<button value='998'>[998] 이 설정으로 생성한다</button><br>"
 ENDIF
-LOCALS += "<button value='999'>[999] 생성하지 않고 돌아간다</button><br>"
+LOCALS += "<button value='999'>[999] 생성하지 않고돌아가기</button><br>"
+LOCALS += "<br>"
+LOCALS += "<button value='-1'>[-1] 복장 목록 표시</button><br>"
 LOCALS += "</div>"
 
 ;右ウインドウ表示
@@ -69,7 +77,7 @@ SELECTCASE 編集モード
 		VARSET 表示番号
 		表示番号 = 11,12,13,14,15,16,17,18,19,20,22,23
 	CASE 2
-		LOCALS += "■판매·해설 설정<br>"
+		LOCALS += "■판매・해설 설정<br>"
 		VARSET 表示番号
 		LOCALS += @"<button value='103'>%"　販売価格", 24, LEFT%：<font color='#\@ 入手手段設定保存 != 2 ? 808080 # C0C0C0 \@'> {販売価格, 8, LEFT}</font>루피</button><br>"
 		LOCALS += @"<button value='104'>%"　連動衣装", 24, LEFT%：<font color='#\@ !STRLENS(連動衣装) ? 808080'>（없음）# C0C0C0'>%連動衣装% \@</font></button><br>"
@@ -78,7 +86,7 @@ SELECTCASE 編集モード
 		FOR LOCAL, 0, VARSIZE("説明文章")
 			LOCALS += @"<button value='{20 + LOCAL}'>[{20 + LOCAL}] "
 			IF 説明文章:LOCAL == ""
-				LOCALS += @"<font color='#808080'>\@ LOCAL ? （행을 늘리다） # （미설정） \@</font></button><br>"
+				LOCALS += @"<font color='#808080'>\@ LOCAL ? （행을 늘린다） # （미설정） \@</font></button><br>"
 				BREAK
 			ELSE
 				LOCALS += @"%説明文章:LOCAL%</button><br>"
@@ -102,7 +110,7 @@ FOR LOCAL, 1, 24
 		LOCALS += @"<font color='#\@ 服構造保存:LOCAL == 0 ? C0C0C0 # 333333\@'><button value='{1000 + LOCAL * 10 + 0}'>[노브라]</button></font>"
 		LOCALS += @"<font color='#\@ 服構造保存:LOCAL == 1 ? C0C0C0 # 333333\@'><button value='{1000 + LOCAL * 10 + 1}'>[브라 착용]</button></font>"
 		LOCALS += @"<font color='#\@ 服構造保存:LOCAL == 2 ? C0C0C0 # 333333\@'><button value='{1000 + LOCAL * 10 + 2}'>[니플 패치]</button></font>"
-		LOCALS += @"<font color='#\@ 服構造保存:LOCAL == 3 ? C0C0C0 # 333333\@'><button value='{1000 + LOCAL * 10 + 3}'>[가슴 붕대]</button></font>"
+		LOCALS += @"<font color='#\@ 服構造保存:LOCAL == 3 ? C0C0C0 # 333333\@'><button value='{1000 + LOCAL * 10 + 3}'>[사라시]</button></font>"
 		LOCALS += @"<font color='#\@ 服構造保存:LOCAL == 4 ? C0C0C0 # 333333\@'><button value='{1000 + LOCAL * 10 + 4}'>[리본]</button></font>"
 		LOCALS += "<br>" + " " * 26
 		LOCALS += @"<font color='#\@ 服構造保存:LOCAL == -1 ? C0C0C0 # 333333\@'><button value='{1000 + LOCAL * 10 + 5}'>[오픈컵 브라]</button></font>"
@@ -115,7 +123,7 @@ FOR LOCAL, 1, 24
 		LOCALS += @"<font color='#\@ 服構造保存:LOCAL == 3 ? C0C0C0 # 333333\@'><button value='{1000 + LOCAL * 10 + 3}'>[훈도시]</button></font>"
 		LOCALS += @"<font color='#\@ 服構造保存:LOCAL == 4 ? C0C0C0 # 333333\@'><button value='{1000 + LOCAL * 10 + 4}'>[리본]</button></font>"
 		LOCALS += "<br>" + " " * 26
-		LOCALS += @"<font color='#\@ 服構造保存:LOCAL == -1 ? C0C0C0 # 333333\@'><button value='{1000 + LOCAL * 10 + 5}'>[오픈 팬티]</button></font>"
+		LOCALS += @"<font color='#\@ 服構造保存:LOCAL == -1 ? C0C0C0 # 333333\@'><button value='{1000 + LOCAL * 10 + 5}'>[오픈 쇼츠]</button></font>"
 		LOCALS += @"<font color='#\@ 服構造保存:LOCAL == -2 ? C0C0C0 # 333333\@'><button value='{1000 + LOCAL * 10 + 6}'>[성기 피어싱]</button></font>"
 		LOCALS += @"<font color='#\@ 服構造保存:LOCAL == -3 ? C0C0C0 # 333333\@'><button value='{1000 + LOCAL * 10 + 7}'>[클리에 명찰]</button></font>"
 	ELSE
@@ -145,7 +153,7 @@ FOR LOCAL, 0, 3
 		CASE 1
 			LOCALS += "하반신 설정으로"
 		CASE 2
-			LOCALS += "판매·해설 설정으로"
+			LOCALS += "판매/해설 설정으로"
 	ENDSELECT
 	LOCALS += @"</font>\@ 編集モード == LOCAL ? # </button> \@　　"
 NEXT
@@ -158,20 +166,67 @@ NEXT
 
 BINPUT
 SELECTCASE RESULT
+	CASE -1
+		;服の関数を取得
+		DRAWLINE
+		PRINTL ・조건 없는 의상 (모두 착용 가능)
+		服装総数 = ENUMFUNCBEGINSWITH("CLOTHES_CHANGE_")
+		ARRAYCOPY "RESULTS", "LOCALS"
+		ARRAYSORT LOCALS, FORWARD, 0, 服装総数
+		LOCAL:1 = 0
+		FOR LOCAL, 0, 服装総数
+			一時服装名称 '= REPLACE(LOCALS:LOCAL, "CLOTHES_CHANGE_", "")
+			IF EXISTFUNCTION(@"CLOTHES_着用条件_%一時服装名称%") == 0
+				IF LOCAL:1 >= 3
+					PRINTL
+					LOCAL:1 = 0
+				ENDIF
+				RESULTS = 
+				TRYCALLFORM CLOTHES_衣装説明_%一時服装名称%
+				IF RESULTS != ""
+					HTML_PRINT @"<nonbutton title='<br>%RESULTS%'><font color='#%カラーパレット_HTML("黄")%'>%一時服装名称, 40%</font></nonbutton>", 1
+				ELSE
+					HTML_PRINT @"%一時服装名称, 40%", 1
+				ENDIF
+				LOCAL:1 ++
+			ENDIF
+		NEXT
+		PRINTL
+		DRAWLINE
+		PRINTL ・조건부 의상
+		LOCAL:1 = 0
+		FOR LOCAL, 0, 服装総数
+			一時服装名称 '= REPLACE(LOCALS:LOCAL, "CLOTHES_CHANGE_", "")
+			IF EXISTFUNCTION(@"CLOTHES_着用条件_%一時服装名称%")
+				IF LOCAL:1 >= 3
+					PRINTL
+					LOCAL:1 = 0
+				ENDIF
+				RESULTS = 
+				TRYCALLFORM CLOTHES_衣装説明_%一時服装名称%
+				IF RESULTS != ""
+					HTML_PRINT @"<nonbutton title='<br>%RESULTS%'><font color='#%カラーパレット_HTML("黄")%'>%一時服装名称, 40%</font></nonbutton>", 1
+				ELSE
+					HTML_PRINT @"%一時服装名称, 40%", 1
+				ENDIF
+				LOCAL:1 ++
+			ENDIF
+		NEXT
+		FORCEWAIT
 	CASE 100
 		DRAWLINE
-		PRINTL 옷의 명칭을 입력해 주세요.
-		PRINTBUTTON "[변경하지 않고 돌아가기]", "変更せず戻る"
+		PRINTL 의상 이름을 입력해주세요.
+		PRINTBUTTON "[변경하지 않고 돌아가기]", "変更せず돌아가기"
 		PRINTL
 		DRAWLINE
 		INPUTS
 		IF RESULTS != "変更せず戻る"
 			服名保存 = %RESULTS%
-			PRINTFORMW 의상 이름을 「%服名保存%」으로 변경했습니다.
+			PRINTFORMW 옷 이름을 「%服名保存%」(으)로 변경했습니다.
 		ENDIF
 	CASE 101
 		DRAWLINE
-		PRINTL 의상 종류를 설정해 주세요.
+		PRINTL 옷 종류를 설정해 주세요.
 		DRAWLINE
 		FOR LOCAL, 0, VARSIZE("服種別")
 			IF 服種別設定保存 == LOCAL
@@ -190,13 +245,13 @@ SELECTCASE RESULT
 		BINPUT
 		IF RESULT != 999
 			服種別設定保存 = RESULT
-			PRINTFORMW 의상 종류를 「%服種別:RESULT%」으로 변경했습니다.
+			PRINTFORMW 옷 종류를 「%服種別:RESULT%」(으)로 변경했습니다.
 			SIF RESULT >= 2
-				PRINTFORMW ERB 출력 후, 다시 착용 조건을 기술해 주세요
+				PRINTFORMW ERB 출력 후, 다시 착용 조건을 기술해 주세요.
 		ENDIF
 	CASE 102
 		DRAWLINE
-		PRINTL 의상 입수 방법을 설정해 주세요.
+		PRINTL 옷 입수 방법을 설정해 주세요.
 		DRAWLINE
 		FOR LOCAL, 0, VARSIZE("入手手段")
 			IF 入手手段設定保存 == LOCAL
@@ -215,24 +270,24 @@ SELECTCASE RESULT
 		BINPUT
 		IF RESULT != 999
 			入手手段設定保存 = RESULT
-			PRINTFORMW 의상 종류를 「%入手手段:RESULT%」으로 변경했습니다.
+			PRINTFORMW 옷 종류를 「%入手手段:RESULT%」(으)로 변경했습니다.
 			SIF !入手手段設定保存
-				PRINTFORMW 어떤 형태로든 입수 방법을 설정하지 않는 한, 게임 중에 등장하지 않으니 주의해 주세요.
+				PRINTFORMW 어떤 형태로든 입수 방법을 설정하지 않는 한, 게임 중에 등장하지 않으므로 주의해 주세요.
 		ENDIF
 	CASE 103
 		SETTEXTBOX TOSTR(販売価格)
-		PRINTL 판매 가격을 입력해 주세요
+		PRINTL 판매 가격을 입력해 주세요.
 		INPUT
 		販売価格 = RESULT
 	CASE 104
 		SETTEXTBOX 連動衣装
-		PRINTL 입수를 연동시킬 의상 이름을 입력해 주세요
+		PRINTL 입수를 연동시킬 의상명을 입력해 주세요.
 		IF 入手手段設定保存 == 2
 			PRINTL （해당 의상을 소지하고 있는 경우, 구매 가능해집니다）
 		ELSE
 			PRINTL （해당 의상이 초기 교복으로 설정되어 있는 경우, 자동으로 사용 가능해집니다
 			PRINTL 　해당 의상 자체에 입수 방법이 있는 경우, 그쪽에 다시
-			PRINTFORML 　『CALL \@ 의상 종류 설정 저장 % 2 ? エロ衣装 # 制服 \@登録処理("%의상 이름 저장%")』이라고 추가해 주세요）
+			PRINTFORML 　『CALL \@ 服種別設定保存 % 2 ? エロ衣装 # 制服 \@登録処理("%服名保存%")』라고 덧붙여 주세요)
 			PRINTL 　
 		ENDIF
 		INPUTS
@@ -245,7 +300,7 @@ SELECTCASE RESULT
 		連動衣装 '= LOCALS:1
 	CASE 105
 		SETTEXTBOX 出典元
-		PRINTL 의상의 출처를 입력해주세요
+		PRINTL 의상의 출처를 입력해 주세요.
 		INPUTS
 		出典元 '= RESULTS
 	CASE 20 TO 29
@@ -277,21 +332,24 @@ SELECTCASE RESULT
 			ENDIF
 			PRINTFORML CALL \@ 服種別設定保存 % 2 ? エロ衣装 # 制服 \@登録処理("%服名保存%")
 			HTML_PRINT "<br>"
-		ELSEIF 入手手段設定保存 == 2 || 説明文章:0 != ""
+		ENDIF
+		IF 入手手段設定保存 == 2 || 説明文章:0 != "" || 出典元 != ""
 			PRINTFORML @CLOTHES_衣装説明_%服名保存%()
 			PRINTL #DIMS 説明文章
 			PRINTL #DIMS 出典元
 			PRINTL #DIM 販売価格
-			PRINTL #DIMS 販売分類
+			PRINTL #DIMS 販売분類
 			HTML_PRINT "<br>"
-			PRINTL ;단위는 루피
+			PRINTL ;単位はルピ
 			PRINTFORML 販売価格 = { 入手手段設定保存 == 2 ? 販売価格 # 0 }
-			PRINTL ;일반 의상, 혹은 에로 의상 중 하나
-			PRINTFORML 販売分類 = \@ 服種別設定保存 % 2 ? 에로 의상 # 일반 의상 \@
-			PRINTL ;판매하지 않을 옷은 여기에 1을 넣으세요
+			PRINTL ;通常衣装、もしくはエロ衣装のどちらか
+			PRINTFORML 販売분類 = \@ 服種別設定保存 % 2 ? エロ衣装 # 通常衣装 \@
+			PRINTL ;販売させない服はこれに1を入れる
 			IF 連動衣装 != ""
-				PRINTFORML ;%連動衣装%을(를) 입수한 후에 판매 개시
+				PRINTFORML ;%連動衣装%を入手後に販売開始
 				PRINTFORML 販売禁止フラグ = !(STRCOUNT(所持制服文字列, @"汎用/%連動衣装%_") + STRCOUNT(所持エロ衣装文字列, @"エロ/%連動衣装%_"))
+			ELSEIF 入手手段設定保存 == 1 || 入手手段設定保存 == 3
+				PRINTL 販売禁止フラグ = 1
 			ELSE
 				PRINTL 販売禁止フラグ = 0
 			ENDIF
@@ -306,7 +364,7 @@ SELECTCASE RESULT
 			NEXT
 			HTML_PRINT "<br>"
 			IF 出典元 != ""
-				PRINTL ;출처가 있는 경우, 그것을 기재
+				PRINTL ;出典元がある場合、それを記載
 				PRINTFORML 出典元 = %出典元%
 				HTML_PRINT "<br>"
 			ENDIF
@@ -314,36 +372,36 @@ SELECTCASE RESULT
 			PRINTL RESULTS:1 = %出典元%
 			PRINTL RESULTS:2 = %販売分類%
 			HTML_PRINT "<br>"
-			PRINTL RETURN 판매 가격
+			PRINTL RETURN 販売価格
 			HTML_PRINT "<br>"
 		ENDIF
 		PRINTFORML @CLOTHES_CHANGE_%服名保存%(対象キャラ)
 		PRINTL #DIM 対象キャラ
 		HTML_PRINT "<br>"
-		PRINTL ;이전 의상을 유지
+		PRINTL ;一個前の服装を保持
 		PRINTFORML SIF CSTR:対象キャラ:着せ替え服 != "%服名保存%"
 		PRINTL 	CSTR:対象キャラ:脱ぐ前の服 = %CSTR:対象キャラ:着せ替え服%
 		HTML_PRINT "<br>"
 
 		PRINTFORML CSTR:対象キャラ:着せ替え服 = %服名保存%
-		PRINTFORML CSTR:対象キャラ:着せ替え服追加名 =
+		PRINTFORML CSTR:対象キャラ:着せ替え服追加名 = 
 		FOR LOCAL, 1, 24
 			PRINTFORML TEQUIP:対象キャラ:%EQUIPNAME:LOCAL% = {服構造保存:LOCAL}
 		NEXT
 		HTML_PRINT "<br>"
 		IF 服種別設定保存 >= 2
-			PRINTFORML @CLOTHES_착용조건_%服名保存%(対象キャラ)
+			PRINTFORML @CLOTHES_着用条件_%服名保存%(対象キャラ)
 			PRINTL #DIM 対象キャラ
 			HTML_PRINT "<br>"
-			PRINTL ;조건을 만족하지 못하는 경우는 NG
-			PRINTL ;SIF NG조건
+			PRINTL ;条件を満たさない場合はNG
+			PRINTL ;SIF NG条件
 			PRINTL ;	RETURN 0
 			HTML_PRINT "<br>"
-			PRINTL ;조건을 만족하는 경우는 OK
-			PRINTL ;SIF OK조건
+			PRINTL ;条件を満たす場合はOK
+			PRINTL ;SIF OK条件
 			PRINTL ;	RETURN 1
 			HTML_PRINT "<br>"
-			PRINTL ;조건을 통과한 캐릭터는 OK
+			PRINTL ;条件をくぐり抜けたキャラはOK
 			PRINTL RETURN 1
 			HTML_PRINT "<br>"
 		ENDIF
@@ -351,7 +409,7 @@ SELECTCASE RESULT
 
 		OUTPUTLOG @"ERB_EDITFILE/CLOTHES_%服名保存%.ERB", 1
 		CLEARLINE LINECOUNT
-		PRINTL ERB_EDITFILE 폴더에 출력했습니다. ERB 폴더로 이동하여 재시작해 주세요
+		PRINTL ERB_EDITFILE폴더에 출력했습니다. ERB폴더로 이동하여 재시작해주세요
 		WAIT
 		GOTO 終了処理
 	CASEELSE

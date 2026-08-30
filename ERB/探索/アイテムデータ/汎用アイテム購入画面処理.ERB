@@ -36,18 +36,18 @@ IF 売却許可フラグ
 	LOCALS += "<div rect='2125,125,3125,381'>"
 	IF 売却モード == 0
 		;購入画面
-		LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'>■구입</font>"
-		LOCALS += "　　　<button value='1100'>■매각</button>"
+		LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'>■구매</font>"
+		LOCALS += "　　　<button value='1100'>■판매</button>"
 	ELSE
 		;売却画面
-		LOCALS += @"<button value='1100'>■구입</button>"
-		LOCALS += @"　　　<font color='#%カラーパレット_HTML("黄")%'>■매각</font>"
+		LOCALS += @"<button value='1100'>■구매</button>"
+		LOCALS += @"　　　<font color='#%カラーパレット_HTML("黄")%'>■판매</font>"
 	ENDIF
 	LOCALS += "</div>"
 ENDIF
 
-LOCALS:2 = 소지 루피：%NUM_FORMAT(MONEY)%<br>
-LOCALS:2 += @"소지 ZP　：%ZP所持量全文字列()%"
+LOCALS:2 = 보유 루피:%NUM_FORMAT(MONEY)%<br>
+LOCALS:2 += @"보유 ZP　:%ZP所持量全文字列()%"
 LOCALS += @"<div rect='156,125,1862,312'>%LOCALS:2%</div>"
 
 IF 売却モード == 0
@@ -71,7 +71,7 @@ IF 売却モード == 0
 				CALLFORM 素材性能記述_%商売文字列保存:0%
 				売価 = (素材性能_素材ランク) * (素材性能_素材ランク) * 500 + 300
 				商売文字列保存:1 = %NUM_FORMAT(売価)%
-				商売文字列保存:2 = 루피
+				商売文字列保存:2 = ルピ
 			ENDCATCH
 		ELSE
 			売価 = TOINT(商売文字列保存:1)
@@ -82,7 +82,7 @@ IF 売却モード == 0
 	NEXT
 	LOCALS += @"<div rect='156,537,1937,2687'>%LOCALS:1%</div>"
 
-	LOCALS += "<div rect='1100,3081,825,125'><button value='999'>[999] 가게에서 나가기</button></div>"
+	LOCALS += "<div rect='1000,3081,925,125'><button value='999'>[999] 가게에서 나가기</button></div>"
 
 	IF 選択アイテム番号 > -1
 		;アイテム詳細文章
@@ -92,7 +92,7 @@ IF 売却モード == 0
 		TRYCCALLFORM アイテム個別文章表示_%商売文字列保存:0%
 			アイテムフラグ = 1
 			LOCALS:3 = %詳細文文字列受け渡し変数%<br>
-			LOCALS:3 += @"구입액：{購入個数, 2}개 / "
+			LOCALS:3 += @"구매액：{購入個数, 2}개 / "
 		CATCH
 			;アイテムにない場合素材を見る
 			アイテムフラグ = 0
@@ -107,7 +107,7 @@ IF 売却モード == 0
 				LOCALS:3 += @"　선물 종류：%素材性能_プレゼント%<br>"
 			ENDIF
 			LOCALS:3 += "<br>"
-			LOCALS:3 += @"구매액:{購入個数, 2}개 / "
+			LOCALS:3 += @"구매액：{購入個数, 2}개 / "
 		ENDCATCH
 		IF 商売文字列保存:1 == ""
 			;特殊値段を設定されてない場合
@@ -155,17 +155,17 @@ ELSE
 
 	LOCALS += @"<div rect='156,537,1937,2687'>%LOCALS:1%</div>"
 
-	LOCALS += "<div rect='1100,3081,825,125'><button value='999'>[999] 가게에서 나간다</button></div>"
+	LOCALS += "<div rect='1000,3081,925,125'><button value='999'>[999] 상점에서 나간다</button></div>"
 
 	IF 選択アイテム番号 > -1
 		;アイテム詳細文章
 		TRYCALLFORM アイテム個別文章表示_%表示アイテム名:選択アイテム番号%
 		LOCALS:3 = %詳細文文字列受け渡し変数%<br>
 		TRYCALLFORM アイテム個別文章表示_%表示アイテム名:選択アイテム番号%("値段")
-		LOCALS:3 += @"매각액:{購入個数, 2}개 / {RESULT / 2 * 購入個数, 6}루피<br><br>"
+		LOCALS:3 += @"판매액：{購入個数, 2}개 / {RESULT / 2 * 購入個数, 6}루피<br><br>"
 		LOCALS:3 += @"<button value='1011'>[+10]</button> "
 		LOCALS:3 += @"<button value='1001'>[+1]</button>"
-		LOCALS:3 += @"　<button value='1000'>이 아이템을%TOFULL(TOSTR(購入個数)), 4%개 매각한다</button>　"
+		LOCALS:3 += @"　<button value='1000'>이 아이템을%TOFULL(TOSTR(購入個数)), 4%개 판매한다</button>　"
 		LOCALS:3 += @"<button value='1002'>[-1]</button> "
 		LOCALS:3 += @"<button value='1012'>[-10]</button>"
 		LOCALS += @"<div rect='2125,537,3800,2687'>%LOCALS:3%</div>"
@@ -259,7 +259,7 @@ SELECTCASE RESULT
 			購入個数 = 1
 		ELSE
 			CALL アイテム増減汎用処理(表示アイテム名:選択アイテム番号, 購入個数 * -1)
-			PRINTFORMW %表示アイテム名:選択アイテム番号%을(를)%TOFULL(TOSTR(購入個数)), 4%개 매각했습니다.
+			PRINTFORMW %表示アイテム名:選択アイテム番号%을(를)%TOFULL(TOSTR(購入個数)), 4%개 판매했습니다.
 			CALLFORM アイテム個別文章表示_%表示アイテム名:選択アイテム番号%("値段")
 			IF 詳細文文字列受け渡し変数 == "ルピ"
 				MONEY += RESULT * 購入個数 / 2

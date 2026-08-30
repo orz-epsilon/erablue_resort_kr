@@ -1,7 +1,7 @@
 
 @COMNAME355
 #FUNCTIONS
-TSTR:コマンド名受渡 = 데이트에 초대하다
+TSTR:コマンド名受渡 = 데이트 신청
 
 ;===================================================
 ;コマンドタイプ
@@ -11,8 +11,8 @@ TSTR:コマンド名受渡 = 데이트에 초대하다
 TFLAG:コマンドタイプ受渡 = COMTYPE("日常")
 
 @COM_TOOLTIP_355
-LOCALS = <br>■デートに誘う<br>
-LOCALS += "일정치 이상의 호감도 레벨을 가진 상대와 데이트하는 커맨드.<br>한 명까지 가능.<br>동행해 줄 시간은 360분, 혹은 밤 9시까지. 함께 은밀 중・우후후 중에도 시간이 카운트된다."
+LOCALS = <br>■데이트 신청<br>
+LOCALS += "일정치 이상의 호감도 레벨을 가진 상대와 데이트하는 커맨드. <br>한 명까지 가능. <br>동행해 주는 시간은 360분, 혹은 밤 9시까지. 함께 은밀 중・우후후 중에도 시간이 카운트된다."
 LOCALS += "<br>COM 타입: 일상<br>획득 소스: 없음"
 LOCALS += "<br>고유 획득 경험: 없음<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
@@ -23,7 +23,7 @@ CALLFORMF COMNAME355
 SELECTCOM_NAME '= TSTR:コマンド名受渡
 
 IF CFLAG:TARGET:デート && CFLAG:TARGET:デート != MASTER + 100
-	PRINTFORMW %CALLNAME:TARGET%은(는) 오늘 하루 종일 %CALLNAME:(ABS(CFLAG:TARGET:デート) - 100)%와(과) 데이트 중이어서 데려갈 수 없습니다
+	PRINTFORMW %CALLNAME:TARGET%은(는) 오늘 이미%CALLNAME:(ABS(CFLAG:TARGET:デート) - 100)%와 데이트 중이므로 데리고 나갈 수 없습니다
 	RETURN -1
 ENDIF
 
@@ -36,7 +36,7 @@ FOR LOCAL,1,CHARANUM
 	ENDIF
 NEXT
 
-PRINTFORMW %CALLNAME:TARGET%와(과) 데이트하러 갑니다.
+PRINTFORMW %CALLNAME:TARGET%와 데이트하러 갑니다.
 CFLAG:TARGET:デート = PLAYER + 100
 CFLAG:PLAYER:デート = TARGET + 100
 
@@ -48,13 +48,13 @@ CALL 初体験日登録処理(TARGET, PLAYER, "初デート", DAY * 1440 + TIME,
 CALL 初体験日登録処理(TARGET, PLAYER, "デート", DAY * 1440 + TIME, GETPLACENAME(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置), "", "", 0)
 IF RESULT
 	;相手とのデートが初の場合にここに入る
-	CALL 履歴データベース登録(CFLAG:TARGET:人物番号, @"처음으로 %CALLNAME:PLAYER%와 데이트를 했다.","日常")
+	CALL 履歴データベース登録(CFLAG:TARGET:人物番号, @"初めて%CALLNAME:PLAYER%とデートをした","日常")
 ENDIF
 CALL 初体験日登録処理(PLAYER, TARGET, "初デート", DAY * 1440 + TIME, GETPLACENAME(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置), "", "", 1)
 CALL 初体験日登録処理(PLAYER, TARGET, "デート", DAY * 1440 + TIME, GETPLACENAME(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置), "", "", 0)
 IF RESULT
 	;相手とのデートが初の場合にここに入る
-	CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"처음으로 %CALLNAME:TARGET%와 데이트를 했다.","日常")
+	CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"初めて%CALLNAME:TARGET%とデートをした","日常")
 ENDIF
 
 ;SOURCEまで回さないのでここで口上を表示させる
@@ -102,23 +102,23 @@ RETURN 1
 スコア記録 = CFLAG:対象キャラ:デートスコア
 DRAWLINE
 PRINTW 데이트 시간이 끝났다……
-PRINTFORML 이번 데이트는 {スコア記録, 6}점 정도의 결과였다.
+PRINTFORML 이번 데이트는{スコア記録, 6}점 정도의 결과였다.
 SELECTCASE スコア記録
 	CASE IS < 7500
-		PRINTFORML %CALLNAME:対象キャラ%를 지루하게 만들어 버렸을지도 모른다……
-		PRINTL 다음에는 좀 더 계획을 세우고 나서 권유하자
+		PRINTFORML %CALLNAME:対象キャラ%을(를) 지루하게 만들었을지도 모른다……
+		PRINTL 다음에는 좀 더 계획을 세운 후에 초대하자
 	CASE IS < 15000
-		PRINTFORML %CALLNAME:対象キャラ%는 즐거워해 주었지만, 평범한 데이트였다
+		PRINTFORML %CALLNAME:対象キャラ%은(는) 즐거워했지만, 평범한 데이트였다
 		PRINTL 선물을 주거나 해도 좋을지도 모른다
 	CASE IS < 30000
-		PRINTFORML %CALLNAME:対象キャラ%는 꽤 즐거워해 주었던 것 같다
-		PRINTL 하지만 이걸로 만족하지 말고, 더 위를 노리자!
+		PRINTFORML %CALLNAME:対象キャラ%은(는) 꽤 즐거워했던 것 같다
+		PRINTL 하지만 이것으로 만족하지 말고, 더 위를 노리자!
 	CASE IS < 60000
-		PRINTFORML %CALLNAME:対象キャラ%는 아주 즐거워해 주었던 것 같다!
-		PRINTL 이 정도의 대접을 할 수 있다면 충분하다고 말해도 좋을 것이다
+		PRINTFORML %CALLNAME:対象キャラ%은(는) 매우 즐거워했던 것 같다!
+		PRINTL 이 정도의 접대가 가능하다면 충분하다고 말할 수 있겠지
 	CASEELSE
-		PRINTFORML %CALLNAME:対象キャラ%는 매우 만족한 모습이다!
-		PRINTL 완벽하다고 해도 과언이 아니다!
+		PRINTFORML %CALLNAME:対象キャラ%은(는) 크게 만족한 모습이다!
+		PRINTL 완벽하다고 말해도 과언이 아니다!
 ENDSELECT
 FORCEWAIT
 DRAWLINE
@@ -209,8 +209,8 @@ FOR 行カウント, 能力表示現在ページ * 表示行数, 能力表示現
 	SIF FIND_CHARA_FROM_PERSON_ID(DT_CELL_GET("デートスコアデータベース", 検索リザルトID:行カウント, "デート相手人物番号", 1)) < 0
 		CONTINUE
 	CALL 任意日付表示(DT_CELL_GET("デートスコアデータベース", 検索リザルトID:行カウント, "デート日時", 1))
-	PRINTFORM 　%@"%CALLNAME:FIND_CHARA_FROM_PERSON_ID(DT_CELL_GET("デートスコアデータベース", 検索リザルトID:行カウント, "デート相手人物番号", 1))%와의 데이트", 26, LEFT%
-	PRINTFORM 　스코어：%NUM_FORMAT(DT_CELL_GET("デートスコアデータベース", 検索リザルトID:行カウント, "デートスコア", 1)), 9%
+	PRINTFORM 　%@"%CALLNAME:FIND_CHARA_FROM_PERSON_ID(DT_CELL_GET("デートスコアデータベース", 検索リザルトID:行カウント, "デート相手人物番号", 1))%とのデート", 26, LEFT%
+	PRINTFORM 　점수：%NUM_FORMAT(DT_CELL_GET("デートスコアデータベース", 検索リザルトID:行カウント, "デートスコア", 1)), 9%
 	PRINTL 
 NEXT
 
@@ -339,35 +339,38 @@ DRAWLINE
 ;あっちから告白してくる処理
 
 ;口上があるならそっちを表示
-TRYCCALLFORM KOJO_EVENT_デート後告白_開始時_{NO:対象キャラ}(対象キャラ)
-CATCH
+CALL 口上変数初期化
+TRYCALLFORM KOJO_EVENT_デート後告白_開始時_{NO:対象キャラ}(対象キャラ)
+IF !口上有無確認(0, 1)
 	;汎用告白処理
-	PRINTFORMW %CALLNAME:MASTER%가 %CALLNAME:対象キャラ%와의 데이트를 마친 후, %CALLNAME:対象キャラ%는 아무래도 할 말이 있는 것 같다.
+	PRINTFORMW %CALLNAME:MASTER%이(가) %CALLNAME:対象キャラ%와의 데이트를 마친 후, %CALLNAME:対象キャラ%은(는) 아무래도 할 말이 있는 것 같다.
 	PRINTL
-	PRINTFORMW %CALLNAME:対象キャラ%는 얼굴을 붉히고 살짝 망설이면서, %CALLNAME:MASTER%에게 사랑의 말을 전한다.
-	PRINTFORMW 연인이 되고 싶어서, %CALLNAME:MASTER%와의 데이트 후에 용기를 내어 고백한 모양이다.
-ENDCATCH
+	PRINTFORMW %CALLNAME:対象キャラ%은(는) 붉은 얼굴을 하고 조금 망설이면서, %CALLNAME:MASTER%에게 사랑의 말을 고한다.
+	PRINTFORMW 연인이 되고 싶어서, %CALLNAME:MASTER%와의 데이트 후에 용기를 내어 고백한 것 같다.
+ENDIF
 
 PRINTFORML %CALLNAME:対象キャラ%의 마음에, %CALLNAME:MASTER%는……
-PRINTBUTTONLC "[0] 마음에 응한다", 0
-PRINTBUTTONLC "[1] 좀 생각할 시간을 달라고 한다", 1
+PRINTBUTTONLC "[0] 마음을 받아들이다", 0
+PRINTBUTTONLC "[1] 조금 생각할 시간을 달라고 하다", 1
 PRINTL
 
 BINPUT
 IF RESULT == 0
-	TRYCCALLFORM KOJO_EVENT_デート後告白_成功_{NO:対象キャラ}(対象キャラ)
-	CATCH
-		PRINTFORMW %CALLNAME:MASTER%가 승낙의 대답을 하자, %CALLNAME:対象キャラ%는 미소를 띠며 기뻐했다.
-	ENDCATCH
+	CALL 口上変数初期化
+	TRYCALLFORM KOJO_EVENT_デート後告白_成功_{NO:対象キャラ}(対象キャラ)
+	IF !口上有無確認(0, 1)
+		PRINTFORMW %CALLNAME:MASTER%이(가) 승낙의 답을 하자, %CALLNAME:対象キャラ%은(는) 웃는 얼굴을 띠며 기뻐했다.
+	ENDIF
 	SETCOLOR カラーパレット("えっちな色")
-	PRINTFORMW %CALLNAME:対象キャラ%는 [연모]를 얻었다.
+	PRINTFORMW %CALLNAME:対象キャラ%은(는) ［연모］를 얻었다.
 	RESETCOLOR
 	TALENT:対象キャラ:恋慕 = 1
 ELSE
-	TRYCCALLFORM KOJO_EVENT_デート後告白_保留_{NO:対象キャラ}(対象キャラ)
-	CATCH
-		PRINTFORMW %CALLNAME:MASTER%가 좀 생각할 시간을 달라고 하자, %CALLNAME:対象キャラ%는 대답은 서두르지 않아도 된다며 돌아갔다……
-	ENDCATCH
+	CALL 口上変数初期化
+	TRYCALLFORM KOJO_EVENT_デート後告白_保留_{NO:対象キャラ}(対象キャラ)
+	IF !口上有無確認(0, 1)
+		PRINTFORMW %CALLNAME:MASTER%이(가) 조금 생각할 시간을 달라고 하자, %CALLNAME:対象キャラ%은(는) 답은 서두르지 않아도 된다며 돌아갔다……
+	ENDIF
 	;フラグを起床時告白と共通して使う
 	CFLAG:対象キャラ:起床時告白済み = 1
 ENDIF

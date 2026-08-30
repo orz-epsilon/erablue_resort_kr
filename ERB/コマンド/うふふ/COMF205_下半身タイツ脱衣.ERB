@@ -4,9 +4,9 @@
 @COMNAME205
 #FUNCTIONS
 IF TEQUIP:下半身服あり && !TEQUIP:下半身下着抜き取り可
-	TSTR:コマンド名受渡 = 타이츠를 찢다
+	TSTR:コマンド名受渡 = 타이츠를 찢는다
 ELSE
-	TSTR:コマンド名受渡 = 타이츠를 벗기다
+	TSTR:コマンド名受渡 = 타이츠를 벗긴다
 ENDIF
 
 ;===================================================
@@ -22,14 +22,14 @@ SIF CFLAG:TARGET:睡眠
 
 @COM_TOOLTIP_205
 IF TEQUIP:下半身服あり && !TEQUIP:下半身下着抜き取り可
-	LOCALS:1 = 찢다
-	LOCALS:2 = 찢다
+	LOCALS:1 = 찢는다
+	LOCALS:2 = 찢는다
 ELSE
-	LOCALS:1 = 벗기다
-	LOCALS:2 = 벗기다
+	LOCALS:1 = 벗긴다
+	LOCALS:2 = 벗길 수 있다
 ENDIF
 LOCALS = <br>■타이츠를%LOCALS:1%<br>
-LOCALS += @"상대의 하반신 타이츠를%LOCALS:2%하는 커맨드. <br>상하 일체형 타이츠의 경우, 상반신 타이츠도%LOCALS:1%."
+LOCALS += @"상대의 하반신 타이츠를%LOCALS:2%명령. <br>상하 일체형 타이츠의 경우, 상반신 타이츠도%LOCALS:1%."
 LOCALS += "<br>COM 타입: 우후후<br>획득 소스: 없음"
 LOCALS += "<br>고유 획득 경험: 없음<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
@@ -107,7 +107,7 @@ IF MARK:快楽刻印
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += MARK:快楽刻印 * 1
-	PRINTFORM 쾌락 각인LV{MARK:快楽刻印}({MARK:快楽刻印 * 1})
+	PRINTFORM 쾌락각인LV{MARK:快楽刻印}({MARK:快楽刻印 * 1})
 	＋表示フラグ = 1
 ENDIF
 ;PALAM:欲情
@@ -129,7 +129,7 @@ ENDIF
 IF TALENT:性別嗜好 & 1 && !(TALENT:PLAYER:性別 & 1) && (!TALENT:恋慕 || PLAYER != MASTER)
 	PRINT  - 
 	実行値 -= 5
-	PRINT 남성 기피(5)
+	PRINT 남성혐오(5)
 	＋表示フラグ = 1
 ENDIF
 ;恋慕
@@ -174,7 +174,16 @@ IF TCVAR:言いなり
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += 999
-	PRINT 당신 뜻대로(999)
+	PRINT 당신의 뜻대로(999)
+	＋表示フラグ = 1
+ENDIF
+
+;特殊言いなり
+IF TCVAR:特殊言いなり
+	SIF ＋表示フラグ
+		PRINT  + 
+	実行値 += 999
+	PRINTFORM %特殊言いなり分岐(TARGET)%(999)
 	＋表示フラグ = 1
 ENDIF
 
@@ -253,9 +262,9 @@ ELSE
 	LOCALS = 벗겼다
 	LOCALS:1 = 벗었다
 ENDIF
-PRINTFORML %CALLNAME:PLAYER%은 %CALLNAME:TARGET%의 타이츠를 %LOCALS%…
+PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%의 타이츠를 %LOCALS%…
 
 
 IF RFLAG:コマンド結果受渡し変数
-	PRINTFORML 다른 사람들의 눈에 띄는 곳에서 %LOCALS:1%하는 바람에, %CALLNAME:TARGET%은 어딘가 불안해 보인다…
+	PRINTFORML 사람들의 눈이 있는 곳에서%LOCALS:1%한 탓에, %CALLNAME:TARGET%은(는) 어딘가 불안해하는 것 같다…
 ENDIF

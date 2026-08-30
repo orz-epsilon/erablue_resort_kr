@@ -1,6 +1,9 @@
 ;------------------------------------------------------------------------------
 ;通常時、いちゃつく
 ;------------------------------------------------------------------------------
+@AUTOCOMNAME5
+RESULTS = いちゃつく
+
 @AUTOCOM5
 CALL SOURCE_CALC_歓楽(AUTOCOM_実行番号保存, PLAYER, 500)
 CALL SOURCE_CALC_好感度要素_恋心度UP(AUTOCOM_実行番号保存, PLAYER, 250)
@@ -32,11 +35,11 @@ RETURN 1
 @MESSAGE_AUTOCOM5
 IF CFLAG:AUTOCOM_実行番号保存:恋慕レベル < 関係閾値:5
 	;恋心パターン
-	PRINTFORML %CALLNAME:AUTOCOM_実行番号保存%는 %CALLNAME:PLAYER%에게 말을 걸어, 아무렇지 않은 잡담을 나눴다.
-	PRINTFORML %CALLNAME:AUTOCOM_実行番号保存%는 왠지 기뻐 보인다……
+	PRINTFORML %CALLNAME:AUTOCOM_実行番号保存%은(는) %CALLNAME:PLAYER%에게 말을 걸어, 별것 아닌 잡담을 했다.
+	PRINTFORML %CALLNAME:AUTOCOM_実行番号保存%은(는) 왠지 기뻐 보인다……
 ELSE
 	;恋慕パターン
-	PRINTFORML %CALLNAME:AUTOCOM_実行番号保存%는 %CALLNAME:PLAYER%에게 말을 걸어, 닭살 돋는 연인 같은 대화를 나눴다.
-	PRINTFORML %CALLNAME:AUTOCOM_実行番号保存%는 왠지 기뻐 보인다……
+	PRINTFORML %CALLNAME:AUTOCOM_実行番号保存%은(는) %CALLNAME:PLAYER%에게 말을 걸어, 알콩달콩 연인 같은 대화를 했다.
+	PRINTFORML %CALLNAME:AUTOCOM_実行番号保存%은(는) 왠지 기뻐 보인다……
 ENDIF
 

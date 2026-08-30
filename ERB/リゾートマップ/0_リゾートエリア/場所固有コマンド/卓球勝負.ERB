@@ -40,23 +40,23 @@ FOR LOCAL, 0, 5
 		カード種類:LOCAL = 3
 	SELECTCASE カード数値:LOCAL
 		CASE 1
-			LOCALS = 1
+			LOCALS = １
 		CASE 2
-			LOCALS = 2
+			LOCALS = ２
 		CASE 3
-			LOCALS = 3
+			LOCALS = ３
 		CASE 4
-			LOCALS = 4
+			LOCALS = ４
 		CASE 5
-			LOCALS = 5
+			LOCALS = ５
 		CASE 6
-			LOCALS = 6
+			LOCALS = ６
 		CASE 7
-			LOCALS = 7
+			LOCALS = ７
 		CASE 8
-			LOCALS = 8
+			LOCALS = ８
 		CASE 9
-			LOCALS = 9
+			LOCALS = ９
 	ENDSELECT
 	GCREATE 画像ID, 50, 50
 	SELECTCASE カード種類:LOCAL
@@ -86,23 +86,23 @@ FOR LOCAL, 5, 10
 		カード種類:LOCAL = 3
 	SELECTCASE カード数値:LOCAL
 		CASE 1
-			LOCALS = 1
+			LOCALS = １
 		CASE 2
-			LOCALS = 2
+			LOCALS = ２
 		CASE 3
-			LOCALS = 3
+			LOCALS = ３
 		CASE 4
-			LOCALS = 4
+			LOCALS = ４
 		CASE 5
-			LOCALS = 5
+			LOCALS = ５
 		CASE 6
-			LOCALS = 6
+			LOCALS = ６
 		CASE 7
-LOCALS = 7
+			LOCALS = ７
 		CASE 8
-LOCALS = 8
+			LOCALS = ８
 		CASE 9
-LOCALS = 9
+			LOCALS = ９
 	ENDSELECT
 	GCREATE 画像ID, 50, 50
 	SELECTCASE カード種類:LOCAL
@@ -122,7 +122,7 @@ NEXT
 ;カード表示
 $卓球_LOOP
 DRAWLINE
-PRINTFORML %CALLNAME:キャラ番号%의 패 (승리 포인트:{勝利数:1})
+PRINTFORML %CALLNAME:キャラ番号%의 패（승리 포인트：{勝利数:1}）
 
 FOR LOCAL, 5, 10
 	IF カード種類:LOCAL == -1
@@ -134,7 +134,7 @@ NEXT
 CALL 画像一斉表示("left", 0, 1)
 PRINTL
 PRINTL
-PRINTFORML %CALLNAME:MASTER%의 패 (승리 포인트:{勝利数:0})
+PRINTFORML %CALLNAME:MASTER%의 패（승리 포인트：{勝利数:0}）
 
 FOR LOCAL, 0, 5
 	IF カード種類:LOCAL == -1
@@ -154,12 +154,12 @@ SELECTCASE RESULT
 		選択カード:0 = RESULT
 	CASE 998
 		PRINTL 탁구 미니게임입니다.
-		PRINTL 게임 시작 시 각각 5장의 패가 배부됩니다.
-		PRINTL 서로 카드를 한 장씩 선택하여 필드에 내고, 그 파워를 비교하여 이긴 쪽이 '승리 포인트'를 얻습니다.
-		PRINTFORML (동일한 값일 경우, %CALLNAME:MASTER%의 승리가 됩니다)
+		PRINTL 게임 시작 시 각각 5장의 패가 지급됩니다.
+		PRINTL 서로 카드를 한 장씩 선택하여 내고, 그 파워를 비교하여 이긴 쪽이 『승리 포인트』를 얻습니다.
+		PRINTFORML （동일한 값일 경우, %CALLNAME:MASTER%의 승리가 됩니다）
 		PRINTW 승리 포인트를 먼저 3개 모은 쪽의 승리입니다.
 		PRINTL
-		PRINTL 카드에는 색상과 문양으로 표현되는 '전술'과 숫자로 표현되는 '파워'가 기재되어 있습니다.
+		PRINTL 카드에는 색과 문양으로 표현되는 『전술』과 숫자로 표현되는 『파워』가 기재되어 있습니다.
 		PRINTL 전술은 다음과 같습니다.
 		PRINT_IMG "ダメアビ"
 		PRINTL …공격형 전술입니다. 상대가 페인트형 전술이었을 경우, 자신의 파워에 +3합니다.
@@ -167,12 +167,12 @@ SELECTCASE RESULT
 		PRINTL …내구형 전술입니다. 상대가 공격형 전술이었을 경우, 자신의 파워에 +3합니다.
 		PRINT_IMG "バフアビ"
 		PRINTL …페인트형 전술입니다. 상대가 내구형 전술이었을 경우, 자신의 파워에 +1합니다.
-		PRINTW 　　이 카드로 승리 포인트를 얻었을 때, '노출 찬스'가 발생합니다.
+		PRINTW 　　이 카드로 승리 포인트를 얻었을 시, 『흘러내림 찬스』가 발생합니다.
 		PRINTL
-		PRINTL '노출 찬스'
-		PRINTL 노출 찬스가 발생했을 때, 상대 캐릭터의 옷이 흐트러져 가슴이 노출될 수 있습니다.
-		PRINTL 기본 확률은 30%이며, 가슴이 클수록 확률은 상승합니다. (작아도 감소하지는 않습니다)
-		PRINTW 노출이 성공했을 경우, 그 승부 중에는 노출 찬스는 발생하지 않습니다.
+		PRINTL 『흘러내림 찬스』
+		PRINTL 흘러내림 찬스가 발생했을 시, 상대 캐릭터의 옷이 흘러내려 가슴이 노출될 수 있습니다.
+		PRINTL 기본 확률은 30％이며, 가슴이 클수록 확률은 상승합니다. (작아도 감소하지는 않습니다)
+		PRINTW 흘러내림이 성공했을 경우, 해당 승부 중에는 흘러내림 찬스는 발생하지 않습니다.
 		GOTO 卓球_LOOP
 	CASEELSE
 		GOTO 卓球_LOOP
@@ -242,7 +242,7 @@ ELSE
 	勝利数:0 += 1
 	IF カード種類:(選択カード:0) == 3 && ポロリ済 == 0 && TEQUIP:キャラ番号:はだけ可
 		SETCOLOR 0xFFD400
-		PRINTW 노출 찬스 발생!
+		PRINTW 흘러내림 찬스 발생!
 		RESETCOLOR
 		LOCAL = 3
 		SIF TALENT:キャラ番号:バストサイズ > 0
@@ -263,7 +263,7 @@ ELSE
 			履歴用実績:キャラ番号:卓球ポロリ回数 += 1
 			CALL 履歴登録チェック(キャラ番号, "ポロリ回数")
 		ELSE
-			PRINTFORML ……하지만, 옷매무새가 흐트러진 것을 알아차린 %CALLNAME:キャラ番号%이(가) 고쳐 버렸다.
+			PRINTFORML ……하지만, 옷매무새가 흐트러진 것을 알아챈 %CALLNAME:キャラ番号%이 고쳐 버렸다.
 			PRINTW 노출 찬스 실패…
 			TRYCALLFORM KOJO_EVENT_卓球勝負中_{NO:キャラ番号}(キャラ番号, "あなた勝利_ポロリ失敗")
 		ENDIF

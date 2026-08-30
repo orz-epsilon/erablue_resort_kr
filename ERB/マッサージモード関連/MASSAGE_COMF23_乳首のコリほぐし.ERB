@@ -5,7 +5,7 @@
 #FUNCTIONS
 TSTR:コマンド名受渡 = 유두 뭉침 풀기
 SIF TALENT:TARGET:陥没乳首 && !TCVAR:TARGET:陥没乳首露出フラグ
-	TSTR:コマンド名受渡 = 함몰 유두 파내기
+	TSTR:コマンド名受渡 = 함몰유두 파내기
 
 
 ;===================================================
@@ -17,15 +17,15 @@ TFLAG:コマンドタイプ受渡 = MASSAGE_COMTYPE("エロマッサージ")
 
 @MASSAGE_COM_TOOLTIP_23
 IF TALENT:TARGET:陥没乳首 && !TCVAR:TARGET:陥没乳首露出フラグ
-	LOCALS = <br>■함몰 유두 파내기<br>
-	LOCALS += "유방 속에서 ‘뭉쳐’ 있는 수줍은 함몰 유두를 파낸다."
+	LOCALS = <br>■함몰유두 파내기<br>
+	LOCALS += "유방 속에서 '뭉쳐' 있는 수줍은 함몰유두를 파낸다."
 	LOCALS += "<br>COM 타입: 에로 마사지<br>획득 소스: 쾌B・노출・접촉・환락"
 	LOCALS += "<br>고유 획득 경험: 없음<br>"
 	TSTR:ツールチップ受渡 = %LOCALS%
 ELSE
 	LOCALS = <br>■유두 뭉침 풀기<br>
-	LOCALS += "마사지 중 쾌락으로 ‘뭉쳐’ 버린 유두를 주물러 풀어준다."
-	LOCALS += "<br>주물러 풀어주고 있는데도 팽팽하게 단단해져만 가는 것은 애교."
+	LOCALS += "마사지 중 쾌락으로 '뭉쳐' 버린 유두를 주물러 풀어준다."
+	LOCALS += "<br>주물러 풀어주고 있는데도 꼿꼿하게 단단해져만 가는 것은 애교."
 	LOCALS += "<br>COM 타입: 에로 마사지<br>획득 소스: 쾌B・노출・접촉・환락"
 	LOCALS += "<br>고유 획득 경험: 없음<br>"
 	TSTR:ツールチップ受渡 = %LOCALS%
@@ -151,13 +151,13 @@ RETURN 1
 @MASSAGE_MESSAGE_COM23
 
 IF TALENT:TARGET:陥没乳首 && !TCVAR:TARGET:陥没乳首露出フラグ
-	PRINTFORM %CALLNAME:PLAYER%은(는), %CALLNAME:TARGET%의
+	PRINTFORM %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%의
 		;胸の施術着があった場合
 		SIF RFLAG:コマンド結果受渡し変数 == 1
 			PRINTFORM 가슴의 시술복을 벗기고,
-	PRINTFORML 유방 속에서 단단해져 있던 함몰 유두를 손가락으로 파냈다.
+	PRINTFORML 유방 속에서 단단해져 있던 함몰유두를 손가락으로 파냈다.
 ELSE
-	PRINTFORM %CALLNAME:PLAYER%은(는),
+	PRINTFORM %CALLNAME:PLAYER%은(는)
 		;胸の施術着がある場合
 		SIF TEQUIP:上半身下着あり > 0
 			PRINTFORM 시술복 위에서도 알 수 있을 정도로
@@ -169,9 +169,9 @@ IF (BASE:TARGET:理性 + BASE:TARGET:警戒) < 700
 	PRINTW 
 	SELECTCASE RAND:2
 	CASE 0
-		PRINTFORM %CALLNAME:TARGET%은(는)%TEXTR("황홀하게 눈가를 녹이며/녹아내린 얼굴로 헤프게 입을 벌리고/법열에 눈가를 녹이며")%,
+		PRINTFORM %CALLNAME:TARGET%은(는)%TEXTR("황홀하게 눈가를 녹이며/풀린 얼굴로 헤프게 입을 벌리고/법열에 눈가를 녹이며")%、
 	CASE 1
-		PRINTFORM %CALLNAME:TARGET%은(는) 헤프게 풀린 입에서%TEXTR("부끄러운 목소리/쾌락에 물든 교성/음란한 목소리")%을(를)%TEXTR("내며/흘리며/흘리면서")%,
+		PRINTFORM %CALLNAME:TARGET%은(는) 헤프게 풀린 입에서%TEXTR("망측한 소리/쾌락에 물든 교성/음란한 소리")%를%TEXTR("내며/흘리며/흘리면서")%、
 	ENDSELECT
-	PRINTFORML %CALLNAME:PLAYER%%TEXTR("의 '마사지'/의 손기술/이 주는 쾌락")%%TEXTR("에 유두를 내주고 있다/에 취해 있다/에 당하는 대로 되어 있다/을 받아들이고 있다/을 감수하고 있다")%…
+	PRINTFORML %CALLNAME:PLAYER%%TEXTR("의 『마사지』/의 손기술/이 주는 쾌락")%%TEXTR("에 유두를 내주고 있다/에 취해 있다/에 당하는 대로 내버려두고 있다/을 받아들이고 있다/을 감수하고 있다")%…
 ENDIF

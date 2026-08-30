@@ -1,0 +1,925 @@
+@汎用個人営業処理
+#DIM キャスト番号取得
+#DIM 隠しキャラ番号取得
+#DIM 上昇量
+#DIMS 名前格納
+#DIM テストカウンター
+
+上昇量 = 0
+
+;まず、あなたを接待するキャラを決める。
+;「キャラが選べない状態で展開を強制される」という都合上、かなり人気上位のキャラに絞らないと「ﾌｪｲﾌｪｲﾀﾞﾖ-」「え、誰？」とかなっちゃいそう。１９０人いるからなぁ……
+;全員対応コンテンツは『シンデレラ』があるから、こっちは有名どころに絞ってもいい……よね？キャラごとにちょっとしたセリフくらいは用意しときたいし、わかる子だけ。
+;どこまでを有名とするか微妙なので、個人の独断と偏見と趣向。
+;たぶん地道なSELECTCASEでやるのが一番確実？
+;雫はあえて省いた。口上作者さんがいるのでそっちに任せる
+SELECTCASE RAND:11
+CASE 0
+;島村卯月 響子、美穂はユニットのほうで
+	キャスト番号取得 = GETCHARA(1004)
+CASE 1
+;渋谷凛 奈緒、加蓮はユニットのほうで
+	キャスト番号取得 = GETCHARA(1005)
+CASE 2
+;本田未央 ポジパはユニットで……といきたかったところだけど、正直わかんない
+	キャスト番号取得 = GETCHARA(1006)
+CASE 3
+;藍子 ポジパで触れられない分。おっぱいちっちゃくてすきだけど、おっぱいちっちゃいこと以外あんま知らない
+	キャスト番号取得 = GETCHARA(1309)
+CASE 4
+;一ノ瀬志希 書けなくもなさそうなので
+	キャスト番号取得 = GETCHARA(1401)
+CASE 5
+;鷺沢文香 個人の趣味
+	キャスト番号取得 = GETCHARA(1407)
+CASE 6
+;橘ありす 個人の趣味
+	キャスト番号取得 = GETCHARA(1408)
+CASE 7
+;安部菜々 書けなくもなさそう？
+	キャスト番号取得 = GETCHARA(1412)
+CASE 8
+;小早川紗枝
+	キャスト番号取得 = GETCHARA(1551)
+CASE 9
+;櫻井桃華
+	キャスト番号取得 = GETCHARA(1671)
+CASE 10
+;佐々木千枝 with mother
+	キャスト番号取得 = GETCHARA(1952)
+ENDSELECT
+
+DRAWLINE
+
+CALL PRINT_STR(@"_H_")
+PRINTFORM %TEXTR("오늘 밤의 꽃/오늘의 캐스트/오늘의 아가씨/오늘 밤의 『신데렐라』")%
+CALL PRINT_STRL(@"_H_")
+CALL PRINT_STR(@"IMAGEPATH_%CSTR:キャスト番号取得:画像フォルダ%/枕用宣材写真") 
+PRINTFORML %SUBSTRING(NAME:キャスト番号取得, STRFIND(NAME:キャスト番号取得, "]") + 1, -1)%
+IF キャスト番号取得 == 1415
+	PRINTFORM 연령：영원의 17세　　
+ELSE
+	PRINTFORM 연령：{BASE:キャスト番号取得:年齢}세　　
+ENDIF
+IF 固有素質チェック(キャスト番号取得, "大学生")
+	PRINTFORM 대학생　　
+ELSEIF 固有素質チェック(キャスト番号取得, "女子高生") || 固有素質チェック(キャスト番号取得, "高校生") 
+	PRINTFORM 고등학생　　
+ELSEIF 固有素質チェック(キャスト番号取得, "中学生") || 固有素質チェック(キャスト番号取得, "女子中学生") 
+	PRINTFORM 중학생　　
+ELSEIF 固有素質チェック(キャスト番号取得, "小学生")
+	PRINTFORM 초등학생　　
+ENDIF
+IF TALENT:キャスト番号取得:処女
+	CALL PRINT_STRL(@"처녀_H_")
+ELSE
+	PRINTL
+ENDIF
+PRINTFORML 신장：%DECIMAL_STRING(BASE:キャスト番号取得:身長, 1)%cm
+PRINTFORML Ｂ：%DECIMAL_STRING(補正込みバストサイズ(キャスト番号取得), 1)%cm%GET_CUPSIZE(キャスト番号取得)%-Ｗ：%DECIMAL_STRING(補正込みウエストサイズ(キャスト番号取得), 1)%cm-Ｈ：%DECIMAL_STRING(補正込みヒップサイズ(キャスト番号取得), 1)%cm
+DRAWLINE
+PRINTL
+PRINTFORML 초대를 받으시겠습니까？
+PRINTL
+PRINTBUTTON "[0] 받는다", 0
+PRINTL
+PRINTBUTTON "[1] 그만둔다", 1
+PRINTL
+BINPUT
+PRINTL
+SELECTCASE RESULT
+	CASE 0
+		IF CFLAG:キャスト番号取得:招待不可フラグ
+			CFLAG:キャスト番号取得:招待不可フラグ = 0
+		ENDIF
+		IF CFLAG:キャスト番号取得:滞在期間 < 1
+			CFLAG:キャスト番号取得:滞在期間 = 1
+			CALL CLOTHES_TODAY(キャスト番号取得)
+			CALL CLOTHES_RESET(キャスト番号取得)
+		ENDIF
+		PRINTFORML 매력적인 아이로군…… 이 아이와 하룻밤을 함께할 수 있다는 기대감에, 지금부터 흥분이 가라앉지 않는다……!
+		PRINTFORMW %CALLNAME:PLAYER%은(는) 준비된 『초대장』을 확인하고, 그 지시에 따라 목적지로 향했다……。
+		PRINTL
+		PRINTL ──
+		PRINTL
+		PRINTL ────
+		PRINTL
+		PRINTW ────────
+		PRINTL
+		;パターン分岐はキャラごとに。全員に全種用意するよりも書くのが楽
+		;ホテル(デフォルト)、３４６社屋の応接室(デフォルト)、撮影の控え室(スターリースカイブライト、水着)、女子寮の部屋の鍵渡されて夜這い(むりやりうふふ)、温泉宿(浴衣・湯浴み着)
+		;ある程度使いまわしやすい感じでシチュ例をいくつか置いておいて、これを元手に有識者が加筆してくれるのを待つって寸法よォ！！
+		;画像は……追加んときにハードルあがるから別になくてもよくない？とは思いつつ自分で書いた分に関してはなんだかんだ用意してしまった。
+		;使いまわしやすいように%CALLNAME:キャスト番号取得%で書いたりしてるけど、特定個人分岐なので普通に名前書いちゃってもいいやつ。コピペめんどい時は普通に書いてるし。
+		;ホテルの名前は適当に決めた。実在の社名とは一切の関係はございません。
+
+		;ライブバトルで負かした相手をあなたに捧げてご褒美貰うみたいなシチュでシャニマスや学マスのアイドル引っぱってきてもいいかも。発生する不都合はera様パワーでどうにか……
+		;負かした相手差し出しながら猗窩座ごっことか
+		;「素晴らしい提案をしましょう……あなたもオーナーさんのモノになりませんか？♡」
+		;「先程のステージを見ればわかります。練り上げられている……顔も、体も、パフォーマンスも。シンデレラガールにだって、きっと届くほど……」
+		;「なぜあなたが今日負けたか、教えてさしあげます」
+		;「オーナーさんを……本当のオスを知らないから♡処女だから♡」
+		;「オーナーさんの女になりましょう？〇〇さん……そうすれば、アイドルとしてもっともっと、輝けるはずですから♡」
+
+		;アイドルにEXP:性接待経験を、プレイヤーにEXP:被接待経験をつけて回数を記録しておく。
+		;被接待経験一定以上で、「あなたとの交流のおかげでアイドルの魅力が上がって業績伸びてるんです」とかでシリーズの他事務所を傘下に置いて『シンデレラ』対象を増やすとかもいいかもね
+		;その場合は「出展作品名を書き換える」という前代未聞の手段とか、楽しそうな気はするよね！
+
+		;ハード目なプレイの時には、「事後に体を気遣うと頬にキスしてくれた」みたいな、海外モノのＢＢＱみたいなのを入れるのがいいかも？う～ん、仲良くしてるしこれは合意だな！ヨシ！
+		IF キャスト番号取得 == GETCHARA(1004)
+			;島村卯月
+				PRINTFORML %CALLNAME:PLAYER%이 안내된 곳은, 잡지 촬영에 사용되는 스튜디오라는 빌딩의 한 방이었다.
+				PRINTFORM 라이브 의상을 사용한
+				PRINTFORM 라이브 의상을 사용한
+				CALL CLOTHES_CHANGE(キャスト番号取得, "スターリースカイ・ブライト")
+				PRINTFORMW 그라비아 촬영이 있다고 한다.
+				PRINTL
+				PRINTFORML 분명히 어울리지 않는 침대가 놓인 대기실에서%CALLNAME:PLAYER%이(가) 잠시 기다리자, 이윽고 문이 열리고
+				PRINTFORMW 촬영을 마친%CALLNAME:キャスト番号取得%이(가) 방으로 돌아왔다.
+				PRINTL
+				PRINTFORMW 「에…… 오너님……? 아, 그렇구나 지금일, 『무도회』……」
+				PRINTL
+				PRINTFORML 덜컥 문을 연 우즈키가, %CALLNAME:PLAYER%을(를) 보고 얼굴을 붉혔다.
+				PRINTFORMW 17세…… 따기에 딱 좋게 여문 몸. 사랑스러운얼굴로 부끄러워하는 모습은 역시 유혹적이다……。
+				PRINTL
+				CALL PRINT_STR(@"IMAGEPATH_%CSTR:キャスト番号取得:画像フォルダ%/コマンド実行時_スターリースカイ・ブライト_肩組み乳揉み") 
+				CALL PRINT_STRW(@"「햐, 읏……_H_ 아, 저기, 읏……！」")
+				PRINTL
+				PRINTFORML 촬영으로 후끈해진 걸까. 어깨를 안고 의상 가슴팍에 손을 넣자, 촉촉하고 부드러운 살결이 손에 달라붙는다.
+				PRINTFORMW 잡지의 꽃으로서 지면을 장식할 그녀의, 팬들은 볼 수 없는 의상 아래의 감촉이%CALLNAME:PLAYER%의 기대를 부추긴다……。
+				PRINTL
+				CALL PRINT_STRW(@"「응읏_H_ 에, 저기, 그…… 샤워라든가, 먼저…… 야아, 읏_H_」")
+				PRINTL
+				PRINTFORML 한창때의 소녀로서 우즈키의 부끄러움은, 하지만%CALLNAME:PLAYER%의 욕망을 막을 수는 없다. 신데렐라는 왕자님에게 거역할 수 없는 법이다.
+				PRINTFORMW 말랑말랑한 가슴을 마음껏 주무르면서, %CALLNAME:PLAYER%은(는) 사소한 저항과 함께 우즈키를 침대에 밀어 넘어뜨렸다……。
+				STR:イベントうふふ場所名 = 모 출판사 포토 스튜디오 대기실
+				FLAG:イベントうふふベッドルーム = 1
+				TCVAR:キャスト番号取得:言いなり = 1
+				CFLAG:キャスト番号取得:イベントうふふ対象フラグ = 1
+				EXP:キャスト番号取得:性接待経験 += 1
+				EXP:MASTER:被接待経験 += 1
+				CALL イベント中うふふ移行処理("『舞踏会』への招待")
+		ELSEIF キャスト番号取得 == GETCHARA(1005)
+			;渋谷凛
+				PRINTFORML 이번에%CALLNAME:PLAYER%이(가) 안내받은 곳은, 어떤 호텔의 한 방이었다.
+				PRINTFORMW 게다가 우사밍별이라니 대체……혹시 그녀는, 별의 백성 같은 것일까?
+				PRINTL
+				PRINTFORMW 방에서 잠시 쉬는 동안 울린 노크 소리에%CALLNAME:PLAYER%이(가) 문을 열자, 그곳에는 남자가 데려온 소녀의 모습이 있었다.
+				PRINTL
+				CALL PRINT_STR(@"IMAGEPATH_%CSTR:キャスト番号取得:画像フォルダ%/舞踏会_ホテル1") 
+				PRINTFORMW 「안녕하세요, 오너님. %SUBSTRING(NAME:キャスト番号取得, STRFIND(NAME:キャスト番号取得, "]") + 1, -1)%입니다」
+				PRINTL
+				PRINTFORML 붉어진 얼굴로 꾸벅 인사를 하는 %CALLNAME:キャスト番号取得%. 초대장 사진으로 보는 것보다 훨씬 귀여운 아이였다……."
+				PRINTFORMW 이런 아이와 하룻밤 내내 관계를 깊게 할 수 있다는 실감이, %CALLNAME:PLAYER%의 기대와 사타구니를 부풀어 오르게 했다.
+				PRINTL
+				PRINTFORMW 「그럼 프로듀서, 내일 아침에 마중을……」
+				PRINTL
+				CALL PRINT_STR(@"IMAGEPATH_%CSTR:キャスト番号取得:画像フォルダ%/舞踏会_ホテル2") 
+				CALL PRINT_STRW(@"「아, 읏_H_ 오너님, 이제 참을 수 없는 건가요? 아, 하아, 읏_H_」")
+				PRINTL
+				PRINTFORML 그녀를 데려온 프로듀서 앞에서 과시하듯이 %CALLNAME:キャスト番号取得%의 가슴을 주무르고,
+				PRINTFORMW 품 안에 끌어안고 부추기듯이 귀를 살짝 깨물자, %CALLNAME:キャスト番号取得%은(는) 오싹 몸을 떨며 정욕이 담긴 한숨을 내쉬었다.
+				PRINTL
+				CALL PRINT_STRW(@"「읏_H_ 프로듀서, 그런 것 같으니까……_H_」")
+				PRINTL
+				CALL PRINT_STRW(@"「응, 후후_H_ 그럼…… 잔뜩 즐기고, 올게……_H_」")
+				PRINTL
+				PRINTFORML 이미 기대에 녹아내린 표정으로 품 안에서 %CALLNAME:PLAYER%를 올려다본 %CALLNAME:キャスト番号取得%가, 프로듀서를 힐끗 한 번 쳐다보고는 팔랑팔랑 손을 흔들었다.
+				PRINTFORM 딸깍 닫히는 문 너머에
+				;ちょっと悪辣になりすぎるか
+				;PRINTFORM 悔しそうに%TEXTR("拳を握り締める/歯噛みする")%
+				PRINTFORMW 프로듀서를 남겨두고, %CALLNAME:PLAYER%와 %CALLNAME:キャスト番号取得%의 『무도회』 막이 지금, 올랐다……."
+				STR:イベントうふふ場所名 = 회원제 호텔 『H@rvest』 306호실
+				FLAG:イベントうふふベッドルーム = 1
+				TCVAR:キャスト番号取得:言いなり = 1
+				CFLAG:キャスト番号取得:イベントうふふ対象フラグ = 1
+				EXP:キャスト番号取得:性接待経験 += 1
+				EXP:MASTER:被接待経験 += 1
+				CALL イベント中うふふ移行処理("『舞踏会』への招待")
+		ELSEIF キャスト番号取得 == GETCHARA(1006)
+			;本田未央 みんなのだった本田さんはいまやあなたの
+				PRINTFORML 이번에 %CALLNAME:PLAYER%에게 준비된 것은, 꽤 큰 사이즈의 검은 차량.
+				PRINTFORMW 이쪽 세계에서 「원박스카」라고 불리는 듯한 그 차량의 뒷좌석은, 제거된 좌석 대신 매트리스가 깔려 있었다.
+				;いわゆるハイエース
+				PRINTL
+				CALL PRINT_STR(@"IMAGEPATH_%CSTR:キャスト番号取得:画像フォルダ%/舞踏会_ハイエース1") 
+				PRINTFORMW 「아…… 실, 실례합니다아……」
+				PRINTL
+				;絵出せなかった……流石に生成できん……
+				PRINTFORML 검은색 차광 유리창 너머로 풍경을 바라보고, 근처 건물에서 울리는 시각을 알리는 차임을 들으며 잠시.
+				PRINTFORMW 차 안에서 %CALLNAME:PLAYER%이(가) 기다리고 있자 뒷문이 열리고, 다소 긴장한 표정의 %CALLNAME:キャスト番号取得%이(가) 들어왔다.
+				PRINTL
+				PRINTFORMW 「일 때문에」라며 조퇴한 %CALLNAME:キャスト番号取得%은(는) 교복 차림 그대로 차에 오르자마자 매트리스 위로 올라간다.
+				PRINTL
+				PRINTFORML 시각은 아직 점심 전. 바로 옆 교사에서 아직 동급생들이 수업을 받고 있을 시간.
+				PRINTFORML 그 일상의 이면에 준비된 『일』을 앞두고, %CALLNAME:キャスト番号取得%의 평소 쾌활함은 자취를 감추고,
+				PRINTFORMW 우물쭈물 허벅지를 비비며 %CALLNAME:PLAYER%을(를) 올려다본다……。
+				PRINTL
+				PRINTFORML 정돈된 얼굴. 레슨으로 다져졌지만 아직 성장을 느끼게 하는 몸매.
+				PRINTFORMW 쉬는 시간에 보여주는 매력적인 웃는 얼굴. 무엇보다 「아이돌이다」라는 특별함……。
+				PRINTL
+				PRINTFORML 동급생부터 교사에 이르기까지, 학교 안 모든 남자의 시선을 한몸에 받는 고고한 꽃.
+				PRINTFORML %CALLNAME:キャスト番号取得%와 같은 학교에 다니는 사춘기 남자라면 「여자친구로 삼고 싶다」 「하고 싶다」고 욕망을 품지 않을 수 없는 최상의 암컷을,
+				PRINTFORMW 그들 바로 옆에서 마음껏 맛볼 수 있다는 우월감이 %CALLNAME:PLAYER%의 욕망을 부추긴다.
+				PRINTL
+				CALL PRINT_STR(@"IMAGEPATH_%CSTR:キャスト番号取得:画像フォルダ%/舞踏会_ハイエース2") 
+				CALL PRINT_STRW(@"「에, 으음…… 흐, 정말, 여기서……? 하, 아무리 미오쨩이라도, 여기선 좀, 부끄러워, 으응_H_」")
+				PRINTL
+				PRINTFORML 주위 남자들을 유혹해 마지않는 위험한 과일을 무심하게 움켜쥐고, %CALLNAME:キャスト番号取得%의 목소리에 태도로 답하는 %CALLNAME:PLAYER%에게
+				PRINTFORMW %CALLNAME:キャスト番号取得%은(는) 오싹오싹 몸을 떨며, 수줍음에 눈을 내리깐다.
+				PRINTL
+				PRINTFORMW 단 한 장의 벽으로 일상과 격리된 밀실에서, %CALLNAME:PLAYER%과(와) %CALLNAME:キャスト番号取得%의 백주의 『무도회』가 조용히 막을 올렸다……。
+				STR:イベントうふふ場所名 = 업무용 원박스 뒷좌석
+				FLAG:イベントうふふベッドルーム = 1
+				TCVAR:キャスト番号取得:言いなり = 1
+				CFLAG:キャスト番号取得:イベントうふふ対象フラグ = 1
+				EXP:キャスト番号取得:性接待経験 += 1
+				EXP:MASTER:被接待経験 += 1
+				CALL イベント中うふふ移行処理("『舞踏会』への招待")
+		ELSEIF キャスト番号取得 == GETCHARA(1309)
+			;高森藍子
+				PRINTFORML 이번에 %CALLNAME:PLAYER%이(가) 안내된 곳은 어느 호텔의 한 객실이었다.
+				PRINTFORMW 게다가 우사밍별이라니 대체……혹시 그녀는, 별의 백성 같은 것일까?
+				PRINTL
+				PRINTFORMW 방에서 잠시 쉬는 동안 울린 노크 소리에 %CALLNAME:PLAYER%이(가) 문을 열자, 그곳에는 남자가 데려온 소녀의 모습이 있었다.
+				PRINTL
+				CALL PRINT_STR(@"IMAGEPATH_%CSTR:キャスト番号取得:画像フォルダ%/舞踏会_ホテル1") 
+				PRINTFORMW 「안녕하세요, 오너님. %SUBSTRING(NAME:キャスト番号取得, STRFIND(NAME:キャスト番号取得, "]") + 1, -1)%입니다」
+				PRINTL
+				PRINTFORML 붉어진 얼굴로 꾸벅 인사를 하는 %CALLNAME:キャスト番号取得%. 초대장 사진으로 보는 것보다 훨씬 귀여운 아이다…….​
+				PRINTFORMW 이런 아이와 밤새도록 친밀해질 수 있다는 실감이, %CALLNAME:PLAYER%의 기대와 사타구니를 부풀어 오르게 한다.
+				PRINTL
+				PRINTFORMW 「그럼 프로듀서님, 내일 아침에……」
+				PRINTL
+				CALL PRINT_STR(@"IMAGEPATH_%CSTR:キャスト番号取得:画像フォルダ%/舞踏会_ホテル2") 
+				CALL PRINT_STRW(@"「햐, 읏_H_ 안 돼요, 오너님_H_ 프로듀서님이, 보고……아, 하아, 읏_H_」")
+				PRINTL
+				PRINTFORML 그녀를 데려온 프로듀서 앞에서 과시하듯이 %CALLNAME:キャスト番号取得%의 가슴을 주무르고,
+				PRINTFORMW 품 안에 끌어안고 유혹하듯이 귀를 살짝 깨물자, %CALLNAME:キャスト番号取得%은(는) 오싹오싹 몸을 떨며 정욕이 담긴 한숨을 내쉬었다.
+				PRINTL
+				CALL PRINT_STRW(@"「읏_H_ 프, 프로듀서님, 보지 마세요오……_H_」")
+				PRINTL
+				CALL PRINT_STRW(@"「응읏, 오, 오너님_H_ 침대 갈까요? 네?_H_」")
+				PRINTL
+				PRINTFORML 수치심에 붉게 물든 얼굴로 %CALLNAME:PLAYER%을(를) 올려다보는 %CALLNAME:キャスト番号取得%이(가), 프로듀서의 얼굴을 보지 못한 채 %CALLNAME:PLAYER%의 품 안에서 팔랑팔랑 손을 흔든다.
+				PRINTFORMW 딸깍 닫히는 문 너머에 프로듀서를 남겨두고, %CALLNAME:PLAYER%와 %CALLNAME:キャスト番号取得%의 『무도회』의 막이 지금, 올랐다…….​
+				STR:イベントうふふ場所名 = 회원제 호텔『H@rvest』 306호실
+				FLAG:イベントうふふベッドルーム = 1
+				TCVAR:キャスト番号取得:言いなり = 1
+				CFLAG:キャスト番号取得:イベントうふふ対象フラグ = 1
+				EXP:キャスト番号取得:性接待経験 += 1
+				EXP:MASTER:被接待経験 += 1
+				CALL イベント中うふふ移行処理("『舞踏会』への招待")
+		ELSEIF キャスト番号取得 == GETCHARA(1401)
+			;一ノ瀬志希
+				PRINTFORML %CALLNAME:PLAYER%이 안내받은 곳은, 잡지 촬영에 사용되는 스튜디오라고 하는 빌딩의 한 방.
+				PRINTFORM 라이브 의상을 사용한
+				;SELECTCASE RAND:2
+				;CASE 0
+				;	PRINTFORM ライブ衣装を使った
+				;	CALL CLOTHES_CHANGE_スターリースカイ・ブライト(キャスト番号取得)
+				;CASE 1
+					PRINTFORM 수영복을 입고 실내
+					CALL CLOTHES_CHANGE(キャスト番号取得, "水着")
+				;ENDSELECT
+				PRINTFORMW 촬영이 있다고 한다.
+				PRINTL
+				PRINTFORML 분명히 어울리지 않는 침대가 놓인 대기실에서 %CALLNAME:PLAYER%이 잠시 기다리자, 이윽고 문이 열리고
+				PRINTFORMW 촬영을 마친 %CALLNAME:キャスト番号取得%이 방으로 돌아왔다.
+				PRINTL
+				CALL PRINT_STR(@"IMAGEPATH_%CSTR:キャスト番号取得:画像フォルダ%/舞踏会_楽屋1") 
+				CALL PRINT_STRW(@"「아! 오너님 역시 이쪽으로 오셨네요_H_ 냐하하, 침대 있으니까 그럴 거라고 생각했어요♪」")
+				PRINTL
+				PRINTFORMW 덜컥 문을 연 시키가, %CALLNAME:PLAYER%을 보자마자 달려들어, 안고 얼굴을 파묻는다. 제멋대로인 아이로군…….`
+				PRINTL
+				CALL PRINT_STRW(@"「하스하스……응하아……_H_ 크으……_H__H_ 음~ 이 절묘한 안드로스테논 냄새……_H_ 역시 멋진 스멜……흐스~……_H_」")
+				PRINTL
+				CALL PRINT_STRW(@"「강~한 수컷 냄새……_H__H_ 테스토스테론, 콸콸 넘치겠지~……음~ 못 참겠어……_H_ 스~~……응흐~~……_H__H_ 냐하_H_ 치히로 씨도 보는 눈 있네~_H_」")
+				PRINTL
+				PRINTFORML 단정한 얼굴을 가슴팍에 부비부비 비비며, 일심으로 %CALLNAME:PLAYER%의 냄새를 맡는 시키.
+				CALL PRINT_STRW(@"스윽……_H_스윽……_H_하고 비벼질 정도로 잘 여문 몸을 %CALLNAME:PLAYER%이 다시 안아 꽉_H_하고 엉덩이를 잡자, 시키는 오싹오싹 허리를 떨었다.")
+				PRINTL
+				CALL PRINT_STRW(@"「~~~읏_H__H_ 냐하, 하……_H_ 조금 가버렸어……_H_」")
+				PRINTL
+				CALL PRINT_STRW(@"「아~~, 이젠 안 돼_H_ 나 울컥울컥 멈출 수가 없어_H_ 자, 괜찮지? 이제 해버릴까?_H__H_」")
+				PRINTL
+				PRINTFORMW 냄새 페티시인 듯한 시키는 가슴팍에서 얼굴을 들자, 완전히 녹아내린 표정으로 %CALLNAME:PLAYER%의 손을 잡고 침대로 이끌어간다…….`
+				PRINTL
+				CALL PRINT_STR(@"IMAGEPATH_%CSTR:キャスト番号取得:画像フォルダ%/舞踏会_楽屋2") 
+				CALL PRINT_STRW(@"「응후~_H_ 이치노세 시키예요~_H_ 예뻐해 주세요~_H_」")
+				PRINTL
+				CALL PRINT_STRW(@"「네, 인사 끝~_H_ 자_H_ 자_H_ 빨리~_H__H_」")
+				PRINTL
+				PRINTFORMW 인사도 대충 마치고 참을 수 없는 듯한 시키에게 재촉당하며, %CALLNAME:PLAYER%은(는) 시키를 침대로 밀어 넘어뜨렸다……。
+				STR:イベントうふふ場所名 = 모 출판사 포토 스튜디오 대기실
+				FLAG:イベントうふふベッドルーム = 1
+				TCVAR:キャスト番号取得:言いなり = 1
+				CFLAG:キャスト番号取得:イベントうふふ対象フラグ = 1
+				EXP:キャスト番号取得:性接待経験 += 1
+				EXP:MASTER:被接待経験 += 1
+				CALL イベント中うふふ移行処理("『舞踏会』への招待")
+		ELSEIF キャスト番号取得 == GETCHARA(1407)
+			;鷺沢文香
+				PRINTFORML 이번에 %CALLNAME:PLAYER%이(가) 안내받은 곳은, 어느 호텔의 한 방이었다.
+				PRINTFORMW 게다가 우사밍별이라니 대체……혹시 그녀는, 별의 백성 같은 것일까?
+				PRINTL
+				PRINTFORMW 방에서 잠시 쉬는 동안 울린 노크에 %CALLNAME:PLAYER%이(가) 문을 열자, 그곳에는 남자가 데려온 소녀의 모습이 있었다.
+				PRINTL
+				CALL PRINT_STR(@"IMAGEPATH_%CSTR:キャスト番号取得:画像フォルダ%/舞踏会_ホテル1") 
+				PRINTFORMW 「안녕하세요…… 오너님…… 사기사와 후미카입니다……」
+				PRINTL
+				PRINTFORML 붉어진 얼굴로 꾸벅하고 인사하는 %CALLNAME:キャスト番号取得%。초대장의 사진으로 보는 것보다 훨씬 귀여운 아이다……。
+				PRINTFORMW 이런 아이와 하룻밤 내내 친밀해질 수 있다는 실감이, %CALLNAME:PLAYER%의 기대와 사타구니를 부풀어 오르게 한다.
+				PRINTL
+				PRINTFORMW 「그럼, 프로듀서님…… 마중은, 明일 아침에……」
+				PRINTL
+				CALL PRINT_STR(@"IMAGEPATH_%CSTR:キャスト番号取得:画像フォルダ%/舞踏会_ホテル2") 
+				CALL PRINT_STRW(@"「응, 앗_H_ 갑자기…… 이런…… 읏_H_ 아, 하아, 읏_H_」")
+				PRINTL
+				PRINTFORML 그녀를 데려온 프로듀서 앞에서 과시하듯이 %CALLNAME:キャスト番号取得%의 가슴을 주무르고, 
+				PRINTFORMW 품 안에 끌어안고 부추기듯이 귀를 살짝 깨물자, %CALLNAME:キャスト番号取得%은(는) 오싹오싹 몸을 떨며, 정욕이 담긴 한숨을 내쉬었다.
+				PRINTL
+				CALL PRINT_STRW(@"「아직, 프로듀서님이…… 거기에…… 읏_H_ 읏하, 아우_H_」")
+				PRINTL
+				IF RAND:2 == 0
+				;文香は行間を読む能力に長けているので、あなたの意図を勝手に汲んでシチュエーションプレイを申し出てくれる(ド偏見)
+					CALL PRINT_STRL(@"「읏, 아……_H_ 후후……_H_ 아니면…… 과시하고 싶으신가요……?_H_ 제가…… 누구의 것인지……_H_」")
+					CALL PRINT_STRW(@"「……오너님께서 원하신다면, 저…… 노력해, 볼게요……_H_ 프로듀서님께 보여지는 것은…… 부끄럽지만……_H_」")
+					PRINTL
+					PRINTFORML 후미카는 요염하게 프로듀서에게 흘겨보내며, %CALLNAME:PLAYER%을(를) 부추기듯이 은밀하게 속삭인다……。
+					PRINTFORMW ──어떻게 할까요?
+					PRINTL
+					PRINTBUTTON "[0] 프로듀서를 방으로 불러들여, 보여준다", 0
+					PRINTL
+					PRINTBUTTON "[1] 후미카의 치태는 독점하고 싶다", 1
+					PRINTL
+					BINPUT
+					PRINTL
+					SELECTCASE RESULT
+					CASE 0
+						PRINTFORMW 후미카의 모처럼의 제안이다. 그것도 좋겠지.
+						PRINTL
+						PRINTFORMW %CALLNAME:PLAYER%이(가) 고개를 끄덕이자, 후미카는 쿡 하고 웃으며, 가슴을 더듬는 %CALLNAME:PLAYER%의 손에 살며시 손을 겹쳤다……。
+						PRINTL
+						CALL PRINT_STRW(@"「응, 읏……_H_ 그럼, 프로듀서님도, 어서 안으로……_H_」")
+						PRINTL
+						PRINTFORMW 프로듀서를 불러들인 후미카가, %CALLNAME:PLAYER%의 손을 이끌고 침대로 향한다
+						PRINTL
+						CALL PRINT_STRW(@"「그럼……_H_ 프로듀서님……거기서, 보고 있어 주세요……_H_」")
+						PRINTL
+						CALL PRINT_STRW(@"「입술도, 가슴도, 엉덩이도……제 몸 전부를 써서, 오너님을 접대해 드리는 것을……_H_」")
+						PRINTL
+						CALL PRINT_STRW(@"「제가 제대로, 몸도 마음도, 오너님의 것이 되어 있는지……거기서 보고, 확인해 주세요……_H_」")
+						PRINTL
+						PRINTFORML 방 한구석에 프로듀서를 남겨두고 %CALLNAME:PLAYER% 앞에 선 %CALLNAME:キャスト番号取得%이(가), 뒤돌아보며 고한다。
+						PRINTFORMW 프로듀서의 뚫어질 듯한 시선 속에서, %CALLNAME:PLAYER%와(과) %CALLNAME:キャスト番号取得%의 『무도회』의 막이 지금, 올랐다……。
+						STR:イベントうふふ場所名 = 회원제 호텔『H@rvest』 306호실
+						FLAG:イベントうふふベッドルーム = 1
+						TCVAR:キャスト番号取得:言いなり = 1
+						CFLAG:キャスト番号取得:イベントうふふ対象フラグ = 1
+						EXP:キャスト番号取得:性接待経験 += 1
+						EXP:MASTER:被接待経験 += 1
+						BASE:PLAYER:勃起 = MAXBASE:PLAYER:勃起
+						SIF GETBIT(TALENT:PLAYER:性別, 1) == 0
+							CALL MODE_CHANGE("ペニスバンド", PLAYER, PLAYER)
+						CALL イベント中うふふ移行処理("『舞踏会』への招待")
+						PRINTW
+						PRINTL ────────
+						PRINTL
+						PRINTL ────
+						PRINTL
+						PRINTW ──
+						PRINTL
+						PRINTFORML %CALLNAME:キャスト番号取得%이(가) %CALLNAME:PLAYER%에게 범해져, 그 극상의 나체와 쾌락으로 가득 찬 교성을 내지르는 모습을 눈앞에서 보게 된 프로듀서는,
+						PRINTFORML 그 광경을 견디지 못하고%TEXTR("손도 대지 못한 채 바지 속에서 비참하게/방구석에서 몰래 자위에 몰두하며,")%3번 사정했다……。
+						PRINTL
+						FLAG:ZP所持量 += 3
+						PRINTFORMW ZP所持量 + 3
+					CASE 1
+						PRINTFORMW ──후미카의 추태는, %CALLNAME:PLAYER%이 독점해야 할 것이다. 설령 프로듀서라 할지라도 보여줄 의리는 없다.
+						PRINTL
+						PRINTFORMW 제안에는 감사하면서도%CALLNAME:PLAYER%이 고개를 젓자, 후미카는 쿡 웃으며%CALLNAME:PLAYER%의 허리에 손을 둘렀다……。
+						PRINTL
+						CALL PRINT_STRL(@"「응, 읏……_H_ 그렇네요……_H_ 제 몸은, 오너님의 것이니까요……_H_ 헐값에 파는 건, 안 되겠네요……_H_」")
+						CALL PRINT_STRW(@"「후후……_H_ 그럼, 그런 것이니……프로듀서님, 내일 또 봐요……_H_」")
+						PRINTL
+						PRINTFORML %CALLNAME:PLAYER%이 보인 독점욕에 표정이 녹아내린%CALLNAME:キャスト番号取得%이, 프로듀서를 힐끗 한 번만 보고%CALLNAME:PLAYER%의 품 안에서 팔랑팔랑 손을 흔든다.
+						PRINTFORMW 딸깍 닫히는 문 너머에 프로듀서를 남겨두고, %CALLNAME:PLAYER%와%CALLNAME:キャスト番号取得%의 『무도회』의 막이 지금, 올랐다……。
+						STR:イベントうふふ場所名 = 회원제 호텔『H@rvest』 306호실
+						FLAG:イベントうふふベッドルーム = 1
+						TCVAR:キャスト番号取得:言いなり = 1
+						CFLAG:キャスト番号取得:イベントうふふ対象フラグ = 1
+						EXP:キャスト番号取得:性接待経験 += 1
+						EXP:MASTER:被接待経験 += 1
+						CALL イベント中うふふ移行処理("『舞踏会』への招待")
+					ENDSELECT
+				ELSE
+					CALL PRINT_STRL(@"「읏……_H_ 저기, 오너님……_H_ 혹시……억지로 손에 넣는 것을……좋아하시는 건가요……_H_」")
+					CALL PRINT_STRW(@"「이렇게……프로듀서님에게, 과시하듯이, 만지고……주무르고……읏_H_」")
+					PRINTL
+					CALL PRINT_STRW(@"「응, 읏_H_ 어떠신가요……프로듀서님 곁에서, 저를 빼앗아……싫어하는 저를, 덮쳐서……억지로, 범하고 싶으신가요……?_H_」")
+					PRINTL
+					PRINTFORML %CALLNAME:PLAYER%의 욕망의 형태를 탐색하듯이, 후미카는 가슴을 주무르면서 살며시 귓가에 속삭인다……。
+					PRINTFORMW ──어떻게 할까?
+					PRINTL
+					PRINTBUTTON "[0] 억지로 범하고 싶다", 0
+					PRINTL
+PRINTBUTTON "[1] 오히려 애정행각을 과시하고 싶다", 1
+					PRINTL
+					BINPUT
+					PRINTL
+					SELECTCASE RESULT
+					CASE 0
+CALL PRINT_STRL(@"속삭임에 부추겨진 %CALLNAME:PLAYER%의 가학심이 손에서 넘쳐흘러, 무심코 꽉_H_ 하고 유난히 강하게 가슴을 쥐자")
+PRINTFORMW 움찔하고 몸을 튀긴 후미카는 말없이 고개를 끄덕이며, 품 안에서 미약하게 몸부림치기 시작했다…….
+						PRINTL
+PRINTFORML 「읏, 아파……! 으, 읏……으, 싫어…… 역시, 싫어요…… 프로듀서님……!」
+PRINTFORMW 「히읏, 읏……! 놓아, 읏…… 놓아주세……읏! 햐, 읏! 싫어어, 읏읏!」
+						;ここまではちゃんとした演技
+						PRINTL
+PRINTFORML 싫어하기 시작한 담당 아이돌의 모습에 「사기사와 씨!」라고 무심코 손을 뻗은 프로듀서를 가로막듯이, 쾅 하고 문이 닫힌다.
+PRINTFORMW 쿵쿵쿵! 하고 주먹이 문을 두드리는 소리가 울리는 방 입구에서, 사악한 미소를 띤 후미카는 그대로 스스로 바닥에 쓰러졌다…….
+						;ここからはだいぶエンジョイ半分の演技
+						PRINTL
+CALL PRINT_STRW(@"「읏아, 읏_H_ 싫어_H_ 꺄아아, 읏_H_ 살려줘, 프로듀……읍, 읏_H__H_」")
+						PRINTL
+PRINTFORMW %CALLNAME:PLAYER%의 밑에 깔리듯이, 털썩, 하고 일부러 소리를 내며 쓰러진 후미카가 가냘프게 날뛰고, 몸부림치며, 옷을 흐트러뜨려간다…….
+						PRINTL
+PRINTFORML 솟아나는 가학심이 이끄는 대로 %CALLNAME:PLAYER%가 한 손으로 후미카의 입을 막고, 다른 한 손으로 옷을 걷어 올려 그 아래 숨겨져 있던 아이돌의 비밀을 난폭하게 주무르자,
+PRINTFORMW 촉촉한 눈동자에 피학의 정욕을 밝힌 후미카는 갓난아기 정도의 힘도 없는 형식적인 저항을 더욱 격렬하게 했다.
+						PRINTL
+						CALL PRINT_STR(@"IMAGEPATH_%CSTR:キャスト番号取得:画像フォルダ%/舞踏会_ホテル3") 
+CALL PRINT_STRW(@"「응읏……_H_ 으응～～……읏_H_ 읏, 핫_H_ 흐, 읏!!_H__H_」")
+						PRINTL
+PRINTFORMW 파닥파닥 소리만 격렬한 저항을 계속하는 후미카의 입가에서 손을 떼고, 허벅지를 안으며 페니스를 꺼내자, 후미카는 일부러 소리를 냈다.
+						PRINTL
+CALL PRINT_STRW(@"「그, 그런 건…… 들어갈 리, 없어요……읏_H_ 으, 싫어……읏_H_ 그것만은……_H_」")
+						PRINTL
+						;面倒なのでチンポある想定で書いてるし画像作ってる。とても面倒なので。
+PRINTFORML 이미 축축하게 젖은 속옷을 내린 %CALLNAME:PLAYER%가 은밀한 곳에 귀두를 갖다 대자,
+						;脳裏をちらつく浮世英寿。ギーツ見てたのが悪いよ……
+						PRINTFORMW 여기부터가 하이라이트라는 듯 후미카는 기대에 입가를 풀면서도 눈가에 눈물마저 글썽이며 울부짖었다.
+						PRINTL
+						CALL PRINT_STR(@"IMAGEPATH_%CSTR:キャスト番号取得:画像フォルダ%/舞踏会_ホテル4") 
+						CALL PRINT_STRW(@"──쭈압, 읏_H_")
+						PRINTL
+						IF TALENT:キャスト番号取得:処女 == 1
+							CALL PRINT_STRW(@"「읏, 힉……_H_ 저, 저는, 아직……읏_H_ 처음이, 란 말이에요……읏_H__H_」")
+							PRINTL
+							CALL PRINT_STRW(@"「으, 싫어엇_H__H_ 고추라도……엉덩이 구멍이라도, 입으로 봉사할 테니까아……읏_H_ 부탁이에요오, 그것만은……읏_H_」")
+							PRINTL
+						ELSE
+							CALL PRINT_STRW(@"「읏, 힉……_H_ 저, 저어, 읏……저, 뭐든지 할 테니까……!_H_ 더는, 저항하지 않을 테니까……읏_H_ 그러니까, 그것만은요오……읏_H__H_」")
+							PRINTL
+						ENDIF
+						PRINTFORMW 밀실 안의 클라이맥스 예감에, 엿듣던 관객들이 문을 두드리는 소리가 격렬해진다. 물론, 멈출 리 없다.
+						PRINTL
+						CALL PRINT_STRW(@"「히기, 읏_H__H_ ㅈ, 적어도, 고무를, 흐으, 으, 을……」")
+						PRINTL
+						CALL PRINT_STR(@"IMAGEPATH_%CSTR:キャスト番号取得:画像フォルダ%/舞踏会_ホテル5") 
+						;アイマス世界なのでゴムはある。当然使わないし名前以外出すつもりもないが
+						IF TALENT:キャスト番号取得:処女 == 1
+							CALL PRINT_STRW(@"────뿌직_H__H__H_ 꾸읍뿌으으으~~~읏_H__H__H__H_")
+						ELSE
+							CALL PRINT_STRW(@"────뉴읍, 읍_H__H__H_ 꾸읍뿌으으으~~~읏_H__H__H__H_")
+						ENDIF
+						PRINTL
+						CALL PRINT_STRW(@"「읏, 으아아아아아아아아아아아아아!!_H__H__H_」")
+						PRINTL
+						PRINTFORML 귀두를 밀어 넣어 흠뻑 젖은 암컷의 구멍 속으로 쑤욱쑤욱 파고드는 %CALLNAME:PLAYER%에게, 후미카는 한층 더 높은 목소리로 울었고,
+						PRINTFORMW 문을 두드리는 소리가 멎은 등 뒤에서는, 무력감에 짓눌린 관객이 무릎을 꿇는 소리가 들려왔다.
+						PRINTL
+						PRINTFORMW 후미카와 가장 가까운 팬이었던 관객을 방 밖에 내버려 둔 채, 후미카와 %CALLNAME:PLAYER%의 『비극의 무도회』는 그렇게 막을 올렸다…….
+						STR:イベントうふふ場所名 = 会員制ホテル『H@rvest』 306号室 ドア前の床
+						FLAG:イベントうふふベッドルーム = 1
+						TCVAR:キャスト番号取得:言いなり = 1
+						CFLAG:キャスト番号取得:イベントうふふ対象フラグ = 1
+						BASE:PLAYER:勃起 = MAXBASE:PLAYER:勃起
+						SIF GETBIT(TALENT:PLAYER:性別, 1) == 0
+							CALL MODE_CHANGE("ペニスバンド", PLAYER, PLAYER)
+						PALAM:キャスト番号取得:潤滑 = 30000
+						EXP:キャスト番号取得:性接待経験 += 1
+						EXP:MASTER:被接待経験 += 1
+						IF TALENT:キャスト番号取得:処女 
+							CALL 履歴データベース登録(CFLAG:キャスト番号取得:人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>프로듀서와 문 하나를 사이에 둔 호텔 바닥에서, 강간당하는 연기로 %CALLNAME:PLAYER%을(를) 유혹해 처녀를 빼앗아 달라고 했다……</font><img src='えっちハート'>","うふふ実績")
+							LOCALS = ペニス
+							SIF GETBIT(TALENT:PLAYER:性別, 1) == 0
+								LOCALS = ペニスバンド
+							TALENT:キャスト番号取得:処女 = 0
+							CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>%LOCALS%로 %CALLNAME:キャスト番号取得%의 V처녀를 빼앗았다</font><img src='えっちハート'>","うふふ実績")
+						ENDIF
+						TEQUIP:キャスト番号取得:下タイツ破れ = 1
+						SIF GETBIT(TALENT:キャスト番号取得:性別, 0)
+							CALL MODE_CHANGE("正常位", PLAYER, キャスト番号取得)
+						CALL イベント中うふふ移行処理("『舞踏会』への招待","むりやりうふふモード")
+						PRINTW
+						PRINTL ────────
+						PRINTL
+						PRINTL ────
+						PRINTL
+						PRINTW ──
+						PRINTL
+						;海外AVのBBQみたいなもん。これは和姦！和姦なんです！！プロデューサーいじめる合意はとってないけど……！！
+						PRINTFORML ……후미카에게 부추겨져서, 꽤 격렬하게 요구해 버렸는데 괜찮았을까……。
+						PRINTFORMW 침대 위로 옮긴 후미카를 위로하자, 나체를 드러내고 절정의 여운에 잠기면서 후미카는 쿡쿡 웃었다.
+						PRINTL
+						CALL PRINT_STRW(@"「후후……걱정하실 필요 없어요……_H_ 저, 이렇게 강하게 요구받는 거, 좋아하는 것 같으니까요……_H_」")
+						PRINTL
+						CALL PRINT_STRL(@"「힘으로 제압당하고, 배 속 깊숙이 휘저어지고……몸 안팎으로, 잔뜩 마킹당하고……_H_」")
+						CALL PRINT_STRW(@"「책에 빠져 글자를 쫓기만 해서는, 이런 건, 몰랐어요……_H_ 중독되어 버릴 것 같아요……_H__H_」")
+						PRINTL
+						;
+						CALL PRINT_STRW(@"「…………그러니까, 그……또 언제든지, 침실로 불러주세요……_H__H_ 오너님과의 천일야, 고대하고 있을게요……_H__H_」")
+						PRINTL
+						PRINTFORMW 부끄러워하며 '왕자님'의 목덜미에 작게 키스하고, %CALLNAME:PLAYER%의 품 안에서 후미카는 스르륵 잠이 들었다……。
+						PRINTL
+						DRAWLINE
+						PRINTW
+						PRINTFORML 소중한 담당 아이돌이 %CALLNAME:PLAYER%에게 범해지는 것을 문 너머에서 그저 듣고만 있을 수밖에 없었던 프로듀서는,
+						PRINTFORML 바지 속에서 두 번, 굴욕적인 사정을 해버린 모양이다……。
+						PRINTL
+						FLAG:ZP所持量 += 2
+						PRINTFORMW ZP所持量 + 2
+					CASE 1
+						PRINTFORML 프로듀서에게서 느껴지는 시선……。
+						PRINTFORMW 싫은 듯, 혹은 분한 듯 %CALLNAME:PLAYER%를 노려보는 이것은 「후미카를 다치게 하지 마라」일까……아니면 「후미카는 내 아이돌인데」일까?
+						PRINTL
+						PRINTFORMW 그렇다면, 이것이 후미카의 동의 하에 이루어진 일이라는 것을 다시 한번 보여줘야겠지.
+						PRINTFORMW %CALLNAME:PLAYER%이 귓가에 「억지로 말고, 알콩달콩하자」라고 속삭이자, 후미카는 쿡 웃으며 %CALLNAME:PLAYER%의 허리에 손을 감았다……。
+						PRINTL
+CALL PRINT_STRL(@"「응, 읏……_H_ 그건……기대되네요……_H_ 연애 소설처럼……달콤하고, 뜨거운 만남……_H_ 저도, 온 마음을 다한 사랑을, 돌려드릴 테니……_H_」")
+CALL PRINT_STRW(@"「후후……_H_ 그럼, 프로듀서님……내일 또 봐요……_H_ 여기부터는, 『연인의 시간』이니까요……_H__H_」")
+						PRINTL
+PRINTFORML 빠져드는 듯한 사랑과 쾌락에 대한 기대로 표정을 녹인 %CALLNAME:キャスト番号取得%이(가), 프로듀서를 힐끗 한 번 보고 문을 닫는다.
+PRINTFORMW 찰칵 닫히는 문 너머에 프로듀서를 남겨두고, %CALLNAME:PLAYER%와(과) %CALLNAME:キャスト番号取得%의 『무도회』의 막이 지금, 올랐다…….
+STR:イベントうふふ場所名 = 회원제 호텔 『H@rvest』 306호실
+						FLAG:イベントうふふベッドルーム = 1
+						TCVAR:キャスト番号取得:言いなり = 1
+						CFLAG:キャスト番号取得:イベントうふふ対象フラグ = 1
+						EXP:キャスト番号取得:性接待経験 += 1
+						EXP:MASTER:被接待経験 += 1
+						CALL イベント中うふふ移行処理("『舞踏会』への招待")
+						PRINTW
+						PRINTL ────────
+						PRINTL
+						PRINTL ────
+						PRINTL
+						PRINTW ──
+					ENDSELECT
+				ENDIF
+		ELSEIF キャスト番号取得 == GETCHARA(1408)
+			;橘ありす U149を見るに都内私立小(制服アリ)っぽいしランドセルじゃなく鞄っぽいのでハイエースする際は注意されたし
+PRINTFORML 이번에 %CALLNAME:PLAYER%이(가) 안내받은 곳은, 346 프로덕션 본사 한 방이었다.
+				;Ａ～Ｇは普通のレッスンルームらしいよ！
+PRINTFORMW 방음벽으로 둘러싸인 방 중앙에는 잘 정돈된 커다란 침대. 입구에 걸린 명패에는 「레슨룸 H」라고 적혀 있었다.
+				PRINTL
+PRINTFORML 건네받은 「특별 강사」 명패를 만지작거리며 방 안에서 기다리기를 잠시.
+PRINTFORMW 울린 노크에 %CALLNAME:PLAYER%이(가) 대답하자 덜컥 문이 열리고, 불쑥 소녀가 얼굴을 내밀었다.
+				PRINTL
+				CALL PRINT_STR(@"IMAGEPATH_%CSTR:キャスト番号取得:画像フォルダ%/舞踏会_レッスン1") 
+				;芸能業界では挨拶は時刻によらず「おはようございます」らしいよ！ここは社内だからそれを適用！
+PRINTFORMW 「치히로 씨에게서 이야기는 들었지만, 저 같은 아이에게도, 해줄 수 있구나, 하고」
+				PRINTL
+PRINTFORMW 꾸벅 고개를 숙이는 %CALLNAME:キャスト番号取得%이(가). 아직 어린데도 예의 바르고, 차분한 아이다…….
+				PRINTL
+PRINTFORML 침대가 놓인, 단둘만의 방. 레슨실이라는 이름뿐인 %CALLNAME:PLAYER%을(를) 위해 준비된 「야리방」에서 할 일이라곤, 하나뿐이다.
+PRINTFORMW 찰칵 하고 문을 잠근 %CALLNAME:キャスト番号取得%은(는) 벽 쪽으로 다가가, %CALLNAME:PLAYER%이(가) 보는 앞에서 옷에 손을 댔다…….
+				PRINTL
+				CALL PRINT_STR(@"IMAGEPATH_%CSTR:キャスト番号取得:画像フォルダ%/舞踏会_レッスン2") 
+PRINTFORML 「……실은, 기대하고 있었어요, 오늘 『레슨』」
+PRINTFORMW 「치히로 씨에게서 이야기는 들었지만, 저 같은 아이에게도, 해줄 수 있구나, 하고」
+				PRINTL
+				CALL PRINT_STR(@"IMAGEPATH_%CSTR:キャスト番号取得:画像フォルダ%/舞踏会_レッスン3")
+				PRINTFORML 「그래서, 좀 일찍 왔다고 생각했는데…… 기다리게 해버렸나요?」
+				CALL PRINT_STRW(@"「……오너님도 기대해주셨다면, 그…… 기뻐요. 에헤헤……」")
+				PRINTL
+				PRINTFORML 힐끗힐끗 %CALLNAME:PLAYER%을(를) 신경 쓰면서, 옷을 벗어가는 %CALLNAME:キャスト番号取得%.
+				PRINTFORML 손을 뻗으면 닿을 거리에서 감상하는, 주니어 아이돌의 최상급 스트립.
+				PRINTFORMW 별것 아닌 대화 속에서 옷깃 스치는 소리가 날 때마다, 아직 살집이 얇은 가녀린 몸이, 더러움을 모르는 순수한 맨살이, 서서히 드러나기 시작한다……。
+				PRINTL
+				CALL PRINT_STR(@"IMAGEPATH_%CSTR:キャスト番号取得:画像フォルダ%/舞踏会_レッスン4") 
+				PRINTFORMW 「……하, 하지만 속옷은, 역시 부끄럽네요……」
+				PRINTL
+				CALL PRINT_STR(@"IMAGEPATH_%CSTR:キャスト番号取得:画像フォルダ%/舞踏会_レッスン5") 
+				CALL PRINT_STRW(@"「…………, 읏_H_」")
+				PRINTL
+				PRINTFORMW 이윽고 속옷까지 벗어 마친 %CALLNAME:キャスト番号取得%은(는) 옷을 접어 정리하고, 부끄러운 듯 뺨을 붉히며 %CALLNAME:PLAYER% 앞에 섰다.
+				PRINTL
+				CALL PRINT_STR(@"IMAGEPATH_%CSTR:キャスト番号取得:画像フォルダ%/舞踏会_レッスン6") 
+				PRINTL
+				CALL PRINT_STRW(@"「……ㅈ, 준비, 됐어요……_H_」")
+				PRINTL
+				PRINTFORMW 수줍음 속에 기대를 담은 눈으로 그렇게 말하며, 아리스는 등 뒤에 들고 있던 것을 살며시 입가에 가져다 댔다.
+				PRINTL
+				CALL PRINT_STR(@"IMAGEPATH_%CSTR:キャスト番号取得:画像フォルダ%/舞踏会_レッスン7") 
+				CALL PRINT_STRW(@"「자, 제3예능과의, 타치바나 아리스. 12살, 초등학교 6학년이에요……_H_」")
+				PRINTL
+				CALL PRINT_STRW(@"「아직, 어린애지만, 오늘은 『어른의 레슨』, 잘 부탁드립니다……읏_H_」")
+				PRINTL
+				PRINTFORML 대낮의 아이돌 사무실에서 이루어지는, 주니어 아이돌과의 성교. 배덕의 극치와 같은 상황에, %CALLNAME:PLAYER%의 심장이 고동친다.
+				PRINTFORMW 팬에게도 누구에게도 알려져서는 안 되는, %CALLNAME:PLAYER%와 %CALLNAME:キャスト番号取得%의 비밀 『무도회』의 막이 지금, 올랐다……。
+				STR:イベントうふふ場所名 = 346 프로덕션 레슨룸 H
+				FLAG:イベントうふふベッドルーム = 1
+				TCVAR:キャスト番号取得:言いなり = 1
+				CFLAG:キャスト番号取得:イベントうふふ対象フラグ = 1
+				EXP:キャスト番号取得:性接待経験 += 1
+				EXP:MASTER:被接待経験 += 1
+				CALL イベント中うふふ移行処理("『舞踏会』への招待")
+		ELSEIF キャスト番号取得 == GETCHARA(1412)
+			;安部菜々
+				PRINTFORML 이번에 %CALLNAME:PLAYER%이(가) 안내받은 곳은, 어느 호텔의 한 방이었다.
+				PRINTFORMW 게다가 우사밍별이라니 대체……혹시 그녀는, 별의 백성 같은 것일까?
+				PRINTL
+				PRINTFORML 방에서 잠시 쉬는 동안 울린 노크 소리에 %CALLNAME:PLAYER%이(가) 문을 열자, 그곳에는 남자가 데려온 소녀의 모습이 있었다.
+				PRINTL
+				CALL PRINT_STR(@"IMAGEPATH_%CSTR:キャスト番号取得:画像フォルダ%/舞踏会_ホテル1") 
+				CALL PRINT_STRW(@"「저, 저녁이에요~, 오너님_H_ 우사밍 별에서 온 성우 아이돌! 아베 나나, 열일곱 살이에요_H_ 캬하☆」")
+				PRINTL
+				PRINTFORML 열린 문 앞에서 활기찬 인사와 함께 멋지게 포즈를 취하는 %CALLNAME:キャスト番号取得%. 어쩐지 자기소개가 능숙하다…….
+				PRINTFORML 『초대장』에는 17세 앞에 『영원의』라고 붙어 있었는데……이거 대체……?
+				PRINTFORMW 게다가 우사밍 별이란 대체……혹시 그녀는, 별의 백성 같은 것일까?
+				PRINTL
+				PRINTFORML 여러 가지 의문이 떠오르지만, 아이돌답게 외모는 흠잡을 데 없다.
+				PRINTFORMW 여성스럽게 나올 곳은 나온 자그마한 체구는 드라프 여성과도 비슷하여, 안기 좋은 몸을 앞에 두고 %CALLNAME:PLAYER%의 기대와 사타구니가 부풀어 오른다…….`
+				PRINTL
+				PRINTFORMW 「그럼 프로듀서님, 마중은 내일……」
+				PRINTL
+				CALL PRINT_STR(@"IMAGEPATH_%CSTR:キャスト番号取得:画像フォルダ%/舞踏会_ホテル2") 
+				CALL PRINT_STRW(@"「햐왓!?_H_ 아아아아아, 오너님!?_H_ 으응, 읏_H_ 안, 안 돼요_H_ 아직 안, 돼, 앗, 하아읏_H_」")
+				PRINTL
+				PRINTFORML 그녀를 데려온 프로듀서 앞에서 과시하듯이 %CALLNAME:キャスト番号取得%의 가슴을 주무르고,
+				PRINTFORMW 품 안에 끌어안고 자극하듯이 귀를 살짝 깨물자, %CALLNAME:キャスト番号取得%은(는) 오싹오싹 몸을 떨며 정욕이 담긴 한숨을 내쉬었다.
+				PRINTL
+				CALL PRINT_STRW(@"「읏_H_ 오, 오너님, 이렇게……읏_H_ 참을 수 없을 정도로, 나나를 마음에 들어 해 주시는 거예요……?_H__H_」")
+				PRINTL
+				CALL PRINT_STRW(@"「응앗, 읏_H_ 알, 읏_H_ 알았으니까요_H_ 방으로, 들어갈까요?_H_ 네?_H_」")
+				PRINTL
+				CALL PRINT_STRW(@"「코흠. 그럼 다시 한번……나나를 너～무나 귀여워해 주시고, 사랑해 주세요_H_ 오너님읏_H__H_ 캬하_H_」")
+				PRINTL
+				PRINTFORML 붉어진 뺨은 수치심인가 기대감인가. 품 안에서 %CALLNAME:PLAYER%을(를) 올려다본 %CALLNAME:キャスト番号取得%이(가), 프로듀서의 시선에서 도망치듯 문을 닫는다.
+				PRINTFORM 쾅 하고 세차게 닫힌 문 너머에
+				;ちょっと悪辣になりすぎるか
+				;PRINTFORM 悔しそうに%TEXTR("拳を握り締める/歯噛みする")%
+				PRINTFORMW 프로듀서를 남겨두고, %CALLNAME:PLAYER%와 %CALLNAME:キャスト番号取得%의 『무도회』 막이 지금, 올랐다……。
+				PRINTL
+				CALL PRINT_STRL(@"「응읏, 정말～……갑자기는, 깜짝 놀라버리잖아요오……_H_」")
+				CALL PRINT_STRW(@"「코흠. 그럼 다시 한번……나나를 너～무나 많이 귀여워해 주고, 사랑해주세요_H_ 오너님_H__H_ 캬하_H_」")
+				STR:イベントうふふ場所名 = 회원제 호텔 『H@rvest』 306호실
+				FLAG:イベントうふふベッドルーム = 1
+				TCVAR:キャスト番号取得:言いなり = 1
+				CFLAG:キャスト番号取得:イベントうふふ対象フラグ = 1
+				EXP:キャスト番号取得:性接待経験 += 1
+				EXP:MASTER:被接待経験 += 1
+				CALL イベント中うふふ移行処理("『舞踏会』への招待")
+		ELSEIF キャスト番号取得 == GETCHARA(1551)
+			;小早川紗枝
+				PRINTFORML %CALLNAME:PLAYER%이(가) 안내받은 곳은, 이벤트 홀이라는 건물의 대기실.
+				PRINTFORMW 안내받은 방의 문을 노크하고, 열자……
+				PRINTL
+				CALL PRINT_STR(@"IMAGEPATH_%CSTR:キャスト番号取得:画像フォルダ%/舞踏会_握手会前1")
+				CALL PRINT_STRW(@"「먼 길 오시느라 고생 많으셨어요. 어서 오세요, 오너 님……_H_」")
+				PRINTL
+				PRINTFORMW 문 앞에서 세 손가락을 모아 절하는 소녀의 모습이 있었다.
+				PRINTL
+				CALL PRINT_STRW(@"「저는 코바야카와 사에라고 합니다. 부디 잘 부탁드립니다……_H_」")
+				PRINTL
+				PRINTFORML 「수고스럽게 오시게 해서, 미안해요」
+				PRINTFORMW 문을 열자마자 환대에 당황하는 %CALLNAME:PLAYER%을(를) 뒤로하고, 사에는 깊이 고개를 숙였다.
+				PRINTL
+				CALL PRINT_STRW(@"「후후_H_ 제대로 된 인사는 이쯤 하고, 자, 오너님, 어서 침대로……_H_」")
+				PRINTL
+				PRINTFORML 사에의 재촉에 따라 안으로 들어가자, 확실히 침대가 있었다. 대기실인데도.
+				PRINTFORMW %CALLNAME:PLAYER%이 침대 옆에 걸터앉자, 사에는 딱 달라붙듯이 옆에 앉았다……。
+				PRINTL
+				CALL PRINT_STR(@"IMAGEPATH_%CSTR:キャスト番号取得:画像フォルダ%/舞踏会_握手会前2")
+				PRINTFORML 「이렇게 발걸음하시게 해서, 죄송해요」
+				PRINTFORMW 「저도, 뭔가 바람피우는 것 같아서 마음이 불편하고…… 이대로는 일이 안 되잖아요」
+				PRINTL
+				PRINTFORMW 이니까 말이지? 라고 덧붙이며, 사에는 살며시 기모노의 가슴팍에 손을 얹었다…….
+				PRINTL
+				PRINTFORMW 「하지만 말이죠? 치히로 씨도 말씀하셨듯이, 저희 아이돌은 오너님의 여자잖아요?」
+				PRINTL
+				PRINTFORML 「몸도 마음도, 사랑도 미래도 전부 오너님의 것이에요. 당연히, 이 손도 그렇죠. 그러니까 말이죠?」
+				PRINTFORMW 「악수도 다른 남자분에게 손을 만져지는 행위니까, 오너님께서 기분 좋지 않으실까 싶어서, 이렇게 와 주십사 한 거예요」
+				PRINTL
+				PRINTFORMW 「저도, 왠지 바람피우는 것 같아서 마음이 불편하고…… 이대로는 일이 안 될 거예요」
+				PRINTL
+				PRINTFORMW 그러니까 말이죠? 라고 덧붙이며, 사에는 살며시 기모노의 가슴팍에 손을 얹었다……。
+				PRINTL
+				CALL PRINT_STR(@"IMAGEPATH_%CSTR:キャスト番号取得:画像フォルダ%/舞踏会_握手会前3")
+				CALL PRINT_STRW(@"「그러니까, 말이죠? 지금부터 제 몸을 짓밟아서, 팬에게 만져지기 전에, 오너님의 것이라고, 알게 해 주세요……_H_」")
+				PRINTL
+				CALL PRINT_STRL(@"「제 의상 아래를, 빨고, 주물러서……_H_ 키스 마크도, 잔뜩 남겨주세요……_H_」")
+				CALL PRINT_STRW(@"「물린 자국이든, 때린 손자국이든 괜찮아요……_H_ 아아…… 오히려, 아픈 흔적이 남는 편이 좋을지도 모르겠네요……_H_」")
+				PRINTL
+				CALL PRINT_STRW(@"「그리고 말이죠? 입술도, 유두도, 그곳의 가장 깊은 곳까지 오너님께서 전부 손대주시면, 저는 안심할 수 있을 것 같아요……_H_」")
+				PRINTL
+				CALL PRINT_STRW(@"「팬인 남자들에게 손을 만져져도, 『이 몸은 오너님의 것이야』라고, 계속 생각하고 싶어요……_H_」")
+				PRINTL
+				CALL PRINT_STRW(@"「그러니까, 말이죠? 지금부터 제 몸을 짓밟아서, 팬에게 만져지기 전에, 오너님의 것이라고, 알게 해 주세요……_H_」")
+				PRINTL
+				PRINTFORML 정숙하고 기품 있는 미소녀 아이돌에게 몸을 바쳐지고, 소유의 증표까지 요구받다니, 그야말로 최고의 기분이다.
+				PRINTFORMW 그녀의 팬들에게 압도적인 우월감을 안주 삼아, 사에와 %CALLNAME:PLAYER%의 비밀스러운 『무도회』가 막을 열었다……。
+				STR:イベントうふふ場所名 = 모 이벤트 홀 대기실
+				FLAG:イベントうふふベッドルーム = 1
+				TCVAR:キャスト番号取得:言いなり = 1
+				CFLAG:キャスト番号取得:イベントうふふ対象フラグ = 1
+				EXP:キャスト番号取得:性接待経験 += 1
+				EXP:MASTER:被接待経験 += 1
+				CALL イベント中うふふ移行処理("『舞踏会』への招待")
+		ELSEIF キャスト番号取得 == GETCHARA(1671)
+			;櫻井桃華
+			;あまりにも話が早いため薄味になってしまった気がする……
+				PRINTFORML 이번에 %CALLNAME:PLAYER%이(가) 안내받은 곳은, 어느 호텔의 한 방이었다.
+				PRINTFORMW 복도를 걷는 것만으로도 알 수 있는 호화로움. 아무래도 상당히 등급이 높은 호텔인 듯하다……。
+				PRINTL
+				PRINTFORML 컨시어지의 안내를 따라 방으로 들어간다.
+				PRINTFORMW 어둑한 방 안으로 들어가자, 캐노피 침대 앞에 어린 소녀가 서 있었다.
+				PRINTL
+				CALL PRINT_STR(@"IMAGEPATH_%CSTR:キャスト番号取得:画像フォルダ%/舞踏会_ホテル1")
+				CALL PRINT_STRW(@"「기다리고 있었습니다_H_ 안녕하신가요, 오너님_H_」")
+				PRINTL
+				PRINTFORMW 느긋하고 우아하게 커티시를 하는 어린 숙녀가 공손하게 %CALLNAME:PLAYER%을(를) 맞이한다.
+				PRINTL
+				CALL PRINT_STRW(@"「오늘 밤, 오너님의 밤의 꽃을 맡게 되는 영광을 얻은, 사쿠라이 모모카라고 합니다_H_」")
+				PRINTL
+				CALL PRINT_STRW(@"「이 몸을 오너님께 바쳐, 치유해 드리는 것은 숙녀의 영광……_H_ 성심성의껏, 임하겠습니다_H_」")
+				CALL PRINT_STRW(@"「아직 가슴도 여물지 않은 풋내기 봉오리이오나, 부디 이 몸, 마음껏 즐겨 주십시오……_H_」")
+				PRINTL
+				PRINTFORML 보기에도 잘 자란 아가씨가 %CALLNAME:PLAYER%에게 겸손하게 굴며, 기꺼이 그 순수한 어린 몸을 내어준다.
+				PRINTFORMW 퇴폐적인 광경에 이끌리듯 손을 뻗은 %CALLNAME:PLAYER%의 손끝이 모모카에게 닿고, 오늘 밤의 『무도회』의 막이 올랐다……。
+				STR:イベントうふふ場所名 = 호텔 뉴 사쿠라이 도쿄 로열 스위트
+				;ニューオータニ的な
+				FLAG:イベントうふふベッドルーム = 1
+				TCVAR:キャスト番号取得:言いなり = 1
+				CFLAG:キャスト番号取得:イベントうふふ対象フラグ = 1
+				EXP:キャスト番号取得:性接待経験 += 1
+				EXP:MASTER:被接待経験 += 1
+				CALL イベント中うふふ移行処理("『舞踏会』への招待")
+		ELSEIF キャスト番号取得 == GETCHARA(1952)
+			;佐々木千枝
+				PRINTFORML 이번에 %CALLNAME:PLAYER%이(가) 안내받은 곳은, 어느 호텔의 한 방이었다.
+				PRINTFORMW 게다가 우사밍별이라니 대체……혹시 그녀는, 별의 백성 같은 것일까?
+				PRINTL
+				PRINTFORML 방에서 잠시 쉬고 있는데 울린 노크 소리에 %CALLNAME:PLAYER%이(가) 문을 열자, 그곳에는……
+				PRINTL
+				CALL PRINT_STR(@"IMAGEPATH_%CSTR:キャスト番号取得:画像フォルダ%/舞踏会_ホテル1") 
+				CALL PRINT_STRW(@"「저, 저기, 오, 오너님……_H_ 사사키 치에라고 합니다」")
+				PRINTL
+				PRINTFORMW 듣고 보니 확실히 치에와 닮은 얼굴. 치에가 크면 이런 느낌이겠구나, 하고 생각하게 하는 미인이다.
+				PRINTL
+				;公式には名前は出てない
+				PRINTFORML 　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　모모에
+				PRINTFORML 「갑자기 찾아와서 죄송합니다. 이 아이의 엄마인 사사키 모모에라고 합니다」
+				CALL PRINT_STRL(@"「치히로 씨에게 들었습니다. 치에가 신세를 지게 될 것 같아서, 이왕이면 인사라도 드리려고요……_H_」")
+				PRINTL
+				PRINTFORMW 「정말, 엄마도 참…… 혼자서도 괜찮은데」
+				PRINTL
+				PRINTFORMW 듣고 보니 확실히 치에를 닮은 얼굴. 치에가 크면 이런 느낌이겠구나, 싶을 정도로 미인이다.
+				PRINTL
+				PRINTFORML 초대장에는 없었지만…… 치히로의 주선이라면, 혹시……?
+				PRINTFORMW 아니 애초에, 이런 밤에 태연하게 11살짜리 딸을 남자가 있는 호텔로 보냈다. 이건…… 틀림없을 것이다…….
+				PRINTL
+				PRINTFORML 치에의 머리를 부드럽게 쓰다듬고, 내면의 긴장을 필사적으로 억누르며, 모모에에게 손을 뻗는다…….
+				PRINTL
+				CALL PRINT_STR(@"IMAGEPATH_%CSTR:キャスト番号取得:画像フォルダ%/舞踏会_ホテル2") 
+				CALL PRINT_STRW(@"「햐, 읏……_H_ 아, 저기, 오너님……?」")
+				PRINTL
+				PRINTFORML 부드럽게 영근 유부녀의 거유에 손가락이 파고든다.
+				PRINTFORMW %CALLNAME:PLAYER%에게 갑자기 가슴을 움켜쥐어졌는데도, 놀라 부끄러워하는 모모에의 표정에는 혐오나 저항이 느껴지지 않는다…….
+				PRINTL
+				PRINTFORML ──이건, 할 수 있다.
+				PRINTFORMW 그렇게 확신한 %CALLNAME:PLAYER%이(가) 손 안의 가슴을 주무르자, 무언가 말하고 싶은 듯한 눈을 한 치에가 %CALLNAME:PLAYER%의 옷자락을 잡아당겼다.
+				PRINTL
+				CALL PRINT_STR(@"IMAGEPATH_%CSTR:キャスト番号取得:画像フォルダ%/舞踏会_ホテル3") 
+				PRINTFORMW ──자, 어떻게 할까?
+				PRINTL
+				隠しキャラ番号取得 = キャラ検索("[佐々木千枝の母]佐々木百枝")
+				IF CFLAG:隠しキャラ番号取得:招待不可フラグ != 0
+					CFLAG:隠しキャラ番号取得:招待不可フラグ = 0
+				ENDIF
+				IF CFLAG:隠しキャラ番号取得:滞在期間 < 1
+					CFLAG:隠しキャラ番号取得:滞在期間 = 1
+					CALL CLOTHES_TODAY(隠しキャラ番号取得)
+				ENDIF
+				PRINTBUTTON "[0] 치에만 받는다", 0
+				PRINTL
+				PRINTBUTTON "[1] 모모에도 받는다", 1
+				PRINTL
+				BINPUT
+				PRINTL
+				SELECTCASE RESULT
+				CASE 0
+					PRINTFORML ……할 수 있다는 확신은 있지만, 치에에게 이런 눈빛을 받으면 당해낼 수 없다.
+					PRINTFORMW 오늘의 『신데렐라』는 치에다. 한눈팔면 불쌍할 것이다.
+					PRINTL
+					PRINTFORMW 모모에의 가슴에서 손을 뗀 %CALLNAME:PLAYER%이 오늘 밤 상대로 치에만을 선택하자, 뚱해 있던 치에는 꽃이 피듯 활짝 웃는 얼굴이 되었다.
+					PRINTL
+					CALL PRINT_STR(@"IMAGEPATH_%CSTR:キャスト番号取得:画像フォルダ%/舞踏会_ホテル6") 
+					CALL PRINT_STRL(@"「에헤헤_H_치에만을 선택해줘서, 기뻐요!_H_」")
+					CALL PRINT_STRW(@"「잔뜩, 봉사 열심히 할게요!_H__H_」")
+					PRINTL
+					PRINTFORMW 「그럼 엄마, 다녀올게!」
+					PRINTL
+					PRINTFORML 금방이라도 춤출 듯 기분이 좋아진 치에가, %CALLNAME:PLAYER%의 손을 잡고 힘껏 침대로 향한다.
+					PRINTFORMW 「다녀와, 치에」라는 모모에의 배웅하는 목소리와, 덜컥 닫히는 문소리를 등지고, 치에와 단둘만의 『무도회』의 막이 올랐다…….
+					;千枝のみを選んだことで恋心度がぐいっと上がる
+					上昇量 = 経験値テーブル:41 - CFLAG:キャスト番号取得:恋心度
+					IF 上昇量 > 0
+						NOWEX:キャスト番号取得:恋心度上昇格納 += 上昇量
+					ELSE
+						;既にLv21以上なのでなんか当たり障りのない量を上げる
+						NOWEX:キャスト番号取得:恋心度上昇格納 += 5000
+					ENDIF
+					STR:イベントうふふ場所名 = 회원제 호텔『H@rvest』 306호실
+					FLAG:イベントうふふベッドルーム = 1
+					TCVAR:キャスト番号取得:言いなり = 1
+					CFLAG:キャスト番号取得:イベントうふふ対象フラグ = 1
+					EXP:キャスト番号取得:性接待経験 += 1
+					EXP:MASTER:被接待経験 += 1
+					CALL イベント中うふふ移行処理("『舞踏会』への招待")
+					DRAWLINE
+					PRINTFORML 이번에 인사를 나눈 인연으로, 모모에가 리조트에 방문하게 되었다!
+					PRINTL
+					PRINTFORMW 숨겨진 캐릭터 [사사키 치에의 엄마]사사키 모모에 가 해방되었습니다.
+					DRAWLINE
+				CASE 1
+					PRINTFORML 신데렐라를 데려온 호박마차까지 먹을 수 있다니, 지극정성이라는 것이 바로 이런 것이다.
+PRINTFORMW %CALLNAME:PLAYER%이(가) 「어머님도 어떠세요?」라고 말을 걸자, 모모에는 가슴을 주무르면서 곤란한 듯 웃는다.
+					PRINTL
+CALL PRINT_STRW(@"「읏……_H_ 아니요, 저는…… 오늘은 치에의 『일』이고…… 으응, 읏_H_」")
+					PRINTL
+CALL PRINT_STRW(@"「섹스하기에는 치에는 아직 어리지만…… 딸이라면 제대로 할 수 있다고, 믿고 있으니까요……」")
+					PRINTL
+					CALL PRINT_STR(@"IMAGEPATH_%CSTR:キャスト番号取得:画像フォルダ%/舞踏会_ホテル4")
+CALL PRINT_STRW(@"「응_H_ 흐읍, 읏_H__H_ …………읏아……또 못 가, 읏……。 ……크으, 응읏_H__H_ 싫어_H__H_ 애태우지, 마……아읏_H__H__H_」")
+					PRINTL
+PRINTFORML 『교섭』의 틈을 타 모모에의 바지 단추를 풀고 안에 손을 넣자, 손가락 끝에는 끈적하게 애액이 엉겨 붙었다.
+PRINTFORMW 변명을 늘어놓지만, 딸 앞에서 함부로 가슴을 주물러진 것만으로도 이렇게 젖다니…… 이 유부녀, 아무래도 상당히 쌓여있는 모양이다…….`
+					PRINTL
+CALL PRINT_STRW(@"「으응읏_H__H_ 안 돼읏_H__H_ 오랜만이라 금방 가버려……읏_H_」")
+					PRINTL
+CALL PRINT_STRW(@"「읏, 아………… 왜, 멈춰……버리는, 거야, 읏_H__H_」")
+					PRINTL
+CALL PRINT_STRW(@"「ん_H_ ふうﾞ、っ_H__H_ …………っあ……またイけな、っ……。 ……くぅ、んﾞっ_H__H_ やぁ_H__H_ 焦らさ、な……あﾞっ_H__H__H_」")
+					PRINTL
+CALL PRINT_STRW(@"「읏_H__H__H_ 알겠_H__H_ 알겠습니다읏_H__H__H_ 치에와 함께, 봉사해 드릴 테니까아읏_H__H__H_」")
+					PRINTL
+CALL PRINT_STRW(@"「그러니까, 좀, 용서해, 읏그_H__H__H__H_ 가읏, 꺄, 읏읏읏읏_H__H__H__H__H__H_」")
+					PRINTL
+PRINTFORML 조금 애태웠을 뿐인데, ２분도 안 되어 순순히 항복하고 합의를 입에 담은 모모에를 손가락으로 가게 하고 문득 옆을 보니,
+PRINTFORMW 흘겨보는 치에가 %CALLNAME:PLAYER%을(를) 응시하고 있었다……。
+					PRINTL
+					CALL PRINT_STR(@"IMAGEPATH_%CSTR:キャスト番号取得:画像フォルダ%/舞踏会_ホテル5")
+PRINTFORMW 「…………역시 오너님도, 엄마 같은 어른 여자가 좋은 건가요……」
+					PRINTL
+PRINTFORMW 「으음～～…… 엄마한테는 안 질 거예요!」
+					PRINTL
+					PRINTFORML 묘한 느낌으로 결의를 다진 치에에게 손을 이끌려 침대로 올라간다.
+					PRINTFORMW 어머니와 딸 양쪽을 한 번에 즐길 수 있는, 가슴 설레는 『무도회』의 막이 지금, 올랐다……。
+					STR:イベントうふふ場所名 = 회원제 호텔 『H@rvest』 306호실
+					FLAG:イベントうふふベッドルーム = 1
+					TCVAR:キャスト番号取得:言いなり = 1
+					TCVAR:隠しキャラ番号取得:言いなり = 1
+					CFLAG:キャスト番号取得:イベントうふふ対象フラグ = 1
+					CFLAG:隠しキャラ番号取得:イベントうふふ対象フラグ = 1
+					PALAM:隠しキャラ番号取得:潤滑 = 10000
+					EXP:キャスト番号取得:性接待経験 += 1
+					EXP:MASTER:被接待経験 += 1
+					EXP:隠しキャラ番号取得:性接待経験 += 1
+					CALL イベント中うふふ移行処理("『舞踏会』への招待")
+					DRAWLINE
+					PRINTFORML %CALLNAME:PLAYER%에게 안기는 쾌락을 알아버린 모모에는, 헤어질 때, 언젠가 리조트를 방문할 것을 약속하고 귀로에 올랐다……。
+					PRINTL
+					PRINTFORMW 숨겨진 캐릭터 [사사키 치에의 어머니]사사키 모모에 가 해방되었습니다.
+					DRAWLINE
+				ENDSELECT
+			ELSE
+			;その他個別が未実装のキャラ セリフを出さないし画像も用意しない最低限なので超薄味
+				PRINTFORML 이번에 %CALLNAME:PLAYER%이(가) 안내받은 곳은, 어느 호텔의 한 객실이었다.
+				PRINTFORMW 게다가 우사밍별이라니 대체……혹시 그녀는, 별의 백성 같은 것일까?
+				PRINTL
+				;プロデューサー同伴じゃない
+				PRINTFORMW 방에서 잠시 쉬는 동안 울린 노크 소리에 %CALLNAME:PLAYER%이(가) 문을 열자, 그곳에는 소녀의 모습이 있었다.
+				PRINTL
+				CALL PRINT_STR(@"IMAGEPATH_%CSTR:キャスト番号取得:画像フォルダ%/短冊_기본") 
+				PRINTFORML 붉게 물든 뺨으로 「%SUBSTRING(NAME:キャスト番号取得, STRFIND(NAME:キャスト番号取得, "]") + 1, -1)%입니다」라고 자신을 소개한 소녀가 꾸벅하고 인사를 한다.
+				PRINTFORMW 그녀가 오늘 밤의 『신데렐라』. %CALLNAME:PLAYER%을(를) 즐겁게 해줄 밤의 꽃이다.
+				PRINTL
+				PRINTFORML 어깨를 안고 방으로 데려와, 먹기 좋은 암컷의 달콤한 향기에 기대를 부풀리며 %CALLNAME:キャスト番号取得%을(를) 침대로 이끈다.
+				PRINTFORMW 대화도 적당히 %CALLNAME:キャスト番号取得%을(를) 털썩 침대에 밀어 넘어뜨리고, %CALLNAME:PLAYER%와 %CALLNAME:キャスト番号取得%의 욕망의 『무도회』가 지금, 막을 올렸다……。
+				STR:イベントうふふ場所名 = 회원제 호텔 『H@rvest』 306호실
+				FLAG:イベントうふふベッドルーム = 1
+				TCVAR:キャスト番号取得:言いなり = 1
+				CFLAG:キャスト番号取得:イベントうふふ対象フラグ = 1
+				EXP:キャスト番号取得:性接待経験 += 1
+				EXP:MASTER:被接待経験 += 1
+				CALL イベント中うふふ移行処理("『舞踏会』への招待")
+		ENDIF
+	CASE 1
+		PRINTFORML 모처럼의 초대지만, 이 아이와는 좀 더 다른 관계를 맺고 싶다……。
+		PRINTL 
+		PRINTFORMW %CALLNAME:PLAYER%은(는) 이번 주의 『무도회』는 결석하기로 했다……。
+ENDSELECT
+
+CALL イベント完了フラグ汎用処理_再視聴不可("『舞踏会』への招待")

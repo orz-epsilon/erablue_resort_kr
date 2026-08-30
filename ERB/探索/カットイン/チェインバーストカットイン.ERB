@@ -22,9 +22,9 @@ FOR メンバ , 0 , ターン中奥義回数保存
 	キャラTEMP = BATTLE_STATE:(チェンバ基準キャラ保存:メンバ):キャラ登録番号
 	IF EXIST画像FILE(@"resources/%CSTR:キャラTEMP:画像フォルダ%/顔_デフォルト")
 		汎用グラ用文字列:カットインカウント = 
-		デフォルト用文字列:カットインカウント = 기본값
+デフォルト用文字列:カットインカウント = 기본
 		SIF CSTR:キャラTEMP:画像フォルダ == ""
-			CSTR:キャラTEMP:画像フォルダ '= GET_RESOURCES_BASE_FOLDER(キャラTEMP)
+		CSTR:キャラTEMP:画像フォルダ '= GET_RESOURCES_BASE_FOLDER(キャラTEMP)
 	ELSEIF OPTION変数:汎用立ち絵制御
 		汎用グラ用文字列:カットインカウント = _%CSTR:キャラTEMP:汎用立ち絵登録文字列%
 		デフォルト用文字列:カットインカウント = _%CSTR:キャラTEMP:汎用立ち絵登録文字列%

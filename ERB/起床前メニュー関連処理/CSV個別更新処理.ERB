@@ -11,16 +11,16 @@
 #DIMS 出演作品検索文字列
 
 DRAWLINE
-PRINTL CSV를 적용할 캐릭터를 선택해 주세요.
+PRINTL CSV를 적용할 캐릭터를 선택해주세요.
 DRAWLINE
 IF !リスト更新
 	IF !ソート変更
 		リスト人数 = 0
-		FOR LOCAL, 1, 5001
-			SIF LOCAL == 999
-				CONTINUE
+		FOR LOCAL, 1, キャラクタ数上限 + 1
 			対象キャラ = GETCHARA(LOCAL)
 			SIF 対象キャラ < 1
+				CONTINUE
+			SIF ランダムキャラ判定(LOCAL)
 				CONTINUE
 			IF 名前検索文字列 != ""
 				SIF STRFIND(NAME表示(対象キャラ), 名前検索文字列) < 0
@@ -28,7 +28,7 @@ IF !リスト更新
 			ENDIF
 			IF 出演作品検索文字列 != ""
 				IF STRFIND(CSTR:対象キャラ:出演作品, 出演作品検索文字列) < 0
-					SIF STRFIND("グランブルーファンタジー", 出演作品検索文字列) < 0 || CSTR:対象キャラ:出演作品 != "" || GROUPMATCH(NO:対象キャラ, 998, 999)
+					SIF STRFIND("グランブルーファンタジー", 出演作品検索文字列) < 0 || CSTR:対象キャラ:出演作品 != "" || NO:対象キャラ == 998 || ランダムキャラ判定(NO:対象キャラ)
 						CONTINUE
 				ENDIF
 			ENDIF
@@ -38,7 +38,7 @@ IF !リスト更新
 	ELSE
 		リスト人数 = 0
 		FOR 対象キャラ, 1, CHARANUM
-			SIF NO:対象キャラ == 999
+			SIF ランダムキャラ判定(NO:対象キャラ)
 				CONTINUE
 			IF 名前検索文字列 != ""
 				SIF STRFIND(NAME表示(対象キャラ), 名前検索文字列) < 0
@@ -46,7 +46,7 @@ IF !リスト更新
 			ENDIF
 			IF 出演作品検索文字列 != ""
 				IF STRFIND(CSTR:対象キャラ:出演作品, 出演作品検索文字列) < 0
-					SIF STRFIND("グランブルーファンタジー", 出演作品検索文字列) < 0 || CSTR:対象キャラ:出演作品 != "" || GROUPMATCH(NO:対象キャラ, 998, 999)
+					SIF STRFIND("グランブルーファンタジー", 出演作品検索文字列) < 0 || CSTR:対象キャラ:出演作品 != "" || NO:対象キャラ == 998 || ランダムキャラ判定(NO:対象キャラ)
 						CONTINUE
 				ENDIF
 			ENDIF
@@ -138,9 +138,9 @@ SELECTCASE ボタン結果
 	CASE 9990
 		DRAWLINE
 		PRINTL 검색할 문자열을 입력해 주세요.
-		PRINTL ※검색 대상은 캐릭터의 NAME(별명+풀네임)입니다.
+		PRINTL ※검색 대상은 캐릭터의 NAME(별명 + 풀네임)입니다.
 		PRINTL ※부분 일치 검색입니다.
-		PRINTL ※공백 등의 구분으로 인한 복수 검색에는 대응하지 않습니다.
+		PRINTL ※공백 등의 구분자로 여러 개를 검색하는 것은 지원하지 않습니다.
 		DRAWLINE
 		PRINTL
 		INPUTS
@@ -153,7 +153,7 @@ SELECTCASE ボタン結果
 		PRINTL 목록에서 선택하거나, 검색할 문자열을 입력해 주세요.
 		PRINTL ※검색 대상은 캐릭터의 출연 작품입니다.
 		PRINTL ※부분 일치 검색입니다.
-		PRINTL ※공백 등의 구분으로 인한 복수 검색에는 대응하지 않습니다.
+		PRINTL ※공백 등의 구분자로 여러 개를 검색하는 것은 지원하지 않습니다.
 		DRAWLINE
 		PRINTBUTTONLC "[그랑블루 판타지]", "グランブルーファンタジー"
 		PRINTBUTTONLC "[TYPE-MOON]", "TYPE-MOON"
@@ -166,7 +166,7 @@ SELECTCASE ボタン結果
 		リスト更新 = 0
 		現在ページ = 0
 	CASE 9992
-		PRINTL CSV 번호를 입력해 주세요(0이나 999, 존재하지 않는 번호 등의 경우에는 취소)
+		PRINTL CSV 번호를 입력해주세요(0이나 999, 존재하지 않는 번호 등의 경우는 취소)
 		PRINTL 
 		INPUT
 		GETCHARA RESULT
@@ -206,11 +206,11 @@ RESTART
 CALL FIX_RESOURCES_FOLDER(対象キャラ)
 IF RESULT
 	PRINTL 현재 설정된 이미지 폴더가 유효하지 않으므로,
-	PRINTFORMW 이미지 폴더 설정을 %CSTR:対象キャラ:画像フォルダ%(으)로 변경했습니다
+	PRINTFORMW 이미지 폴더 설정을%CSTR:対象キャラ:画像フォルダ%으로 변경했습니다
 ENDIF
 
 DRAWLINE
-PRINTL CSV를 적용할 카테고리를 선택해 주세요.
+PRINTL CSV를 적용할 카테고리를 선택해주세요.
 PRINTFORML 선택 중인 캐릭터：%NAME表示(対象キャラ)%
 DRAWLINE
 
@@ -219,7 +219,7 @@ IF CSVNAME(NO:対象キャラ) != NAME:対象キャラ || CSVCALLNAME(NO:対象�
 	PRINTL
 ELSE
 	SETCOLOR カラーパレット("グレーアウト")
-	PRINTPLAIN [0] 이름 변경을 적용한다 (변경 없음)
+	PRINTPLAIN [0] 이름 변경을 적용한다（변경 없음）
 	RESETCOLOR
 	PRINTL
 ENDIF
@@ -229,17 +229,17 @@ IF CSVCSTR(NO:対象キャラ, GETNUM(CSTR, "出演作品")) != CSTR:対象キ�
 	PRINTL
 ELSE
 	SETCOLOR カラーパレット("グレーアウト")
-	PRINTPLAIN [1] 출연 작품 변경을 적용한다 (변경 없음)
+	PRINTPLAIN [1] 출연 작품 변경을 적용한다（변경 없음）
 	RESETCOLOR
 	PRINTL
 ENDIF
 
 IF CSVCSTR(NO:対象キャラ, GETNUM(CSTR, "プレゼント好み")) != CSTR:対象キャラ:プレゼント好み
-	PRINTBUTTON "[2] 선물 취향 변경을 적용한다", 2
+	PRINTBUTTON "[2] 선물 선호도 변경을 적용한다", 2
 	PRINTL
 ELSE
 	SETCOLOR カラーパレット("グレーアウト")
-	PRINTPLAIN [2] 선물 취향 변경을 적용한다 (변경 없음)
+	PRINTPLAIN [2] 선물 선호도 변경을 적용한다（변경 없음）
 	RESETCOLOR
 	PRINTL
 ENDIF
@@ -249,7 +249,7 @@ IF CSVCSTR(NO:対象キャラ, GETNUM(CSTR, "戦闘基礎ステータス設定")
 	PRINTL
 ELSE
 	SETCOLOR カラーパレット("グレーアウト")
-	PRINTPLAIN [3] 전투 타입 변경을 적용한다 (변경 없음)
+	PRINTPLAIN [3] 전투 타입 변경을 적용한다（변경 없음）
 	RESETCOLOR
 	PRINTL
 ENDIF
@@ -258,10 +258,10 @@ RESULT = 0
 CALL 肉体情報比較処理(対象キャラ, 0)
 IF RESULT
 	PRINTBUTTON "[4] 육체 정보 변경을 적용한다", 4
-	PRINTL 　　※처리상 변경이 없어도 적용할 수 있는 경우가 있습니다.
+	PRINTL 　　※처리상의 편의상, 변경이 없어도 적용될 수 있습니다.
 ELSE
 	SETCOLOR カラーパレット("グレーアウト")
-	PRINTPLAIN [4] 육체 정보 변경을 적용한다 (변경 없음)
+	PRINTPLAIN [4] 육체 정보 변경 적용（변경없음）
 	RESETCOLOR
 	PRINTL
 ENDIF
@@ -269,11 +269,11 @@ ENDIF
 RESULT = 0
 CALL 素質比較処理(対象キャラ, 0)
 IF RESULT
-	PRINTBUTTON "[5] 소질 변경을 적용한다", 5
-	PRINTL 　　※처리상 변경이 없어도 적용할 수 있는 경우가 있습니다.
+	PRINTBUTTON "[5] 소질 변경 적용", 5
+	PRINTL 　　※처리상의 편의상, 변경이 없어도 적용될 수 있습니다.
 ELSE
 	SETCOLOR カラーパレット("グレーアウト")
-	PRINTPLAIN [5] 소질 변경을 적용한다 (변경 없음)
+	PRINTPLAIN [5] 소질 변경 적용（변경없음）
 	RESETCOLOR
 	PRINTL
 ENDIF
@@ -281,11 +281,11 @@ ENDIF
 RESULT = 0
 CALL 知識素質比較処理(対象キャラ, 0)
 IF RESULT
-	PRINTBUTTON "[6] 지식 소질의 변경을 적용하다", 6
+	PRINTBUTTON "[6] 지식 소질 변경 적용", 6
 	PRINTL 　　※성장도 초기화됩니다.
 ELSE
 	SETCOLOR カラーパレット("グレーアウト")
-	PRINTPLAIN [6] 지식 소질의 변경을 적용하다 (변경 없음)
+	PRINTPLAIN [6] 지식 소질 변경 적용（변경없음）
 	RESETCOLOR
 	PRINTL
 ENDIF
@@ -293,11 +293,11 @@ ENDIF
 RESULT = 0
 CALL 性癖素質比較処理(対象キャラ, 0)
 IF RESULT
-	PRINTBUTTON "[7] 성벽 소질의 변경을 적용하다", 7
+	PRINTBUTTON "[7] 성벽 소질 변경 적용", 7
 	PRINTL 　　※성장도 초기화됩니다.
 ELSE
 	SETCOLOR カラーパレット("グレーアウト")
-	PRINTPLAIN [7] 성벽 소질의 변경을 적용하다 (변경 없음)
+	PRINTPLAIN [7] 성벽 소질 변경 적용（변경없음）
 	RESETCOLOR
 	PRINTL
 ENDIF
@@ -310,10 +310,10 @@ FOR LOCAL, 0, 10
 	ENDIF
 NEXT
 IF RESULT
-	PRINTBUTTON "[8] 고유 소질의 변경을 적용하다", 8
+	PRINTBUTTON "[8] 고유 소질 변경 적용", 8
 ELSE
 	SETCOLOR カラーパレット("グレーアウト")
-	PRINTPLAIN [8] 고유 소질의 변경을 적용하다 (변경 없음)
+	PRINTPLAIN [8] 고유 소질 변경 적용（변경없음）
 	RESETCOLOR
 	PRINTL
 ENDIF
@@ -326,11 +326,11 @@ FOR LOCAL, 0, VARSIZE("ABL")
 	ENDIF
 NEXT
 IF RESULT
-	PRINTBUTTON "[9] 능력의 변경을 적용하다", 9
+	PRINTBUTTON "[9] 능력 변경 적용", 9
 	PRINTL 　　※성장도 초기화됩니다.
 ELSE
 	SETCOLOR カラーパレット("グレーアウト")
-	PRINTPLAIN [9] 능력의 변경을 적용하다 (변경 없음)
+	PRINTPLAIN [9] 능력 변경을 적용한다 (변경 없음)
 	RESETCOLOR
 	PRINTL
 ENDIF
@@ -343,11 +343,11 @@ FOR LOCAL, 0, VARSIZE("EXP")
 	ENDIF
 NEXT
 IF RESULT
-	PRINTBUTTON "[10] 경험의 변경을 적용하다", 10
-	PRINTL 　　※성장도 초기화됩니다.
+	PRINTBUTTON "[10] 경험 변경을 적용한다", 10
+	PRINTL 　　※성장도 리셋됩니다.
 ELSE
 	SETCOLOR カラーパレット("グレーアウト")
-	PRINTPLAIN [10] 경험의 변경을 적용하다 (변경 없음)
+	PRINTPLAIN [10] 경험 변경을 적용한다 (변경 없음)
 	RESETCOLOR
 	PRINTL
 ENDIF
@@ -365,11 +365,11 @@ SIF RESULT == 0 && CSTR:対象キャラ:普段着解説 != CSVCSTR(NO:対象キ�
 	RESULT = 1
 
 IF RESULT
-	PRINTBUTTON "[11] 초기 복장의 변경을 적용하다", 11
+	PRINTBUTTON "[11] 초기 복장 변경을 적용한다", 11
 	PRINTL 　　※성장도 리셋됩니다.
 ELSE
 	SETCOLOR カラーパレット("グレーアウト")
-	PRINTPLAIN [11] 초기 복장 변경을 적용합니다 (변경 없음)
+	PRINTPLAIN [11] 초기 복장 변경을 적용한다 (변경 없음)
 	RESETCOLOR
 	PRINTL
 ENDIF
@@ -382,10 +382,10 @@ IF CSTR:対象キャラ:陥落奥義設定 != CSVCSTR(NO:対象キャラ, GETNUM
 	RESULT = 1
 ENDIF
 IF RESULT
-	PRINTBUTTON "[12] 오의명 설정 변경을 적용합니다", 12
+	PRINTBUTTON "[12] 오의명 설정 변경을 적용한다", 12
 ELSE
 	SETCOLOR カラーパレット("グレーアウト")
-	PRINTPLAIN [12] 오의명 설정 변경을 적용합니다 (변경 없음)
+	PRINTPLAIN [12] 오의명 설정 변경을 적용한다 (변경 없음)
 	RESETCOLOR
 	PRINTL
 ENDIF
@@ -410,21 +410,21 @@ PRINTL ・변경점
 SELECTCASE ボタン結果
 	CASE 0
 		IF CSVNAME(NO:対象キャラ) != NAME:対象キャラ
-			PRINTL 이름:
+			PRINTL 이름：
 			PRINTFORML %NAME表示(対象キャラ)% > %CSVNAME(NO:対象キャラ)%
 		ENDIF
 		IF CSVCALLNAME(NO:対象キャラ) != CALLNAME:対象キャラ
-			PRINTL 호칭:
+			PRINTL 호칭：
 			PRINTFORML %CALLNAME:対象キャラ% > %CSVCALLNAME(NO:対象キャラ)%
 		ENDIF
 	CASE 1
-		PRINTL 출연 작품:
+		PRINTL 출연 작품：
 		PRINTFORML %CSTR:対象キャラ:出演作品% > %CSVCSTR(NO:対象キャラ, GETNUM(CSTR, "出演作品"))%
 	CASE 2
-		PRINTL 선물 취향:
+		PRINTL 선물 취향：
 		PRINTFORML %CSTR:対象キャラ:プレゼント好み% > %CSVCSTR(NO:対象キャラ, GETNUM(CSTR, "プレゼント好み"))%
 	CASE 3
-		PRINTL 전투 타입:
+		PRINTL 전투 타입：
 		PRINTFORML %CSTR:対象キャラ:戦闘基礎ステータス設定% > %CSVCSTR(NO:対象キャラ, GETNUM(CSTR, "戦闘基礎ステータス設定"))%
 	CASE 4
 		CALL 肉体情報比較処理(対象キャラ, -1)
@@ -466,13 +466,13 @@ SELECTCASE ボタン結果
 		VARSET LOCALS
 		IF CSTR:対象キャラ:表示奥義設定 != ""
 			SPLIT CSTR:対象キャラ:表示奥義設定, "_", LOCALS
-			PRINTL ■일반 오의: 변경 전
+			PRINTL ■통상 오의: 변경 전
 			PRINTFORML %LOCALS:0%
 			PRINTFORML %LOCALS:1%
 			PRINTFORML %LOCALS:2%
 		ELSE
 			PRINTL ■통상 오의: 변경 전
-			PRINTL 설정 없음
+			PRINTL 設定없음
 		ENDIF
 		PRINTL
 		VARSET LOCALS
@@ -484,7 +484,7 @@ SELECTCASE ボタン結果
 			PRINTFORML %LOCALS:2%
 		ELSE
 			PRINTL ■통상 오의: 변경 후
-			PRINTL 설정 없음
+			PRINTL 設定없음
 		ENDIF
 		VARSET LOCALS
 		IF CSTR:対象キャラ:陥落奥義設定 != ""
@@ -495,7 +495,7 @@ SELECTCASE ボタン結果
 			PRINTFORML %LOCALS:2%
 		ELSE
 			PRINTL ■함락 오의: 변경 전
-			PRINTL 설정 없음
+			PRINTL 設定없음
 		ENDIF
 		PRINTL
 		VARSET LOCALS
@@ -507,17 +507,17 @@ SELECTCASE ボタン結果
 			PRINTFORML %LOCALS:2%
 		ELSE
 			PRINTL ■함락 오의: 변경 후
-			PRINTL 설정 없음
+			PRINTL 設定없음
 		ENDIF
 ENDSELECT
 DRAWLINE
-PRINTFORML %カテゴリ一覧:ボタン結果%에 CSV 설정을 적용하시겠습니까?
-PRINTL ※성장・ZP에 의한 변동 등도 모두 초기화됩니다
-PRINTL ※아이를 가진, 연인을 가진 등의 소질도 초기화됩니다. 오류의 원인이 될 수 있으니 주의해 주십시오.
-PRINTL ※체격, 체형에 대해서는 CSV 적용 후에 종족 보정 등을 적용하기 때문에, 표시와 다른 값이 될 수 있습니다.
+PRINTFORML %カテゴリ一覧:ボタン結果%에 CSV 설정을 적용해도 괜찮습니까?
+PRINTL ※성장・ZP에 의한 변동 등도 모두 리셋됩니다
+PRINTL ※아이를 가진, 연인인 등의 소질도 초기화됩니다. 오류의 원인이 될 수 있으니 주의해 주세요.
+PRINTL ※체격, 체형에 대해서는 CSV 적용 후에종족補正 등을 적용하기 때문에, 표시와 다른 값이 될 수 있습니다.
 DRAWLINE
 PRINTBUTTONLC "[0] 예", 0
-PRINTBUTTONLC "[1] 아니요", 1
+PRINTBUTTONLC "[1] 아니오", 1
 PRINTL
 BINPUT
 IF RESULT == 1
@@ -666,9 +666,9 @@ IF 動作モード == 0
 ELSEIF 動作モード == -1
 	;差異の表示
 	SIF TALENT:対象キャラ:種族 != CSVTALENT(NO:対象キャラ, GETNUM(TALENT, "種族"))
-		PRINTFORML 종족：%GET_TALENTNAME(GETNUM(TALENT, "種族"), TALENT:対象キャラ:種族,,対象キャラ)% > %GET_TALENTNAME(GETNUM(TALENT, "種族"), CSVTALENT(NO:対象キャラ, GETNUM(TALENT, "種族")),,対象キャラ)%
+		PRINTFORML 종족:%GET_TALENTNAME(GETNUM(TALENT, "種族"), TALENT:対象キャラ:種族,,対象キャラ)% > %GET_TALENTNAME(GETNUM(TALENT, "種族"), CSVTALENT(NO:対象キャラ, GETNUM(TALENT, "種族")),,対象キャラ)%
 	SIF CSTR:対象キャラ:特殊種族 != CSVCSTR(NO:対象キャラ, GETNUM(CSTR, "特殊種族"))
-		PRINTFORML 특수 종족：%CSTR:対象キャラ:特殊種族% > %CSVCSTR(NO:対象キャラ, GETNUM(CSTR, "特殊種族"))%
+		PRINTFORML 特殊종족:%CSTR:対象キャラ:特殊種族% > %CSVCSTR(NO:対象キャラ, GETNUM(CSTR, "特殊種族"))%
 	SIF TALENT:対象キャラ:角あり != CSVTALENT(NO:対象キャラ, GETNUM(TALENT, "角あり"))
 		PRINTFORML 뿔 있음：{TALENT:対象キャラ:角あり} > {CSVTALENT(NO:対象キャラ, GETNUM(TALENT, "角あり"))}
 	SIF TALENT:対象キャラ:尻尾あり != CSVTALENT(NO:対象キャラ, GETNUM(TALENT, "尻尾あり"))
@@ -678,32 +678,32 @@ ELSEIF 動作モード == -1
 	SIF TALENT:対象キャラ:ハーヴィン耳 != CSVTALENT(NO:対象キャラ, GETNUM(TALENT, "ハーヴィン耳"))
 		PRINTFORML 하빈 귀：{TALENT:対象キャラ:ハーヴィン耳} > {CSVTALENT(NO:対象キャラ, GETNUM(TALENT, "ハーヴィン耳"))}
 	IF BASE:対象キャラ:バスト != CSVBASE(NO:対象キャラ, GETNUM(BASE, "バスト")) && CSVBASE(NO:対象キャラ, GETNUM(BASE, "バスト"))
-		PRINTFORML 가슴：{BASE:対象キャラ:バスト} > {CSVBASE(NO:対象キャラ, GETNUM(BASE, "バスト"))}
+		PRINTFORML 가슴둘레:{BASE:対象キャラ:バスト} > {CSVBASE(NO:対象キャラ, GETNUM(BASE, "バスト"))}
 	ELSE
 		SIF TALENT:対象キャラ:バストサイズ != CSVTALENT(NO:対象キャラ, GETNUM(TALENT, "バストサイズ"))
-			PRINTFORML 가슴 사이즈：{TALENT:対象キャラ:バストサイズ} > {CSVTALENT(NO:対象キャラ, GETNUM(TALENT, "バストサイズ"))}
+			PRINTFORML 가슴サイズ：{TALENT:対象キャラ:バストサイズ} > {CSVTALENT(NO:対象キャラ, GETNUM(TALENT, "バストサイズ"))}
 	ENDIF
 	IF BASE:対象キャラ:ウエスト != CSVBASE(NO:対象キャラ, GETNUM(BASE, "ウエスト")) && CSVBASE(NO:対象キャラ, GETNUM(BASE, "ウエスト"))
-		PRINTFORML 허리：{BASE:対象キャラ:ウエスト} > {CSVBASE(NO:対象キャラ, GETNUM(BASE, "ウエスト"))}
+		PRINTFORML 허리:{BASE:対象キャラ:ウエスト} > {CSVBASE(NO:対象キャラ, GETNUM(BASE, "ウエスト"))}
 	ENDIF
 	IF BASE:対象キャラ:ヒップ != CSVBASE(NO:対象キャラ, GETNUM(BASE, "ヒップ")) && CSVBASE(NO:対象キャラ, GETNUM(BASE, "ヒップ"))
-		PRINTFORML 엉덩이：{BASE:対象キャラ:ヒップ} > {CSVBASE(NO:対象キャラ, GETNUM(BASE, "ヒップ"))}
+		PRINTFORML 엉덩이:{BASE:対象キャラ:ヒップ} > {CSVBASE(NO:対象キャラ, GETNUM(BASE, "ヒップ"))}
 	ELSE
 		SIF TALENT:対象キャラ:下半身 != CSVTALENT(NO:対象キャラ, GETNUM(TALENT, "下半身"))
 			PRINTFORML 하반신：{TALENT:対象キャラ:下半身} > {CSVTALENT(NO:対象キャラ, GETNUM(TALENT, "下半身"))}
 	ENDIF
 	IF BASE:対象キャラ:身長 != CSVBASE(NO:対象キャラ, GETNUM(BASE, "身長")) && CSVBASE(NO:対象キャラ, GETNUM(BASE, "身長"))
-		PRINTFORML 신장：{BASE:対象キャラ:身長} > {CSVBASE(NO:対象キャラ, GETNUM(BASE, "身長"))}
+		PRINTFORML 키:{BASE:対象キャラ:身長} > {CSVBASE(NO:対象キャラ, GETNUM(BASE, "身長"))}
 	ENDIF
 	IF BASE:対象キャラ:年齢 != CSVBASE(NO:対象キャラ, GETNUM(BASE, "年齢"))
-		PRINTFORML 연령：{BASE:対象キャラ:年齢} > {CSVBASE(NO:対象キャラ, GETNUM(BASE, "年齢"))}
+		PRINTFORML 나이:{BASE:対象キャラ:年齢} > {CSVBASE(NO:対象キャラ, GETNUM(BASE, "年齢"))}
 	ELSEIF TALENT:対象キャラ:年齢層 != CSVTALENT(NO:対象キャラ, GETNUM(TALENT, "年齢層"))
-		PRINTFORML 연령층：{TALENT:対象キャラ:年齢層} > {CSVTALENT(NO:対象キャラ, GETNUM(TALENT, "年齢層"))}
+		PRINTFORML 나이層：{TALENT:対象キャラ:年齢層} > {CSVTALENT(NO:対象キャラ, GETNUM(TALENT, "年齢層"))}
 	ENDIF
 	SIF CSTR:対象キャラ:特殊年齢 != CSVCSTR(NO:対象キャラ, GETNUM(CSTR, "特殊年齢"))
-		PRINTFORML 특수 연령：%CSTR:対象キャラ:特殊年齢% > %CSVCSTR(NO:対象キャラ, GETNUM(CSTR, "特殊年齢"))%
+		PRINTFORML 特殊나이:%CSTR:対象キャラ:特殊年齢% > %CSVCSTR(NO:対象キャラ, GETNUM(CSTR, "特殊年齢"))%
 	SIF TALENT:対象キャラ:外見年齢 != CSVTALENT(NO:対象キャラ, GETNUM(TALENT, "外見年齢"))
-		PRINTFORML 외모 연령：{TALENT:対象キャラ:外見年齢} > {CSVTALENT(NO:対象キャラ, GETNUM(TALENT, "外見年齢"))}
+		PRINTFORML 外見나이:{TALENT:対象キャラ:外見年齢} > {CSVTALENT(NO:対象キャラ, GETNUM(TALENT, "外見年齢"))}
 	SIF TALENT:対象キャラ:体格 != CSVTALENT(NO:対象キャラ, GETNUM(TALENT, "体格"))
 		PRINTFORML 체격：{TALENT:対象キャラ:体格} > {CSVTALENT(NO:対象キャラ, GETNUM(TALENT, "体格"))}
 	SIF TALENT:対象キャラ:体型 != CSVTALENT(NO:対象キャラ, GETNUM(TALENT, "体型"))
@@ -711,7 +711,7 @@ ELSEIF 動作モード == -1
 	SIF TALENT:対象キャラ:男性器サイズ != CSVTALENT(NO:対象キャラ, GETNUM(TALENT, "男性器サイズ"))
 		PRINTFORML 남성기 사이즈：{TALENT:対象キャラ:男性器サイズ} > {CSVTALENT(NO:対象キャラ, GETNUM(TALENT, "男性器サイズ"))}
 	SIF TALENT:対象キャラ:性別 != CSVTALENT(NO:対象キャラ, GETNUM(TALENT, "性別"))
-		PRINTFORML 성별：{TALENT:対象キャラ:性別} > {CSVTALENT(NO:対象キャラ, GETNUM(TALENT, "性別"))}
+		PRINTFORML 성별:{TALENT:対象キャラ:性別} > {CSVTALENT(NO:対象キャラ, GETNUM(TALENT, "性別"))}
 	SIF TALENT:対象キャラ:処女 != CSVTALENT(NO:対象キャラ, GETNUM(TALENT, "処女"))
 		PRINTFORML 처녀：{TALENT:対象キャラ:処女} > {CSVTALENT(NO:対象キャラ, GETNUM(TALENT, "処女"))}
 	SIF TALENT:対象キャラ:非童貞 != CSVTALENT(NO:対象キャラ, GETNUM(TALENT, "非童貞"))
@@ -911,7 +911,7 @@ RETURN 0
 #DIMS CSTR切り分け文字列格納, 2
 
 FOR 対象キャラ, 1, CHARANUM
-	SIF NO:対象キャラ == 999
+	SIF ランダムキャラ判定(NO:対象キャラ)
 		CONTINUE
 
 	NAME:対象キャラ = %CSVNAME(NO:対象キャラ)%

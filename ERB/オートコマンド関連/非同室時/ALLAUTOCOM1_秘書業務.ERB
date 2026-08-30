@@ -1,6 +1,9 @@
 ;------------------------------------------------------------------------------
 ;秘書業務_日中イベント
 ;------------------------------------------------------------------------------
+@ALLAUTOCOMNAME1
+RESULTS = 秘書業務
+
 @ALLAUTOCOM1
 ;-------------------------------------------------
 ;ソース追加処理
@@ -45,8 +48,8 @@ SIF RAND:LOCAL
 RETURN 1
 
 @MESSAGE_ALLAUTOCOM1_非口上時
-PRINTFORML %CALLNAME:AUTOCOM_実行番号保存%는 %CALLNAME:PLAYER%에게 결재 서류를 가져왔다.
-PRINTFORML 확인하고 도장을 찍자, %CALLNAME:AUTOCOM_実行番号保存%는 그대로 일하러 돌아갔다……
+PRINTFORML %CALLNAME:AUTOCOM_実行番号保存%은(는) %CALLNAME:PLAYER%에게 결제 서류를 가져왔다.
+PRINTFORML 확인하고 도장을 찍자, 그대로 %CALLNAME:AUTOCOM_実行番号保存%은(는) 일로 돌아갔다……
 
 
 

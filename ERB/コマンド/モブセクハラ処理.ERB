@@ -1,4 +1,4 @@
-﻿@モブセクハラ処理
+@モブセクハラ処理
 #DIM セクハラ部位
 #DIMS レイプパターン
 #DIM セクハラ快楽量
@@ -83,7 +83,7 @@ IF フィールド展開:逆セクハラ && RAND:3 == 0
 			;Vレイプ
 			IF GETBIT(TALENT:PLAYER:性別, 0) && TALENT:PLAYER:Ｖ感度 != -2
 				IF !TALENT:PLAYER:処女 || OPTION変数:処女童貞RAPE制御
-					LOCALS:パターン数 = Vレイプ
+					LOCALS:パターン数 = V레이프
 					パターン数 += 1
 				ENDIF
 			ENDIF
@@ -92,7 +92,7 @@ IF フィールド展開:逆セクハラ && RAND:3 == 0
 				;男の時は同性愛やふたなり制御を見る
 				IF TALENT:PLAYER:性別 == 2 && 素質切り替えOPTION記憶:ふたなり_女性 && EXP:PLAYER:同性愛経験 < 100
 				ELSE
-					LOCALS:パターン数 = Aレイプ
+					LOCALS:パターン数 = A레이프
 					パターン数 += 1
 				ENDIF
 			ENDIF
@@ -100,20 +100,20 @@ IF フィールド展開:逆セクハラ && RAND:3 == 0
 			;男の時は同性愛やふたなり制御を見る
 			IF TALENT:PLAYER:性別 == 2 && 素質切り替えOPTION記憶:ふたなり_女性 && EXP:PLAYER:同性愛経験 < 100
 			ELSE
-				LOCALS:パターン数 = おくちレイプ
+				LOCALS:パターン数 = 입 레이프
 				パターン数 += 1
 			ENDIF
 			;V逆レイプ
 			IF GETBIT(TALENT:PLAYER:性別, 1) && TALENT:PLAYER:Ｃ感度 != -2
 				IF TALENT:PLAYER:非童貞 || OPTION変数:処女童貞RAPE制御
-					LOCALS:パターン数 = V逆レイプ
+					LOCALS:パターン数 = V역레이프
 					パターン数 += 1
 				ENDIF
 			ENDIF
 			;A逆レイプ
 			IF GETBIT(TALENT:PLAYER:性別, 1) && TALENT:PLAYER:Ｃ感度 != -2
 				IF TALENT:PLAYER:非童貞 || OPTION変数:処女童貞RAPE制御
-					LOCALS:パターン数 = A逆レイプ
+					LOCALS:パターン数 = A역레이프
 					パターン数 += 1
 				ENDIF
 			ENDIF
@@ -145,7 +145,7 @@ IF フィールド展開:逆セクハラ && RAND:3 == 0
 					CALL 初体験日登録処理(PLAYER, -1, "初うふふ", DAY * 1440 + TIME, GETPLACENAME(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置), "セクハラレイプ", "", 1)
 					CALL 初体験日登録処理(PLAYER, -1, "うふふ", DAY * 1440 + TIME, GETPLACENAME(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置), "セクハラレイプ", "", 0)
 					IF RESULT
-						CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>처음으로 낯선 상대와 성관계를 했다.</font><img src='えっちハート'>","うふふ")
+						CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>初めて見知らぬ相手とえっちをした</font><img src='えっちハート'>","うふふ")
 					ENDIF
 				CASE "Aレイプ"
 					;A処女喪失
@@ -167,7 +167,7 @@ IF フィールド展開:逆セクハラ && RAND:3 == 0
 					CALL 初体験日登録処理(PLAYER, -1, "初うふふ", DAY * 1440 + TIME, GETPLACENAME(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置), "セクハラレイプ", "", 1)
 					CALL 初体験日登録処理(PLAYER, -1, "うふふ", DAY * 1440 + TIME, GETPLACENAME(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置), "セクハラレイプ", "", 0)
 					IF RESULT
-						CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>처음으로 낯선 상대와 성관계를 했다.</font><img src='えっちハート'>","うふふ")
+						CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>初めて見知らぬ相手とえっちをした</font><img src='えっちハート'>","うふふ")
 					ENDIF
 				CASE "おくちレイプ"
 					CALL SOURCE_CALC_露出(TARGET, PLAYER, 30)
@@ -190,7 +190,7 @@ IF フィールド展開:逆セクハラ && RAND:3 == 0
 					CALL 初体験日登録処理(PLAYER, -1, "初うふふ", DAY * 1440 + TIME, GETPLACENAME(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置), "セクハラレイプ", "", 1)
 					CALL 初体験日登録処理(PLAYER, -1, "うふふ", DAY * 1440 + TIME, GETPLACENAME(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置), "セクハラレイプ", "", 0)
 					IF RESULT
-						CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>처음으로 낯선 상대와 성관계를 했다.</font><img src='えっちハート'>","うふふ")
+						CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>初めて見知らぬ相手とえっちをした</font><img src='えっちハート'>","うふふ")
 					ENDIF
 				CASE "A逆レイプ"
 					CALL LOST_MAN_A_VIRGIN(PLAYER, -1)
@@ -205,7 +205,7 @@ IF フィールド展開:逆セクハラ && RAND:3 == 0
 					CALL 初体験日登録処理(PLAYER, -1, "初うふふ", DAY * 1440 + TIME, GETPLACENAME(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置), "セクハラレイプ", "", 1)
 					CALL 初体験日登録処理(PLAYER, -1, "うふふ", DAY * 1440 + TIME, GETPLACENAME(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置), "セクハラレイプ", "", 0)
 					IF RESULT
-						CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>처음으로 낯선 상대와 성관계를 했다.</font><img src='えっちハート'>","うふふ")
+						CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>初めて見知らぬ相手とえっちをした</font><img src='えっちハート'>","うふふ")
 					ENDIF
 			ENDSELECT
 

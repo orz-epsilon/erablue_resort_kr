@@ -2,7 +2,7 @@
 
 @COMNAME323
 #FUNCTIONS
-TSTR:コマンド名受渡 = 어깨동무 가슴 주무르기
+TSTR:コマンド名受渡 = 肩組み乳揉み
 
 ;===================================================
 ;コマンドタイプ
@@ -13,9 +13,9 @@ TFLAG:コマンドタイプ受渡 = COMTYPE("セクハラ強")
 弱点コマンドカテゴリ = B_女
 
 @COM_TOOLTIP_323
-LOCALS = <br>■어깨동무 가슴 주무르기<br>
-LOCALS += "상대의 어깨에 팔을 두르고, 그대로 유방을 주무르는 커맨드. <br>실행자가 대상보다 체격이 크게 열등한 경우에는 실행 불가. <br>대상이 상반신에 갑옷을 입고 있는 경우에는 실행 불가."
-LOCALS += "<br>COM 타입: 성희롱<br>획득 소스: 접촉・노출・쾌B"
+LOCALS = <br>■肩組み乳揉み<br>
+LOCALS += "상대의 어깨에 팔을 두르고, 그대로 유방을 주무르는 커맨드。<br>실행자가 대상보다 체격이 크게 열세인 경우 실행 불가。<br>대상이 상반신에 갑옷을 입고 있는 경우 실행 불가。"
+LOCALS += "<br>COM 타입: 성희롱<br>획득 소스: 접촉・노출・쾌Ｂ"
 LOCALS += "<br>고유 획득 경험: 없음<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
@@ -121,7 +121,7 @@ SIF CFLAG:睡眠
 SIF TEQUIP:上半身鎧あり
 	RETURN 0
 ;TARGETの好感度レベル
-SIF CFLAG:好感度レベル < 1 + 関係閾値:2
+SIF (CFLAG:好感度レベル < 1 + 関係閾値:2) && TCVAR:TARGET:言いなり == 0 && TCVAR:TARGET:特殊言いなり == 0
 	RETURN 0
 ;体格問題 TARGETのほうが2サイズ大きいと届かない
 SIF 体格差計算(PLAYER, TARGET) >= 2
@@ -139,20 +139,20 @@ SIF 体格差計算(PLAYER, TARGET) <= -3
 PRINTFORM %CALLNAME:TARGET%의 어깨에 손을 두르고, 그대로
 SELECTCASE TALENT:TARGET:バストサイズ
 	CASE -2
-		PRINTL 거의 부풀어 오르지 않은, 평평한 가슴에 손을 뻗어 겨우 주물렀다
+		PRINTL 거의 부풀어 오르지 않은, 납작한 가슴에 손을 뻗어 겨우 주물렀다
 	CASE -1
-		PRINTL 작게 부풀어 오른 가슴에 손을 뻗어, 부드럽게 주물렀다
+		PRINTL 작게 부풀어 오른 가슴에 손을 뻗어 부드럽게 주물렀다
 	CASE 0
-		PRINTL 가슴에 손을 뻗어, 주물렀다
+		PRINTL 가슴에 손을 뻗어 주물렀다
 	CASE 1 TO 2
-		PRINTL 크고 부드러운 가슴에 손을 뻗어, 주물렀다
+		PRINTL 크고 부드러운 가슴에 손을 뻗어 주물렀다
 	CASE 3
-		PRINTL 두 손에 다 들어오지 않을 정도로 풍만한 가슴에 손을 뻗어, 주물렀다
+		PRINTL 두 손에 다 들어오지 않을 정도로 풍만한 가슴에 손을 뻗어 주물렀다
 ENDSELECT
 
 IF CUP:TARGET:快Ｂ > 1000
 	;一定以上の快楽が発生した時にちょっと声が出る
-	PRINTFORML 뜻밖의 쾌락에, %CALLNAME:TARGET%은(는) 무심코 작은 소리를 흘리고 말았다…
+	PRINTFORML 뜻밖의 쾌락에, %CALLNAME:TARGET%은(는) 무심코 작은 신음을 흘리고 말았다…
 	PRINTL
 ENDIF
 
@@ -167,26 +167,37 @@ ENDIF
 SELECTCASE RFLAG:コマンド結果受渡し変数２
 	CASE 1
 		;無知
-PRINTFORML %CALLNAME:TARGET%은(는) 잘 모르겠지만, %CALLNAME:PLAYER%이(가) 즐겁다면 좋다고 기뻐하고 있다
+		PRINTFORML %CALLNAME:TARGET%은(는) 잘 모르겠지만, %CALLNAME:PLAYER%이(가) 즐겁다면 좋다고 기뻐하고 있다
 	CASE 2
 		;無反応
-PRINTFORML %CALLNAME:TARGET%은(는) 태연한 척하지만, 살짝 얼굴을 붉히고 %CALLNAME:PLAYER%에게 몸을 비벼왔다…
+		PRINTFORML %CALLNAME:TARGET%은(는) 태연한 척하지만, 조금 얼굴을 붉히고 %CALLNAME:PLAYER%에게 몸을 비벼왔다…
 	CASE 3
 		;嫌悪
-PRINTFORML %CALLNAME:TARGET%은(는) 어쩔 수 없는 사람이네, 라는 얼굴로 %CALLNAME:PLAYER%가 하고 싶은 대로 내버려 두고 있다…
+		PRINTFORML %CALLNAME:TARGET%은(는) 어쩔 수 없는 사람이네, 라는 얼굴로 %CALLNAME:PLAYER%이(가) 하고 싶은 대로 내버려 두고 있다…
 	CASE 4
 		;拒否
-PRINTFORML %CALLNAME:TARGET%은(는) 나쁘지 않은 기분인 듯, %CALLNAME:PLAYER%가 하고 싶은 대로 내버려 두고 있다…
+		PRINTFORML %CALLNAME:TARGET%은(는) 싫지 않은 듯한 모습으로, %CALLNAME:PLAYER%이(가) 하고 싶은 대로 내버려 두고 있다…
 	CASE 5
 		;余裕
-PRINTFORML %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%에게, 주위에 들키지 않도록 몰래 만지라고 말했다…
+		PRINTFORML %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%에게, 주변에 들키지 않도록 몰래 만지라고 말했다…
 	CASE 6
 		;羞恥
-PRINTFORML %CALLNAME:TARGET%은(는) 붉어진 얼굴로 %CALLNAME:PLAYER%을(를) 바라보며, 살며시 몸을 기대왔다…
+		PRINTFORML %CALLNAME:TARGET%은(는) 붉어진 얼굴로 %CALLNAME:PLAYER%을(를) 응시하며, 살며시 몸을 기대왔다…
 	CASE 7
 		;愉悦
-PRINTFORML %CALLNAME:TARGET%은(는) 다른 곳도 만질 거냐며, 요염한 표정으로 %CALLNAME:PLAYER%을(를) 도발하고 있다…
+		PRINTFORML %CALLNAME:TARGET%은(는) 다른 장소도 만질 거냐며, 요염한 표정으로 %CALLNAME:PLAYER%을(를) 도발하고 있다…
 	CASE 8
-PRINTFORML %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%에게 만져지는 것을 조금 기쁘게 생각하는 것 같다…
+		PRINTFORML %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%에게 만져지는 것을 조금 기쁘게 생각하는 듯하다…
 ENDSELECT
 
+
+IF 特定状況口上用フラグ:TARGET:0 == 2
+	PRINTL
+	SETCOLOR カラーパレット("えっちな色")
+	PRINTFORM %CALLNAME:TARGET%의 가슴팍을 들여다보니,
+	PRINT_IMG "デレマス_マーク"
+	CALL PRINT_STRL(@"표식을 발견했다_H_")
+	PRINTFORMW %CALLNAME:TARGET%은(는) 오늘의 『신데렐라』였던 듯하다
+	特定状況口上用フラグ:TARGET:0 = 1
+	RESETCOLOR
+ENDIF

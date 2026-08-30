@@ -115,14 +115,14 @@ RETURN 1
 SIF RFLAG:コマンド結果受渡し変数 == 999
 	RETURN 1
 IF TARGET
-	PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%\@ GET_TARGETNUM() > 1 ? 들 # \@와(과) 낚시를 하며 즐거워했다.
+	PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%\@ GET_TARGETNUM() > 1 ? 들 # \@과(와) 낚시를 하며 즐거운 시간을 보냈다.
 	IF RFLAG:コマンド結果受渡し変数２ >= 10
 		;大漁
 		PRINTL 산더미 같은 물고기가 잡히는 대어였다!
 		PRINTFORML %CALLNAME:TARGET%와(과) 함께 기뻐하며 가져왔다.
 	ELSEIF RFLAG:コマンド結果受渡し変数２ >= 5
 		;そこそこ釣れた
-		PRINTFORML 조과는 최고였다. %CALLNAME:TARGET%도 기뻐하는 것 같다.
+		PRINTFORML 조과는 훌륭했다. %CALLNAME:TARGET%도 기뻐하는 것 같다.
 	ELSEIF  RFLAG:コマンド結果受渡し変数２ > 0
 		;とりあえず０ではない
 		PRINTL 별다른 성과는 없었지만, 즐거운 한때를 보낼 수 있었다.

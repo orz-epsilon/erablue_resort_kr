@@ -5,6 +5,7 @@
 #DIM 候補性癖数
 #DIM 一日終了時フラグ
 #DIMS 性癖名取得, 2
+#DIM スキップオンにした
 ;起床前メニュー関連じゃないが、性癖関連をひとまとめにするためこのフォルダに置いている
 
 IF 一日終了時フラグ
@@ -14,6 +15,12 @@ ENDIF
 
 SIF キャラ番号 <= 0
 	RETURN 0
+
+スキップオンにした = 0
+IF TALENT:キャラ番号:分身 && !ISSKIP()
+	スキップオンにした = 1
+	SKIPDISP 1
+ENDIF
 
 VARSET RESULTS
 候補性癖数 = ENUMFUNCBEGINSWITH("自動取得性癖_")
@@ -30,12 +37,16 @@ FOR 取得性癖番号, 0, 候補性癖数
 	ENDIF
 NEXT
 
+SIF スキップオンにした
+	SKIPDISP 0
+
 @性癖成長チェック(キャラ番号, 一日終了時フラグ = 0)
 #DIM キャラ番号
 #DIM 一日終了時フラグ
 #DIM 取得性癖番号
 #DIM 候補性癖数
 #DIMS 性癖名取得, 2
+#DIM スキップオンにした
 
 IF 一日終了時フラグ
 	;一日終了時はこの文字列に結果を保存して後で格納する
@@ -44,6 +55,12 @@ ENDIF
 
 SIF キャラ番号 <= 0
 	RETURN 0
+
+スキップオンにした = 0
+IF TALENT:キャラ番号:分身 && !ISSKIP()
+	スキップオンにした = 1
+	SKIPDISP 1
+ENDIF
 
 VARSET RESULTS
 候補性癖数 = ENUMFUNCBEGINSWITH("性癖段階成長_")
@@ -59,6 +76,9 @@ FOR 取得性癖番号, 0, 候補性癖数
 		DRAWLINE
 	ENDIF
 NEXT
+
+SIF スキップオンにした
+	SKIPDISP 0
 
 @性癖非同室成長チェック(キャラ番号)
 #DIM キャラ番号
@@ -115,7 +135,7 @@ DRAWLINE
 PRINTFORML %CALLNAME:キャラ番号%의 상태가 이상하다……
 PRINTL 아무래도 정액을 마시면, 큰 쾌락을 느끼는 몸이 되어버린 것 같다.
 PRINTL 
-PRINTFORML %CALLNAME:キャラ番号%은(는) 성벽 소질[정액 마시기(애호)]을(를) 취득했다
+PRINTFORML %CALLNAME:キャラ番号%은(는) 성벽 소질[정액 마시기(애호)]을(를) 습득했다
 PRINTL
 
 
@@ -218,7 +238,7 @@ DRAWLINE
 PRINTFORML %CALLNAME:キャラ番号%의 상태가 이상하다……
 PRINTL 아무래도 키스의 감각에 빠져버린 것 같다.
 PRINTL 
-PRINTFORML %CALLNAME:キャラ番号%은(는) 성벽 소질[키스(애호)]을(를) 취득했다
+PRINTFORML %CALLNAME:キャラ番号%은(는) 성벽 소질[키스(애호)]을(를) 습득했다
 PRINTL
 
 
@@ -260,7 +280,7 @@ SELECTCASE 表示段階
 		;取得メッセージ
 		DRAWLINE
 		PRINTFORML %CALLNAME:キャラ番号%의 상태가 이상하다……
-		PRINTL 아무래도 키스의 감각과 쾌락을 잊을 수 없어 입술과 혀가 키스를 갈구하며 쑤시게 된 것 같다.
+		PRINTL 아무래도 키스의 감각과 쾌락을 잊을 수 없어 입술과 혀가 키스를 갈구하며 쑤시게 되어버린 것 같다.
 		PRINTL 
 		PRINTFORML %CALLNAME:キャラ番号%의 성벽 소질[키스(애호)]은(는) [키스(중독)]으로 성장했다
 		PRINTL
@@ -311,7 +331,7 @@ DRAWLINE
 PRINTFORML %CALLNAME:キャラ番号%의 상태가 이상하다……
 PRINTL 아무래도 질내 사정을 당하면, 큰 쾌락을 느끼는 몸이 되어버린 것 같다.
 PRINTL 
-PRINTFORML %CALLNAME:キャラ番号%은(는) 성벽 소질[질내 사정(애호)]을(를) 취득했다
+PRINTFORML %CALLNAME:キャラ番号%은(는) 성벽 소질[질내 사정(애호)]을(를) 습득했다
 PRINTL
 
 @性癖段階成長_膣内射精(キャラ番号)
@@ -343,10 +363,10 @@ SELECTCASE 表示段階
 	CASE 2
 		;取得メッセージ
 		DRAWLINE
-PRINTFORML %CALLNAME:キャラ番号%의 상태가 이상하다……
-PRINTL 아무래도 질내 사정을 당하면, 반사적으로 절정하는 몸이 되어버린 것 같다.
+		PRINTFORML %CALLNAME:キャラ番号%의 상태가 이상하다……
+		PRINTL 아무래도 질내사정을 당하면 반사적으로 절정하는 몸이 되어버린 것 같다.
 		PRINTL 
-PRINTFORML %CALLNAME:キャラ番号%의 성벽 소질[질내 사정(애호)]은(는)[질내 사정(중독)]으로 성장했다
+		PRINTFORML %CALLNAME:キャラ番号%의 성벽 소질[질내사정(애호)]은 [질내사정(중독)]으로 성장했다
 		PRINTL
 ENDSELECT
 
@@ -401,9 +421,9 @@ RETURN 1
 
 DRAWLINE
 PRINTFORML %CALLNAME:キャラ番号%의 상태가 이상하다……
-PRINTL 아무래도 장내 사정을 당하면, 큰 쾌락을 느끼는 몸이 되어버린 것 같다.
+PRINTL 아무래도 장내사정을 당하면 큰 쾌락을 느끼는 몸이 되어버린 것 같다.
 PRINTL 
-PRINTFORML %CALLNAME:キャラ番号%은(는) 성벽 소질[장내 사정(애호)]을(를) 취득했다
+PRINTFORML %CALLNAME:キャラ番号%은(는) 성벽 소질[장내사정(애호)]을 취득했다
 PRINTL
 
 @性癖段階成長_腸内射精(キャラ番号)
@@ -435,10 +455,10 @@ SELECTCASE 表示段階
 	CASE 2
 		;取得メッセージ
 		DRAWLINE
-PRINTFORML %CALLNAME:キャラ番号%의 상태가 이상하다……
-PRINTL 아무래도 장내 사정을 당하면, 반사적으로 절정하는 몸이 되어버린 것 같다.
+		PRINTFORML %CALLNAME:キャラ番号%의 상태가 이상하다……
+		PRINTL 아무래도 장내사정을 당하면 반사적으로 절정하는 몸이 되어버린 것 같다.
 		PRINTL 
-PRINTFORML %CALLNAME:キャラ番号%의 성벽 소질[장내 사정(애호)]은(는)[장내 사정(중독)]으로 성장했다
+		PRINTFORML %CALLNAME:キャラ番号%의 성벽 소질[장내사정(애호)]은 [장내사정(중독)]으로 성장했다
 		PRINTL
 ENDSELECT
 
@@ -526,7 +546,7 @@ RETURN 1
 
 DRAWLINE
 PRINTFORML %CALLNAME:キャラ番号%의 상태가 이상하다……
-PRINTFORML 아무래도 %CALLNAME:MASTER%을(를) 성적으로 인식하고, 연애 대상 외일 터인 상대와 몸을 겹치는 것에 흥미를 가져버린 것 같다.
+PRINTFORML 아무래도 %CALLNAME:MASTER%을(를) 성적으로 인식하고, 연애 대상이 아닐 터인 상대와 몸을 겹치는 것에 흥미를 가지게 된 것 같다.
 PRINTL 
-PRINTFORML %CALLNAME:キャラ番号%은(는) 성벽 소질[%GET_性癖素質NAME(GETNUM(性癖素質, "同性愛"), キャラ番号)%(흥미)]을(를) 취득했다
+PRINTFORML %CALLNAME:キャラ番号%은(는) 성벽 소질[%GET_性癖素質NAME(GETNUM(性癖素質, "同性愛"), キャラ番号)%(흥미)]을 취득했다
 PRINTL

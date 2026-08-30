@@ -3,7 +3,7 @@
 ;-------------------------------------------------
 @MASSAGE_COMNAME5
 #FUNCTIONS
-TSTR:コマンド名受渡 = 미용 피부와 잘록한 허리의 오일 스파
+TSTR:コマンド名受渡 = 미용과 잘록한 허리의 오일 스파
 SIF TALENT:TARGET:性別 == 2
 	TSTR:コマンド名受渡 = 복직근 오일 에스테
 
@@ -17,14 +17,14 @@ TFLAG:コマンドタイプ受渡 = MASSAGE_COMTYPE("通常マッサージ")
 @MASSAGE_COM_TOOLTIP_5
 IF TALENT:TARGET:性別 == 2
 	LOCALS = <br>■복직근 오일 에스테<br>
-	LOCALS += "남성의 배 주위를 오일 마사지한다."
+	LOCALS += "남성의 배 주변을 오일 마사지한다."
 	LOCALS += "<br>COM 타입: 일반 마사지<br>획득 소스: 쾌S・접촉・환락・노출"
 	LOCALS += "<br>고유 획득 경험: 없음<br>"
 	TSTR:ツールチップ受渡 = %LOCALS%
 ELSE
-	LOCALS = <br>■미용 피부와 잘록한 허리의 오일 스파<br>
-	LOCALS += "복근 주변을 오일 마사지한다. 보습, 미용 피부 효과가 있다."
-	LOCALS += "<br>시술 후에는 배 주위가 개운해지고, 허리 라인도 선명해져 날씬해 보인다고 평판이 좋다."
+	LOCALS = <br>■미용과 잘록한 허리의 오일 스파<br>
+	LOCALS += "복근 주변을 오일 마사지한다. 보습, 미용 효과가 있다."
+	LOCALS += "<br>시술 후에는 배 주변이 깔끔해지고, 허리 라인도 선명해져 날씬해 보인다는 평판이다."
 	LOCALS += "<br>COM 타입: 일반 마사지<br>획득 소스: 쾌S・접촉・환락・노출"
 	LOCALS += "<br>고유 획득 경험: 없음<br>"
 	TSTR:ツールチップ受渡 = %LOCALS%
@@ -82,6 +82,6 @@ RETURN 1
 PRINTFORM %CALLNAME:PLAYER%은(는)
 	;今後浴衣とかバスローブみたいな施術着を着ないとも限らないため
 	SIF TEQUIP:TARGET:上半身服あり == 1 && TEQUIP:TARGET:はだけ可 == 1
-		PRINTFORM %CALLNAME:TARGET%이(가) 입고 있는 시술복 앞을 풀어헤치고,
-PRINTFORML 에센셜 오일을%CALLNAME:TARGET%의 배에 떨어뜨려, 손바닥으로 주무르듯이 정성껏 마사지했다.
+		PRINTFORM %CALLNAME:TARGET%이(가) 입고 있는 시술복 앞섶을 풀어헤치고,
+PRINTFORML 에센셜 오일을%CALLNAME:TARGET%의 배에 떨어뜨린 후, 손바닥으로 주무르듯이 정성껏 마사지했다.
 

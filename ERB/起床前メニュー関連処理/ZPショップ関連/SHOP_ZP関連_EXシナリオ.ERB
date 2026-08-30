@@ -15,7 +15,7 @@ PRINTL
 DRAWLINE
 PRINTL ZP를 소비하여, 본래라면 발생하지 않을 사건을 발생시킵니다.
 PRINTL 어떤 이벤트를 발생시키겠습니까?
-PRINTFORML 소지 ZP:%ZP所持量全文字列()%
+PRINTFORML 소지ZP:%ZP所持量全文字列()%
 DRAWLINE
 
 IF 初回起動 == 0
@@ -31,7 +31,7 @@ ENDIF
 DRAWLINE
 PRINTL ZP를 소비하여, 본래라면 발생하지 않을 사건을 발생시킵니다.
 PRINTL 어떤 이벤트를 발생시키겠습니까?
-PRINTFORML 소지 ZP:%ZP所持量全文字列()%
+PRINTFORML 소지ZP:%ZP所持量全文字列()%
 DRAWLINE
 FOR 配列番号, 0, 表示候補数
 	一時イベント名 '= REPLACE(表示用リスト:配列番号, "ZP開放時イベント解説_", "")
@@ -52,8 +52,8 @@ LOCALS = <div rect='81,31,1937,2812' border='31' bcolor='#C0C0C0'></div><div rec
 LOCALS += "<div width='1050' height='125' xpos='337' ypos='0' color='#101010'>엔딩 이벤트</div>"
 LOCALS += "<div rect='2081,31,3937,2812' border='31' bcolor='#C0C0C0' padding='50,25,50'>"
 IF 表示キー == -1
-	LOCALS += "왼쪽 목록에서 임의의 이벤트를 선택해 주십시오.<br>"
-	LOCALS += "이 칸에는 이벤트의 상세 내용과, 이벤트를 해방할지 여부의 확인 버튼이 표시됩니다.<br>"
+	LOCALS += "왼쪽 목록에서 원하는 이벤트를 선택해 주십시오.<br>"
+	LOCALS += "이 칸에는 이벤트 상세와, 이벤트를 해방할지 여부의 확인 버튼이 표시됩니다.<br>"
 ELSE
 	CALLFORM %表示用リスト:表示キー%
 	ZP消費量 = RESULT
@@ -65,9 +65,9 @@ ELSE
 		LOCALS += "<button value='-1'>[-1]해설 상세</button><br><br>"
 	ENDIF
 	IF ZP消費量 <= FLAG:ZP所持量
-		LOCALS += @"<button value='10000'>[10000]이 이벤트를 해방한다</button>　필요 ZP:%NUM_FORMAT(ZP消費量)%<br>"
+		LOCALS += @"<button value='10000'>[10000]이 이벤트를 해방한다</button>　필요 ZP：%NUM_FORMAT(ZP消費量)%<br>"
 	ELSE
-		LOCALS += @"<font color='#%カラーパレット_HTML("グレーアウト")%'>[10000]이 이벤트를 해방한다</font>　필요 ZP:%NUM_FORMAT(ZP消費量)%<br>"
+		LOCALS += @"<font color='#%カラーパレット_HTML("グレーアウト")%'>[10000]이 이벤트를 해방한다</font>　필요 ZP：%NUM_FORMAT(ZP消費量)%<br>"
 	ENDIF
 ENDIF
 LOCALS += "</div>"
@@ -102,7 +102,7 @@ SELECTCASE LOCAL
 		ENDIF
 		一時イベント名 '= REPLACE(表示用リスト:表示キー, "ZP開放時イベント解説_", "")
 		EXシナリオ解放記録 += @"%一時イベント名%___"
-		PRINTFORMW 이벤트 「%一時イベント名%」을(를) 해방했습니다.
+		PRINTFORMW 이벤트「%一時イベント名%」을(를) 해방했습니다.
 		FLAG:ZP所持量 -= ZP消費量
 		初回起動 = 0
 		RESTART

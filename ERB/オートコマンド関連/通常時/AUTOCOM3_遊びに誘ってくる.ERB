@@ -1,6 +1,9 @@
 ;------------------------------------------------------------------------------
 ;通常時、遊べる施設で遊びに誘ってくる
 ;------------------------------------------------------------------------------
+@AUTOCOMNAME3
+RESULTS = 遊びに誘ってくる
+
 @AUTOCOM3
 CALL SOURCE_CALC_歓楽(AUTOCOM_実行番号保存, PLAYER, 500)
 CALL SOURCE_CALC_好感度要素_友情度UP(AUTOCOM_実行番号保存, PLAYER, 250)
@@ -40,22 +43,22 @@ SIF CFLAG:キャラ番号:うふふ
 RETURN 1
 
 @MESSAGE_AUTOCOM3
-PRINTFORML %CALLNAME:AUTOCOM_実行番号保存%는 %CALLNAME:PLAYER%를 유혹해서, 함께 %GETPLACENAME(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置)%에서 즐겁게 놀았다
+PRINTFORML %CALLNAME:AUTOCOM_実行番号保存%은(는) %CALLNAME:PLAYER%을(를) 유혹하여, 함께 %GETPLACENAME(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置)%에서 즐겁게 놀았다
 
 ;プール系、及び爆乳以上だとぽろりチャンス
 IF RFLAG:コマンド結果受渡し変数
 	PRINTW 
-	PRINTFORML ……맙소사! 놀다 보니, %CALLNAME:AUTOCOM_実行番号保存%의 수영복이 흘러내려 가슴이 노출되어 버렸다!
-	PRINTFORM %CALLNAME:AUTOCOM_実行番号保存%는
+	PRINTFORML ……이런! 노는 동안, %CALLNAME:AUTOCOM_実行番号保存%의 수영복이 흘러내려 가슴이 노출되어 버렸다!
+	PRINTFORM %CALLNAME:AUTOCOM_実行番号保存%은(는)
 	SELECTCASE TALENT:AUTOCOM_実行番号保存:羞恥心
 		CASE -1
 			PRINT 웃으면서
 		CASE 0
 			PRINT 서둘러
 		CASE 1
-			PRINT 아주 부끄러운 듯이
+			PRINT 몹시 부끄러운 듯이
 	ENDSELECT
-	PRINTL 수영복을 정리하고 있다…
+	PRINTL 수영복을 바로잡고 있다…
 ENDIF
 
 

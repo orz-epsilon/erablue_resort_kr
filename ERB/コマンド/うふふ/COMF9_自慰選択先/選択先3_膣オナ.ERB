@@ -1,7 +1,7 @@
 
 @COMNAME_S9_3
 #FUNCTIONS
-TSTR:コマンド名受渡 = 질 자위
+TSTR:コマンド名受渡 = 膣オナ
 
 ;===================================================
 ;コマンドタイプ
@@ -15,10 +15,10 @@ TFLAG:コマンドタイプ受渡 = COMTYPE("うふふ")
 
 
 @COM_TOOLTIP_S9_3
-LOCALS = <br>■질 자위<br>
-LOCALS += "상대가 보는 앞에서 질에 손가락을 넣어 자위를 하는 커맨드."
-LOCALS += "<br>COM 타입: 우후후<br>획득 소스: 노출・쾌락 V・환락(일정 조건 시)・반감(일정 조건 시)"
-LOCALS += "<br>고유 획득 경험: 자위 경험(자위 실행자), 조교 자위 경험(자위 실행자)<br>"
+LOCALS = <br>■膣オナ<br>
+LOCALS += "상대가 보는 앞에서 질에 손가락을 넣어 자위하는 커맨드。"
+LOCALS += "<br>COMタイプ：우후후<br>取得ソース：노출・쾌Ｖ・환락(일정 조건 시)・반감(일정 조건 시)"
+LOCALS += "<br>고유 획득 경험：자위 경험(자위 실행자)、조교 자위 경험(자위 실행자)<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
 
@@ -88,9 +88,9 @@ RETURN 3
 
 PRINTFORM %CALLNAME:(自慰ターゲット保存)%은(는)
 IF TEQUIP:(自慰ターゲット保存):下半身服あり && TEQUIP:(自慰ターゲット保存):ずらし可
-	PRINT 옷을 비켜서
+	PRINT 옷을 젖히고
 ELSEIF TEQUIP:(自慰ターゲット保存):下半身下着あり > 0
-	PRINT 속옷을 비켜서
+	PRINT 속옷을 젖히고
 ENDIF
 PRINTL 손가락을 질에 넣고, 안을 문지르기 시작했다…
 
@@ -102,9 +102,9 @@ SIF TFLAG:オートコマンドフラグ > 0
 	RETURN 0
 
 IF EXP:(自慰ターゲット保存):調教自慰経験 <= 10
-	PRINTFORML 누군가에게 보여지면서 하는 자위에는 익숙하지 않은 듯, %CALLNAME:(自慰ターゲット保存)%은(는) 얼굴을 붉히고 %CALLNAME:MASTER%을(를) 노려보고 있다…
+	PRINTFORML 누군가에게 보여지는 자위에는 익숙하지 않은 듯, %CALLNAME:(自慰ターゲット保存)%은(는) 얼굴을 붉히고 %CALLNAME:MASTER%을(를) 노려보고 있다…
 ELSEIF EXP:(自慰ターゲット保存):調教自慰経験 <= 50
 	PRINTFORML 조금 익숙해진 듯하지만, 아직 %CALLNAME:MASTER%의 시선이 신경 쓰이는 듯하다…
 ELSE
-	PRINTFORML %CALLNAME:(自慰ターゲット保存)%은(는) %CALLNAME:MASTER%에게 보여지면서 하는 자위에, 묘한 고양감을 느끼고 있다…
+	PRINTFORML %CALLNAME:(自慰ターゲット保存)%은(는) %CALLNAME:MASTER%에게 보여지는 자위에, 묘한 고양감을 느끼고 있다…
 ENDIF

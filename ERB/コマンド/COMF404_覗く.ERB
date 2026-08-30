@@ -1,7 +1,7 @@
 
 @COMNAME404
 #FUNCTIONS
-TSTR:コマンド名受渡 = 엿보기
+TSTR:コマンド名受渡 = 엿보다
 
 
 ;===================================================
@@ -12,9 +12,9 @@ TSTR:コマンド名受渡 = 엿보기
 TFLAG:コマンドタイプ受渡 = COMTYPE("単独可能")
 
 @COM_TOOLTIP_404
-LOCALS = <br>■覗く<br>
-LOCALS += "탈의실・탈의실・목욕탕 등을 엿보는 커맨드.<br>혹은, 야외 오나니를 하고 있는 모습을 엿보는 커맨드."
-LOCALS += "<br>COM 타입：단독 가능<br>획득 소스：없음"
+LOCALS = <br>■엿보기<br>
+LOCALS += "탈의실・환복실・욕실 등을 엿보는 커맨드. <br> 혹은, 야외 자위행위를 하는 모습을 엿보는 커맨드."
+LOCALS += "<br>COM타입：단독가능<br>획득소스：없음"
 LOCALS += "<br>고유 획득 경험：대상 캐릭터에 대한 육체 숙지(MASTER)<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
@@ -27,9 +27,9 @@ TSTR:ツールチップ受渡 = %LOCALS%
 ;覗き方をRFLAG:コマンド結果受渡し変数に投げる
 IF GETBIT(覗き_ABLE(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置), 1) && GETBIT(覗き_ABLE(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置), 3)
 	DRAWLINE
-	PRINTFORML %CALLNAME:PLAYER%는 반대편을 엿보려 했지만, 누군가 숨어있는 기척도 느꼈다…
-	PRINTBUTTONLC "[1]반대편을 엿본다", 1
-	PRINTBUTTONLC "[3]숨은 곳을 엿본다", 3
+	PRINTFORML %CALLNAME:PLAYER%은(는) 반대편을 엿보려 했지만, 누군가 숨어있는 기척도 느꼈다…
+	PRINTBUTTONLC "[1]반대편을 엿보다", 1
+	PRINTBUTTONLC "[3]숨은 곳을 엿보다", 3
 	PRINTL
 	$INPUT_LOOP
 	INPUT
@@ -282,23 +282,23 @@ IF RFLAG:コマンド結果受渡し変数 == 3
 		;物陰で野外オナニーを見つける
 		RFLAG:コマンド結果受渡し変数４ = TCVAR:(RFLAG:コマンド結果受渡し変数２):野外オナニー_部位
 		
-		PRINTFORM %CALLNAME:PLAYER%는 몰래 숨은 곳을 엿보니, 그곳에서는 %CALLNAME:(RFLAG:コマンド結果受渡し変数２)%가
+		PRINTFORM %CALLNAME:PLAYER%은(는) 몰래 숨은 곳을 엿보니, 그곳에서는 %CALLNAME:(RFLAG:コマンド結果受渡し変数２)%이(가)
 		
 		IF TCVAR:(RFLAG:コマンド結果受渡し変数２):野外オナニー_絶頂
 			;絶頂シーン
-			PRINTFORML 손가락을 격렬하게 움직이며, 자신의 %PART_DESCRIPTION(RFLAG:コマンド結果受渡し変数２, TCVAR:(RFLAG:コマンド結果受渡し変数２):野外オナニー_部位)%를 자극하고 있었다
-			PRINTFORML 그대로 %CALLNAME:(RFLAG:コマンド結果受渡し変数２)%는 절정을 맞이하고, 쾌락의 파도가 가라앉을 때까지 여운에 잠겨 있었다…
+			PRINTFORML 손가락을 격렬하게 움직이며, 자신의 %PART_DESCRIPTION(RFLAG:コマンド結果受渡し変数２, TCVAR:(RFLAG:コマンド結果受渡し変数２):野外オナニー_部位)%을(를) 자극하고 있었다
+			PRINTFORML 그대로 %CALLNAME:(RFLAG:コマンド結果受渡し変数２)%은(는) 절정을 맞이했고, 쾌락의 파도가 가라앉을 때까지 여운에 잠겨 있었다…
 			CALL 覗きアニメーション(RFLAG:コマンド結果受渡し変数２,"短冊_デフォルト_差分_絶頂")
 		ELSE
 			;オナニーシーン
-			PRINTFORML 숨은 곳에서 자신의 %PART_DESCRIPTION(RFLAG:コマンド結果受渡し変数２, TCVAR:(RFLAG:コマンド結果受渡し変数２):野外オナニー_部位)%를 희롱하고 있는 모습이 보였다
+			PRINTFORML 숨은 곳에서 자신의 %PART_DESCRIPTION(RFLAG:コマンド結果受渡し変数２, TCVAR:(RFLAG:コマンド結果受渡し変数２):野外オナニー_部位)%을(를) 만지고 있는 모습이 보였다
 			
 			IF ABL:(RFLAG:コマンド結果受渡し変数２):(TCVAR:(RFLAG:コマンド結果受渡し変数２):野外オナニー_部位) > 4
-				PRINTFORML %CALLNAME:(RFLAG:コマンド結果受渡し変数２)%는 자위의 쾌락에 완전히 빠져들어, 무의식적으로 허리가 덜덜 흔들리고 있다…
+				PRINTFORML %CALLNAME:(RFLAG:コマンド結果受渡し変数２)%은(는) 자위의 쾌락에 흠뻑 빠져, 무의식적으로 허리가 덜덜 흔들리고 있다…
 			ELSEIF ABL:(RFLAG:コマンド結果受渡し変数２):(TCVAR:(RFLAG:コマンド結果受渡し変数２):野外オナニー_部位) > 2
-				PRINTFORML %CALLNAME:(RFLAG:コマンド結果受渡し変数２)%는 강한 쾌감을 느끼는 듯, 거친 숨을 반복하고 있다…
+				PRINTFORML %CALLNAME:(RFLAG:コマンド結果受渡し変数２)%은(는) 강한 쾌감을 느끼는 듯, 거친 숨을 반복하고 있다…
 			ELSE
-				PRINTFORML %CALLNAME:(RFLAG:コマンド結果受渡し変数２)%는 두리번거리며 주위를 확인하면서도, 그러나 자위를 하는 손은 계속 움직이고 있다…
+				PRINTFORML %CALLNAME:(RFLAG:コマンド結果受渡し変数２)%은(는) 두리번거리며 주위를 확인하면서도, 하지만 자위하는 손은 계속 움직이고 있다…
 			ENDIF
 			
 			CALL 覗きアニメーション(RFLAG:コマンド結果受渡し変数２,"短冊_デフォルト_差分_欲情")
@@ -317,16 +317,16 @@ SELECTCASE CFLAG:PLAYER:現在マップ種別
 		SELECTCASE RFLAG:コマンド結果受渡し変数
 			CASE 1
 				;反対側を覗く
-				PRINTFORML %CALLNAME:PLAYER%는 벽의 장치를 통해 반대편을 엿보았다
+				PRINTFORML %CALLNAME:PLAYER%은(는) 벽의 장치를 통해 반대편을 엿보았다
 				IF RFLAG:コマンド結果受渡し変数２
-					PRINTFORM 저쪽 편에서는 %CALLNAME:(RFLAG:コマンド結果受渡し変数２)%가
+					PRINTFORM 저편에서는 %CALLNAME:(RFLAG:コマンド結果受渡し変数２)%이(가)
 					SELECTCASE CFLAG:PLAYER:現在位置
 						CASE 7, 8
 							PRINTL 옷을 벗고 있는 모습이 보인다…
 							CALL 覗きアニメーション(RFLAG:コマンド結果受渡し変数２,"短冊_全裸")
 						CASE 9, 11
 							PRINTDATA RFLAG:コマンド結果受渡し変数３
-								DATA 알몸으로 탕에 몸을 담그고 있는 모습이 보인다…
+								DATA 알몸으로 욕조에 몸을 담그고 있는 모습이 보인다…
 								DATA 비누로 몸을 씻고 있는 모습이 보인다…
 							ENDDATA
 							PRINTL 
@@ -336,72 +336,72 @@ SELECTCASE CFLAG:PLAYER:現在マップ種別
 							CALL 覗きアニメーション(RFLAG:コマンド結果受渡し変数２,"短冊_全裸")
 					ENDSELECT
 				ELSE
-					PRINTL 하지만, 저쪽 편에는 아무도 없는 듯하다…
+					PRINTL 하지만, 저편에는 아무도 없는 것 같다…
 				ENDIF
 			CASE 2
 				;隠れて覗く
-				PRINTFORM %CALLNAME:PLAYER%는 숨은 곳에 숨어서, %CALLNAME:(RFLAG:コマンド結果受渡し変数２)%가
+				PRINTFORM %CALLNAME:PLAYER%은(는) 물그림자에 숨어, %CALLNAME:(RFLAG:コマンド結果受渡し変数２)%이(가)
 					SELECTCASE CFLAG:PLAYER:現在位置
 						CASE 7, 8
 							PRINTL 옷을 벗고 있는 모습을 몰래 엿보았다…
 							CALL 覗きアニメーション(RFLAG:コマンド結果受渡し変数２,"短冊_全裸")
 						CASE 9, 11
 							PRINTDATA RFLAG:コマンド結果受渡し変数３
-								DATA 알몸으로 욕조에 몸을 담그고 있는 모습을 몰래 훔쳐봤다…
-								DATA 비누로 몸을 씻고 있는 모습을 몰래 훔쳐봤다…
+								DATA 알몸으로 욕조에 몸을 담그고 있는 모습을 몰래 엿보았다…
+								DATA 비누로 몸을 씻고 있는 모습을 몰래 엿보았다…
 							ENDDATA
 							CALL 覗きアニメーション(RFLAG:コマンド結果受渡し変数２,"短冊_全裸")
 						CASE 13, 14
-							PRINTL 수영복으로 갈아입는 모습을 몰래 훔쳐봤다…
+							PRINTL 수영복으로 갈아입고 있는 모습을 몰래 엿보았다…
 							CALL 覗きアニメーション(RFLAG:コマンド結果受渡し変数２,"短冊_全裸")
 					ENDSELECT
 			CASE 4
 				;覗き専用場所から覗く
-				PRINTFORML %CALLNAME:PLAYER%는 벽의 장치를 통해 %GETPLACENAME(CFLAG:(RFLAG:コマンド結果受渡し変数２):現在マップ種別, CFLAG:(RFLAG:コマンド結果受渡し変数２):現在位置)%를 엿봤다
+				PRINTFORML %CALLNAME:PLAYER%은(는) 벽의 장치를 통해 %場所名韓国語変換(GETPLACENAME(CFLAG:(RFLAG:コマンド結果受渡し変数２):現在マップ種別, CFLAG:(RFLAG:コマンド結果受渡し変数２):現在位置))%을(를) 엿보았다
 				IF RFLAG:コマンド結果受渡し変数２
-					PRINTFORM 저쪽에서는 %CALLNAME:(RFLAG:コマンド結果受渡し変数２)%가
+					PRINTFORM 저편에서는 %CALLNAME:(RFLAG:コマンド結果受渡し変数２)%이(가)
 					SELECTCASE CFLAG:(RFLAG:コマンド結果受渡し変数２):現在位置
 						CASE 702, 802
 							PRINTL 옷을 벗고 있는 모습이 보인다…
 						CASE 703, 803
 							PRINTL 비누로 몸을 씻고 있는 모습이 보인다…
 						CASE 704, 804
-							PRINTL 알몸으로 욕조에 몸을 담그고 있는 모습이 보인다…
+							PRINTL 알몸으로 탕에 몸을 담그고 있는 모습이 보인다…
 						CASE 705, 805
-							PRINTL 알몸으로 특별한 탕에 몸을 담그고 있는 모습이 보인다…
+							PRINTL 알몸으로 약탕에 몸을 담그고 있는 모습이 보인다…
 						CASE 706, 806
 							PRINTL 사우나에서 땀을 흘리고 있는 모습이 보인다…
 						CASE 707, 807
 							PRINTL 알몸으로 노천탕에 몸을 담그고 있는 모습이 보인다…
 						CASE 708, 808
-							PRINTL 알몸으로 항아리 탕에 몸을 담그고 있는 모습이 보인다…
+							PRINTL 알몸으로 항아리탕에 몸을 담그고 있는 모습이 보인다…
 					ENDSELECT
 					CALL 覗きアニメーション(RFLAG:コマンド結果受渡し変数２,"短冊_湯浴み着")
 				ELSE
-					PRINTL 하지만, 저쪽에는 아무도 없는 것 같다…
+					PRINTL 하지만, 저편에는 아무도 없는 것 같다…
 				ENDIF
 		ENDSELECT
 	CASE 3
 		SELECTCASE RFLAG:コマンド結果受渡し変数
 			CASE 1
 				;反対側を覗く
-				PRINTFORML %CALLNAME:PLAYER%는 벽의 장치를 통해 반대편을 엿봤다
+				PRINTFORML %CALLNAME:PLAYER%은(는) 벽의 장치를 통해 반대편을 엿보았다
 				IF RFLAG:コマンド結果受渡し変数２
-					PRINTFORM 저쪽에서는 %CALLNAME:(RFLAG:コマンド結果受渡し変数２)%가
+					PRINTFORM 저편에서는 %CALLNAME:(RFLAG:コマンド結果受渡し変数２)%이(가)
 					SELECTCASE CFLAG:PLAYER:現在位置
 						CASE 4, 5
 							PRINTL 수영복으로 갈아입고 있는 모습이 보인다…
 							CALL 覗きアニメーション(RFLAG:コマンド結果受渡し変数２,"短冊_全裸")
 					ENDSELECT
 				ELSE
-					PRINTL 하지만, 저쪽에는 아무도 없는 것 같다…
+					PRINTL 하지만, 저편에는 아무도 없는 것 같다…
 				ENDIF
 			CASE 2
 				;隠れて覗く
-				PRINTFORM %CALLNAME:PLAYER%는 그림자에 숨어 %CALLNAME:(RFLAG:コマンド結果受渡し変数２)%가
+				PRINTFORM %CALLNAME:PLAYER%은(는) 물그림자에 숨어 %CALLNAME:(RFLAG:コマンド結果受渡し変数２)%이(가)
 					SELECTCASE CFLAG:PLAYER:現在位置
 						CASE 4, 5
-							PRINTL 수영복으로 갈아입는 모습을 몰래 훔쳐봤다…
+							PRINTL 수영복으로 갈아입는 모습을 몰래 엿보았다…
 							CALL 覗きアニメーション(RFLAG:コマンド結果受渡し変数２,"短冊_全裸")
 					ENDSELECT
 		ENDSELECT
@@ -427,7 +427,7 @@ IF !EXIST画像FILE(@"%対象フォルダ%/%画像指定文字列%")
 	ENDIF
 ENDIF
 	IF 画像指定文字列 == "短冊_全裸" || 画像指定文字列 == "短冊_湯浴み着"
-		RESULT = ENUMFILES(対象フォルダ, 画像指定文字列 + "_差分_表情*.*")
+		RESULT = ENUMFILES(対象フォルダ, 画像指定文字列 + "_差분_表情*.*")
 		LOCAL = RAND:(RESULT + 1)
 		SELECTCASE LOCAL
 			CASE RESULT

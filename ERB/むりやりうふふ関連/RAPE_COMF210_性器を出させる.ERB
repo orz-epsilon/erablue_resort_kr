@@ -3,7 +3,7 @@
 ;-------------------------------------------------
 @RAPE_COMNAME210
 #FUNCTIONS
-TSTR:コマンド名受渡 = 성기를 드러내게 하다
+TSTR:コマンド名受渡 = 성기를 노출시킨다
 
 
 
@@ -16,9 +16,9 @@ TFLAG:コマンドタイプ受渡 = RAPE_COMTYPE("うふふ")
 
 
 @RAPE_COM_TOOLTIP_210
-LOCALS = <br>■성기를 드러내게 하다<br>
-LOCALS += "상대의 하반신 옷을 벗겨내고, 성기를 노출시킨다."
-LOCALS += "<br>RAPE_COM 타입: 우후후<br>획득 소스: 없음"
+LOCALS = <br>■성기를 노출시킨다<br>
+LOCALS += "상대의 하반신 옷을 벗기고, 성기를 노출시킨다."
+LOCALS += "<br>RAPE_COM타입：우후후<br>취득 소스：없음"
 LOCALS += "<br>고유 획득 경험: 없음<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
@@ -60,11 +60,11 @@ RETURN 1
 
 IF CFLAG:TARGET:睡眠
 	IF TCVAR:TARGET:泥酔眠姦
-		PRINTFORM 술에 취해 쓰러졌다
+		PRINTFORM 술에 취해 쓰러진
 	ELSE
-		PRINTFORM 잠꼬대를 한다
+		PRINTFORM 숨소리를 낸다
 	ENDIF
 ENDIF
-PRINTFORML %CALLNAME:TARGET%의 옷을 벗겨내고, 하반신을 노출시켰다…
+PRINTFORML %CALLNAME:TARGET%의 옷을 벗기고, 하반신을 노출시켰다…
 
 

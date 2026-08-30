@@ -24,13 +24,13 @@ $難易度_LOOP
 ;難易度選択
 DRAWLINE
 PRINTL 어떤 난이도로 플레이하시겠습니까?
-PRINTBUTTON "[1]EASY (유예 시간 2초: 횟수 5회)", 1
+PRINTBUTTON "[1]EASY（유예시간 ２초：횟수 ５회）", 1
 PRINTL 
-PRINTBUTTON "[2]NORMAL (유예 시간 1초: 횟수 7회)", 2
+PRINTBUTTON "[2]NOMAL（유예시간 １초：횟수 ７회）", 2
 PRINTL 
-PRINTBUTTON "[3]HARD (유예 시간 0.5초: 횟수 10회)", 3
+PRINTBUTTON "[3]HARD（유예시간 ０．５초：횟수 １０회）", 3
 PRINTL 
-PRINTBUTTON "[4]십천중 (유예 시간 0.1초: 횟수 15회)", 4
+PRINTBUTTON "[4]십천중（유예시간 ０．１초：횟수 １５회）", 4
 PRINTL 
 DRAWLINE
 PRINTBUTTONLC "[설명]", 998
@@ -49,13 +49,13 @@ SELECTCASE RESULT
 		PRINTL 클릭에 성공한 횟수가 많을수록 캐릭터와 즐겁게 놀았다는 것이 되어, 파라미터 상승량이 증가합니다.
 		PRINTW 또한, 난이도가 높을수록 클릭할 기회가 늘어납니다.
 		PRINTL 
-		PRINTL ■유예 시간・횟수에 대하여
-		PRINTL 유예 시간이란, 타겟이 표시되고 나서 실패가 될 때까지의 시간을 말합니다
+		PRINTL ■유예시간・횟수에 대하여
+		PRINTL 유예시간이란, 타겟이 표시되고 나서 실패가 될 때까지의 시간을 말합니다.
 		PRINTL 횟수란, 몇 번 타겟을 노릴 기회가 있는지를 말합니다.
-		PRINTW 유예 시간이 길수록 간단하며, 횟수가 많을수록 성공 횟수를 벌 기회가 있습니다.
+		PRINTW 유예시간이 길수록 간단하며, 횟수가 많을수록 성공 횟수를 벌 기회가 있습니다.
 		PRINTL 
-		PRINTL (난이도 십천중은 인간이 성공할 수 있도록 만들지 않았습니다)
-		PRINTW (앞으로 유예 시간이 늘어나거나 횟수를 늘릴 수 있는 시스템을 예정하고 있지만 미구현입니다)
+		PRINTL （난이도 십천중은 인간이 성공할 수 있도록 만들어지지 않았습니다）
+		PRINTW （향후 유예시간이 늘어나거나 횟수를 늘릴 수 있는 시스템을 예정하고 있지만 미구현입니다）
 		GOTO 難易度_LOOP
 	CASE 1
 		難易度:0 = 2000
@@ -140,14 +140,14 @@ ENDIF
 難易度:1 -= 1
 IF 難易度:1
 	PRINTL 
-	PRINTFORM 남은 횟수:%TOFULL(TOSTR(難易度:1))%회　　　
-	PRINTFORMW 성공 횟수:%TOFULL(TOSTR(クリック成功回数))%회
+	PRINTFORM 남은 횟수：%TOFULL(TOSTR(難易度:1))%회　　　
+	PRINTFORMW 성공 횟수：%TOFULL(TOSTR(クリック成功回数))%회
 	GOTO 描画_LOOP
 ELSE
 	PRINTW 
 	DRAWLINE
 	PRINTL 게임 종료!
-	PRINTFORMW 성공 횟수:%TOFULL(TOSTR(クリック成功回数))%회
+	PRINTFORMW 성공 횟수：%TOFULL(TOSTR(クリック成功回数))%회
 	履歴用実績:MASTER:水鉄砲回数 += 1
 	CALL 履歴登録チェック(MASTER, "水鉄砲回数")
 	履歴用実績:キャラ番号:水鉄砲回数 += 1

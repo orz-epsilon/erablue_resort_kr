@@ -106,30 +106,30 @@ SIF MODE_確認_完全一致("Ｖ挿入系", PLAYER, TARGET) > -1 || MODE_確認
 
 IF CFLAG:TARGET:睡眠
 	IF TCVAR:TARGET:泥酔眠姦
-		PRINTFORM 취해 쓰러진
+		PRINTFORM 술에 취해 쓰러진
 	ELSE
 		PRINTFORM 푹 잠든
 	ENDIF
 ELSEIF CFLAG:TARGET:発情期フラグ < 0
-	PRINTFORM %TEXTR("발정해 버린/발정으로 달아오른")%
+	PRINTFORM %TEXTR("발정해버린/발정으로 달아오른")%
 ELSEIF BASE:性欲 > 1000
-	PRINTFORM %TEXTR("욕정해 버린/욕정으로 달아오른")%
+	PRINTFORM %TEXTR("욕정해버린/욕정으로 달아오른")%
 ENDIF
 PRINTFORM %CALLNAME:TARGET%의
 
-IF 知識素質:TARGET:高貴 >= 1
-	PRINTFORM %TEXTR("고귀한/고상한")% 옥체
+IF 高貴知識_初期所持判定(TARGET) >= 1
+	PRINTFORM %TEXTR("고귀한/고상한")%옥체
 ELSE
 	;小柄体型
 	IF TALENT:体格 <= -1
-		PRINTFORM %TEXTR("작은 몸/부드러운 왜구")%
+		PRINTFORM %TEXTR("작은 몸/부드러운 왜소한 몸")%
 	ELSE
 		PRINTFORM %TEXTR("몸/몸")%
 	ENDIF
 ENDIF
-PRINTFORM 을 더듬어, %TEXTR("손바닥 가득/")%
+PRINTFORM 을(를) 더듬고, %TEXTR("손바닥 가득/")%
 IF アイドル判定(TARGET)
-	PRINTFORM 아이돌의 %TEXTR("안는/만지는")% 감촉을
+	PRINTFORM 아이돌의%TEXTR("안는/만지는")% 감촉을
 ELSE
 	PRINTFORM 감촉을
 ENDIF
@@ -138,7 +138,7 @@ PRINTFORML %TEXTR("만끽했다/즐겼다")%…
 PRINTL
 
 SIF MODE_確認_完全一致("Ｖ挿入系", PLAYER, TARGET) > -1 || MODE_確認_完全一致("Ａ挿入系", PLAYER, TARGET) > -1
-	PRINTFORM %TEXTR("물고 있는/박아 넣어진")% 페니스를 꽉꽉 조이면서,
+	PRINTFORM %TEXTR("물고 있는/박혀 들어온")%페니스를 큥큥 조이면서,
 
 IF CFLAG:TARGET:睡眠
 	SELECTCASE MAX(CUP:TARGET:快Ｃ, CUP:TARGET:快Ｂ)
@@ -160,6 +160,6 @@ ELSE
 		PRINTFORML %CALLNAME:TARGET%은 싫어하며 벗어나려 몸을 비틀지만, 그 몸은 주어지는 쾌락에 반응하고 있다…
 	CASEELSE
 		;あまり感じていない
-		PRINTFORML 싫어하는 %CALLNAME:TARGET%은 %CALLNAME:PLAYER%의 팔 안에서 몸부림치고 있지만, 무력한 저항은 오히려 %CALLNAME:PLAYER%의 %TEXTR("정복욕/가학심")%을 부추길 뿐이다…
+		PRINTFORML 싫어하는%CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%의 품속에서 버둥거리고 있지만, 무력한 저항은 오히려 %CALLNAME:PLAYER%의%TEXTR("정복욕/가학심")%을 부추길 뿐이다…
 	ENDSELECT
 ENDIF

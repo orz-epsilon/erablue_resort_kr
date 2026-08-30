@@ -1,7 +1,7 @@
 
 @COMNAME_S62_2
 #FUNCTIONS
-TSTR:コマンド名受渡 = 자궁 뒤를 공략한다
+TSTR:コマンド名受渡 = 자궁 뒤를 자극한다
 
 ;===================================================
 ;コマンドタイプ
@@ -19,10 +19,10 @@ SIF CFLAG:TARGET:睡眠
 連続オート許可 = 1
 
 @COM_TOOLTIP_S62_2
-LOCALS = <br>■자궁 뒤를 공격하다<br>
-LOCALS += "장내에서 자궁 뒤로, 페니스로 강한 자극을 주는 커맨드.<br>A삽입계 모드일 때만 실행 가능."
-LOCALS += "<br>COM타입：A계<br>획득 소스：쾌A・쾌V・접촉・고통"
-LOCALS += "<br>고유 획득 경험：A성교경험(TARGET)・포르치오개발(TARGET)・C성교경험_A삽입(PLAYER)<br>"
+LOCALS = <br>■자궁 뒤를 자극한다<br>
+LOCALS += "장내에서 자궁 뒤쪽으로, 페니스로 강한 자극을 주는 커맨드. <br>A삽입계 모드 시에만 실행 가능."
+LOCALS += "<br>COM 타입：A계<br>획득 소스：쾌A・쾌V・접촉・고통"
+LOCALS += "<br>고유 획득 경험: A성교 경험(TARGET)・포르치오 개발(TARGET)・C성교 경험_A삽입(PLAYER)<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
 @COM_S62_2
@@ -87,18 +87,18 @@ RETURN 1
 ;-------------------------------------------------
 @MESSAGE_COM_S62_2
 #DIM 同時キャラ番号
-PRINTFORM %CALLNAME:PLAYER%은
+PRINTFORM %CALLNAME:PLAYER%은(는)
 
 IF GETBIT(FLAG:モード管理, モードビット_同時)
 	FOR 同時キャラ番号, 0, 同時モード_選択数
 		SIF 同時キャラ番号 > 0
-			PRINT ,
+			PRINT 、
 		PRINTFORM %CALLNAME:(同時モード_選択キャラ:同時キャラ番号)%
 	NEXT
-	PRINT 의 자궁 뒤를 직장에서 압박하여 자극했다
+	PRINT 의 자궁 뒤를 직장에서부터 압박하여 자극했다
 	RETURN 0
 ENDIF
 
-PRINTFORML %CALLNAME:TARGET%의 자궁 뒤를 직장에서 압박하여 자극했다
+PRINTFORML %CALLNAME:TARGET%의 자궁 뒤를 직장에서부터 압박하여 자극했다
 
 

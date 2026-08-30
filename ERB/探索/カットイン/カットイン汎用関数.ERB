@@ -66,12 +66,12 @@ ENDIF
 #DIM 対象キャラ
 
 DRAWLINE
-PRINT 현재 전체 설정:
+PRINT 현재 전체 설정：
 SELECTCASE カットイン演出一括表示フラグ
 	CASE 1
 		PRINT [항상 숨기기]
 	CASE 2
-		PRINT [같은 캐릭터는 하루에 한 번만]
+		PRINT [같은 캐릭터는 하루 한 번만]
 	CASEELSE
 		PRINT [항상 표시]
 ENDSELECT
@@ -101,7 +101,7 @@ SELECTCASE CSTR:対象キャラ:カットイン個別選択オプション
 		RESETCOLOR
 		PRINT  / 
 		SETCOLOR カラーパレット("グレーアウト")
-		PRINTBUTTON "[같은 캐릭터는 하루에 한 번만]", 3
+		PRINTBUTTON "[같은 캐릭터는 하루 한 번만]", 3
 		RESETCOLOR
 	CASE "非表示"
 		SETCOLOR カラーパレット("グレーアウト")
@@ -112,38 +112,38 @@ SELECTCASE CSTR:対象キャラ:カットイン個別選択オプション
 		PRINTBUTTON "[항상 표시]", 1
 		RESETCOLOR
 		PRINT  / 
-		PRINT [항상 숨기기]
+		PRINT [항상 숨김]
 		PRINT  / 
 		SETCOLOR カラーパレット("グレーアウト")
-PRINTBUTTON "[같은 캐릭터는 하루에 한 번만]", 3
+		PRINTBUTTON "[같은 캐릭터는 하루 한 번만]", 3
 		RESETCOLOR
 	CASE "一日一回のみ"
 		SETCOLOR カラーパレット("グレーアウト")
-PRINTBUTTON "[전체 설정에 따름]", 0
+		PRINTBUTTON "[전체 설정에 따름]", 0
 		RESETCOLOR
 		PRINT  / 
 		SETCOLOR カラーパレット("グレーアウト")
-PRINTBUTTON "[항상 표시]", 1
+		PRINTBUTTON "[항상 표시]", 1
 		RESETCOLOR
 		PRINT  / 
 		SETCOLOR カラーパレット("グレーアウト")
-PRINTBUTTON "[항상 숨김]", 2
+		PRINTBUTTON "[항상 숨김]", 2
 		RESETCOLOR
 		PRINT  / 
-PRINT [같은 캐릭터는 하루에 한 번만]
+		PRINT [같은 캐릭터는 하루 한 번만]
 	CASEELSE
-PRINT [전체 설정에 따름]
+		PRINT [전체 설정에 따름]
 		PRINT  / 
 		SETCOLOR カラーパレット("グレーアウト")
-PRINTBUTTON "[항상 표시]", 1
+		PRINTBUTTON "[항상 표시]", 1
 		RESETCOLOR
 		PRINT  / 
 		SETCOLOR カラーパレット("グレーアウト")
-PRINTBUTTON "[항상 숨김]", 2
+		PRINTBUTTON "[항상 숨김]", 2
 		RESETCOLOR
 		PRINT  / 
 		SETCOLOR カラーパレット("グレーアウト")
-PRINTBUTTON "[같은 캐릭터는 하루에 한 번만]", 3
+		PRINTBUTTON "[같은 캐릭터는 하루 한 번만]", 3
 		RESETCOLOR
 ENDSELECT
 PRINTL
@@ -151,10 +151,66 @@ PRINT 　　
 SELECTCASE CSTR:対象キャラ:カットイン画像選択オプション
 	CASE "縦カットイン"
 		SETCOLOR カラーパレット("グレーアウト")
-PRINTBUTTON "[전체 설정에 따름]", 10
+		PRINTBUTTON "[전체 설정에 따름]", 10
 		RESETCOLOR
 		PRINT  / 
-PRINT [세로 컷인 우선]
+		PRINT [세로 컷인 우선]
+		PRINT  / 
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[가로 컷인 우선]", 12
+		RESETCOLOR
+		PRINT  / 
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTBUTTON "[기본 얼굴 그래픽 우선]", 13
+		RESETCOLOR
+		PRINT  / 
+		SETCOLOR カラーパレット("グレーアウト")
+PRINTBUTTON "[세로 가로 랜덤 표시]", 14
+		RESETCOLOR
+	CASE "横カットイン"
+		SETCOLOR カラーパレット("グレーアウト")
+PRINTBUTTON "[전체 설정 따르기]", 10
+		RESETCOLOR
+		PRINT  / 
+		SETCOLOR カラーパレット("グレーアウト")
+PRINTBUTTON "[세로 컷인 우선]", 11
+		RESETCOLOR
+		PRINT  / 
+PRINT [가로 컷인 우선]
+		PRINT  / 
+		SETCOLOR カラーパレット("グレーアウト")
+PRINTBUTTON "[기본 얼굴 그래픽 우선]", 13
+		RESETCOLOR
+		PRINT  / 
+		SETCOLOR カラーパレット("グレーアウト")
+PRINTBUTTON "[세로 가로 랜덤 표시]", 14
+		RESETCOLOR
+	CASE "デフォルト"
+		SETCOLOR カラーパレット("グレーアウト")
+PRINTBUTTON "[전체 설정 따르기]", 10
+		RESETCOLOR
+		PRINT  / 
+		SETCOLOR カラーパレット("グレーアウト")
+PRINTBUTTON "[세로 컷인 우선]", 11
+		RESETCOLOR
+		PRINT  / 
+		SETCOLOR カラーパレット("グレーアウト")
+PRINTBUTTON "[가로 컷인 우선]", 12
+		RESETCOLOR
+		PRINT  / 
+PRINT [기본 얼굴 그래픽 우선]
+		PRINT  / 
+		SETCOLOR カラーパレット("グレーアウト")
+PRINTBUTTON "[세로 가로 랜덤 표시]", 14
+		RESETCOLOR
+	CASE "縦横ランダム"
+		SETCOLOR カラーパレット("グレーアウト")
+PRINTBUTTON "[전체 설정 따르기]", 10
+		RESETCOLOR
+		PRINT  / 
+		SETCOLOR カラーパレット("グレーアウト")
+PRINTBUTTON "[세로 컷인 우선]", 11
+		RESETCOLOR
 		PRINT  / 
 		SETCOLOR カラーパレット("グレーアウト")
 PRINTBUTTON "[가로 컷인 우선]", 12
@@ -164,65 +220,9 @@ PRINTBUTTON "[가로 컷인 우선]", 12
 PRINTBUTTON "[기본 얼굴 그래픽 우선]", 13
 		RESETCOLOR
 		PRINT  / 
-		SETCOLOR カラーパレット("グレーアウト")
-PRINTBUTTON "[세로 가로 랜덤 표시]", 14
-		RESETCOLOR
-	CASE "横カットイン"
-		SETCOLOR カラーパレット("グレーアウト")
-PRINTBUTTON "[전체 설정에 따름]", 10
-		RESETCOLOR
-		PRINT  / 
-		SETCOLOR カラーパレット("グレーアウト")
-		PRINTBUTTON "[세로 컷인 우선]", 11
-		RESETCOLOR
-		PRINT  / 
-		PRINT [가로 컷인 우선]
-		PRINT  / 
-		SETCOLOR カラーパレット("グレーアウト")
-		PRINTBUTTON "[기본 얼굴 그래픽 우선]", 13
-		RESETCOLOR
-		PRINT  / 
-		SETCOLOR カラーパレット("グレーアウト")
-		PRINTBUTTON "[세로 가로 랜덤 표시]", 14
-		RESETCOLOR
-	CASE "デフォルト"
-		SETCOLOR カラーパレット("グレーアウト")
-		PRINTBUTTON "[전체 설정 따르기]", 10
-		RESETCOLOR
-		PRINT  / 
-		SETCOLOR カラーパレット("グレーアウト")
-		PRINTBUTTON "[세로 컷인 우선]", 11
-		RESETCOLOR
-		PRINT  / 
-		SETCOLOR カラーパレット("グレーアウト")
-		PRINTBUTTON "[가로 컷인 우선]", 12
-		RESETCOLOR
-		PRINT  / 
-		PRINT [기본 얼굴 그래픽 우선]
-		PRINT  / 
-		SETCOLOR カラーパレット("グレーアウト")
-		PRINTBUTTON "[세로 가로 랜덤 표시]", 14
-		RESETCOLOR
-	CASE "縦横ランダム"
-		SETCOLOR カラーパレット("グレーアウト")
-		PRINTBUTTON "[전체 설정 따르기]", 10
-		RESETCOLOR
-		PRINT  / 
-		SETCOLOR カラーパレット("グレーアウト")
-		PRINTBUTTON "[세로 컷인 우선]", 11
-		RESETCOLOR
-		PRINT  / 
-		SETCOLOR カラーパレット("グレーアウト")
-		PRINTBUTTON "[가로 컷인 우선]", 12
-		RESETCOLOR
-		PRINT  / 
-		SETCOLOR カラーパレット("グレーアウト")
-		PRINTBUTTON "[기본 얼굴 그래픽 우선]", 13
-		RESETCOLOR
-		PRINT  / 
 		PRINT [세로 가로 랜덤 표시]
 	CASEELSE
-		PRINT [전체 설정 따르기]
+		PRINT [전체 설정에 따름]
 		PRINT  / 
 		SETCOLOR カラーパレット("グレーアウト")
 		PRINTBUTTON "[세로 컷인 우선]", 11
@@ -251,7 +251,7 @@ SELECTCASE RESULT
 	CASE 1
 		CSTR:対象キャラ:カットイン個別選択オプション = 표시
 	CASE 2
-		CSTR:対象キャラ:カットイン個別選択オプション = 숨기기
+		CSTR:対象キャラ:カットイン個別選択オプション = 숨김
 	CASE 3
 		CSTR:対象キャラ:カットイン個別選択オプション = 하루 한 번만
 	CASE 10

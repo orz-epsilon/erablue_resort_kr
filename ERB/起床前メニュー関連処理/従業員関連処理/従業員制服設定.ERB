@@ -5,7 +5,7 @@ VARSET 従業員一覧, -1
 
 DRAWLINE
 PRINTL 직원이 착용할 제복을 설정합니다.
-PRINTL ※개발 중이므로, 일이 올바르게 작동하지 않을 수 있습니다.
+PRINTL ※개발 중이므로, 작업이 올바르게 작동하지 않을 수 있습니다.
 DRAWLINE
 LOCALS = <div rect='81,31,1937,2812' border='31' bcolor='#C0C0C0'></div><div rect='2050,31,3875,2812' border='31' bcolor='#C0C0C0'></div>
 
@@ -27,10 +27,16 @@ FOR LOCAL, ページ数 * 17, ページ数 * 17 + 17
 	LOCALS += @"<button value='{LOCAL}'>%CALLNAME:(従業員一覧:LOCAL), 16, LEFT%["
 	IF 現在制服:(従業員一覧:LOCAL):0 == ""
 		LOCALS += "평상복"
+	ELSEIF ISNUMERIC(現在制服:(従業員一覧:LOCAL):0)
+		LOCALS += @"%CSVCSTR(TOINT(現在制服:(従業員一覧:LOCAL):0), GETNUM(CSTR, "服名称"))%"
 	ELSE
 		LOCALS += @"%SUBSTRING(現在制服:(従業員一覧:LOCAL):0, 0, 17)%"
 	ENDIF
-	LOCALS += "]</button><br>"
+	LOCALS += "]"
+	IF 現在制服:(従業員一覧:LOCAL):セットアイテム != ""
+		LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'>★</font>"
+	ENDIF
+	LOCALS += "</button><br>"
 NEXT
 IF ページ数 > 0
 	LOCALS += "<button value='1000'>　＜ 이전 페이지</button>"
@@ -117,23 +123,122 @@ LOOP 1
 #DIMS 衣装合算
 #DIM 文字長さ
 #DIM 表示許可数
+#DIM 表示モード
+#DIM 横位置
+#DIMS 衣装名
+#DIMS 表示名
 #DIM CONST 表示数 = 20
 #DIMS 解説文
+#DIMS アイテム名
+#DIM 衣装キャラNO
 
 DRAWLINE
 PRINTL 직원이 착용할 제복을 설정합니다.
-PRINTL ※개발 중이므로, 올바르게 작동하지 않을 수 있습니다.
+PRINTL ※개발 중이므로 정상적으로 작동하지 않을 수 있습니다.
 DRAWLINE
-LOCALS = <div rect='81,31,1937,2812' border='31' bcolor='#C0C0C0'></div><div rect='2050,31,3875,2812' border='31' bcolor='#C0C0C0'></div>
-LOCALS += "<div rect='156,156,1937,2812'>"
+LOCALS = <div rect='81,175,1937,2812' border='31' bcolor='#C0C0C0'></div><div rect='2050,175,3875,2812' border='31' bcolor='#C0C0C0'></div>
+
+;衣装種類タブ
+横位置 = 2050
+IF 表示モード == 0
+	LOCALS += @"<div rect='{横位置},0,500,200' padding='25,15,0' color='#101010' border='31, 31, 0' bcolor='#C0C0C0'><font color='#%カラーパレット_HTML("黄")%'>일반 의상</font>"
+ELSE
+	LOCALS += @"<div rect='{横位置},0,500,200' padding='25,15,0' color='#101010' border='31' bcolor='#C0C0C0'><button value='990'>일반 의상</button>"
+ENDIF
+LOCALS += "</div>"
+IF フィールド展開:エロ制服許可 != 0
+	横位置 += 550
+	IF 表示モード == 1
+		LOCALS += @"<div rect='{横位置},0,500,200' padding='25,15,0' color='#101010' border='31, 31, 0' bcolor='#C0C0C0'><font color='#%カラーパレット_HTML("黄")%'>에로 의상</font>"
+	ELSE
+		LOCALS += @"<div rect='{横位置},0,500,200' padding='25,15,0' color='#101010' border='31' bcolor='#C0C0C0'><button value='991'>에로 의상</button>"
+	ENDIF
+	LOCALS += "</div>"
+ELSEIF 表示モード == 1
+	表示モード = 0
+ENDIF
+横位置 += 550
+IF 表示モード == 2
+	LOCALS += @"<div rect='{横位置},0,600,200' padding='25,15,0' color='#101010' border='31, 31, 0' bcolor='#C0C0C0'><font color='#%カラーパレット_HTML("黄")%'>캐릭터 의상</font>"
+ELSE
+	LOCALS += @"<div rect='{横位置},0,600,200' padding='25,15,0' color='#101010' border='31' bcolor='#C0C0C0'><button value='992'>캐릭터 의상</button>"
+ENDIF
+LOCALS += "</div>"
+横位置 += 650
+
+LOCALS += "<div rect='156,300,1937,2812'>"
 IF 対象キャラ != 9999
 	LOCALS += @"%CALLNAME:対象キャラ, 16, LEFT%["
 	IF 現在制服:対象キャラ:0 == ""
 		LOCALS += "평상복]"
 	ELSEIF 現在制服:対象キャラ:0 == "浴衣"
-		LOCALS += "유카타]"
+		LOCALS += "ユカタヴィラ]"
+	ELSEIF ISNUMERIC(現在制服:対象キャラ:0)
+		LOCALS += @"%CSVCSTR(TOINT(現在制服:対象キャラ:0), GETNUM(CSTR, "服名称"))%]"
 	ELSE
 		LOCALS += @"%現在制服:対象キャラ:0%]"
+	ENDIF
+	IF フィールド展開:エロ制服許可 && (対象キャラ == MASTER || 陥落チェック_性的＋疑似恋慕(対象キャラ))
+		LOCALS += "<br>"
+		LOCALS += "<br>"
+		IF HAS_CLITORIS(対象キャラ)
+			LOCALS += "<button value='-1'>[-1] 클리캡 "
+			IF STRFIND(現在制服:対象キャラ:セットアイテム, "_クリキャップ_") >= 0
+				LOCALS += @"ON / <font color='#%カラーパレット_HTML("グレーアウト")%'>OFF</font>"
+			ELSE
+				LOCALS += @"<font color='#%カラーパレット_HTML("グレーアウト")%'>ON</font> / OFF"
+			ENDIF
+			LOCALS += "</button>"
+			LOCALS += "<br>"
+		ENDIF
+		IF TALENT:対象キャラ:Ｂ感度 != -2
+			LOCALS += "<button value='-2'>[-2] 니플캡 "
+			IF STRFIND(現在制服:対象キャラ:セットアイテム, "_ニプルキャップ_") >= 0
+				LOCALS += @"ON / <font color='#%カラーパレット_HTML("グレーアウト")%'>OFF</font>"
+			ELSE
+				LOCALS += @"<font color='#%カラーパレット_HTML("グレーアウト")%'>ON</font> / OFF"
+			ENDIF
+			LOCALS += "</button>"
+			LOCALS += "<br>"
+		ENDIF
+		IF HAS_VAGINA(対象キャラ)
+			LOCALS += "<button value='-3'>[-3] 바이브 "
+			IF STRFIND(現在制服:対象キャラ:セットアイテム, "_バイブ_") >= 0
+				LOCALS += @"ON / <font color='#%カラーパレット_HTML("グレーアウト")%'>OFF</font>"
+			ELSE
+				LOCALS += @"<font color='#%カラーパレット_HTML("グレーアウト")%'>ON</font> / OFF"
+			ENDIF
+			LOCALS += "</button>"
+			LOCALS += "<br>"
+		ENDIF
+		IF TALENT:対象キャラ:Ａ感度 != -2
+			LOCALS += "<button value='-4'>[-4] 애널 바이브 "
+			IF STRFIND(現在制服:対象キャラ:セットアイテム, "_アナルバイブ_") >= 0
+				LOCALS += @"ON / <font color='#%カラーパレット_HTML("グレーアウト")%'>OFF</font>"
+			ELSE
+				LOCALS += @"<font color='#%カラーパレット_HTML("グレーアウト")%'>ON</font> / OFF"
+			ENDIF
+			LOCALS += "</button>"
+			LOCALS += "<br>"
+			LOCALS += "<button value='-5'>[-5] 애널 비즈 "
+			IF STRFIND(現在制服:対象キャラ:セットアイテム, "_アナルビーズ_") >= 0
+				LOCALS += @"ON / <font color='#%カラーパレット_HTML("グレーアウト")%'>OFF</font>"
+			ELSE
+				LOCALS += @"<font color='#%カラーパレット_HTML("グレーアウト")%'>ON</font> / OFF"
+			ENDIF
+			LOCALS += "</button>"
+			LOCALS += "<br>"
+		ENDIF
+		IF HAS_PENIS(対象キャラ)
+			LOCALS += "<button value='-6'>[-6] 오나홀 "
+			IF STRFIND(現在制服:対象キャラ:セットアイテム, "_オナホール_") >= 0
+				LOCALS += @"ON / <font color='#%カラーパレット_HTML("グレーアウト")%'>OFF</font>"
+			ELSE
+				LOCALS += @"<font color='#%カラーパレット_HTML("グレーアウト")%'>ON</font> / OFF"
+			ENDIF
+			LOCALS += "</button>"
+			LOCALS += "<br>"
+		ENDIF
 	ENDIF
 ELSE
 	LOCALS += @"일괄 설정"
@@ -143,12 +248,43 @@ LOCALS += "<br>"
 LOCALS += "<button value='999'>[999] 돌아가기</button>"
 LOCALS += "<br>"
 LOCALS += "</div>"
-IF フィールド展開:エロ制服許可
-	衣装合算 = %所持制服文字列%%所持エロ衣装文字列%
-	SPLIT 衣装合算, "_", 制服一時配列
-ELSE
-	SPLIT 所持制服文字列, "_", 制服一時配列
-ENDIF
+; IF フィールド展開:エロ制服許可
+; 	衣装合算 = %所持制服文字列%%所持エロ衣装文字列%
+; 	SPLIT 衣装合算, "_", 制服一時配列
+; ELSE
+; 	SPLIT 所持制服文字列, "_", 制服一時配列
+; ENDIF
+VARSET 制服一時配列
+SELECTCASE 表示モード
+	CASE 0
+		;通常衣装
+		SPLIT 所持制服文字列, "_", 制服一時配列
+	CASE 1
+		;エロ衣装
+		SPLIT 所持エロ衣装文字列, "_", 制服一時配列
+	CASE 2
+		;キャラ衣装
+		LOCAL:1 = 0
+		FOR LOCAL, 1, CHARANUM
+			;衣装所持フラグチェック
+			IF キャラ衣装所持フラグ:(NO:LOCAL) > 0
+				;自分はスキップ
+				SIF LOCAL == 対象キャラ
+					CONTINUE
+				IF ランダムキャラ判定(NO:LOCAL)
+					;汎用ランダムキャラは無し
+					SIF NO:LOCAL == 999
+						CONTINUE
+					;汎用以外なら重複がないかチェック
+					SIF MATCH(制服一時配列, @"キャラ服/{NO:LOCAL}")
+						CONTINUE
+				ENDIF
+				;配列に突っ込む
+				制服一時配列:(LOCAL:1) '= @"キャラ服/{NO:LOCAL}"
+				LOCAL:1 ++
+			ENDIF
+		NEXT
+ENDSELECT
 
 文字長さ = 18
 FOR LOCAL, 0, 990
@@ -158,10 +294,10 @@ FOR LOCAL, 0, 990
 	;DEBUGPRINTFORML %分割文字列配列:1%
 NEXT
 
-LOCALS:1 = <div rect='2125,156,3675,2812'>
+LOCALS:1 = <div rect='2125,300,3675,2812'>
 ;普段着と全裸分
 表示許可数 = 2
-IF ページ数 == 0
+IF ページ数 == 0 && 表示モード == 0
 	LOCALS:1 += @"<button value='996'>[996] %"普段着", 文字長さ, LEFT%(으)로 변경</button>"
 	IF 対象キャラ != 9999
 		SIF CSTR:対象キャラ:画像フォルダ == ""
@@ -186,28 +322,39 @@ FOR LOCAL, 0, 990
 		BREAK
 	ENDIF
 	SPLIT 制服一時配列:LOCAL, "/", 分割文字列配列
-	IF 対象キャラ != 9999
-		TRYCCALLFORM CLOTHES_着用条件_%分割文字列配列:1%(対象キャラ)
+	衣装名 = %分割文字列配列:1%
+	表示名 = %分割文字列配列:1%
+	IF 分割文字列配列:0 == "キャラ服"
+		衣装キャラNO = TOINT(衣装名)
+		衣装名 = {衣装キャラNO}
+		表示名 = %CSVCSTR(衣装キャラNO, GETNUM(CSTR, "服名称"))%
+		TRYCCALLFORM CLOTHES_着用条件_%衣装名%(対象キャラ)
 			SIF RESULT == 0
 				CONTINUE
 		CATCH
 		ENDCATCH
 	ELSE
-		SIF EXISTFUNCTION(@"CLOTHES_着用条件_%分割文字列配列:1%")
-			CONTINUE
+		IF 対象キャラ != 9999
+			TRYCCALLFORM CLOTHES_着用条件_%衣装名%(対象キャラ)
+				SIF RESULT == 0
+					CONTINUE
+			CATCH
+			ENDCATCH
+		ELSE
+			SIF EXISTFUNCTION(@"CLOTHES_着用条件_%衣装名%")
+				CONTINUE
+		ENDIF
 	ENDIF
 	表示許可数 ++
 	SIF ページ数 != (表示許可数 - 1) / 表示数
 		CONTINUE
-	IF 分割文字列配列:1 == "浴衣"
-		LOCALS:2 = 浴衣
-	ELSE
-		LOCALS:2 '= 分割文字列配列:1
+	IF 衣装名 == "浴衣"
+		表示名 = ユカタヴィラ
 	ENDIF
 	VARSET RESULTS
 	IF OPTION変数:ツールチップ切り替え == 0
 		解説文 = 
-		TRYCCALLFORM CLOTHES_衣装説明_%分割文字列配列:1%()
+		TRYCCALLFORM CLOTHES_衣装説明_%衣装名%()
 			LOCAL:1 = HTML_STRINGLEN(RESULTS)
 			IF RESULTS != ""
 				解説文 += @"<br>%RESULTS%"
@@ -218,12 +365,17 @@ FOR LOCAL, 0, 990
 			解説文 '= REPLACE(解説文, "<(?!br).*?>", "")
 		CATCH
 		ENDCATCH
-		LOCALS:1 += @"<button value='{LOCAL}' title='%解説文%'>[{LOCAL, 3, RIGHT}] %LOCALS:2, 文字長さ, LEFT%(으)로 변경</button>"
+		IF 分割文字列配列:0 == "キャラ服"
+			SIF 解説文 == ""
+				解説文 += "<br>"
+			解説文 += @"원래 소유자：%CSVNAME(衣装キャラNO)%<br>"
+		ENDIF
+		LOCALS:1 += @"<button value='{LOCAL}' title='%解説文%'>[{LOCAL, 3, RIGHT}] %表示名, 文字長さ, LEFT%(으)로 변경</button>"
 	ELSE
-		LOCALS:1 += @"<button value='{LOCAL}'>[{LOCAL, 3, RIGHT}] %LOCALS:2, 文字長さ, LEFT%(으)로 변경</button>"
+		LOCALS:1 += @"<button value='{LOCAL}'>[{LOCAL, 3, RIGHT}] %表示名, 文字長さ, LEFT%(으)로 변경</button>"
 	ENDIF
 	IF 対象キャラ != 9999
-		IF EXIST画像FILE(@"resources/%CSTR:対象キャラ:画像フォルダ%/顔_%分割文字列配列:1%") || EXIST画像FILE(@"resources/%CSTR:対象キャラ:画像フォルダ%/短冊_%分割文字列配列:1%")
+		IF EXIST画像FILE(@"resources/%CSTR:対象キャラ:画像フォルダ%/顔_%衣装名%") || EXIST画像FILE(@"resources/%CSTR:対象キャラ:画像フォルダ%/短冊_%衣装名%")
 			LOCALS:1 += @"　<font color='#%カラーパレット_HTML("黄")%'>이미지 있음</font>"
 		ENDIF
 	ENDIF
@@ -251,7 +403,7 @@ LOCALS:1 += "</div>"
 
 HTML_PRINT LOCALS, 1
 HTML_PRINT LOCALS:1, 1
-FOR LOCAL, 0, 25
+FOR LOCAL, 0, 28
 	PRINTL
 NEXT
 DRAWLINE
@@ -260,14 +412,46 @@ DO
 BINPUT
 LOCAL = RESULT
 SELECTCASE LOCAL
+	CASE IS < 0
+		SELECTCASE LOCAL
+			CASE -1
+				アイテム名 = クリキャップ
+			CASE -2
+				アイテム名 = ニプルキャップ
+			CASE -3
+				アイテム名 = バイブ
+			CASE -4
+				アイテム名 = アナルバイブ
+			CASE -5
+				アイテム名 = アナルビーズ
+			CASE -6
+				アイテム名 = オナホール
+		ENDSELECT
+		IF STRFIND(現在制服:対象キャラ:セットアイテム, @"_%アイテム名%_") >= 0
+			現在制服:対象キャラ:セットアイテム '= REPLACE(現在制服:対象キャラ:セットアイテム, @"_%アイテム名%_", "")
+		ELSE
+			現在制服:対象キャラ:セットアイテム += @"_%アイテム名%_"
+			;アナル系だけ排他
+			IF アイテム名 == "アナルバイブ" && STRFIND(現在制服:対象キャラ:セットアイテム, @"_アナルビーズ_") >= 0
+				現在制服:対象キャラ:セットアイテム '= REPLACE(現在制服:対象キャラ:セットアイテム, @"_アナルビーズ_", "")
+			ELSEIF アイテム名 == "アナルビーズ" && STRFIND(現在制服:対象キャラ:セットアイテム, @"_アナルバイブ_") >= 0
+				現在制服:対象キャラ:セットアイテム '= REPLACE(現在制服:対象キャラ:セットアイテム, @"_アナルバイブ_", "")
+			ENDIF
+		ENDIF
+		RESTART
 	CASE 1000
 		ページ数 --
 		RESTART
 	CASE 1001
 		ページ数 ++
 		RESTART
+	CASE 990, 991, 992
+		表示モード = LOCAL - 990
+		ページ数 = 0
+		RESTART
 	CASE 999
 		ページ数 = 0
+		表示モード = 0
 		RETURN 0
 	CASE 998
 		RETURN 0
@@ -309,16 +493,14 @@ SELECTCASE LOCAL
 			FOR LOCAL, 1, CHARANUM
 				SIF TALENT:LOCAL:従業員 == 0
 					CONTINUE
+				SIF NO:LOCAL == TOINT(分割文字列配列:1)
+					CONTINUE
 				現在制服:LOCAL:0 = %分割文字列配列:1%
 				CALL CLOTHES_RESET(LOCAL)
 				CALL CLOTHES_RESET_TRAIN(LOCAL)
 			NEXT
 		ELSE
-			IF STRCOUNT(制服一時配列:LOCAL, "キャラ専用")
-				現在制服:対象キャラ:0 = %分割文字列配列:1%
-			ELSE
-				現在制服:対象キャラ:0 = %分割文字列配列:1%
-			ENDIF
+			現在制服:対象キャラ:0 = %分割文字列配列:1%
 			CALL CLOTHES_RESET(対象キャラ)
 			CALL CLOTHES_RESET_TRAIN(対象キャラ)
 		ENDIF
@@ -378,69 +560,69 @@ LOCALS += "</div>"
 
 LOCALS += "<div rect='2125,340,3675,2812'>"
 IF 改造対象 < 0
-	LOCALS += "개조 가능한 제복은 없습니다<br>"
+	LOCALS += "개조 가능한 제복이 없습니다<br>"
 ELSE
 	SIF !制服改造:改造対象:改造状況フラグ
 		CALLFORM 制服改造初期化_%対象衣装名%()
 	CALLF パターン改造素質逆引き(改造対象, 改造パターン名_上, 改造パターン名_下, 改造パターン名_その他)
 	IF 詳細改造フラグ == 0
 		;個別の関数を作ろうかと思ったけどめんどくせぇので直記述
-		;現状の改造説明
-		LOCALS += "■해설<br>"
+		;현재の改造説明
+		LOCALS += "■설명<br>"
 		IF 制服改造:改造対象:改造状況フラグ == -1
-			LOCALS += "　개조하지 않은 상태의 제복.<br>"
+			LOCALS += "　개조하지 않은 상태의 제복. <br>"
 			LOCALS += "　상반신: 긴팔 슈트 스타일<br>"
 			LOCALS += "　하반신: 팬츠 슈트 스타일<br>"
 		ELSE
-			LOCALS += "　패턴 개조를 한 제복.<br>"
+			LOCALS += "　패턴 개조를 거친 제복. <br>"
 			LOCALS += "　상반신:"
 			LOCAL = 0
 			IF STRFIND(改造パターン名_上, "エロ改造：トップレス_") > -1
-				LOCALS += "팔꿈치부터 손목까지의 소매를 제외하고, 남김없이 노출된 토플리스 스타일　"
+				LOCALS += "상박부터 소매 끝까지를 제외하고, 남김없이 노출된 토플리스 스타일　"
 			ELSE
 				IF STRFIND(改造パターン名_上, "谷間露出_") > -1
-					LOCALS += "골짜기를 크게 드러내"
+					LOCALS += "가슴골을 크게 드러내고"
 					LOCAL = 1
 				ENDIF
 				IF STRFIND(改造パターン名_上, "横乳露出_") > -1
 					SIF LOCAL
-						LOCALS += ","
-					LOCALS += "겨드랑이와 옆가슴을 노출시켜"
+						LOCALS += "、"
+					LOCALS += "겨드랑이와 옆가슴을 노출시키고"
 					LOCAL = 1
 				ENDIF
 				IF STRFIND(改造パターン名_上, "へそ露出_") > -1
 					SIF LOCAL
-						LOCALS += ","
+						LOCALS += "、"
 					LOCALS += "배꼽을 드러내"
 					LOCAL = 1
 				ENDIF
 				SIF LOCAL
-					LOCALS += "ㄴ"
+					LOCALS += "는"
 				LOCALS += "긴팔 슈트 스타일"
 				SIF STRFIND(改造パターン名_上, "インナー_") > -1
-					LOCALS += "(이너웨어 있음)"
+					LOCALS += "（이너웨어 있음）"
 			ENDIF
 			IF STRFIND(改造パターン名_上, "ノーブラ_") > -1 && STRFIND(改造パターン名_上, "エロ改造：トップレス_") < 0
-				LOCALS += "(노브라)"
+				LOCALS += "（노브라）"
 			ELSEIF STRFIND(改造パターン名_上, "ニプレス_") > -1
-				LOCALS += "(니플 패치 착용)"
+				LOCALS += "（니플 패치 착용）"
 			ELSEIF STRFIND(改造パターン名_上, "さらし_") > -1
-				LOCALS += "(가슴 붕대 착용)"
+				LOCALS += "（사라시 착용）"
 			ELSEIF STRFIND(改造パターン名_上, "リボン_") > -1
-				LOCALS += "(리본 랩핑)"
+				LOCALS += "（리본 래핑）"
 			ELSEIF STRFIND(改造パターン名_その他, "エロ改造：オープンカップブラ_") > -1
-				LOCALS += "(오픈 컵 브라 착용)"
+				LOCALS += "（오픈컵 브라 착용）"
 			ELSEIF STRFIND(改造パターン名_その他, "エロ改造：ニップルピアス_") > -1
-				LOCALS += "(니플 피어싱 착용)"
+				LOCALS += "（니플 피어싱 착용）"
 			ELSEIF STRFIND(改造パターン名_その他, "エロ改造：乳首名札_") > -1
-				LOCALS += "(유두에 직접 명찰 착용)"
+				LOCALS += "（유두에 직접 명찰 착용）"
 			ELSEIF STRFIND(改造パターン名_上, "ノーブラ_") < 0 && STRFIND(改造パターン名_上, "エロ改造：トップレス_") > -1
 				LOCALS += "（브래지어 착용）"
 			ENDIF
 			LOCALS += "<br>"
 			LOCALS += "　하반신："
 			IF STRFIND(改造パターン名_下, "エロ改造：ボトムレス_") > -1
-				LOCALS += "양말과 신발 외에는 아무것도 걸치지 않은 보텀리스 스타일"
+				LOCALS += "양말과 신발 외에는 아무것도 입지 않은 보텀리스 스타일"
 			ELSE
 				IF STRFIND(改造パターン名_下, "スカート_") > -1
 					LOCALS += "우아한 스커트 스타일"
@@ -455,7 +637,7 @@ ELSE
 			IF STRFIND(改造パターン名_下, "ノーパン_") > -1 && STRFIND(改造パターン名_下, "エロ改造：ボトムレス_") < 0
 				LOCALS += "（노팬티）"
 			ELSEIF STRFIND(改造パターン名_下, "前張り_") > -1
-				LOCALS += "（마에바리 착용）"
+				LOCALS += "（앞가리개 착용）"
 			ELSEIF STRFIND(改造パターン名_下, "ふんどし_") > -1
 				LOCALS += "（훈도시 착용）"
 			ELSEIF STRFIND(改造パターン名_下, "リボン_") > -1
@@ -465,7 +647,7 @@ ELSE
 			ELSEIF STRFIND(改造パターン名_その他, "エロ改造：性器ピアス_") > -1
 				LOCALS += "（성기 피어스 장착）"
 			ELSEIF STRFIND(改造パターン名_その他, "エロ改造：クリ名札_") > -1
-				LOCALS += "（음핵에 직접 명찰을 장착）"
+				LOCALS += "（클리토리스에 직접 명찰 장착）"
 			ELSEIF STRFIND(改造パターン名_下, "ノーパン_") < 0 && STRFIND(改造パターン名_下, "エロ改造：ボトムレス_") > -1
 				LOCALS += "（속옷 착용）"
 			ENDIF
@@ -484,32 +666,32 @@ ELSE
 		LOCALS += "<br>"
 		LOCALS += "　<button value='2003'>・이너를 입히다</button>"
 		SIF STRFIND(改造パターン名_上, "インナー_") > -1
-			LOCALS += @"　　<font color='#%カラーパレット_HTML("黄")%'>적용 완료</font>"
+			LOCALS += @"　　<font color='#%カラーパレット_HTML("黄")%'>적용됨</font>"
 		LOCALS += "<br>"
 		LOCALS += "<br>"
-		LOCALS += "■하반신 개조<br>"
+LOCALS += "■하반신 개조<br>"
 		LOCALS += "　・하의："
 		LOCAL = (STRFIND(改造パターン名_下, "スカート_") > -1) + (STRFIND(改造パターン名_下, "ミニスカ_") > -1) + (STRFIND(改造パターン名_下, "エロ改造：ボトムレス_") > -1)
 		LOCALS += @"<font color='#\@ !LOCAL ? C0C0C0 # 505050\@'><button value='2009'>[롱 팬츠]</button></font>"
 		LOCALS += @"<font color='#\@ STRFIND(改造パターン名_下, "スカート_") > -1 ? C0C0C0 # 505050\@'><button value='2010'>[스커트]</button></font>"
 		LOCALS += @"<font color='#\@ STRFIND(改造パターン名_下, "ミニスカ_") > -1 ? C0C0C0 # 505050\@'><button value='2011'>[미니스커트]</button></font>"
 		SIF フィールド展開:エロ制服許可
-			LOCALS += @"<font color='#\@ STRFIND(改造パターン名_下, "エロ改造：ボトムレス_") > -1 ? C0C0C0 # 505050\@'><button value='2013'>[보텀리스]</button></font>"
+			LOCALS += @"<font color='#\@ STRFIND(改造パターン名_下, "エロ改造：ボトムレス_") > -1 ? C0C0C0 # 505050\@'><button value='2013'>[하의 없음]</button></font>"
 		LOCALS += "<br>"
 		LOCALS += "　<button value='2012'>・타이츠를 입히다</button>"
 		SIF STRFIND(改造パターン名_下, "タイツ_") > -1
-			LOCALS += @"　　<font color='#%カラーパレット_HTML("黄")%'>적용 완료</font>"
+			LOCALS += @"　　<font color='#%カラーパレット_HTML("黄")%'>적용됨</font>"
 		LOCALS += "<br>"
 		LOCALS += "<br>"
 		
-		LOCALS += "■그 외 개조<br>"
+		LOCALS += "■기타 개조<br>"
 		LOCALS += "　・가슴 속옷："
 		LOCAL = (STRFIND(改造パターン名_上, "ノーブラ_") > -1) + (STRFIND(改造パターン名_上, "ニプレス_") > -1) + (STRFIND(改造パターン名_上, "さらし_") > -1) + (STRFIND(改造パターン名_上, "リボン_") > -1)
 		LOCAL += (STRFIND(改造パターン名_その他, "エロ改造：オープンカップブラ_") > -1) + (STRFIND(改造パターン名_その他, "エロ改造：ニップルピアス_") > -1) + (STRFIND(改造パターン名_その他, "エロ改造：乳首名札_") > -1)
 		LOCALS += @"<font color='#\@ STRFIND(改造パターン名_上, "ノーブラ_") > -1 ? C0C0C0 # 505050\@'><button value='2020'>[노브라]</button></font>"
 		LOCALS += @"<font color='#\@ !LOCAL ? C0C0C0 # 505050\@'><button value='2021'>[브라 착용]</button></font>"
 		LOCALS += @"<font color='#\@ STRFIND(改造パターン名_上, "ニプレス_") > -1 ? C0C0C0 # 505050\@'><button value='2022'>[니플 패치]</button></font>"
-		LOCALS += @"<font color='#\@ STRFIND(改造パターン名_上, "さらし_") > -1 ? C0C0C0 # 505050\@'><button value='2023'>[가슴 붕대]</button></font>"
+		LOCALS += @"<font color='#\@ STRFIND(改造パターン名_上, "さらし_") > -1 ? C0C0C0 # 505050\@'><button value='2023'>[사라시]</button></font>"
 		LOCALS += @"<font color='#\@ STRFIND(改造パターン名_上, "リボン_") > -1 ? C0C0C0 # 505050\@'><button value='2024'>[리본]</button></font>"
 		IF フィールド展開:エロ制服許可
 			LOCALS += "<br>" + " " * 12
@@ -518,7 +700,7 @@ ELSE
 			LOCALS += @"<font color='#\@ STRFIND(改造パターン名_その他, "エロ改造：乳首名札_") > -1 ? C0C0C0 # 505050\@'><button value='2032'>[유두에 명찰]</button></font>"
 		ENDIF
 		LOCALS += "<br>"
-		LOCALS += "　・사타구니 속옷："
+		LOCALS += "　・하반신 속옷："
 		LOCAL = (STRFIND(改造パターン名_下, "ノーパン_") > -1) + (STRFIND(改造パターン名_下, "前張り_") > -1) + (STRFIND(改造パターン名_下, "ふんどし_") > -1) + (STRFIND(改造パターン名_下, "リボン_") > -1)
 		LOCAL += (STRFIND(改造パターン名_その他, "エロ改造：オープンショーツ_") > -1) + (STRFIND(改造パターン名_その他, "エロ改造：性器ピアス_") > -1) + (STRFIND(改造パターン名_その他, "エロ改造：クリ名札_") > -1)
 		LOCALS += @"<font color='#\@ STRFIND(改造パターン名_下, "ノーパン_") > -1 ? C0C0C0 # 505050\@'><button value='2040'>[노팬티]</button></font>"
@@ -528,7 +710,7 @@ ELSE
 		LOCALS += @"<font color='#\@ STRFIND(改造パターン名_下, "リボン_") > -1 ? C0C0C0 # 505050\@'><button value='2044'>[리본]</button></font>"
 		IF フィールド展開:エロ制服許可
 			LOCALS += "<br>" + " " * 12
-			LOCALS += @"<font color='#\@ STRFIND(改造パターン名_その他, "エロ改造：オープンショーツ_") > -1 ? C0C0C0 # 505050\@'><button value='2050'>[오픈 팬티]</button></font>"
+			LOCALS += @"<font color='#\@ STRFIND(改造パターン名_その他, "エロ改造：オープンショーツ_") > -1 ? C0C0C0 # 505050\@'><button value='2050'>[오픈 쇼츠]</button></font>"
 			LOCALS += @"<font color='#\@ STRFIND(改造パターン名_その他, "エロ改造：性器ピアス_") > -1 ? C0C0C0 # 505050\@'><button value='2051'>[성기 피어싱]</button></font>"
 			LOCALS += @"<font color='#\@ STRFIND(改造パターン名_その他, "エロ改造：クリ名札_") > -1 ? C0C0C0 # 505050\@'><button value='2052'>[클리에 명찰]</button></font>"
 		ENDIF
@@ -551,13 +733,13 @@ ELSE
 			ENDIF
 			IF LOCAL == 9
 				LOCALS += @"<font color='#\@ 制服改造:改造対象:LOCAL == 0 ? C0C0C0 # 505050\@'><button value='{1000 + LOCAL * 10 + 0}'>[노브라]</button></font>"
-				LOCALS += @"<font color='#\@ 制服改造:改造対象:LOCAL == 1 ? C0C0C0 # 505050\@'><button value='{1000 + LOCAL * 10 + 1}'>[브라 착용]</button></font>"
+				LOCALS += @"<font color='#\@ 制服改造:改造対象:LOCAL == 1 ? C0C0C0 # 505050\@'><button value='{1000 + LOCAL * 10 + 1}'>[브래지어 착용]</button></font>"
 				LOCALS += @"<font color='#\@ 制服改造:改造対象:LOCAL == 2 ? C0C0C0 # 505050\@'><button value='{1000 + LOCAL * 10 + 2}'>[니플 패치]</button></font>"
 				LOCALS += @"<font color='#\@ 制服改造:改造対象:LOCAL == 3 ? C0C0C0 # 505050\@'><button value='{1000 + LOCAL * 10 + 3}'>[사라시]</button></font>"
 				LOCALS += @"<font color='#\@ 制服改造:改造対象:LOCAL == 4 ? C0C0C0 # 505050\@'><button value='{1000 + LOCAL * 10 + 4}'>[리본]</button></font>"
 				IF フィールド展開:エロ制服許可
 					LOCALS += "<br>" + " " * 26
-					LOCALS += @"<font color='#\@ 制服改造:改造対象:LOCAL == -1 ? C0C0C0 # 505050\@'><button value='{1000 + LOCAL * 10 + 5}'>[오픈 컵 브라]</button></font>"
+					LOCALS += @"<font color='#\@ 制服改造:改造対象:LOCAL == -1 ? C0C0C0 # 505050\@'><button value='{1000 + LOCAL * 10 + 5}'>[오픈컵 브라]</button></font>"
 					LOCALS += @"<font color='#\@ 制服改造:改造対象:LOCAL == -2 ? C0C0C0 # 505050\@'><button value='{1000 + LOCAL * 10 + 6}'>[니플 피어싱]</button></font>"
 					LOCALS += @"<font color='#\@ 制服改造:改造対象:LOCAL == -3 ? C0C0C0 # 505050\@'><button value='{1000 + LOCAL * 10 + 7}'>[유두에 명찰]</button></font>"
 				ENDIF
@@ -592,7 +774,7 @@ LOCALS += "</div>"
 
 ;上書きで黒線を乗せるためにここに表記
 IF 詳細改造フラグ == 0
-	LOCALS += @"<div rect='2050,0,792,243' padding='46' color='#101010' border='31,31,0' bcolor='#C0C0C0'><font color='#%カラーパレット_HTML("黄")%'>패턴 개조</font></div><div rect='2890,0,592,243' padding='46' border='31' bcolor='#C0C0C0'><button value='997'>세부 개조</button></div>"
+	LOCALS += @"<div rect='2050,0,792,243' padding='46' color='#101010' border='31,31,0' bcolor='#C0C0C0'><font color='#%カラーパレット_HTML("黄")%'>패턴 개조</font></div><div rect='2890,0,592,243' padding='46' border='31' bcolor='#C0C0C0'><button value='997'>상세 개조</button></div>"
 ELSE
 	LOCALS += @"<div rect='2050,0,792,243' padding='46' border='31' bcolor='#C0C0C0'><button value='997'>패턴 개조</button></div><div rect='2890,0,592,243' color='#101010' padding='46' border='31,31,0' bcolor='#C0C0C0'><font color='#%カラーパレット_HTML("黄")%'>상세 개조</font></div>"
 ENDIF
@@ -674,7 +856,7 @@ SELECTCASE LOCAL
 		IF STRFIND(改造パターン名_上, "谷間露出_") > -1
 			改造パターン名_上 = %REPLACE(改造パターン名_上, "谷間露出_", "")%
 		ELSE
-			改造パターン名_上 += "谷間露出_"
+			改造パターン名_上 += "가슴골 노출_"
 			IF STRFIND(改造パターン名_上, "エロ改造：トップレス_") > -1
 				改造パターン名_上 = %REPLACE(改造パターン名_上, "エロ改造：トップレス_", "")%
 			ENDIF
@@ -686,7 +868,7 @@ SELECTCASE LOCAL
 		IF STRFIND(改造パターン名_上, "横乳露出_") > -1
 			改造パターン名_上 = %REPLACE(改造パターン名_上, "横乳露出_", "")%
 		ELSE
-			改造パターン名_上 += "横乳露出_"
+			改造パターン名_上 += "옆가슴 노출_"
 			IF STRFIND(改造パターン名_上, "エロ改造：トップレス_") > -1
 				改造パターン名_上 = %REPLACE(改造パターン名_上, "エロ改造：トップレス_", "")%
 			ENDIF
@@ -698,7 +880,7 @@ SELECTCASE LOCAL
 		IF STRFIND(改造パターン名_上, "へそ露出_") > -1
 			改造パターン名_上 = %REPLACE(改造パターン名_上, "へそ露出_", "")%
 		ELSE
-			改造パターン名_上 += "へそ露出_"
+			改造パターン名_上 += "배꼽 노출_"
 			IF STRFIND(改造パターン名_上, "エロ改造：トップレス_") > -1
 				改造パターン名_上 = %REPLACE(改造パターン名_上, "エロ改造：トップレス_", "")%
 			ENDIF
@@ -710,7 +892,7 @@ SELECTCASE LOCAL
 		IF STRFIND(改造パターン名_上, "インナー_") > -1
 			改造パターン名_上 = %REPLACE(改造パターン名_上, "インナー_", "")%
 		ELSE
-			改造パターン名_上 += "インナー_"
+			改造パターン名_上 += "이너_"
 		ENDIF
 		CALLFORM 制服改造初期化_%対象衣装名%()
 		CALL パターン改造素質セット(改造対象, 改造パターン名_上, 改造パターン名_下, 改造パターン名_その他)
@@ -743,7 +925,7 @@ SELECTCASE LOCAL
 		IF STRFIND(改造パターン名_下, "スカート_") > -1
 			改造パターン名_下 = %REPLACE(改造パターン名_下, "スカート_", "")%
 		ELSE
-			改造パターン名_下 += "スカート_"
+			改造パターン名_下 += "스커트_"
 			IF STRFIND(改造パターン名_下, "ミニスカ_") > -1
 				改造パターン名_下 = %REPLACE(改造パターン名_下, "ミニスカ_", "")%
 			ENDIF
@@ -758,7 +940,7 @@ SELECTCASE LOCAL
 		IF STRFIND(改造パターン名_下, "ミニスカ_") > -1
 			改造パターン名_下 = %REPLACE(改造パターン名_下, "ミニスカ_", "")%
 		ELSE
-			改造パターン名_下 += "ミニスカ_"
+			改造パターン名_下 += "미니스커트_"
 			IF STRFIND(改造パターン名_下, "スカート_") > -1
 				改造パターン名_下 = %REPLACE(改造パターン名_下, "スカート_", "")%
 			ENDIF
@@ -773,7 +955,7 @@ SELECTCASE LOCAL
 		IF STRFIND(改造パターン名_下, "タイツ_") > -1
 			改造パターン名_下 = %REPLACE(改造パターン名_下, "タイツ_", "")%
 		ELSE
-			改造パターン名_下 += "タイツ_"
+			改造パターン名_下 += "타이츠_"
 		ENDIF
 		CALLFORM 制服改造初期化_%対象衣装名%()
 		CALL パターン改造素質セット(改造対象, 改造パターン名_上, 改造パターン名_下, 改造パターン名_その他)
@@ -802,19 +984,19 @@ SELECTCASE LOCAL
 		
 		SELECTCASE LOCAL
 			CASE 2020
-				改造パターン名_上 += "ノーブラ_"
+				改造パターン名_上 += "노브라_"
 			CASE 2022
-				改造パターン名_上 += "ニプレス_"
+				改造パターン名_上 += "니플 패치_"
 			CASE 2023
-				改造パターン名_上 += "さらし_"
+				改造パターン名_上 += "가슴 붕대_"
 			CASE 2024
-				改造パターン名_上 += "リボン_"
+				改造パターン名_上 += "리본_"
 			CASE 2030
-				改造パターン名_その他 += "エロ改造：オープンカップブラ_"
+				改造パターン名_その他 += "에로 개조: 오픈 컵 브라_"
 			CASE 2031
-				改造パターン名_その他 += "エロ改造：ニップルピアス_"
+				改造パターン名_その他 += "에로 개조: 니플 피어싱_"
 			CASE 2032
-				改造パターン名_その他 += "エロ改造：乳首名札_"
+				改造パターン名_その他 += "에로 개조: 유두 명찰_"
 		ENDSELECT		
 		CALLFORM 制服改造初期化_%対象衣装名%()
 		CALL パターン改造素質セット(改造対象, 改造パターン名_上, 改造パターン名_下, 改造パターン名_その他)
@@ -830,19 +1012,19 @@ SELECTCASE LOCAL
 		改造パターン名_その他 = %REPLACE(改造パターン名_その他, "エロ改造：クリ名札_", "")%
 		SELECTCASE LOCAL
 			CASE 2040
-				改造パターン名_下 += "ノーパン_"
+				改造パターン名_下 += "노팬티_"
 			CASE 2042
-				改造パターン名_下 += "前張り_"
+				改造パターン名_下 += "앞 가리개_"
 			CASE 2043
-				改造パターン名_下 += "ふんどし_"
+				改造パターン名_下 += "훈도시_"
 			CASE 2044
-				改造パターン名_下 += "リボン_"
+				改造パターン名_下 += "리본_"
 			CASE 2050
-				改造パターン名_その他 += "エロ改造：オープンショーツ_"
+				改造パターン名_その他 += "에로 개조: 오픈 쇼츠_"
 			CASE 2051
-				改造パターン名_その他 += "エロ改造：性器ピアス_"
+				改造パターン名_その他 += "에로 개조: 성기 피어싱_"
 			CASE 2052
-				改造パターン名_その他 += "エロ改造：クリ名札_"
+				改造パターン名_その他 += "에로 개조: 클리 명찰_"
 		ENDSELECT		
 		CALLFORM 制服改造初期化_%対象衣装名%()
 		CALL パターン改造素質セット(改造対象, 改造パターン名_上, 改造パターン名_下, 改造パターン名_その他)
@@ -857,20 +1039,20 @@ LOOP 1
 IF EXISTFUNCTION(@"CLOTHES_CHANGE_%ARGS%")
 	;被ってない？
 	IF STRCOUNT(所持制服文字列, @"汎用/%ARGS%_") == 0 && STRCOUNT(所持エロ衣装文字列, @"エロ/%ARGS%_") == 0
-		所持制服文字列 += @"汎用/%ARGS%_"
+		所持制服文字列 += @"범용/%ARGS%_"
 	ENDIF
 	RETURN 1
-ELSE
-	;キャラ服にあるか？
-	FOR LOCAL, 1, CHARANUM
-		IF CSTR:LOCAL:服名称 == ARGS
-			;被ってない？
-			IF STRCOUNT(所持制服文字列, @"キャラ専用{NO:LOCAL}/%ARGS%_") == 0
-				所持制服文字列 += @"キャラ専用{NO:LOCAL}/%ARGS%_"
-			ENDIF
-			RETURN 1
-		ENDIF
-	NEXT
+; ELSE
+; 	;キャラ服にあるか？
+; 	FOR LOCAL, 1, CHARANUM
+; 		IF CSTR:LOCAL:服名称 == ARGS
+; 			;被ってない？
+; 			IF STRCOUNT(所持制服文字列, @"キャラ専用{NO:LOCAL}/%ARGS%_") == 0
+; 				所持制服文字列 += @"キャラ専用{NO:LOCAL}/%ARGS%_"
+; 			ENDIF
+; 			RETURN 1
+; 		ENDIF
+; 	NEXT
 ENDIF
 
 ;どっちにもないならエラー返しておしまい
@@ -1052,119 +1234,119 @@ LOCAL = 0
 IF 制服改造:改造対象:上半身鎧あり == 0 && 制服改造:改造対象:上半身服あり == 0
 	;上半身服なし、上半身鎧なしならトップレス（排他）
 	SIF STRFIND(改造パターン名_上, "エロ改造：トップレス_") < 0
-		改造パターン名_上 += "エロ改造：トップレス_"
+		改造パターン名_上 += "에로 개조: 토플리스_"
 	LOCAL = 1
 ELSE
 	IF 制服改造:改造対象:パイズリ可
 		;パイズリ可能なら谷間露出
 		SIF STRFIND(改造パターン名_上, "谷間露出_") < 0
-			改造パターン名_上 += "谷間露出_"
+			改造パターン名_上 += "가슴골 노출_"
 		LOCAL = 1
 	ENDIF
 	IF 制服改造:改造対象:手差し込み可 && 制服改造:改造対象:脇出し
 		;差し込み可かつ脇が出ているなら横乳露出
 		SIF STRFIND(改造パターン名_上, "横乳露出_") < 0
-			改造パターン名_上 += "横乳露出_"
+			改造パターン名_上 += "옆가슴 노출_"
 		LOCAL = 1
 	ENDIF
 	IF 制服改造:改造対象:へそ出し
 		;へそ出しならへそ露出
 		SIF STRFIND(改造パターン名_上, "へそ露出_") < 0
-			改造パターン名_上 += "へそ露出_"
+			改造パターン名_上 += "배꼽 노출_"
 		LOCAL = 1
 	ENDIF
 	IF 制服改造:改造対象:上半身下着あり == 0
 		;トップレス以外で胸下着無しならノーブラ
 		SIF STRFIND(改造パターン名_上, "ノーブラ_") < 0
-			改造パターン名_上 += "ノーブラ_"
+			改造パターン名_上 += "노브라_"
 		LOCAL = 1
 	ELSEIF 制服改造:改造対象:上半身下着あり == 2
 		SIF STRFIND(改造パターン名_上, "ニプレス_") < 0
-			改造パターン名_上 += "ニプレス_"
+			改造パターン名_上 += "니플리스_"
 		LOCAL = 1
 	ELSEIF 制服改造:改造対象:上半身下着あり == 3
 		SIF STRFIND(改造パターン名_上, "さらし_") < 0
-			改造パターン名_上 += "さらし_"
+			改造パターン名_上 += "사라시_"
 		LOCAL = 1
 	ELSEIF 制服改造:改造対象:上半身下着あり == 3
 		SIF STRFIND(改造パターン名_上, "リボン_") < 0
-			改造パターン名_上 += "リボン_"
+			改造パターン名_上 += "리본_"
 		LOCAL = 1
 	ENDIF
 ENDIF
 IF 制服改造:改造対象:上タイツあり
 	;上タイツありならインナーあり
-	改造パターン名_上 += "インナー_"
+	改造パターン名_上 += "이너_"
 	LOCAL = 1
 ENDIF
 
 IF 制服改造:改造対象:下腹部後鎧あり == 0 && 制服改造:改造対象:下腹部前鎧あり == 0 && 制服改造:改造対象:下半身服あり == 0
 	;下半身服なし、下半身鎧前後なしならボトムレス（排他）
 	SIF STRFIND(改造パターン名_下, "エロ改造：ボトムレス_") < 0
-		改造パターン名_下 += "エロ改造：ボトムレス_"
+		改造パターン名_下 += "에로 개조: 보텀리스_"
 	LOCAL = 1
 ELSE
 	IF 制服改造:改造対象:スカートめくり可
 		IF 制服改造:改造対象:膝露出
 			;スカートめくり可、膝露出ありならミニスカ
 			SIF STRFIND(改造パターン名_下, "ミニスカ_") < 0
-				改造パターン名_下 += "ミニスカ_"
+				改造パターン名_下 += "미니스커트_"
 		ELSE
 			;スカートめくり可ならスカート
 			SIF STRFIND(改造パターン名_下, "スカート_") < 0
-				改造パターン名_下 += "スカート_"
+				改造パターン名_下 += "스커트_"
 		ENDIF
 		LOCAL = 1
 	ENDIF
 	IF 制服改造:改造対象:下半身下着あり == 0
 		;ボトムレス以外で股下着無しならノーパン
 		SIF STRFIND(改造パターン名_下, "ノーパン_") < 0
-			改造パターン名_下 += "ノーパン_"
+			改造パターン名_下 += "노팬티_"
 		LOCAL = 1
 	ELSEIF 制服改造:改造対象:下半身下着あり == 2
 		SIF STRFIND(改造パターン名_下, "前張り_") < 0
-			改造パターン名_下 += "前張り_"
+			改造パターン名_下 += "앞가리개_"
 		LOCAL = 1
 	ELSEIF 制服改造:改造対象:下半身下着あり == 3
 		SIF STRFIND(改造パターン名_下, "ふんどし_") < 0
-			改造パターン名_下 += "ふんどし_"
+			改造パターン名_下 += "훈도시_"
 		LOCAL = 1
 	ELSEIF 制服改造:改造対象:下半身下着あり == 4
 		SIF STRFIND(改造パターン名_下, "リボン_") < 0
-			改造パターン名_下 += "リボン_"
+			改造パターン名_下 += "리본_"
 		LOCAL = 1
 	ENDIF
 ENDIF
 IF 制服改造:改造対象:下タイツあり
 	;下タイツありならタイツあり
 	SIF STRFIND(改造パターン名_下, "タイツ_") < 0
-		改造パターン名_下 += "タイツ_"
+		改造パターン名_下 += "타이츠_"
 	LOCAL = 1
 ENDIF
 IF 制服改造:改造対象:上半身下着あり == -3
 	SIF STRFIND(改造パターン名_その他, "エロ改造：乳首名札_") < 0
-		改造パターン名_その他 += "エロ改造：乳首名札_"
+		改造パターン名_その他 += "에로 개조: 유두 명찰_"
 	LOCAL = 1
 ELSEIF 制服改造:改造対象:上半身下着あり == -2
 	SIF STRFIND(改造パターン名_その他, "エロ改造：ニップルピアス_") < 0
-		改造パターン名_その他 += "エロ改造：ニップルピアス_"
+		改造パターン名_その他 += "에로 개조: 니플 피어싱_"
 	LOCAL = 1
 ELSEIF 制服改造:改造対象:上半身下着あり == -1
 	SIF STRFIND(改造パターン名_その他, "エロ改造：オープンカップブラ_") < 0
-		改造パターン名_その他 += "エロ改造：オープンカップブラ_"
+		改造パターン名_その他 += "에로 개조: 오픈컵 브라_"
 	LOCAL = 1
 ENDIF
 IF 制服改造:改造対象:下半身下着あり == -3
 	SIF STRFIND(改造パターン名_その他, "エロ改造：クリ名札_") < 0
-		改造パターン名_その他 += "エロ改造：クリ名札_"
+		改造パターン名_その他 += "에로 개조: 클리 명찰_"
 	LOCAL = 1
 ELSEIF 制服改造:改造対象:下半身下着あり == -2
 	SIF STRFIND(改造パターン名_その他, "エロ改造：性器ピアス_") < 0
-		改造パターン名_その他 += "エロ改造：性器ピアス_"
+		改造パターン名_その他 += "에로 개조: 성기 피어싱_"
 	LOCAL = 1
 ELSEIF 制服改造:改造対象:下半身下着あり == -1
 	SIF STRFIND(改造パターン名_その他, "エロ改造：オープンショーツ_") < 0
-		改造パターン名_その他 += "エロ改造：オープンショーツ_"
+		改造パターン名_その他 += "에로 개조: 오픈 쇼츠_"
 	LOCAL = 1
 ENDIF
 RETURNF LOCAL
@@ -1182,20 +1364,20 @@ LOCALS '= "정장・긴 바지"
 
 IF パターン改造素質逆引き(GETNUM(制服改造, "リゾート従業員制服", 1), 改造パターン名_上, 改造パターン名_下, 改造パターン名_その他)
 	IF STRFIND(改造パターン名_上, "エロ改造：トップレス_") > -1
-		LOCALS = トップレス・
+		LOCALS = 토플리스・
 	ELSEIF STRFIND(改造パターン名_上, "谷間露出_") > -1 || STRFIND(改造パターン名_上, "横乳露出_") > -1
-		LOCALS = 胸部露出・
+		LOCALS = 흉부 노출・
 	ELSE
-		LOCALS = スーツ・
+		LOCALS = 정장・
 	ENDIF
 	IF STRFIND(改造パターン名_下, "エロ改造：ボトムレス_") > -1
-		LOCALS += "ボトムレス"
+		LOCALS += "하의 없음"
 	ELSEIF STRFIND(改造パターン名_下, "ミニスカ") > -1
-		LOCALS += "ミニスカ"
+		LOCALS += "미니스커트"
 	ELSEIF STRFIND(改造パターン名_下, "スカート") > -1
-		LOCALS += "スカート"
+		LOCALS += "스커트"
 	ELSE
-		LOCALS += "ロングパンツ"
+		LOCALS += "롱 팬츠"
 	ENDIF
 ENDIF
 RETURNF LOCALS

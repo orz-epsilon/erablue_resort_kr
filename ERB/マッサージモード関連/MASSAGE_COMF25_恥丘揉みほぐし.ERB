@@ -3,7 +3,7 @@
 ;-------------------------------------------------
 @MASSAGE_COMNAME25
 #FUNCTIONS
-TSTR:コマンド名受渡 = 치구 주무르기
+TSTR:コマンド名受渡 = 치구 마사지
 
 
 ;===================================================
@@ -14,9 +14,9 @@ TSTR:コマンド名受渡 = 치구 주무르기
 TFLAG:コマンドタイプ受渡 = MASSAGE_COMTYPE("エロマッサージ")
 
 @MASSAGE_COM_TOOLTIP_25
-LOCALS = <br>■치구 주무르기<br>
-LOCALS += "손바닥 전체를 사용하여 감싸듯이 부드럽게 치구를 주무른다."
-LOCALS += "<br>애액이 나오는 것은 해독이 되니까요. 많이 나오게 하자."
+LOCALS = <br>■치구 마사지<br>
+LOCALS += "손바닥 전체를 사용하여 감싸듯이 부드럽게 치구를 마사지한다."
+LOCALS += "<br>애액이 나오는 건 디톡스가 되니까. 많이 내보내자."
 LOCALS += "<br>COM 타입: 에로 마사지<br>획득 소스: 쾌C・접촉・환락・액체"
 LOCALS += "<br>고유 획득 경험: 없음<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
@@ -64,6 +64,8 @@ ELSE
 	CALL SOURCE_CALC_好感度要素_性愛度UP(TARGET, PLAYER, 50)
 ENDIF
 
+BASE:TARGET:ちんイラ = MAX(0, BASE:TARGET:ちんイラ - 100)
+
 ;-------------------------------------------------
 ;経験の処理
 ;-------------------------------------------------
@@ -107,16 +109,16 @@ RETURN 1
 ;-------------------------------------------------
 @MASSAGE_MESSAGE_COM25
 
-PRINTFORML %CALLNAME:PLAYER%은(는) 마사지 오일을 바른 손바닥으로, %CALLNAME:TARGET%의 치구를 감싸듯이%TEXTR("부드럽게/상냥하게")% 주물렀다.
+PRINTFORML %CALLNAME:PLAYER%은(는) 마사지 오일을 바른 손바닥으로, %CALLNAME:TARGET%의 치구를 감싸듯이 %TEXTR("살살/부드럽게")% 주물렀다.
 
 ;削りが十分な時は追加のメッセージ
 IF (BASE:TARGET:理性 + BASE:TARGET:警戒) < 500
 	PRINTW 
 	SELECTCASE RAND:2
 	CASE 0
-		PRINTFORM %CALLNAME:TARGET%은(는) %TEXTR("황홀하게 눈가를 녹이며/녹아내린 얼굴로 헤프게 입을 벌리고/법열에 눈가를 녹이며")%、
+		PRINTFORM %CALLNAME:TARGET%은(는) %TEXTR("황홀하게 눈가를 녹이며/황홀한 얼굴로 헤프게 입을 벌리고/법열에 눈가를 녹이며")%、
 	CASE 1
-		PRINTFORM %CALLNAME:TARGET%은(는) 헤프게 풀린 입에서%TEXTR("상스러운 목소리/쾌락에 물든 교성/음란한 목소리")%을(를)%TEXTR("내며/흘리며/흘리면서")%、
+		PRINTFORM %CALLNAME:TARGET%은(는) 헤프게 풀린 입에서 %TEXTR("주체할 수 없는 소리/쾌락에 물든 교성/음란한 소리")%를 %TEXTR("내며/흘리며/흘리면서")%、
 	ENDSELECT
-	PRINTFORML %CALLNAME:PLAYER%%TEXTR("의 『마사지』/의 손기술/이 주는 쾌락")%%TEXTR("에 보지를 내주고 있다/에 취해 있다/에 당하는 대로 되어 있다/을 받아들이고 있다/을 감수하고 있다")%…
+	PRINTFORML %CALLNAME:PLAYER%%TEXTR("의 '마사지'/의 손기술/이 주는 쾌락")%%TEXTR("에 보지를 내주고 있다/에 취해 있다/에 당하는 대로 되어 있다/을 받아들이고 있다/을 감수하고 있다")%…
 ENDIF

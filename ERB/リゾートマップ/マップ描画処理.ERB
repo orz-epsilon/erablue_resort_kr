@@ -14,7 +14,7 @@
 #DIM 表示開始数_縦
 #DIM 描画横幅カウント
 #DIM 表示幅
-#DIMS AA, 50
+#DIMS AA, 80
 #DIM SPOT
 #DIM MODE
 #DIM LOCATION
@@ -29,6 +29,7 @@ VARSET RESULTS
 表示文字列 = 
 一時文字列 = 
 改行数 = 0
+最大横サイズ = 0
 
 TRYCCALLFORM MAP_VIEWING_{CFLAG:PLAYER:現在マップ種別}(AA)
 CATCH
@@ -41,6 +42,11 @@ ENDCATCH
 FOR LINENUM, 表示開始数_縦, VARSIZE("AA")
 	SIF AA:LINENUM == ""
 		CONTINUE
+	;表示幅(縦用に補正したもの)以降は非表示。補正はクイック移動用なので他で使うとズレるかも
+	IF 表示幅 > 0 && LINENUM - 表示開始数_縦 > 表示幅 * 10 / 24
+		改行数 += 1
+		CONTINUE
+	ENDIF
 	;行ごとに初期化
 	X_POINT = 0
 	RESULTS = I
@@ -122,7 +128,7 @@ FOR LOCAL, 0, マップ部屋番号上限
 			LOCAL:2 = 0
 		ENDIF
 		;存在する場所を順番に並べる
-		表示文字列 += @"<button value='{LOCAL}'>[{LOCAL, 4}] %GETPLACENAME(CFLAG:PLAYER:現在マップ種別, LOCAL), 20, LEFT%</button>"
+		表示文字列 += @"<button value='{LOCAL}'>[{LOCAL, 4}] %場所名韓国語変換(GETPLACENAME(CFLAG:PLAYER:現在マップ種別, LOCAL)), 20, LEFT%</button>"
 		LOCAL:1 ++ 
 		IF LOCAL:1 % 3 == 0
 			表示文字列 += "<br>"
@@ -154,16 +160,16 @@ FOR LOCAL, 0, 10
 		IF TSTR:場所名受渡 != ""
 			SIF ENUMFUNCENDSWITH(@"大規模エリア建設条件_%TSTR:場所名受渡%") > 0 && MATCH(開拓エリア開発番号, LOCAL) < 1
 				CONTINUE
-			PRINTBUTTON @"[{LOCAL}]%TSTR:場所名受渡%으로 이동한다", LOCAL
+			PRINTBUTTON @"[{LOCAL}]%TSTR:場所名受渡%로 이동한다", LOCAL
 			;工事中表示
 			IF TSTR:場所名受渡 == "空艇港エリア" && イベント完了フラグ確認("渡りに船の定期便") && 渡りに船の定期便_受諾日付 + 3 > DAY
-				PRINTFORM 　(현재 공사 중! 남은 %TOFULL(TOSTR(3 - (DAY - 渡りに船の定期便_受諾日付)))%일)
+				PRINTFORM 　（현재 공사 중!　남은 %TOFULL(TOSTR(3 - (DAY - 渡りに船の定期便_受諾日付)))%일）
 			ENDIF
 			;NEW表示
 			IF エリアNEW表示判定(TSTR:場所名受渡)
 				;存在するけど訪れたことのないエリアがあるなら強調表示
 				SETCOLOR カラーパレット("黄")
-				PRINT 　NEW!
+				PRINT 　NEW！
 				RESETCOLOR
 			ENDIF
 			PRINTL 
@@ -267,7 +273,7 @@ RETURNF 1
 IF あなた追跡キャラ
 	IF CFLAG:あなた追跡キャラ:現在位置 == 998 || CFLAG:あなた追跡キャラ:現在位置 == 999
 		;リゾートにいないパターン
-		PRINTFORMW %CALLNAME:あなた追跡キャラ%이(가) 리조트 밖에 있으므로, 자동 추적을 중지합니다.
+		PRINTFORMW %CALLNAME:あなた追跡キャラ%이(가) 리조트 밖에 있어서, 자동 추적을 중지합니다.
 		あなた追跡キャラ = 0
 	ELSEIF IS_SAME_ROOM(MASTER, あなた追跡キャラ) == 0
 		;コマンド入力をスキップし移動処理を入れる

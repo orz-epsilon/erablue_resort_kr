@@ -2,7 +2,7 @@
 
 @COMNAME23
 #FUNCTIONS
-TSTR:コマンド名受渡 = 시키는 대로
+TSTR:コマンド名受渡 = 내버려 두기
 
 ;===================================================
 ;コマンドタイプ
@@ -12,8 +12,8 @@ TSTR:コマンド名受渡 = 시키는 대로
 TFLAG:コマンドタイプ受渡 = COMTYPE("うふふ_被挿入中")
 
 @COM_TOOLTIP_23
-LOCALS = <br>■なすがまま<br>
-LOCALS += "행동하지 않고, 상대방이 원하는 대로 하게 하는 커맨드. <br>5커맨드 동안, 오토 커맨드를 연속 발동시킨다."
+LOCALS = <br>■내버려 두기<br>
+LOCALS += "행동하지 않고, 상대가 원하는 대로 하게 하는 커맨드. <br>5 커맨드 동안, 자동 커맨드를 연속 발동시킨다."
 LOCALS += "<br>COM 타입: 우후후<br>획득 소스: 없음"
 LOCALS += "<br>고유 획득 경험: 없음<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
@@ -50,5 +50,5 @@ RETURN 1
 ;実行時メッセージ
 ;-------------------------------------------------
 @MESSAGE_COM23
-PRINTFORML %CALLNAME:PLAYER%는 %CALLNAME:TARGET%의 뜻대로 된다…
+PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%에게 맡겨졌다…
 

@@ -1,0 +1,156 @@
+
+@イベント発生条件_突発イベント_カミカイヒ
+;開放条件を満たしたら1を返すこと
+#DIM キャラ番号_キクル
+;イベント消滅日数渡し = 10
+;イベント消滅確率渡し = 30
+;イベント再発生日数渡し = 20
+;イベント再発生確率渡し = 50
+
+キャラ番号_キクル = GETCHARA(3024) ;
+SIF CFLAG:キャラ番号_キクル:招待不可フラグ != 0
+	RETURN 0
+
+RETURN 1
+
+@イベント関数_突発イベント_カミカイヒ(ARG)
+#DIM 最大レベル
+#DIM 対象キャラ
+#DIMS 顔グラ表示文字列
+
+対象キャラ = GETCHARA(3024) ;任意のキャラのNOを入れる
+LOCAL = DT_CELL_GET("各イベント用変数配列", ARG, "イベント再発生CT")
+;IF LOCAL == 0
+	;初回
+	DRAWLINE
+	PRINTL ［마물습격］
+	DRAWLINE
+
+	PRINTFORMW 보아하니 근처 산과 숲에서 마물이 내려온 모양이다. 하지만 이번 대상은 지금까지의 보고와 상당히 다르다.
+	PRINTFORMW 목격자에 따르면, 이 개체는 비정상적으로 거대해진 거미 괴물인 듯하다. 게다가 매우 빠르다.
+	PRINTFORMW 이 지역에서는 보기 드문 괴물이지만, 키클·마단이 해당하는 괴물을 알고 있는 듯하다.
+	PRINTL
+	IF ENUMFILES(@"resources/3024キクル/", "顔_デフォルト.*", 1) > 0
+		顔グラ表示文字列 = %顔グラ表示用文字列関数(対象キャラ)%
+		HTML_PRINT 顔グラ表示文字列
+		描画開始行数 = LINECOUNT
+		CALL ピクセル自動改行(180)
+	ENDIF
+	PRINTL 키클：
+	PRINTFORMW 「설마 이 녀석인건가」
+	PRINTL
+	PRINTFORMW 그의 설명에 따르면, 이번 마물은 아마도 거미 마물 ‘회피거미’의 네임드라고 한다.
+	PRINTFORMW 일반 종은 적의를 감지해 공격을 피한다. 조준이 필요한 공격에서는 토벌할 수 없다.
+	PRINTFORMW 게다가 한 번 물어 상대를 죽음에 이르게 하는 강력한 독을 가지고 있으며, 철보다도 강인한 실을 지니고 있다.
+	PRINTFORMW 이는 매우 위험한 적이므로, 출격 캐릭터 선택을 신중히 검토하는 것이 좋겠다.
+	PRINTL
+	PRINTL 리조트에 내려온 마물과 싸웁니다. 준비는 되셨나요?
+	PRINTBUTTON "[0]예", 0
+	PRINTL
+	PRINTBUTTON "[1]아니오", 1
+	PRINTL
+	BINPUT
+	SELECTCASE RESULT
+		CASE 0
+		
+			PRINTFORMW %CALLNAME:PLAYER%들은 리조트에 침입한 마물에 맞서 싸운다!
+			
+			CALL イベント戦闘初期処理()
+			;最大レベル取得
+			最大レベル = 0
+			VARSET LOCAL
+			FOR LOCAL, 0, 14
+				SIF LOCAL > 3 && LOCAL < 10
+					CONTINUE
+				SIF BATTLE_STATE:LOCAL:キャラ登録番号 < 1
+					CONTINUE
+				SIF BATTLE_STATE:LOCAL:Lv > 最大レベル
+					最大レベル = BATTLE_STATE:LOCAL:Lv
+				;キャラ数もカウント
+				LOCAL:1 ++
+			NEXT
+			敵BATTLE_STATE_STR:2:エネミー名 = Lv40_カミカイヒ
+			敵BATTLE_STATE_STR:1:エネミー名 = Lv1_深遠な森
+			敵BATTLE_STATE_STR:5:エネミー名 = Lv1_深遠な森
+			;CALL ランダムエネミーセット関数(LOCAL:1, 最大レベル - 2)
+			CALL 雑魚敵遭遇汎用処理
+			IF RESULT == 0
+				;勝利
+				PRINTFORMW %CALLNAME:PLAYER%들은 무사히 마물을 퇴치했다.
+				CALL イベント完了フラグ汎用処理("カミカイヒ")
+			ELSEIF RESULT == 1
+				;全滅
+				PRINTW 실수를 해버렸다. 여기서는 일단 물러나자.
+			ELSEIF RESULT == -1
+				;逃走
+				PRINTW 생각보다 만만치 않은 것 같다. 여기서는 일단 물러나자.
+			ENDIF
+			CALL ダンジョン終了時処理
+		CASE 1
+			PRINTW 아니, 방심은 좋지 않다. 여기서는 철저히 준비한 뒤에 하자.
+	ENDSELECT
+;ELSE
+;	;二回目以降
+;	DRAWLINE
+;	PRINTL ［魔物袭击］
+;	DRAWLINE
+;	PRINTW
+;	PRINTFORMW 又有魔物侵袭至度假区。
+;	PRINTFORMW 需在受害前迅速击溃。
+;	PRINTL
+;	PRINTL 将与袭击度假区的魔物交战。准备就绪了吗？
+;	PRINTBUTTON "[0]确定", 0
+;	PRINTL
+;	PRINTBUTTON "[1]取消", 1
+;	PRINTL
+;	BINPUT
+;	SELECTCASE RESULT
+;		CASE 0
+;			PRINTFORMW %CALLNAME:PLAYER%一行迎击来袭魔物！
+;
+;			CALL イベント戦闘初期処理()
+;			;最大レベル取得
+;			最大レベル = 0
+;			VARSET LOCAL
+;			FOR LOCAL, 0, 14
+;				SIF LOCAL > 3 && LOCAL < 10
+;					CONTINUE
+;				SIF BATTLE_STATE:LOCAL:キャラ登録番号 < 1
+;					CONTINUE
+;				SIF BATTLE_STATE:LOCAL:Lv > 最大レベル
+;					最大レベル = BATTLE_STATE:LOCAL:Lv
+;				;キャラ数もカウント
+;				LOCAL:1 ++
+;			NEXT
+;			CALL ランダムエネミーセット関数(LOCAL:1, 最大レベル - 2)
+;			CALL イベント中戦闘用処理()
+;			IF RESULT == 0
+;				;勝利
+;				PRINTL 
+;				PRINTL 
+;				PRINTFORMW %CALLNAME:PLAYER%一行顺利清剿魔物。
+;				CALL イベント完了フラグ汎用処理("カミカイヒ")
+;			ELSEIF RESULT == 1
+;				;全滅
+;				PRINTL 
+;				PRINTL 
+;				PRINTW 遭遇惨败，暂且撤退重整旗鼓。
+;			ELSEIF RESULT == -1
+;				;逃走
+;				PRINTL 
+;				PRINTL 
+;				PRINTW 敌方实力超乎预期，暂且撤退从长计议。
+;			ENDIF
+;			CALL ダンジョン終了時処理
+;		CASE 1
+;			PRINTW 不，不能掉以轻心。还是充分准备后再行动吧。
+;	ENDSELECT
+;ENDIF
+
+
+
+
+
+
+
+

@@ -25,7 +25,7 @@ IF TALENT:TARGET:性別 == 2
 ELSE
 	LOCALS = <br>■허벅지 다리 슬리밍 에스테<br>
 	LOCALS += "오일을 사용하여 허벅지를 마사지한다."
-	LOCALS += "<br>보습, 미용 효과 외에도 시술 후에는 부기가 빠져 아름다운 다리가 된다고 평판이 좋다."
+	LOCALS += "<br>보습, 미용 효과 외에도 시술 후에는 부기가 빠져 아름다운 다리가 된다고 평판이 자자하다."
 	LOCALS += "<br>COM 타입: 미묘한 에로 마사지<br>획득 소스: 쾌S・접촉・환락・노출"
 	LOCALS += "<br>고유 획득 경험: 없음<br>"
 	TSTR:ツールチップ受渡 = %LOCALS%
@@ -104,17 +104,17 @@ IF TALENT:TARGET:性別 == 2
 	PRINTFORM %CALLNAME:PLAYER%은(는) 마사지 오일을 바른 손바닥으로%CALLNAME:TARGET%의
 		IF TALENT:TARGET:体格 >= 1
 		;長身以上
-			PRINTFORM %TEXTR("살이 꽉 찬/근육질의")%
+			PRINTFORM %TEXTR("살집이 단단하게 붙은/근육질의")%
 		ELSEIF TALENT:TARGET:体格 <= -1
 		;小柄以下
 			PRINTFORM 살집이 얇고 가녀린
 		ENDIF
 	PRINTFORML 허벅지를 정성껏 주물러 풀었다.
 ELSE
-	PRINTFORM %CALLNAME:PLAYER%은(는) 마사지 오일을 떨어뜨리고, 손바닥 전체를 사용하여 %CALLNAME:TARGET%의
+	PRINTFORM %CALLNAME:PLAYER%은(는) 마사지 오일을 떨어뜨리고, 손바닥 전체를 사용해서 %CALLNAME:TARGET%의
 		IF 下半身体型(TARGET) >= 1
 		;肉感的以上
-			PRINTFORM %TEXTR("탱탱한/말랑말랑한/탱탱하게 살이 붙은/말랑말랑하고 육감적인")%
+			PRINTFORM %TEXTR("통통한/말랑말랑한/통통하게 살이 붙은/말랑말랑하고 육감적인")%
 		ELSEIF 下半身体型(TARGET) <= -2
 		;細身以下
 			PRINTFORM 살집이 얇은 가녀린

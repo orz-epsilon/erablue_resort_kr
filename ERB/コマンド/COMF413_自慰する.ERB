@@ -96,16 +96,16 @@ RETURN 1
 ;実行時メッセージ
 ;-------------------------------------------------
 @MESSAGE_COM413
-PRINTFORM %CALLNAME:PLAYER%는
+PRINTFORM %CALLNAME:PLAYER%은(는)
 IF TFLAG:調教モード == 2
 	PRINTFORM %CALLNAME:TARGET%의 눈앞에서
 ELSEIF GET_TARGETNUM() > 0 && CFLAG:PLAYER:隠密
-	PRINT 들키지 않게 숨으면서
+	PRINT 들키지 않게 숨어서
 ELSEIF MYROOM(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置)
-	PRINT 자신의 방에서 편안하게
+	PRINT 자신의 방에서 느긋하게
 ELSE
-	PRINT 아무도 없는 곳에서 몰래
+	PRINT 아무도 없는 장소에서 몰래
 ENDIF
-PRINTL 자신을 위로했다……
+PRINTL 스스로를 위로했다……
 
 

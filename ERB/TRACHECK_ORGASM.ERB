@@ -136,8 +136,8 @@ IF ARG != MASTER && PLAYER == MASTER && RCVAR:ARG:絶頂の強度 > 0 && !CFLAG:
 	IF !CFLAG:ARG:快楽計算フラグ || CFLAG:ARG:うふふ
 		IF 初体験日:ARG:あなたの手で初絶頂 == 0
 			初体験日:ARG:あなたの手で初絶頂 = DAY
-			CALL 履歴データベース登録(CFLAG:MASTER:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>처음으로 %CALLNAME:ARG%를 절정시켰다.</font>","うふふ")
-			CALL 履歴データベース登録(CFLAG:ARG:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>처음으로 %CALLNAME:MASTER%의 손에 절정했다.</font>","うふふ")
+			CALL 履歴データベース登録(CFLAG:MASTER:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>처음으로 %CALLNAME:ARG%을 절정시켰다</font>","うふふ")
+			CALL 履歴データベース登録(CFLAG:ARG:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>처음으로 %CALLNAME:MASTER%의 손으로 절정했다</font>","うふふ")
 		ENDIF
 	ENDIF
 ENDIF
@@ -387,16 +387,16 @@ IF NOWEX:対象キャラ:多重絶頂 > 3
 	PRINTFORML 승천(%CALLNAME:対象キャラ%)
 ELSEIF NOWEX:対象キャラ:多重絶頂 > 2
 	DRAWLINE
-	PRINTFORML 초강절정(%CALLNAME:対象キャラ%)
+	PRINTFORML 초강 절정(%CALLNAME:対象キャラ%)
 ELSEIF NOWEX:対象キャラ:多重絶頂 > 1
 	DRAWLINE
-	PRINTFORML 강절정(%CALLNAME:対象キャラ%)
+	PRINTFORML 강 절정(%CALLNAME:対象キャラ%)
 ELSEIF NOWEX:対象キャラ:多重絶頂 >= 1
 	DRAWLINE
 	PRINTFORML 절정(%CALLNAME:対象キャラ%)
 ELSEIF NOWEX:対象キャラ:噴乳 > 1
 	DRAWLINE
-	PRINTFORML 대량분유(%CALLNAME:対象キャラ%)
+	PRINTFORML 대량 분유(%CALLNAME:対象キャラ%)
 ELSEIF NOWEX:対象キャラ:噴乳 > 0
 	DRAWLINE
 	PRINTFORML 분유(%CALLNAME:対象キャラ%)
@@ -413,7 +413,7 @@ SIF TALENT:対象キャラ:自制心
 
 IF ABL:対象キャラ:欲望 < LOCAL
 	ABL:対象キャラ:欲望 ++
-	PRINTFORML 그리고 %CALLNAME:対象キャラ%의 욕망이 LV{LOCAL}이(가) 되었다
+	PRINTFORML 그리고 %CALLNAME:対象キャラ%의 욕망이 LV{LOCAL}이 되었다
 ENDIF
 ;-------------------------------------------------
 ;調教対象の噴乳チェック
@@ -464,14 +464,15 @@ BASE:ARG:母乳 += LOCAL
 SIF !CFLAG:ARG:うふふ
 	BASE:ARG:母乳 = MIN(BASE:ARG:母乳, MAXBASE:ARG:母乳 - 1)
 
-IF  BASE:ARG:母乳 > MAXBASE:ARG:母乳 * 2
-	LOCAL = 1
-ELSEIF BASE:ARG:母乳 > MAXBASE:ARG:母乳
-	LOCAL = 0
-ELSE
+SIF BASE:ARG:母乳 < MAXBASE:ARG:母乳
 	RETURN 0
-ENDIF
-LOCAL ++
+
+;噴乳を最大2までにしたい場合は下二行のコメントアウトを削除
+;SIF BASE:ARG:母乳 >= MAXBASE:ARG:母乳 * 3
+;	BASE:ARG:母乳 = MAXBASE:ARG:母乳 * 3 - 1
+LOCAL = BASE:ARG:母乳 / MAXBASE:ARG:母乳
+BASE:ARG:母乳 %= MAXBASE:ARG:母乳
+
 IF EXP:ARG:噴乳経験 < EXPLV:1
 	SOURCE:ARG:露出 += 5000 * LOCAL
 	SOURCE:ARG:屈従 += 2500 * LOCAL
@@ -499,8 +500,6 @@ ENDIF
 ; PRINTFORML %CALLNAME:ARG%は乳首から\@ LOCAL == 2 ? 大量の # \@母乳を噴出した
 EXP:ARG:噴乳経験 += LOCAL
 ;Ｂに母乳汚れ
-SIF BASE:ARG:母乳 >= MAXBASE:ARG:母乳
-	BASE:ARG:母乳 = MAXBASE:ARG:母乳 - 1
 NOWEX:ARG:噴乳 += LOCAL
 EX:ARG:噴乳 += LOCAL
 NOWEX:ARG:スコア += LOCAL
@@ -526,6 +525,10 @@ NOWEX:ARG:スコア += LOCAL
 SIF 実行キャラ != MASTER || あなた特殊能力:エナジードレイン <= 0
 	RETURN
 SIF !あなた特殊能力_発揮条件_エナジードレイン()
+	RETURN
+;射精側があなたの場合、体力は無限
+;それにわざわざ回復させなくても勝手に自然回復するからね…
+SIF 射精キャラ == MASTER
 	RETURN
 
 ;1回万全で射精できるだけの精力を体力を削って確保させる

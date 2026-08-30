@@ -58,9 +58,9 @@ CALL 初体験日登録処理(ARG, ARG:1, "Ｖ挿入初体験", 喪失時間, �
 CALL 初体験日登録処理(ARG, ARG:1, "Ｖ挿入体験", 喪失時間, 喪失場所, 喪失方法, , 0)
 IF RESULT
 	IF ARG:1 < 0
-		CALL 履歴データベース登録(CFLAG:ARG:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>처음으로 낯선 상대에게 Ｖ삽입 당했다.</font>","うふふ")
+		CALL 履歴データベース登録(CFLAG:ARG:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>처음으로 모르는 상대에게 V삽입을 당했다</font>","うふふ")
 	ELSE
-		CALL 履歴データベース登録(CFLAG:ARG:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>처음으로 %CALLNAME:(ARG:1)%에게 Ｖ삽입 당했다.</font>","うふふ")
+		CALL 履歴データベース登録(CFLAG:ARG:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>처음으로 %CALLNAME:(ARG:1)%에게 V삽입을 당했다</font>","うふふ")
 	ENDIF
 ENDIF
 
@@ -85,31 +85,31 @@ IF TALENT:ARG:処女 == 1
 		LOCAL = 2000
 		IF ARG:1 < 0
 			IF GETBIT(ABS(ARG:1), 1)
-				PRINTW ：페니스
+				PRINTW : 음경
 			ELSE
-				PRINTW ：페니스 밴드
+				PRINTW : 페니스 밴드
 				RCVAR:ARG:破瓜 = 5
 			ENDIF
 		ELSE
 			IF GETBIT(TALENT:(ARG:1):性別, 1)
-				PRINTW ：페니스
+				PRINTW : 음경
 			ELSE
-				PRINTW ：페니스 밴드
+				PRINTW : 페니스 밴드
 				RCVAR:ARG:破瓜 = 5
 			ENDIF
 		ENDIF
 	;バイブ
 	ELSEIF ARG:2 == 2
 		LOCAL = 1500
-		PRINTW ：도구
+		PRINTW : 도구
 	;指
 	ELSEIF ARG:2 == 3
 		LOCAL = 1000
-		PRINTW ：손가락
+		PRINTW : 손가락
 	;触手
 	ELSEIF ARG:2 == 4
 		LOCAL = 2000
-		PRINTW ：촉수
+		PRINTW : 촉수
 	ENDIF
 	LOCAL = LOCAL * PAIN_CHECK_V(ARG) / 1000
 	CALL SOURCE_CALC_苦痛(ARG, ARG:1, LOCAL)
@@ -161,11 +161,11 @@ IF TALENT:ARG:処女 == 1
 		IF ARG:2 == 1
 			;親愛かつ相手が主人
 			IF TALENT:ARG:恋慕 > 1
-				PRINTFORML %CALLNAME:ARG%은(는)%CALLNAME:MASTER%이(가) 첫 상대라는 것에 더할 나위 없는 행복을 느끼는 것 같다……
+				PRINTFORML %CALLNAME:ARG%은(는) %CALLNAME:MASTER%이(가) 첫 상대라는 사실에 더없는 행복을 느끼는 듯하다……
 				CALL SOURCE_CALC_歓楽(ARG, PLAYER, 5000)
 			;恋慕かつ相手が主人
 			ELSEIF TALENT:ARG:恋慕
-				PRINTFORML %CALLNAME:ARG%은(는)%CALLNAME:MASTER%에게 처녀를 바쳐진 것에 행복을 느끼는 것 같다……
+				PRINTFORML %CALLNAME:ARG%은(는) %CALLNAME:MASTER%에게 처녀를 바칠 수 있었던 것에 행복을 느끼는 듯하다……
 				CALL SOURCE_CALC_歓楽(ARG, PLAYER, 2000)
 			ENDIF
 		ENDIF
@@ -221,9 +221,9 @@ CALL 初体験日登録処理(ARG, ARG:1, "Ａ挿入初体験", 喪失時間, �
 CALL 初体験日登録処理(ARG, ARG:1, "Ａ挿入体験", 喪失時間, 喪失場所, 喪失方法, , 0)
 IF RESULT
 	IF ARG:1 < 0
-		CALL 履歴データベース登録(CFLAG:ARG:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>처음으로 낯선 상대에게 Ａ삽입 당했다.</font>","うふふ")
+		CALL 履歴データベース登録(CFLAG:ARG:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>처음으로 모르는 상대에게 A삽입을 당했다</font>","うふふ")
 	ELSE
-		CALL 履歴データベース登録(CFLAG:ARG:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>처음으로 %CALLNAME:(ARG:1)%에게 Ａ삽입 당했다.</font>","うふふ")
+		CALL 履歴データベース登録(CFLAG:ARG:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>처음으로 %CALLNAME:(ARG:1)%에게 A삽입을 당했다</font>","うふふ")
 	ENDIF
 ENDIF
 
@@ -248,23 +248,23 @@ IF TALENT:ARG:Ａ処女 == 1
 		LOCAL = 2000
 		IF ARG:1 < 0
 			IF GETBIT(ABS(ARG:1), 1)
-				PRINTW ：페니스
+				PRINTW : 음경
 			ELSE
-				PRINTW ：페니스 밴드
+				PRINTW : 페니스 밴드
 				RCVAR:ARG:Ａ破瓜 = 5
 			ENDIF
 		ELSE
 			IF GETBIT(TALENT:(ARG:1):性別, 1)
-				PRINTW ：페니스
+				PRINTW : 음경
 			ELSE
-				PRINTW ：페니스 밴드
+				PRINTW : 페니스 밴드
 				RCVAR:ARG:Ａ破瓜 = 5
 			ENDIF
 		ENDIF
 	;触手
 	ELSEIF ARG:2 == 4
 		LOCAL = 2000
-		PRINTW ：촉수
+		PRINTW : 촉수
 	ENDIF
 	LOCAL = LOCAL * PAIN_CHECK_V(ARG) / 1000
 	CALL SOURCE_CALC_苦痛(ARG, ARG:1, LOCAL)
@@ -318,11 +318,11 @@ IF TALENT:ARG:Ａ処女 == 1
 		IF ARG:2 == 1
 		;親愛かつ相手が主人
 			IF TALENT:ARG:恋慕 > 1
-				PRINTFORML %CALLNAME:ARG%은(는) %CALLNAME:MASTER%이 뒤의 첫 상대라는 것에 더없는 행복을 느끼는 것 같다……
+				PRINTFORML %CALLNAME:ARG%은(는) %CALLNAME:MASTER%가 뒤쪽의 첫 상대라는 사실에 더없는 행복을 느끼는 듯합니다……
 				CALL SOURCE_CALC_歓楽(ARG, PLAYER, 5000)
 			;恋慕かつ相手が主人
 			ELSEIF TALENT:ARG:恋慕
-				PRINTFORML %CALLNAME:ARG%은(는) %CALLNAME:MASTER%에게 A처녀를 바쳐진 것에 행복을 느끼는 것 같다……
+				PRINTFORML %CALLNAME:ARG%은(는) %CALLNAME:MASTER%에게 A처녀를 바칠 수 있었다는 사실에 행복을 느끼는 듯합니다……
 				CALL SOURCE_CALC_歓楽(ARG, PLAYER, 2000)
 			ENDIF
 		ENDIF
@@ -373,9 +373,9 @@ CALL 初体験日登録処理(ARG, ARG:1, "Ｖ挿入初体験_男側", 喪失時
 CALL 初体験日登録処理(ARG, ARG:1, "Ｖ挿入体験_男側", 喪失時間, 喪失場所, , , 0)
 IF RESULT
 	IF ARG:1 < 0
-		CALL 履歴データベース登録(CFLAG:ARG:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>처음으로 낯선 상대에게 Ｖ삽입했다.</font>","うふふ")
+		CALL 履歴データベース登録(CFLAG:ARG:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>처음으로 모르는 상대에게 V삽입했다</font>","うふふ")
 	ELSE
-		CALL 履歴データベース登録(CFLAG:ARG:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>처음으로 %CALLNAME:(ARG:1)%에게 Ｖ삽입했다.</font>","うふふ")
+		CALL 履歴データベース登録(CFLAG:ARG:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>처음으로 %CALLNAME:(ARG:1)%에게 V삽입했다</font>","うふふ")
 	ENDIF
 ENDIF
 
@@ -411,11 +411,11 @@ IF ARG:1 == MASTER
 	ENDIF
 	;親愛
 	IF TALENT:ARG:恋慕 > 1
-		PRINTFORML %CALLNAME:ARG%은(는) %CALLNAME:MASTER%이 동정을 버린 상대라는 것에 더없는 행복을 느끼는 것 같다……
+		PRINTFORML %CALLNAME:ARG%은(는) %CALLNAME:MASTER%가 동정을 버린 상대라는 사실에 더없는 행복을 느끼는 듯합니다……
 		CALL SOURCE_CALC_歓楽(ARG, PLAYER, 5000)
 	;恋慕
 	ELSEIF TALENT:ARG:恋慕
-		PRINTFORML %CALLNAME:ARG%은(는) %CALLNAME:MASTER%이 동정을 버린 첫 경험 상대라는 것에 행복을 느끼는 것 같다……
+		PRINTFORML %CALLNAME:ARG%은(는) %CALLNAME:MASTER%가 동정을 버린 첫 경험의 상대라는 사실에 행복을 느끼는 듯합니다……
 		CALL SOURCE_CALC_歓楽(ARG, PLAYER, 2000)
 	ENDIF
 ELSE
@@ -463,9 +463,9 @@ CALL 初体験日登録処理(ARG, ARG:1, "Ａ挿入初体験_男側", 喪失時
 CALL 初体験日登録処理(ARG, ARG:1, "Ａ挿入体験_男側", 喪失時間, 喪失場所, , , 0)
 IF RESULT
 	IF ARG:1 < 0
-		CALL 履歴データベース登録(CFLAG:ARG:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>처음으로 낯선 상대에게 Ａ삽입했다.</font>","うふふ")
+		CALL 履歴データベース登録(CFLAG:ARG:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>처음으로 모르는 상대에게 A삽입했다</font>","うふふ")
 	ELSE
-		CALL 履歴データベース登録(CFLAG:ARG:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>처음으로 %CALLNAME:(ARG:1)%에게 Ａ삽입했다.</font>","うふふ")
+		CALL 履歴データベース登録(CFLAG:ARG:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>처음으로 %CALLNAME:(ARG:1)%에게 A삽입했다</font>","うふふ")
 	ENDIF
 ENDIF
 
@@ -500,11 +500,11 @@ IF ARG:1 == MASTER
 	ENDIF
 	;親愛
 	IF TALENT:ARG:恋慕 > 1
-		PRINTFORML %CALLNAME:ARG%은(는) %CALLNAME:MASTER%이 A동정을 버린 상대라는 것에 더없는 행복을 느끼는 것 같다……
+		PRINTFORML %CALLNAME:ARG%은(는) %CALLNAME:MASTER%가 A동정을 버린 상대라는 사실에 더없는 행복을 느끼는 듯합니다……
 		CALL SOURCE_CALC_歓楽(ARG, PLAYER, 5000)
 	;恋慕
 	ELSEIF TALENT:ARG:恋慕
-		PRINTFORML %CALLNAME:ARG%은(는) %CALLNAME:MASTER%이 A동정을 버린 상대라는 것에 행복을 느끼는 것 같다……
+		PRINTFORML %CALLNAME:ARG%은(는) %CALLNAME:MASTER%가 A동정을 버린 상대라는 사실에 행복을 느끼는 듯합니다……
 		CALL SOURCE_CALC_歓楽(ARG, PLAYER, 2000)
 	ENDIF
 ELSE
@@ -526,6 +526,27 @@ ELSE
 		ENDIF
 	ENDIF
 ENDIF
+
+
+;-------------------------------------------------
+;特定部位への刺激による補正
+;-------------------------------------------------
+@SOURCE_部位補正(対象キャラ)
+#DIM 対象キャラ
+#DIM 精力回復量
+
+;睾丸コマンドフラグがあるとき、体力を消費して精力を回復・勃起度上昇
+IF RCVAR:対象キャラ:睾丸コマンドフラグ > 0
+	精力回復量 = MIN(RCVAR:対象キャラ:睾丸コマンドフラグ * 5, MAXBASE:対象キャラ:精力 - BASE:対象キャラ:精力)
+	IF 精力回復量 > 0
+		;あなたは体力を消費しない
+		SIF 対象キャラ != MASTER
+			DOWNBASE:対象キャラ:体力 += 精力回復量 * 5
+
+		BASE:対象キャラ:精力 += 精力回復量
+	ENDIF
+ENDIF
+
 
 ;-------------------------------------------------
 ;EXP取得
@@ -1277,9 +1298,11 @@ SIF 判定キャラ == MASTER
 SIF 相手キャラ == -1
 	相手キャラ = MASTER
 
-;性的陥落してる時は無条件でOK
-SIF 陥落チェック_性的(判定キャラ)
-	RETURNF 0
+IF 相手キャラ == MASTER
+	;性的陥落してる時は無条件でOK
+	SIF 陥落チェック_性的(判定キャラ)
+		RETURNF 0
+ENDIF
 
 ;これ口上側にセットすべきだよな……と思いつつめんどいのでとりあえず直記入
 ;era様は相手が貴方の時性別不問でOK
@@ -1354,14 +1377,14 @@ SELECTCASE ARGS
 		LOCAL = 0
 		IF NOWEX:ARG:友情度上昇格納
 			IF CFLAG:ARG:友情度 < 経験値テーブル:99 && CFLAG:ARG:友情度 + NOWEX:ARG:友情度上昇格納 >= 経験値テーブル:99
-				CALL 履歴データベース登録(CFLAG:ARG:人物番号, @"%CALLNAME:MASTER%에의 우정도가 최대가 되었다.","日常")
+				CALL 履歴データベース登録(CFLAG:ARG:人物番号, @"%CALLNAME:MASTER%에 대한 우정도가 최대가 되었다","日常")
 			ENDIF
 			CFLAG:ARG:友情度 += NOWEX:ARG:友情度上昇格納
-			PRINTFORM %CALLNAME:ARG%：
-			PRINTFORM \@(NOWEX:ARG:友情度上昇格納 >= 0) ? 호감도 요소：우정＋{NOWEX:ARG:友情度上昇格納} # 호감도 요소：우정－{-NOWEX:ARG:友情度上昇格納}\@
+PRINTFORM %CALLNAME:ARG%：
+PRINTFORM \@(NOWEX:ARG:友情度上昇格納 >= 0) ? 호감도 요소: 우정＋{NOWEX:ARG:友情度上昇格納} # 호감도 요소: 우정－{-NOWEX:ARG:友情度上昇格納}\@
 			IF 干渉強化変数:ARG:干渉種類 == 1 && 干渉なしフラグ == 0
 				SETCOLOR カラーパレット("黄")
-				PRINT 　간섭 효과 발동 중!
+	PRINT 　간섭 효과 발동 중!
 				RESETCOLOR
 			ENDIF
 			PRINTL
@@ -1369,14 +1392,14 @@ SELECTCASE ARGS
 		ENDIF
 		IF NOWEX:ARG:信頼度上昇格納
 			IF CFLAG:ARG:信頼度 < 経験値テーブル:99 && CFLAG:ARG:信頼度 + NOWEX:ARG:信頼度上昇格納 >= 経験値テーブル:99
-				CALL 履歴データベース登録(CFLAG:ARG:人物番号, @"%CALLNAME:MASTER%에의 신뢰도가 최대가 되었다.","日常")
+				CALL 履歴データベース登録(CFLAG:ARG:人物番号, @"%CALLNAME:MASTER%에 대한 신뢰도가 최대가 되었다","日常")
 			ENDIF
 			CFLAG:ARG:信頼度 += NOWEX:ARG:信頼度上昇格納
-			PRINTFORM %CALLNAME:ARG%：
-			PRINTFORM \@(NOWEX:ARG:信頼度上昇格納 >= 0) ? 호감도 요소: 신뢰＋{NOWEX:ARG:信頼度上昇格納} # 호감도 요소: 신뢰－{-NOWEX:ARG:信頼度上昇格納}\@
+PRINTFORM %CALLNAME:ARG%：
+PRINTFORM \@(NOWEX:ARG:信頼度上昇格納 >= 0) ? 호감도 요소: 신뢰＋{NOWEX:ARG:信頼度上昇格納} # 호감도 요소: 신뢰－{-NOWEX:ARG:信頼度上昇格納}\@
 			IF 干渉強化変数:ARG:干渉種類 == 2 && 干渉なしフラグ == 0
 				SETCOLOR カラーパレット("黄")
-				PRINT 　간섭 효과 발동 중!
+	PRINT 　간섭 효과 발동 중!
 				RESETCOLOR
 			ENDIF
 			PRINTL
@@ -1384,7 +1407,7 @@ SELECTCASE ARGS
 		ENDIF
 		IF NOWEX:ARG:恋心度上昇格納
 			IF CFLAG:ARG:恋心度 < 経験値テーブル:99 && CFLAG:ARG:恋心度 + NOWEX:ARG:恋心度上昇格納 >= 経験値テーブル:99
-				CALL 履歴データベース登録(CFLAG:ARG:人物番号, @"%CALLNAME:MASTER%에의 연심도가 최대가 되었다.","日常")
+				CALL 履歴データベース登録(CFLAG:ARG:人物番号, @"%CALLNAME:MASTER%에 대한 연심도가 최대가 되었다","日常")
 			ENDIF
 			CFLAG:ARG:恋心度 += NOWEX:ARG:恋心度上昇格納
 			IF 恋愛対象外チェック(ARG) || GETBIT(TALENT:ARG:陥落不可, 0)
@@ -1392,11 +1415,11 @@ SELECTCASE ARGS
 			ELSE
 				CFLAG:ARG:恋慕度 = MAX(CFLAG:ARG:恋慕度, CFLAG:ARG:恋心度 / 3)
 			ENDIF
-			PRINTFORM %CALLNAME:ARG%：
-			PRINTFORM \@(NOWEX:ARG:恋心度上昇格納 >= 0) ? 호감도 요소: 연심＋{NOWEX:ARG:恋心度上昇格納} # 호감도 요소: 연심－{-NOWEX:ARG:恋心度上昇格納}\@
+PRINTFORM %CALLNAME:ARG%：
+PRINTFORM \@(NOWEX:ARG:恋心度上昇格納 >= 0) ? 호감도 요소: 연심＋{NOWEX:ARG:恋心度上昇格納} # 호감도 요소: 연심－{-NOWEX:ARG:恋心度上昇格納}\@
 			IF 干渉強化変数:ARG:干渉種類 == 3 && 干渉なしフラグ == 0
 				SETCOLOR カラーパレット("黄")
-				PRINT 　간섭 효과 발동 중!
+	PRINT 　간섭 효과 발동 중!
 				RESETCOLOR
 			ENDIF
 			PRINTL
@@ -1404,14 +1427,14 @@ SELECTCASE ARGS
 		ENDIF
 		IF NOWEX:ARG:性愛度上昇格納
 			IF CFLAG:ARG:性愛度 < 経験値テーブル:99 && CFLAG:ARG:性愛度 + NOWEX:ARG:性愛度上昇格納 >= 経験値テーブル:99
-				CALL 履歴データベース登録(CFLAG:ARG:人物番号, @"%CALLNAME:MASTER%에의 성애도가 최대가 되었다.","日常")
+				CALL 履歴データベース登録(CFLAG:ARG:人物番号, @"%CALLNAME:MASTER%에 대한 성애도가 최대가 되었다","日常")
 			ENDIF
 			CFLAG:ARG:性愛度 += NOWEX:ARG:性愛度上昇格納
-			PRINTFORM %CALLNAME:ARG%：
-			PRINTFORM \@(NOWEX:ARG:性愛度上昇格納 >= 0) ? 호감도 요소: 성애＋{NOWEX:ARG:性愛度上昇格納} # 호감도 요소: 성애－{-NOWEX:ARG:性愛度上昇格納}\@
+PRINTFORM %CALLNAME:ARG%：
+PRINTFORM \@(NOWEX:ARG:性愛度上昇格納 >= 0) ? 호감도 요소: 성애＋{NOWEX:ARG:性愛度上昇格納} # 호감도 요소: 성애－{-NOWEX:ARG:性愛度上昇格納}\@
 			IF 干渉強化変数:ARG:干渉種類 == 4 && 干渉なしフラグ == 0
 				SETCOLOR カラーパレット("黄")
-				PRINT 　간섭 효과 발동 중!
+	PRINT 　간섭 효과 발동 중!
 				RESETCOLOR
 			ENDIF
 			PRINTL
@@ -1419,11 +1442,11 @@ SELECTCASE ARGS
 		ENDIF
 		IF NOWEX:ARG:キャラ固有好感度要素上昇格納
 			IF CFLAG:ARG:キャラ固有好感度 < 経験値テーブル:99 && CFLAG:ARG:キャラ固有好感度 + NOWEX:ARG:キャラ固有好感度要素上昇格納 >= 経験値テーブル:99
-				CALL 履歴データベース登録(CFLAG:ARG:人物番号, @"%CALLNAME:MASTER%에의 %CSTR:ARG:キャラ固有好感度要素%가 최대가 되었다.","日常")
+				CALL 履歴データベース登録(CFLAG:ARG:人物番号, @"%CALLNAME:MASTER%에 대한 %CSTR:ARG:キャラ固有好感度要素%이(가) 최대가 되었다","日常")
 			ENDIF
 			CFLAG:ARG:キャラ固有好感度 += NOWEX:ARG:キャラ固有好感度要素上昇格納
-			PRINTFORM %CALLNAME:ARG%：
-			PRINTFORML \@(NOWEX:ARG:キャラ固有好感度要素上昇格納 >= 0) ? 호감도 요소:%CSTR:ARG:キャラ固有好感度要素%＋{NOWEX:ARG:キャラ固有好感度要素上昇格納} # 호감도 요소:%CSTR:ARG:キャラ固有好感度要素%－{-NOWEX:ARG:キャラ固有好感度要素上昇格納}\@
+PRINTFORM %CALLNAME:ARG%：
+PRINTFORML \@(NOWEX:ARG:キャラ固有好感度要素上昇格納 >= 0) ? 호감도 요소:%CSTR:ARG:キャラ固有好感度要素%＋{NOWEX:ARG:キャラ固有好感度要素上昇格納} # 호감도 요소:%CSTR:ARG:キャラ固有好感度要素%－{-NOWEX:ARG:キャラ固有好感度要素上昇格納}\@
 			LOCAL = 1
 		ENDIF
 		SIF LOCAL
@@ -1440,8 +1463,8 @@ SELECTCASE ARGS
 			RETURN 0
 		IF ARG:1 > 0
 			CFLAG:ARG:恋慕度 += ARG:1
-			PRINTFORM %CALLNAME:ARG%：
-			PRINTFORML \@(ARG:1 >= 0) ? 연모도＋{ARG:1} # 연모도－{-ARG:1}\@
+PRINTFORM %CALLNAME:ARG%：
+			PRINTFORML \@(ARG:1 >= 0) ? 恋慕度＋{ARG:1} # 恋慕度－{-ARG:1}\@
 			CALL Love_LvUPCheck(ARG)
 		ENDIF
 	
@@ -1473,6 +1496,7 @@ ENDSELECT
 #DIM 恋心度記録
 #DIM 性愛度記録
 #DIMS 関係名, 6, 5
+#DIM スキップオンにした
 
 IF 関係名:0:0 == ""
 	FOR LOCAL, 0, 6
@@ -1526,12 +1550,13 @@ SIF !INRANGE(ARG, 1, CHARANUM-1)
 
 ;テーブルと比較してレベル算出
 要素最大値 = MAX(友情度記録, 信頼度記録, 恋心度記録, 性愛度記録)
+計算後レベル = 0
 FOR ループ用, 0, 100
 	IF 経験値テーブル:ループ用 >= 要素最大値
 		BREAK
 	ENDIF
+	計算後レベル ++
 NEXT
-計算後レベル = ループ用
 要素最大値 = MAXFIND(4, 友情度記録, 信頼度記録, 恋心度記録, 性愛度記録)
 ; TRYCCALLFORM キャラ固有好感度関係名_{NO:ARG}()
 ; 	FOR ループ用, 0, 6
@@ -1542,6 +1567,11 @@ NEXT
 ; 	SIF 要素最大値 == 5
 ; 		要素最大値 = MAXFIND(4, 友情度記録, 信頼度記録, 恋心度記録, 性愛度記録)
 ; ENDCATCH
+スキップオンにした = 0
+IF TALENT:ARG:分身 && !ISSKIP()
+	スキップオンにした = 1
+	SKIPDISP 1
+ENDIF
 
 ;現在レベルより高ければレベルアップ処理
 IF CFLAG:ARG:好感度レベル < 計算後レベル
@@ -1550,7 +1580,7 @@ IF CFLAG:ARG:好感度レベル < 計算後レベル
 	ENDIF
 	IF CFLAG:ARG:好感度レベル <= 関係閾値:0 && 計算後レベル > 関係閾値:0
 		LOCALS '= 関係名:1:要素最大値
-		PRINTFORML 첫 만남 > %LOCALS%
+		PRINTFORML 첫 대면 > %LOCALS%
 		CSTR:ARG:現在の好感度表示 '= LOCALS
 	ENDIF
 	FOR ループ用, 1, 5
@@ -1562,47 +1592,50 @@ IF CFLAG:ARG:好感度レベル < 計算後レベル
 		ENDIF
 	NEXT
 	IF CFLAG:ARG:好感度レベル < 100 && 計算後レベル >= 100
-		CALL 履歴データベース登録(CFLAG:ARG:人物番号, @"%CALLNAME:MASTER%에의 호감도 레벨이 최대가 되었다.","日常")
+		CALL 履歴データベース登録(CFLAG:ARG:人物番号, @"%CALLNAME:MASTER%에 대한 호감도 레벨이 최대가 되었다","日常")
 	ENDIF
 	CFLAG:ARG:好感度レベル = 計算後レベル
 ELSE
 	LOCAL = RANGEFIND(計算後レベル, 関係閾値:0, 関係閾値:1, 関係閾値:2, 関係閾値:3, 関係閾値:4, 関係閾値:5) + 1
 	LOCALS '= 関係名:LOCAL:要素最大値
 	IF CSTR:ARG:現在の好感度表示 != LOCALS
-		PRINTFORML %CALLNAME:ARG%의 %CALLNAME:MASTER%을(를) 보는 눈이 달라졌다……
+		PRINTFORML %CALLNAME:ARG%이(가) %CALLNAME:MASTER%을(를) 보는 눈빛이 달라졌다……
 		PRINTFORML %CSTR:ARG:現在の好感度表示% > %LOCALS% 
 		CSTR:ARG:現在の好感度表示 '= LOCALS
 	ENDIF
 ENDIF
 PRINTW 
+SIF スキップオンにした
+	SKIPDISP 0
 
 @Love_LvUPCheck(ARG)
 #DIM ループ用
 #DIM 計算後レベル
 
 ;テーブルと比較してレベル算出
+計算後レベル = 0
 FOR ループ用, 0, 100
 	IF 経験値テーブル:ループ用 >= CFLAG:ARG:恋慕度
 		BREAK
 	ENDIF
+	計算後レベル ++
 NEXT
-計算後レベル = ループ用
 
 ;現在レベルより高ければレベルアップ処理
 IF CFLAG:ARG:恋慕レベル < 計算後レベル
-	PRINTFORML 연모도LvUP!! {CFLAG:ARG:恋慕レベル} > {計算後レベル}
+	PRINTFORML 연모도 LvUP!! {CFLAG:ARG:恋慕レベル} > {計算後レベル}
 	SIF CFLAG:ARG:恋慕レベル <= 0 && 計算後レベル > 0
 		PRINTL 가망 없음 > 조금 신경 쓰임
 	SIF CFLAG:ARG:恋慕レベル <= 10 && 計算後レベル > 10
-		PRINTL 조금 신경 쓰임 > 왠지 좋을지도
+		PRINTL 조금 신경 쓰임 > 왠지 괜찮을지도
 	SIF CFLAG:ARG:恋慕レベル <= 20 && 計算後レベル > 20
-		PRINTL 왠지 좋을지도 > 호의를 자각
+		PRINTL 왠지 괜찮을지도 > 호의를 자각
 	SIF CFLAG:ARG:恋慕レベル <= 50 && 計算後レベル > 50
 		PRINTL 호의를 자각 > 러브러브
 	SIF CFLAG:ARG:恋慕レベル <= 80 && 計算後レベル > 80
 		PRINTL 러브러브 > 가장 사랑하는 사람
 	IF CFLAG:ARG:恋慕レベル < 100 && 計算後レベル >= 100
-		CALL 履歴データベース登録(CFLAG:ARG:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>%CALLNAME:MASTER%에의 연모 레벨이 최대가 되었다.</font>","日常")
+		CALL 履歴データベース登録(CFLAG:ARG:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>%CALLNAME:MASTER%에 대한 연모 레벨이 최대가 되었다</font>","日常")
 	ENDIF
 	CFLAG:ARG:恋慕レベル = 計算後レベル
 ENDIF
@@ -1769,7 +1802,7 @@ SIF ABL:ARG:技巧 > 4
 IF 技巧経験値:ARG:0 > (ABL:ARG:技巧 * ABL:ARG:技巧 * 10 + 10)
 	技巧経験値:ARG:0 = 0
 	ABL:ARG:技巧 += 1
-	PRINTFORML %CALLNAME:ARG%의 기교Lv이 {ABL:ARG:技巧}로 상승했다
+	PRINTFORML %CALLNAME:ARG%의 기교 Lv가 {ABL:ARG:技巧}로 상승했다
 	RETURN 1
 ENDIF
 
@@ -1784,6 +1817,8 @@ RETURN 0
 ;OPTION制御
 SIF GETBIT(OPTION変数:性知識成長制御, 0)
 	RETURN 0
+SIF CFLAG:ARG:性知識成長禁止
+	RETURN 0
 
 ;最大値は３
 SIF 知識素質:ARG:性知識 >= 3
@@ -1796,7 +1831,7 @@ WHILE 性知識経験値:ARG:0 > 性知識必要経験値(知識素質:ARG:性�
 	知識素質:ARG:性知識 += 1
 WEND
 IF 知識素質:ARG:性知識 > 上昇前数値
-	PRINTFORML %CALLNAME:ARG%의 성지식Lv이 %性知識段階表示(上昇前数値, ARG)%에서 %性知識段階表示(知識素質:ARG:性知識, ARG)%으로 상승했다
+	PRINTFORML %CALLNAME:ARG%의 성지식 Lv가 %性知識段階表示(上昇前数値, ARG)%에서 %性知識段階表示(知識素質:ARG:性知識, ARG)%로 상승했다
 	RETURN 1
 ENDIF
 

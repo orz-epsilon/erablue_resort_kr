@@ -11,9 +11,9 @@ TSTR:コマンド名受渡 = 휴식
 TFLAG:コマンドタイプ受渡 = COMTYPE("単独可能")
 
 @COM_TOOLTIP_403
-LOCALS = <br>■休憩<br>
-LOCALS += "휴식하여 시간을 소비하고 체력을 회복하는 커맨드.<br>통상 60분 소비하며, [회복 느림]이면 +20분, [회복 빠름]이면 -20분의 보정이 걸린다."
-LOCALS += "<br>COM 타입: 단독 가능<br>획득 소스: 없음"
+LOCALS = <br>■휴식<br>
+LOCALS += "휴식하고, 시간을 소비하여 체력을 회복하는 커맨드. <br>통상 ６０분 소비하며, [회복 느림]일 경우 ＋２０분, [회복 빠름]일 경우 －２０분의 보정이 걸린다."
+LOCALS += "<br>COM타입：단독가능<br>획득소스：없음"
 LOCALS += "<br>고유 획득 경험: 없음<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
@@ -23,7 +23,7 @@ TSTR:ツールチップ受渡 = %LOCALS%
 ;-------------------------------------------------
 @COM403
 IF TIME_PROGRESS(CFLAG:MASTER:314) >= 960 && !CFLAG:MASTER:睡眠
-	PRINTFORMW 쉬려던 %CALLNAME:MASTER%는 그대로 잠들어 버렸다
+	PRINTFORMW 잠깐 쉬려고 했던 %CALLNAME:MASTER%는 그대로 잠들어 버렸다.
 	CFLAG:MASTER:睡眠 = 1
 	CFLAG:MASTER:就寝時刻 = DAY * 1440 + TIME
 	FLAG:一日終了 = 1
@@ -60,9 +60,9 @@ RETURN 1
 ;-------------------------------------------------
 @MESSAGE_COM403
 IF BATHROOM(CFLAG:MASTER:現在位置)
-	PRINTFORML %CALLNAME:PLAYER%는 욕장에서 편히 쉬었다
+	PRINTFORML %CALLNAME:PLAYER%은(는) 욕실에서 편안히 쉬었다
 ELSE
-	PRINTFORML %CALLNAME:PLAYER%는 한숨 돌렸다
+	PRINTFORML %CALLNAME:PLAYER%은(는) 한숨 돌렸다
 ENDIF
 
 

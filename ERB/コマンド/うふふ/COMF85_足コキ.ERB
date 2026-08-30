@@ -15,17 +15,20 @@ TSTR:コマンド名受渡 = 발코키
 TFLAG:コマンドタイプ受渡 = COMTYPE("うふふ&奉仕")
 オートコマンド許可 = 3
 反転オート許可 = 3
+同時モード許可 = 2
+同時モード反転許可 = 2
+ダウン中許可_PLAYER = 1
 
 @COM_TOOLTIP_85
 IF RFLAG:奉仕逆転時ツールチップフラグ
-	LOCALS = <br>■발로 해주다<br>
-	LOCALS += "자신의 발로 상대의 페니스를 애무하는 커맨드.<br>발코키 모드가 되어, 모드를 변경하거나 성행위를 종료할 때까지 지속적으로 특정 소스가 발생한다."
+	LOCALS = <br>■발코키 하기<br>
+	LOCALS += "자신의 발로 상대의 페니스를 애무하는 커맨드. <br>발코키 모드가 되어, 모드를 변경하거나 성행위를 종료할 때까지 지속적으로 특정 소스가 발생한다."
 ELSE
-	LOCALS = <br>■발로 해주기<br>
-	LOCALS += "상대의 발로 페니스를 애무받는 커맨드.<br>발코키 모드가 되어, 모드를 변경하거나 성행위를 종료할 때까지 지속적으로 특정 소스가 발생한다."
+	LOCALS = <br>■발코키<br>
+	LOCALS += "상대의 발로 페니스를 애무받는 커맨드. <br>발코키 모드가 되어, 모드를 변경하거나 성행위를 종료할 때까지 지속적으로 특정 소스가 발생한다."
 ENDIF
 LOCALS += "<br>COM 타입: 우후후<br>획득 소스: 정복・노출・접촉・봉사・불결"
-LOCALS += "<br>고유 획득 경험: 가학쾌락경험(TARGET・일정 조건 시)<br>"
+LOCALS += "<br>고유 획득 경험: 가학 쾌락 경험(TARGET・일정 조건 시)<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
 @COM85
@@ -98,7 +101,7 @@ IF ABL:奉仕精神
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += ABL:奉仕精神 * 4
-	PRINTFORM 봉사 정신LV{ABL:奉仕精神}({ABL:奉仕精神 * 4})
+	PRINTFORM 봉사정신LV{ABL:奉仕精神}({ABL:奉仕精神 * 4})
 	＋表示フラグ = 1
 ENDIF
 ;ABL:精液中毒
@@ -106,7 +109,7 @@ IF ABL:精液中毒
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += ABL:精液中毒 * 1
-	PRINTFORM 정액 중독LV{ABL:精液中毒}({ABL:精液中毒 * 1})
+	PRINTFORM 정액중독LV{ABL:精液中毒}({ABL:精液中毒 * 1})
 	＋表示フラグ = 1
 ENDIF
 
@@ -114,7 +117,7 @@ IF MARK:快楽刻印
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += MARK:快楽刻印 * 1
-	PRINTFORM 쾌락 각인LV{MARK:快楽刻印}({MARK:快楽刻印 * 1})
+	PRINTFORM 쾌락각인LV{MARK:快楽刻印}({MARK:快楽刻印 * 1})
 	＋表示フラグ = 1
 ENDIF
 ;PALAM:欲情
@@ -137,14 +140,14 @@ IF TALENT:汚臭耐性 > 0
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += 1
-	PRINT 악취 둔감(1)
+	PRINT 악취둔감(1)
 	＋表示フラグ = 1
 ENDIF
 ;汚臭敏感
 IF TALENT:汚臭耐性 < 0
 	PRINT  - 
 	実行値 -= 1
-	PRINT 악취 민감(1)
+	PRINT 오취 민감(1)
 	＋表示フラグ = 1
 ENDIF
 ;献身的
@@ -159,7 +162,7 @@ ENDIF
 IF TALENT:快感応答 < 0 && !TALENT:淫乱
 	PRINT  - 
 	実行値 -= 3
-	PRINT 쾌감 부정(3)
+	PRINT 쾌감의 부정(3)
 	＋表示フラグ = 1
 ENDIF
 ;男嫌い（恋慕、親愛で無効）
@@ -208,7 +211,16 @@ IF TCVAR:言いなり
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += 999
-	PRINT 당신이 시키는 대로(999)
+	PRINT 당신의 말대로(999)
+	＋表示フラグ = 1
+ENDIF
+
+;特殊言いなり
+IF TCVAR:特殊言いなり
+	SIF ＋表示フラグ
+		PRINT  + 
+	実行値 += 999
+	PRINTFORM %特殊言いなり分岐(TARGET)%(999)
 	＋表示フラグ = 1
 ENDIF
 
@@ -273,13 +285,13 @@ RETURN 1
 ;実行時メッセージ
 ;-------------------------------------------------
 @MESSAGE_COM85
-PRINTFORM %CALLNAME:TARGET%는
+PRINTFORM %CALLNAME:TARGET%은(는)
 IF 知識素質:性知識 < 0
 	PRINTFORM %CALLNAME:PLAYER%에게 부탁받은 대로,
 ENDIF
 PRINTFORM %CALLNAME:PLAYER%의 페니스를 발바닥으로
 ;恋慕か親愛
 SIF TALENT:恋慕 && PLAYER == MASTER
-	PRINT 꼼꼼히
+	PRINT 정성껏
 PRINTFORML 문지르고 있다…
 

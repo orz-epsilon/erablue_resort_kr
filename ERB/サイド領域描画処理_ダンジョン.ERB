@@ -1,4 +1,4 @@
-﻿@サイド領域描画_ダンジョン
+@サイド領域描画_ダンジョン
 #DIMS 表示文字列
 #DIMS 追加表示文字列
 
@@ -14,17 +14,17 @@ TRYCALLFORM サイド描画表示種類_%サイド描画表示種類_ダンジ�
 LOCAL = 5925
 LOCAL:10 = 4135
 LOCAL:1 = 500
-表示文字列 += @"<div rect='{LOCAL}, {LOCAL:10}, {LOCAL:1}, 200' padding='25,15,0' color='#101010' border='31' bcolor='#C0C0C0'><button value='サイド領域_サイド切り替え_表示なし'>表示なし</button></div>"
+表示文字列 += @"<div rect='{LOCAL}, {LOCAL:10}, {LOCAL:1}, 200' padding='25,15,0' color='#101010' border='31' bcolor='#C0C0C0'><button value='サイド領域_サイド切り替え_表示なし'>표시 없음</button></div>"
 SIF サイド描画表示種類_ダンジョン用 == "表示なし"
 	表示文字列 += @"<div rect='{LOCAL + 25}, {LOCAL:10 -20}, {LOCAL:1 - 40}, 60' color='#101010'></div>"
 LOCAL += LOCAL:1 + 50
 LOCAL:1 = 700
-表示文字列 += @"<div rect='{LOCAL}, {LOCAL:10}, {LOCAL:1}, 200' padding='25,0,0' color='#101010' border='31' bcolor='#C0C0C0'><button value='サイド領域_サイド切り替え_イベントログ'>イベントログ</button></div>"
+表示文字列 += @"<div rect='{LOCAL}, {LOCAL:10}, {LOCAL:1}, 200' padding='25,0,0' color='#101010' border='31' bcolor='#C0C0C0'><button value='サイド領域_サイド切り替え_イベントログ'>이벤트 로그</button></div>"
 SIF サイド描画表示種類_ダンジョン用 == "イベントログ"
 	表示文字列 += @"<div rect='{LOCAL + 25}, {LOCAL:10 - 20}, {LOCAL:1 - 40}, 60' color='#101010'></div>"
 LOCAL += LOCAL:1 + 50
 LOCAL:1 = 700
-表示文字列 += @"<div rect='{LOCAL}, {LOCAL:10}, {LOCAL:1}, 200' padding='25,0,0' color='#101010' border='31' bcolor='#C0C0C0'><button value='サイド領域_サイド切り替え_前回戦闘ログ'>前回戦闘ログ</button></div>"
+表示文字列 += @"<div rect='{LOCAL}, {LOCAL:10}, {LOCAL:1}, 200' padding='25,0,0' color='#101010' border='31' bcolor='#C0C0C0'><button value='サイド領域_サイド切り替え_前回戦闘ログ'>이전 전투 로그</button></div>"
 SIF サイド描画表示種類_ダンジョン用 == "前回戦闘ログ"
 	表示文字列 += @"<div rect='{LOCAL + 25}, {LOCAL:10 - 20}, {LOCAL:1 - 40}, 60' color='#101010'></div>"
 
@@ -72,24 +72,26 @@ VARSET RESULTS
 VARSET ツールチップ保存文字列
 ログ表示用文字列 = %サイド描画_ダンジョンログ保存%
 
+
+
 ;ツールチップを判定行数から排除するため、中身を配列に突っ込む
 REGEXPMATCH ログ表示用文字列, "\<nonbutton title='.*?\/nonbutton\>", 1
 退避件数 = RESULT
 FOR 繰り返し回数, 0, 退避件数
 	ツールチップ保存文字列:繰り返し回数 '= RESULTS:繰り返し回数
-	ログ表示用文字列 '= REPLACE(ログ表示用文字列, RESULTS:繰り返し回数, @"___ツールチップ退避{繰り返し回数}___")
+	ログ表示用文字列 '= REPLACE(ログ表示用文字列, ESCAPE(RESULTS:繰り返し回数), @"___툴팁 대피{繰り返し回数}___")
 NEXT
 
 IF STRCOUNT(ログ表示用文字列, "<br>") > 35
 	追加表示文字列 += "<div rect='6000, 4000, 3825, 100'>　　　　　"
 	IF STRCOUNT(ログ表示用文字列, "<br>") > 35 + サイド描画縦スクロール保存
-		追加表示文字列 += "<button value='サイド領域_スクロール_上'>[上へスクロール]</button>"
+		追加表示文字列 += "<button value='サイド領域_スクロール_上'>[위로 스크롤]</button>"
 	ELSE
 		追加表示文字列 += "　　　　　　　　"
 	ENDIF
 	追加表示文字列 += "　　　　　　　　　　　　"
 	SIF サイド描画縦スクロール保存 > 0
-		追加表示文字列 += "<button value='サイド領域_スクロール_下'>[下へスクロール] </button>"
+		追加表示文字列 += "<button value='サイド領域_スクロール_下'>[아래로 스크롤] </button>"
 	追加表示文字列 += "</div>"
 ENDIF
 
@@ -106,6 +108,7 @@ IF 退避件数 > 0
 		ログ表示用文字列 '= REPLACE(ログ表示用文字列, @"___ツールチップ退避{繰り返し回数}___",ツールチップ保存文字列:繰り返し回数 )
 	NEXT
 ENDIF
+
 
 表示文字列 += @"%ログ表示用文字列%"
 
@@ -134,13 +137,13 @@ NEXT
 IF STRCOUNT(ログ表示用文字列, "<br>") > 35
 	追加表示文字列 += "<div rect='6000, 4000, 3825, 100'>　　　　　"
 	IF STRCOUNT(ログ表示用文字列, "<br>") > 35 + サイド描画縦スクロール保存
-		追加表示文字列 += "<button value='サイド領域_スクロール_上'>[上へスクロール]</button>"
+		追加表示文字列 += "<button value='サイド領域_スクロール_上'>[위로 스크롤]</button>"
 	ELSE
 		追加表示文字列 += "　　　　　　　　"
 	ENDIF
 	追加表示文字列 += "　　　　　　　　　　　　"
 	SIF サイド描画縦スクロール保存 > 0
-		追加表示文字列 += "<button value='サイド領域_スクロール_下'>[下へスクロール] </button>"
+		追加表示文字列 += "<button value='サイド領域_スクロール_下'>[아래로 스크롤] </button>"
 	追加表示文字列 += "</div>"
 ENDIF
 

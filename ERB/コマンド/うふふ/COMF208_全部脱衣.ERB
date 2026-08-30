@@ -20,10 +20,11 @@ SIF CFLAG:TARGET:睡眠
 睡眠中許可 = 1
 同時モード許可 = 999
 オートコマンド許可 = 3
+ダウン中許可 = 1
 
 @COM_TOOLTIP_208
 LOCALS = <br>■전라로 만들다<br>
-LOCALS += "상대의 모든 것을 벗기는 커맨드.<br>탈의계 커맨드 중 유일하게 동시 모드로 실행 가능"
+LOCALS += "상대의 옷을 전부 벗기는 커맨드. <br>탈의계 커맨드 중 유일하게 동시 모드에서 실행 가능"
 LOCALS += "<br>COM 타입: 우후후<br>획득 소스: 없음"
 LOCALS += "<br>고유 획득 경험: 없음<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
@@ -67,7 +68,7 @@ SIF RFLAG:指示モード対象あなたフラグ
 	RETURN 1
 
 SKIPDISP ARG
-PRINTFORML 모두 벗기기(%CALLNAME:TARGET%)
+PRINTFORML 전부 탈의(%CALLNAME:TARGET%)
 ;-------------------------------------------------
 ;実行判定処理
 ;-------------------------------------------------
@@ -84,7 +85,7 @@ IF ABL:露出癖
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += ABL:露出癖 * 10
-	PRINTFORM 노출벽LV{ABL:露出癖}({ABL:露出癖 * 10})
+	PRINTFORM 노출증LV{ABL:露出癖}({ABL:露出癖 * 10})
 	＋表示フラグ = 1
 ENDIF
 IF MARK:快楽刻印
@@ -158,7 +159,16 @@ IF TCVAR:言いなり
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += 999
-	PRINT 당신이 시키는 대로(999)
+	PRINT 당신의 말대로(999)
+	＋表示フラグ = 1
+ENDIF
+
+;特殊言いなり
+IF TCVAR:特殊言いなり
+	SIF ＋表示フラグ
+		PRINT  + 
+	実行値 += 999
+	PRINTFORM %特殊言いなり分岐(TARGET)%(999)
 	＋表示フラグ = 1
 ENDIF
 
@@ -230,19 +240,46 @@ RETURN 1
 @MESSAGE_COM208
 #DIM 同時キャラ番号
 
-PRINTFORM %CALLNAME:PLAYER%는
+PRINTFORM %CALLNAME:PLAYER%은(는)
 IF GETBIT(FLAG:モード管理, モードビット_同時)
 	FOR 同時キャラ番号, 0, 同時モード_選択数
 		SIF 同時キャラ番号 > 0
-			PRINT ,
+			PRINT 、
 		PRINTFORM %CALLNAME:(同時モード_選択キャラ:同時キャラ番号)%
 	NEXT
-	PRINTL 의 옷을 전부 벗겼다…
+	PRINTL 의 옷을 모두 벗겼다…
 ELSE
-	PRINTFORML %CALLNAME:TARGET%의 옷을 전부 벗겼다…
+	PRINTFORML %CALLNAME:TARGET%의 옷을 모두 벗겼다…
 ENDIF
 
 IF RFLAG:コマンド結果受渡し変数
-	PRINTFORML 다른 사람 눈이 있는 곳에서 벗은 탓에, %CALLNAME:TARGET%는 어딘가 안절부절못하는 것 같다…
+	PRINTFORML 사람들의 시선이 있는 곳에서 벗었기 때문에, %CALLNAME:TARGET%은(는) 어딘가 불안해 보인다…
 ENDIF
 
+IF 特定状況口上用フラグ:TARGET:0 == 2
+	PRINTL
+	SETCOLOR カラーパレット("えっちな色")
+	PRINTFORM 벗긴 %CALLNAME:TARGET%의 가슴팍에
+	PRINT_IMG "デレマス_マーク"
+	CALL PRINT_STRL(@"마크를 발견했다_H_")
+	PRINTFORMW %CALLNAME:TARGET%은(는) 오늘의 『신데렐라』였던 것 같다
+	特定状況口上用フラグ:TARGET:0 = 1
+	RESETCOLOR
+ELSEIF 特定状況口上用フラグ:TARGET:0 == 3
+	PRINTL
+	SETCOLOR カラーパレット("えっちな色")
+	PRINTFORM 벗긴 %CALLNAME:TARGET%의 배꼽 아래에
+	PRINT_IMG "デレマス_マーク"
+	CALL PRINT_STRL(@"마크를 발견했다_H_")
+	PRINTFORMW %CALLNAME:TARGET%은(는) 오늘의 『신데렐라』였던 것 같다
+	特定状況口上用フラグ:TARGET:0 = 1
+ELSEIF 特定状況口上用フラグ:TARGET:0 == 4
+	PRINTL
+	SETCOLOR カラーパレット("えっちな色")
+	PRINTFORM 벗긴 %CALLNAME:TARGET%의 허벅지 안쪽에
+	PRINT_IMG "デレマス_マーク"
+	CALL PRINT_STRL(@"마크를 발견했다_H_")
+	PRINTFORMW %CALLNAME:TARGET%은(는) 오늘의 『신데렐라』였던 것 같다
+	特定状況口上用フラグ:TARGET:0 = 1
+	RESETCOLOR
+ENDIF

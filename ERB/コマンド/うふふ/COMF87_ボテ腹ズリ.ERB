@@ -4,9 +4,9 @@
 ;-------------------------------------------------
 @COMNAME87
 #FUNCTIONS
-TSTR:コマンド名受渡 = 보테배 문지르기
+TSTR:コマンド名受渡 = ボテ腹ズリ
 SIF GETBIT(FLAG:モード管理, モードビット_同時)
-	TSTR:コマンド名受渡 = 더블 보테배 문지르기
+	TSTR:コマンド名受渡 = ダブルボテ腹ズリ
 
 
 ;===================================================
@@ -21,11 +21,11 @@ TFLAG:コマンドタイプ受渡 = COMTYPE("うふふ&奉仕")
 
 @COM_TOOLTIP_87
 IF RFLAG:奉仕逆転時ツールチップフラグ
-	LOCALS = <br>■불룩한 배를 문지르다<br>
-	LOCALS += "자신의 임신하여 커진 복부로 상대의 페니스를 애무하는 커맨드.<br>불룩한 배 문지르기 모드가 되어, 모드를 변경하거나 성행위를 종료할 때까지 지속적으로 특정 소스가 발생한다."
+	LOCALS = <br>■배불뚝이 배 비비기<br>
+	LOCALS += "자신의 임신하여 커진 복부로 상대의 페니스를 애무하는 커맨드。<br>배불뚝이 배 비비기 모드가 되어, 모드를 변경하거나 성행위를 종료할 때까지 지속적으로 특정 소스가 발생한다."
 ELSE
-	LOCALS = <br>■불룩한 배 문지르기<br>
-	LOCALS += "상대에게 임신하여 커진 복부로 자신의 페니스를 애무하게 하는 커맨드.<br>불룩한 배 문지르기 모드가 되어, 모드를 변경하거나 성행위를 종료할 때까지 지속적으로 특정 소스가 발생한다."
+	LOCALS = <br>■배불뚝이 배 비비기<br>
+	LOCALS += "상대에게 임신하여 커진 복부로 자신의 페니스를 애무받는 커맨드。<br>배불뚝이 배 비비기 모드가 되어, 모드를 변경하거나 성행위를 종료할 때까지 지속적으로 특정 소스가 발생한다."
 ENDIF
 LOCALS += "<br>COM 타입: 우후후<br>획득 소스: 쾌S・노출・접촉・봉사・불결"
 TSTR:ツールチップ受渡 = %LOCALS%
@@ -79,7 +79,7 @@ RETURN 1
 #DIM ＋表示フラグ
 
 SKIPDISP ARG
-PRINTFORML 보테배즈리(%CALLNAME:TARGET%)
+PRINTFORML 배불뚝이 배 비비기(%CALLNAME:TARGET%)
 
 実行値 = 0
 ＋表示フラグ = 0
@@ -102,7 +102,7 @@ IF ABL:奉仕精神
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += ABL:奉仕精神 * 4
-	PRINTFORM 봉사 정신LV{ABL:奉仕精神}({ABL:奉仕精神 * 4})
+	PRINTFORM 봉사정신LV{ABL:奉仕精神}({ABL:奉仕精神 * 4})
 	＋表示フラグ = 1
 ENDIF
 ;ABL:精液中毒
@@ -110,7 +110,7 @@ IF ABL:精液中毒
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += ABL:精液中毒 * 3
-	PRINTFORM 정액 중독LV{ABL:精液中毒}({ABL:精液中毒 * 3})
+	PRINTFORM 정액중독LV{ABL:精液中毒}({ABL:精液中毒 * 3})
 	＋表示フラグ = 1
 ENDIF
 
@@ -118,7 +118,7 @@ IF MARK:快楽刻印
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += MARK:快楽刻印 * 1
-	PRINTFORM 쾌락 각인LV{MARK:快楽刻印}({MARK:快楽刻印 * 1})
+	PRINTFORM 쾌락각인LV{MARK:快楽刻印}({MARK:快楽刻印 * 1})
 	＋表示フラグ = 1
 ENDIF
 ;PALAM:欲情
@@ -141,14 +141,14 @@ IF TALENT:汚臭耐性 > 0
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += 1
-	PRINT 악취 둔감(1)
+	PRINT 악취둔감(1)
 	＋表示フラグ = 1
 ENDIF
 ;汚臭敏感
 IF TALENT:汚臭耐性 < 0
 	PRINT  - 
 	実行値 -= 2
-	PRINT 악취 민감(2)
+	PRINT 오취 민감(2)
 	＋表示フラグ = 1
 ENDIF
 ;献身的
@@ -189,6 +189,15 @@ IF TCVAR:言いなり
 		PRINT  + 
 	実行値 += 999
 	PRINT 당신의 말대로(999)
+	＋表示フラグ = 1
+ENDIF
+
+;特殊言いなり
+IF TCVAR:特殊言いなり
+	SIF ＋表示フラグ
+		PRINT  + 
+	実行値 += 999
+	PRINTFORM %特殊言いなり分岐(TARGET)%(999)
 	＋表示フラグ = 1
 ENDIF
 
@@ -262,10 +271,10 @@ RETURN 1
 IF GETBIT(FLAG:モード管理, モードビット_同時)
 	FOR 同時キャラ番号, 0, 同時モード_選択数
 		SIF 同時キャラ番号 > 0
-			PRINT ,
+			PRINT 、
 		PRINTFORM %CALLNAME:(同時モード_選択キャラ:同時キャラ番号)%
 	NEXT
-	PRINTFORML 는 서로의 복부를 바싹 붙이고, %CALLNAME:PLAYER%의 페니스를 불룩한 배로 다루고 있다…
+	PRINTFORML 은(는) 서로의 복부를 바싹 붙이고, %CALLNAME:PLAYER%의 페니스를 불룩한 배로 다루고 있다…
 	RETURN 0
 ENDIF
 
@@ -278,9 +287,9 @@ SELECTCASE PREGNANCY_SIZE(TARGET)
 		腹部描写 = 山なりに盛り上がった腹部
 ENDSELECT
 IF GETBIT(FLAG:モード管理, モードビット_同時) == 0
-	PRINTFORML %CALLNAME:TARGET%는
+	PRINTFORML %CALLNAME:TARGET%은(는)
 	IF 知識素質:性知識 < 0
-		PRINTFORM %CALLNAME:PLAYER%에게 시키는 대로
+		PRINTFORM %CALLNAME:PLAYER%이(가) 시키는 대로
 	ENDIF
-	PRINTFORM %腹部描写%를 들이대고, 짓누르듯이 %CALLNAME:PLAYER%의 페니스에 복부를 비비고 있다…
+	PRINTFORM %腹部描写%을(를) 밀어붙이고, 덮치듯이 %CALLNAME:PLAYER%의 페니스에 복부를 비비고 있다…
 ENDIF

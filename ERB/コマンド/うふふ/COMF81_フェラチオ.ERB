@@ -23,20 +23,22 @@ SIF 派生名フラグ
 TFLAG:コマンドタイプ受渡 = COMTYPE("うふふ&奉仕")
 同時モード許可 = 3
 同時モード拡張許可 = 0
+同時モード反転許可 = 2
 オートコマンド許可 = 3
 反転オート許可 = 3
+ダウン中許可_PLAYER = 1
 
 
 @COM_TOOLTIP_81
 IF RFLAG:奉仕逆転時ツールチップフラグ
-	LOCALS = <br>■フェラチオする<br>
-	LOCALS += "자신이 입으로 상대의 페니스를 애무하는 커맨드.<br>펠라치오 모드가 되어, 모드를 변경하거나 성행위를 종료할 때까지 지속적으로 특정 소스가 발생한다.<br>파이즈리 모드 시, [파이즈리 펠라]로 변화."
+	LOCALS = <br>■펠라치오하기<br>
+	LOCALS += "자신이 입으로 상대의 페니스를 애무하는 명령. <br>펠라치오 모드가 되어, 모드를 변경하거나 성행위를 종료할 때까지 지속적으로 특정 소스가 발생한다. <br>파이즈리 모드 시, [파이즈리 펠라]로 변화."
 ELSE
-	LOCALS = <br>■フェラチオ<br>
-	LOCALS += "상대에게 입으로 자신의 페니스를 애무하게 하는 커맨드.<br>펠라치오 모드가 되어, 모드를 변경하거나 성행위를 종료할 때까지 지속적으로 특정 소스가 발생한다.<br>파이즈리 모드 시, [파이즈리 펠라]로 변화."
+	LOCALS = <br>■펠라치오<br>
+	LOCALS += "상대에게 입으로 자신의 페니스를 애무하게 하는 명령. <br>펠라치오 모드가 되어, 모드를 변경하거나 성행위를 종료할 때까지 지속적으로 특정 소스가 발생한다. <br>파이즈리 모드 시, [파이즈리 펠라]로 변화."
 ENDIF
-LOCALS += "<br>대상자가 [혀놀림][고양이 혀]를 가지고 있을 경우, 실행자에게의 효과가 증감한다."
-LOCALS += "<br>COM 타입: 우후후<br>획득 소스: 노출・접촉・봉사・불결"
+LOCALS += "<br>대상자가 [혀놀림][뜨거운 것 못 먹음]을(를) 가지고 있을 경우, 실행자에게의 효과가 증감한다."
+LOCALS += "<br>COM 타입：우후후<br>획득 소스：노출・접촉・봉사・불결"
 LOCALS += "<br>고유 획득 경험: 구강성교 경험(TARGET)<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
@@ -46,6 +48,11 @@ TSTR:ツールチップ受渡 = %LOCALS%
 ;-------------------------------------------------
 SIF !MODE_シックスナイン中_完全一致(PLAYER, TARGET) && MODE_存在判定_完全一致("シックスナイン可能", PLAYER, TARGET) && GETBIT(FLAG:モード管理, モードビット_同時) == 0
 	RFLAG:コマンド結果受渡し変数 = 1
+IF MODE_存在判定_完全一致("イラマチオ", TARGET, PLAYER)
+	CALL MODE_DELETE_プレイヤー側("イラマチオ", TARGET)
+	RFLAG:コマンド結果受渡し変数２ = 1
+ENDIF
+
 IF MODE_存在判定_完全一致("パイズリ", TARGET, PLAYER)
 	RFLAG:同時モード体位変化フラグ = 1
 	CALL MODE_DELETE_プレイヤー側("パイズリ", TARGET)
@@ -108,7 +115,7 @@ SIF TALENT:TARGET:猫舌
 CALL 初体験日登録処理(TARGET, PLAYER, "ファーストキス", DAY * 1440 + TIME, GETPLACENAME(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置), "陰茎", "", 1)
 IF RESULT
 	RCVAR:TARGET:ファーストキス中フラグ = 1
-	CALL 履歴データベース登録(CFLAG:TARGET:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>%CALLNAME:PLAYER%의 [음경]에 첫 키스를 바쳤다.</font><img src='えっちハート'>","うふふ")
+	CALL 履歴データベース登録(CFLAG:TARGET:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>%CALLNAME:PLAYER%の[陰茎]にファーストキスを捧げた</font><img src='えっちハート'>","うふふ")
 ENDIF
 
 RETURN 1
@@ -184,14 +191,14 @@ IF TALENT:汚臭耐性 > 0
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += 1
-	PRINT 악취둔감(1)
+	PRINT 악취 둔감(1)
 	＋表示フラグ = 1
 ENDIF
 ;汚臭敏感
 IF TALENT:汚臭耐性 < 0
 	PRINT  - 
 	実行値 -= 3
-	PRINT 악취민감(3)
+	PRINT 악취 민감(3)
 	＋表示フラグ = 1
 ENDIF
 ;献身的
@@ -206,14 +213,14 @@ ENDIF
 IF TALENT:快感応答 < 0 && !TALENT:淫乱
 	PRINT  - 
 	実行値 -= 1
-	PRINT 쾌감의 부정(1)
+	PRINT 쾌감 부정(1)
 	＋表示フラグ = 1
 ENDIF
 ;男嫌い（恋慕、親愛で無効）
 IF TALENT:性別嗜好 & 1 && !(TALENT:PLAYER:性別 & 1) && (!TALENT:恋慕 || PLAYER != MASTER)
 	PRINT  - 
 	実行値 -= 12
-	PRINT 남자 싫음(12)
+	PRINT 남성 혐오(12)
 	＋表示フラグ = 1
 ENDIF
 ;恋慕
@@ -247,7 +254,16 @@ IF TCVAR:言いなり
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += 999
-	PRINT 당신의 말대로(999)
+	PRINT 당신의 뜻대로(999)
+	＋表示フラグ = 1
+ENDIF
+
+;特殊言いなり
+IF TCVAR:特殊言いなり
+	SIF ＋表示フラグ
+		PRINT  + 
+	実行値 += 999
+	PRINTFORM %特殊言いなり分岐(TARGET)%(999)
 	＋表示フラグ = 1
 ENDIF
 
@@ -260,7 +276,7 @@ SIF 実行値 == 必要実行値
 	PRINT  = 
 SIF 実行値 > 必要実行値
 	PRINT  > 
-PRINTFORM 실행 {必要実行値}
+PRINTFORM 실행값{必要実行値}
 
 WAIT
 SKIPDISP 0
@@ -302,14 +318,14 @@ SIF TALENT:猫舌 && ABL:技巧 < 2
 ;ボールギャグ使用中は不可
 ; SIF TEQUIP:ボールギャグ
 ; 	RETURN 0
-IF !MODE_存在判定_完全一致("パイズリ", TARGET, PLAYER)
+IF !MODE_存在判定_完全一致("パイズリ", TARGET, PLAYER) && !MODE_存在判定_完全一致("イラマチオ", TARGET, PLAYER)
 	;ペニスを何かに使ってるなら無理
 	SIF TEQUIP:PLAYER:ペニス
 		RETURN 0
+	;口を何かに使ってるなら無理
+	SIF TEQUIP:TARGET:口
+		RETURN 0
 ENDIF
-;口を何かに使ってるなら無理
-SIF TEQUIP:TARGET:口
-	RETURN 0
 
 ;オートコマンド中の制限
 IF FLAG:オートコマンド判定中フラグ
@@ -325,15 +341,25 @@ RETURN 1
 @MESSAGE_COM81
 #DIM 同時キャラ番号
 IF GETBIT(FLAG:モード管理, モードビット_同時)
-	FOR 同時キャラ番号, 0, 同時モード_選択数
-		SIF 同時キャラ番号 > 0
-			PRINT ,
-		PRINTFORM %CALLNAME:(同時モード_選択キャラ:同時キャラ番号)%
-	NEXT
-	IF MODE_存在判定_完全一致("パイズリフェラ", TARGET, PLAYER)
-		PRINTFORML 는 유방을 맞대면서 %CALLNAME:PLAYER%의 페니스에 혀를 핥았다…
+	IF RFLAG:入替えコマンドフラグ
+		PRINTFORM %CALLNAME:TARGET%은(는)
+		FOR 同時キャラ番号, 0, 同時モード_選択数
+			SIF 同時キャラ番号 > 0
+				PRINT 、
+			PRINTFORM %CALLNAME:(同時モード_選択キャラ:同時キャラ番号)%
+		NEXT
+		PRINTL 의 페니스에 번갈아 혀를 훑었다…
 	ELSE
-		PRINTFORML 는 분담해서 %CALLNAME:PLAYER%의 페니스에 혀를 핥고 있다…
+		FOR 同時キャラ番号, 0, 同時モード_選択数
+			SIF 同時キャラ番号 > 0
+				PRINT 、
+			PRINTFORM %CALLNAME:(同時モード_選択キャラ:同時キャラ番号)%
+		NEXT
+		IF MODE_存在判定_完全一致("パイズリフェラ", TARGET, PLAYER)
+			PRINTFORML 은(는) 유방을 맞대면서%CALLNAME:PLAYER%의 페니스에 혀를 훑었다…
+		ELSE
+			PRINTFORML 은(는) 분담하여%CALLNAME:PLAYER%의 페니스에 혀를 훑고 있다…
+		ENDIF
 	ENDIF
 	RETURN 0
 ENDIF
@@ -366,35 +392,38 @@ ENDIF
 ;ELSE
 
 IF MODE_存在判定_完全一致("パイズリフェラ", TARGET, PLAYER)
-	PRINTFORM %CALLNAME:TARGET%는
+	PRINTFORM %CALLNAME:TARGET%은(는)
 	;恋慕か親愛
 	IF TALENT:恋慕 && PLAYER == MASTER
-		PRINT 자애로운 표정으로,
+		PRINT 사랑스러운 표정으로,
 		;淫乱か娼婦
 		SIF TALENT:淫乱
 			PRINT 스스로
 	ELSEIF 知識素質:性知識 < 0
 		PRINTFORM %CALLNAME:PLAYER%에게 부탁받아,
 	ENDIF
-	PRINTFORML 파이즈리하고 있던 %CALLNAME:PLAYER%의 페니스를 물었다…
+	PRINTFORML 가슴으로 애무하고 있던%CALLNAME:PLAYER%의 페니스를 물었다…
+ELSEIF RFLAG:コマンド結果受渡し変数２
+	PRINTFORM %CALLNAME:TARGET%은(는) 목구멍 깊숙이 받아들이고 있던 페니스를 뱉어내고,
+	PRINTFORML 혀로 애무하기 시작했다…
 ELSE
-	PRINTFORM %CALLNAME:TARGET%는
+	PRINTFORM %CALLNAME:TARGET%은(는)
 	;シックスナインに派生
 	SIF RFLAG:コマンド結果受渡し変数
-		PRINTFORM %CALLNAME:PLAYER%와 머리 위치가 서로 엇갈리도록 자세를 바꾸자,
+		PRINTFORM %CALLNAME:PLAYER%와 머리 위치가 엇갈리도록 자세를 바꾸자,
 	;恋慕か親愛
 	IF TALENT:恋慕 && PLAYER == MASTER
-		PRINT 자애로운 표정으로,
+		PRINT 사랑스러운 표정으로,
 		;淫乱か娼婦
 		SIF TALENT:淫乱
 			PRINT 스스로
 	ELSEIF 知識素質:性知識 < 0
-		PRINTFORM %CALLNAME:PLAYER%에게 말한 대로,
+		PRINTFORM %CALLNAME:PLAYER%에게 들은 대로,
 	ENDIF
 	;シックスナイン体勢中
 	SIF !RFLAG:コマンド結果受渡し変数 && MODE_シックスナイン中_完全一致(TARGET, PLAYER)
 		PRINT 눈앞에 있는
-	PRINTFORML %CALLNAME:PLAYER%의 페니스에 혀를 훑고 있다…
+	PRINTFORML %CALLNAME:PLAYER%의 페니스에 혀를 핥고 있다…
 ENDIF
 ;ENDIF
 

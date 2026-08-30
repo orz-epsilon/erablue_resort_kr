@@ -15,8 +15,8 @@ TFLAG:コマンドタイプ受渡 = COMTYPE("道具系&Ａ系")
 オートコマンド許可 = 1
 
 @COM_TOOLTIP_S45_1
-LOCALS = <br>■アナルバイブ責め<br>
-LOCALS += "애널 바이브가 삽입되어 있는 상대에게, 애널 바이브를 움직여 고문하는 커맨드. <br>애널 바이브가 삽입되어 있는 것이 자신인 경우, 애널 바이브 자위가 된다."
+LOCALS = <br>■애널 바이브 고문<br>
+LOCALS += "애널 바이브가 삽입된 상대에게 애널 바이브를 움직여 괴롭히는 커맨드.<br>애널 바이브가 삽입된 것이 자신일 경우, 애널 바이브 자위가 된다."
 LOCALS += "<br>COM 타입: 도구계<br>획득 소스: 쾌A・접촉・고통"
 LOCALS += "<br>고유 획득 경험: 도구 사용 경험(PLAYER)<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
@@ -65,11 +65,11 @@ RETURN 1
 ;-------------------------------------------------
 @MESSAGE_COM_S45_1
 #DIM 同時キャラ番号
-PRINTFORM %CALLNAME:PLAYER%는
+PRINTFORM %CALLNAME:PLAYER%은(는)
 IF MODE_存在判定_ターゲット側("アナルバイブ", PLAYER)
-	PRINTFORML 자신이 머금고 있는 아날 바이브를 움직여, 강한 쾌락을 탐했다...
+	PRINTFORML 스스로 물고 있는 애널 바이브를 움직여, 강한 쾌락을 탐했다…
 ELSE
-	PRINTFORML %CALLNAME:TARGET%가 머금고 있는 아날 바이브를 움직여, 강한 쾌락을 주었다...
+	PRINTFORML %CALLNAME:TARGET%이(가) 물고 있는 애널 바이브를 움직여, 강한 쾌락을 주었다…
 ENDIF
 
 

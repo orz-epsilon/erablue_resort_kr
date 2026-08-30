@@ -7,7 +7,10 @@
 #DIM 干渉変更費用
 #DIM 干渉関数数
 #DIM 干渉強化値段
+#DIM 干渉強化値段_最大
 #DIMS 干渉関数配列, 50
+#DIM 計算段階
+#DIM 固有値段
 
 VARSET 表示候補, -1
 現在ページ = 0
@@ -31,7 +34,7 @@ $表示_LOOP
 
 ;広告対象の表示
 DRAWLINE
-PRINTL 누구에게의 간섭을 강화하시겠습니까?
+PRINTL 누구에 대한 간섭을 강화하시겠습니까?
 DRAWLINE
 
 LOCAL:1 = 0
@@ -75,6 +78,8 @@ PRINTL
 PRINTL 
 PRINTBUTTON "[9998] 일괄 부여 화면으로", 9998
 PRINTL 
+PRINTBUTTON "[9996] 일괄 강화 화면으로", 9996
+PRINTL 
 PRINTL 
 PRINTBUTTON "[9997] 시스템 설명", 9997
 PRINTL 
@@ -102,6 +107,9 @@ SELECTCASE RESULT
 	CASE 9998
 		CALL まとめて干渉処理(表示候補, 干渉関数配列, 干渉関数数)
 		GOTO 表示_LOOP
+	CASE 9996
+		CALL まとめて強化処理(表示候補)
+		GOTO 表示_LOOP
 	CASE 9999
 		RETURN -1
 	CASEELSE
@@ -116,7 +124,7 @@ PRINTFORML ■%NAME表示(選択キャラ番号)%
 PRINTL 강화할 간섭을 선택해주세요
 DRAWLINE
 LOCALS = <div rect='81,0,1912,344' border='31' bcolor='#C0C0C0'></div>
-LOCALS += @"<div rect='156,62,1912,281'>소지 루피:%NUM_FORMAT(MONEY)%<br>소지 ZP　:%ZP所持量全文字列()%</div>"
+LOCALS += @"<div rect='156,62,1912,281'>보유 루피:%NUM_FORMAT(MONEY)%<br>보유 ZP　:%ZP所持量全文字列()%</div>"
 LOCALS += "<div rect='81,375,1937,2812' border='31' bcolor='#C0C0C0'></div><div rect='2050,375,3875,2812' border='31' bcolor='#C0C0C0'></div>"
 LOCALS += "<div rect='2125,500,3762,2812'>"
 ;右側表示
@@ -132,14 +140,28 @@ IF 詳細表示変数 == -1
 		IF 干渉強化変数:選択キャラ番号:干渉ランク < 5
 			干渉強化値段 = 干渉経験値テーブル:(干渉強化変数:選択キャラ番号:干渉ランク) - 干渉強化変数:選択キャラ番号:干渉経験値
 			CALLFORM 干渉強化関数_{干渉強化変数:選択キャラ番号:干渉種類}("値段")
-			干渉強化値段 = MAX(干渉強化値段 * RESULT / 5, 1)
-			LOCALS += @"<br>간섭 랭크를 올린다 필요 ZP:{干渉強化値段}<br>"
+			固有値段 = RESULT
+			干渉強化値段 = MAX(干渉強化値段 * 固有値段 / 5, 1)
+			LOCALS += @"<br>간섭 랭크를 올린다 필요 ZP:{干渉強化値段}"
+			IF 干渉強化変数:選択キャラ番号:干渉ランク <= 3
+				;最大値も計算
+				干渉強化値段_最大 = 干渉経験値テーブル:4 * 固有値段 / 5
+				LOCALS += @"　　최대까지 필요 ZP:{干渉強化値段_最大}"
+			ENDIF
+			LOCALS += "<br>"
 			IF 干渉経験値テーブル:(干渉強化変数:選択キャラ番号:干渉ランク) / 10 > FLAG:ZP所持量
 				LOCALS += @"<font color='#%カラーパレット_HTML("グレーアウト")%'>[1] 현재 간섭을 강화한다 (ZP가 부족합니다)</font><br>"
+				LOCALS += @"<font color='#%カラーパレット_HTML("グレーアウト")%'>[2] 현재 간섭을 최대로 강화한다</font><br>"
 			ELSEIF 干渉強化変数:選択キャラ番号:干渉ランク >= 4
-				LOCALS += @"<font color='#%カラーパレット_HTML("グレーアウト")%'>[1] 현재 간섭을 강화한다 (최대 랭크입니다)</font><br>"
+				LOCALS += @"<font color='#%カラーパレット_HTML("グレーアウト")%'>[1] 현재의 간섭을 강화한다 (최대 랭크입니다)</font><br>"
+				LOCALS += @"<font color='#%カラーパレット_HTML("グレーアウト")%'>[2] 현재의 간섭을 최대로 강화한다</font><br>"
 			ELSE
-				LOCALS += @"<button value='1'>[1] 현재 간섭을 강화한다</button><br>"
+				LOCALS += @"<button value='1'>[1] 현재의 간섭을 강화한다</button><br>"
+				IF 干渉強化変数:選択キャラ番号:干渉ランク <= 3 && 干渉強化値段_最大 <= FLAG:ZP所持量
+					LOCALS += @"<button value='2'>[2] 현재의 간섭을 최대로 강화한다</button><br>"
+				ELSE
+					LOCALS += @"<font color='#%カラーパレット_HTML("グレーアウト")%'>[2] 현재의 간섭을 최대로 강화한다</font><br>"
+				ENDIF
 			ENDIF
 		ENDIF
 	ENDIF
@@ -162,7 +184,7 @@ LOCALS += "</div>"
 ;左側表示
 LOCALS += "<div rect='156,500,1937,2812'>"
 IF 干渉強化変数:選択キャラ番号:干渉種類 == 0
-	LOCALS += @"현재 간섭: 없음"
+	LOCALS += @"현재 간섭:없음"
 ELSE
 	CALLFORM 干渉強化関数_{干渉強化変数:選択キャラ番号:干渉種類}("名前")
 	LOCALS += @"　현재 간섭:<button value='998'>[%TSTR:コマンド名受渡%]</button>"
@@ -195,9 +217,9 @@ IF 詳細表示変数 == -1
 			PRINTL 간섭을 해제하면 간섭 랭크가 0으로 돌아갑니다.
 			PRINTL 다시 같은 간섭을 해도 간섭 랭크는 돌아오지 않습니다.
 			PRINTL
-			PRINTL 간섭을 해제하시겠습니까?
+			PRINTL 간섭을 해제해도 괜찮습니까?
 			PRINTBUTTONLC "[0] 예", 0
-			PRINTBUTTONLC "[1] 아니요", 1
+			PRINTBUTTONLC "[1] 아니오", 1
 			BINPUT
 			SELECTCASE RESULT
 				CASE 0
@@ -210,9 +232,9 @@ IF 詳細表示変数 == -1
 					GOTO 干渉表示_LOOP
 			ENDSELECT
 		CASE 1
-			PRINTL 간섭을 강화해도 괜찮겠습니까?
+PRINTFORML {干渉強化値段}ZP를 소비하여 간섭을 강화하시겠습니까?
 			PRINTBUTTONLC "[0] 예", 0
-			PRINTBUTTONLC "[1] 아니요", 1
+			PRINTBUTTONLC "[1] 아니오", 1
 			BINPUT
 			SELECTCASE RESULT
 				CASE 0
@@ -220,6 +242,21 @@ IF 詳細表示変数 == -1
 					FLAG:ZP所持量 -= 干渉強化値段
 					干渉強化変数:選択キャラ番号:干渉ランク ++
 					干渉強化変数:選択キャラ番号:干渉経験値 = 干渉経験値テーブル:(干渉強化変数:選択キャラ番号:干渉ランク - 1)
+					GOTO 干渉表示_LOOP
+				CASE 1
+					GOTO 干渉表示_LOOP
+			ENDSELECT
+		CASE 2
+			PRINTFORML {干渉強化値段_最大}ZP를 소비하여 간섭을 최대로 강화하시겠습니까?
+			PRINTBUTTONLC "[0] 예", 0
+			PRINTBUTTONLC "[1] 아니오", 1
+			BINPUT
+			SELECTCASE RESULT
+				CASE 0
+					PRINTW 간섭을 강화했습니다.
+					FLAG:ZP所持量 -= 干渉強化値段_最大
+					干渉強化変数:選択キャラ番号:干渉ランク = 5
+					干渉強化変数:選択キャラ番号:干渉経験値 = 干渉経験値テーブル:4
 					GOTO 干渉表示_LOOP
 				CASE 1
 					GOTO 干渉表示_LOOP
@@ -243,17 +280,17 @@ ELSE
 				GOTO 干渉表示_LOOP
 			ENDIF
 			CALLFORM %干渉関数配列:詳細表示変数%("名前")
-			PRINTFORML %CALLNAME:選択キャラ番号%에게 %TSTR:コマンド名受渡%을(를) 합니다.
-			PRINTL 간섭을 변경하면 간섭 랭크가 0으로 돌아갑니다.
-			PRINTL 다시 이전과 같은 간섭을 해도 간섭 랭크는 돌아오지 않습니다.
+			PRINTFORML %CALLNAME:選択キャラ番号%에게 %TSTR:コマンド名受渡%을(를) 수행합니다.
+			PRINTL 간섭을 변경하면, 간섭 랭크가 0으로 돌아갑니다.
+			PRINTL 다시 이전과 같은 간섭을 수행해도 간섭 랭크는 돌아오지 않습니다.
 			PRINTL
-			PRINTL 괜찮겠습니까?
+			PRINTL 괜찮으시겠습니까?
 			PRINTBUTTONLC "[0] 예", 0
-			PRINTBUTTONLC "[1] 아니요", 1
+			PRINTBUTTONLC "[1] 아니오", 1
 			BINPUT
 			SELECTCASE RESULT
 				CASE 0
-					PRINTFORMW %TSTR:コマンド名受渡%을(를) 했습니다.
+					PRINTFORMW %TSTR:コマンド名受渡%을(를) 수행했습니다.
 					FLAG:ZP所持量 -= 干渉変更費用
 					干渉強化変数:選択キャラ番号:干渉種類 = TOINT(REPLACE(干渉関数配列:詳細表示変数, "干渉強化関数_", ""))
 					干渉強化変数:選択キャラ番号:干渉ランク = 0
@@ -324,33 +361,33 @@ PRINTL
 PRINTL
 DRAWLINE
 PRINTL 임의의 간섭 강화를 여러 캐릭터에게 적용합니다.
-PRINTL 간섭의 종류를 선택해 주세요.
+PRINTL 간섭 종류를 선택해주세요.
 DRAWLINE
 LOCALS = <div rect='81,0,1912,344' border='31' bcolor='#C0C0C0'></div>
-LOCALS += @"<div rect='156,62,1912,281'>보유 루피：%NUM_FORMAT(MONEY)%<br>보유 ZP　：%ZP所持量全文字列()%</div>"
+LOCALS += @"<div rect='156,62,1912,281'>보유 루피:%NUM_FORMAT(MONEY)%<br>보유 ZP　:%ZP所持量全文字列()%</div>"
 LOCALS += "<div rect='81,375,1937,2812' border='31' bcolor='#C0C0C0'></div><div rect='2050,375,3875,2812' border='31' bcolor='#C0C0C0'></div>"
 LOCALS += "<div rect='2125,500,3762,2812'>"
 IF 詳細表示変数 == -1
 	;現在の干渉詳細を表示
-	LOCALS += @"특정 간섭을 여러 캐릭터에게 한꺼번에 할 수 있습니다.<br>"
-	LOCALS += @"간섭을 선택한 후 다음 패턴을 실행할 수 있습니다.<br>"
+	LOCALS += @"특정 간섭을 여러 캐릭터에게 한꺼번에 수행할 수 있습니다.<br>"
+	LOCALS += @"간섭을 선택한 후에 다음 패턴을 실행할 수 있습니다.<br>"
 	LOCALS += @"<br>"
 	LOCALS += @"　・임의의 캐릭터를 선택하여 간섭 강화<br>"
 	LOCALS += @"　・현재 간섭이 「없음」인 캐릭터에게 일괄적으로 간섭 강화<br>"
 	LOCALS += @"　・모든 캐릭터에게 일괄적으로 간섭 강화<br>"
 	LOCALS += @"<br>"
-	LOCALS += @"또한, 왼쪽의 「무작위로 간섭하기」를 선택하면 다음 3가지를 실행할 수 있습니다.<br>"
+	LOCALS += @"또한, 왼쪽의 「무작위로 간섭하기」를 선택하면 다음 세 가지를 실행할 수 있습니다.<br>"
 	LOCALS += @"<br>"
 	LOCALS += @"　・임의의 캐릭터를 선택하여 무작위 간섭 강화<br>"
 	LOCALS += @"　・현재 간섭이 「없음」인 캐릭터에게 일괄적으로 무작위 간섭 강화<br>"
 	LOCALS += @"　・모든 캐릭터에게 일괄적으로 무작위 간섭 강화<br>"
 	LOCALS += @"<br>"
-	LOCALS += @"（모든 패턴에서 ZP가 부족할 때 부여를 중지합니다）<br>"
+	LOCALS += @"(모든 패턴에서, ZP가 부족할 시 부여를 중지합니다)<br>"
 ELSEIF 詳細表示変数 == 998
 	LOCALS += @"■무작위 간섭 강화<br><br>"
-	LOCALS += @"현재 부여 가능한 모든 간섭 중에서 무작위로 적용합니다.<br><br>"
+	LOCALS += @"현재 부여 가능한 모든 간섭 중에서, 무작위로 적용합니다.<br><br>"
 	LOCALS += @"1인당 필요 ZP: 간섭 종류에 따라 변동<br>"
-	LOCALS += @"<button value='0'>[0] 적용할 캐릭터를 선택합니다</button><br>"
+	LOCALS += @"<button value='0'>[0] 적용할 캐릭터를 선택한다</button><br>"
 	LOCALS += @"<button value='1'>[1] 간섭 「없음」인 캐릭터에게 일괄 적용</button><br>"
 	LOCALS += @"<button value='2'>[2] 모든 캐릭터에게 일괄 적용</button><br>"
 ELSE
@@ -360,9 +397,9 @@ ELSE
 	LOCALS += @"%TSTR:コマンド名受渡%<br><br>"
 	CALLFORM %干渉関数配列:詳細表示変数%("値段")
 	干渉変更費用 = RESULT
-	LOCALS += @"1인당 필요 ZP：{干渉変更費用}<br>"
+	LOCALS += @"1인당 필요 ZP:{干渉変更費用}<br>"
 	LOCALS += @"<button value='0'>[0] 적용할 캐릭터를 선택한다</button><br>"
-	LOCALS += @"<button value='1'>[1] 간섭 「없음」인 캐릭터에게 일괄 적용</button><br>"
+	LOCALS += @"<button value='1'>[1] 간섭「없음」인 캐릭터에게 일괄 적용</button><br>"
 	LOCALS += @"<button value='2'>[2] 모든 캐릭터에게 일괄 적용</button><br>"
 ENDIF
 LOCALS += "</div>"
@@ -398,12 +435,12 @@ SELECTCASE RESULT
 			PRINTFORML 현재 간섭 강화가 「없음」인 캐릭터 전원에게 무작위 간섭 강화를 적용합니다.
 		ELSE
 			CALLFORM %干渉関数配列:詳細表示変数%("名前")
-			PRINTFORML 현재 간섭 강화가 「없음」인 캐릭터 전원에게%TSTR:コマンド名受渡%을(를) 적용합니다.
+			PRINTFORML 현재 간섭 강화가 「없음」인 캐릭터 전원에게 %TSTR:コマンド名受渡%을(를) 적용합니다.
 		ENDIF
 		PRINTL 괜찮습니까?
 		PRINTL
 		PRINTBUTTONLC "[0] 예", 0
-		PRINTBUTTONLC "[1] 아니요", 1
+		PRINTBUTTONLC "[1] 아니오", 1
 		PRINTL
 		BINPUT
 		IF RESULT == 0
@@ -439,7 +476,7 @@ SELECTCASE RESULT
 					SIF 表示候補:LOCAL == -1
 						BREAK
 					IF 干渉変更費用 > FLAG:ZP所持量
-						PRINTW ZP 부족으로 도중에 적용을 종료합니다.
+						PRINTW ZP 부족으로 인해 도중에 적용을 종료합니다.
 						BREAK
 					ENDIF
 					IF 干渉強化変数:(表示候補:LOCAL):干渉種類 == 0
@@ -450,7 +487,7 @@ SELECTCASE RESULT
 						適用キャラ数 ++
 					ENDIF
 				NEXT
-				PRINTFORMW {適用キャラ数}명의 캐릭터에게 %TSTR:コマンド名受渡%의 적용을 완료했습니다.
+				PRINTFORMW {適用キャラ数}명의 캐릭터에게 %TSTR:コマンド名受渡% 적용을 완료했습니다.
 			ENDIF
 			RETURN 0
 		ELSE
@@ -460,13 +497,13 @@ SELECTCASE RESULT
 		PRINTL
 		PRINTL
 		IF 詳細表示変数 == 998
-			PRINTFORML 간섭 강화를 변경할 수 있는 모든 캐릭터에게 무작위 간섭 강화를 적용합니다.
+			PRINTFORML 간섭 강화를 변경할 수 있는 캐릭터 전원에게 무작위 간섭 강화를 적용합니다.
 		ELSE
 			CALLFORM %干渉関数配列:詳細表示変数%("名前")
-			PRINTFORML 간섭 강화를 변경할 수 있는 모든 캐릭터에게 %TSTR:コマンド名受渡%을(를) 적용합니다.
+			PRINTFORML 간섭 강화를 변경할 수 있는 캐릭터 전원에게 %TSTR:コマンド名受渡%을(를) 적용합니다.
 		ENDIF
 		PRINTL 괜찮습니까?
-		PRINTL ※간섭 강화를 변경하면 간섭 랭크가 0으로 돌아갑니다.
+		PRINTL ※간섭 강화를 변경하면, 간섭 랭크가 0으로 돌아갑니다.
 		PRINTL ※원래 간섭으로 변경해도 간섭 랭크는 0이 되므로 주의하십시오.
 		PRINTL
 		PRINTBUTTONLC "[0] 예", 0
@@ -486,7 +523,7 @@ SELECTCASE RESULT
 					CALLFORM %干渉関数配列:干渉番号%("値段")
 					干渉変更費用 = RESULT
 					IF 干渉変更費用 > FLAG:ZP所持量
-						PRINTW ZP 부족으로 도중에 적용을 종료합니다.
+						PRINTW ZP 부족으로 인해 도중에 적용을 종료합니다。
 						BREAK
 					ENDIF
 					IF 干渉強化変数:(表示候補:LOCAL):干渉種類 != TOINT(REPLACE(干渉関数配列:干渉番号, "干渉強化関数_", ""))
@@ -517,7 +554,7 @@ SELECTCASE RESULT
 						適用キャラ数 ++
 					ENDIF
 				NEXT
-				PRINTFORMW {適用キャラ数}명의 캐릭터에게 %TSTR:コマンド名受渡%의 적용을 완료했습니다.
+				PRINTFORMW {適用キャラ数}명의 캐릭터에게 %TSTR:コマンド名受渡% 적용을 완료했습니다.
 			ENDIF
 			RETURN 0
 		ELSE
@@ -552,7 +589,7 @@ VARSET 選択候補, -1
 $表示_LOOP
 ;広告対象の表示
 DRAWLINE
-PRINTL 간섭 강화할 캐릭터를 선택하십시오.
+PRINTL 간섭 강화를 할 캐릭터를 선택해주세요.
 DRAWLINE
 
 ;キャラの表示（15人まで）
@@ -569,11 +606,11 @@ FOR LOCAL, (現在ページ * 30), ((現在ページ * 30) + 30)
 	ENDIF
 	LOCALS += @"[{LOCAL,3,RIGHT}] %ADD_STR_SPACE(GET_NAME(表示候補:LOCAL,1), "]"), 40, LEFT%"
 	IF 干渉強化変数:(表示候補:LOCAL):干渉種類 == 0
-		LOCALS += "현재 간섭: 없음"
+		LOCALS += "현재 간섭:없음"
 	ELSE
 		CALLFORM 干渉強化関数_{干渉強化変数:(表示候補:LOCAL):干渉種類}("名前")
-		LOCALS += @"현재 간섭：%TSTR:コマンド名受渡%　　"
-		LOCALS += @"랭크：%TOFULL(TOSTR(干渉強化変数:(表示候補:LOCAL):干渉ランク))%"
+		LOCALS += @"현재 간섭:%TSTR:コマンド名受渡%　　"
+		LOCALS += @"랭크:%TOFULL(TOSTR(干渉強化変数:(表示候補:LOCAL):干渉ランク))%"
 		CALLFORM 干渉強化関数_{干渉強化変数:(表示候補:LOCAL):干渉種類}("対象値", 表示候補:LOCAL)
 		LOCALS += @"　　%TSTR:コマンド名受渡%"
 	ENDIF
@@ -600,7 +637,7 @@ IF 詳細表示変数 == 998
 	PRINTBUTTON @"[998] 선택 캐릭터에게 무작위 간섭 강화를 적용한다", 998
 ELSE
 	CALLFORM %干渉関数配列:詳細表示変数%("名前")
-	PRINTBUTTON @"[998] 선택 캐릭터에게%TSTR:コマンド名受渡%을(를) 적용한다", 998
+	PRINTBUTTON @"[998] 선택 캐릭터에게 %TSTR:コマンド名受渡%를 적용한다", 998
 ENDIF
 PRINTL 
 PRINTBUTTON "[999] 돌아가기", 999
@@ -623,16 +660,16 @@ SELECTCASE LOCAL
 				BREAK
 			ENDIF
 		NEXT
-		PRINTFORM 이상의{選択キャラ数, 3}명의 캐릭터에게
+		PRINTFORM 이상의 {選択キャラ数, 3}명의 캐릭터에게
 		IF 詳細表示変数 == 998
 			PRINT 무작위 간섭 강화
 		ELSE
 			CALLFORM %干渉関数配列:詳細表示変数%("名前")
 			PRINTFORM %TSTR:コマンド名受渡%
 		ENDIF
-		PRINTL 을(를) 적용하시겠습니까?
+		PRINTL 를 적용해도 괜찮습니까?
 		PRINTBUTTONLC "[0] 예", 0
-		PRINTBUTTONLC "[1] 아니요", 1
+		PRINTBUTTONLC "[1] 아니오", 1
 		PRINTL
 		BINPUT
 		IF RESULT == 0
@@ -677,7 +714,7 @@ SELECTCASE LOCAL
 						選択キャラ数 ++
 					ENDIF
 				NEXT
-				PRINTFORMW {選択キャラ数}명의 캐릭터에게 %TSTR:コマンド名受渡%의 적용을 완료했습니다.
+				PRINTFORMW {選択キャラ数}명의 캐릭터에게 %TSTR:コマンド名受渡% 적용을 완료했습니다.
 			ENDIF
 			RETURN 0
 		ELSE
@@ -688,6 +725,230 @@ SELECTCASE LOCAL
 	CASEELSE
 		SIF 詳細表示変数 < 50 && 干渉強化変数:(表示候補:LOCAL):干渉種類 == TOINT(REPLACE(干渉関数配列:詳細表示変数, "干渉強化関数_", ""))
 			GOTO 表示_LOOP
+		IF MATCH(選択候補, 表示候補:LOCAL)
+			ARRAYSHIFT 選択候補, -1, -1, FINDELEMENT(選択候補, 表示候補:LOCAL)
+		ELSE
+			選択候補:(FINDELEMENT(選択候補, -1)) = 表示候補:LOCAL
+		ENDIF
+		GOTO 表示_LOOP
+ENDSELECT
+
+
+@まとめて強化処理(表示候補)
+#DIM REF 表示候補
+#DIM 適用キャラ数
+#DIM 干渉変更費用
+
+$干渉表示_LOOP
+PRINTL
+PRINTL
+PRINTL
+DRAWLINE
+PRINTL 여러 캐릭터의 간섭을 한꺼번에 강화합니다.
+PRINTL 강화할 종류를 선택해 주세요.
+DRAWLINE
+LOCALS = <div rect='81,0,1912,344' border='31' bcolor='#C0C0C0'></div>
+LOCALS += @"<div rect='156,62,1912,281'>보유 루피:%NUM_FORMAT(MONEY)%<br>보유 ZP　:%ZP所持量全文字列()%</div>"
+LOCALS += "<div rect='81,375,1937,2812' border='31' bcolor='#C0C0C0'></div><div rect='2050,375,3875,2812' border='31' bcolor='#C0C0C0'></div>"
+LOCALS += "<div rect='2125,500,3762,2812'>"
+
+;現在の干渉詳細を表示
+LOCALS += @"여러 캐릭터에게 한꺼번에 간섭 강화를 할 수 있습니다. <br>"
+LOCALS += @"다음 패턴의 강화가 실행 가능합니다. <br>"
+LOCALS += @"<br>"
+LOCALS += @"　・임의의 캐릭터를 선택하여 간섭을 Lv5까지 강화<br>"
+LOCALS += @"　・간섭이 Lv5가 아닌 캐릭터에게 일괄로 간섭 강화<br>"
+LOCALS += @"<br>"
+LOCALS += @"（모든 패턴에서 ZP가 부족할 시 부여를 정지합니다）<br>"
+
+LOCALS += "</div>"
+LOCALS += "<div rect='156,500,1937,2812'>"
+LOCALS += "<br>"
+LOCALS += "<button value='0'>[0] 임의 캐릭터의 간섭을 강화한다</button>"
+LOCALS += "<br>"
+LOCALS += "<button value='1'>[1] Lv5가 아닌 캐릭터의 간섭을 강화한다</button>"
+LOCALS += "<br>"
+LOCALS += "<button value='999'>[999] 돌아가기</button>"
+LOCALS += "<br>"
+LOCALS += "</div>"
+
+HTML_PRINT LOCALS, 1
+FOR LOCAL, 0, 29
+	PRINTL
+NEXT
+DRAWLINE
+
+BINPUT
+SELECTCASE RESULT
+	CASE 0
+		;キャラ選択へ
+		CALL まとめて強化処理_キャラ選択(表示候補)
+		GOTO 干渉表示_LOOP
+	CASE 1
+		PRINTL
+		PRINTL
+		PRINTFORML 현재 간섭 강화가 Lv5 미만인 캐릭터 전원에게 강화를 진행합니다.
+		PRINTL 괜찮습니까?
+		PRINTL
+		PRINTBUTTONLC "[0] 예", 0
+		PRINTBUTTONLC "[1] 아니오", 1
+		PRINTL
+		BINPUT
+		IF RESULT == 0
+			PRINTL
+			PRINTL
+			適用キャラ数 = 0
+			FOR LOCAL, 0, 2000
+				;登録が終わったら表示終了
+				SIF 表示候補:LOCAL == -1
+					BREAK
+				SIF 干渉強化変数:(表示候補:LOCAL):干渉種類 == 0
+					CONTINUE
+				SIF 干渉強化変数:(表示候補:LOCAL):干渉ランク >= 5
+					CONTINUE
+				CALLFORM 干渉強化関数_{干渉強化変数:(表示候補:LOCAL):干渉種類}("値段")
+				干渉変更費用 = 干渉経験値テーブル:4 * RESULT / 5
+				IF 干渉変更費用 > FLAG:ZP所持量
+PRINTW ZP 부족으로 인해 도중에 적용을 종료합니다.
+					BREAK
+				ENDIF
+				干渉強化変数:(表示候補:LOCAL):干渉ランク = 5
+				干渉強化変数:(表示候補:LOCAL):干渉経験値 = 干渉経験値テーブル:4
+				FLAG:ZP所持量 -= 干渉変更費用
+				適用キャラ数 ++
+			NEXT
+PRINTFORMW {適用キャラ数}명의 캐릭터에 대한 간섭을 Lv5로 강화했습니다.
+			RETURN 0
+		ELSE
+			GOTO 干渉表示_LOOP
+		ENDIF
+	CASE 999
+		RETURN 0
+ENDSELECT
+
+
+@まとめて強化処理_キャラ選択(表示候補)
+#DIM REF 表示候補
+#DIM 現在ページ
+#DIM 選択候補, 2000
+#DIM 選択キャラ数
+#DIM 干渉変更費用
+
+VARSET 選択候補, -1
+現在ページ = 0
+
+$表示_LOOP
+;広告対象の表示
+DRAWLINE
+PRINTL 간섭을 강화할 캐릭터를 선택해주세요.
+DRAWLINE
+
+;キャラの表示（15人まで）
+FOR LOCAL, (現在ページ * 30), ((現在ページ * 30) + 30)
+	;登録が終わったら表示終了
+	IF 表示候補:LOCAL == -1
+		BREAK
+	ENDIF
+	LOCALS = 
+	IF MATCH(選択候補, 表示候補:LOCAL)
+		SETCOLOR カラーパレット("黄")
+	ELSEIF 干渉強化変数:(表示候補:LOCAL):干渉種類 == 0
+		SETCOLOR カラーパレット("グレーアウト")
+	ELSEIF 干渉強化変数:(表示候補:LOCAL):干渉ランク >= 5
+		SETCOLOR カラーパレット("グレーアウト")
+	ENDIF
+	LOCALS += @"[{LOCAL,3,RIGHT}] %ADD_STR_SPACE(GET_NAME(表示候補:LOCAL,1), "]"), 40, LEFT%"
+	IF 干渉強化変数:(表示候補:LOCAL):干渉種類 == 0
+		LOCALS += "현재 간섭: 없음"
+		PRINTPLAINFORM %LOCALS%
+	ELSE
+		CALLFORM 干渉強化関数_{干渉強化変数:(表示候補:LOCAL):干渉種類}("名前")
+		LOCALS += @"현재 간섭: %TSTR:コマンド名受渡%　　"
+		LOCALS += @"랭크: %TOFULL(TOSTR(干渉強化変数:(表示候補:LOCAL):干渉ランク))%"
+		CALLFORM 干渉強化関数_{干渉強化変数:(表示候補:LOCAL):干渉種類}("対象値", 表示候補:LOCAL)
+		LOCALS += @"　　%TSTR:コマンド名受渡%"
+		IF 干渉強化変数:(表示候補:LOCAL):干渉ランク >= 5
+			PRINTPLAINFORM %LOCALS%
+		ELSE
+			PRINTBUTTON @"%LOCALS%", LOCAL
+		ENDIF
+	ENDIF
+	RESETCOLOR
+	PRINTL 
+NEXT
+PRINTL
+DRAWLINE
+
+;ページめくり表示
+IF 現在ページ > 0
+	PRINTBUTTONLC "[9000] 이전 페이지로", 9000
+ELSE
+	PRINTLC 　
+ENDIF
+PRINTFORM - {現在ページ + 1} -
+IF 表示候補:(現在ページ * 30) + 30 > -1
+	PRINTBUTTONC "[9001] 다음 페이지로", 9001
+ENDIF
+PRINTL 
+PRINTL 
+PRINTBUTTON "[9998] 선택 캐릭터에게 간섭 강화를 실행한다", 9998
+PRINTL 
+PRINTBUTTON "[9999] 돌아가기", 9999
+
+BINPUT
+LOCAL = RESULT
+SELECTCASE LOCAL
+	CASE 9000
+		現在ページ = MAX(現在ページ - 1, 0)
+		GOTO 表示_LOOP
+	CASE 9001
+		現在ページ += 1
+		GOTO 表示_LOOP
+	CASE 9998
+		選択キャラ数 = 0
+		FOR LOCAL, 0, 2000
+			IF 選択候補:LOCAL > -1
+				選択キャラ数 ++
+			ELSE
+				BREAK
+			ENDIF
+		NEXT
+		PRINTFORM 이상의 {選択キャラ数, 3}명의 캐릭터에게 간섭 강화
+		PRINTL 를 실행해도 괜찮겠습니까?
+		PRINTBUTTONLC "[0] 예", 0
+		PRINTBUTTONLC "[1] 아니오", 1
+		PRINTL
+		BINPUT
+		IF RESULT == 0
+			選択キャラ数 = 0
+			FOR LOCAL, 0, 2000
+				;登録が終わったら表示終了
+				SIF 選択候補:LOCAL == -1
+					BREAK
+				SIF 干渉強化変数:(選択候補:LOCAL):干渉種類 == 0
+					CONTINUE
+				SIF 干渉強化変数:(選択候補:LOCAL):干渉ランク >= 5
+					CONTINUE
+				CALLFORM 干渉強化関数_{干渉強化変数:(選択候補:LOCAL):干渉種類}("値段")
+				干渉変更費用 = 干渉経験値テーブル:4 * RESULT / 5
+				IF 干渉変更費用 > FLAG:ZP所持量
+					PRINTW ZP 부족으로 인해 도중에 적용을 종료합니다.
+					BREAK
+				ENDIF
+				干渉強化変数:(選択候補:LOCAL):干渉ランク = 5
+				干渉強化変数:(選択候補:LOCAL):干渉経験値 = 干渉経験値テーブル:4
+				FLAG:ZP所持量 -= 干渉変更費用
+				選択キャラ数 ++
+			NEXT
+			PRINTFORMW {選択キャラ数}명의 캐릭터에 대한 간섭 강화를 완료했습니다.
+				
+			RETURN 0
+		ELSE
+			GOTO 表示_LOOP
+		ENDIF
+	CASE 9999
+		RETURN -1
+	CASEELSE
 		IF MATCH(選択候補, 表示候補:LOCAL)
 			ARRAYSHIFT 選択候補, -1, -1, FINDELEMENT(選択候補, 表示候補:LOCAL)
 		ELSE

@@ -8,7 +8,7 @@ TSTR:コマンド名受渡 = 유사성교
 ;許可時の特別文章はここに記入
 IF TFLAG:オートコマンドフラグ >= 4000
 	;反転時、つまりあなたが擦りつける方
-	許可取り文章 = %CALLNAME:TARGET%는 %CALLNAME:PLAYER%에게 [유사성교]를 해줬으면 하는 것 같다…
+	許可取り文章 = %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%에게 [유사성교]를 해 주길 바라는 것 같다…
 ENDIF
 
 
@@ -28,7 +28,7 @@ TFLAG:コマンドタイプ受渡 = COMTYPE("うふふ")
 ;===================================================
 @COM_TOOLTIP_89
 TSTR:ツールチップ受渡 '= "<br>■유사성교<br>"
-TSTR:ツールチップ受渡 += "페니스와 상대의 음순을 비벼 쾌락을 서로 주는 커맨드. <br>유사성교 모드가 되어, 모드를 변경하거나 성행위를 종료할 때까지 지속적으로 특정 소스가 발생한다."
+TSTR:ツールチップ受渡 += "페니스와 상대의 음순을 비벼 쾌락을 주고받는 커맨드. <br>유사성교 모드가 되어, 모드를 변경하거나 성행위를 종료할 때까지 지속적으로 특정 소스가 발생한다."
 TSTR:ツールチップ受渡 += "<br>COM 타입: 우후후<br>획득 소스: 쾌C・노출・접촉・불결"
 TSTR:ツールチップ受渡 += "<br>고유 획득 경험: 없음<br>"
 
@@ -111,7 +111,7 @@ IF GETBIT(TALENT:PLAYER:性別, 1) && ABL:精液中毒
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += ABL:精液中毒 * 1
-	PRINTFORM 정액 중독LV{ABL:精液中毒}({ABL:精液中毒 * 1})
+	PRINTFORM 정액중독LV{ABL:精液中毒}({ABL:精液中毒 * 1})
 	＋表示フラグ = 1
 ENDIF
 ;ABL:Ｃ感覚
@@ -127,7 +127,7 @@ IF MARK:快楽刻印
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += MARK:快楽刻印 * 3
-	PRINTFORM 쾌락 각인LV{MARK:快楽刻印}({MARK:快楽刻印 * 3})
+	PRINTFORM 쾌락각인LV{MARK:快楽刻印}({MARK:快楽刻印 * 3})
 	＋表示フラグ = 1
 ENDIF
 ;PALAM:欲情
@@ -149,21 +149,21 @@ ENDIF
 IF TALENT:快感応答 < 0 && !TALENT:淫乱
 	PRINT  - 
 	実行値 -= 5
-	PRINT 쾌감 부정(5)
+	PRINT 쾌감의 부정(5)
 	＋表示フラグ = 1
 ENDIF
 ;男嫌い（恋慕、親愛で無効）
 IF TALENT:性別嗜好 & 1 && !(TALENT:PLAYER:性別 & 1) && (!TALENT:恋慕 || PLAYER != MASTER)
 	PRINT  - 
 	実行値 -= 12
-	PRINT 남성 혐오(12)
+	PRINT 남성혐오(12)
 	＋表示フラグ = 1
 ENDIF
 ;女嫌い（恋慕、親愛で無効）
 IF TALENT:性別嗜好 & 2 && !(TALENT:PLAYER:性別 & 2) && (!TALENT:恋慕 || PLAYER != MASTER)
 	PRINT  - 
 	実行値 -= 12
-	PRINT 여성 혐오(12)
+	PRINT 여성혐오(12)
 	＋表示フラグ = 1
 ENDIF
 ;恋慕
@@ -179,7 +179,7 @@ IF TALENT:セフレ
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += 10
-	PRINT 섹파(10)
+	PRINT 섹프(10)
 	＋表示フラグ = 1
 ENDIF
 
@@ -206,7 +206,16 @@ IF TCVAR:言いなり
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += 999
-	PRINT 당신 말이라면 뭐든지(999)
+	PRINT 당신의 뜻대로(999)
+	＋表示フラグ = 1
+ENDIF
+
+;特殊言いなり
+IF TCVAR:特殊言いなり
+	SIF ＋表示フラグ
+		PRINT  + 
+	実行値 += 999
+	PRINTFORM %特殊言いなり分岐(TARGET)%(999)
 	＋表示フラグ = 1
 ENDIF
 
@@ -317,7 +326,7 @@ RETURNF 1
 ;実行時メッセージ
 ;===================================================
 @MESSAGE_COM89
-PRINTFORM %CALLNAME:PLAYER%는 위로 눕혀진 %CALLNAME:TARGET%의
+PRINTFORM %CALLNAME:PLAYER%은(는) 똑바로 누운%CALLNAME:TARGET%의
 SIF PALAM:TARGET:潤滑 >= PALAMLV:4
-	PRINT 흥건하게 젖은
-PRINTL 음순에 단단히 발기한 음경을 맞대고, 허리를 움직여 비벼 올리기 시작했다…
+	PRINT 축축하게 젖은
+PRINTL 음순에 단단히 솟아오른 음경을 갖다 대자, 허리를 움직여 비벼 올리기 시작했다…

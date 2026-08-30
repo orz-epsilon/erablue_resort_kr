@@ -5,9 +5,9 @@
 @RAPE_COMNAME16
 #FUNCTIONS
 IF MODE_確認_完全一致("フェラチオ", TARGET, PLAYER) > -1
-	TSTR:コマンド名受渡 = 가슴으로 펠라하다
+	TSTR:コマンド名受渡 = 가슴 펠라를 하다
 ELSE
-	TSTR:コマンド名受渡 = 가슴으로 펠라해 주다
+	TSTR:コマンド名受渡 = 가슴으로 해주다
 ENDIF
 
 
@@ -21,10 +21,10 @@ TFLAG:コマンドタイプ受渡 = RAPE_COMTYPE("うふふ")
 
 
 @RAPE_COM_TOOLTIP_16
-LOCALS = <br>■가슴으로 펠라해 주다<br>
+LOCALS = <br>■가슴으로 해주다<br>
 LOCALS += "가슴으로 상대의 페니스를 애무해 주는 커맨드. <br>가슴 펠라 모드가 되어, 모드를 변경하거나 성행위를 종료할 때까지 지속적으로 특정 소스가 발생한다. <br>펠라치오 모드 시, [가슴 펠라]로 변화."
 LOCALS += "<br>RAPE_COM 타입: 우후후<br>획득 소스: 쾌B・노출・접촉・봉사・불결"
-LOCALS += "<br>고유 획득 경험: 가슴 펠라 경험(TARGET)<br>"
+LOCALS += "<br>고유 획득 경험: 가슴 애무 경험(TARGET)<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
 @RAPE_COM16
@@ -125,13 +125,13 @@ PRINTFORM %CALLNAME:PLAYER%은(는)%CALLNAME:TARGET%의
 	IF TALENT:非童貞 == 0
 		PRINTFORM 동정
 	ELSEIF TALENT:イキやすさ == 1
-		PRINTFORM %TEXTR("하찮은/흐느적거리는")%
+		PRINTFORM %TEXTR("잡몹/약골")%
 	ELSEIF TALENT:Ｃ感度 == 1
 		PRINTFORM 민감
 	ENDIF
 	
 	IF TALENT:男性器サイズ <= -1
-		PRINTFORM %TEXTR("자지/고추/작은 자지")%
+		PRINTFORM %TEXTR("고추/고추/작은 고추")%
 	ELSEIF TALENT:男性器サイズ == 0
 		PRINTFORM %TEXTR("자지/고추/페니스")%
 	ELSEIF TALENT:男性器サイズ == 1
@@ -141,17 +141,17 @@ PRINTFORM %CALLNAME:PLAYER%은(는)%CALLNAME:TARGET%의
 	ENDIF
 PRINTFORM 을(를)
 SIF MODE_確認_完全一致("パイズリフェラ", PLAYER, TARGET) > -1
-PRINTFORM 물고 있는 채로,
+	PRINTFORM 문 채로,
 IF TALENT:PLAYER:バストサイズ <= -1
-PRINTFORM 얇은 가슴으로
+	PRINTFORM 빈약한 가슴으로
 ;巨乳
 ELSEIF TALENT:PLAYER:バストサイズ == 1
-PRINTFORM 크게 자란 가슴으로 페니스를 감싸 안고
+	PRINTFORM 크게 자란 가슴으로 페니스를 감싸 안고
 ;爆乳以上
 ELSEIF TALENT:PLAYER:バストサイズ >= 2
-PRINTFORM 너무나 풍만하게 자란 가슴으로 페니스를 감추듯이 끼워
+	PRINTFORM 지나치게 풍만한 가슴으로 페니스를 감싸 숨기듯이 끼워서
 ELSE
-PRINTFORM 가슴으로 페니스를 끼워
+	PRINTFORM 가슴으로 페니스를 끼워서
 ENDIF
 PRINTFORML 문질러 올려주었다…
 

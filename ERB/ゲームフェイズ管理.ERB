@@ -21,7 +21,7 @@ FOR LOCAL, 1, CHARANUM
 	;食いしばり状態チェック
 	IF TCVAR:(TARGET:LOCAL):食いしばりフラグ > 1
 		;食いしばり時にモード変更すると、即座に体力限界に移行させる
-		PRINTFORML （%CALLNAME:(TARGET:LOCAL)%의 체력이 한계에 다다랐습니다）
+		PRINTFORML （%CALLNAME:(TARGET:LOCAL)%의 체력이 한계에 도달했습니다）
 		SELECTCASE SAVESTR:ゲームフェイズ管理
 			CASE "マッサージモード"
 				TRYCALLFORM KOJO_EVENT_マッサージ体力限界_{NO:(TARGET:LOCAL)}(TARGET:LOCAL)

@@ -12,28 +12,69 @@ TFLAG:コマンドタイプ受渡 = COMTYPE("日常")
 
 @COM_TOOLTIP_301
 LOCALS = <br>■차를 끓이다<br>
-LOCALS += "차를 끓여, 그 자리에 있는 전원이 휴식하는 커맨드. <br>한 번 실행한 후에는 2시간의 인터벌이 필요하다."
-LOCALS += "<br>COM 타입: 일상<br>획득 소스: 환락・정복"
+LOCALS += "차를 끓여 그 자리에 있는 전원과 함께 휴식하는 커맨드.<br>한 번 실행한 후에는 2시간의 인터벌이 필요하다."
+LOCALS += "<br>COM 타입：일常<br>획득 소스：환락・정복"
 LOCALS += "<br>고유 획득 경험: 없음<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
 ;お茶を淹れる
 @COM301
-LOCAL = RAND:100
-LOCAL:1 = 90 + GET_SUCCESS_RATE() / 5
-SIF LOCAL:1 > 99
-	LOCAL:1 = 99
-IF LOCAL <= 9
-	;10％で大成功
-	EXP:MASTER:会話経験 ++
-	RFLAG:コマンド結果受渡し変数 = 1
-ELSEIF LOCAL >= LOCAL:1
-	;10～1％で失敗
-	RFLAG:コマンド結果受渡し変数 = -1
+
+;料理経験獲得をつけて「お茶淹れを繰り返してくと失敗が減る」みたいにしてもいい気もしたけど、
+;それだと「ひたすらお茶酌みしてたら全空最高の料理人になっていた件」みたいな感じのなろう系オーナーになってしまう懸念もある
+;EXP:お茶酌み経験を新設すればいいんだろうけど、それだと「オーナーの料理人技能意味を持たせようキャンペーン」の趣旨からは外れる。痛し痒し。
+IF 知識素質:MASTER:料理人 >= 3
+;全空一のお茶酌み
+	SELECTCASE RAND:100
+	CASE 0 TO 49
+	;大成功 50% お茶酌み界の十天衆ならこのくらいは出すよねきっと
+		EXP:MASTER:会話経験 ++
+		RFLAG:コマンド結果受渡し変数 = 1
+	CASEELSE
+	;成功 80%
+		RFLAG:コマンド結果受渡し変数 = 0	
+	ENDSELECT
+ELSEIF 知識素質:MASTER:料理人 == 2
+;料理人で食ってけるベテランのお茶酌み
+	SELECTCASE RAND:100
+	CASE 0 TO 19
+	;大成功 20%
+		EXP:MASTER:会話経験 ++
+		RFLAG:コマンド結果受渡し変数 = 1
+	CASEELSE
+	;成功 80%
+		RFLAG:コマンド結果受渡し変数 = 0	
+	ENDSELECT
+ELSEIF 知識素質:MASTER:料理人 == 1
+;あくまで趣味レベルのお茶酌み
+	SELECTCASE RAND:100
+	CASE 0 TO 14
+	;大成功 15%
+		EXP:MASTER:会話経験 ++
+		RFLAG:コマンド結果受渡し変数 = 1
+	CASE 15 TO 19
+	;失敗 5%
+		RFLAG:コマンド結果受渡し変数 = -1
+	CASEELSE
+	;成功 80%
+		RFLAG:コマンド結果受渡し変数 = 0	
+	ENDSELECT
 ELSE
-	;残りは成功
-	RFLAG:コマンド結果受渡し変数 = 0
+;素人
+	SELECTCASE RAND:10
+	CASE 0
+	;大成功 10%
+		EXP:MASTER:会話経験 ++
+		RFLAG:コマンド結果受渡し変数 = 1
+	CASE 1
+	;失敗 10%
+		RFLAG:コマンド結果受渡し変数 = -1
+	CASEELSE
+	;成功 80%
+		RFLAG:コマンド結果受渡し変数 = 0	
+	ENDSELECT
 ENDIF
+
 
 ;その場に居るTARGET全員で回す
 LOCAL:1 = TARGET
@@ -128,9 +169,9 @@ RETURN 1
 @MESSAGE_COM301
 PRINTFORML %CALLNAME:PLAYER%은(는) 차를 끓여%CALLNAME:TARGET%\@ GET_TARGETNUM() > 1 ? 達 # \@에게 내밀었다…
 IF RFLAG:コマンド結果受渡し変数 == 1
-	PRINTFORML %CALLNAME:TARGET%와(과)%CALLNAME:PLAYER%은(는) 차를 마시며 즐거운 한때를 보냈다…
+	PRINTFORML %CALLNAME:TARGET%와(과) %CALLNAME:PLAYER%은(는) 차를 마시며 즐거운 한때를 보냈다…
 ELSEIF RFLAG:コマンド結果受渡し変数 == -1
-	PRINTFORML …아무래도%CALLNAME:TARGET%의 입맛에 맞지 않았던 것 같다
+	PRINTFORML …아무래도 %CALLNAME:TARGET%의 입맛에 맞지 않았던 모양이다
 ENDIF
 
 

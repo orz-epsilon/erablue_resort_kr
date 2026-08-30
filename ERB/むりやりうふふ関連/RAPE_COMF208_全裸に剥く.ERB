@@ -3,7 +3,7 @@
 ;-------------------------------------------------
 @RAPE_COMNAME208
 #FUNCTIONS
-TSTR:コマンド名受渡 = 전라로 벗기다
+TSTR:コマンド名受渡 = 알몸으로 벗기다
 
 
 
@@ -16,10 +16,10 @@ TFLAG:コマンドタイプ受渡 = RAPE_COMTYPE("うふふ")
 
 
 @RAPE_COM_TOOLTIP_208
-LOCALS = <br>■전라로 벗기다<br>
+LOCALS = <br>■알몸으로 벗기다<br>
 LOCALS += "상대의 옷을 전부 벗겨내고 벗긴다. <br>상황적으로 정중하게 전부 벗길 수 있을지는 의심스럽지만, 그렇다고 없으면 곤란하므로"
-LOCALS += "<br>RAPE_COM 타입：우후후<br>획득 소스：없음"
-LOCALS += "<br>고유 획득 경험：없음<br>"
+LOCALS += "<br>RAPE_COM타입：우후후<br>취득 소스：없음"
+LOCALS += "<br>고유 획득 경험: 없음<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
 @RAPE_COM208
@@ -87,11 +87,11 @@ RETURN 1
 
 IF CFLAG:TARGET:睡眠
 	IF TCVAR:TARGET:泥酔眠姦
-		PRINTFORM 만취했다
+		PRINTFORM 술에 취해 쓰러진
 	ELSE
-		PRINTFORM 잠꼬대를 한다
+		PRINTFORM 숨소리를 낸다
 	ENDIF
 ENDIF
-PRINTFORML %CALLNAME:TARGET%의 의복을%TEXTR("모두 벗겼다/억지로 벗겨냈다")%…
+PRINTFORML %CALLNAME:TARGET%의 옷을%TEXTR("모두 벗겼다/억지로 벗겨냈다")%…
 
 

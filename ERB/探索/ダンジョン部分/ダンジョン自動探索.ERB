@@ -153,7 +153,7 @@ FOR LOCAL, 0, 関数総数
 	ENDIF
 NEXT
 IF 表示候補数 < 1
-	PRINTW 클리어한 던전이 없습니다
+PRINTW 클리어한 던전이 없습니다
 	RETURN -1
 ENDIF
 ARRAYMSORT レベルソート_クリア済み, 表示用リスト_クリア済み, 表示用リスト_人数記録
@@ -167,7 +167,7 @@ DRAWLINE
 LOCALS = 
 ;まず余り人数を表示
 LOCALS += @"<div rect='30, 30, 6000, 260' padding='50,25,50' color='#101010' border='31' bcolor='#C0C0C0'>"
-LOCALS += "미할당 인원:"
+LOCALS += "미배정 인원:"
 IF 派遣合計人数 < 仕事人数表示用:自動探索担当人数
 	LOCALS += @"{仕事人数表示用:自動探索担当人数 - 派遣合計人数, 2}명 "
 	FOR LOCAL, 0, MIN(仕事人数表示用:自動探索担当人数 - 派遣合計人数, 64)

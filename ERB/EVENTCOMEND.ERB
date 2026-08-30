@@ -89,10 +89,11 @@ ELSE
 	ENDIF
 ENDIF
 
-;射精場所記録
 FOR LOCAL, 0, CHARANUM
 	SIF CFLAG:LOCAL:滞在期間 < 0
 		CONTINUE
+
+	;射精場所記録
 	IF TCVAR:LOCAL:現ターン被射精場所
 		TCVAR:LOCAL:前ターン被射精場所 = TCVAR:LOCAL:現ターン被射精場所
 	ELSE
@@ -101,6 +102,13 @@ FOR LOCAL, 0, CHARANUM
 			TCVAR:LOCAL:前ターン被射精場所 = 0
 	ENDIF
 	TCVAR:LOCAL:現ターン被射精場所 = 0
+
+	;初うふふ突入時処理
+	IF フレーバー素質:LOCAL:素質表示設定 == 3 && TCVAR:LOCAL:初うふふフラグ
+		PRINTL
+		PRINTW 첫 우후후 진입이므로 플레이버 소질 설정 화면을 엽니다.
+		CALL フレーバー素質個別設定画面(LOCAL)
+	ENDIF
 NEXT
 
 訪問キャラ保存 = 0
@@ -131,13 +139,6 @@ FLAG:オートコマンド判定中フラグ = 0
 
 ;キャラごとの特殊処理を呼び出す
 TRYCALLFORM TURNEND_CHARAEVENT_{NO:TARGET}
-
-;初うふふ突入時処理
-IF フレーバー素質:TARGET:素質表示設定 == 3 && TCVAR:TARGET:初うふふフラグ
-	PRINTL
-	PRINTW 첫 우후후 돌입을 위해, 플레이버 소질 설정 화면을 엽니다.
-	CALL フレーバー素質個別設定画面(TARGET)
-ENDIF
 
 ;諸々リセット
 CALL TURN_RESET
@@ -222,15 +223,15 @@ FOR LOCAL, 0, CHARANUM
 				ENDIF
 			CASE "お風呂", "自室入浴"
 				;回復早い、回復遅い
-				BASE:LOCAL:体力 = MIN(MAXBASE:LOCAL:体力, BASE:LOCAL:体力 + ((TIME - TIME:2) * 30 / (3 - TALENT:LOCAL:回復速度)))
+				BASE:LOCAL:体力 = MIN(MAXBASE:LOCAL:体力, BASE:LOCAL:体力 + (((TIME < TIME:2 ? TIME + 1440 # TIME) - TIME:2) * 30 / (3 - TALENT:LOCAL:回復速度)))
 		ENDSELECT
 	ENDIF
 NEXT
 
-IF FLAG:お出かけ先フラグ > 0 && TIME > 1260
+IF FLAG:外出先番号 > 0 && TIME > 1260
 	TFLAG:オートコマンドフラグ = 0
 
-	PRINTW (슬슬 귀가할 시간이다... 하루를 종료합니다)
+	PRINTW （슬슬 귀가할 시간이다… 하루를 종료합니다）
 	;二日酔い処理のため、酩酊が残ってたら絶対値を負に
 	BASE:MASTER:酩酊 = BASE:MASTER:酩酊 * -1
 
@@ -247,17 +248,17 @@ IF FLAG:お出かけ先フラグ > 0 && TIME > 1260
 ELSEIF CFLAG:MASTER:酔いすぎ == 1
 	TFLAG:オートコマンドフラグ = 0
 
-	PRINTW (취해서 쓰러져버렸습니다... 하루를 종료합니다)
+	PRINTW （술에 취해 쓰러졌습니다… 하루를 종료합니다）
 	;二日酔い処理のため、酩酊が残ってたら絶対値を負に
 	BASE:MASTER:酩酊 = BASE:MASTER:酩酊 * -1
 
 	CFLAG:MASTER:睡眠 = 1
 	CFLAG:MASTER:就寝時刻 = DAY * 1440 + TIME
 	IF TARGET > 0 && TALENT:恋慕 && BASE:体力 >= 1
-		IF FLAG:お出かけ先フラグ > 0
-			PRINTFORMW 어떻게든 리조트까지 돌아올 수 있었다......
+		IF FLAG:外出先番号 > 0
+			PRINTFORMW 어떻게든 리조트까지 돌아올 수 있었다……
 		ELSE
-			PRINTFORMW %CALLNAME%이(가) %CALLNAME:MASTER%을(를) 개인실로 옮겨주었다...
+			PRINTFORMW %CALLNAME%이(가) %CALLNAME:MASTER%을(를) 개인실까지 옮겨 주었다…
 			CFLAG:現在位置 = CFLAG:MASTER:自室位置
 			CFLAG:現在マップ種別 = 0
 		ENDIF
@@ -270,20 +271,20 @@ ELSEIF CFLAG:MASTER:酔いすぎ == 1
 	CALL うふふ終了処理("あなた泥酔")
 	CALL 飲み会終了処理
 	FLAG:一日終了 = 1
-ELSEIF CFLAG:MASTER:起床予定時刻 > TIME && CFLAG:MASTER:起床予定時刻 - 120 < TIME
+ELSEIF CFLAG:MASTER:起床予定時刻 > TIME && CFLAG:MASTER:起床予定時刻 - 120 < TIME && FLAG:イベントうふふ中フラグ == 0
 	TFLAG:オートコマンドフラグ = 0
 
-	PRINTW (졸음이 한계에 다다랐다... 하루를 종료합니다)
+	PRINTW （졸음이 한계다… 하루를 종료합니다）
 	;二日酔い処理のため、酩酊が残ってたら絶対値を負に
 	BASE:MASTER:酩酊 = BASE:MASTER:酩酊 * -1
 
 	CFLAG:MASTER:睡眠 = 1
 	CFLAG:MASTER:就寝時刻 = DAY * 1440 + TIME
 	IF TARGET > 0 && TALENT:恋慕 && BASE:体力 >= 1
-		IF FLAG:お出かけ先フラグ > 0
-			PRINTFORMW 어떻게든 리조트까지 돌아올 수 있었다......
+		IF FLAG:外出先番号 > 0
+			PRINTFORMW 어떻게든 리조트까지 돌아올 수 있었다……
 		ELSE
-			PRINTFORMW %CALLNAME%이(가) %CALLNAME:MASTER%을(를) 개인실로 옮겨주었다...
+			PRINTFORMW %CALLNAME%이(가) %CALLNAME:MASTER%을(를) 개인실까지 옮겨 주었다…
 			CFLAG:現在位置 = CFLAG:MASTER:自室位置
 			CFLAG:現在マップ種別 = 0
 		ENDIF
@@ -298,7 +299,7 @@ ELSEIF CFLAG:MASTER:起床予定時刻 > TIME && CFLAG:MASTER:起床予定時刻
 	FLAG:一日終了 = 1
 ENDIF
 IF TARGET && RCVAR:不機嫌
-	PRINTFORMW %CALLNAME:TARGET%을(를) 화나게 해버렸다...
+	PRINTFORMW %CALLNAME:TARGET%을(를) 화나게 해버렸다…
 	IF AUTOCOM_実行番号保存 == TARGET
 		TFLAG:オートコマンドフラグ = 0
 		AUTOCOM_実行番号保存 = -1
@@ -317,7 +318,7 @@ FOR LOCAL, 1, CHARANUM
 		TCVAR:(TARGET:LOCAL):食いしばりフラグ --
 	ELSEIF BASE:(TARGET:LOCAL):体力 < 1 && !CFLAG:(TARGET:LOCAL):体力限界
 		CALL 体力限界時画像表示処理(TARGET:LOCAL)
-		PRINTFORML (%CALLNAME:(TARGET:LOCAL)%의 체력이 한계에 달했습니다)
+		PRINTFORML （%CALLNAME:(TARGET:LOCAL)%의 체력이 한계에 도달했습니다）
 		TRYCALLFORM KOJO_EVENT_うふふ体力限界_{NO:(TARGET:LOCAL)}(TARGET:LOCAL)
 		FORCEWAIT
 		IF CFLAG:(TARGET:LOCAL):デート == MASTER + 100
@@ -335,8 +336,8 @@ FOR LOCAL, 1, CHARANUM
 		;うふふ時間で履歴登録
 		時間保存 = (TIME + 1440 * DAY) - CFLAG:(TARGET:LOCAL):うふふ開始時間記録
 		IF 時間保存 > 300 && CFLAG:(TARGET:LOCAL):うふふ開始時間記録 > 0
-			CALL 履歴データベース登録(CFLAG:MASTER:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>%CALLNAME:(TARGET:LOCAL)%와 %TOFULL(TOSTR(時間保存 / 60))%시간 %TOFULL(TOSTR(時間保存 % 60))%분 야한 일 했다.</font><img src='えっちハート'>","うふふ")
-			CALL 履歴データベース登録(CFLAG:(TARGET:LOCAL):人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>%CALLNAME:MASTER%와 %TOFULL(TOSTR(時間保存 / 60))%시간 %TOFULL(TOSTR(時間保存 % 60))%분 야한 일 했다.</font><img src='えっちハート'>","うふふ")
+			CALL 履歴データベース登録(CFLAG:MASTER:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>%CALLNAME:(TARGET:LOCAL)%와%TOFULL(TOSTR(時間保存 / 60))%시간%TOFULL(TOSTR(時間保存 % 60))%분 우후후했다</font><img src='えっちハート'>","うふふ")
+			CALL 履歴データベース登録(CFLAG:(TARGET:LOCAL):人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>%CALLNAME:MASTER%와%TOFULL(TOSTR(時間保存 / 60))%시간%TOFULL(TOSTR(時間保存 % 60))%분 우후후했다</font><img src='えっちハート'>","うふふ")
 		ENDIF
 		CFLAG:(TARGET:LOCAL):うふふ開始時間記録 = 0
 		;経験取得表示スキップ用
@@ -367,29 +368,42 @@ FOR LOCAL, 1, CHARANUM
 	ENDIF
 	SIF !CFLAG:(TARGET:LOCAL):体力限界 && CFLAG:(TARGET:LOCAL):隠密 == CFLAG:MASTER:隠密
 		モード中キャラカウント += 1
+	SIF TCVAR:(TARGET:LOCAL):ダウン後いたずら
+		モード中キャラカウント += 1
 NEXT
 IF CFLAG:MASTER:うふふ && モード中キャラカウント == 0
 	CALL 呼び出す候補キャラ登録(表示候補)
-	IF RESULT > 0 && BEDROOM(CFLAG:MASTER:現在マップ種別, CFLAG:MASTER:現在位置) && !CFLAG:MASTER:隠密
+	IF RESULT > 0 && BEDROOM(CFLAG:MASTER:現在マップ種別, CFLAG:MASTER:現在位置) && !CFLAG:MASTER:隠密 && FLAG:イベントうふふ中フラグ == 0
 		PRINTL
-		PRINTFORML %CALLNAME:MASTER%의 상대가 전부 다운되어버렸다......
-		PRINTFORML 새로운 상대를 불러낼까요?
+		PRINTFORML %CALLNAME:MASTER%의 상대가 모두 쓰러져 버렸다……
+		PRINTFORML 새로운 상대를 불러오시겠습니까?
 		PRINTBUTTON "[0] 예", 0
 		PRINTL
-		PRINTBUTTON "[1] 아니요", 1
+		PRINTBUTTON "[1] 아니오", 1
+		PRINTL
+		PRINTBUTTON "[10] 다운된 캐릭터에게 조금 더 장난친다", 10
 		PRINTL
 		BINPUT
-		IF RESULT == 0
-			CALL COM210
-			IF RESULT == -1
+		SELECTCASE RESULT
+			CASE 0
+				CALL COM210
+				IF RESULT == -1
+					CALL うふふ終了処理("全員ダウン")
+				ELSE
+					;呼び出した相手をTARGETに
+					TFLAG:TARGET変更用 = RFLAG:コマンド結果受渡し変数
+				ENDIF
+			CASE 10
+				FOR LOCAL, 1, CHARANUM
+					SIF TARGET:LOCAL < 1
+						BREAK
+					IF CFLAG:(TARGET:LOCAL):体力限界 && CFLAG:(TARGET:LOCAL):うふふ
+						TCVAR:(TARGET:LOCAL):ダウン後いたずら = 1
+					ENDIF
+				NEXT
+			CASEELSE
 				CALL うふふ終了処理("全員ダウン")
-			ELSE
-				;呼び出した相手をTARGETに
-				TFLAG:TARGET変更用 = RFLAG:コマンド結果受渡し変数
-			ENDIF
-		ELSE
-			CALL うふふ終了処理("全員ダウン")
-		ENDIF
+		ENDSELECT
 	ELSE
 		CALL うふふ終了処理("全員ダウン")
 	ENDIF
@@ -403,7 +417,7 @@ FOR LOCAL, 1, CHARANUM
 		TCVAR:(飲み会TARGET:LOCAL):食いしばりフラグ --
 	ELSEIF BASE:(飲み会TARGET:LOCAL):体力 < 1
 		CALL 体力限界時画像表示処理(飲み会TARGET:LOCAL)
-		PRINTFORML (%CALLNAME:(飲み会TARGET:LOCAL)%의 체력이 한계에 달했습니다)
+		PRINTFORML （%CALLNAME:(飲み会TARGET:LOCAL)%의 체력이 한계에 도달했습니다）
 		FORCEWAIT
 		IF CFLAG:(飲み会TARGET:LOCAL):デート == MASTER + 100
 			CALL デート採点処理(飲み会TARGET:LOCAL)
@@ -477,7 +491,7 @@ IF LOCAL > 0
 	PRINTL
 	PRINTFORML \@ LOCAL / 60 > 0?{LOCAL / 60}시간# \@{LOCAL % 60}분 경과
 ENDIF
-TIME:2 = TIME > 1440 ? TIME - 1440 # TIME
+TIME:2 = TIME >= 1440 ? TIME - 1440 # TIME
 
 WAIT
 
@@ -492,6 +506,7 @@ WAIT
 #DIM COM保存
 #DIMS キャラ衣装識別
 #DIMS 母乳種別
+#DIM 発情期フラグ_旧
 
 SIF !TFLAG:オートコマンドフラグ
 	自慰ターゲット保存 = -1
@@ -646,10 +661,10 @@ FOR LOCAL,0,CHARANUM
 	ENDIF
 
 	;母乳の収集
-	IF TALENT:LOCAL:母乳体質 && NOWEX:LOCAL:Ｂ絶頂 && MODE_確認_ターゲット側("搾乳機", LOCAL) > -1
-		TCVAR:LOCAL:母乳カウント += 300
+	IF TALENT:LOCAL:母乳体質 && NOWEX:LOCAL:噴乳 && MODE_確認_ターゲット側("搾乳機", LOCAL) > -1
+		TCVAR:LOCAL:母乳カウント += 300 * NOWEX:LOCAL:噴乳
 		SIF TCVAR:LOCAL:母乳マッサージ
-			TCVAR:LOCAL:母乳カウント += 150
+			TCVAR:LOCAL:母乳カウント += 150 * NOWEX:LOCAL:噴乳
 	ENDIF
 	;母乳のアイテム化
 	IF TCVAR:LOCAL:母乳カウント > 5000
@@ -687,11 +702,11 @@ FOR LOCAL,0,CHARANUM
 		DRAWLINE
 		SETCOLOR カラーパレット("えっちな色")
 		IF 母乳種別 == "通常"
-			PRINTFORML %CALLNAME:TARGET保存%의 모유가 쌓였기 때문에, 「%CALLNAME:TARGET保存%의 우유」를 입수했다.
+			PRINTFORML %CALLNAME:TARGET保存%의 모유가 차올라 「%CALLNAME:TARGET保存%의 밀크」를 입수했다.
 		ELSE
-			PRINTFORML %CALLNAME:TARGET保存%의 모유가 쌓였기 때문에, 「%CALLNAME:TARGET保存%의 %母乳種別% 우유」를 입수했다.
+			PRINTFORML %CALLNAME:TARGET保存%의 모유가 차올라 「%CALLNAME:TARGET保存%의 %母乳種別% 밀크」를 입수했다.
 		ENDIF
-		PRINTW ※소비 칼로리: 100kcal
+		PRINTW ※소모 칼로리: 100kcal
 		TCVAR:LOCAL:摂取カロリー -= 100
 		RESETCOLOR
 		TCVAR:LOCAL:母乳カウント = 0
@@ -716,55 +731,54 @@ FOR LOCAL,0,CHARANUM
 	CALL EXP変動記録処理(LOCAL)
 
 	;発情期フラグの更新
-	IF 発情期判定(LOCAL)
-		IF TALENT:LOCAL:性欲 == -2
-			CFLAG:LOCAL:発情期フラグ = 0
-		ELSE
-			IF CFLAG:LOCAL:発情期フラグ < 0
-				CFLAG:LOCAL:発情期フラグ = RISKY_DAY(LOCAL) * -1
-				IF CFLAG:LOCAL:発情期フラグ > -1
-					;発情期が終わった時、性欲を大きく減らす
-					BASE:LOCAL:性欲 = MAX(0, BASE:LOCAL:性欲 - 1500)
-				ENDIF
-			ELSE
-				CFLAG:LOCAL:発情期フラグ = RISKY_DAY(LOCAL) * -1
-			ENDIF
-		ENDIF
-		;ドラフorドラフまぜまぜは発情期に母乳体質化＆発情期でなくなったら母乳を止める
-		;発情期に母乳体質化するオプションがあるキャラも処理する
-		IF 素質切り替えOPTION記憶:母乳体質_発情期_なし == 0
-			IF (TALENT:LOCAL:種族 == 3 || GETBIT(TALENT:LOCAL:発情期あり, 2) ||キャラ一致チェック(LOCAL, "[六竜の『金』]ガレヲン")) && TALENT:LOCAL:母乳体質 != 3 && (GETBIT(TALENT:LOCAL:性別, 0) || OPTION変数:男ドラフ母乳)
-				IF CFLAG:LOCAL:発情期フラグ < 0
-					SIF TALENT:LOCAL:母乳体質 == 0
-						TALENT:LOCAL:母乳体質 = 2
-				ELSE
-					SIF TALENT:LOCAL:母乳体質 == 2
-						TALENT:LOCAL:母乳体質 = 0
-				ENDIF
-			ENDIF
-		ENDIF
-		;発情期にふたなり化するキャラを処理
-		IF GETBIT(TALENT:LOCAL:発情期あり, 3) && 素質切り替えOPTION記憶:ふたなり_女性 == 0
-			IF CFLAG:LOCAL:発情期フラグ < 0
-				TALENT:LOCAL:性別 = 3
-			ELSE
-				;女性器ないキャラがふたなり化妊娠中の時は戻さない
-				IF GETBIT(CFLAG:LOCAL:元性別保存, 0) != 0 || TALENT:LOCAL:妊娠 == 0
-					TALENT:LOCAL:性別 = CFLAG:LOCAL:元性別保存
-				ENDIF
-			ENDIF
-		ELSEIF GETBIT(TALENT:LOCAL:発情期あり, 8)
-			IF CFLAG:LOCAL:発情期フラグ < 0
-				TALENT:LOCAL:性別 = 1
-			ELSE
-				;女性器ないキャラが女体化妊娠中の時は戻さない
-				IF GETBIT(CFLAG:LOCAL:元性別保存, 0) != 0 || TALENT:LOCAL:妊娠 == 0
-					TALENT:LOCAL:性別 = CFLAG:LOCAL:元性別保存
-				ENDIF
-			ENDIF
-		ENDIF
+	発情期フラグ_旧 = CFLAG:LOCAL:発情期フラグ
+	IF 発情期存在判定(LOCAL)
+		CFLAG:LOCAL:発情期フラグ = RISKY_DAY(LOCAL) * -1
 	ELSE
 		CFLAG:LOCAL:発情期フラグ = 0
+	ENDIF
+	IF TCVAR:LOCAL:強制発情フラグ > 0
+		CFLAG:LOCAL:発情期フラグ = -1
+	ELSEIF TCVAR:LOCAL:強制発情フラグ < 0
+		CFLAG:LOCAL:発情期フラグ = 0
+	ENDIF
+	;発情期フラグの変化による各種素質の更新
+	;発情期が終わった時、性欲を大きく減らす
+	IF 発情期フラグ_旧 < 0 && CFLAG:LOCAL:発情期フラグ >= 0
+		BASE:LOCAL:性欲 = MAX(0, BASE:LOCAL:性欲 - 1500)
+	ENDIF
+	;ドラフorドラフまぜまぜは発情期に母乳体質化＆発情期でなくなったら母乳を止める
+	;発情期に母乳体質化するオプションがあるキャラも処理する
+	IF 素質切り替えOPTION記憶:母乳体質_発情期_なし == 0
+		IF (TALENT:LOCAL:種族 == 3 || GETBIT(TALENT:LOCAL:発情期あり, 2) ||キャラ一致チェック(LOCAL, "[六竜の『金』]ガレヲン")) && TALENT:LOCAL:母乳体質 != 3 && (GETBIT(TALENT:LOCAL:性別, 0) || OPTION変数:男ドラフ母乳)
+			IF CFLAG:LOCAL:発情期フラグ < 0
+				SIF TALENT:LOCAL:母乳体質 == 0
+					TALENT:LOCAL:母乳体質 = 2
+			ELSE
+				SIF TALENT:LOCAL:母乳体質 == 2
+					TALENT:LOCAL:母乳体質 = 0
+			ENDIF
+		ENDIF
+	ENDIF
+	;発情期にふたなり化するキャラを処理
+	IF GETBIT(TALENT:LOCAL:発情期あり, 3) && 素質切り替えOPTION記憶:ふたなり_女性 == 0
+		IF CFLAG:LOCAL:発情期フラグ < 0
+			TALENT:LOCAL:性別 = 3
+		ELSE
+			;女性器ないキャラがふたなり化妊娠中の時は戻さない
+			IF GETBIT(CFLAG:LOCAL:元性別保存, 0) != 0 || TALENT:LOCAL:妊娠 == 0
+				TALENT:LOCAL:性別 = CFLAG:LOCAL:元性別保存
+			ENDIF
+		ENDIF
+	ELSEIF GETBIT(TALENT:LOCAL:発情期あり, 8)
+		IF CFLAG:LOCAL:発情期フラグ < 0
+			TALENT:LOCAL:性別 = 1
+		ELSE
+			;女性器ないキャラが女体化妊娠中の時は戻さない
+			IF GETBIT(CFLAG:LOCAL:元性別保存, 0) != 0 || TALENT:LOCAL:妊娠 == 0
+				TALENT:LOCAL:性別 = CFLAG:LOCAL:元性別保存
+			ENDIF
+		ENDIF
 	ENDIF
 NEXT
 
@@ -948,85 +962,85 @@ FOR LOCAL,0,200
 		CASE GETNUM(EXP, "Ｃ絶頂経験") TO GETNUM(EXP, "Ｓ絶頂経験")
 			EXP一時保存 = CSVEXP(NO:対象キャラ, LOCAL)
 			SIF EXP:対象キャラ:(LOCAL) > EXP一時保存 && TCVAR:対象キャラ:(400 + LOCAL) == EXP一時保存
-				CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>게임 중 처음으로[%REPLACE(GET_EXPNAME(LOCAL, 対象キャラ), "経験", "")%]했다.</font>","うふふ")
+				CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>게임 중 처음으로 [%REPLACE(GET_EXPNAME(LOCAL, 対象キャラ), "経験", "")%]했다</font>","うふふ")
 			SIF EXP:対象キャラ:(LOCAL) >= EXP一時保存 + 10 && TCVAR:対象キャラ:(400 + LOCAL) < EXP一時保存 + 10
-				CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>게임 중 [%REPLACE(GET_EXPNAME(LOCAL, 対象キャラ), "経験", "")%]한 횟수가 １０회를 넘었다.</font>","うふふ")
+				CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>게임 중 [%REPLACE(GET_EXPNAME(LOCAL, 対象キャラ), "経験", "")%]한 횟수가 10회를 넘었다</font>","うふふ")
 			SIF EXP:対象キャラ:(LOCAL) >= EXP一時保存 + 50 && TCVAR:対象キャラ:(400 + LOCAL) < EXP一時保存 + 50
-				CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>게임 중 [%REPLACE(GET_EXPNAME(LOCAL, 対象キャラ), "経験", "")%]한 횟수가 ５０회를 넘었다.</font>","うふふ")
+				CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>게임 중 [%REPLACE(GET_EXPNAME(LOCAL, 対象キャラ), "経験", "")%]한 횟수가 50회를 넘었다</font>","うふふ")
 			SIF EXP:対象キャラ:(LOCAL) >= EXP一時保存 + 100 && TCVAR:対象キャラ:(400 + LOCAL) < EXP一時保存 + 100
-				CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>게임 중 [%REPLACE(GET_EXPNAME(LOCAL, 対象キャラ), "経験", "")%]한 횟수가 １００회를 넘었다.</font>","うふふ")
+				CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>게임 중 [%REPLACE(GET_EXPNAME(LOCAL, 対象キャラ), "経験", "")%]한 횟수가 100회를 넘었다</font>","うふふ")
 			SIF EXP:対象キャラ:(LOCAL) >= EXP一時保存 + 500 && TCVAR:対象キャラ:(400 + LOCAL) < EXP一時保存 + 500
-				CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>게임 중 [%REPLACE(GET_EXPNAME(LOCAL, 対象キャラ), "経験", "")%]한 횟수가 ５００회를 넘었다.</font>","うふふ")
+				CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>게임 중 [%REPLACE(GET_EXPNAME(LOCAL, 対象キャラ), "経験", "")%]한 횟수가 500회를 넘었다</font>","うふふ")
 			SIF EXP:対象キャラ:(LOCAL) >= EXP一時保存 + 999 && TCVAR:対象キャラ:(400 + LOCAL) < EXP一時保存 + 999
-				CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>게임 중 [%REPLACE(GET_EXPNAME(LOCAL, 対象キャラ), "経験", "")%]한 횟수가 ９９９회를 넘었다.</font>","うふふ")
+				CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>게임 중 [%REPLACE(GET_EXPNAME(LOCAL, 対象キャラ), "経験", "")%]한 횟수가 999회를 넘었다</font>","うふふ")
 		CASE GETNUM(EXP, "肉体熟知")
 			EXP一時保存 = 0
 			SIF EXP:対象キャラ:(LOCAL) > EXP一時保存 + 50 && TCVAR:対象キャラ:(400 + LOCAL) <= EXP一時保存 + 50
-				CALL 履歴データベース登録(CFLAG:MASTER:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>%CALLNAME:対象キャラ%의 [육체숙지]가５０을 넘었다.</font>","うふふ")
+				CALL 履歴データベース登録(CFLAG:MASTER:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>%CALLNAME:対象キャラ%의 [육체 숙지]가 50를 넘었다</font>","うふふ")
 			SIF EXP:対象キャラ:(LOCAL) > EXP一時保存 + 100 && TCVAR:対象キャラ:(400 + LOCAL) <= EXP一時保存 + 100
-				CALL 履歴データベース登録(CFLAG:MASTER:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>%CALLNAME:対象キャラ%의 [육체숙지]가１００을 넘었다.</font>","うふふ")
+				CALL 履歴データベース登録(CFLAG:MASTER:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>%CALLNAME:対象キャラ%의 [육체 숙지]가 100를 넘었다</font>","うふふ")
 			SIF EXP:対象キャラ:(LOCAL) > EXP一時保存 + 500 && TCVAR:対象キャラ:(400 + LOCAL) <= EXP一時保存 + 500
-				CALL 履歴データベース登録(CFLAG:MASTER:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>%CALLNAME:対象キャラ%의 [육체숙지]가５００을 넘었다.</font>","うふふ")
+				CALL 履歴データベース登録(CFLAG:MASTER:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>%CALLNAME:対象キャラ%의 [육체 숙지]가 500를 넘었다</font>","うふふ")
 			SIF EXP:対象キャラ:(LOCAL) > EXP一時保存 + 999 && TCVAR:対象キャラ:(400 + LOCAL) <= EXP一時保存 + 999
-				CALL 履歴データベース登録(CFLAG:MASTER:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>%CALLNAME:対象キャラ%의 [육체숙지]가９９９을 넘었다.</font>","うふふ")
+				CALL 履歴データベース登録(CFLAG:MASTER:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>%CALLNAME:対象キャラ%의 [육체 숙지]가 999를 넘었다</font>","うふふ")
 		CASE GETNUM(EXP, "乳首開発") TO GETNUM(EXP, "尻尾開発")
 			EXP一時保存 = CSVEXP(NO:対象キャラ, LOCAL)
 			SIF EXP:対象キャラ:(LOCAL) > EXP一時保存 && TCVAR:対象キャラ:(400 + LOCAL) == EXP一時保存
-				CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>게임 중 처음으로[%GET_EXPNAME(LOCAL, 対象キャラ)%]을 진행했다.</font>","うふふ")
+				CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>게임 중 처음으로 [%GET_EXPNAME(LOCAL, 対象キャラ)%]을 진행했다</font>","うふふ")
 			SIF EXP:対象キャラ:(LOCAL) >= EXP一時保存 + 10 && TCVAR:対象キャラ:(400 + LOCAL) < EXP一時保存 + 10
-				CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>게임 중 [%GET_EXPNAME(LOCAL, 対象キャラ)%]의 진행률이 １０을 넘었다.</font>","うふふ")
+				CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>게임 중 [%GET_EXPNAME(LOCAL, 対象キャラ)%]의 진행률이 10를 넘었다</font>","うふふ")
 			SIF EXP:対象キャラ:(LOCAL) >= EXP一時保存 + 50 && TCVAR:対象キャラ:(400 + LOCAL) < EXP一時保存 + 50
-				CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>게임 중 [%GET_EXPNAME(LOCAL, 対象キャラ)%]의 진행률이 ５０을 넘었다.</font>","うふふ")
+				CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>게임 중 [%GET_EXPNAME(LOCAL, 対象キャラ)%]의 진행률이 50를 넘었다</font>","うふふ")
 			SIF EXP:対象キャラ:(LOCAL) >= EXP一時保存 + 100 && TCVAR:対象キャラ:(400 + LOCAL) < EXP一時保存 + 100
-				CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>게임 중 [%GET_EXPNAME(LOCAL, 対象キャラ)%]의 진행률이 １００을 넘었다.</font>","うふふ")
+				CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>게임 중 [%GET_EXPNAME(LOCAL, 対象キャラ)%]의 진행률이 100를 넘었다</font>","うふふ")
 			SIF EXP:対象キャラ:(LOCAL) >= EXP一時保存 + 500 && TCVAR:対象キャラ:(400 + LOCAL) < EXP一時保存 + 500
-				CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>게임 중 [%GET_EXPNAME(LOCAL, 対象キャラ)%]의 진행률이 ５００을 넘었다.</font>","うふふ")
+				CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>게임 중 [%GET_EXPNAME(LOCAL, 対象キャラ)%]의 진행률이 500를 넘었다</font>","うふふ")
 			SIF EXP:対象キャラ:(LOCAL) >= EXP一時保存 + 999 && TCVAR:対象キャラ:(400 + LOCAL) < EXP一時保存 + 999
-				CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>게임 중 [%GET_EXPNAME(LOCAL, 対象キャラ)%]의 진행률이 ９９９을 넘었다.</font>","うふふ")
+				CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>게임 중 [%GET_EXPNAME(LOCAL, 対象キャラ)%]의 진행률이 999를 넘었다</font>","うふふ")
 		CASE GETNUM(EXP, "ダウン経験")
 			EXP一時保存 = CSVEXP(NO:対象キャラ, LOCAL)
 			SIF EXP:対象キャラ:(LOCAL) > EXP一時保存 && TCVAR:対象キャラ:(400 + LOCAL) == EXP一時保存
-				CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"처음으로 체력이 ０이 되었다.","うふふ")
+				CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"처음으로 체력이 0이 되었다","うふふ")
 			SIF EXP:対象キャラ:(LOCAL) >= EXP一時保存 + 10 && TCVAR:対象キャラ:(400 + LOCAL) < EXP一時保存 + 10
-				CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"１０번 체력이 ０이 되었다.","うふふ")
+				CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"10회 체력이 0이 되었다","うふふ")
 			SIF EXP:対象キャラ:(LOCAL) >= EXP一時保存 + 50 && TCVAR:対象キャラ:(400 + LOCAL) < EXP一時保存 + 50
-				CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"５０번 체력이 ０이 되었다.","うふふ")
+				CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"50회 체력이 0이 되었다","うふふ")
 			SIF EXP:対象キャラ:(LOCAL) >= EXP一時保存 + 100 && TCVAR:対象キャラ:(400 + LOCAL) < EXP一時保存 + 100
-				CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"１００번 체력이 ０이 되었다.","うふふ")
+				CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"100회 체력이 0이 되었다","うふふ")
 			SIF EXP:対象キャラ:(LOCAL) >= EXP一時保存 + 300 && TCVAR:対象キャラ:(400 + LOCAL) < EXP一時保存 + 300
-				CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"３００번 체력이 ０이 되었다.","うふふ")
+				CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"300회 체력이 0이 되었다","うふふ")
 			SIF EXP:対象キャラ:(LOCAL) >= EXP一時保存 + 500 && TCVAR:対象キャラ:(400 + LOCAL) < EXP一時保存 + 500
-				CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"５００번 체력이 ０이 되었다.","うふふ")
+				CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"500회 체력이 0이 되었다","うふふ")
 			SIF EXP:対象キャラ:(LOCAL) >= EXP一時保存 + 999 && TCVAR:対象キャラ:(400 + LOCAL) < EXP一時保存 + 999
-				CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"９９９번 체력이 ０이 되었다.","うふふ")
+				CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"999회 체력이 0이 되었다","うふふ")
 		CASE GETNUM(EXP, "釣り経験")
 			EXP一時保存 = CSVEXP(NO:対象キャラ, LOCAL)
 			SIF EXP:対象キャラ:(LOCAL) > EXP一時保存 && TCVAR:対象キャラ:(400 + LOCAL) == EXP一時保存
-				CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"처음으로 물고기를 낚아 올렸다.","リゾート")
+				CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"처음으로 물고기를 낚았다","リゾート")
 			SIF EXP:対象キャラ:(LOCAL) >= EXP一時保存 + 10 && TCVAR:対象キャラ:(400 + LOCAL) < EXP一時保存 + 10
-				CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"물고기를 １０마리 낚아 올렸다.","リゾート")
+				CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"물고기를 10마리 낚았다","リゾート")
 			SIF EXP:対象キャラ:(LOCAL) >= EXP一時保存 + 50 && TCVAR:対象キャラ:(400 + LOCAL) < EXP一時保存 + 50
-				CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"물고기를 ５０마리 낚아 올렸다.","リゾート")
+				CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"물고기를 50마리 낚았다","リゾート")
 			SIF EXP:対象キャラ:(LOCAL) >= EXP一時保存 + 100 && TCVAR:対象キャラ:(400 + LOCAL) < EXP一時保存 + 100
-				CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"물고기를 １００마리 낚아 올렸다.","リゾート")
+				CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"물고기를 100마리 낚았다","リゾート")
 			SIF EXP:対象キャラ:(LOCAL) >= EXP一時保存 + 500 && TCVAR:対象キャラ:(400 + LOCAL) < EXP一時保存 + 500
-				CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"물고기를 ５００마리 낚아 올렸다.","リゾート")
+				CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"물고기를 500마리 낚았다","リゾート")
 			SIF EXP:対象キャラ:(LOCAL) >= EXP一時保存 + 999 && TCVAR:対象キャラ:(400 + LOCAL) < EXP一時保存 + 999
-				CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"물고기를 ９９９마리 낚아 올렸다.","リゾート")
+				CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"물고기를 999마리 낚았다","リゾート")
 		CASE GETNUM(EXP, "妊娠経験")
 			EXP一時保存 = 0
 			SIF EXP:対象キャラ:(LOCAL) > EXP一時保存 && TCVAR:対象キャラ:(400 + LOCAL) == EXP一時保存
-				CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"처음으로 임신했다.","うふふ")
+				CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"처음으로 임신했다","うふふ")
 			SIF EXP:対象キャラ:(LOCAL) >= EXP一時保存 + 10 && TCVAR:対象キャラ:(400 + LOCAL) < EXP一時保存 + 10
-				CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"１０번 임신했다.","うふふ")
+				CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"10회 임신했다","うふふ")
 			SIF EXP:対象キャラ:(LOCAL) >= EXP一時保存 + 50 && TCVAR:対象キャラ:(400 + LOCAL) < EXP一時保存 + 50
-				CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"５０번 임신했다.","うふふ")
+				CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"50회 임신했다","うふふ")
 			SIF EXP:対象キャラ:(LOCAL) >= EXP一時保存 + 100 && TCVAR:対象キャラ:(400 + LOCAL) < EXP一時保存 + 100
-				CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"１００번 임신했다.","うふふ")
+				CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"100회 임신했다","うふふ")
 			SIF EXP:対象キャラ:(LOCAL) >= EXP一時保存 + 500 && TCVAR:対象キャラ:(400 + LOCAL) < EXP一時保存 + 500
-				CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"５００번 임신했다.","うふふ")
+				CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"500회 임신했다","うふふ")
 			SIF EXP:対象キャラ:(LOCAL) >= EXP一時保存 + 999 && TCVAR:対象キャラ:(400 + LOCAL) < EXP一時保存 + 999
-				CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"９９９번 임신했다.","うふふ")
+				CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"999회 임신했다","うふふ")
 	ENDSELECT
 	TCVAR:対象キャラ:(400 + LOCAL) = EXP:対象キャラ:(LOCAL)
 NEXT
@@ -1045,17 +1059,17 @@ RETURNF 回復量
 #DIM 回数保存
 
 SIF CFLAG:対象キャラ:コマンドタゲ回数記録 > 0 && 回数保存 <= 0
-	CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"게임 중 처음으로 커맨드의 대상이 되었다.","日常_実績")
+	CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"게임 중 처음으로 커맨드의 대상이 되었다","日常_実績")
 SIF CFLAG:対象キャラ:コマンドタゲ回数記録 > 100 && 回数保存 <= 100
-	CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"게임 중 커맨드의 대상이 된 횟수가 １００회를 넘었다.","日常_実績")
+	CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"게임 중 커맨드의 대상이 된 횟수가 100회를 넘었다","日常_実績")
 SIF CFLAG:対象キャラ:コマンドタゲ回数記録 > 500 && 回数保存 <= 500
-	CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"게임 중 커맨드의 대상이 된 횟수가 ５００회를 넘었다.","日常_実績")
+	CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"게임 중 커맨드의 대상이 된 횟수가 500회를 넘었다","日常_実績")
 SIF CFLAG:対象キャラ:コマンドタゲ回数記録 > 1000 && 回数保存 <= 1000
-	CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"게임 중 커맨드의 대상이 된 횟수가 １０００회를 넘었다.","日常_実績")
+	CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"게임 중 커맨드의 대상이 된 횟수가 1000회를 넘었다","日常_実績")
 SIF CFLAG:対象キャラ:コマンドタゲ回数記録 > 5000 && 回数保存 <= 5000
-	CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"게임 중 커맨드의 대상이 된 횟수가 ５０００회를 넘었다.","日常_実績")
+	CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"게임 중 커맨드의 대상이 된 횟수가 5000회를 넘었다","日常_実績")
 SIF CFLAG:対象キャラ:コマンドタゲ回数記録 > 9999 && 回数保存 <= 9999
-	CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"게임 중 커맨드의 대상이 된 횟수가 ９９９９회를 넘었다.","日常_実績")
+	CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"게임 중 커맨드의 대상이 된 횟수가 9999회를 넘었다","日常_実績")
 
 
 @処女童貞適用処理(対象キャラ)
@@ -1085,13 +1099,17 @@ IF RCVAR:対象キャラ:破瓜
 			ENDIF
 			道具記録 = 触手
 		CASE 5
-			相手記録 = %CALLNAME:(RCVAR:対象キャラ:破瓜_相手番号)%のペニスバンド
+			IF RCVAR:対象キャラ:破瓜_相手番号 < 0
+				相手記録 = 誰とも知らない相手のペニスバンド
+			ELSE
+				相手記録 = %CALLNAME:(RCVAR:対象キャラ:破瓜_相手番号)%のペニスバンド
+			ENDIF
 			道具記録 = ペニスバンド
 	ENDSELECT
 	IF RCVAR:対象キャラ:破瓜_相手番号 > -1
-		CALL 履歴データベース登録(CFLAG:(RCVAR:対象キャラ:破瓜_相手番号):人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>%道具記録%로 %CALLNAME:対象キャラ%의 Ｖ처녀를 빼앗았다.</font><img src='えっちハート'>","うふふ実績")
+		CALL 履歴データベース登録(CFLAG:(RCVAR:対象キャラ:破瓜_相手番号):人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>%道具記録%로%CALLNAME:対象キャラ%의 V처녀를 빼앗았다</font><img src='えっちハート'>","うふふ実績")
 	ENDIF
-	CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>%相手記録%에게 Ｖ처녀를 바쳤다.</font><img src='えっちハート'>","うふふ実績")
+	CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>%相手記録%에게 V처녀를 바쳤다</font><img src='えっちハート'>","うふふ実績")
 ENDIF
 ;Ａ処女喪失
 IF RCVAR:対象キャラ:Ａ破瓜
@@ -1102,8 +1120,8 @@ IF RCVAR:対象キャラ:Ａ破瓜
 				相手記録 = 誰とも知らない相手のペニス
 			ELSE
 				相手記録 = %CALLNAME:(RCVAR:対象キャラ:Ａ破瓜_相手番号)%のペニス
-				道具記録 = ペニス
 			ENDIF
+			道具記録 = ペニス
 		CASE 2
 			相手記録 = バイブ
 			道具記録 = バイブ
@@ -1115,13 +1133,17 @@ IF RCVAR:対象キャラ:Ａ破瓜
 			ENDIF
 			道具記録 = 触手
 		CASE 5
-			相手記録 = %CALLNAME:(RCVAR:対象キャラ:Ａ破瓜_相手番号)%のペニスバンド
+			IF RCVAR:対象キャラ:Ａ破瓜_相手番号 < 0
+				相手記録 = 誰とも知らない相手のペニスバンド
+			ELSE
+				相手記録 = %CALLNAME:(RCVAR:対象キャラ:Ａ破瓜_相手番号)%のペニスバンド
+			ENDIF
 			道具記録 = ペニスバンド
 	ENDSELECT
 	IF RCVAR:対象キャラ:Ａ破瓜_相手番号 > -1
-		CALL 履歴データベース登録(CFLAG:(RCVAR:対象キャラ:Ａ破瓜_相手番号):人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>%道具記録%로 %CALLNAME:対象キャラ%의 Ａ처녀를 빼앗았다.</font><img src='えっちハート'>","うふふ実績")
+		CALL 履歴データベース登録(CFLAG:(RCVAR:対象キャラ:Ａ破瓜_相手番号):人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>%道具記録%로%CALLNAME:対象キャラ%의 A처녀를 빼앗았다</font><img src='えっちハート'>","うふふ実績")
 	ENDIF
-	CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>%相手記録%에게 Ａ처녀를 바쳤다.</font><img src='えっちハート'>","うふふ実績")
+	CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>%相手記録%에게 A처녀를 바쳤다</font><img src='えっちハート'>","うふふ実績")
 ENDIF
 ;童貞喪失
 IF RCVAR:対象キャラ:童貞喪失
@@ -1130,9 +1152,9 @@ IF RCVAR:対象キャラ:童貞喪失
 		相手記録 = 誰とも知らない相手
 	ELSE
 		相手記録 = %CALLNAME:(RCVAR:対象キャラ:童貞喪失_相手番号)%
-		CALL 履歴データベース登録(CFLAG:(RCVAR:対象キャラ:童貞喪失_相手番号):人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>%CALLNAME:対象キャラ%의 Ｖ동정을 빼앗았다.</font><img src='えっちハート'>","うふふ実績")
+		CALL 履歴データベース登録(CFLAG:(RCVAR:対象キャラ:童貞喪失_相手番号):人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>%CALLNAME:対象キャラ%의 V동정을 빼앗았다</font><img src='えっちハート'>","うふふ実績")
 	ENDIF
-	CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>%相手記録%에게 Ｖ동정을 바쳤다.</font><img src='えっちハート'>","うふふ実績")
+	CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>%相手記録%에게 V동정을 바쳤다</font><img src='えっちハート'>","うふふ実績")
 ENDIF
 ;Ａ童貞喪失
 IF RCVAR:対象キャラ:Ａ童貞喪失
@@ -1141,9 +1163,9 @@ IF RCVAR:対象キャラ:Ａ童貞喪失
 		相手記録 = 誰とも知らない相手
 	ELSE
 		相手記録 = %CALLNAME:(RCVAR:対象キャラ:Ａ童貞喪失_相手番号)%
-		CALL 履歴データベース登録(CFLAG:(RCVAR:対象キャラ:Ａ童貞喪失_相手番号):人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>%CALLNAME:対象キャラ%의Ａ동정을 빼앗았다.</font><img src='えっちハート'>","うふふ実績")
+		CALL 履歴データベース登録(CFLAG:(RCVAR:対象キャラ:Ａ童貞喪失_相手番号):人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>%CALLNAME:対象キャラ%의 A동정을 빼앗았다</font><img src='えっちハート'>","うふふ実績")
 	ENDIF
-	CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>%相手記録%에게 Ａ동정을 바쳤다.</font><img src='えっちハート'>","うふふ実績")
+	CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>%相手記録%에게 A동정을 바쳤다</font><img src='えっちハート'>","うふふ実績")
 ENDIF
 
 ;変数リセット

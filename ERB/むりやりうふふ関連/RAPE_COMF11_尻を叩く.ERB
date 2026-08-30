@@ -80,18 +80,18 @@ RETURN 1
 PRINTFORM %CALLNAME:PLAYER%은(는)
 
 IF MODE_確認_完全一致("Ｖ挿入系", PLAYER, TARGET) > -1 || MODE_確認_完全一致("Ａ挿入系", PLAYER, TARGET) > -1
-	PRINTFORM %CALLNAME:TARGET%%TEXTR("과 이어진 채/의 엉덩이에 허리를 부딪치면서/을(를) 뒤에서 범하면서")%,
+	PRINTFORM %CALLNAME:TARGET%%TEXTR("이어진 채로/엉덩이에 허리를 부딪치면서/을(를) 뒤에서 범하면서")%、
 ELSE
 	PRINTFORM %CALLNAME:TARGET%의
 ENDIF
 IF TALENT:TARGET:体型 >= 1
 	;肉感的以上
-	PRINTFORM %TEXTR("탱탱한/말랑말랑한/탱탱하게 살이 붙은/말랑말랑하고 육감적인")%
+	PRINTFORM %TEXTR("두툼한/말랑한/두툼하게 살이 붙은/말랑하고 육감적인")%
 ELSEIF TALENT:TARGET:体型 <= -2
 	;細身以下
 	PRINTFORM 살집이 얇고 가녀린
 ENDIF
-PRINTFORML %TEXTR("엉덩이/엉덩이살/엉덩이살")%을(를) %TEXTR("손바닥/손바닥")%으로 강하게 몇 번이고 때려, 날카로운 고통과 지배의 증거를 새겨 넣었다.
+PRINTFORML %TEXTR("엉덩이/엉덩이살/엉덩이살")%을(를) %TEXTR("손바닥/손바닥")%으로 강하게 여러 번 때려, 날카로운 고통과 지배의 증거를 새겨 넣었다.
 
 
 SIF MODE_確認_完全一致("Ｖ挿入系", PLAYER, TARGET) > -1 || MODE_確認_完全一致("Ａ挿入系", PLAYER, TARGET) > -1

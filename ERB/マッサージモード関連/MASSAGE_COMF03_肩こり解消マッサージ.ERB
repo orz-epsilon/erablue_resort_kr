@@ -17,7 +17,7 @@ TFLAG:コマンドタイプ受渡 = MASSAGE_COMTYPE("通常マッサージ")
 LOCALS = <br>■어깨 결림 해소 마사지<br>
 LOCALS += "굳어버린 어깨를 지압으로 풀어준다. 거유일수록 효과가 높다."
 LOCALS += "<br>COM 타입: 일반 마사지<br>획득 소스: 쾌S・접촉・환락"
-LOCALS += "<br>고유 획득 경험: 고통 쾌락 경험(TARGET)<br>"
+LOCALS += "<br>고유 획득 경험: 고통쾌락경험(TARGET)<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
 @MASSAGE_COM3
@@ -53,7 +53,7 @@ ELSEIF TALENT:TARGET:バストサイズ == 1
 	CALL SOURCE_CALC_歓楽(TARGET, PLAYER, 300)
 ELSEIF TALENT:TARGET:バストサイズ == 0 || TALENT:TARGET:Ｂ感度 == -2
 	;普乳 言うて普乳っつってもそこそこあるよな？
-	;現状だと男もここ
+	;현재だと男もここ
 	CALL SOURCE_CALC_快Ｓ(TARGET, PLAYER, 125)
 	CALL SOURCE_CALC_苦痛(TARGET, PLAYER, 20)
 	CALL SOURCE_CALC_歓楽(TARGET, PLAYER, 250)
@@ -104,7 +104,7 @@ RETURN 1
 PRINTFORM %CALLNAME:PLAYER%은(는), %CALLNAME:TARGET%의
 	;巨乳以上
 	SIF TALENT:TARGET:バストサイズ == 1
-		PRINTFORM %TEXTR("풍만하게 자란/탐스럽게 열린/묵직한")%%TEXTR("가슴의 무게/거유의 무게/왕가슴의 무게")%으로 굳어버린
+		PRINTFORM %TEXTR("풍만하게 자란/탐스럽게 영근/묵직한")%%TEXTR("가슴의 무게/거유의 무게/왕가슴의 무게")%으로 굳어버린
 
-PRINTFORML 어깨를 손으로 정성껏 풀어주었다.
+PRINTFORML 어깨를 손으로 정성껏 주물러 풀어주었다.
 

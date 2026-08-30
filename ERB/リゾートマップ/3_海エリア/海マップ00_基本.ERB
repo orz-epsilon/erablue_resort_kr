@@ -7,6 +7,9 @@ SIF MATCH(開拓エリア開発番号, 大規模番号_海エリア) > 0
 ;イベント見ること
 SIF 海作成許可フラグ < 1
 	RETURN 0
+;居住区が先
+SIF MATCH(開拓エリア開発番号, 大規模番号_居住区エリア) < 1
+	RETURN 0
 
 RETURN 1
 
@@ -30,7 +33,7 @@ TRYCALLFORM MAP_RESORT_3_{TFLAG:マップ種別}(AA)
 @エリア情報登録_3(ARGS)
 SELECTCASE ARGS
 	CASE "エリア名"
-		TSTR:場所名受渡 = 바다지역
+		TSTR:場所名受渡 = 바다 지역
 	CASE "エリア移動可能場所"
 		RETURN 1
 ENDSELECT
@@ -139,20 +142,20 @@ IF 海初来訪イベントフラグ == 0
 	DRAWLINE
 	PRINTW
 	PRINTFORMW %CALLNAME:PLAYER%은(는) 섬을 개척하고, 비어있는 지역에 생성한 바다를 방문했다.
-	PRINTFORMW 이미 몇몇 발 빠른 관광객이 방문하여, 물가에서 놀거나 바닷가 식당에서 식사를 즐기고 있다.
+PRINTFORMW 이미 몇몇 소식 빠른 관광객들이 찾아와, 물가에서 놀거나 바닷가 식당에서 식사를 즐기고 있다.
 	PRINTL 
-	PRINTFORMW 성정수의 힘과 ZP를 구사하여 만들어진 바다는 아름답고, 밀려왔다 밀려가는 잔잔한 파도를 머금고 있다.
-	PRINTFORMW 지금은 아직 별다를 것 없는 해수욕장이지만, 언젠가는 더 많은 레저 요소를 늘려도 좋을 것이다.
-	PRINTFORMW 심해의 고전장 던전처럼 바닷속을 산책하거나, 배를 타고 먼바다로 나가 낚시를 하는 등 여러 가지를 생각해 볼 수 있을 것 같다 (※미구현입니다)
+PRINTFORMW 성정수의 힘과 ZP를 구사하여 만들어진 바다는 아름답고, 밀려왔다 밀려가는 잔잔한 파도를 머금고 있다.
+PRINTFORMW 지금은 아직 별다를 것 없는 해수욕장이지만, 언젠가는 더 많은 레저 요소를 늘려도 좋을 것이다.
+PRINTFORMW 심해의 고전장 던전처럼 해중을 산책하거나, 배로 먼바다에 나가 낚시를 하거나, 여러 가지를 생각해 볼 수 있을 것 같다 (※미구현입니다)
 	PRINTL
-	PRINTFORMW 또한, 지금은 평범한 물고기만 서식하고 있지만, 언젠가는 아우구스테와 같은 해산물이 발생할지도 모른다. (※미구현입니다)
-	PRINTFORMW 그것도 나름 명물이 될 것 같지만…… 리조트 지역으로서는 대책을 생각해 두어야 할 것이다.
-	PRINTFORMW 그렇다고 지금은 어려운 것을 생각하지 않고.
-	PRINTFORMW 햇살 아래, 건강하게 바다에서 노는 것이 좋을 것 같다.
+PRINTFORMW 또한, 지금은 보통 물고기밖에 서식하지 않지만, 언젠가는 아우구스테와 같은 해산물이 발생할지도 모른다. (※미구현입니다)
+PRINTFORMW 그것은 그것대로 명산물이 될 것 같지만…… 리조트 지역으로서는 대책을 생각해 두어야 할 것이다.
+PRINTFORMW と예え 지금은 어려운 것을 생각하지 말고.
+PRINTFORMW 일差し 아래, 건강하게 바다에서 노는 것이 좋을 것 같다.
 	PRINTL
 	SETCOLOR カラーパレット("黄")
-	PRINTFORMW 바다 지역의 완성으로 통상 의상 「수영복」을 입수했다.
-	PRINTFORMW 바다 지역의 완성으로 통상 의상 「유카타빌라」를 입수했다.
+PRINTFORMW 바다 에리어 완성으로 통상 의상 「수영복」을 입수했다.
+PRINTFORMW 바다 에리어 완성으로 통상 의상 「유카타빌라」를 입수했다.
 	RESETCOLOR
 	CALL 制服登録処理("水着")
 	CALL 制服登録処理("浴衣")
@@ -164,20 +167,20 @@ ENDIF
 #FUNCTIONS
 ;100~199と999は大本のメニュー操作で使うため、使用しないこと
 
-LOCALS = 바다 지역을 발전시켜, 지역의 기능이나 시설을 늘립니다. <br><br>
-LOCALS += @"■[바다 지역의 발전] Lv{海改造度:0:0}：상한<br>"
-LOCALS += "└■먼바다 지역을 활용한다<br>"
+LOCALS = 바다 에리어를 발전시켜, 에리어의 기능이나 시설을 늘립니다. <br><br>
+LOCALS += @"■[바다 에리어의 발전] Lv{海改造度:0:0}：상한<br>"
+LOCALS += "└■먼바다 에리어를 활용한다<br>"
 LOCALS += "　├"
 IF 海改造度:6:0 < 1
-	LOCALS += "<button value='260'>[어선을 구입한다]</button><br>"
+LOCALS += "<button value='260'>[어선을 구입한다]</button><br>"
 ELSE
-	LOCALS += "[어선을 구입한다]　구입 완료<br>"
+	LOCALS += "[어선을 구매한다]　구매 완료<br>"
 ENDIF
 LOCALS += @"　├"
 IF 海改造度:6:1 < 1
-	LOCALS += "<button value='261'>[유람선을 구입한다]</button><br>"
+	LOCALS += "<button value='261'>[유람선을 구매한다]</button><br>"
 ELSE
-	LOCALS += "[유람선을 구입한다]　구입 완료<br>"
+	LOCALS += "[유람선을 구매한다]　구매 완료<br>"
 ENDIF
 LOCALS += @"　└"
 IF 海改造度:6:2 < 1
@@ -195,12 +198,12 @@ RETURNF LOCALS
 SELECTCASE ARG
 	CASE 260
 		DRAWLINE
-		PRINTL 어선을 구입하여, 먼바다로 고기잡이를 나가게 됩니다.
+		PRINTL 어선을 구매하여, 먼바다로 조업을 나가게 됩니다.
 		PRINTL 매일 무작위 물고기 재료를 얻습니다.
 		PRINTL 
-		PRINTL 어선을 구입하시겠습니까? (필요:30,000루피)
+		PRINTL 어선을 구매하시겠습니까?（필요:30,000루피）
 		PRINTBUTTONLC "[0] 예", 0
-		PRINTBUTTONLC "[1] 아니요", 1
+		PRINTBUTTONLC "[1] 아니오", 1
 		INPUT
 		SELECTCASE RESULT
 			CASE 0
@@ -210,8 +213,8 @@ SELECTCASE ARG
 				ENDIF
 				海改造度:6:0 = 1
 				MONEY -= 30000
-				PRINTL 어선을 구입했습니다!
-				PRINTW (毎日ランダムな魚素材を入手)
+				PRINTL 어선을 구매했습니다!
+				PRINTW (매일 무작위 물고기 재료를 얻음)
 				CALL RESET_GRAPH_3
 				CALL 履歴データベース登録(CFLAG:MASTER:人物番号, @"海エリアで漁船を購入した","実績")
 				RETURN
@@ -221,10 +224,10 @@ SELECTCASE ARG
 		RESTART
 	CASE 261
 		DRAWLINE
-		PRINTL 유람선을 구매하여 관광객을 태우고 바다 생물을 관찰하는 투어를 시작합니다.
-		PRINTL 리조트의 인기 상한이 상승합니다.
+		PRINTL 유람선을 구매하여, 관광객을 태우고 바다 생물을 관찰하는 투어를 시작합니다.
+		PRINTL 리조트의 인기도 상한이 상승합니다.
 		PRINTL 
-		PRINTL 유람선을 구매하시겠습니까? (필요: 20,000루피)
+		PRINTL 유람선을 구매하시겠습니까?（필요:20,000루피）
 		PRINTBUTTONLC "[0] 예", 0
 		PRINTBUTTONLC "[1] 아니오", 1
 		INPUT
@@ -237,7 +240,7 @@ SELECTCASE ARG
 				海改造度:6:1 = 1
 				MONEY -= 20000
 				PRINTL 유람선을 구매했습니다!
-				PRINTW (リゾートの人気度上限上昇)
+				PRINTW (리조트의인기도 상한 상승)
 				CALL RESET_GRAPH_3
 				CALL 履歴データベース登録(CFLAG:MASTER:人物番号, @"海エリアで遊覧船を購入した","実績")
 				RETURN
@@ -247,10 +250,10 @@ SELECTCASE ARG
 		RESTART
 	CASE 262
 		DRAWLINE
-		PRINTL 해저를 산책할 수 있는 마법을 실용화하여 관광에 활용합니다.
-		PRINTL 리조트의 인기 상한이 상승하고, 전투 시 수속성 내성이 약간 상승합니다.
+		PRINTL 해저를 산책할 수 있는 마법을 실용화하여, 관광에 활용합니다.
+		PRINTL 리조트의인기도 상한이 상승하고, 전투 시의 수속성 내성이 조금 상승합니다.
 		PRINTL 
-		PRINTL 마법을 연구하시겠습니까? (필요: 50,000루피)
+		PRINTL 마법을 연구하시겠습니까?（필요:50,000루피）
 		PRINTBUTTONLC "[0] 예", 0
 		PRINTBUTTONLC "[1] 아니오", 1
 		INPUT
@@ -263,7 +266,7 @@ SELECTCASE ARG
 				海改造度:6:2 = 1
 				MONEY -= 50000
 				PRINTL 해저 산책 마법을 실용화했습니다!
-PRINTW (リゾートの人気度上限上昇、水属性耐性上昇)
+				PRINTW (리조트의인기도 상한 상승, 수속성 내성 상승)
 				CALL RESET_GRAPH_3
 				CALL 履歴データベース登録(CFLAG:MASTER:人物番号, @"海エリアで海底散歩の魔法を実用化した","実績")
 				RETURN
@@ -286,7 +289,7 @@ VARSET RESULT
 入手量 = RAND:5 + 3
 候補数 = DT_SELECT("所持素材データベース", "素材カテゴリ = '食物素材' And 食材分類 = '魚'")
 
-RSTR:その他報告_記録文字列 += "　　어선에 의한 어업으로"
+RSTR:その他報告_記録文字列 += "　　어선으로 어획하여"
 改行カウント = STRLENS("　　漁船による漁で")
 FOR 入手カウント, 0, 入手量
 	;とりあえず完全ランダム
@@ -304,7 +307,7 @@ FOR 入手カウント, 0, 入手量
 	ENDIF
 	RSTR:その他報告_記録文字列 += @"%入手名%"
 NEXT
-RSTR:その他報告_記録文字列 += @"을(를) 손에 넣었다!"
+RSTR:その他報告_記録文字列 += @"을 손에 넣었다!"
 
 ;従業員分を追加
 RSTR:その他報告_記録文字列 += RSTR:漁師結果一時保存

@@ -2,21 +2,21 @@
 @アイテム個別文章表示_ポテトフライＬ(ARGS)
 ;ポテトフライＬ
 IF ARGS == "値段"
-	詳細文文字列受け渡し変数 = 루피
+	詳細文文字列受け渡し変数 = ルピ
 	RETURN 3980
 ENDIF
 
 LOCALS = 
 LOCALS += @"■포테이토 프라이 L　　　소지 수:{DT_CELL_GET("所持アイテムデータベース", 0, "ポテトフライＬ")}<br>"
 LOCALS += "감자를 기름에 튀긴 죄 많은 음식의 L 사이즈. <br>"
-LOCALS += "기본적으로 공유를 권장하는 일품. <br>"
-LOCALS += "먹으면 기운이 솟아나 체력과 마력이 회복된다. <br>"
+LOCALS += "기본적으로 나눠 먹는 것을 권장하는 메뉴. <br>"
+LOCALS += "먹으면 기운이 솟아나, 체력과 마력이 회복된다. <br>"
 LOCALS += "전투 중에는 사용할 수 없다. <br>"
-LOCALS += "섭취 칼로리:515kcal<br>"
+LOCALS += "섭취 칼로리: 515kcal<br>"
 LOCALS += "<br>"
 LOCALS += "【효과】<br>"
-LOCALS += "아군 전체의 HP를 [2000÷인원수], <br>"
-LOCALS += "MP를 [200÷인원수] 회복한다. <br>"
+LOCALS += "아군 전체의 HP를 ［２０００÷人数］, <br>"
+LOCALS += "MP를 ［２００÷人数］ 회복한다. <br>"
 
 詳細文文字列受け渡し変数 = %LOCALS%
 
@@ -59,24 +59,24 @@ FOR 隊列番号, 0, 14
 		CONTINUE
 	SIF !BATTLE_STATE:隊列番号:キャラ登録番号
 		CONTINUE
-	SIF BATTLE_STATE:隊列番号:최대HP == BATTLE_STATE:隊列番号:ＨＰ && BATTLE_STATE:隊列番号:최대MP == BATTLE_STATE:隊列番号:ＭＰ
+	SIF BATTLE_STATE:隊列番号:最大ＨＰ == BATTLE_STATE:隊列番号:ＨＰ && BATTLE_STATE:隊列番号:最大ＭＰ == BATTLE_STATE:隊列番号:ＭＰ
 		CONTINUE
 	SIF BATTLE_STATE:隊列番号:ＨＰ < 1
 		CONTINUE
 
-	IF BATTLE_STATE:隊列番号:최대HP - BATTLE_STATE:隊列番号:ＨＰ < HP回復量
-		PRINTFORMW %CALLNAME:(BATTLE_STATE:隊列番号:キャラ登録番号)%의 HP를 {BATTLE_STATE:隊列番号:최대HP - BATTLE_STATE:隊列番号:ＨＰ}회복했습니다
+	IF BATTLE_STATE:隊列番号:最大ＨＰ - BATTLE_STATE:隊列番号:ＨＰ < HP回復量
+		PRINTFORMW %CALLNAME:(BATTLE_STATE:隊列番号:キャラ登録番号)%의 HP를 {BATTLE_STATE:隊列番号:最大ＨＰ - BATTLE_STATE:隊列番号:ＨＰ} 회복했습니다
 	ELSE
-		PRINTFORMW %CALLNAME:(BATTLE_STATE:隊列番号:キャラ登録番号)%의 HP를 {HP回復量}회복했습니다
+		PRINTFORMW %CALLNAME:(BATTLE_STATE:隊列番号:キャラ登録番号)%의 HP를 {HP回復量} 회복했습니다
 	ENDIF
-	IF BATTLE_STATE:隊列番号:최대MP - BATTLE_STATE:隊列番号:ＭＰ < MP回復量
-		PRINTFORMW %CALLNAME:(BATTLE_STATE:隊列番号:キャラ登録番号)%의 MP를 {BATTLE_STATE:隊列番号:최대MP - BATTLE_STATE:隊列番号:ＭＰ}회복했습니다
+	IF BATTLE_STATE:隊列番号:最大ＭＰ - BATTLE_STATE:隊列番号:ＭＰ < MP回復量
+		PRINTFORMW %CALLNAME:(BATTLE_STATE:隊列番号:キャラ登録番号)%의 MP를 {BATTLE_STATE:隊列番号:最大ＭＰ - BATTLE_STATE:隊列番号:ＭＰ} 회복했습니다
 	ELSE
-		PRINTFORMW %CALLNAME:(BATTLE_STATE:隊列番号:キャラ登録番号)%의 MP를 {MP回復量}회복했습니다
+		PRINTFORMW %CALLNAME:(BATTLE_STATE:隊列番号:キャラ登録番号)%의 MP를 {MP回復量} 회복했습니다
 	ENDIF
 
-	BATTLE_STATE:隊列番号:ＨＰ = MIN(BATTLE_STATE:隊列番号:ＨＰ + HP回復量, BATTLE_STATE:隊列番号:최대HP)
-	BATTLE_STATE:隊列番号:ＭＰ = MIN(BATTLE_STATE:隊列番号:ＭＰ + MP回復量, BATTLE_STATE:隊列番号:최대MP)
+	BATTLE_STATE:隊列番号:ＨＰ = MIN(BATTLE_STATE:隊列番号:ＨＰ + HP回復量, BATTLE_STATE:隊列番号:最大ＨＰ)
+	BATTLE_STATE:隊列番号:ＭＰ = MIN(BATTLE_STATE:隊列番号:ＭＰ + MP回復量, BATTLE_STATE:隊列番号:最大ＭＰ)
 	TCVAR:(BATTLE_STATE:隊列番号:キャラ登録番号):摂取カロリー += 515
 	人数 ++
 NEXT

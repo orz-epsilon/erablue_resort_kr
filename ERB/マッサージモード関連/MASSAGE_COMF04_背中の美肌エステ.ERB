@@ -3,7 +3,7 @@
 ;-------------------------------------------------
 @MASSAGE_COMNAME4
 #FUNCTIONS
-TSTR:コマンド名受渡 = 등의 미용 에스테
+TSTR:コマンド名受渡 = 등 미용 에스테
 
 
 ;===================================================
@@ -14,10 +14,10 @@ TSTR:コマンド名受渡 = 등의 미용 에스테
 TFLAG:コマンドタイプ受渡 = MASSAGE_COMTYPE("通常マッサージ")
 
 @MASSAGE_COM_TOOLTIP_4
-LOCALS = <br>■등의 미용 에스테<br>
-LOCALS += "특성 아로마 오일로 등 피부 관리를 한다. 보습, 미용 효과가 있다."
+LOCALS = <br>■등 미용 에스테<br>
+LOCALS += "특성 아로마 오일로 등 피부를 관리한다. 보습, 미용 효과가 있다."
 LOCALS += "<br>등을 드러내기 쉬운 엘룬 손님에게 특히 효과가 높다."
-LOCALS += "<br>COM 타입: 마사지<br>획득 소스: 쾌S・접촉・환락・노출(엘룬 이외)"
+LOCALS += "<br>COM 타입：마사지<br>획득 소스：쾌S・접촉・환락・노출(엘룬 이외)"
 LOCALS += "<br>고유 획득 경험: 없음<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
@@ -88,7 +88,7 @@ RETURN 1
 @MASSAGE_MESSAGE_COM4
 PRINTFORM %CALLNAME:PLAYER%은(는)
 	IF RFLAG:コマンド結果受渡し変数 == 1
-		PRINTFORML 시술복을 벗겨서%CALLNAME:TARGET%의 등을 드러내고, 에센셜 오일을 떨어뜨려 마사지하며 정성껏 발랐다.
+		PRINTFORML 시술복을 벗겨%CALLNAME:TARGET%의 등을 드러내고, 에센셜 오일을 떨어뜨려 마사지하면서 정성스럽게 펴 발랐다.
 	ELSE
-		PRINTFORML 에센셜 오일을%CALLNAME:TARGET%의 등에 떨어뜨려, 마사지하며 정성껏 발랐다.
+		PRINTFORML 에센셜 오일을%CALLNAME:TARGET%의 등에 떨어뜨려, 마사지하면서 정성스럽게 펴 발랐다.
 	ENDIF

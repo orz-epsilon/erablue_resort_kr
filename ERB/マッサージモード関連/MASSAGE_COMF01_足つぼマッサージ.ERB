@@ -16,8 +16,8 @@ TFLAG:コマンドタイプ受渡 = MASSAGE_COMTYPE("通常マッサージ")
 @MASSAGE_COM_TOOLTIP_1
 LOCALS = <br>■발 지압 마사지<br>
 LOCALS += "발바닥에 있는 혈을 자극한다. 혈액순환 촉진 효과가 있다. 아프지만 기분 좋다."
-LOCALS += "<br>COM 타입: 일반 마사지<br>획득 소스: 쾌S・접촉・고통・환락"
-LOCALS += "<br>고유 획득 경험: 고통 쾌락 경험(TARGET)<br>"
+LOCALS += "<br>COM타입：일반 마사지<br>획득 소스：쾌S・접촉・고통・환락"
+LOCALS += "<br>고유 획득 경험：고통 쾌락 경험(TARGET)<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
 @MASSAGE_COM1
@@ -69,12 +69,12 @@ RETURN 1
 ;実行時メッセージ
 ;-------------------------------------------------
 @MASSAGE_MESSAGE_COM1
-PRINTFORML %CALLNAME:PLAYER%은(는) 엄지손가락으로 %CALLNAME:TARGET%의 발바닥에 있는 혈을 꾹꾹 자극했다.
+PRINTFORML %CALLNAME:PLAYER%은(는) 엄지손가락으로 %CALLNAME:TARGET%의 발바닥에 있는 혈을 꾸욱꾸욱 자극했다.
 
 @MASSAGE_MESSAGE_COM1_非口上時
 
 ;按摩の技能かマゾか。技能名すらまだ確定していないので後日要修正。
 
 IF ABL:TARGET:マゾ性感 > 2
-	PRINTFORML 아프면서도 기분 좋은 쾌락에, %CALLNAME:TARGET%의 입에서는 황홀한 신음 소리가 새어 나왔다…
+	PRINTFORML 아프면서도 기분 좋은 쾌락에, %CALLNAME:TARGET%의 입에서는 황홀한 신음 소리가 흘러나왔다…
 ENDIF

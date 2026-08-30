@@ -123,7 +123,7 @@ FOR LOCAL,0,CHARANUM
 	CFLAG:LOCAL:風呂 += TIME_PROGRESS(TFLAG:行動前時刻)
 	IF BATHROOM(CFLAG:LOCAL:現在マップ種別, CFLAG:LOCAL:現在位置)
 		SIF LOCAL == 0 && LOCAL:1
-			PRINTFORMW %CALLNAME:MASTER%은(는) 목욕탕에 몸을 담갔다
+			PRINTFORMW %CALLNAME:MASTER%은(는) 목욕을 했다
 		CFLAG:LOCAL:風呂 = 0
 	ENDIF
 
@@ -169,7 +169,7 @@ FOR LOCAL,0,CHARANUM
 
 	;性欲
 	SIF !CFLAG:LOCAL:睡眠
-		CALL 性欲ゲージ増加(LOCAL)
+		CALL 性欲ゲージ自然増加_時間(LOCAL)
 
 	;現在何らかのモードに入っているか
 	モード実行中フラグ = 0
@@ -189,13 +189,14 @@ FOR LOCAL,0,CHARANUM
 			;うふふ中、あるいは何らかのモード実行中は遊ぶが途切れない
 			CFLAG:LOCAL:一緒に遊ぶ = MAX(CFLAG:LOCAL:一緒に遊ぶ, 1)
 		IF !CFLAG:LOCAL:一緒に遊ぶ
-			PRINTFORML %CALLNAME:LOCAL%은(는) 놀이에 만족한 것 같다.
+			PRINTFORML %CALLNAME:LOCAL%은(는) 놀이에 만족한 듯하다.
 		ENDIF
 	ENDIF
 
 	;Add ahyanosia
 	;ゆきずりセックス処理
-	IF 性癖素質:LOCAL:ゆきずりセックス > 0 && !CFLAG:LOCAL:うふふ
+	;女性は従来の性癖、男性は攻め側の性癖を参照する
+	IF !CFLAG:LOCAL:うふふ && ((GETBIT(TALENT:LOCAL:性別, 0) && 性癖素質:LOCAL:ゆきずりセックス > 0) || (!GETBIT(TALENT:LOCAL:性別, 0) && GETBIT(TALENT:LOCAL:性別, 1) && 性癖素質:LOCAL:ゆきずりセックス（攻め） > 0))
 		CALL ゆきずりセックス判定(LOCAL)
 		;性行為中は移動しない
 		SIF IS_ゆきずりセックス中(LOCAL)
@@ -223,7 +224,7 @@ FOR LOCAL,0,CHARANUM
 		CONTINUE
 	SIF CFLAG:LOCAL:一緒に遊ぶ
 		CONTINUE
-	SIF モード実行中フラグ && !CFLAG:LOCAL:睡眠
+	SIF モード実行中フラグ && !CFLAG:LOCAL:睡眠 && !CFLAG:LOCAL:キャラ同士うふふ
 		CONTINUE
 	SIF CFLAG:LOCAL:添い寝フラグ
 		CONTINUE
@@ -244,16 +245,17 @@ ENDIF
 
 ;ここでキャラ同士うふふの判定を行う
 ;これ汎用化したほうがいいんだけどとりあえずキャラ同士うふふでしか使わないのでベタ打ち
-FOR LOCAL,1,CHARANUM
-	IF 移動スケジュール文字列:LOCAL:(スケジュール状態:LOCAL:現在スケジュール):スケジュール == "自室でうふふ"
-		IF CFLAG:LOCAL:デート
-			IF CFLAG:LOCAL:現在位置 == CFLAG:(ABS(CFLAG:LOCAL:デート) - 100):現在位置 && CFLAG:LOCAL:現在マップ種別 == CFLAG:(ABS(CFLAG:LOCAL:デート) - 100):現在マップ種別
-				CFLAG:LOCAL:キャラ同士うふふ = 1
-				CALL CLOTHES_CHANGE(LOCAL, "全裸")
-			ENDIF
-		ENDIF
-	ENDIF
-NEXT
+;@SCHEDULE_自室でうふふでするようにしたのでコメントアウト
+;FOR LOCAL,1,CHARANUM
+;	IF 移動スケジュール文字列:LOCAL:(スケジュール状態:LOCAL:現在スケジュール):スケジュール == "自室でうふふ"
+;		IF CFLAG:LOCAL:デート
+;			IF CFLAG:LOCAL:現在位置 == CFLAG:(ABS(CFLAG:LOCAL:デート) - 100):現在位置 && CFLAG:LOCAL:現在マップ種別 == CFLAG:(ABS(CFLAG:LOCAL:デート) - 100):現在マップ種別
+;				CFLAG:LOCAL:キャラ同士うふふ = 1
+;				CALL CLOTHES_CHANGE(LOCAL, "全裸")
+;			ENDIF
+;		ENDIF
+;	ENDIF
+;NEXT
 
 LOCAL:1 = 滞在キャラ数算出関数(2)
 
@@ -289,7 +291,7 @@ SIF CFLAG:ARG:酔いすぎ == 1
 SIF CFLAG:ARG:体力限界 == 1
 	寝る = 0
 ;泥酔眠姦とかに使う分岐
-SIF TCVAR:ARG:言いなり == 1
+SIF TCVAR:ARG:泥酔眠姦 == 1
 	寝る = 0
 
 
@@ -332,7 +334,7 @@ SELECTCASE 移動先候補
 		ELSE
 			RETURN 0
 		ENDIF
-	CASE 20, 2000 TO 2020
+	CASE 20, 2000 TO 2040
 		;基本自室には来ない（後々恋慕状態だと来るように再設定すること）
 		RETURN 0
 	;ほかはまんべんなく移動する
@@ -351,6 +353,7 @@ RETURNF TIME + DAY * 1440 - ARG
 
 @CHARA_SLEEP, ARG
 #DIM 睡眠場所指定
+#DIM 睡眠場所追従不能フラグ
 #DIM 睡眠マップ
 #DIM 睡眠場所
 #DIM 部屋割
@@ -385,11 +388,14 @@ VARSET LOCAL
 ;ENDIF
 
 IF !CFLAG:ARG:睡眠
+	睡眠場所追従不能フラグ = 0
 	CALL CHARA_ROUTINE_STATUS(ARG, "就寝場所")
 	睡眠場所指定 = RESULT
 	IF 睡眠場所指定
 		睡眠マップ = RESULT:1
 		睡眠場所 = RESULT:2
+		SIF 睡眠マップ == 0 && 睡眠場所 == 999
+			睡眠場所追従不能フラグ = 1
 	ENDIF
 	CFLAG:ARG:同行 = 0
 	CFLAG:ARG:睡眠 = 1
@@ -401,14 +407,26 @@ IF !CFLAG:ARG:睡眠
 		CALL デート採点処理(ARG)
 	ENDIF
 
-	IF CFLAG:ARG:酔いすぎ == 1
+	IF TCVAR:ARG:日帰りフラグ
+		;日帰りキャラの睡眠時間は仮置きなので、メッセージを非表示にする
+		CFLAG:ARG:現在位置 = 0
+		CFLAG:ARG:現在マップ種別 = 999
+		GOTO リセット位置
+	ELSEIF 睡眠場所追従不能フラグ
+		;リゾート外へ行く場合はあなたはついていけない 泥酔・ダウン時も頑張って自力で帰る
+		PRINTFORMW %CALLNAME:ARG%은(는) 리조트에서 돌아와 잠드는 듯하다.
+		TRYCALLFORM KOJO_EVENT_移動おやすみ_{NO:ARG}(ARG)
+		CFLAG:ARG:現在位置 = 0
+		CFLAG:ARG:現在マップ種別 = 999
+		GOTO リセット位置
+	ELSEIF CFLAG:ARG:酔いすぎ == 1
 		LOCAL = キャラクター部屋検索(ARG)
 		IF CFLAG:MASTER:酔いすぎ != 1 && CFLAG:MASTER:現在位置 == CFLAG:ARG:現在位置
 			;あなたがいる場合は部屋へと運ぶ
 			IF 自由利用BEDROOM(CFLAG:ARG:現在マップ種別, CFLAG:ARG:現在位置)
-				PRINTFORMW %CALLNAME:MASTER%은(는) 지쳐버린 %CALLNAME:ARG%을(를) 침대에 눕히고 이불을 덮어주었다.
+				PRINTFORMW %CALLNAME:MASTER%은(는) 지쳐버린 %CALLNAME:ARG%을(를) 침대에 눕히고, 이불을 덮어주었다.
 			ELSEIF CFLAG:ARG:現在位置 == LOCAL && CFLAG:ARG:現在マップ種別 == 部屋検索_マップ種別
-				PRINTFORMW %CALLNAME:MASTER%은(는) 술에 취해 쓰러진 %CALLNAME:ARG%을(를) 침대에 눕히고 이불을 덮어주었다.
+				PRINTFORMW %CALLNAME:MASTER%은(는) 만취해버린 %CALLNAME:ARG%을(를) 침대에 눕히고, 이불을 덮어주었다.
 			ELSEIF GETBIT(TALENT:ARG:性別, 0) && TCVAR:ARG:レディキラー >= 1
 				;書いた人は男あなたで男が酔いつぶれた時にも選択肢が出てしまうのが嫌で女に限定した。あなたの性別嗜好が取れる手段があるならそれで。
 				;女前提なら地の文でも女性的な表現使えて楽！
@@ -424,54 +442,54 @@ IF !CFLAG:ARG:睡眠
 				WEND
 				CFLAG:ARG:現在位置 = LOCAL
 				CFLAG:ARG:現在マップ種別 = 部屋検索_マップ種別
-				PRINTFORMW %CALLNAME:ARG%은(는) 술에 취해 쓰러진 것 같다…… .
+				PRINTFORMW %CALLNAME:ARG%은(는) 만취해버린 듯하다……。
 				PRINTL
 				PRINTBUTTONLC "[0] 신사적으로 방까지 바래다준다", 0
-				PRINTBUTTONLC "[1] 이리 늑대가 된다", 1
+				PRINTBUTTONLC "[1] 흑심을 품고 바래다준다", 1
 				BINPUT
 				IF RESULT == 0
 					PRINTL
-					PRINTFORMW %CALLNAME:MASTER%은(는) 술에 취해 쓰러진 %CALLNAME:ARG%을(를) 방으로 바래다주었다…… .
+					PRINTFORMW %CALLNAME:MASTER%은(는) 만취해버린 %CALLNAME:ARG%을(를) 방으로 바래다주었다……。
 				ELSE
 					;泥酔レイプ！野獣と化したオーナー
 					PRINTL
-					PRINTFORMW %CALLNAME:MASTER%은(는) 술에 취해 쓰러진 %CALLNAME:ARG%에게 어깨를 빌려주어, 방까지 바래다주기로 했다.
+					PRINTFORMW %CALLNAME:MASTER%은(는) 만취해버린 %CALLNAME:ARG%에게 어깨를 빌려주어, 방까지 바래다주기로 했다.
 					PRINTL
-					PRINTFORMW 술에 달아오른 몸에 팔을 두르고, 반신에 %CALLNAME:ARG%의 부드러움을 느끼며 천천히 방으로 발걸음을 옮긴다…… .
+					PRINTFORMW 술에 달아오른 몸에 팔을 두르고, 반신에 %CALLNAME:ARG%의 부드러움을 느끼며 천천히 방으로 발걸음을 옮긴다……。
 					PRINTL
 					IF 送り狼成否 < CHARANUM && 送り狼成否 > 0
 						;がっ‥！駄目っ‥！
-						PRINTFORMW 하지만, 방에는 %CALLNAME:送り狼成否%이(가) 있었으므로 %CALLNAME:ARG%을(를) 맡기고, %CALLNAME:MASTER%은(는) 풀이 죽어 돌아갔다…… .
+						PRINTFORMW 하지만, 방에는 %CALLNAME:送り狼成否%이(가) 있었기에 %CALLNAME:ARG%을(를) 맡기고, %CALLNAME:MASTER%은(는) 풀이 죽어 돌아갔다……。
 					ELSE
 						CALL 飲み会終了処理()
 						IF TALENT:ARG:恋慕 >= 1
-							PRINTFORML %CALLNAME:PLAYER% 앞에서 완전히 방심하고, 만취할 때까지 술에 취해 쓰러진 %CALLNAME:ARG%은(는), %CALLNAME:PLAYER%이(가) 몸을 안자 기쁜 듯 몸을 비벼온다.
+							PRINTFORML %CALLNAME:PLAYER% 앞에서 완전히 방심하고, 만취할 때까지 취해버린 %CALLNAME:ARG%은(는), %CALLNAME:PLAYER%이(가) 몸을 안자 기쁜 듯 몸을 비벼온다.
 						ELSEIF TALENT:ARG:恋人持ち == -1 || TALENT:ARG:恋人持ち ==1 ||TALENT:ARG:恋人持ち == 2
 							IF TALENT:ARG:恋人持ち == -1
-								PRINTFORM 마음속의 사람
+								PRINTFORM 짝사랑 상대
 							ELSEIF TALENT:ARG:恋人持ち == 1
 								PRINTFORM 연인
 							ELSEIF TALENT:ARG:恋人持ち == 2
-								PRINTFORM 반려
+								PRINTFORM 배우자
 							ENDIF
-							PRINTFORML 이 있는데도, %CALLNAME:MASTER% 앞에서 취해 쓰러지다니 다소 부주의하다.
+							PRINTFORML 가 있는데도, %CALLNAME:MASTER% 앞에서 취해 쓰러지다니 예 조금 부주의하다.
 						ELSEIF 知識素質:高貴 > 0
-							PRINTFORML 고귀한 신분임에도 불구하고, %CALLNAME:MASTER% 앞에서 취해 쓰러지다니 다소 부주의하다.
+							PRINTFORML 고귀한 신분인데도, %CALLNAME:MASTER% 앞에서 취해 쓰러지다니 예 조금 부주의하다.
 						ELSEIF TALENT:ARG:性別嗜好 == 1 && TALENT:MASTER:性別 == 2
 							PRINTFORML %CALLNAME:ARG%가 남자를 싫어한다고 해도, 이렇게 취해 쓰러져 버리면 귀여운 법이다.
 						ELSEIF TALENT:ARG:年齢層 == 10 || (BASE:ARG:年齢 <= 15 && BASE:ARG:年齢 != 0)
-							PRINTFORML 나이 때문에 안 된다는 것을 알고 있을 텐데, 권하는 대로 술을 마셔 버리다니……%TEXTR("나쁜/안 좋은")% 아이다.
+							PRINTFORML 나이 때문에 안 된다는 것을 알고 있을 텐데도, 권하는 대로 술을 마셔 버리다니……%TEXTR("나쁜/안 좋은")% 아이다.
 						ELSE
-							PRINTFORML 취기에 들떠, %CALLNAME:PLAYER%에게 몸을 맡기고 꿈결 같은 %CALLNAME:ARG%은(는),
+							PRINTFORML 술에 취해, %CALLNAME:PLAYER%에게 몸을 맡기고 꿈꾸는 듯한 %CALLNAME:ARG%는,
 						ENDIF
-						PRINTFORMW 「넘어지지 않도록」이라는 핑계를 대고 %CALLNAME:MASTER%이(가)%TEXTR("위험한 부분을 만지/끌어안는 팔로 몰래 가슴을 주무르/허리에 두른 손으로 몰래 엉덩이를 만지")%더라도%TEXTR(", 무엇을 당하고 있는지조차 모르는 모양이다/싫어하는 기색은 없다")%.
+						PRINTFORMW 「넘어지지 않게」라며 이유를 대고 %CALLNAME:MASTER%가%TEXTR("은밀한 부분을 만지/끌어안는 팔로 몰래 가슴을 주무르/허리에 두른 손으로 몰래 엉덩이를 만지")%더라도%TEXTR(", 헛소리처럼 감사 인사까지 하며, 무슨 일을 당하고 있는지 전혀 모르는 모습이다/싫어하는 기색은 없다")%.
 						PRINTL
 						IF (TALENT:ARG:恋人持ち == -1 || TALENT:ARG:恋人持ち ==1 || TALENT:ARG:恋人持ち == 2 || TALENT:ARG:恋人持ち == 3) && TALENT:ARG:恋慕 < 1 && RAND:3 == 0
-							PRINTFORML 손바닥으로 간호의 특권을 즐기며 열쇠를 열고 어두컴컴한 방으로 들어가, %CALLNAME:ARG%을(를) 침대 위로 눕히자,
+							PRINTFORML 손바닥으로 간병의 특권을 즐기면서 열쇠를 열고 어둑한 방으로 들어가, %CALLNAME:ARG%를 침대 위로 눕히자,
 							PRINTFORMW %CALLNAME:ARG%은(는) 멍한 눈으로 %CALLNAME:MASTER%에게 어리광을 부린다.
 							PRINTL
 							PRINTFORML 아무래도 눈앞의 상대가 누구인지도 모를 정도로 취해 쓰러진 %CALLNAME:ARG%은(는),
-							PRINTFORM 간호하고 있는 %CALLNAME:MASTER%을(를)
+							PRINTFORM 간병하고 있는 %CALLNAME:MASTER%을(를)
 							IF TALENT:ARG:恋人持ち == -1
 								PRINTFORM 마음에 둔 상대
 							ELSEIF TALENT:ARG:恋人持ち == 1
@@ -481,30 +499,30 @@ IF !CFLAG:ARG:睡眠
 							ELSEIF TALENT:ARG:恋人持ち == 3
 								PRINTFORM 이미 없을 터인 옛 배우자
 							ENDIF
-							PRINTFORMW 라고 착각하고 있는 모양이다……。
+PRINTFORMW 라고 착각하고 있는 듯하다……。
 							PRINTL
-PRINTFORMW 정신없이 취해 쓰러진 데다, 착각으로 경계가 허술해진%CALLNAME:ARG%의 모습에 무심코 %CALLNAME:MASTER%의 입꼬리가 올라간다.
+PRINTFORMW 인사불성이 될 정도로 취한 데다, 착각으로 인해 경계가 허술해진%CALLNAME:ARG%의 모습에 무심코%CALLNAME:MASTER%의 입꼬리가 올라간다.
 							PRINTL
-PRINTFORMW ──다시는 없을 기회다. 이용해 주마.
+PRINTFORMW ──두 번 다시 없을 기회다. 이용해 주마.
 							PRINTL
-PRINTFORM %CALLNAME:MASTER%는 %CALLNAME:ARG%의, 잠꼬대와도 같은 미심쩍은 말에
+PRINTFORM %CALLNAME:MASTER%은(는)%CALLNAME:ARG%의 잠꼬대와도 같은 미심쩍은 말에
 							IF TALENT:ARG:恋人持ち == -1
-	PRINTFORM 마음에 둔 상대인 척하며
+PRINTFORM 마음에 둔 상대인 척하며
 							ELSEIF TALENT:ARG:恋人持ち == 1
-	PRINTFORM 연인인 척하며
+PRINTFORM 연인인 척하며
 							ELSEIF TALENT:ARG:恋人持ち == 2
-	PRINTFORM 반려인 척하며
+PRINTFORM 반려인 척하며
 							ENDIF
 PRINTFORML 적당히 맞장구를 치면서,
-PRINTFORMW 잠시 동안의 러브러브%TEXTR("기분/교미/섹스")%를 즐기기 위해%CALLNAME:ARG%를 살며시 밀어 넘어뜨렸다……。
+PRINTFORMW 한때의 러브러브%TEXTR("기분/교미/섹스")%를 즐기기 위해%CALLNAME:ARG%을(를) 살며시 밀어 넘어뜨렸다……。
 							CFLAG:MASTER:現在位置 = LOCAL
 							CFLAG:MASTER:現在マップ種別 = 部屋検索_マップ種別
 							CFLAG:ARG:現在位置 = LOCAL
 							CFLAG:ARG:現在マップ種別 = 部屋検索_マップ種別
 							CALL TARGET_SET()
 							;EVENTCOMENDからそのままもってきた。正直よくわかってない。
-LOCALS '= CSTR:ARG:コスプレ前の服
-LOCALS:1 '= CSTR:ARG:着せ替え服
+							LOCALS '= CSTR:ARG:コスプレ前の服
+							LOCALS:1 '= CSTR:ARG:着せ替え服
 							CSTR:ARG:コスプレ前の服 '= LOCALS
 							CALL CLOTHES_CHANGE(ARG, LOCALS:1)
 							;うふふに移行
@@ -515,53 +533,79 @@ LOCALS:1 '= CSTR:ARG:着せ替え服
 							CFLAG:MASTER:うふふ = 1
 							CALL うふふ開始キャラ処理(ARG, "泥酔姦")
 	;						TSTR:むりやりごっこ時シチュ保存 '= CSTR:TARGET:うふふシチュ記録
-							CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>酔いつぶれた%CALLNAME:ARG%の勘違いに付け込み、想い人のふりをしてその体をこっそり楽しませてもらった</font><img src='えっちハート'>","うふふ")
-							CALL 履歴データベース登録(CFLAG:ARG:人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>酔いつぶれて%CALLNAME:MASTER%を想い人と勘違いし、体を許してしまった</font><img src='えっちハート'>","うふふ")
+							IF TALENT:ARG:恋人持ち == -1
+									CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>酔いつぶれた%CALLNAME:ARG%の勘違いに付け込み、彼女の想い人のふりをしてその体をこっそり楽しませてもらった</font><img src='えっちハート'>","うふふ")
+									CALL 履歴データベース登録(CFLAG:ARG:人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>酔いつぶれて目の前にいた%CALLNAME:MASTER%を想い人と勘違いし、%TEXTR("自らすすんで体を許してしまった/ラブラブセックスを許してしまった/間違った相手にそのカラダとともに心からの愛を捧げてしまった")%</font><img src='えっちハート'>","うふふ")
+							ELSEIF TALENT:ARG:恋人持ち == 1
+									CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>酔いつぶれた%CALLNAME:ARG%の勘違いに付け込み、彼女の恋人のふりをしてその体をこっそり楽しませてもらった</font><img src='えっちハート'>","うふふ")
+									CALL 履歴データベース登録(CFLAG:ARG:人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>酔いつぶれて目の前にいた%CALLNAME:MASTER%を恋人と勘違いし、%TEXTR("自らすすんで体を許してしまった/恋人としかしないはずのラブラブセックスを許してしまった/間違った相手にそのカラダとともに心からの愛を捧げてしまった")%</font><img src='えっちハート'>","うふふ")
+							ELSEIF TALENT:ARG:恋人持ち == 2
+									CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>酔いつぶれた%CALLNAME:ARG%の勘違いに付け込み、彼女の伴侶のふりをしてその体をこっそり楽しませてもらった</font><img src='えっちハート'>","うふふ")
+									CALL 履歴データベース登録(CFLAG:ARG:人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>酔いつぶれて目の前にいた%CALLNAME:MASTER%を伴侶と勘違いし、%TEXTR("自らすすんで体を許してしまった/伴侶としかしないはずのラブラブセックスを許してしまった/間違った相手にそのカラダとともに心からの愛を捧げてしまった")%</font><img src='えっちハート'>","うふふ")
+							ENDIF
 							TIME += 10
 						ELSE
-PRINTFORML 손바닥으로 간호의 특권을 즐기며 열쇠를 열고 방에 들어가, %CALLNAME:ARG%를 침대 위로 눕힌다.
+PRINTFORML 손바닥으로 간호의 특권을 즐기면서 열쇠를 열고 방에 들어가,%CALLNAME:ARG%을(를) 침대 위로 눕힌다.
 							IF 知識素質:高貴 > 0
 								PRINTW
-	PRINTFORML 알코올 냄새를 풍기며 시트 위에 힘없이 뒹구는, 본래의 신분으로는 만지는 것조차 허락되지 않을, %TEXTR("고귀한/귀한")% 혈통을 잇는%CALLNAME:ARG%의 옥체.
+PRINTFORML 침대 시트에 찰랑하고 펼쳐진 비단 같은 머리카락. 술기운을 머금은 싱그러운 입술. 호흡과 함께 오르내리는 예쁜 가슴.
+PRINTFORMW 움찔하고 뒤척이는 허리놀림은 요염하고, 약간 흐트러진 옷은 누가 봐도 고급스러운 촉감으로, 안쪽에 살짝 보이는 맨살의 가치가 얼마나 높은지를 웅변하고 있다……。
+								PRINTL
+PRINTFORML 백성을 위해, 나라를 위해, 장래 그녀에게 걸맞은 가문의 고귀한 상대와 맺어져, 그 고귀한 반려에게만 만지는 것을 허락했을 터인%CALLNAME:ARG%의 몸.
+PRINTFORMW 변방 섬의 리조트 오너%TEXTR("정도로는/따위로는")%는 뵙는 것조차 불가능했을 터인,%SUBSTRING(NAME:TARGET, STRFIND(NAME:TARGET, "]") + 1, -1)%의 고귀한 몸은 그러나, 지금 이렇게%CALLNAME:PLAYER%의 손이 닿는%TEXTR("곳에 있다/곳으로 떨어졌다")%。
+								PRINTL
+PRINTFORML 두른 고귀한 옷을 벗겨내고, 그녀의 태어난 그대로의 모습을 드러내. 입술을, 혀를, 가슴을, 엉덩이를. 핥아 빨고, 빨아들이고 깨물어 흔적을 남기고, 어루만지고 때리고 주무르며.
+								PRINTFORML 고귀한 혈통을 남길 사명을 띤, 그녀의 고귀한 암컷 구멍 깊숙한 곳까지 남김없이 만끽하고,
+								PRINTFORMW 듬뿍 자궁에 씨앗을 부어%TEXTR("불의의 아이를 임신시켜 버린다/그 혈통에 유전자를 섞어 버린다/유전자로 그녀의 혈통을 망쳐 버린다")%는 것조차, %CALLNAME:PLAYER%에게는 가능해 버리는 것이다…….
 							ELSEIF アイドル判定(ARG)
 								PRINTW
-	PRINTFORML 알코올 냄새를 풍기며 시트 위에 힘없이 뒹구는, 아이돌로서 수많은 팬을 매료시키기 위해 갈고닦았지만, 그러나 그 누구도 만지는 것조차 불가능한%CALLNAME:ARG%의 몸.
+								PRINTFORML 침대 시트에 찰랑 펼쳐진 비단 같은 머리카락. 술기운을 풍기는 탱글탱글한 입술. 은은하게 풍기는, %TEXTR("복숭아/우유")% 같은 달콤한 여인의 향기.
+								PRINTFORMW 젊은 생명력으로 가득 찬 맨살은 섬세하고 탄력이 있으며, 호흡과 함께 오르내리는 예쁜 가슴은 뒤척임과 함께 흔들려 %CALLNAME:PLAYER%을 유혹하는 듯하다.
+								PRINTL
+								PRINTFORML 팬들에게 활기와 행복을 뿌리기 위해 갈고닦아, 여자로서의 상품 가치를 극한까지 높여온 %CALLNAME:ARG%의 몸.
+								PRINTFORML 무대 아래에서 올려다보기만 하는 팬들에게는 결코 손이 닿지 않는, 인기 아이돌 %SUBSTRING(NAME:TARGET, STRFIND(NAME:TARGET, "]") + 1, -1)%의 빛나는 몸은 그러나,
+								PRINTFORMW 이제 이렇게 무방비하게, %CALLNAME:PLAYER%의 손이 닿는 %TEXTR("곳에 있다/곳으로 타락했다")%.
+								PRINTL
+								PRINTFORML 청순의 베일째 옷을 벗겨내고, 그녀의 태어난 그대로의 모습을 드러내. 입술을, 혀를, 가슴을, 엉덩이를. 핥아 빨고, 빨아 물어 자국을 남기고, 쓰다듬고 때리고 주물러서.
+								PRINTFORML 셀 수 없이 많은 팬들이 %TEXTR("아무리 쌓아도/아무리 돈을 바쳐도")% 닿을 리 없는, 일상적인 트레이닝으로 단련된 그녀의 %TEXTR("꽉 조이는/탄력 좋은")%%TEXTR("질구멍/암컷 구멍")% 깊숙한 곳까지 남김없이 만끽하고,
+								PRINTFORMW 「기념 촬영」을 하면서 듬뿍 자궁에 씨앗을 쏟아부어 갑작스러운 임신 스캔들을 선물해 주는 것조차, %CALLNAME:PLAYER%에게는 가능해 버리는 것이다…….
 							ELSEIF TALENT:ARG:恋人持ち == -1 || TALENT:ARG:恋人持ち ==1 || TALENT:ARG:恋人持ち == 2 || TALENT:ARG:恋人持ち == 3
-	PRINTFORM 알코올 냄새를 풍기며 시트 위에 힘없이 뒹구는,
+								PRINTFORM 알코올 냄새를 풍기며 시트 위에 힘없이 털썩 구르는,
 								IF TALENT:ARG:恋人持ち == -1
-		PRINTFORML 마음에 둔 상대에게 바치고 싶었을%CALLNAME:ARG%의 몸.
+									PRINTFORML 마음에 둔 상대에게 바치고 싶었을 %CALLNAME:ARG%의 몸.
 								ELSEIF TALENT:ARG:恋人持ち == 1
-									PRINTFORML 본래 연인%TEXTR("만이 맛볼 수 있는/에게만 허락할 생각은 없는/만이 즐길 수 있는")%일 터인%CALLNAME:ARG%의 몸.
+									PRINTFORML 본래 연인 %TEXTR("만이 맛볼 수 있는/에게만 허락할 생각은 없는/만이 즐길 수 있는")% 것이었을 %CALLNAME:ARG%의 몸.
 								ELSEIF TALENT:ARG:恋人持ち == 2 && TALENT:ARG:恋慕 != 2
-									PRINTFORML 반려에게만 바치기로 맹세했을 터인 유부녀의 몸.
+									PRINTFORML 반려자에게만 바치기로 맹세했을 유부녀의 몸.
 								ELSEIF TALENT:ARG:恋人持ち == 3
 								;未亡人なら熟れとるやろ(適当)
-									PRINTFORML 남자 가뭄이었을 미망인의 농익은 몸.
+									PRINTFORML 남자에게 굶주렸을 미망인의 농익은 몸.
 								ENDIF
+								PRINTFORMW 눕자마자 기분 좋은 듯 새근새근 잠꼬대를 시작한 %CALLNAME:ARG%의 무방비한 모습은, 마치 %CALLNAME:MASTER%을(를) 유혹하는 것 같다……。
 							ELSEIF 十天衆判定(ARG)
 								PRINTW
-								PRINTFORML 알코올 냄새를 풍기며 시트 위에 힘없이 털썩 구르는, 십천중의 한 명으로 꼽히는%CALLNAME:ARG%의, 전공 최강의 힘을 간직한 몸.
+								PRINTFORML 알코올 냄새를 풍기며 시트 위에 힘없이 털썩 쓰러진, 십천중의 한 명으로 손꼽히는 %CALLNAME:ARG%의, 전공 최강의 힘을 간직한 몸.
+								PRINTFORMW 눕자마자 기분 좋은 듯 새근새근 잠꼬대를 시작한 %CALLNAME:ARG%의 무방비한 모습은, 마치 %CALLNAME:MASTER%을(를) 유혹하는 것 같다……。
 							ENDIF
-							PRINTFORMW 눕자마자 기분 좋은 듯 새근새근 잠꼬대를 시작한%CALLNAME:ARG%의 무방비한 모습은, 마치%CALLNAME:MASTER%을(를) 유혹하는 것 같다……。
 							PRINTL
 							SELECTCASE RAND:4
 							CASE 0
-								PRINTFORMW 술에 취해 당분간은 깨어나지 않을 지금이라면, 이 무방비한 몸을%TEXTR("조금/몰래")%%TEXTR("즐기게/몰래 맛보게")%받는다 해도 분명 들키지 않을 것이다.
+								PRINTFORMW 술에 취해 당분간은 깨어나지 않을 지금이라면, 이 무방비한 몸을%TEXTR("조금/몰래")%%TEXTR("즐겁게/몰래 맛보게")% 해 준다 해도 분명 들키지 않을 것이다.
 								PRINTL
-								PRINTFORMW %CALLNAME:MASTER%은(는) 잠든 상대를 덮치는 스릴에 가슴을 설레게 하며, 잠꼬대를 방해하지 않도록 조용히%CALLNAME:ARG%에게 덮쳐들었다……。
+								PRINTFORMW %CALLNAME:MASTER%은(는) 잠든 상대를 덮치는 스릴에 가슴을 설레며, 잠꼬대를 흐트러뜨리지 않도록 조용히 %CALLNAME:ARG%에게 덮쳐들었다……。
 							CASE 1
-								PRINTFORMW %CALLNAME:MASTER%앞에서 술에 취해 쓰러진%CALLNAME:ARG%이 나쁜 것이다. 이래서는 무슨 일을 당해도 불평은 못 할 것이다.
+								PRINTFORMW %CALLNAME:MASTER%앞에서 술에 취해 쓰러진 %CALLNAME:ARG%이(가) 잘못이다. 이래서는 무슨 일을 당해도 불평할 수 없을 것이다.
 								PRINTL
-								PRINTFORMW 뇌리에서 제멋대로 욕망을 정당화하며%CALLNAME:MASTER%은(는) 득의양양하게 웃으며, 방심하고 술에 취해 쓰러지면 어떻게 되는지, 그 몸에 실컷%TEXTR("가르쳐/새겨")%주기 위해%CALLNAME:ARG%에게 덮쳐들었다……。
+								PRINTFORMW 뇌리에서 제멋대로 욕망을 정당화하며 %CALLNAME:MASTER%은(는) 비웃으며, 방심하고 술에 취해 쓰러지면 어떻게 되는지, 그 몸에 실컷%TEXTR("가르쳐/새겨")% 주기 위해 %CALLNAME:ARG%에게 덮쳐들었다……。
 							CASE 2
 								PRINTFORMW ──분명 이대로는 잠들기 힘들 것이다. 옷을 벗겨주는 것은, 어디까지나 선의의 「간호」다.
 								;卑猥は一切ない。いいね？
 								PRINTL
-								PRINTFORMW 뇌리에서 일부러 이유를 붙이며%CALLNAME:MASTER%은(는) 살며시%CALLNAME:ARG%의 옷에 손을 대고, 그 아래에 있는 부드러운 몸으로 끓어오르는 욕망을 향했다……。
+								PRINTFORMW 뇌리에서 일부러 핑계를 대며 %CALLNAME:MASTER%은(는) 살며시 %CALLNAME:ARG%의 옷에 손을 대고, 그 아래에 있는 부드러운 몸으로 끓어오르는 욕망을 향했다……。
 							CASE 3
-								PRINTFORMW ──아니, 이건 이미 유혹하고 있는 게 틀림없다. 그렇다면 이 차려진 밥상에, 손을 대지 않는 것이 오히려 실례일 것이다.
+								PRINTFORMW ──아니, 이건 이미 유혹하고 있는 것이 틀림없다. 그렇다면 이 차려진 밥상, 손대지 않는 것이 오히려 실례일 것이다.
 								PRINTL
-								PRINTFORMW 뇌리에서 제멋대로 해석을 붙인%CALLNAME:MASTER%은(는) 득의양양하게 웃으며, 잠꼬대를 방해하지 않도록 조용히%CALLNAME:ARG%에게 덮쳐들었다……。
+								PRINTFORMW 뇌리에서 제멋대로 해석을 붙인 %CALLNAME:MASTER%은(는) 비웃으며, 잠꼬대를 흐트러뜨리지 않도록 조용히 %CALLNAME:ARG%에게 덮쳐들었다……。
 							ENDSELECT
 							CFLAG:MASTER:現在位置 = LOCAL
 							CFLAG:MASTER:現在マップ種別 = 部屋検索_マップ種別
@@ -597,7 +641,7 @@ PRINTFORML 손바닥으로 간호의 특권을 즐기며 열쇠를 열고 방에
 			ELSE
 				CFLAG:ARG:現在位置 = LOCAL
 				CFLAG:ARG:現在マップ種別 = 部屋検索_マップ種別
-				PRINTFORMW %CALLNAME:MASTER%은(는) 취해버린%CALLNAME:ARG%을(를) 방으로 보냈습니다.
+				PRINTFORMW %CALLNAME:MASTER%은(는) 술에 취해 쓰러진 %CALLNAME:ARG%을(를) 방으로 보냈습니다.
 			ENDIF
 		ELSE
 			;同室じゃない(既に送り狼になってる)場合は誰か(era様？)が戻してくれる
@@ -610,13 +654,13 @@ PRINTFORML 손바닥으로 간호의 특권을 즐기며 열쇠를 열고 방에
 			;あなたがいる場合は部屋へと運ぶ
 			LOCAL = キャラクター部屋検索(ARG)
 			IF 自由利用BEDROOM(CFLAG:ARG:現在マップ種別, CFLAG:ARG:現在位置)
-				PRINTFORMW %CALLNAME:MASTER%은(는) 지쳐버린%CALLNAME:ARG%을(를) 침대에 눕히고, 이불을 덮어주었다.
+				PRINTFORMW %CALLNAME:MASTER%은(는) 지쳐버린 %CALLNAME:ARG%을(를) 침대에 눕히고, 이불을 덮었다.
 			ELSEIF CFLAG:ARG:現在位置 == LOCAL && CFLAG:ARG:現在マップ種別 == 部屋検索_マップ種別
-				PRINTFORMW %CALLNAME:MASTER%은(는) 지쳐버린%CALLNAME:ARG%을(를) 침대에 눕히고, 이불을 덮어주었다.
+				PRINTFORMW %CALLNAME:MASTER%은(는) 지쳐버린 %CALLNAME:ARG%을(를) 침대에 눕히고, 이불을 덮었다.
 			ELSE
 				CFLAG:ARG:現在位置 = LOCAL
 				CFLAG:ARG:現在マップ種別 = 部屋検索_マップ種別
-				PRINTFORMW %CALLNAME:MASTER%은(는) 지쳐버린%CALLNAME:ARG%을(를) 방으로 옮겼습니다.
+				PRINTFORMW %CALLNAME:MASTER%은(는) 지쳐버린 %CALLNAME:ARG%을(를) 방으로 옮겼습니다.
 			ENDIF
 		ELSE
 			;同室じゃない場合は勝手に戻る
@@ -626,19 +670,19 @@ PRINTFORML 손바닥으로 간호의 특권을 즐기며 열쇠를 열고 방에
 	ELSEIF CFLAG:MASTER:現在位置 == CFLAG:ARG:現在位置 && CFLAG:MASTER:現在マップ種別 == CFLAG:ARG:現在マップ種別
 		IF 睡眠場所指定
 			IF CFLAG:MASTER:現在位置 == 睡眠場所 && CFLAG:MASTER:現在マップ種別 == 睡眠マップ
-				PRINTFORMW %CALLNAME:ARG%은(는) 이대로%GETPLACENAME(睡眠マップ, 睡眠場所)%에서 잠들 것 같다.
+				PRINTFORMW %CALLNAME:ARG%은(는) 이대로 %場所名韓国語変換(GETPLACENAME(睡眠マップ, 睡眠場所))%에서 잠드는 것 같다.
 				TRYCALLFORM KOJO_EVENT_この場おやすみ_{NO:ARG}(ARG)
 			ELSE
-				PRINTFORMW %CALLNAME:ARG%은(는) %GETPLACENAME(睡眠マップ, 睡眠場所)%에서 잠들 것 같다.
+				PRINTFORMW %CALLNAME:ARG%은(는) %場所名韓国語変換(GETPLACENAME(睡眠マップ, 睡眠場所))%에서 잠드는 것 같다.
 				TRYCALLFORM KOJO_EVENT_移動おやすみ_{NO:ARG}(ARG)
 			ENDIF
 		ELSE
 			部屋割 = キャラクター部屋検索(ARG)
 			IF CFLAG:MASTER:現在位置 == 部屋割 && CFLAG:MASTER:現在マップ種別 == 部屋検索_マップ種別
-				PRINTFORMW %CALLNAME:ARG%은(는) 이대로 방에서 잠들 것 같다.
+				PRINTFORMW %CALLNAME:ARG%은(는) 이대로 방에서 잠드는 것 같다.
 				TRYCALLFORM KOJO_EVENT_この場おやすみ_{NO:ARG}(ARG)
 			ELSE
-				PRINTFORMW %CALLNAME:ARG%은(는) 방으로 돌아가 잠들 것 같다.
+				PRINTFORMW %CALLNAME:ARG%은(는) 방으로 돌아가 잠드는 것 같다.
 				TRYCALLFORM KOJO_EVENT_移動おやすみ_{NO:ARG}(ARG)
 			ENDIF
 		ENDIF
@@ -665,6 +709,7 @@ PRINTFORML 손바닥으로 간호의 특권을 즐기며 열쇠를 열고 방에
 			PRINTFORMW %CALLNAME:MASTER%은(는) 쫓겨나 버렸다……
 			;モードもリセット
 			CALL 特定キャラモードリセット(MASTER)
+			CALL うふふ終了処理("居住者から追い出され")
 			IF CFLAG:ARG:現在位置 == 303
 				CFLAG:MASTER:現在位置 = 307
 			ELSEIF 部屋検索_マップ種別 == 999
@@ -723,8 +768,8 @@ IF CFLAG:ARG:睡眠 && CFLAG:ARG:現在位置 == CFLAG:MASTER:現在位置 && CF
 		IF MODE_存在判定_完全一致("ＶＡ挿入系", PLAYER, ARG)
 			;挿入時に目覚めたらうふふへ派生
 			DRAWLINE
-			PRINTFORML 삽입 중에%CALLNAME:ARG%이(가) 눈을 떠버렸다……！
-			PRINTFORML %CALLNAME:PLAYER%은(는) 잠에서 깨어나 혼란스러워하는%CALLNAME:ARG%상대에게 허리를 움직여, 흐지부지 섹스로 이끌었다…
+			PRINTFORML 삽입 중에 %CALLNAME:ARG%이(가) 눈을 떠 버렸다……!
+			PRINTFORML %CALLNAME:PLAYER%은(는) 잠에서 깨어나 혼란스러워하는 %CALLNAME:ARG% 상대에게 허리를 움직여, 없음 무너뜨리기로 섹스로 이끌었다…
 			CFLAG:ARG:睡眠 = 0
 			IF GET_TARGETNUM() > 1
 				CFLAG:PLAYER:隠密 = 1
@@ -738,8 +783,8 @@ IF CFLAG:ARG:睡眠 && CFLAG:ARG:現在位置 == CFLAG:MASTER:現在位置 && CF
 			FORCEWAIT
 			RETURN 0
 		ELSEIF MODE_存在判定_ターゲット側("ALL", ARG)
-			PRINTFORML %CALLNAME:ARG%이(가) 눈을 뜰 것 같다……！
-			PRINTFORML %CALLNAME:PLAYER%은(는) 황급히%CALLNAME:ARG%에게서 떨어졌다……
+			PRINTFORML %CALLNAME:ARG%이(가) 눈을 뜰 것 같다……!
+			PRINTFORML %CALLNAME:PLAYER%은(는) 황급히 %CALLNAME:ARG%에게서 떨어졌다……
 			FORCEWAIT
 		ENDIF
 		PRINTFORML %CALLNAME:ARG%이(가) 눈을 떴다
@@ -760,7 +805,7 @@ IF CFLAG:ARG:睡眠
 		RETURN 0
 	ENDIF
 	IF CFLAG:ARG:現在位置 != CFLAG:MASTER:現在位置 || CFLAG:ARG:現在マップ種別 != CFLAG:MASTER:現在マップ種別
-		PRINTFORML %CALLNAME:ARG%이(가) 눈을 뜬 것 같다.
+		PRINTFORML %CALLNAME:ARG%이(가) 눈을 뜬 모양이다.
 		CALL CHARA_ROUTINE_STATUS(ARG, "初期位置")
 	ENDIF
 	;起きても酩酊が残ってるなら二日酔い

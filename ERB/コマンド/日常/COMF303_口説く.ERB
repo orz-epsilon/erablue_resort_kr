@@ -11,8 +11,8 @@ TSTR:コマンド名受渡 = 유혹하다
 TFLAG:コマンドタイプ受渡 = COMTYPE("日常")
 
 @COM_TOOLTIP_303
-LOCALS = <br>■유혹하다<br>
-LOCALS += "상대방을 칭찬하거나 호의적인 말을 걸어 친해지려고 하는 커맨드. 일정 확률로 대성공, 성공, 실패로 분기. <br>단시간에 너무 많이 실행하면 대화 소재가 없어 실패한다. 소질: 연모를 소지하고 있는 상대의 경우, 이 제한은 무효가 된다. <br>상대방의 성지식이 0 이하인 경우, 효과가 낮아진다."
+LOCALS = <br>■유혹<br>
+LOCALS += "상대를 칭찬하거나 호의적인 말을 건네 친해지려 하는 커맨드. 일정 확률로 대성공, 성공, 실패로 분기. <br>단시간에 너무 많이 실행하면 대화 소재가 고갈되어 실패한다. 소질: 연모를 소지하고 있는 상대의 경우, 이 제한은 무효가 된다. <br>상대의 성 지식이 0 이하인 경우, 효과가 낮아진다."
 LOCALS += "<br>COM 타입: 일상<br>획득 소스: 애정・정복"
 LOCALS += "<br>고유 획득 경험: 대화 경험(MASTER)<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
@@ -24,7 +24,7 @@ TSTR:ツールチップ受渡 = %LOCALS%
 
 ;会話累積値が閾値を超えると失敗
 IF TCVAR:話題無しフラグ && !TALENT:恋慕
-	PRINTFORML %CALLNAME:TARGET%에게 말을 걸려고 했지만 말이 떠오르지 않는다
+	PRINTFORML %CALLNAME:TARGET%에게 말을 걸려 했지만 말이 떠오르지 않는다
 	PRINTW 주변에 어색한 공기가 흘렀다…
 	TIME += 10
 	;口上分岐としてはここは大失敗扱いがいいんじゃないかな
@@ -132,7 +132,7 @@ RETURN 1
 ;実行時メッセージ
 ;-------------------------------------------------
 @MESSAGE_COM303
-PRINTFORM %CALLNAME:PLAYER%은(는)%CALLNAME:TARGET%
+PRINTFORM %CALLNAME:PLAYER%는%CALLNAME:TARGET%
 IF TALENT:恋慕
 	PRINTDATA
 		DATA 에게, 사랑을 전하는 말을 속삭였다
@@ -141,19 +141,19 @@ IF TALENT:恋慕
 ELSE
 	PRINTDATA
 		DATA 의 아름다움을 칭찬했다
-		DATA 의 마음이 맑다고 칭찬했다
+		DATA 의 마음이 순수하다고 칭찬했다
 		DATA 가 매우 섹시하다고 속삭였다
-		DATA 와 더 친해지고 싶다고 거리를 좁혔다
+		DATA 와 더 친해지고 싶다며 거리를 좁혔다
 	ENDDATA
 ENDIF
 PRINTL 
 IF RFLAG:コマンド結果受渡し変数 == 2
-	PRINTFORM 요염하고 정열적인%CALLNAME:PLAYER%의 유혹하는 말에, %CALLNAME:TARGET%은(는)
+	PRINTFORM 요염하고 정열적인 %CALLNAME:PLAYER%의 유혹적인 말에, %CALLNAME:TARGET%은(는)
 	SIF 知識素質:性知識 < 1
 		PRINT 의미는 알 수 없지만
 	PRINTL 완전히 취한 것 같다…
 ELSEIF 知識素質:性知識 < 1
-	PRINTFORML %CALLNAME:TARGET%은(는) 잘 의미를 이해하지 못하는 것 같다…
+	PRINTFORML %CALLNAME:TARGET%은(는) 잘 의미를 모르는 것 같다…
 ELSEIF RFLAG:コマンド結果受渡し変数 == 1
 	IF TALENT:恋慕
 		PRINTFORML %CALLNAME:TARGET%은(는) 기뻐하며, 똑같이 사랑의 말을 돌려주었다
@@ -164,10 +164,10 @@ ELSEIF RFLAG:コマンド結果受渡し変数 == 0
 	IF TALENT:恋慕
 		PRINTFORML %CALLNAME:TARGET%은(는) 웃으며 기뻐하고 있다
 	ELSE
-		PRINTFORML %CALLNAME:TARGET%은(는) 웃으며 말을 흘려보내고 있다
+		PRINTFORML %CALLNAME:TARGET%은(는) 웃으며 말을 흘려듣고 있다
 	ENDIF
 ELSEIF RFLAG:コマンド結果受渡し変数 == -1
-	PRINTFORML %CALLNAME:TARGET%에게는 별로 와닿지 않은 것 같다…
+	PRINTFORML %CALLNAME:TARGET%에게는 별로 와닿지 않은 모양이다…
 ENDIF
 
 

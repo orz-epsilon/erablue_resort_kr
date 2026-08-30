@@ -19,7 +19,7 @@ IF RESULT
 	RETURN 1
 ELSE
 	;そもそも証の関数そのものが無い時は-1を返す
-	PRINTFORMW 지정된 증표（%証名一時保存%）를 찾을 수 없습니다.
+	PRINTFORMW 지정된 증표（%証名一時保存%）를(을) 찾을 수 없습니다.
 	RETURN -1
 ENDIF
 
@@ -32,6 +32,11 @@ ENDIF
 
 IF 表示証種別 == ""
 	表示証種別 = 通常ジョブ
+ENDIF
+
+IF CFLAG:キャラ番号:ジョブ証変更禁止
+	PRINTFORMW %NAME:キャラ番号%은(는) 직업 증표를(을) 변경할 수 없습니다.
+	RETURN 0
 ENDIF
 
 ;表示部分
@@ -73,7 +78,7 @@ ELSE
 	LOCALS += "　　　　　　　　　　"
 ENDIF
 IF 装備ステータス補正保存:キャラ番号:装備証番号 > 0
-	LOCALS += "　　　　　　　　　　　　　<button value='1002'>[1002]장비를 해제하다</button>　　"
+	LOCALS += "　　　　　　　　　　　　　<button value='1002'>[1002]장비 제외</button>　　"
 ELSE
 	LOCALS += "　　　　　　　　　　　　　　　　　　　　　　　"
 ENDIF
@@ -96,13 +101,13 @@ SELECTCASE LOCAL
 	CASE 1002
 		装備ステータス補正保存:キャラ番号:装備証番号 = 0
 		CALL 装備再計算処理(キャラ番号)
-		PRINTFORMW %CALLNAME:キャラ番号%은(는) 탐색 증표를 해제했다.
+		PRINTFORMW %CALLNAME:キャラ番号%은(는) 탐색 증표를(을) 해제했다.
 		ページ番号 = 0
 		RETURN 0
 	CASE IS < 500
 		装備ステータス補正保存:キャラ番号:装備証番号 = DT_CELL_GET("所持ジョブ証データベース", LOCAL, "id")
 		CALL 装備再計算処理(キャラ番号)
-		PRINTFORMW %CALLNAME:キャラ番号%은(는)%DT_CELL_GETS("所持ジョブ証データベース", LOCAL, "ジョブ証名")%을(를) 장비했다.
+		PRINTFORMW %CALLNAME:キャラ番号%은(는) %DT_CELL_GETS("所持ジョブ証データベース", LOCAL, "ジョブ証名")%를(을) 장비했다.
 		表示証種別 = 通常ジョブ
 		ページ番号 = 0
 		RETURN 0
@@ -219,7 +224,7 @@ SELECTCASE LOCAL
 		LOCALS += @"■%TSTR:コマンド名受渡%<br><br>"
 		LOCALS += @"%詳細文文字列受け渡し変数%<br>"
 
-		LOCALS += @"・추가 어빌리티<br>"
+		LOCALS += @"・추가 어빌<br>"
 		VARSET RESULTS
 		関数総数 = ENUMFUNCBEGINSWITH(@"証アビ関数_%DT_CELL_GETS("所持ジョブ証データベース", LOCAL, "ジョブ証名")%_")
 		FOR 表示アビ番号, 0, 関数総数
@@ -237,7 +242,7 @@ SELECTCASE LOCAL
 		TRYCALLFORM 証関数_%DT_CELL_GETS("所持ジョブ証データベース", LOCAL - 500, "ジョブ証名")%("フレーバー")
 		LOCALS = %詳細文文字列受け渡し変数%<br>
 
-		LOCALS += @"・추가 어빌리티<br>"
+		LOCALS += @"・추가 어빌<br>"
 		VARSET RESULTS
 		関数総数 = ENUMFUNCBEGINSWITH(@"証アビ関数_%DT_CELL_GETS("所持ジョブ証データベース", LOCAL - 500, "ジョブ証名")%_")
 		FOR 表示アビ番号, 0, 関数総数

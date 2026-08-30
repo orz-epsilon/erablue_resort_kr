@@ -4,7 +4,7 @@
 ;-------------------------------------------------
 @COMNAME43
 #FUNCTIONS
-TSTR:コマンド名受渡 = 오나홀
+TSTR:コマンド名受渡 = オナホール
 
 ;弱点コマンド欄に専用の文字列を表示したい場合、これを設定すること
 弱点コマンド欄表示名 = オナホール
@@ -21,10 +21,10 @@ TFLAG:コマンドタイプ受渡 = COMTYPE("道具系")
 
 
 @COM_TOOLTIP_43
-LOCALS = <br>■오나홀<br>
-LOCALS += "페니스에 자동으로 진동하는 성구를 장착하여 자극하는 커맨드. <br>오나홀 장비 상태가 되어, 해제하거나 성행위를 종료할 때까지 지속적으로 쾌락이 발생한다."
-LOCALS += "<br>COM 타입: 도구계<br>획득 소스: 쾌C・노출・접촉"
-LOCALS += "<br>고유 획득 경험: 도구 사용 경험(PLAYER)<br>"
+LOCALS = <br>■オナホール<br>
+LOCALS += "페니스에 자동으로 진동하는 성구를 장착하여 자극하는 커맨드. <br>오나홀 장비 상태가 되어, 제외하거나 성행위를 종료할 때까지 지속적으로 쾌락이 발생한다."
+LOCALS += "<br>COM 타입：도구 계열<br>획득 소스：쾌C・노출・접촉"
+LOCALS += "<br>고유 획득 경험：도구 사용 경험(PLAYER)<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
 @COM43
@@ -36,8 +36,8 @@ IF OPTION変数:オナホール強さ初期値 == -1
 	PRINTL
 	PRINTL
 	DRAWLINE
-	PRINTL ■강도의 초기값을 선택해주세요
-	PRINT 　　오나홀 강도:
+	PRINTL ■강도 초기값을 선택해 주세요
+	PRINT 　　오나홀 강도：
 	PRINTBUTTON "[-]", -1
 	FOR LOCAL, 0, 6
 		IF 強さ初期値記録 >= LOCAL
@@ -50,7 +50,7 @@ IF OPTION変数:オナホール強さ初期値 == -1
 	PRINTL
 	PRINTL
 	PRINTBUTTONLC "[900] 오나홀을 장착한다", 900
-	PRINTBUTTONLC "[999] 돌아간다", 999
+	PRINTBUTTONLC "[999] 돌아가기", 999
 
 	BINPUT
 	LOCAL = RESULT
@@ -147,14 +147,14 @@ RETURN 1
 ;-------------------------------------------------
 @MESSAGE_COM43
 #DIM 同時キャラ番号
-PRINTFORM %CALLNAME:PLAYER%는
+PRINTFORM %CALLNAME:PLAYER%은(는)
 IF GETBIT(FLAG:モード管理, モードビット_同時)
 	FOR 同時キャラ番号, 0, 同時モード_選択数
 		SIF 同時キャラ番号 > 0
 			PRINT ,
 		PRINTFORM %CALLNAME:(同時モード_選択キャラ:同時キャラ番号)%
 	NEXT
-	PRINT 모두의 페니스를 각각의 오나홀에 삽입했다
+	PRINT 모두의 페니스를 각자의 오나홀에 삽입했다
 	RETURN 0
 ENDIF
 PRINTFORML %CALLNAME:TARGET%의 페니스를 오나홀에 삽입했다

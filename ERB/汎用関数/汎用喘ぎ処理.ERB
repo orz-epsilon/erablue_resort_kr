@@ -19,6 +19,8 @@ ENDIF
 #DIMS 自称単語
 #DIMS 他称単語
 #DIM 実行者番号
+#DIM 候補配列, 100
+#DIM 候補数
 
 
 基準快楽量 = CUP:キャラ番号:快Ｃ + CUP:キャラ番号:快Ｂ + CUP:キャラ番号:快Ｖ + CUP:キャラ番号:快Ａ + CUP:キャラ番号:快Ｓ
@@ -108,8 +110,24 @@ CATCH
 		他称単語 '= CALLNAME:実行者番号
 ENDCATCH
 
+IF CFLAG:キャラ番号:キャラ同士うふふ
+	VARSET 候補配列
+	候補数 = 0
+	FOR LOCAL, 1, CHARANUM
+		SIF TARGET:LOCAL < 1
+			BREAK
+		IF MODE_取得_完全一致(TARGET:LOCAL, キャラ番号) != ""
+			候補配列:候補数 = (TARGET:LOCAL)
+			候補数 ++
+		ENDIF
+	NEXT
+	IF 候補数 > 0
+		他称単語 '= CALLNAME:(候補配列:(RAND:候補数))
+	ENDIF
+ENDIF
+
 ;DEBUGPRINTFORML 　%自称単語%/%他称単語%
-KSTR:(K++) = %汎用喘ぎ基礎文節(文節数, 喘ぎレベル, 自称単語, 他称単語)%
+KSTR:(K++) = %汎用喘ぎ基礎文節(文節数, 喘ぎレベル, 自称単語, 他称単語, キャラ番号)%
 RETURN 1
 
 
@@ -130,12 +148,12 @@ SELECTCASE 喘ぎレベル
 			DATA 후
 			DATA 아
 			DATA 응
-			DATA 응으
+			DATA 응읏
 			DATA 응아
-			DATA 아응
+			DATA 앙
 			DATA 읏
-			DATA 으읏
-			DATA 아읏
+			DATA 읏
+			DATA 앗
 			DATA 읏
 			DATA 히야
 			DATA 훗
@@ -144,21 +162,21 @@ SELECTCASE 喘ぎレベル
 	CASE 4 TO 5
 		STRDATA 文字返り値
 			DATA 아으
-			DATA 아읏
+			DATA 아으읏
 			DATA 읏읏
 			DATA 으으
-			DATA 으읏
-			DATA 어으
-			DATA 어읏
-			DATA 어으읏
-			DATA 후, 으으……읏
+			DATA 으으읏
+			DATA 오으
+			DATA 오으읏
+			DATA 오으읏
+			DATA 흐, 으으……읏
 			DATA 앗앗
 			DATA 아읏
 			DATA 하, 아
 			DATA 아, 앗
-			DATA 으응으으으
+			DATA 응으으으읏
 			DATA 아-앗
-			DATA 읏
+			DATA 얏
 			DATA 읏
 			DATA 앗
 		ENDDATA
@@ -172,7 +190,7 @@ RETURNF 文字返り値
 
 
 STRDATA 文字返り値
-	DATA 으응
+	DATA 응
 	DATA 읏
 	DATA 읏
 	DATA ──
@@ -181,8 +199,9 @@ ENDDATA
 
 RETURNF 文字返り値
 
-@汎用喘ぎ基礎文節(文節数, 喘ぎレベル, 一人称, 二人称)
+@汎用喘ぎ基礎文節(文節数, 喘ぎレベル, 一人称, 二人称, キャラ番号)
 #FUNCTIONS
+#DIM キャラ番号
 #DIM 喘ぎレベル
 #DIM 文節数
 #DIMS 文字返り値
@@ -193,14 +212,18 @@ RETURNF 文字返り値
 
 SELECTCASE 文節数
 	CASE 1
-		STRDATA LOCALS
-			DATAFORM 
-			DATAFORM 
-			DATAFORM %二人称%… 
-			DATAFORM %二人称%_H_ 
-			DATAFORM %二人称%…안 돼… 
-			DATAFORM %二人称%…읏_H_ 
-		ENDDATA
+		IF CFLAG:キャラ番号:睡眠
+			LOCALS = 
+		ELSE
+			STRDATA LOCALS
+				DATAFORM 
+				DATAFORM 
+				DATAFORM %二人称%… 
+				DATAFORM %二人称%_H_ 
+				DATAFORM %二人称%…안 돼… 
+				DATAFORM %二人称%…얏_H_ 
+			ENDDATA
+		ENDIF
 		STRDATA 文字返り値
 			DATAFORM 「%汎用喘ぎ基礎文字(喘ぎレベル)%읏……%LOCALS%%汎用喘ぎハート数返り(喘ぎレベル)%」
 			DATAFORM 「%汎用喘ぎ基礎文字(喘ぎレベル)%%汎用喘ぎ接続文字()% %LOCALS%%汎用喘ぎハート数返り(喘ぎレベル)%」
@@ -213,14 +236,14 @@ SELECTCASE 文節数
 			STRDATA LOCALS
 				DATAFORM 
 				DATAFORM 
-				DATAFORM %一人称%윽 
+				DATAFORM %一人称%읏 
 				DATAFORM %一人称%_H_ 
-				DATAFORM %一人称%、더는… 
-				DATAFORM %SUBSTRINGU(一人称, 0, 1)%윽 %一人称%_H_ 
+				DATAFORM %一人称%, 정말… 
+				DATAFORM %SUBSTRINGU(一人称, 0, 1)%읏 %一人称%_H_ 
 				DATAFORM %二人称%… 
 				DATAFORM %二人称%_H_ 
 				DATAFORM %二人称%…안 돼… 
-				DATAFORM %二人称%…앗_H_ 
+				DATAFORM %二人称%…싫어_H_ 
 			ENDDATA
 		ELSE
 			STRDATA LOCALS
@@ -229,24 +252,24 @@ SELECTCASE 文節数
 				DATAFORM %二人称%… 
 				DATAFORM %二人称%_H_ 
 				DATAFORM %二人称%…안 돼… 
-				DATAFORM %二人称%…앗_H_ 
+				DATAFORM %二人称%…싫어_H_ 
 			ENDDATA
 		ENDIF
 		LOCAL:1 = RAND:文節数
 		FOR LOCAL, 0, 文節数
 			STRDATA 文節保存
 				DATAFORM %汎用喘ぎ基礎文字(喘ぎレベル)%%汎用喘ぎハート数返り(喘ぎレベル)%
-				DATAFORM %汎用喘ぎ基礎文字(喘ぎレベル)%윽%汎用喘ぎハート数返り(喘ぎレベル)%
 				DATAFORM %汎用喘ぎ基礎文字(喘ぎレベル)%읏%汎用喘ぎハート数返り(喘ぎレベル)%
-				DATAFORM %汎用喘ぎ基礎文字(喘ぎレベル)%、%汎用喘ぎ基礎文字(喘ぎレベル)%윽……%汎用喘ぎハート数返り(喘ぎレベル)%
-				DATAFORM %汎用喘ぎ基礎文字(喘ぎレベル)%、%汎用喘ぎ基礎文字(喘ぎレベル)%윽%汎用喘ぎハート数返り(喘ぎレベル)%
-				DATAFORM %汎用喘ぎ基礎文字(喘ぎレベル)%、%汎用喘ぎ基礎文字(喘ぎレベル)%읏%汎用喘ぎハート数返り(喘ぎレベル)%
-				DATAFORM %汎用喘ぎ基礎文字(喘ぎレベル)%、%汎用喘ぎ基礎文字(喘ぎレベル)%、%汎用喘ぎ基礎文字(喘ぎレベル)%%汎用喘ぎハート数返り(喘ぎレベル)%
-				DATAFORM %汎用喘ぎ接続文字()%、%汎用喘ぎ基礎文字(喘ぎレベル)%、%汎用喘ぎ基礎文字(喘ぎレベル)%윽%汎用喘ぎハート数返り(喘ぎレベル)%
-				DATAFORM %汎用喘ぎ接続文字()%、%汎用喘ぎ接続文字()%、%汎用喘ぎ基礎文字(喘ぎレベル)%윽%汎用喘ぎハート数返り(喘ぎレベル)%
-				DATAFORM %汎用喘ぎ基礎文字(喘ぎレベル)%, %汎用喘ぎ接続文字()%, %汎用喘ぎ接続文字()%윽%汎用喘ぎハート数返り(喘ぎレベル)%
-				DATAFORM %汎用喘ぎ基礎文字(喘ぎレベル)%──윽%汎用喘ぎハート数返り(喘ぎレベル)%
-				DATAFORM %汎用喘ぎ基礎文字(喘ぎレベル)%……윽%汎用喘ぎハート数返り(喘ぎレベル)%
+				DATAFORM %汎用喘ぎ基礎文字(喘ぎレベル)%읏%汎用喘ぎハート数返り(喘ぎレベル)%
+				DATAFORM %汎用喘ぎ基礎文字(喘ぎレベル)%, %汎用喘ぎ基礎文字(喘ぎレベル)%읏……%汎用喘ぎハート数返り(喘ぎレベル)%
+				DATAFORM %汎用喘ぎ基礎文字(喘ぎレベル)%, %汎用喘ぎ基礎文字(喘ぎレベル)%읏%汎用喘ぎハート数返り(喘ぎレベル)%
+				DATAFORM %汎用喘ぎ基礎文字(喘ぎレベル)%, %汎用喘ぎ基礎文字(喘ぎレベル)%읏%汎用喘ぎハート数返り(喘ぎレベル)%
+				DATAFORM %汎用喘ぎ基礎文字(喘ぎレベル)%, %汎用喘ぎ基礎文字(喘ぎレベル)%, %汎用喘ぎ基礎文字(喘ぎレベル)%%汎用喘ぎハート数返り(喘ぎレベル)%
+				DATAFORM %汎用喘ぎ接続文字()%, %汎用喘ぎ基礎文字(喘ぎレベル)%, %汎用喘ぎ基礎文字(喘ぎレベル)%읏%汎用喘ぎハート数返り(喘ぎレベル)%
+				DATAFORM %汎用喘ぎ接続文字()%, %汎用喘ぎ接続文字()%, %汎用喘ぎ基礎文字(喘ぎレベル)%읏%汎用喘ぎハート数返り(喘ぎレベル)%
+				DATAFORM %汎用喘ぎ基礎文字(喘ぎレベル)%, %汎用喘ぎ接続文字()%, %汎用喘ぎ接続文字()%읏%汎用喘ぎハート数返り(喘ぎレベル)%
+				DATAFORM %汎用喘ぎ基礎文字(喘ぎレベル)%──읏%汎用喘ぎハート数返り(喘ぎレベル)%
+				DATAFORM %汎用喘ぎ基礎文字(喘ぎレベル)%……읏%汎用喘ぎハート数返り(喘ぎレベル)%
 			ENDDATA
 			SIF LOCAL == LOCAL:1 && LOCALS != ""
 				文字返り値 += @"　%LOCALS%"

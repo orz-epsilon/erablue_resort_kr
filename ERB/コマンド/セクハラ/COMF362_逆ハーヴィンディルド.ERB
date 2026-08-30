@@ -2,7 +2,7 @@
 @COMNAME362
 #FUNCTIONS
 
-TSTR:コマンド名受渡 = 역 하빈 딜도
+TSTR:コマンド名受渡 = 逆ハーヴィンディルド
 
 ;===================================================
 ;コマンドタイプ
@@ -12,24 +12,24 @@ TSTR:コマンド名受渡 = 역 하빈 딜도
 TFLAG:コマンドタイプ受渡 = COMTYPE("セクハラ")
 
 @COM_TOOLTIP_362
-LOCALS = <br>■역 하빈 딜도<br>
-LOCALS += "V, 혹은 A에 삽입한 채 상대의 옷 아래에 자신을 고정하는 커맨드. <br>동실자가 전원 함락 완료되었을 때만 가능하지만, 함께 은밀 시에는 같은 장소에 비함락 캐릭터가 있어도 가능."
-LOCALS += "<br>COM 타입: 성희롱<br>획득 소스: 쾌C・접촉"
-LOCALS += "<br>고유 획득 경험: VorA 성교 경험(TARGET)・C 성교 경험_VorA 삽입(PLAYER)<br>"
+LOCALS = <br>■逆ハーヴィンディルド<br>
+LOCALS += "V, 또는 A에 삽입한 채 상대의 옷 아래에 자신을 고정하는 커맨드. <br>동실자가 전원 함락된 때에만 가능하지만, 함께 은밀할 때에는 같은 장소에 비함락 캐릭터가 있어도 가능."
+LOCALS += "<br>COM 타입:성희롱<br>획득 소스:쾌Ｃ・접촉"
+LOCALS += "<br>고유 획득 경험:V_or_A 성교 경험(TARGET)・C 성교 경험_V_or_A 삽입(PLAYER)<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
 @COM362
 ;固定された後は自動で時間が進むのでモード化しない
 
 DRAWLINE
-PRINTL ■삽입할 곳을 선택해 주세요
+PRINTL ■삽입할 곳을 선택해주세요
 PRINTL
 LOCAL = 0
 IF GETBIT(TALENT:TARGET:性別, 0) == 1 && TALENT:TARGET:Ｖ感度 != -2
 	IF TEQUIP:TARGET:膣 == 0
 		LOCALS = V 삽입
 		SIF TALENT:TARGET:処女
-			LOCALS += "(처녀)"
+			LOCALS += "（처녀）"
 		PRINTBUTTONLC @"[1] %LOCALS%", 1
 		LOCAL += 1
 	ENDIF
@@ -38,7 +38,7 @@ IF TALENT:TARGET:Ａ感度 != -2
 	IF TEQUIP:TARGET:アナル == 0
 		LOCALS = A 삽입
 		SIF TALENT:TARGET:Ａ処女
-			LOCALS += "(A 처녀)"
+			LOCALS += "（A 처녀）"
 		PRINTBUTTONLC @"[2] %LOCALS%", 2
 		LOCAL += 1
 	ENDIF
@@ -123,7 +123,7 @@ RETURN 1
 #DIM 部位フラグ
 
 SKIPDISP ARG
-PRINTFORML 역 하빈 딜도(%CALLNAME:TARGET%)
+PRINTFORML 逆ハーヴィンディルド(%CALLNAME:TARGET%)
 ;-------------------------------------------------
 ;実行できるかの判定
 ;-------------------------------------------------
@@ -158,7 +158,7 @@ ELSE
 		SIF ＋表示フラグ
 			PRINT  + 
 		実行値 += ABL:Ａ感覚 * 2
-		PRINTFORM A감각LV{ABL:Ａ感覚}({ABL:Ａ感覚 * 2})
+		PRINTFORM A 감각LV{ABL:Ａ感覚}({ABL:Ａ感覚 * 2})
 		＋表示フラグ = 1
 	ENDIF
 ENDIF
@@ -167,7 +167,7 @@ IF MARK:快楽刻印
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += MARK:快楽刻印 * 3
-	PRINTFORM 쾌락각인LV{MARK:快楽刻印}({MARK:快楽刻印 * 3})
+	PRINTFORM 쾌락 각인LV{MARK:快楽刻印}({MARK:快楽刻印 * 3})
 	＋表示フラグ = 1
 ENDIF
 ;PALAM:潤滑（の不足）
@@ -249,7 +249,7 @@ IF 部位フラグ == 1
 	ELSEIF EXP:Ｖ経験 < EXPLV:2
 		PRINT  - 
 		実行値 -= 15
-		PRINT V경험 부족(15)
+		PRINT Ｖ 경험 부족(15)
 		＋表示フラグ = 1
 	ENDIF
 ELSE
@@ -257,7 +257,7 @@ ELSE
 	IF EXP:Ａ経験 < EXPLV:2
 		PRINT  - 
 		実行値 -= 15
-		PRINT A경험 부족(15)
+		PRINT Ａ 경험 부족(15)
 		＋表示フラグ = 1
 	ENDIF
 ENDIF
@@ -297,7 +297,7 @@ SIF 実行値 == 必要実行値
 	PRINT  = 
 SIF 実行値 > 必要実行値
 	PRINT  > 
-PRINTFORM 실행값{必要実行値}
+PRINTFORM 실행 값{必要実行値}
 
 WAIT
 SKIPDISP 0
@@ -340,12 +340,12 @@ RETURN RESULT
 ;-------------------------------------------------
 @MESSAGE_COM362
 
-PRINTFORM %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%을(를) 전라로 벗기고,
+PRINTFORM %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%를 전라로 벗겨,
 SELECTCASE RFLAG:コマンド結果受渡し変数
 	CASE 1
-		PRINTL 껴안게 하는 형태로 비열에 삽입시켰다……
+		PRINTL 끌어안는 형태로 비열에 삽입시켰다……
 	CASE 2
-		PRINTL 등에 껴안게 하는 형태로 항문에 삽입시켰다……
+		PRINTL 등에 끌어안는 형태로 항문에 삽입시켰다……
 ENDSELECT
 PRINTFORML 그대로 %CALLNAME:PLAYER%을(를) 밀착시키듯이 몸에 고정하고, 옷 아래에 숨겼다.
 

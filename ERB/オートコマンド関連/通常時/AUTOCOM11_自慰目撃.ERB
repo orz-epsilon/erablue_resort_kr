@@ -1,6 +1,9 @@
 ;------------------------------------------------------------------------------
 ;通常時、自慰目撃
 ;------------------------------------------------------------------------------
+@AUTOCOMNAME11
+RESULTS = 自慰目撃
+
 @AUTOCOM11
 IF MYROOM(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置)
 	;キャラが自室を訪ねて目撃しちゃう＝あなたに落ち度なし
@@ -79,36 +82,36 @@ ENDIF
 RETURN 1
 
 @MESSAGE_AUTOCOM11
-PRINTFORM %CALLNAME:AUTOCOM_実行番号保存%는
+PRINTFORM %CALLNAME:AUTOCOM_実行番号保存%은(는)
 IF MYROOM(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置)
-	PRINTFORML %CALLNAME:PLAYER%의 방을 방문했을 때 우연히 자위하는 모습을 목격하고 말았다…!
+	PRINTFORML %CALLNAME:PLAYER%의 방을 방문했을 때 우연히 자위를 목격하고 말았다…!
 	IF 陥落チェック_性的(AUTOCOM_実行番号保存) && (BASE:AUTOCOM_実行番号保存:性欲 >= 1500 || CFLAG:AUTOCOM_実行番号保存:発情期フラグ < 0)
-		PRINTFORML 혼자 할 바에는, 라며 %CALLNAME:AUTOCOM_実行番号保存%는 %CALLNAME:PLAYER%의 방으로 들어왔다.
-		PRINTFORML %CALLNAME:PLAYER%를 유혹하고 있다……
+		PRINTFORML 혼자 할 바에는, 이라며 %CALLNAME:AUTOCOM_実行番号保存%은(는) %CALLNAME:PLAYER%의 방으로 들어왔다.
+		PRINTFORML %CALLNAME:PLAYER%을(를) 유혹하고 있다……
 		PRINTL
-		PRINTFORML %CALLNAME:PLAYER%는 유혹에 넘어가, %CALLNAME:AUTOCOM_実行番号保存%를 밀어 넘어뜨렸다
+		PRINTFORML %CALLNAME:PLAYER%은(는) 유혹에 넘어가, %CALLNAME:AUTOCOM_実行番号保存%을(를) 밀어 넘어뜨렸다
 	ELSEIF 知識素質:AUTOCOM_実行番号保存:性知識 < 0
-		PRINTFORML %CALLNAME:AUTOCOM_実行番号保存%는 신경 쓰지 않고 방 안으로 들어와, 뭘 하고 있냐고 %CALLNAME:PLAYER%에게 물었다
-		PRINTFORML %CALLNAME:PLAYER%는 이야기를 얼버무려 어떻게든 둘러댔다…
+		PRINTFORML %CALLNAME:AUTOCOM_実行番号保存%은(는) 신경 쓰지 않고 방 안으로 들어와, 무엇을 하고 있는지 %CALLNAME:PLAYER%에게 물어왔다
+		PRINTFORML %CALLNAME:PLAYER%은(는) 말을 얼버무려, 어떻게든 얼버무렸다…
 	ELSE
-		PRINTFORML %CALLNAME:AUTOCOM_実行番号保存%는 그대로, %CALLNAME:PLAYER%가 눈치채지 못하게 조용히 방을 떠났다…
+		PRINTFORML %CALLNAME:AUTOCOM_実行番号保存%은(는) 그대로, %CALLNAME:PLAYER%에게 들키지 않도록 조용히 방을 떠났다…
 	ENDIF
 ELSEIF CFLAG:PLAYER:隠密
-	PRINTFORML 숨어 있던 %CALLNAME:PLAYER%를 우연히 발견하고, 자위하는 모습을 목격하고 말았다…!
+	PRINTFORML 숨어있던 %CALLNAME:PLAYER%을(를) 우연히 발견하고, 자위를 목격하고 말았다…!
 	IF 陥落チェック_性的(AUTOCOM_実行番号保存) && (BASE:AUTOCOM_実行番号保存:性欲 >= 1500 || CFLAG:AUTOCOM_実行番号保存:発情期フラグ < 0)
-		PRINTFORML 혼자 할 바에는, 라며 %CALLNAME:AUTOCOM_実行番号保存%는 %CALLNAME:PLAYER%가 숨어 있는 곳으로 들어왔다.
-		PRINTFORML %CALLNAME:PLAYER%를 유혹하고 있다……
+		PRINTFORML 혼자 할 바에는, 이라며 %CALLNAME:AUTOCOM_実行番号保存%은(는) %CALLNAME:PLAYER%이(가) 숨어있는 장소로 들어왔다.
+		PRINTFORML %CALLNAME:PLAYER%을(를) 유혹하고 있다……
 		PRINTL
-		PRINTFORML %CALLNAME:PLAYER%는 유혹에 넘어가, %CALLNAME:AUTOCOM_実行番号保存%를 밀어 넘어뜨렸다
+		PRINTFORML %CALLNAME:PLAYER%은(는) 유혹에 넘어가, %CALLNAME:AUTOCOM_実行番号保存%을(를) 밀어 넘어뜨렸다
 	ELSEIF 知識素質:AUTOCOM_実行番号保存:性知識 < 0
-		PRINTFORML %CALLNAME:AUTOCOM_実行番号保存%는 신경 쓰지 않고 %CALLNAME:PLAYER% 가까이 다가와, 뭘 하고 있냐고 물었다
-		PRINTFORML %CALLNAME:PLAYER%는 이야기를 얼버무려 어떻게든 둘러댔다…
+		PRINTFORML %CALLNAME:AUTOCOM_実行番号保存%은(는) 신경 쓰지 않고 %CALLNAME:PLAYER%의 근처로 다가가, 무엇을 하고 있는지 물어왔다
+		PRINTFORML %CALLNAME:PLAYER%은(는) 말을 얼버무려, 어떻게든 얼버무렸다…
 	ELSE
-		PRINTFORML %CALLNAME:AUTOCOM_実行番号保存%는 그대로, %CALLNAME:PLAYER%가 눈치채지 못하게 조용히 그 자리를 떠났다…
+		PRINTFORML %CALLNAME:AUTOCOM_実行番号保存%은(는) 그대로, %CALLNAME:PLAYER%에게 들키지 않도록 조용히 그 자리를 떠났다…
 	ENDIF
 ELSE
-	PRINTFORML 숨어 있었는데, 같은 장소에서 자위를 시작한 %CALLNAME:PLAYER%를 목격하고 말았다…!
-	PRINTFORML %CALLNAME:AUTOCOM_実行番号保存%는 그대로, %CALLNAME:PLAYER%가 눈치채지 못하게 계속 숨어 있다…
+	PRINTFORML 숨어 있었더니, 같은 장소에서 자위를 시작한 %CALLNAME:PLAYER%을(를) 목격하고 말았다…!
+	PRINTFORML %CALLNAME:AUTOCOM_実行番号保存%은(는) 그대로, %CALLNAME:PLAYER%에게 들키지 않도록 계속 숨어 있다…
 ENDIF
 
 

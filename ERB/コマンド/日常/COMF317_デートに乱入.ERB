@@ -11,8 +11,8 @@ TFLAG:コマンドタイプ受渡 = COMTYPE("日常")
 
 @COM_TOOLTIP_317
 LOCALS = <br>■데이트에 난입<br>
-LOCALS += "데이트에 난입하여 그대로 함께 데이트하는 커맨드. <br>데이트하고 있는 양쪽을 함락시키지 않으면 불가"
-LOCALS += "<br>COM 타입: 일상<br>획득 소스: 없음"
+LOCALS += "데이트에 난입하여 그대로 함께 데이트하는 커맨드。<br>데이트하고 있는 양쪽을 함락시키지 않으면 불가"
+LOCALS += "<br>COM 타입：일상<br>획득 소스：없음"
 LOCALS += "<br>고유 획득 경험: 없음<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
@@ -32,7 +32,7 @@ FOR LOCAL,1,CHARANUM
 NEXT
 
 
-PRINTFORMW %CALLNAME:TARGET%와 %CALLNAME:(ABS(CFLAG:TARGET:デート) - 100)%가 하고 있는 데이트에 난입했다.
+PRINTFORMW %CALLNAME:TARGET%와 %CALLNAME:(ABS(CFLAG:TARGET:デート) - 100)%이(가) 하고 있는 데이트에 난입했다.
 
 元デート相手 = ABS(CFLAG:TARGET:デート) - 100
 
@@ -54,26 +54,26 @@ CALL 初体験日登録処理(TARGET, PLAYER, "初デート", DAY * 1440 + TIME,
 CALL 初体験日登録処理(TARGET, PLAYER, "デート", DAY * 1440 + TIME, GETPLACENAME(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置), "", "", 0)
 IF RESULT
 	;相手とのデートが初の場合にここに入る
-	CALL 履歴データベース登録(CFLAG:TARGET:人物番号, @"처음으로 %CALLNAME:PLAYER%とデートをした","日常")
+	CALL 履歴データベース登録(CFLAG:TARGET:人物番号, @"初めて%CALLNAME:PLAYER%とデートをした","日常")
 ENDIF
 CALL 初体験日登録処理(PLAYER, TARGET, "初デート", DAY * 1440 + TIME, GETPLACENAME(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置), "", "", 1)
 CALL 初体験日登録処理(PLAYER, TARGET, "デート", DAY * 1440 + TIME, GETPLACENAME(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置), "", "", 0)
 IF RESULT
 	;相手とのデートが初の場合にここに入る
-	CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"처음으로 %CALLNAME:TARGET%とデートをした","日常")
+	CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"初めて%CALLNAME:TARGET%とデートをした","日常")
 ENDIF
 
 CALL 初体験日登録処理(元デート相手, PLAYER, "初デート", DAY * 1440 + TIME, GETPLACENAME(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置), "", "", 1)
 CALL 初体験日登録処理(元デート相手, PLAYER, "デート", DAY * 1440 + TIME, GETPLACENAME(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置), "", "", 0)
 IF RESULT
 	;相手とのデートが初の場合にここに入る
-	CALL 履歴データベース登録(CFLAG:元デート相手:人物番号, @"처음으로 %CALLNAME:PLAYER%とデートをした","日常")
+	CALL 履歴データベース登録(CFLAG:元デート相手:人物番号, @"初めて%CALLNAME:PLAYER%とデートをした","日常")
 ENDIF
 CALL 初体験日登録処理(PLAYER, 元デート相手, "初デート", DAY * 1440 + TIME, GETPLACENAME(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置), "", "", 1)
 CALL 初体験日登録処理(PLAYER, 元デート相手, "デート", DAY * 1440 + TIME, GETPLACENAME(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置), "", "", 0)
 IF RESULT
 	;相手とのデートが初の場合にここに入る
-	CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"처음으로 %CALLNAME:元デート相手%とデートをした","日常")
+	CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"初めて%CALLNAME:元デート相手%とデートをした","日常")
 ENDIF
 
 ;SOURCEまで回さないのでここで口上を表示させる

@@ -99,15 +99,15 @@ DRAWLINE
 ;ヘッダ兼まとめて選択系ボタンの表示
 PRINTS " " * 6
 PRINTBUTTON "[모두 선택]", -1
-PRINTS " " * (41 - STRLENS("[모두 선택]"))
+PRINTS " " * (41 - STRLENS("[全員選択]"))
 PRINTS " "
 PRINTBUTTON "[옷]", -2
 PRINTS " "
-PRINTBUTTON "[B]", -3
-PRINTBUTTON "[C]", -4
-PRINTBUTTON "[V]", -5
-PRINTBUTTON "[A]", -6
-PRINTBUTTON "[P]", -7
+PRINTBUTTON "[Ｂ]", -3
+PRINTBUTTON "[Ｃ]", -4
+PRINTBUTTON "[Ｖ]", -5
+PRINTBUTTON "[Ａ]", -6
+PRINTBUTTON "[Ｐ]", -7
 PRINTL
 
 ;まず候補を並べる
@@ -138,7 +138,7 @@ FOR 同室番号, 1, CHARANUM
 	IF CFLAG:対象キャラ:体力限界
 		; ダウン中のキャラは選択不可
 		SETCOLOR カラーパレット("グレーアウト")
-		PRINTPLAINFORM "[{同室番号, 3}] %ADD_STR_SPACE(NAME表示省略(NAME表示(対象キャラ)), "]"), 41, LEFT%"
+		PRINTPLAINFORM [{同室番号, 3}] %ADD_STR_SPACE(NAME表示省略(NAME表示(対象キャラ)), "]"), 41, LEFT%
 		PRINTS " "
 		; 選択できないので状態表示は全部・で埋める
 		PRINTS " ・   ・  ・  ・  ・  ・ "
@@ -171,12 +171,12 @@ PRINTL
 ; 操作ボタンの表示
 IF 選択キャラカウント < 1
 	SETCOLOR カラーパレット("グレーアウト")
-	PRINTFORMLC [---] 이걸로 결정
+	PRINTFORMLC [---] 이대로 결정
 	RESETCOLOR
 ELSE
-	PRINTBUTTONLC "[998] 이걸로 결정", 998
+	PRINTBUTTONLC "[998] 결정", 998
 ENDIF
-PRINTBUTTONLC "[995] 선택 전체 해제", 995
+PRINTBUTTONLC "[995] 선택 모두 해제", 995
 PRINTL
 ; 戻るボタン
 PRINTBUTTONLC "[999] 돌아가기", 999
@@ -251,7 +251,7 @@ IF CSTR:対象キャラ:着せ替え服 != "全裸"
 ELSE
 	; 全裸時
 	SETCOLOR カラーパレット("グレーアウト")
-	PRINTS " 맨몸 "
+	PRINTS " 나체 "
 	SETCOLOR フォント色
 ENDIF
 PRINTS " "
@@ -272,7 +272,7 @@ FOR 部位番号, 0, VARSIZE("部位リスト")
 			; 陥没中で使用できない場合はグレーアウトで「陥」表示
 			IF !同時モード設定_部位使用可能判定(対象キャラ, 部位リスト:部位番号, 2)
 				SETCOLOR カラーパレット("グレーアウト")
-				PRINTS " 함 "
+				PRINTS " 함락 "
 				SETCOLOR フォント色
 				CONTINUE
 			ENDIF

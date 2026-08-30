@@ -1,7 +1,7 @@
 
 @COMNAME332
 #FUNCTIONS
-TSTR:コマンド名受渡 = 치마 속으로 잠입
+TSTR:コマンド名受渡 = スカート潜り込み
 
 ;===================================================
 ;コマンドタイプ
@@ -19,6 +19,7 @@ TSTR:ツールチップ受渡 = %LOCALS%
 
 
 @COM332
+
 
 CALL セクハラ反応タイプ判定(TARGET)
 ;RFLAG:コマンド結果受渡し変数
@@ -49,7 +50,9 @@ ELSE
 		CALL SOURCE_CALC_反感(TARGET, PLAYER, 100)
 	ENDIF
 ENDIF
-
+;SETCOLOR カラーパレット("えっちな色")
+;PRINTFORMW 服で隠れていなかったため,%CALLNAME:TARGET%の太ももにマークが見つかった。
+;RESETCOLOR
 TIME += 3
 RETURN 1
 
@@ -82,8 +85,18 @@ RETURN 1
 ;-------------------------------------------------
 @MESSAGE_COM332
 
-PRINTFORML %CALLNAME:PLAYER%은(는)%CALLNAME:TARGET%에게 몰래 다가가, 옷자락에 머리를 들이밀었다.
+PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%에게 몰래 다가가, 옷자락에 머리를 들이밀었다.
 
+IF 特定状況口上用フラグ:TARGET:0 == 4
+	PRINTL
+	SETCOLOR カラーパレット("えっちな色")
+	PRINTFORM 치마 속에 파고들자, %CALLNAME:TARGET%의 허벅지 안쪽에
+	PRINT_IMG "デレマス_マーク"
+	CALL PRINT_STRL(@"표식이 발견되었다_H_")
+	PRINTFORMW %CALLNAME:TARGET%은(는) 오늘의 『신데렐라』였던 것 같다
+	特定状況口上用フラグ:TARGET:0 = 1
+	RESETCOLOR
+ENDIF
 
 
 @MESSAGE_COM332_非口上時
@@ -101,58 +114,58 @@ SELECTCASE RFLAG:コマンド結果受渡し変数２
 		;嫌悪
 		IF RFLAG:コマンド結果受渡し変数 == 1
 			;拒絶
-			PRINTFORM 황급히 옷을 붙잡고, 질색하는 듯한 눈으로%CALLNAME:PLAYER%을(를) 보고 있다.
+			PRINTFORM 황급히 옷을 붙잡고, 질색하는 듯한 눈으로 %CALLNAME:PLAYER%을(를) 보고 있다.
 		ELSEIF RFLAG:コマンド結果受渡し変数 == 2
 			;受け入れ
-			PRINTFORM 옷을 붙잡고, 어이없다는 듯한 눈으로%CALLNAME:PLAYER%을(를) 보고 있다.
+			PRINTFORM 옷을 붙잡고, 어이없다는 듯한 눈으로 %CALLNAME:PLAYER%을(를) 보고 있다.
 		ELSE
 			;喜び
-			PRINTFORM 바보 같은 짓을 하는군, 하고 어이없다는 듯한 눈으로%CALLNAME:PLAYER%을(를) 보고 있다.
+			PRINTFORM 바보 같은 짓을 하는군, 하고 어이없다는 듯한 눈으로 %CALLNAME:PLAYER%을(를) 보고 있다.
 		ENDIF
 	CASE 4
 		;拒否
 		IF RFLAG:コマンド結果受渡し変数 == 1
 			;拒絶
-			PRINTFORM 황급히 옷을 붙잡고, 엄한 어조로%CALLNAME:PLAYER%에게 주의를 주었다.
+			PRINTFORM 황급히 옷을 붙잡고, 엄한 어조로 %CALLNAME:PLAYER%에게 주의를 주었다.
 		ELSEIF RFLAG:コマンド結果受渡し変数 == 2
 			;受け入れ
-			PRINTFORM 옷을 붙잡고, 부드럽게%CALLNAME:PLAYER%에게 주의를 주었다.
+			PRINTFORM 옷을 붙잡고, 부드럽게 %CALLNAME:PLAYER%을(를) 주의시켰다.
 		ELSE
 			;喜び
-			PRINTFORM 다른 사람이 있을 때는 하지 말라고, %CALLNAME:PLAYER%에게 주의를 주었다.
+			PRINTFORM 다른 사람이 있을 때는 하지 말라고, %CALLNAME:PLAYER%을(를) 주의시켰다.
 		ENDIF
 	CASE 5
 		;余裕
 		IF RFLAG:コマンド結果受渡し変数 == 1
 			;拒絶
-			PRINTFORM 조용히 옷을 누르고, 차가운 눈으로 %CALLNAME:PLAYER%을(를) 노려보았다.
+			PRINTFORM 조용히 옷을 붙잡고, 차가운 눈으로 %CALLNAME:PLAYER%을(를) 노려보았다.
 		ELSEIF RFLAG:コマンド結果受渡し変数 == 2
 			;受け入れ
-			PRINTFORM 옷을 누르고, 부드럽게 %CALLNAME:PLAYER%을(를) 주의시켰다.
+			PRINTFORM 옷을 붙잡고, 부드럽게 %CALLNAME:PLAYER%을(를) 주의시켰다.
 		ELSE
 			;喜び
-			PRINTFORM 보고 싶으면 사양할 것 없다며, 스스로 옷자락을 펄럭이고 있다.
+			PRINTFORM 보고 싶으면 사양할 것 없다고, 스스로 옷자락을 팔랑거리고 있다.
 		ENDIF
 	CASE 6
 		;羞恥
 		IF RFLAG:コマンド結果受渡し変数 == 1
 			;拒絶
-			PRINTFORM 황급히 옷을 누르고, 새빨개진 얼굴로 %CALLNAME:PLAYER%에게서 펄쩍 물러났다.
+			PRINTFORM 황급히 옷을 붙잡고, 새빨간 얼굴로 %CALLNAME:PLAYER%에게서 펄쩍 물러났다.
 		ELSEIF RFLAG:コマンド結果受渡し変数 == 2
 			;受け入れ
-			PRINTFORM 황급히 옷을 누르고, 새빨개진 얼굴로 %CALLNAME:PLAYER%을(를) 툭툭 때려왔다.
+			PRINTFORM 황급히 옷을 붙잡고, 새빨간 얼굴로 %CALLNAME:PLAYER%을(를) 툭툭 때려왔다.
 		ELSE
 			;喜び
-			PRINTFORM 옷을 누르고, 새빨개진 얼굴로 %CALLNAME:PLAYER%을(를) 빤히 바라보고 있다.
+			PRINTFORM 옷을 붙잡고, 새빨간 얼굴로 %CALLNAME:PLAYER%을(를) 빤히 바라보고 있다.
 		ENDIF
 	CASE 7
 		;愉悦
 		IF RFLAG:コマンド結果受渡し変数 == 1
 			;拒絶
-			PRINTFORM 조용히 옷을 누르고, 차가운 눈으로 %CALLNAME:PLAYER%을(를) 노려보았다.
+			PRINTFORM 조용히 옷을 붙잡고, 차가운 눈으로 %CALLNAME:PLAYER%을(를) 노려보았다.
 		ELSEIF RFLAG:コマンド結果受渡し変数 == 2
 			;受け入れ
-			PRINTFORM 그렇게 속이 궁금하냐며 %CALLNAME:PLAYER%을(를) 놀려왔다.
+			PRINTFORM 그렇게 안이 궁금하냐며 %CALLNAME:PLAYER%을(를) 놀려왔다.
 		ELSE
 			;喜び
 			PRINTFORM 보기만 해도 괜찮냐며 %CALLNAME:PLAYER%을(를) 놀려왔다.
@@ -161,12 +174,12 @@ SELECTCASE RFLAG:コマンド結果受渡し変数２
 		;汎用
 		IF RFLAG:コマンド結果受渡し変数 == 1
 			;拒絶
-			PRINTFORM 황급히 옷을 누르고, %CALLNAME:PLAYER%을(를) 노려보았다.
+			PRINTFORM 황급히 옷을 붙잡고, %CALLNAME:PLAYER%을(를) 노려보았다.
 		ELSEIF RFLAG:コマンド結果受渡し変数 == 2
 			;受け入れ
-			PRINTFORM 옷을 누르고, 곤란한 듯한 얼굴로 %CALLNAME:PLAYER%을(를) 보고 있다.
+			PRINTFORM 옷을 붙잡고, 곤란한 듯한 얼굴로 %CALLNAME:PLAYER%을(를) 보고 있다.
 		ELSE
 			;喜び
-			PRINTFORM 장난치면 안 된다며, 쓴웃음을 지으며 %CALLNAME:PLAYER%을(를) 주의시켰다.
+			PRINTFORM 장난치면 안 된다고, 쓴웃음을 지으며 %CALLNAME:PLAYER%을(를) 주의시켰다.
 		ENDIF
 ENDSELECT

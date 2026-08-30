@@ -31,6 +31,8 @@ SIF CFLAG:ARG:デート
 	RETURN 0
 SIF CFLAG:ARG:うふふ
 	RETURN 0
+SIF CFLAG:ARG:キャラ同士うふふ
+	RETURN 0
 SIF MODE_存在判定_いずれか側("同行系", ARG)
 	RETURN 0
 SIF MODE_存在判定_いずれか側("キス系", ARG)
@@ -111,19 +113,23 @@ IF CFLAG:PLAYER:隠密 && IS_SAME_ROOM(ARG)
 		ENDIF
 	NEXT
 	IF 陥落チェック_性的(ARG) && 同行者未陥落 == 0
-		PRINTFORML %CALLNAME:PLAYER%이(가) 물그림자에 들어서자, 그곳에 있던%CALLNAME:ARG%은(는) 몹시 당황한 모습을 보였지만
-		PRINTFORMW 나타난 것이%CALLNAME:PLAYER%인 것을 알자, 안심한 듯하다
+		PRINTFORML %CALLNAME:PLAYER%이(가) 물그림자에 들어서자, 그곳에 있던%CALLNAME:ARG%은(는) 몹시 당황한 기색을 보였지만
+		PRINTFORMW 나타난 것이%CALLNAME:PLAYER%인 것을 알자, 안심한 듯했다
 		PRINTL
-		PRINTFORML %CALLNAME:ARG%의 복장은 흐트러져 있었고, 뺨을 붉힌 모습은 매우 선정적이다……
-		IF 同行者フラグ
-			PRINTFORML %CALLNAME:ARG%들을 끌어안겠습니까?
+		IF MODE_存在判定_いずれか側("ハーヴィンオナホ系", PLAYER)
+			RESULT = 1
 		ELSE
-			PRINTFORML %CALLNAME:ARG%을(를) 끌어안겠습니까?
+			PRINTFORML %CALLNAME:ARG%의 옷차림은 흐트러져 있었고, 뺨을 붉힌 모습은 매우 선정적이다……
+			IF 同行者フラグ
+				PRINTFORML %CALLNAME:ARG%들을 끌어안겠습니까?
+			ELSE
+				PRINTFORML %CALLNAME:ARG%을(를) 끌어안겠습니까?
+			ENDIF
+			PRINTBUTTONLC "[0] 예", 0
+			PRINTBUTTONLC "[1] 아니오", 1
+			PRINTL
+			BINPUT
 		ENDIF
-		PRINTBUTTONLC "[0] 예", 0
-		PRINTBUTTONLC "[1] 아니요", 1
-		PRINTL
-		BINPUT
 		IF RESULT == 0
 			PRINTFORMW %CALLNAME:PLAYER%은(는) 그대로 물그림자에서%CALLNAME:ARG%을(를) 끌어안았다……。
 			CALL 野外オナニー途中終了(ARG)
@@ -147,7 +153,7 @@ IF CFLAG:PLAYER:隠密 && IS_SAME_ROOM(ARG)
 			自慰ターゲット保存 = -1
 			RETURN 0
 		ELSE
-			PRINTFORML 즐거움을 방해해서는 미안하다.
+			PRINTFORML 즐거운 시간을 방해해서는 미안하다.
 			PRINTFORMW %CALLNAME:PLAYER%은(는)%CALLNAME:ARG%에게 가볍게 사과하고, 그 자리를 떠났다.
 			CFLAG:PLAYER:隠密 = 0
 			FOR LOCAL, 1, CHARANUM
@@ -163,7 +169,7 @@ IF CFLAG:PLAYER:隠密 && IS_SAME_ROOM(ARG)
 		ENDIF
 	ELSE
 		DRAWLINE
-		PRINTFORML %CALLNAME:PLAYER%이(가) 물그림자에 들어서자, 그곳에 있던%CALLNAME:ARG%은(는) 몹시 당황한 모습으로 몸단장을 하고
+		PRINTFORML %CALLNAME:PLAYER%이(가) 물그림자에 들어서자, 그곳에 있던%CALLNAME:ARG%은(는) 몹시 당황한 기색으로 몸단장을 하고
 		PRINTFORMW %CALLNAME:PLAYER%와 눈을 마주치지 않고 물그림자에서 떠나갔다…
 		CALL 野外オナニー途中終了(ARG)
 		CFLAG:ARG:隠密 = 0
@@ -244,9 +250,9 @@ SIF !HAS_EROGENOUS_ZONE(ARG)
 
 ;母乳搾り
 IF TALENT:ARG:母乳体質 && BASE:ARG:母乳 >= (MAXBASE:ARG:母乳 * 4 / 5)
-	CSTR:ARG:オナニー報告_記録文字列 += @"%CALLNAME:ARG%은(는) 고여 있던 모유를 자기 방에서 짜고 있는 듯하다。<br>"
+	CSTR:ARG:オナニー報告_記録文字列 += @"%CALLNAME:ARG%은(는) 고여 있던 모유를 자기 방에서 짜내고 있는 듯하다。<br>"
 	IF ABL:ARG:Ｂ感覚 >= 3 || ABL:ARG:欲望 >= 4
-		CSTR:ARG:オナニー報告_記録文字列 += @"짜는 동안 기분이 좋아진 것인지, %CALLNAME:ARG%의 손가락은 그대로 쾌락을 찾아 유두를 주무르고 있다…<br>"
+		CSTR:ARG:オナニー報告_記録文字列 += @"짜내는 동안 기분이 좋아진 것인지, %CALLNAME:ARG%의 손가락은 그대로 쾌락을 찾아 유두를 주무르고 있다…<br>"
 	ELSE
 		CSTR:ARG:オナニー報告_記録文字列 += @"유두에서 모유가 나오는 감각은, %CALLNAME:ARG%에게 적지 않은 쾌감을 주고 있다…<br>"
 	ENDIF
@@ -270,7 +276,7 @@ SIF CFLAG:ARG:オナニー覚えたて && EXP:ARG:自慰経験 > 10
 IF CFLAG:ARG:オナニー覚えたて
 	オナニー部位 = CFLAG:ARG:オナニー覚えたて - 覚えたて定数
 
-	CSTR:ARG:オナニー報告_記録文字列 += @"%CALLNAME:ARG%은(는) 오늘 밤도 막 배운 자위의 포로가 되어 있다<br>"
+	CSTR:ARG:オナニー報告_記録文字列 += @"%CALLNAME:ARG%은(는) 오늘 밤도 막 배운 자위의 노예가 되어 있다<br>"
 	CSTR:ARG:オナニー報告_記録文字列 += "<br>"
 	CSTR:ARG:オナニー報告_記録文字列 += @"%CALLNAME:ARG%은(는)"
 	SIF TALENT:ARG:羞恥心 || ABL:ARG:欲望 < 3
@@ -278,13 +284,13 @@ IF CFLAG:ARG:オナニー覚えたて
 	IF 使用道具 == ""
 		CSTR:ARG:オナニー報告_記録文字列 += @" 자신의%PART_DESCRIPTION(ARG, オナニー部位)%에 손을 뻗었다<br>"
 	ELSE
-		CSTR:ARG:オナニー報告_記録文字列 += @"%使用道具%을(를) 꺼내, %PART_DESCRIPTION(ARG, オナニー部位)%에 가까이 댔다<br>"
+		CSTR:ARG:オナニー報告_記録文字列 += @"%使用道具%을(를) 꺼내, %PART_DESCRIPTION(ARG, オナニー部位)%에 가까이 가져갔다<br>"
 	ENDIF
 	CSTR:ARG:オナニー報告_記録文字列 += "<br>"
 	IF ABL:ARG:オナニー部位 >= 3 || ABL:ARG:欲望 >= 4
-		CSTR:ARG:オナニー報告_記録文字列 += @"그대로 몰두하여, 자위가 가져다주는 쾌락에 자신의 몸을 맡기고 있다…<br>"
+		CSTR:ARG:オナニー報告_記録文字列 += @"그대로 몰두하여, 자위가 가져다주는 쾌락에 몸을 맡기고 있다…<br>"
 	ELSE
-		CSTR:ARG:オナニー報告_記録文字列 += @"익숙지 않은 손놀림이지만, 자신을 절정으로 이끌려고 애쓰고 있다…<br>"
+		CSTR:ARG:オナニー報告_記録文字列 += @"서툰 손놀림으로, 자신을 절정으로 이끌려 노력하고 있다…<br>"
 	ENDIF
 
 	CALL オナニー実処理(ARG, オナニー部位, 使用道具)
@@ -327,7 +333,7 @@ IF BASE:ARG:性欲 >= (1000 - TALENT:ARG:自慰しやすい * 200)
 		IF !RAND:10
 			;10%の確率でオナニーに目覚める
 			CSTR:ARG:オナニー報告_記録文字列 += "<br>"
-			CSTR:ARG:オナニー報告_記録文字列 += "…하지만 문득, 자신의 육체를 만지면 기분 좋은 부위가 있다는 것을 깨달은 것 같다<br>"
+			CSTR:ARG:オナニー報告_記録文字列 += "…하지만 문득, 자신의 육체를 만지면 기분 좋은 부위가 있다는 것을 깨달은 듯하다<br>"
 			CFLAG:ARG:オナニー覚えたて = オナニー部位 + 覚えたて定数
 		ELSE
 			RETURN -1
@@ -340,15 +346,15 @@ IF BASE:ARG:性欲 >= (1000 - TALENT:ARG:自慰しやすい * 200)
 	IF 使用道具 == ""
 		CSTR:ARG:オナニー報告_記録文字列 += @"자신의%PART_DESCRIPTION(ARG, オナニー部位)%에 손을 뻗었다<br>"
 	ELSE
-		CSTR:ARG:オナニー報告_記録文字列 += @"%使用道具%을(를) 꺼내, %PART_DESCRIPTION(ARG, オナニー部位)%에 가까이 댔다<br>"
+		CSTR:ARG:オナニー報告_記録文字列 += @"%使用道具%을(를) 꺼내, %PART_DESCRIPTION(ARG, オナニー部位)%에 가까이 가져갔다<br>"
 	ENDIF
 	CSTR:ARG:オナニー報告_記録文字列 += "<br>"
 	IF ABL:ARG:オナニー部位 >= 5
 		CSTR:ARG:オナニー報告_記録文字列 += @"어떻게 하면 자신이 기분 좋은지 숙지한 듯 손가락을 움직여, 몇 번이고 몇 번이고 절정을 거듭하고 있다…<br>"
 	ELSEIF ABL:ARG:オナニー部位 >= 3 || ABL:ARG:欲望 >= 4
-		CSTR:ARG:オナニー報告_記録文字列 += @"그대로 몰두하여, 자위가 가져다주는 쾌락에 자신의 몸을 맡기고 있다…<br>"
+		CSTR:ARG:オナニー報告_記録文字列 += @"그대로 몰두하여, 자위가 가져다주는 쾌락에 몸을 맡기고 있다…<br>"
 	ELSE
-		CSTR:ARG:オナニー報告_記録文字列 += @"단조로운 손놀림으로, 자신을 절정으로 이끌려고 애쓰고 있다…<br>"
+		CSTR:ARG:オナニー報告_記録文字列 += @"단조로운 손놀림으로, 자신을 절정으로 이끌려 노력하고 있다…<br>"
 	ENDIF
 
 	CALL オナニー実処理(ARG, オナニー部位, 使用道具)
@@ -600,7 +606,7 @@ CFLAG:ARG:リゾート内野外オナニー回数 ++
 #DIM 性欲上昇量
 
 RESULTS = 
-RESULTS += @"%CALLNAME:ARG%은(는) 만족스러운 야외 오나니를 하지 못하고, 답답해하고 있다……。"
+RESULTS += @"%CALLNAME:ARG%은(는) 만족스러운 야외 자위를 하지 못하고 답답해하고 있다……。"
 
 性欲上昇量 = MIN(MAXBASE:ARG:性欲 - BASE:ARG:性欲, 500)
 

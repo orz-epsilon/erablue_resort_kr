@@ -65,14 +65,14 @@ RETURN 1
 #DIM 成長後年齢層
 
 DRAWLINE
-PRINTFORML ZP를 소비하여%GET_PERSON_呼び名(子供人物番号)%을(를) 성장시킬 수 있습니다.
+PRINTFORML ZP를 소비하여 %GET_PERSON_呼び名(子供人物番号)%을(를) 성장시킬 수 있습니다.
 PRINTL 어디까지 성장시키겠습니까?
 DRAWLINE
 FOR LOCAL, 年齢層_幼い, 年齢層_壮年
 	PRINTBUTTON @"[{LOCAL, 2}]%GET_TALENTNAME(164, LOCAL, 0)%", LOCAL
-	PRINTFORML 　　　필요 ZP:{COST_BASE + COST_PER_AGE * (LOCAL - 年齢層_乳幼児)}
+	PRINTFORML 　　　필요ZP:{COST_BASE + COST_PER_AGE * (LOCAL - 年齢層_乳幼児)}
 NEXT
-PRINTBUTTON "[998]이름을 다시 짓다", 998
+PRINTBUTTON "[998]이름을 다시 짓는다", 998
 PRINTL
 PRINTBUTTON "[999]돌아가기", 999
 PRINTL
@@ -95,9 +95,9 @@ IF FLAG:ZP所持量 < 必要COST
 	RESTART
 ENDIF
 PRINTFORML {必要COST}ZP를 지불하고, %GET_PERSON_呼び名(子供人物番号)%을(를) 성장시키겠습니까?
-PRINTFORML (소지 ZP：{FLAG:ZP所持量})
+PRINTFORML （소지 ZP：{FLAG:ZP所持量}）
 PRINTBUTTONLC "[0]예", 0
-PRINTBUTTONLC "[1]아니요", 1
+PRINTBUTTONLC "[1]아니오", 1
 BINPUT
 SIF RESULT == 1
 	RESTART
@@ -107,9 +107,9 @@ SELECTCASE 成長後年齢層
 	CASE 年齢層_幼い
 		PRINTFORML 아직 어리지만, %GET_PERSON_呼び名(子供人物番号)%은(는) 조금 성장했다!
 	CASE 年齢層_若い
-		PRINTFORML %GET_PERSON_呼び名(子供人物番号)%은(는)\@ (GET_PERSON_性別(子供人物番号) == 2) ? 소년 # 소녀 \@이라고 부를 수 있을 정도로 성장했다!
+		PRINTFORML %GET_PERSON_呼び名(子供人物番号)%은(는)\@ (GET_PERSON_性別(子供人物番号) == 2) ? 소년 # 소녀 \@라고 부를 수 있을 만큼 성장했다!
 	CASE 年齢層_成人
-		PRINTFORML %GET_PERSON_呼び名(子供人物番号)%은(는) 성인이라고 부를 수 있을 정도로 성장했다!
+		PRINTFORML %GET_PERSON_呼び名(子供人物番号)%은(는) 성인이라고 부를 수 있을 만큼 성장했다!
 	CASE 年齢層_大人
 		PRINTFORML %GET_PERSON_呼び名(子供人物番号)%은(는) 완전히 어른의 모습으로 성장했다!
 ENDSELECT
@@ -130,8 +130,8 @@ RETURN 0
 #DIMS 子供名前
 
 DRAWLINE
-PRINTL {必要COST}ZP를 소비하여 게임 시작 시 아이의 이름을 다시 지을 수 있습니다.
-PRINTFORML 보유 ZP:%ZP所持量全文字列()%
+PRINTL {必要COST}ZP를 소비하여 게임 시작 시의 아이의 이름을 다시 지을 수 있습니다.
+PRINTFORML 소지ZP:%ZP所持量全文字列()%
 DRAWLINE
 
 ;ZP足りる？
@@ -140,36 +140,36 @@ IF FLAG:ZP所持量 < 必要COST
 	RETURN 0
 ENDIF
 
-PRINTFORML {必要COST}ZP를 지불하고, 이름을 다시 지으시겠습니까?
-PRINTFORML (보유 ZP:{FLAG:ZP所持量})
+PRINTFORML {必要COST}ZP를 지불하고, 이름을 다시 짓겠습니까?
+PRINTFORML （소지ZP：{FLAG:ZP所持量}）
 PRINTBUTTONLC "[0]예", 0
-PRINTBUTTONLC "[1]아니요", 1
+PRINTBUTTONLC "[1]아니오", 1
 BINPUT
 SIF RESULT != 0
 	RETURN 0
 
 DO
-	PRINTL 이름을 입력해 주세요. (9자까지)
+	PRINTL 이름을 입력해 주세요.（９글자까지）
 	INPUTS
 	IF RESULTS == ""
 		PRINTL 이름이 입력되지 않았습니다. 이름 변경을 취소하시겠습니까?
 		PRINTBUTTONLC "[0]예", 0
-		PRINTBUTTONLC "[1]아니요", 1
+		PRINTBUTTONLC "[1]아니오", 1
 		BINPUT
 		SIF RESULT == 0
 			RETURN 0
 	ELSE
 		子供名前 '= SUBSTRING(RESULTS, 0, 18)
-		PRINTFORML %子供名前%으로 괜찮으시겠습니까?
+		PRINTFORML %子供名前%(으)로 하시겠습니까?
 		PRINTBUTTONLC "[0]예", 0
-PRINTBUTTONLC "[1]아니요", 1
+		PRINTBUTTONLC "[1]아니오", 1
 		BINPUT
 		SIF RESULT == 0
 			BREAK
 	ENDIF
 LOOP 1
 
-PRINTFORMW %GET_PERSON_呼び名(子供人物番号)%의 이름을 %子供名前%으로 변경했습니다.
+PRINTFORMW %GET_PERSON_呼び名(子供人物番号)%의 이름을 %子供名前%(으)로 변경했습니다.
 FLAG:ZP所持量 -= 必要COST
 CALL SET_PERSON_呼び名(子供人物番号, 子供名前)
 CALL SET_PERSON_名前(子供人物番号, @"[%CALLNAME:(FIND_MOTHER_CHARA_FROM_PERSON_ID(子供人物番号))%の子供]%子供名前%")
@@ -246,7 +246,7 @@ PARENT = 遺伝元(DOMINANT, RECESSIVE, "変異あり", "あなた除外")
 基礎BATTLE_STATE:ステータスタイプ保存 = (PARENT >= 0) ? 基礎BATTLE_STATE:PARENT:ステータスタイプ保存 # RAND:8
 SIF 基礎BATTLE_STATE:ステータスタイプ保存 < 0
 	基礎BATTLE_STATE:ステータスタイプ保存 = RAND:8
-CSTR:戦闘基礎ステータス設定 += @" 초기 스탯 타입_%成長タイプ:(基礎BATTLE_STATE:ステータスタイプ保存)%"
+CSTR:戦闘基礎ステータス設定 += @" 초기 스테이터스 타입_%成長タイプ:(基礎BATTLE_STATE:ステータスタイプ保存)%"
 
 ;種族・特殊種族
 TALENT:種族 = GET_PERSON_種族(子供人物番号)
@@ -304,7 +304,7 @@ TALENT:性別 = GET_PERSON_性別(子供人物番号)
 TALENT:処女 = 1
 TALENT:Ａ処女 = 1
 TALENT:非童貞 = 0
-CSTR:知識素質設定 '= " 性知識Lv-2 "
+CSTR:知識素質設定 '= " 성지식Lv-2 "
 
 ;年齢層・外見年齢
 TALENT:年齢層 = 成長後年齢層
@@ -377,7 +377,7 @@ IF TALENT:性別 != 2
 ELSE
 	PARENT = 遺伝元(FATHER, MOTHER, "両親のみ")
 ENDIF
-TALENT:体格 = ランダム体格(ベース種族, TALENT:性別, 成長後年齢層, TALENT:バストサイズ, 0)
+TALENT:体格 = ランダム体格(ベース種族, TALENT:性別, 成長後年齢層, 0, TALENT:バストサイズ)
 IF PARENT >= 0
 	;因子により補正
 	TALENT:体格 = LIMIT(TALENT:体格 + 因子取得_体格(PARENT), -3, 2)
@@ -466,7 +466,7 @@ ENDIF
 ;プレゼント好み
 CSTR:プレゼント好み '= GET_PERSON_プレゼント好み(子供人物番号)
 SIF TALENT:飲兵衛 > 0
-	CSTR:プレゼント好み += "_술"
+	CSTR:プレゼント好み '= SUBSTRINGU(CSTR:プレゼント好み, 0, STRFINDU(CSTR:プレゼント好み, "_")) + "_술"
 
 CFLAG:人物番号 = 子供人物番号
 CALL コマンド存在チェック
@@ -512,6 +512,13 @@ IF 成長後年齢層 <= 年齢層_成人
 			ELSE
 				部屋決定フラグ = 0
 			ENDIF
+		ELSEIF TALENT:部屋決定フラグ:定住者 == 3
+			FOR LOCAL, 0, VARSIZE("飼育区部屋割り配列")
+				IF STRFIND(飼育区部屋割り配列:LOCAL, @"_{部屋決定フラグ}_") > -1 || STRFIND(飼育区部屋割り配列:LOCAL, @"{部屋決定フラグ}_") == 0
+					飼育区部屋割り配列:LOCAL += @"{TARGET}_"
+					BREAK
+				ENDIF
+			NEXT
 		ELSE
 			FOR LOCAL, 0, VARSIZE("定住者部屋割り配列")
 				IF STRFIND(定住者部屋割り配列:LOCAL, @"_{部屋決定フラグ}_") > -1 || STRFIND(定住者部屋割り配列:LOCAL, @"{部屋決定フラグ}_") == 0
@@ -723,7 +730,7 @@ WEND
 @親容姿(PARENT)
 #FUNCTION
 #DIM PARENT
-IF NO:PARENT == 0 || NO:PARENT == 999
+IF NO:PARENT == 0 || ランダムキャラ判定(NO:PARENT)
 	;あなたとランダムキャラは設定されているものを使う
 	RETURNF TALENT:PARENT:容姿
 ELSE
@@ -734,7 +741,7 @@ ENDIF
 @因子取得_体格(PARENT)
 #FUNCTION
 #DIM PARENT
-RETURNF TALENT:PARENT:体格 - 体格_平均(ベース種族検索(CFLAG:PARENT:人物番号), TALENT:PARENT:性別, キャラ見た目年齢(PARENT), TALENT:PARENT:バストサイズ, (TALENT:PARENT:年齢層>=年齢層_老年))
+RETURNF TALENT:PARENT:体格 - 体格_平均(ベース種族検索(CFLAG:PARENT:人物番号), TALENT:PARENT:性別, TALENT:PARENT:年齢層, TALENT:PARENT:外見年齢, TALENT:PARENT:バストサイズ)
 
 @因子取得_体型(PARENT)
 #FUNCTION

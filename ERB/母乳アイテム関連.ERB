@@ -12,12 +12,14 @@
 #DIMS ミルク名
 #DIMS 消費期限
 
+CALL 期限切れミルク自動破棄()
+
 DRAWLINE
-PRINTL 소지하고 있는 우유 목록입니다
+PRINTL 보유 중인 밀크 목록입니다
 IF 一括削除モード
-	PRINTL 선택한 우유를 일괄 폐기할 수 있습니다 (100개까지)
+	PRINTL 선택한 밀크를 일괄 폐기할 수 있습니다（최대 100개）
 ELSE
-	PRINTL 선택하면 사용/폐기할 수 있습니다
+	PRINTL 선택하면 사용하거나 폐기할 수 있습니다
 ENDIF
 DRAWLINE
 
@@ -25,15 +27,19 @@ DRAWLINE
 FOR ミルク番号, 0, DT_ROW_LENGTH("ミルクデータベース") + (15 - DT_ROW_LENGTH("ミルクデータベース") % 15)
 	IF 表示数カウント >= 15
 		;表示スキップした中に表示するミルクがあるなら次ページフラグを立てとく
-		SIF DT_ROW_LENGTH("ミルクデータベース") > ミルク番号 && DT_CELL_GETS("ミルクデータベース", ミルク番号, "状態") != "フタ"
+		IF DT_ROW_LENGTH("ミルクデータベース") > ミルク番号 && DT_CELL_GETS("ミルクデータベース", ミルク番号, "状態") != "フタ"
 			次ページフラグ = 1
+			BREAK
+		ENDIF
 		CONTINUE
 	ENDIF
 	IF DT_ROW_LENGTH("ミルクデータベース") > ミルク番号
 		SIF DT_CELL_GETS("ミルクデータベース", ミルク番号, "状態") == "フタ"
 			CONTINUE
-		SIF ページ数 !=  表示数カウント / 15 
+		IF ページ数 !=  表示数カウント / 15
+			表示数カウント ++
 			CONTINUE
+		ENDIF
 		SIF 一括削除モード && STRCOUNT(削除番号, @"_{DT_CELL_GET("ミルクデータベース", ミルク番号, "id")}_")
 			SETCOLOR カラーパレット("黄")
 		IF DT_CELL_GETS("ミルクデータベース", ミルク番号, "状態") == "通常"
@@ -53,7 +59,7 @@ FOR ミルク番号, 0, DT_ROW_LENGTH("ミルクデータベース") + (15 - DT_
 			CASEELSE
 				消費期限 = 期限切れ
 		ENDSELECT
-		PRINTBUTTON @"[{ミルク番号, 3}] - %ミルク名, 50, LEFT% - 유통기한:%消費期限%", ミルク番号
+		PRINTBUTTON @"[{ミルク番号, 3}] - %ミルク名, 50, LEFT% - 소비기한: %消費期限%", ミルク番号
 		RESETCOLOR
 		PRINTL
 	ELSE
@@ -78,7 +84,7 @@ IF 一括削除モード && 削除番号 != ""
 	PRINTBUTTONLC "[9998] 폐기하기", 9998
 ELSEIF 一括削除モード
 	SETCOLOR カラーパレット("グレーアウト")
-	PRINTPLAIN [9998] 폐기하기
+	PRINTPLAIN [9998] 폐기
 	PRINT            
 	RESETCOLOR
 ELSE
@@ -106,7 +112,7 @@ SELECTCASE ボタン記録
 			FOR ミルク番号, 1, 一括削除件数 + 1
 				DT_CELL_SET "ミルクデータベース", TOINT(削除番号配列:ミルク番号), "状態", "フタ", 1
 			NEXT
-			PRINTFORMW {一括削除件数}개의 우유를 삭제했습니다
+			PRINTFORMW {一括削除件数}개의 밀크를 삭제했습니다
 			一括削除モード = 0
 			一括削除件数 = 0
 			削除番号 = 
@@ -230,35 +236,35 @@ ENDIF
 ; ENDIF
 
 DAY算出 = DT_CELL_GET("ミルクデータベース", ボタン記録, "生産日", 1)
-PRINTFORML 　　생산 일시:{DAY算出 / 120 + 1}년째　%月登録:((DAY算出 / 30) % 4)%　{DAY算出 % 30 + 1}일(%曜日登録:(DAY算出 % 7)%)
-PRINTFORML 　　생산원:%DT_CELL_GETS("ミルクデータベース", ボタン記録, "生産元名称", 1)%
+PRINTFORML 　　생산 일시: {DAY算出 / 120 + 1}년째　%月登録:((DAY算出 / 30) % 4)%　{DAY算出 % 30 + 1}일(%曜日登録:(DAY算出 % 7)%)
+PRINTFORML 　　생산원: %DT_CELL_GETS("ミルクデータベース", ボタン記録, "生産元名称", 1)%
 PRINTL
 
 PRINTBUTTONLC "[999] 돌아가기", 999
 PRINTL
 IF 射精可能(MASTER)
-	PRINTBUTTONLC @"[1000] 이 우유를 %CALLNAME:MASTER%에 사용한다", 1000
+	PRINTBUTTONLC @"[1000] 이 우유를 %CALLNAME:MASTER%에게 사용하기", 1000
 	PRINTL 
 ELSE
 	SETCOLOR カラーパレット("グレーアウト")
-	PRINTPLAINFORM [1000] 이 우유를 %CALLNAME:MASTER%에 사용한다
+	PRINTPLAINFORM [1000] 이 밀크를 %CALLNAME:MASTER%에게 사용
 	RESETCOLOR
 	PRINTL 
 ENDIF
 IF TARGET
 	IF 射精可能(TARGET)
-		PRINTBUTTONLC @"[1001] 이 우유를 %CALLNAME:TARGET%에 사용한다", 1001
+		PRINTBUTTONLC @"[1001] 이 우유를 %CALLNAME:TARGET%에게 사용하기", 1001
 		PRINTL 
 	ELSE
 		SETCOLOR カラーパレット("グレーアウト")
-		PRINTPLAINFORM [1000] 이 우유를 %CALLNAME:TARGET%에 사용한다
+		PRINTPLAINFORM [1000] 이 밀크를 %CALLNAME:TARGET%에게 사용
 		RESETCOLOR
 		PRINTL 
 	ENDIF
 ELSE
 	PRINTL 
 ENDIF
-PRINTBUTTONLC "[1010] 이 우유를 폐기한다", 1010
+PRINTBUTTONLC "[1010] 이 우유 폐기", 1010
 PRINTL 
 IF 前フラグ
 	PRINTBUTTONLC "[4] 이전 우유로", 4
@@ -277,7 +283,7 @@ SELECTCASE RESULT
 		ELSE
 			使用キャラ = TARGET
 		ENDIF
-		PRINTFORML %CALLNAME:使用キャラ%은(는) %ミルク名%을(를) 다 마셨다.
+		PRINTFORML %CALLNAME:使用キャラ%은(는) %ミルク名%을(를) 전부 마셨다.
 		PRINTDATA
 			DATA 부드럽고 깊은 맛이다.
 			DATA 깔끔하고 잡미 없는 맛이다.
@@ -285,7 +291,7 @@ SELECTCASE RESULT
 			DATA 뒷맛이 상쾌하고 깔끔한 맛이다.
 		ENDDATA
 		PRINTL 
-		PRINTFORMW %CALLNAME:使用キャラ%의 정력이 회복되었다!
+		PRINTFORMW %CALLNAME:使用キャラ%의 정력이 회복됐다!
 		SELECTCASE DT_CELL_GETS("ミルクデータベース", ボタン記録, "状態", 1)
 			CASE "特濃"
 				BASE:使用キャラ:精力 = MAXBASE:使用キャラ:精力
@@ -306,9 +312,9 @@ SELECTCASE RESULT
 		DT_CELL_SET "ミルクデータベース", ボタン記録, "状態", "フタ", 1
 	CASE 1010
 		DRAWLINE
-		PRINTFORML 『%ミルク名%』을(를) 폐기해도 괜찮습니까?
+		PRINTFORML 『%ミルク名%』을(를) 폐기하시겠습니까?
 		PRINTBUTTONLC "[0] 예", 0
-		PRINTBUTTONLC "[1] 아니요", 1
+		PRINTBUTTONLC "[1] 아니오", 1
 		BINPUT
 		IF RESULT == 0
 			PRINTFORMW 『%ミルク名%』을(를) 폐기했습니다.
@@ -325,6 +331,24 @@ SELECTCASE RESULT
 ENDSELECT
 
 
+
+@期限切れミルク自動破棄()
+#DIM ミルク番号
+#DIM 削除数
+
+削除数 = 0
+FOR ミルク番号, 0, DT_ROW_LENGTH("ミルクデータベース")
+	SIF DT_CELL_GETS("ミルクデータベース", ミルク番号, "状態") == "フタ"
+		CONTINUE
+	IF DAY - DT_CELL_GET("ミルクデータベース", ミルク番号, "生産日") > 3
+		DT_CELL_SET "ミルクデータベース", ミルク番号, "状態", "フタ"
+		削除数 ++
+	ENDIF
+NEXT
+
+IF 削除数 > 0
+	PRINTFORMW 유통기한이 지난 밀크 {削除数}개를 폐기했습니다.
+ENDIF
 
 
 

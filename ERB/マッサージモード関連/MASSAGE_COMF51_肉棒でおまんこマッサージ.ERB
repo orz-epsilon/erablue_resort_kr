@@ -4,7 +4,7 @@
 @MASSAGE_COMNAME51
 #FUNCTIONS
 IF GETBIT(TALENT:PLAYER:性別, 1) == 0
-	TSTR:コマンド名受渡 = 페니스 밴드로 보지 마사지_H_
+	TSTR:コマンド名受渡 = 페니반으로 보지 마사지_H_
 ELSEIF TALENT:TARGET:恋人持ち == 2
 	TSTR:コマンド名受渡 = 임신 활동 보지 마사지_H_
 ELSE
@@ -21,9 +21,9 @@ TFLAG:コマンドタイプ受渡 = MASSAGE_COMTYPE("エロマッサージ")
 
 @MASSAGE_COM_TOOLTIP_51
 LOCALS = <br>■육봉으로 보지 마사지<br>
-LOCALS += "흐물흐물하게 풀려 먹기 좋게 된 보지를, 전용 『시술 도구』를 사용해 마사지한다."
-LOCALS += "<br>삽입하기 전까지는 백만 보 양보해서 에스테였을지도 모르지만, 삽입해 버렸다면 그것은 이미 섹스이므로, 우후후 모드에 돌입한다."
-LOCALS += "<br>COM 타입: 에로 마사지<br>획득 소스: 쾌감V・노출・접촉・고통・불결(일정 조건 시)"
+LOCALS += "흐물흐물하게 풀려서 먹기 좋게 된 보지를, 전용 『시술 도구』를 사용해서 마사지한다."
+LOCALS += "<br>삽입하기 전까지는 백만 보 양보해서 에스테였을지도 모르지만, 삽입해 버렸다면 그건 이미 섹스이므로, 우후후 모드에 돌입한다."
+LOCALS += "<br>COM 타입: 에로 마사지<br>획득 소스: 쾌락V・노출・접촉・고통・불결(일정 조건 시)"
 LOCALS += "<br>고유 획득 경험: V성교 경험(TARGET)・C성교 경험_V삽입(PLAYER)<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
@@ -45,12 +45,13 @@ RFLAG:コマンド結果受渡し変数 = RESULT
 ;ここでレイプ時の記憶喪失手段使うよ～とか
 ;レイプするけどOK～？　みたいな確認分岐を入れる
 IF RFLAG:コマンド結果受渡し変数 == 2
-	PRINTFORML %CALLNAME:TARGET%은(는)%CALLNAME:PLAYER%이(가) 무엇을 하려는지 알아차리고, 그만두라고 말한다.
-	PRINTW 하지만 그 거부는 나약하고, 강하게 밀어붙이면 결국 허락해 줄 것 같다……
+	PRINTFORML %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%이 무엇을 하려는지 눈치채고, 그만두라고 말한다.
+	PRINTW 하지만 그 거부는 나약하고, 강하게 밀어붙이면 무너뜨려 허락해 줄 것 같다……
+	PRINTL
 	PRINTL 이대로 실행하시겠습니까?
 	PRINTL
 	PRINTBUTTONLC "[0] 예", 0
-	PRINTBUTTONLC "[1] 아니요", 1
+	PRINTBUTTONLC "[1] 아니오", 1
 	BINPUT
 	IF RESULT == 1
 		PRINTFORMW %CALLNAME:PLAYER%은(는) 다시 생각하기로 했다.
@@ -72,55 +73,130 @@ IF RFLAG:コマンド結果受渡し変数 == 2
 		CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"<img src='えっちハート'><font color='#%カラーパレット_HTML("赤ピンク")%'>%CALLNAME:TARGET%を[セフレ]陥落させた</font><img src='えっちハート'>","うふふ")
 		CALL 履歴データベース登録(CFLAG:TARGET:人物番号, @"<img src='えっちハート'><font color='#%カラーパレット_HTML("赤ピンク")%'>陥落素質[セフレ]を得た</font><img src='えっちハート'>","うふふ")
 	ENDIF
+
+ELSEIF 特定状況口上用フラグ:TARGET:0 >= 1
+;シンデレラ勢
+	PRINTFORM 『마사지』를 명분으로 삼아 하반신 옷을 벗고
+		IF GETBIT(TALENT:PLAYER:性別, 1)
+			PRINTFORM %TEXTR("단단하게 발기하고/단단히 솟아오른")% %TEXTR("음경/꼬추/페니스/육봉")%을(를) 내밀었다
+		ELSE
+			PRINTFORM 페니스 밴드를 착용했다
+		ENDIF
+	PRINTFORML %CALLNAME:PLAYER%%TEXTR("이, 지금부터 무엇을 하려 하는지/에게, 앞으로 무엇을 당하게 될지")%를 눈치챈 %CALLNAME:TARGET%은(는),
+	PRINTFORMW %TEXTR("작게 소리를 내며/움찔 어깨를 떨면서도")% 저항은 하지 않고, %TEXTR("열기가 담긴/욕정에 녹아내린/어딘가 기대하는 듯한")% 시선을 %CALLNAME:PLAYER%에게 향하고 있다……。
+	PRINTL
+	PRINTL 이대로 실행하시겠습니까?
+	PRINTL
+	PRINTBUTTONLC "[0] 예", 0
+	PRINTBUTTONLC "[1] 아니오", 1
+	BINPUT
+	IF RESULT == 1
+		PRINTFORMW %CALLNAME:PLAYER%은(는) 다시 생각하기로 했다.
+		RETURN -1
+	ENDIF
+	;履歴セット
+	CFLAG:TARGET:泥酔ックス回数 += 1
+	CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>マッサージ中に快楽でとろとろにした%CALLNAME:TARGET%を手籠めにした</font><img src='えっちハート'>","うふふ")
+	CALL 履歴データベース登録(CFLAG:TARGET:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>マッサージ中に快楽に負け、%CALLNAME:PLAYER%と一線を越えてしまった</font><img src='えっちハート'>","うふふ")
+	
+
+	IF ((CFLAG:TARGET:お願いックス回数 + CFLAG:TARGET:泥酔ックス回数 / 3) >= 4 || TALENT:淫乱) && 性癖素質:ゆきずりセックス < 1
+		SETBIT CFLAG:1 , 0
+		TALENT:セフレ = 1
+		初体験日:セフレ = DAY
+		RFLAG:コマンド結果受渡し変数３ = 1
+		RFLAG:コマンド結果受渡し変数４ = TALENT:陥落不可
+		CLEARBIT TALENT:陥落不可, 1
+		CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"<img src='えっちハート'><font color='#%カラーパレット_HTML("赤ピンク")%'>%CALLNAME:TARGET%を[セフレ]陥落させた</font><img src='えっちハート'>","うふふ")
+		CALL 履歴データベース登録(CFLAG:TARGET:人物番号, @"<img src='えっちハート'><font color='#%カラーパレット_HTML("赤ピンク")%'>陥落素質[セフレ]を得た</font><img src='えっちハート'>","うふふ")
+	ENDIF
+
 ELSEIF RFLAG:コマンド結果受渡し変数 == 3
 	;レイプしないを選んだ時はキャンセル扱いでコマンド選択に戻す
-	PRINTFORM 『마사지』를 명분으로 삼아 하반신 옷을 벗기고
-	IF GETBIT(TALENT:PLAYER:性別, 1)
-		PRINTFORM %TEXTR("딱딱하게 발기한/단단히 솟아오른")% %TEXTR("음경/자지/페니스/육봉")%을 내밀었다
-	ELSE
-		PRINTFORM 페니스 밴드를 착용했다
-	ENDIF
-	PRINTFORML %CALLNAME:PLAYER%%TEXTR("가, 지금부터 무엇을 하려는지/에게, 앞으로 무엇을 당하게 될지")%를 깨달은 %CALLNAME:TARGET%는
-	IF TFLAG:マッサージ_鬼灯の香使用時間 + 20 < DAY * 1440 + TIME
+	IF (TFLAG:マッサージ_鬼灯の香使用時間 + 20 < DAY * 1440 + TIME) || TCVAR:言いなり || TCVAR:特殊言いなり
+		PRINTFORM 『마사지』를 핑계 삼아 하반신 옷을 벗고
+		IF GETBIT(TALENT:PLAYER:性別, 1)
+			PRINTFORM %TEXTR("단단하게 발기한/굳게 솟아오른")% %TEXTR("음경/자지/페니스/육봉")%을 꺼냈다
+		ELSE
+			PRINTFORM 페니스 밴드를 착용했다
+		ENDIF
+		PRINTFORML %CALLNAME:PLAYER%%TEXTR("이, 지금부터 무엇을 하려 하는지/에게, 앞으로 무엇을 당하게 될지")%를 눈치챈 %CALLNAME:TARGET%은(는)
 		PRINTFORM 꿈꾸는 듯 멍하니 있으면서도
 		IF TALENT:TARGET:度胸 == -1 || TALENT:TARGET:応答 == -1 || TALENT:TARGET:プライド == -1 || TALENT:TARGET:陽気／陰気 == -1
 		;臆病、大人しい、プライド低い、陰気
-			PRINTFORML 필사적으로, 그만두기를 간청한다.
+			PRINTFORML 필사적으로, 그만해 달라고 간청한다.
 		ELSE
-			PRINTFORML 필사적으로, 그만%TEXTR("하라고 말한다/두기를 입에 담는다")%.
+			PRINTFORML 필사적으로, 그만%TEXTR("하라고 말해 온다/해 달라고 말한다")%。
 		ENDIF
-		PRINTFORMW 억지로 일을 벌이려 한다면, 분명 평소의 %CALLNAME:TARGET%라면 %TEXTR("강하게/격렬하게")% 저항했을 것이다…….
+		PRINTFORMW 억지로 일을 벌이려 한다면, 분명 평소의 %CALLNAME:TARGET%이라면 %TEXTR("강하게/격렬하게")% 저항했을 것이다……。
 	ELSE
-		PRINTFORML 그만두라고 말한다.
-		PRINTFORMW 억지로 일을 벌이려 한다면, 분명 %CALLNAME:TARGET%는 강하게 저항할 것이다…….
+		PRINTFORML %CALLNAME:PLAYER%의 손기술로 실컷 주물러 풀린 %CALLNAME:TARGET%은(는), 완전히 쾌락에 녹아내리고 있다……。
+		PRINTFORMW ……하지만, %CALLNAME:PLAYER%의 마사지사로서의 직감이 「아직」이라고 알린다. 지금 상태에서 억지로 일을 벌이려 한다면, 분명 %CALLNAME:TARGET%은(는) 강하게 저항할 것이다……。
 	ENDIF
 	PRINTL
 	;香使用から20分以上経ってると許可
-	IF TFLAG:マッサージ_鬼灯の香使用時間 > 0 && TFLAG:マッサージ_鬼灯の香使用時間 + 20 < DAY * 1440 + TIME
-		;ここで記憶を曖昧にする薬の所持分岐
-		PRINTFORML 하지만 「호오즈키 향」이 충분히 효과를 발휘하는 지금이라면, 쾌락과 약효로 몽롱해진 %CALLNAME:TARGET%에게는 더 이상 아기 정도의 저항력밖에 남아있지 않다.
-		PRINTFORML 게다가 향의 효과로 행위 중의 기억은 모호해져, 「잘 기억나지 않지만 기분 좋았다」 정도로밖에 남지 않는다…….
-		PRINTFORM 이 정도라면 %CALLNAME:PLAYER%의 힘으로도 쉽게 저항을 봉쇄하고,
-		SELECTCASE RAND:5
-		CASE 0
-			IF TALENT:TARGET:恋人持ち == 1 || TALENT:TARGET:恋人持ち == 2
-				PRINTFORM %CALLNAME:TARGET%의 가장 깊은 곳에 억지로 %TEXTR("부정의/불륜의/불륜 섹스의/연인 이외에게 범해지는")% 쾌락을 %TEXTR("기억하게 한다/가르쳐준다/새겨준다")%
-			ELSE
-				PRINTFORM 억지로 %TEXTR("관계를 맺는다/범한다")%
-			ENDIF
-		CASE 1
-			IF アイドル判定(TARGET)
-				PRINTFORM %TEXTR("범해져/몽롱 레이프/섹스/원치 않는")% 스캔들로 팬을 배신하게 한다
-			ELSE
-				PRINTFORM 합의 없이 %CALLNAME:TARGET%의 몸을 탐하다
-			ENDIF
-		CASE 2
-			PRINTFORM 여자로서의 『사용감』을 마음껏 즐기다
-		CASE 3
-			PRINTFORM 마사지로 %CALLNAME:TARGET%의 몸에 닿은 탓에 실컷 애태웠던%TEXTR("짐승 같은 욕망/욕망")%%TEXTR("을 마음껏 그 몸에 부딪히다/을 마음껏 그 몸에 쏟아붓다/의 책임을 지게 하다")%
-		CASE 4
-			PRINTFORM 노 리스크로 강간을 즐기다
-		ENDSELECT
+	IF (TFLAG:マッサージ_鬼灯の香使用時間 > 0 && TFLAG:マッサージ_鬼灯の香使用時間 + 20 < DAY * 1440 + TIME) || TCVAR:言いなり || TCVAR:特殊言いなり
+		IF TCVAR:言いなり || TCVAR:特殊言いなり
+			PRINTFORML 하지만 지금, %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%의 말대로 할 수밖에 없는 입장이다.
+PRINTFORMW 아무리 본의 아니더라도, 거역하는 것은 허락되지 않는다……。
+			PRINTL
+PRINTFORM 입장에 따라 저항이 봉쇄된%CALLNAME:TARGET%이라면, %CALLNAME:PLAYER%의 힘으로도 쉽게%TEXTR("저항을 봉쇄하고/저항을 꺾어 눕히고")%、
+		ELSE
+			;ここで記憶を曖昧にする薬の所持分岐
+PRINTFORML 하지만 「귀등의 향」이 충분히 효과를 발휘하는 지금이라면, 쾌락과 약효로 몽롱해진%CALLNAME:TARGET%에게는 더 이상 갓난아기 정도의 저항력밖에 남아있지 않다.
+PRINTFORMW 게다가 향의 효과로 행위 중의 기억은 모호해지고, 「잘 기억나지 않지만 기분 좋았다」 정도로밖에 남지 않는다……。
+			PRINTL
+PRINTFORM 이것이라면%CALLNAME:PLAYER%의 힘으로도 쉽게%CALLNAME:TARGET%의%TEXTR("저항을 봉쇄하고/저항을 꺾어 눕히고")%、
+		ENDIF
+		IF TALENT:TARGET:恋人持ち == 1 || TALENT:TARGET:恋人持ち == 2
+PRINTFORM 싫어하는%CALLNAME:TARGET%의 가장 깊숙한 곳에 억지로%TEXTR("부정의/바람의/바람 섹스의/연인 이외에게 범해지는/연인 이외의 형태와 그")%쾌락을%TEXTR("각인시킨다/가르쳐준다/새겨준다")%
+		ELSEIF アイドル判定(TARGET)
+			SELECTCASE RAND:9
+			CASE 0
+				PRINTL
+				PRINTFORM %TEXTR("범해져/몽롱 레이프/섹스/원치 않는")%스캔들로 팬을 배신하게 한다
+			CASE 1
+				PRINTL
+				PRINTFORM %TEXTR("팬을 위해 갈고닦아온/모두를 매료시키고 마는")%%CALLNAME:TARGET%의 그 몸을%TEXTR("마음껏/합의 없이/실컷/제멋대로")%%TEXTR("탐한다/즐긴다/만끽한다/맛본다/독점한다")%
+			CASE 2
+				PRINTL
+				PRINTFORM 그 매력적인 몸을 사용해 실컷 「%TEXTR("특별한/당신만의/")%팬 서비스」를 받는다
+			CASE 3
+				PRINTL
+				PRINTFORM 아름다운 그녀의 얼굴도 몸도, 눈물도 신음도 모든 것을%CALLNAME:PLAYER%%TEXTR("만의 것으로 만들어버린다/가 독점한다")%
+			CASE 4
+				PRINTL
+				PRINTFORM 팬을 위해 갈고닦아온%CALLNAME:TARGET%의 몸을, %CALLNAME:PLAYER%%TEXTR("만의 것으로 만들어버린다/만이 즐긴다/에게만 바치게 한다/")%
+			CASE 5
+				PRINTL
+				PRINTFORM 확고부동한 인기 아이돌・%SUBSTRING(NAME:TARGET, STRFIND(NAME:TARGET, "]") + 1, -1)%의 아무도 모르는%TEXTR("안는 느낌/박는 느낌/박는 정도")%를 파헤치고, %TEXTR("마음껏/합의 없이/실컷/제멋대로")%%TEXTR("탐한다/맛본다/만끽한다/즐긴다/독점한다/정복한다")%
+			CASE 6
+				PRINTL
+				PRINTFORM 인기 아이돌・%SUBSTRING(NAME:TARGET, STRFIND(NAME:TARGET, "]") + 1, -1)%에게 매료된%TEXTR("수많은/별처럼 많은")%팬들로부터, 그녀를 빼앗아%CALLNAME:PLAYER%만의 것으로 만든다
+			CASE 7
+				PRINTL
+				PRINTFORM 팬에게%TEXTR("숨어서/몰래")%인기 아이돌・%SUBSTRING(NAME:TARGET, STRFIND(NAME:TARGET, "]") + 1, -1)%와%TEXTR("육체적 관계를 맺는다/관계를 가진다")%
+			CASE 8
+				PRINTL 
+				PRINTFORML 팬 모두가%TEXTR("동경하는/갈망해 마지않는")%인기 아이돌・%SUBSTRING(NAME:TARGET, STRFIND(NAME:TARGET, "]") + 1, -1)%의 입술도 혀도 실컷 빨고, 가슴의 부드러움이나 엉덩이의 때리는 감촉을%TEXTR("마음껏/실컷/제멋대로")%만끽하고,
+				PRINTFORM 미성(美聲)의 탄식과 신음을 안주 삼아 저항으로 꽉 조이는 암컷 구멍을 깊숙한 곳까지 침략하여, 최고의 %TEXTR("달성/정복")%감과 사정 쾌락을 맛본다
+			ENDSELECT
+		ELSEIF TALENT:TARGET:恋人持ち == -1
+			PRINTFORM %CALLNAME:TARGET%의 %TEXTR("가슴속에 있는 연인에게서 그녀를 억지로 빼앗아간다/품고 있는 달콤한 연심을 짓밟고, 마음껏 그 몸을 탐닉한다")%
+		ELSE
+			SELECTCASE RAND:5
+			CASE 0
+				PRINTFORM %TEXTR("마음껏/합의 없이/실컷/제멋대로")%%CALLNAME:TARGET%의 몸을 %TEXTR("탐하다/즐기다")%
+			CASE 1
+				PRINTFORM 합의 없이 %CALLNAME:TARGET%의 몸을 %TEXTR("마음껏/실컷/제멋대로")%%TEXTR("탐하다/즐기다")%
+			CASE 2
+				PRINTFORM 여자로서의 '사용감'을 마음껏 즐긴다
+			CASE 3
+				PRINTFORM 마사지로 %CALLNAME:TARGET%의 몸에 닿은 탓에 실컷 흥분했던 %TEXTR("수욕/욕망")%%TEXTR("을 마음껏 그 몸에 쏟아붓는다/을 마음껏 그 몸에 퍼붓는다/의 책임을 지게 한다")%
+			CASE 4
+				PRINTFORM 노 리스크로 강간을 즐긴다
+			ENDSELECT
+		ENDIF
 		PRINTFORMW 할 수 있을 것이다.
 		PRINTL
 		PRINTL 이대로 실행하시겠습니까?
@@ -129,19 +205,39 @@ ELSEIF RFLAG:コマンド結果受渡し変数 == 3
 		PRINTBUTTONLC "[1] 아니오", 1
 		BINPUT
 		IF RESULT == 1
-			PRINTFORMW %CALLNAME:PLAYER%는 생각을 고쳐먹기로 했다.
+			PRINTFORMW %CALLNAME:PLAYER%은(는) 생각을 고쳐먹기로 했다.
 			RETURN -1
 		ENDIF
 		CFLAG:TARGET:泥酔ックス回数 += 1
-		CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>マッサージ中、快楽とお香で抵抗力を奪った%CALLNAME:TARGET%を無理やり手籠めにした</font><img src='えっちハート'>","うふふ")
-		CALL 履歴データベース登録(CFLAG:TARGET:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>マッサージ中、快楽とお香で朦朧とする中で抵抗むなしく%CALLNAME:PLAYER%に%TEXTR("犯/レイプ")%されてしまった</font><img src='えっちハート'>","うふふ")
-		IF TALENT:TARGET:処女
-			IF 知識素質:TARGET:高貴 >= 1
-				CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>%CALLNAME:TARGET%のロイヤルヴァージンを無理やり奪ってやった</font><img src='えっちハート'>","うふふ")
-				CALL 履歴データベース登録(CFLAG:TARGET:人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>快楽とお香で朦朧とする意識の中、%CALLNAME:PLAYER%に無理やり犯され、高貴な身でありながら処女を%TEXTR("奪われ/散らされ")%てしまった</font><img src='えっちハート'>","うふふ")
-			ELSE
-				CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>%CALLNAME:TARGET%の処女を無理やり奪ってやった</font><img src='えっちハート'>","うふふ")
-				CALL 履歴データベース登録(CFLAG:TARGET:人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>快楽とお香で朦朧とする意識の中、%CALLNAME:PLAYER%に無理やり犯され処女を%TEXTR("奪われ/散らされ")%てしまった</font><img src='えっちハート'>","うふふ")
+		IF TCVAR:言いなり || TCVAR:特殊言いなり
+			CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>マッサージ中、言いなりになることしかできない%CALLNAME:TARGET%を無理やり手籠めにした</font><img src='えっちハート'>","うふふ")
+			CALL 履歴データベース登録(CFLAG:TARGET:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>マッサージ中、言いなりになることしかできないまま%CALLNAME:PLAYER%に%TEXTR("犯/レイプ")%されてしまった</font><img src='えっちハート'>","うふふ")
+			IF TALENT:TARGET:処女
+				IF  アイドル判定(TARGET)
+					CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>大人気アイドル・%SUBSTRING(NAME:TARGET, STRFIND(NAME:TARGET, "]") + 1, -1)%%TEXTR("の/が守り抜いてきた")%%TEXTR("処女/純潔")%%TEXTR("を無理やり奪って/を力ずくでモノにして/を喰い散らかして/を無理やり奪い、新品だったアイドル雌穴を中古品にして")%やった</font><img src='えっちハート'>","うふふ")
+					CALL 履歴データベース登録(CFLAG:TARGET:人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>言いなりになることしかできないなか、%CALLNAME:PLAYER%に犯されアイドル%TEXTR("でありながら/として守ってきた")%処女を%TEXTR("奪われ/散らされ")%てしまった。ファンの皆さん、ごめんなさい……</font><img src='えっちハート'>","うふふ")
+				ELSEIF 高貴知識_初期所持判定(TARGET) >= 1
+					CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>「マッサージ」にかこつけて、%CALLNAME:TARGET%%TEXTR("の高貴なる/が守り抜いてきた貴い")%純潔を無理やり奪ってやった</font><img src='えっちハート'>","うふふ")
+					CALL 履歴データベース登録(CFLAG:TARGET:人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>言いなりになることしかできないなか、%CALLNAME:PLAYER%に無理やり犯され、高貴な身でありながら処女を%TEXTR("奪われ/散らされ")%てしまった</font><img src='えっちハート'>","うふふ")
+				ELSE
+					CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>「マッサージ」にかこつけて、%CALLNAME:TARGET%の処女を無理やり奪ってやった</font><img src='えっちハート'>","うふふ")
+					CALL 履歴データベース登録(CFLAG:TARGET:人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>言いなりになることしかできないなか、%CALLNAME:PLAYER%に無理やり犯され処女を%TEXTR("奪われ/散らされ")%てしまった</font><img src='えっちハート'>","うふふ")
+				ENDIF
+			ENDIF
+		ELSE
+			CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>マッサージ中、快楽とお香で抵抗力を奪った%CALLNAME:TARGET%を無理やり手籠めにした</font><img src='えっちハート'>","うふふ")
+			CALL 履歴データベース登録(CFLAG:TARGET:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>マッサージ中、快楽とお香で朦朧とする中で抵抗むなしく%CALLNAME:PLAYER%に%TEXTR("犯/レイプ")%されてしまった</font><img src='えっちハート'>","うふふ")
+			IF TALENT:TARGET:処女
+				IF  アイドル判定(TARGET)
+					CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>大人気アイドル・%SUBSTRING(NAME:TARGET, STRFIND(NAME:TARGET, "]") + 1, -1)%%TEXTR("の/が守り抜いてきた")%%TEXTR("処女/純潔")%%TEXTR("を無理やり奪って/を力ずくでモノにして/を喰い散らかして/を無理やり奪い、新品だったアイドル雌穴を中古品にして")%やった</font><img src='えっちハート'>","うふふ")
+					CALL 履歴データベース登録(CFLAG:TARGET:人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>朦朧とする意識の中で%CALLNAME:PLAYER%に犯され、アイドル%TEXTR("でありながら/として守ってきた")%処女を%TEXTR("奪われ/散らされ")%てしまった。ファンの皆さん、ごめんなさい……</font><img src='えっちハート'>","うふふ")
+				ELSEIF 高貴知識_初期所持判定(TARGET) >= 1
+					CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>「マッサージ」にかこつけて、%CALLNAME:TARGET%%TEXTR("の高貴なる/が守り抜いてきた貴い")%純潔を無理やり奪ってやった</font><img src='えっちハート'>","うふふ")
+					CALL 履歴データベース登録(CFLAG:TARGET:人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>快楽とお香で朦朧とする意識の中、%CALLNAME:PLAYER%に無理やり犯され、高貴な身でありながら処女を%TEXTR("奪われ/散らされ")%てしまった</font><img src='えっちハート'>","うふふ")
+				ELSE
+					CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>「マッサージ」にかこつけて、%CALLNAME:TARGET%の処女を無理やり奪ってやった</font><img src='えっちハート'>","うふふ")
+					CALL 履歴データベース登録(CFLAG:TARGET:人物番号, @"<font color='#%カラーパレット_HTML("赤ピンク")%'>快楽とお香で朦朧とする意識の中、%CALLNAME:PLAYER%に無理やり犯され処女を%TEXTR("奪われ/散らされ")%てしまった</font><img src='えっちハート'>","うふふ")
+				ENDIF
 			ENDIF
 		ENDIF
 		;うわべだけ実行判定
@@ -175,7 +271,7 @@ ELSEIF RFLAG:コマンド結果受渡し変数 == 3
 				SIF ＋表示フラグ
 					PRINT  + 
 				実行値 += ABL:Ｃ感覚 * 3
-				PRINTFORM C감각LV{ABL:Ｃ感覚}({ABL:Ｃ感覚 * 3})
+				PRINTFORM Ｃ감각LV{ABL:Ｃ感覚}({ABL:Ｃ感覚 * 3})
 				＋表示フラグ = 1
 			ENDIF
 		ELSE
@@ -184,7 +280,7 @@ ELSEIF RFLAG:コマンド結果受渡し変数 == 3
 				SIF ＋表示フラグ
 					PRINT  + 
 				実行値 += ABL:Ｖ感覚 * 2
-				PRINTFORM V감각LV{ABL:Ｖ感覚}({ABL:Ｖ感覚 * 2})
+				PRINTFORM Ｖ감각LV{ABL:Ｖ感覚}({ABL:Ｖ感覚 * 2})
 				＋表示フラグ = 1
 			ENDIF
 		ENDIF
@@ -193,7 +289,7 @@ ELSEIF RFLAG:コマンド結果受渡し変数 == 3
 			SIF ＋表示フラグ
 				PRINT  + 
 			実行値 += MARK:快楽刻印 * 3
-			PRINTFORM 쾌락각인LV{MARK:快楽刻印}({MARK:快楽刻印 * 3})
+			PRINTFORM 쾌락 각인LV{MARK:快楽刻印}({MARK:快楽刻印 * 3})
 			＋表示フラグ = 1
 		ENDIF
 		;PALAM:潤滑（の不足）
@@ -258,7 +354,7 @@ ELSEIF RFLAG:コマンド結果受渡し変数 == 3
 			SIF ＋表示フラグ
 				PRINT  + 
 			実行値 += 10
-			PRINT 섹스 파트너(10)
+			PRINT 섹프(10)
 			＋表示フラグ = 1
 		ENDIF
 		;未陥落
@@ -313,7 +409,7 @@ ELSEIF RFLAG:コマンド結果受渡し変数 == 3
 			SIF ＋表示フラグ
 				PRINT  + 
 			実行値 += 6
-			PRINT 발정 중(6)
+PRINT 발정 중(6)
 			＋表示フラグ = 1
 		ENDIF
 
@@ -330,13 +426,13 @@ PRINTFORM 실행값{必要実行値}
 		PRINTL
 
 		;ここまでの実行値
-PRINTFORM %CALLNAME:TARGET%의 존엄({実行値})
+PRINTFORM %CALLNAME:TARGET%의%TEXTR("존엄/저항")%({実行値})
 
 		;鬼灯の香
 		PRINT  + 
 		実行値 += 999
 		SETCOLOR カラーパレット("赤")
-PRINTFORM 꽈리 향(999)
+		PRINTFORM 귀등의 향(999)
 		RESETCOLOR
 
 		;再度合計を表示()
@@ -351,23 +447,23 @@ PRINTFORM 실행값{必要実行値}
 
 		IF TCVAR:TARGET:マッサージ_うつ伏せフラグ
 		;うつ伏せだと寝バック
-			CALL PRINT_STR(@"_FS_4_寝バック_")
+CALL PRINT_STR(@"_FS_4_후배위_")
 		ELSE
 		;仰向けだと正常位
-			CALL PRINT_STR(@"_FS_4_正常位_")
+CALL PRINT_STR(@"_FS_4_정상위_")
 		ENDIF
 		SETCOLOR カラーパレット("赤")
 PRINTFORML 　강간 성공
 		RESETCOLOR
 		SIF TALENT:処女
-	PRINT 강간으로
+PRINT 강간으로
 	ELSEIF TFLAG:マッサージ_鬼灯の香使用時間
-PRINTL 꽈리 향이 효과를 발휘하기까지는 아직 조금 더 시간이 필요할 것이다.
+PRINTL 귀등의 향이 효과를 발휘하기까지는 아직 조금 더 시간이 필요할 것이다.
 PRINTFORMW %CALLNAME:PLAYER%은(는) 아직 기다리기로 했다.
 		RETURN -1
 	ELSE
-PRINTL 이대로는 실행할 수 없다. 뭔가 저항을 봉쇄하기 위한 도구가 필요할 것이다.
-PRINTFORMW %CALLNAME:PLAYER%은(는) 다시 생각하기로 했다.
+PRINTL 이대로는 실행할 수 없다. 무언가 저항을 봉쇄할 도구가 필요할 것이다.
+PRINTFORMW %CALLNAME:PLAYER%은(는) 사타구니에 고인 울렁거림을 꾹 참고 시술로 돌아갔다……。
 		RETURN -1
 	ENDIF
 	
@@ -578,20 +674,20 @@ SELECTCASE RFLAG:コマンド結果受渡し変数
 	CASE 1
 PRINTFORM %CALLNAME:PLAYER%은(는)
 		IF RFLAG:コマンド結果受渡し変数２
-	PRINTFORM %CALLNAME:TARGET%의 시술복을 벗기고,
+PRINTFORM %CALLNAME:TARGET%의 시술복을 벗기고,
 		ENDIF
 		IF PALAM:TARGET:潤滑 > PALAMLV:3
-	PRINT 질척하게 젖은
+PRINT 질척하게 젖은
 		ENDIF
-PRINTFORM %CALLNAME:TARGET%의 보지에,
+		PRINTFORM %CALLNAME:TARGET%의 보지에,
 		IF GETBIT(TALENT:PLAYER:性別, 1) == 0
-	PRINT 페니스 밴
+			PRINT 페니스 밴드
 		ELSE
 			PRINT 자신의 육봉
 		ENDIF
 		PRINTL 을(를) 천천히 삽입했다……。
 	CASE 2
-		PRINTFORML %CALLNAME:PLAYER%이(가) 기어코 부탁하자, %CALLNAME:TARGET%은(는) 망설이면서도 '마사지'가 아니게 되는 것에 고개를 끄덕였다.
+		PRINTFORML %CALLNAME:PLAYER%이(가) 기어코 부탁하자, %CALLNAME:TARGET%은(는) 망설이면서도 『마사지』가 아니게 되는 것에 고개를 끄덕였다.
 		PRINTFORM %CALLNAME:PLAYER%은(는)
 		IF RFLAG:コマンド結果受渡し変数２
 			PRINTFORM %CALLNAME:TARGET%의 시술복을 벗기고,
@@ -609,13 +705,13 @@ PRINTFORM %CALLNAME:TARGET%의 보지에,
 
 		IF RFLAG:コマンド結果受渡し変数３
 			SIF !TALENT:TARGET:淫乱
-				PRINTFORML %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%와 몇 번인가 몸을 겹쳐, 저항감이 옅어진 것 같다…
-			PRINTFORML %CALLNAME:TARGET%은(는) [섹스 프렌드]를 얻었다
+				PRINTFORML %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%와 몇 번 몸을 겹쳐, 저항감이 옅어진 것 같다…
+			PRINTFORML %CALLNAME:TARGET%은(는) [セフレ]을(를) 얻었다
 			IF GETBIT(RFLAG:コマンド結果受渡し変数４, 1)
 				IF GETBIT(TALENT:TARGET:陥落不可, 0)
-					PRINTFORML %CALLNAME:TARGET%의 [함락 불가]가 [연모 불가]로 변화했습니다.
+					PRINTFORML %CALLNAME:TARGET%의 [陥落不可]이(가) [恋慕不可]으로 변화했습니다.
 				ELSE
-					PRINTFORML %CALLNAME:TARGET%의 [섹스 프렌드 불가]가 소멸했습니다.
+					PRINTFORML %CALLNAME:TARGET%의[セフレ不可]이(가) 소멸했습니다.
 				ENDIF
 			ENDIF
 		ENDIF
@@ -631,7 +727,7 @@ PRINTFORM %CALLNAME:TARGET%의 보지에,
 			PRINTFORML %TEXTR("엎드린/엎드리게 억누른")%%CALLNAME:TARGET%에게%TEXTR("등 뒤에서 덮쳐/뒤에서 짓눌러")%、
 		ELSE
 		;仰向けだと正常位
-			PRINTFORM 앙와위인 채%TEXTR("가냘픈 힘으로 손을 뻗어 저항하는/미약한 힘으로 발버둥 치며 저항하려는/멍한 머리로 싫다고 고개를 젓는/변변한 저항조차 제대로 못 하는/저항력을 빼앗겨 말 잘 듣는 몸이 된")%
+			PRINTFORM 똑바로 누운 채%TEXTR("가냘픈 힘으로 손을 뻗어 저항하는/미약한 힘으로 몸부림치며 저항하려 하는/멍한 머리로 싫다고 고개를 젓는/변변한 저항조차 제대로 못 하는/필사적으로 닫으려 하는/저항력을 빼앗겨 시키는 대로 하는 몸이 된")%
 			PRINTFORML %CALLNAME:TARGET%의%TEXTR("다리를 벌려/허벅지를 벌려/허벅지를 잡고 가랑이를 벌리게 하여")%、
 		ENDIF
 
@@ -645,55 +741,63 @@ PRINTFORM %CALLNAME:TARGET%의 보지에,
 		ELSEIF TALENT:TARGET:恋人持ち == 2
 			;人妻
 				IF TALENT:TARGET:処女
-				PRINTFORM 결혼했으면서도, 아직 남편의 침입도 허락하지 않았다
+				PRINTFORM 결혼했으면서도 아직 남편의 침입도 허락하지 않았던
 			ELSE
 				PRINTFORM 남편에게만 허락해야 했을
 			ENDIF
 		ELSEIF TALENT:TARGET:恋人持ち == 3
 		;未亡人
 			IF TALENT:TARGET:処女
-				PRINTFORM 옛 남편에게%TEXTR("바치는 것조차 이루지 못했던/정조를 지켰을")% 미망인의
+				PRINTFORM 옛 남편에게%TEXTR("바치는 것조차 이루지 못했던/정조를 지키고 있었을")% 미망인의
 			ELSE
-				PRINTFORM 남편을 잃고%TEXTR("남자 가뭄/욕구불만")%이었을 익은
+				PRINTFORM 남편을 잃고%TEXTR("남자가 그리웠을/욕구불만이었을")% 성숙한
+			ENDIF
+		ELSEIF アイドル判定(TARGET)
+		;アイドル
+			IF TALENT:TARGET:処女
+				PRINTFORM %TEXTR("팬을 위해 정조를 지키고 있던/팬을 위해 굳게 지켜지고 있던/지금까지 청순을 지켜왔던/지금까지 필사적으로 스캔들을 피하고 있던/수많은 유혹에도 지지 않고 순결을 지켜온")%
+			ELSE
+				PRINTFORM %TEXTR("팬이라면 누구나 맛보고 싶을/팬이 아무리 돈을 쌓아도 맛볼 수 없는/팬에게 들키면 불타오를 것이 뻔한/모두가 부러워하는")%
 			ENDIF
 		ELSEIF TALENT:TARGET:恋人持ち == -1
 		;想い人あり
 			IF TALENT:TARGET:処女
-				PRINTFORM %TEXTR("아직 연모하는 이의 침입도 허락하지 않은/아직 누구에게도 손대지 않은/연모하는 이에게 바칠 예정이었을/연모하는 이를 위해 막을 남겨두었을")%
+				PRINTFORM %TEXTR("아직 짝사랑 상대의 침입도 허락하지 않은/아직 누구에게도 손대지 않은/짝사랑 상대에게 바칠 예정이었을/짝사랑 상대를 위해 막을 남겨두었을")%
 			ELSE
-				PRINTFORM 연모하는 이에게만 허락해야 했을
+				PRINTFORM 사랑하는 사람에게만 허락해야 했을
 			ENDIF
 		ELSEIF キャラ一致チェック(TARGET, "[蒼天の剣閃]モニカ") || キャラ一致チェック(TARGET, "[スカイセイバー]リーシャ")
 			IF TALENT:TARGET:処女
-				PRINTFORM 질서처럼 굳게 지켜왔을
+				PRINTFORM 질서처럼 굳건히 지켜왔을
 			ELSE
 				PRINTFORM 질서처럼 흐트러지지 않았을
 			ENDIF
 		ELSEIF TALENT:TARGET:種族 == 5 && TALENT:TARGET:処女
 		;星晶獣かつ処女
-			PRINTFORM %TEXTR("불로/장명")%의 존재이면서도 순결을 지킨 채의
+			PRINTFORM %TEXTR("불로/장명")%의 존재이면서도 순결을 지킨 채인
 		ELSEIF TALENT:TARGET:処女
 			IF RAND:3 == 0
-				PRINTFORM %CALLNAME:PLAYER%에게 범해지기 위해 지금까지 순결을 지켜주고 있었다
+				PRINTFORM %CALLNAME:PLAYER%에게 범해지기 위해 지금까지 순결을 지켜주었던
 			ELSE
-				PRINTFORM %TEXTR("순결을 지키고 있었다/아직 더러움을 몰랐다")%
+				PRINTFORM %TEXTR("순결을 지키고 있던/아직 더러움을 몰랐던")%
 			ENDIF
 		ELSE
 		;その他　犯す側の、自分勝手であまりにも都合の良い解釈
-			PRINTFORM %CALLNAME:PLAYER%%TEXTR("의 페니스를 음란하게 유혹하는/의 가랑이를 흥분시키는/의 수욕을 흥분시켜 마지않는")%
+			PRINTFORM %CALLNAME:PLAYER%%TEXTR("의 페니스를 음란하게 유혹하는/의 사타구니를 흥분시키는/의 수욕을 끊임없이 흥분시키는")%
 		ENDIF
 
-		PRINTFORM %CALLNAME:TARGET%의
+		IF アイドル判定(TARGET)
+			PRINTFORM 인기 아이돌・%SUBSTRING(NAME:TARGET, STRFIND(NAME:TARGET, "]") + 1, -1)%의
+		ELSE
+			PRINTFORM %CALLNAME:TARGET%의
+		ENDIF
 
 		;おまんこ冠詞群
 		;範囲が狭くシコリティの高そうなものから順につけていく
-		IF 知識素質:TARGET:高貴 >= 1
+		IF 高貴知識_初期所持判定(TARGET) >= 1
 		;高貴持ち
 			PRINTFORM %TEXTR("고귀한/로열")%
-		ELSEIF アイドル判定(TARGET)
-		;アイドル勢
-			PRINTFORM 아이돌
-		ELSEIF 固有素質チェック(TARGET, "女子高生")
+		ELSEIF 固有素質チェック(TARGET, "女子高生", "高校生")
 			PRINTFORM 여고생
 		ELSEIF 固有素質チェック(TARGET, "中学生")
 			PRINTFORM 중학생
@@ -738,7 +842,7 @@ PRINTFORM %CALLNAME:TARGET%의 보지에,
 			IF CFLAG:TARGET:発情期フラグ < 0
 				PRINTFORM 발정
 			ELSE
-				PRINTFORM 위험일
+				PRINTFORM 위험한 날
 			ENDIF
 		ENDIF
 	
@@ -748,94 +852,100 @@ PRINTFORM %CALLNAME:TARGET%의 보지에,
 			PRINTFORM 유부녀
 
 		SIF (TALENT:TARGET:年齢層 == 16 && TALENT:TARGET:外見年齢 == 10) || (TALENT:TARGET:年齢層 == 16 && TALENT:TARGET:外見年齢 == 11)
-			PRINTFORM 로리 할머니
+			PRINTFORM 로리바바
 		SIF TALENT:TARGET:処女
-			PRINTFORM %TEXTR("미경험/처녀/미사용")%
+			PRINTFORM %TEXTR("미통/처녀/미사용")%
 		SIF TALENT:TARGET:年齢層 == 10 || (BASE:TARGET:年齢 <= 13 && BASE:TARGET:年齢 != 0)
 			PRINTFORM %TEXTR("로리/아이/애송이")%
 	
 		PRINTFORM 보지에
 
 		IF GETBIT(TALENT:PLAYER:性別, 1)
-			PRINTFORM %TEXTR("딱딱하게 발기하여/단단하게 솟아오른")% %TEXTR("음경/자지/페니스/육봉")%
+			PRINTFORM %TEXTR("단단하게 발기하고/단단히 솟아오른")% %TEXTR("음경/자지/페니스/육봉")%
 		ELSE
 			PRINTFORM 페니스 밴드
 		ENDIF
 
-		PRINTFORML 을(를)%TEXTR("천천히/끈적끈적")%라고%TEXTR("삽입해 나갔다/밀어 넣어 정복해 나갔다/비틀어 넣어 '여자'로서의 가장 깊은 곳을 짓밟았다/비틀어 넣어 '여자'로서의 존엄을 무참히 짓밟아 주었다/비틀어 넣어 정복해 나갔다/밀어 넣어 나갔다/비틀어 넣어 나갔다/채워 나갔다")%…
-		PRINTL
 
 		;おまけ
 		;キャラにそれ用の口上ができたら自由に消してＯＫ
 		IF キャラ一致チェック(TARGET, "[炎舞の紅脚]アリーザ")
 			PRINTW 
-			PRINTFORM %CALLNAME:TARGET%은(는) 몽롱한 의식 속에서 헛소리처럼 스탠%TEXTR("의 이름을 부르고 있/에게 사죄를 반복하고 있")%
+			PRINTFORM %CALLNAME:TARGET%은(는) 몽롱한 의식 속에서, 헛소리처럼 스탄%TEXTR("의 이름을 부르고/에게 사죄를 반복하고")%
 			IF PALAM:欲情 >= PALAMLV:3
-				PRINTFORML 었지만,
-				PRINTFORML %CALLNAME:PLAYER%이 허리를 찔러 넣자 점차 그 목소리는 쾌락에 녹아 교성 속에 묻혀갔다…
+				PRINTFORML 있었지만,
+				PRINTFORML %CALLNAME:PLAYER%이(가) 허리를 찔러 넣자 점차 그 목소리는 쾌락에 녹아내려 교성 속에 파묻혀갔다…
 			ELSE
-				PRINTFORML 다…
+				PRINTFORML 있다…
 			ENDIF
 			PRINTW 
-			PRINTFORM 　　　　　　　　「%TEXTR("미안해, 스탠/스탠……나, 이제")%……읏
+			PRINTFORM 　　　　　　　　「%TEXTR("미안해, 스탄/스탄…… 나, 이제")%……っ
 			CALL PRINT_STRL(@"_H_」")
 		ELSEIF キャラ一致チェック(TARGET, "[狂恋の華鎧]ヴィーラ")
 			対象キャラ２ = キャラ検索("[蒼天の守護騎士]カタリナ・アリゼ")
 			PRINTW 
-			IF STRFIND(経験相手:対象キャラ２:Ｖ挿入初体験, @"-{CFLAG:PLAYER:人物番号}-") >= 0
+			IF 初体験相手_存在チェック("Ｖ挿入初体験", 対象キャラ２, PLAYER)
 			;カタリナとヤったことがある場合。ド級の畜生、「ド畜生」である。
-				PRINTFORM %CALLNAME:PLAYER%이 장난스럽게
+				PRINTFORM %CALLNAME:PLAYER%이(가) 장난스럽게
 				IF RAND:2 == 0
-					PRINTFORML 「%TEXTR("카타리나보다 기분 좋아/카타리나보다 더 잘 조여져")%」라고 가장 사랑하는 언니와의 관계를 암시하자,
+					PRINTFORML 「%TEXTR("카타리나보다 기분 좋아/카타리나보다 더 잘 조여")%」라고 가장 사랑하는 언니와의 관계를 암시하자,
 				ELSE
-					PRINTFORML 「%TEXTR("이거라면 카타리나가 더 기분 좋았어/이거라면 카타리나가 더 잘 조여져서 기분 좋았어")%」라고 가장 사랑하는 언니를 빌미로 비라를 깎아내리자,
+					PRINTFORML 「%TEXTR("이거라면 카타리나가 더 기분 좋았어/이거라면 카타리나가 더 잘 조여서 기분 좋았어")%」라고 가장 사랑하는 언니를 빌미로 비라를 폄하하자,
 				ENDIF
-				PRINTFORML 비라는 몽롱하게%TEXTR("하면서/달콤한 목소리를 내면서/교성을 내면서")%도 필사적으로%CALLNAME:PLAYER%을(를) 노려보았다……
+				PRINTFORML 비라는 몽롱하게 %TEXTR("하면서/달콤한 목소리를 내면서/교성을 지르면서")%도 필사적으로 %CALLNAME:PLAYER%을(를) 노려보았다……
 			ELSE
-				PRINTFORM %CALLNAME:TARGET%은(는) 몽롱한 의식 속에서 헛소리처럼 카타리나%TEXTR("의 이름을 부르고 있/에게 사죄를 반복하고 있")%
+				PRINTFORM %CALLNAME:TARGET%은(는) 몽롱한 의식 속에서, 헛소리처럼 카타리나%TEXTR("의 이름을 부르고/에게 사죄를 반복하고")%
 				IF PALAM:欲情 >= PALAMLV:3
-					PRINTFORML 었지만,
-					PRINTFORML %CALLNAME:PLAYER%이 허리를 찔러 넣자 점차 그 목소리는 쾌락에 녹아 교성 속에 묻혀갔다…
+PRINTFORML 그러나,
+PRINTFORML %CALLNAME:PLAYER%이(가) 허리를 들이밀자 점차 그 목소리는 쾌락에 녹아내려 교성 속에 파묻혀갔다…
 				ELSE
-					PRINTFORML 다…
+PRINTFORML …
 				ENDIF
 				PRINTW 
-				PRINTFORM 　　　　　　　　「아아……언니, 님아……읏
-				CALL PRINT_STRL(@"_H_」")
+PRINTFORM 　　　　　　　　「아아……언니이……읏
+CALL PRINT_STRL(@"_H_」")
 			ENDIF
 		ELSEIF キャラ一致チェック(TARGET, "[純白の花嫁]ジュリエット")
 			PRINTW 
-			PRINTFORM %CALLNAME:TARGET%은(는) 몽롱한 의식 속에서, 헛소리처럼 로미오%TEXTR("의 이름을 부르고 있/에게 사죄를 반복하고 있")%
+PRINTFORM %CALLNAME:TARGET%은(는) 몽롱한 의식 속에서, 헛소리처럼 로미오%TEXTR("의 이름을 부르고 있/에게 사죄를 반복하고 있")%
 			IF PALAM:欲情 >= PALAMLV:3
-				PRINTFORML 었지만,
-				PRINTFORML %CALLNAME:PLAYER%이(가) 허리를 찔러 넣자 점차 그 목소리는 쾌락에 녹아 교성 속에 묻혀갔다…
+PRINTFORML 그러나,
+PRINTFORML %CALLNAME:PLAYER%이(가) 허리를 들이밀자 점차 그 목소리는 쾌락에 녹아내려 교성 속에 파묻혀갔다…
 			ELSE
-				PRINTFORML 다…
+PRINTFORML …
 			ENDIF
 			PRINTW 
-			PRINTFORM 　　　　　　　　「아아……로미오……미안해요……읏
-			CALL PRINT_STRL(@"_H_」")
+PRINTFORM 　　　　　　　　「아아……로미오……미안해……읏
+CALL PRINT_STRL(@"_H_」")
 		ELSEIF キャラ一致チェック(TARGET, "[奮い立つ決意の盾]マシュ・キリエライト")
 			PRINTW 
-			PRINTFORM %CALLNAME:TARGET%은(는) 몽롱한 의식 속에서, 헛소리처럼 「선배」라는 사람%TEXTR("을 부르고 있/에게 사죄를 반복하고 있")%
+PRINTFORM %CALLNAME:TARGET%은(는) 몽롱한 의식 속에서, 헛소리처럼 「선배」라는 사람을%TEXTR("부르고 있/에게 사죄를 반복하고 있")%
 			IF PALAM:欲情 >= PALAMLV:3
-				PRINTFORML 었지만,
-				PRINTFORML %CALLNAME:PLAYER%이(가) 허리를 찔러 넣자 점차 그 목소리는 쾌락에 녹아 교성 속에 묻혀갔다…
+PRINTFORML 그러나,
+PRINTFORML %CALLNAME:PLAYER%이(가) 허리를 들이밀자 점차 그 목소리는 쾌락에 녹아내려 교성 속에 파묻혀갔다…
 			ELSE
-				PRINTFORML 다…
+PRINTFORML …
 			ENDIF
 			PRINTW 
-			PRINTFORM 　　　　　　　　「아아, 아……선, 배……
+			PRINTFORM 　　　　　　　　「아아, 아…… 선, 배……
 			CALL PRINT_STRL(@"_H_」")
 		ELSEIF TALENT:TARGET:恋人持ち == 2
 			PRINTW 
-			PRINTFORM %CALLNAME:TARGET%은(는) 몽롱한 의식 속에서, 헛소리처럼 반려에게 사죄를 반복하고 있
+			PRINTFORM %CALLNAME:TARGET%은(는) 몽롱한 의식 속에서, 헛소리처럼 반려에게 사죄를 반복하고 있었지만,
 			IF PALAM:欲情 >= PALAMLV:3
-				PRINTFORML 었지만,
-				PRINTFORML %CALLNAME:PLAYER%이(가) 허리를 찔러 넣자 점차 그 목소리는 쾌락에 녹아 교성 속에 묻혀갔다…
+				PRINTFORML %CALLNAME:PLAYER%이 허리를 들이밀자 점차 그 목소리는 쾌락에 녹아 교성 속에 묻혀갔다…
+				PRINTFORML …
 			ELSE
-				PRINTFORML 다…
+			PRINTFORML 을(를)%TEXTR("천천히/느릿느릿")%와(과) %TEXTR("삽입해갔다/밀어 넣어 정복해갔다/비틀어 넣어 '여자'로서의 가장 깊은 곳을 짓밟았다/비틀어 넣어 '여자'로서의 존엄을 무참히 짓밟아 주었다/비틀어 넣어 정복해갔다/밀어 넣어갔다/비틀어 넣어갔다/채워 넣었다")%…
 			ENDIF
+		ELSE
+			PRINTFORM %TEXTR("버둥거리는/가냘픈 저항을 계속하는/약한 힘으로 마지막 저항을 시도하는")%%CALLNAME:TARGET%의 %TEXTR("꽉 조이는 보지/질의 조임")%를 비집고 열듯이 안으로 안으로 %TEXTR("밀고 들어가/침략을 진행하며")%,
+			PRINTL
+			PRINTFORM %TEXTR("팟/꿀럭/느읍/꿀럭")%
+			PRINTFORML 하고 허리를 %TEXTR("딱/")%밀착시켜 %TEXTR("가장 안쪽/가장 깊은 곳/가장 깊은 곳/가장 깊은 곳")%%TEXTR("까지/을(를)")% 정복하자,
+			CALL PRINT_STRL(@"_H_")
+			PRINTFORML %CALLNAME:TARGET%은(는) 한 줄기 눈물과 함께 유난히 높은 목소리로 울었고, 저항하던 사지에서는 %TEXTR("체념한 듯/절망한 듯/포기한 듯")% 힘이 빠져나갔다……
+			PRINTFORML %CALLNAME:TARGET%は一筋の涙とともにひときわ甲高い声で鳴いて、抵抗していた四肢からは%TEXTR("観念し/絶望し/諦め")%たかのように力が抜けていった……
 		ENDIF
 ENDSELECT
 

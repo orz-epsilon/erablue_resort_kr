@@ -17,14 +17,14 @@ TFLAG:コマンドタイプ受渡 = COMTYPE("うふふ")
 
 @COM_TOOLTIP_S80_1
 IF RFLAG:奉仕逆転時ツールチップフラグ
-	LOCALS = <br>■수유 핸드잡을 하는<br>
-	LOCALS += "상대에게 자신의 유두를 빨게 하면서, 상대의 페니스를 손으로 애무하는 커맨드.<br>수유 수음 모드가 되어, 모드를 변경하거나 성행위를 종료할 때까지 지속적으로 특정 소스가 발생한다."
+	LOCALS = <br>■수유 수음하기<br>
+	LOCALS += "상대에게 자신의 젖꼭지를 빨게 하면서, 상대의 페니스를 손으로 애무하는 커맨드. <br>수유 수음 모드가 되어, 모드를 변경하거나 성행위를 종료할 때까지 지속적으로 특정 소스가 발생한다."
 ELSE
-	LOCALS = <br>■수유 핸드잡<br>
-	LOCALS += "상대의 유두에 달라붙어 빨면서, 상대에게 손으로 자신의 페니스를 애무받는 커맨드.<br>수유 수음 모드가 되어, 모드를 변경하거나 성행위를 종료할 때까지 지속적으로 특정 소스가 발생한다."
+	LOCALS = <br>■수유 수음<br>
+	LOCALS += "상대의 젖꼭지를 빨면서, 상대에게 손으로 자신의 페니스를 애무받는 커맨드. <br>수유 수음 모드가 되어, 모드를 변경하거나 성행위를 종료할 때까지 지속적으로 특정 소스가 발생한다."
 ENDIF
 LOCALS += "<br>COM 타입: 우후후<br>획득 소스: 쾌B・노출・접촉・봉사・불결"
-LOCALS += "<br>고유 획득 경험: 수음 경험(TARGET)・유두 개발(TARGET)<br>"
+LOCALS += "<br>고유 획득 경험: 수음 경험(TARGET)・젖꼭지 개발(TARGET)<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
 @COM_S80_1
@@ -83,7 +83,7 @@ RETURN 1
 #DIM ＋表示フラグ
 
 SKIPDISP ARG
-PRINTFORML 수유 핸드잡(%CALLNAME:TARGET%)
+PRINTFORML 수유 수음(%CALLNAME:TARGET%)
 ;-------------------------------------------------
 ;実行判定処理
 ;-------------------------------------------------
@@ -116,7 +116,7 @@ IF ABL:精液中毒
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += ABL:精液中毒 * 1
-	PRINTFORM 정액 중독LV{ABL:精液中毒}({ABL:精液中毒 * 1})
+	PRINTFORM 정액중독LV{ABL:精液中毒}({ABL:精液中毒 * 1})
 	＋表示フラグ = 1
 ENDIF
 
@@ -124,7 +124,7 @@ IF MARK:快楽刻印
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += MARK:快楽刻印 * 1
-	PRINTFORM 쾌락 각인LV{MARK:快楽刻印}({MARK:快楽刻印 * 1})
+	PRINTFORM 쾌락각인LV{MARK:快楽刻印}({MARK:快楽刻印 * 1})
 	＋表示フラグ = 1
 ENDIF
 ;PALAM:欲情
@@ -139,7 +139,7 @@ ENDIF
 IF TALENT:羞恥心 > 0
 	PRINT  - 
 	実行値 -= 1
-	PRINT 부끄러움(1)
+	PRINT 수치심(1)
 	＋表示フラグ = 1
 ENDIF
 ;汚臭鈍感
@@ -147,7 +147,7 @@ IF TALENT:汚臭耐性 > 0
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += 1
-	PRINT 악취 둔감(1)
+	PRINT 오취둔감(1)
 	＋表示フラグ = 1
 ENDIF
 ;汚臭敏感
@@ -169,14 +169,14 @@ ENDIF
 IF TALENT:快感応答 < 0 && !TALENT:淫乱
 	PRINT  - 
 	実行値 -= 1
-	PRINT 쾌감의 부정(1)
+	PRINT 쾌감 부정(1)
 	＋表示フラグ = 1
 ENDIF
 ;男嫌い（恋慕、親愛で無効）
 IF TALENT:性別嗜好 & 1 && !(TALENT:PLAYER:性別 & 1) && (!TALENT:恋慕 || PLAYER != MASTER)
 	PRINT  - 
 	実行値 -= 5
-	PRINT 남자 혐오(5)
+	PRINT 남성 혐오(5)
 	＋表示フラグ = 1
 ENDIF
 ;恋慕
@@ -211,6 +211,15 @@ IF TCVAR:言いなり
 		PRINT  + 
 	実行値 += 999
 	PRINT 당신의 뜻대로(999)
+	＋表示フラグ = 1
+ENDIF
+
+;特殊言いなり
+IF TCVAR:特殊言いなり
+	SIF ＋表示フラグ
+		PRINT  + 
+	実行値 += 999
+	PRINTFORM %特殊言いなり分岐(TARGET)%(999)
 	＋表示フラグ = 1
 ENDIF
 
@@ -277,21 +286,21 @@ RETURN 1
 ;実行時メッセージ
 ;-------------------------------------------------
 @MESSAGE_COM_S80_1
-PRINTFORM %CALLNAME:TARGET%는
+PRINTFORM %CALLNAME:TARGET%은(는)
 SIF 知識素質:性知識 < 0
-	PRINTFORM %CALLNAME:PLAYER%가 시키는 대로,
+	PRINTFORM %CALLNAME:PLAYER%에게 말하는 대로,
 
 PRINTFORM %CALLNAME:PLAYER%
 IF RAND:2 == 0
-	PRINT 를 무릎에 눕히고,
+	PRINT 을(를) 무릎에 눕히고,
 ELSE
-	PRINT 몸을 기대어 쓰러지며,
+	PRINT 에게 기대어,
 ENDIF
 SELECTCASE TALENT:TARGET:バストサイズ
 	CASE -2
-		PRINT 희미하게 부푼 가슴에 톡 박혀 있는
+		PRINT 희미하게 부푼 가슴에 덩그러니 있는
 	CASE -1
-		PRINT 작게 부푼
+		PRINT 작은 부풀음의
 	CASE 1
 		PRINT 커다란 가슴의
 	CASE 2
@@ -299,6 +308,6 @@ SELECTCASE TALENT:TARGET:バストサイズ
 	CASE 3
 		PRINT 얼굴이 파묻힐 정도로 커다란 가슴의
 ENDSELECT
-PRINTL 젖꼭지를 빨게 하면서 페니스에 손가락을 얽어 비벼 올리고 있다…
+PRINTL 젖꼭지를 빨게 하면서 페니스에 손가락을 얽어 문지르고 있다…
 
 

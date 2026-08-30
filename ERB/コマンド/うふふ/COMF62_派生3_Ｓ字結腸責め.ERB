@@ -1,7 +1,7 @@
 
 @COMNAME_S62_3
 #FUNCTIONS
-TSTR:コマンド名受渡 = S자 결장 괴롭히기
+TSTR:コマンド名受渡 = S자 결장 공격
 
 ;===================================================
 ;コマンドタイプ
@@ -20,7 +20,7 @@ SIF CFLAG:TARGET:睡眠
 
 @COM_TOOLTIP_S62_3
 LOCALS = <br>■S자 결장 공격<br>
-LOCALS += "장 안쪽 깊숙한 곳에 있는 S자 결장에 페니스로 강한 자극을 주는 커맨드.<br>A삽입계 모드일 때만 실행 가능."
+LOCALS += "장 안쪽에 있는 S자 결장에 페니스로 강한 자극을 주는 커맨드. <br>A삽입계 모드시에만 실행 가능."
 LOCALS += "<br>COM 타입: A계<br>획득 소스: 쾌A・접촉・고통"
 LOCALS += "<br>고유 획득 경험: A성교 경험(TARGET)・S자 결장 개발(TARGET)・C성교 경험_A삽입(PLAYER)<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
@@ -80,18 +80,18 @@ RETURN 1
 ;-------------------------------------------------
 @MESSAGE_COM_S62_3
 #DIM 同時キャラ番号
-PRINTFORM %CALLNAME:PLAYER%는
+PRINTFORM %CALLNAME:PLAYER%은(는)
 
 IF GETBIT(FLAG:モード管理, モードビット_同時)
 	FOR 同時キャラ番号, 0, 同時モード_選択数
 		SIF 同時キャラ番号 > 0
-			PRINT ,
+			PRINT 、
 		PRINTFORM %CALLNAME:(同時モード_選択キャラ:同時キャラ番号)%
 	NEXT
-	PRINT 의 장내 깊숙한 곳, S자 결장 부분을 쓸어 올렸다
+	PRINT 의 장 안쪽, S자 결장 부분을 문질러 올렸다
 	RETURN 0
 ENDIF
 
-PRINTFORML %CALLNAME:TARGET%의 장내 깊숙한 곳, S자 결장 부분을 쓸어 올렸다
+PRINTFORML %CALLNAME:TARGET%의 장 안쪽, S자 결장 부분을 문질러 올렸다
 
 

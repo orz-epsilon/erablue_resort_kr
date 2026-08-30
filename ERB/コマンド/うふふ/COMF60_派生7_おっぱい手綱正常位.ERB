@@ -14,8 +14,8 @@ TFLAG:コマンドタイプ受渡 = COMTYPE("Ｖ系")
 
 @COM_TOOLTIP_S60_7
 LOCALS = <br>■가슴 고삐 정상위<br>
-LOCALS += "거유를 움켜쥐고, 잡아당기면서 허리를 흔드는 커맨드. <br>정상위 시에만 가능하며, 잡을 수 있을 정도로 가슴이 크지 않으면 실행할 수 없다. <br>피학적 성감으로 효과가 상승한다."
-LOCALS += "<br>몇 번이고 반복 실행하면……?"
+LOCALS += "거유를 움켜쥐고, 잡아당기면서 허리를 흔드는 커맨드. <br>정상위 시이며 잡을 수 있을 정도로 가슴이 크지 않으면 실행할 수 없다. <br>마조 성감으로 효과가 상승한다."
+LOCALS += "<br>몇 번이고 반복해서 실행하면……?"
 LOCALS += "<br>COM 타입: V계<br>획득 소스: 정복・쾌B・쾌V・접촉・고통"
 LOCALS += "<br>고유 획득 경험: V성교 경험(TARGET)・C성교 경험_V삽입(PLAYER)<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
@@ -107,41 +107,41 @@ RETURN 1
 ;-------------------------------------------------
 @MESSAGE_COM_S60_7
 #DIM 同時キャラ番号
-PRINTFORM %CALLNAME:PLAYER%는,
+PRINTFORM %CALLNAME:PLAYER%은(는),
 IF TALENT:TARGET:長乳
-	PRINTFORM %CALLNAME:PLAYER%에게 %TEXTR("몇 번이고/수없이/반복해서")% 잡아당겨져서 완전히 %TEXTR("천박하게/너덜너덜하게")% 늘어져 %TEXTR("버렸/")%다
+	PRINTFORM %CALLNAME:PLAYER%에%TEXTR("몇 번이고/몇 번이나/반복해서")% 잡아당겨져서 완전히%TEXTR("천박하게/흐트러지게")% 늘어나%TEXTR("버렸/")%다
 ELSE
-	PRINTFORM %TEXTR("누워 있는/찌를 때마다 눈앞에서 흔들리는/흔들리며 당신을 유혹하는")%
+	PRINTFORM %TEXTR("드러누운/찌를 때마다 눈앞에서 흔들리는/흔들리며 당신을 유혹하는")%
 ENDIF
 PRINTFORM %CALLNAME:TARGET%의
 IF TALENT:TARGET:バストサイズ == 3
 	;魔乳
 	;「あまりにもデカすぎるデカパイ」、頭悪すぎて好き
 	;「下品に育ちきった」とか「だらしなく実った」とかもアリかもしれないけど……純愛シチュの時に貶すようなワード出てもアレかもなぁってことで一応保留
-	PRINTFORM %TEXTR("킹사이즈의/너무나도 거대한/사람 머리만 한 크기의/규격 외 사이즈의")%%TEXTR("가슴/왕젖통/마유")%
+	PRINTFORM %TEXTR("킹사이즈의/너무나도 거대한/사람 머리통만 한 크기의/규격 외 사이즈의")%%TEXTR("가슴/거유/마유")%
 ELSEIF TALENT:TARGET:バストサイズ == 2
 	;爆乳
-	PRINTFORM %TEXTR("손바닥에서 넘쳐흐를 정도의/평소부터 남자들의 시선을 사로잡아 마지않는/꿈이 가득한")%%TEXTR("가슴/왕젖통/폭유")%
+	PRINTFORM %TEXTR("손바닥에서 넘쳐흐를 정도의/평소부터 남자들의 시선을 사로잡아 마지않는/꿈이 가득 찬")%%TEXTR("가슴/거유/폭유")%
 ELSEIF TALENT:TARGET:バストサイズ == 1
 	;巨乳
 	IF TALENT:TARGET:種族 == 3
 	;ドラフ
 	;「小さめな巨乳」という矛盾したワード
-		PRINTFORM 드라프치고는 작은 편인 %TEXTR("왕젖통/거유")%
+		PRINTFORM 드라프 치고는 작은 편인%TEXTR("거유/거유")%
 	ELSE
-		PRINTFORM %TEXTR("볼륨감 넘치는/움켜쥐기 딱 좋은 크기의")%%TEXTR("가슴/왕젖통/거유")%
+		PRINTFORM %TEXTR("볼륨감 있는/잡기에 딱 좋은 크기의")%%TEXTR("가슴/거유/거유")%
 	ENDIF
 ENDIF
-PRINTFORM 을 %TEXTR("꾸욱/꼬옥")%
+PRINTFORM 을%TEXTR("꽉/꼬옥")%
 CALL PRINT_STR("_H_")
-PRINTFORML 하고 %TEXTR("움켜쥐며/와락 움켜쥐고/손바닥 가득 움켜쥐고")%,
-PRINTFORM %TEXTR("뭉개애애～～앳/꾸물꾸물～～앳")%
+PRINTFORML %TEXTR("움켜쥐고/꽉 움켜쥐고/손바닥 가득 잡고")%、
+PRINTFORM %TEXTR("뭉개애애~~/꾸우욱~~")%
 CALL PRINT_STR("_H__H__H_")
-PRINTFORML 하고 잡아당기면서 %TEXTR("강하게/격렬하게/거칠게")% 허리를 부딪쳤다……
+PRINTFORML 잡아당기면서%TEXTR("강하게/격렬하게/거칠게")% 허리를 박았다……
 
 IF CFLAG:TARGET:おっぱい引っぱりカウント >= 20 && TALENT:TARGET:長乳 == 0
 	PRINTW
-	PRINTFORM 몇 번이고 몇 번이고 반복해서 %CALLNAME:PLAYER%에게 교미 시의 고삐가 된 %CALLNAME:TARGET%의
+	PRINTFORM 몇 번이고 반복해서 %CALLNAME:PLAYER%에게 교미 시 고삐로 사용된 %CALLNAME:TARGET%의
 	IF TALENT:TARGET:バストサイズ == 3
 		PRINTFORM 마유
 	ELSEIF TALENT:TARGET:バストサイズ == 2
@@ -149,11 +149,11 @@ IF CFLAG:TARGET:おっぱい引っぱりカウント >= 20 && TALENT:TARGET:長�
 	ELSEIF TALENT:TARGET:バストサイズ == 1
 		PRINTFORM 거유
 	ENDIF
-	PRINTFORML 는,
-	PRINTFORM 집요하게 잡아당겨진 탓에 너덜너덜하게 세로로 늘어져,
+	PRINTFORML 은(는),
+	PRINTFORM 집요하게 잡아당겨진 탓에 보기 흉하게 세로로 늘어나,
 	SETCOLOR カラーパレット("えっちな色")
 		PRINT [장유]
 	RESETCOLOR
-	PRINTFORML 가 되어버렸다……
+	PRINTFORML 이(가) 되어버렸다……
 	TALENT:TARGET:長乳 = 1
 ENDIF

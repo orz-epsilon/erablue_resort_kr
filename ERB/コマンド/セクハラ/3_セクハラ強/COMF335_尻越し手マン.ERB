@@ -3,7 +3,7 @@
 ;===================================================
 @COMNAME335
 #FUNCTIONS
-TSTR:コマンド名受渡 = 엉덩이 너머 핸드잡
+TSTR:コマンド名受渡 = 尻越し手マン
 
 
 ;===================================================
@@ -19,10 +19,10 @@ TFLAG:コマンドタイプ受渡 = COMTYPE("セクハラ強")
 ;ツールチップ文章
 ;===================================================
 @COM_TOOLTIP_335
-TSTR:ツールチップ受渡 '= "<br>■엉덩이 너머 핸드잡<br>"
-TSTR:ツールチップ受渡 += "상대의 등 뒤에서 손을 돌려, 엉덩이 너머로 질에 손가락을 넣어 주무르는 커맨드. <br>"
-TSTR:ツールチップ受渡 += "대상이 하반신 뒤쪽에 갑옷을 입고 있는 경우・상하 일체복을 입고 있는 경우는 실행 불가. <br>"
-TSTR:ツールチップ受渡 += "데리고 나갈 수 있을 때, 모드화하여 동행 상태가 된다. <br>"
+TSTR:ツールチップ受渡 '= "<br>■尻越し手マン<br>"
+TSTR:ツールチップ受渡 += "상대의 등 뒤에서 손을 둘러, 엉덩이 너머로 질에 손가락을 넣어 희롱하는 커맨드. <br>"
+TSTR:ツールチップ受渡 += "대상이 하반신 뒤쪽에 갑옷을 입고 있는 경우・상하 일체형 옷을 입고 있는 경우는 실행 불가. <br>"
+TSTR:ツールチップ受渡 += "동행 가능 시, 모드화되어 동행 상태가 된다. <br>"
 TSTR:ツールチップ受渡 += "COM 타입: 성희롱<br>획득 소스: 접촉・노출・쾌락V・고통<br>"
 TSTR:ツールチップ受渡 += "고유 획득 경험: 없음<br>"
 
@@ -165,21 +165,21 @@ RETURN 1
 ;===================================================
 @MESSAGE_COM335
 
-PRINTFORM %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%의 등 뒤에서 손을 돌려
+PRINTFORM %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%의 등 뒤에서 손을 둘러
 IF TEQUIP:下半身服あり
-	PRINT 옷 속에 집어넣자
+	PRINT 옷 속으로 집어넣자
 ELSE
-	PRINT 하자
+	PRINT 그러자
 ENDIF
-PRINTFORM ,\@ TALENT:種族 == 4 ? 작은 # \@엉덩이 너머로
+PRINTFORM , \@ TALENT:種族 == 4 ? 작은 # \@엉덩이 너머로
 ;潤滑LV4以上
 SIF PALAM:TARGET:潤滑 >= PALAMLV:4
-	PRINT 흠뻑 젖은
-PRINTFORML 은밀한 틈에 손가락을 넣어, 주무르기 시작했다…
+	PRINT 축축하게 젖은
+PRINTFORML 은밀한 틈새에 손가락을 집어넣어, 희롱했다…
 
 IF CUP:TARGET:快Ｖ > 1000
 	;一定以上の快楽が発生した時にちょっと声が出る
-	PRINTFORML 갑작스러운 쾌락에, %CALLNAME:TARGET%은(는) 무심코 작은 신음을 흘리고 말았다…
+	PRINTFORML 뜻밖의 쾌락에, %CALLNAME:TARGET%은(는) 자신도 모르게 작은 신음을 흘리고 말았다…
 	PRINTL
 ENDIF
 
@@ -193,25 +193,25 @@ ENDIF
 SELECTCASE RFLAG:コマンド結果受渡し変数２
 	CASE 1
 		;無知
-PRINTFORML %CALLNAME:TARGET%은(는) 잘 모르겠지만, %CALLNAME:PLAYER%이(가) 즐겁다면 좋다고 기뻐하고 있다
+		PRINTFORML %CALLNAME:TARGET%은(는) 잘 모르겠지만, %CALLNAME:PLAYER%이(가) 즐겁다면 좋다고 기뻐하고 있다
 	CASE 2
 		;無反応
-PRINTFORML %CALLNAME:TARGET%은(는) 태연한 척하지만, 살짝 얼굴을 붉히고 %CALLNAME:PLAYER%에게 몸을 비벼왔다…
+		PRINTFORML %CALLNAME:TARGET%은(는) 태연한 척하지만, 조금 얼굴을 붉히고 %CALLNAME:PLAYER%에게 몸을 비벼왔다…
 	CASE 3
 		;嫌悪
-PRINTFORML %CALLNAME:TARGET%은(는) 어쩔 수 없는 사람이네, 라는 얼굴로 %CALLNAME:PLAYER%가 하고 싶은 대로 내버려 두고 있다…
+		PRINTFORML %CALLNAME:TARGET%은(는) 어쩔 수 없는 사람이네, 라는 얼굴로 %CALLNAME:PLAYER%이(가) 하고 싶은 대로 내버려 두고 있다…
 	CASE 4
 		;拒否
-PRINTFORML %CALLNAME:TARGET%은(는) 나쁘지 않은 기분인 듯, %CALLNAME:PLAYER%가 하고 싶은 대로 내버려 두고 있다…
+		PRINTFORML %CALLNAME:TARGET%은(는) 싫지 않은 듯한 모습으로, %CALLNAME:PLAYER%이(가) 하고 싶은 대로 내버려 두고 있다…
 	CASE 5
 		;余裕
-PRINTFORML %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%에게, 주위에 들키지 않도록 몰래 만지라고 말했다…
+		PRINTFORML %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%에게, 주위에 들키지 않도록 몰래 만지라고 말했다…
 	CASE 6
 		;羞恥
-PRINTFORML %CALLNAME:TARGET%은(는) 붉어진 얼굴로 %CALLNAME:PLAYER%을(를) 바라보며, 살며시 몸을 기대왔다…
+		PRINTFORML %CALLNAME:TARGET%은(는) 붉어진 얼굴로 %CALLNAME:PLAYER%을(를) 응시하며, 살며시 몸을 기대왔다…
 	CASE 7
 		;愉悦
-PRINTFORML %CALLNAME:TARGET%은(는) 다른 곳도 만질 거냐며, 요염한 표정으로 %CALLNAME:PLAYER%을(를) 도발하고 있다…
+		PRINTFORML %CALLNAME:TARGET%은(는) 다른 장소도 만질 거냐며, 요염한 표정으로 %CALLNAME:PLAYER%을(를) 도발하고 있다…
 	CASE 8
-PRINTFORML %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%에게 만져지는 것을 조금 기쁘게 생각하는 것 같다…
+		PRINTFORML %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%에게 만져지는 것을 조금 기쁘게 생각하는 듯하다…
 ENDSELECT

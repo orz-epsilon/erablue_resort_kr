@@ -13,7 +13,7 @@ TSTR:コマンド名受渡 = 스팽킹
 TFLAG:コマンドタイプ受渡 = COMTYPE("うふふ")
 
 @COM_TOOLTIP_22
-LOCALS = <br>■スパンキング<br>
+LOCALS = <br>■스팽킹<br>
 LOCALS += "상대의 엉덩이를 때려, 고통과 쾌락을 주는 커맨드."
 LOCALS += "<br>COM 타입: 우후후<br>획득 소스: 쾌S・고통・반감(일정 조건 시)・환락(일정 조건 시)"
 LOCALS += "<br>고유 획득 경험: 없음<br>"
@@ -82,10 +82,10 @@ RETURN 1
 ;実行時メッセージ
 ;-------------------------------------------------
 @MESSAGE_COM22
-PRINTFORML %CALLNAME:PLAYER%는 손바닥으로 %CALLNAME:TARGET%의 엉덩이를 몇 번이고 세게 때렸다
+PRINTFORML %CALLNAME:PLAYER%은(는) 손바닥으로 %CALLNAME:TARGET%의 엉덩이를 몇 번이고 세게 때렸다
 
 @MESSAGE_COM22_非口上時
 
 IF ABL:TARGET:マゾ性感 > 2
-	PRINTFORML %CALLNAME:TARGET%는 맞을 때마다 교성을 올리며 황홀해하고 있다…
+	PRINTFORML %CALLNAME:TARGET%은(는) 맞을 때마다 교성을 지르며, 황홀해하고 있다…
 ENDIF

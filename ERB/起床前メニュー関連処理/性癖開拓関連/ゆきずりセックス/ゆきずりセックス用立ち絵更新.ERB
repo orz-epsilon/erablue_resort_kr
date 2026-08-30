@@ -12,6 +12,12 @@
 #DIMS D_NAME
 #DIMS 体位
 ;--------------------------------------------------------------------------------------------------
+
+;男性キャラクターは攻め側専用の立ち絵更新処理へ移行する
+IF !GETBIT(TALENT:ARG:性別, 0) && GETBIT(TALENT:ARG:性別, 1)
+	RETURNF ゆきずりセックス攻め立ち絵更新(ARG, TYPE)
+ENDIF
+
 VARSET LOCAL
 VARSET 差分エフェクト
 
@@ -29,9 +35,9 @@ IF IS_ゆきずりセックス中(ARG)
 	体位 = %立ち絵存在確認＆代用差替(ARG, 切り替え用文字列, CSTR:ARG:ゆきずりセックス_プレイ内容, TYPE)%
 	
 	;ゆきずりセックス中は常に欲情エフェクト
-	;差分エフェクト:0 '= "エフェクト_" + TYPE + "欲情"
+	;差分エフェクト:0:0 '= "エフェクト_" + TYPE + "欲情"
 	;SIF 物陰エフェクト
-	;	差分エフェクト:1 '= "エフェクト_" + TYPE + "隠密"
+	;	差分エフェクト:0:1 '= "エフェクト_" + TYPE + "隠密"
 
 	SIF 差分抽出(ARG, TYPE, 切り替え用文字列, 体位) && D_NAME == ""
 		D_NAME '= RESULTS
@@ -59,21 +65,21 @@ ENDIF
 SELECTCASE TCVAR:ARG:ゆきずりセックス_体位
 	CASE 1 ;Ｖ性交
 		IF TCVAR:ARG:覗きバレ && ENUMFILES(@"resources/%CSTR:ARG:画像フォルダ%/", @"%切り替え用文字列%_差分_覗きバレセックス*.*")
-			RETURNF "覗きバレセックス"
+			RETURNF "들킨 엿보기 섹스"
 		ELSEIF ENUMFILES(@"resources/%CSTR:ARG:画像フォルダ%/", @"%切り替え用文字列%_差分_覗きセックス*.*")
-			RETURNF "覗きセックス"
+			RETURNF "엿보기 섹스"
 		ENDIF
 	CASE 2 ;Ａ性交
 		IF TCVAR:ARG:覗きバレ && ENUMFILES(@"resources/%CSTR:ARG:画像フォルダ%/", @"%切り替え用文字列%_差分_覗きバレＡセックス*.*")
-			RETURNF "覗きバレＡセックス"
+			RETURNF "들킨 엿보기 A섹스"
 		ELSEIF ENUMFILES(@"resources/%CSTR:ARG:画像フォルダ%/", @"%切り替え用文字列%_差分_覗きＡセックス*.*")
-			RETURNF "覗きＡセックス"
+			RETURNF "엿보기 A섹스"
 		ENDIF
 	CASEELSE ;奉仕
 		IF TCVAR:ARG:覗きバレ && ENUMFILES(@"resources/%CSTR:ARG:画像フォルダ%/", @"%切り替え用文字列%_差分_覗きバレ奉仕*.*")
-			RETURNF "覗きバレ奉仕"
+			RETURNF "들킨 엿보기 봉사"
 		ELSEIF ENUMFILES(@"resources/%CSTR:ARG:画像フォルダ%/", @"%切り替え用文字列%_差分_覗き奉仕*.*")
-			RETURNF "覗き奉仕"
+			RETURNF "엿보기 봉사"
 		ENDIF
 ENDSELECT
 
@@ -105,7 +111,7 @@ ENDIF
 ;Ｖ性交で画像がなければエフェクトを表示
 IF TCVAR:ARG:ゆきずりセックス_体位 == 1
 	SIF !ENUMFILES(@"resources/%CSTR:ARG:画像フォルダ%/", @"%切り替え用文字列%_差分_%体位%*.*")
-		差分エフェクト:1 '= "エフェクト_" + TYPE + "挿入"
+		差分エフェクト:0 '= "エフェクト_" + TYPE + "挿入"
 ENDIF
 
 
@@ -117,8 +123,13 @@ IF !TCVAR:ARG:ゆきずりセックス_絶頂値
 			SIF !ENUMFILES(@"resources/%CSTR:ARG:画像フォルダ%/", @"%切り替え用文字列%_差分_%体位%膣内射精*.*")
 				体位 = 膣内射精
 			;汎用画像もないならエフェクトを表示
-			SIF !ENUMFILES(@"resources/%CSTR:ARG:画像フォルダ%/", @"%切り替え用文字列%_差分_%体位%*.*")
-				差分エフェクト:2 '= "エフェクト_" + TYPE + "膣内射精"
+			IF !ENUMFILES(@"resources/%CSTR:ARG:画像フォルダ%/", @"%切り替え用文字列%_差分_%体位%*.*")
+				IF TALENT:ARG:妊娠 && PREGNANCY_SIZE(ARG) >= 2
+					差分エフェクト:0 '= "エフェクト_" + TYPE + "妊娠膣内射精"
+				ELSE
+					差分エフェクト:0 '= "エフェクト_" + TYPE + "膣内射精"
+				ENDIF
+			ENDIF
 				
 		CASE 2 ;Ａ性交
 			SIF !ENUMFILES(@"resources/%CSTR:ARG:画像フォルダ%/", @"%切り替え用文字列%_差分_%体位%腸内射精*.*")
@@ -135,7 +146,7 @@ IF !TCVAR:ARG:ゆきずりセックス_絶頂値
 						体位 = 口内射精
 					ELSE
 						;射精エフェクトを表示
-						差分エフェクト:2 '= "エフェクト_" + TYPE + "口内射精"
+						差分エフェクト:0 '= "エフェクト_" + TYPE + "口内射精"
 					ENDIF
 			ENDSELECT
 			

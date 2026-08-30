@@ -3,7 +3,7 @@
 ;-------------------------------------------------
 @COMNAME210
 #FUNCTIONS
-TSTR:コマンド名受渡 = 불러내다
+TSTR:コマンド名受渡 = 호출
 
 ;===================================================
 ;コマンドタイプ
@@ -13,10 +13,10 @@ TSTR:コマンド名受渡 = 불러내다
 TFLAG:コマンドタイプ受渡 = COMTYPE("単独可能_特殊プレイ")
 
 @COM_TOOLTIP_210
-LOCALS = <br>■불러내다<br>
-LOCALS += "[연모]나 [섹프]를 소지하고 있는 캐릭터를 이 장소로 불러내 성교를 하는 커맨드."
-LOCALS += "<br>성교 중에 추가로 불러낼 경우, 현재 성교 대상도 [연모]나 [섹프]를 소지하고 있어야 한다."
-LOCALS += "<br>COM 타입: 특수 플레이<br>획득 소스: 없음"
+LOCALS = <br>■호출<br>
+LOCALS += "[연모]나 [섹프]를 소지하고 있는 캐릭터를 이 장소로 불러내 성교섭을 하는 커맨드."
+LOCALS += "<br>성교섭 중에 추가로 불러낼 경우, 현재의 성교섭 대상도 [연모]나 [섹프]를 소지하고 있어야 한다."
+LOCALS += "<br>COM 타입：특수 플레이<br>취득 소스：없음"
 LOCALS += "<br>고유 획득 경험: 없음<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
@@ -49,7 +49,28 @@ ENDIF
 
 PRINTL
 DRAWLINE
-PRINTL 누구를 부르시겠어요?
+PRINTL 누구를 호출하시겠습니까?
+DRAWLINE
+PRINT 호출 이력:
+FOR LOCAL, 0, VARSIZE("呼び出し履歴")
+	SIF LOCAL > 0
+		PRINT  / 
+	IF 呼び出し履歴:LOCAL < 1
+		;履歴なし
+		PRINTPLAIN [------]
+	ELSEIF MATCH(TARGET, 呼び出し履歴:LOCAL)
+		;既に同室
+		SETCOLOR カラーパレット("グレーアウト")
+		PRINTPLAINFORM [%CALLNAME:(呼び出し履歴:LOCAL)%]
+		RESETCOLOR
+	ELSE
+		SIF MATCH(呼び出し対象, 呼び出し履歴:LOCAL)
+			SETCOLOR カラーパレット("黄")
+		PRINTBUTTON @"[%CALLNAME:(呼び出し履歴:LOCAL)%]", 1000 + LOCAL
+		RESETCOLOR
+	ENDIF
+NEXT
+PRINTL 
 DRAWLINE
 LOCAL:1 = 0
 ;キャラの表示
@@ -69,7 +90,7 @@ FOR LOCAL, (現在ページ * 表示人数), ((現在ページ * 表示人数) +
 	ELSEIF MAXBASE:(表示候補:LOCAL):体力 < BASE:(表示候補:LOCAL):体力 / 3
 		SETCOLOR カラーパレット("赤")
 	ENDIF
-	PRINTFORM 체력: {BASE:(表示候補:LOCAL):体力, 4} / {MAXBASE:(表示候補:LOCAL):体力, 4}　
+	PRINTFORM 체력：{BASE:(表示候補:LOCAL):体力, 4} / {MAXBASE:(表示候補:LOCAL):体力, 4}　
 	RESETCOLOR
 	; 性欲の状態に合わせて性欲の色を変更
 	IF BASE:(表示候補:LOCAL):性欲 > 2000
@@ -77,7 +98,7 @@ FOR LOCAL, (現在ページ * 表示人数), ((現在ページ * 表示人数) +
 	ELSEIF BASE:(表示候補:LOCAL):性欲 > 1000
 		SETCOLOR カラーパレット("薄ピンク")
 	ENDIF
-	PRINTFORM 성욕: {BASE:(表示候補:LOCAL):性欲, 4}　
+	PRINTFORM 성욕：{BASE:(表示候補:LOCAL):性欲, 4}　
 	RESETCOLOR
 	; 発情期表示
 	IF CFLAG:(表示候補:LOCAL):発情期フラグ < 0
@@ -95,11 +116,11 @@ FOR LOCAL, (現在ページ * 表示人数), ((現在ページ * 表示人数) +
 		PRINT 연모　
 		RESETCOLOR
 	ELSEIF TALENT:(表示候補:LOCAL):セフレ
-		PRINT 섹스 프렌드
+		PRINT 섹프
 	ELSE
 		PRINT 　　　
 	ENDIF
-	PRINTFORM 　　이미지 수: {CHAR_GRAPHIC_COUNT(表示候補:LOCAL, 0), 4}　　
+	PRINTFORM 　　이미지 수:{CHAR_GRAPHIC_COUNT(表示候補:LOCAL, 0), 4}　　
 	PRINTBUTTON "[이미지 상세]", 10000 + LOCAL
 	PRINTL
 NEXT
@@ -117,23 +138,23 @@ IF 表示候補:((現在ページ * 表示人数) + 表示人数) > 0
 ENDIF
 PRINTL 
 ;まとめて選択系ボタン
-PRINTBUTTONLC @"[995] 전원 선택", 995
+PRINTBUTTONLC @"[995] 모두 선택", 995
 PRINTBUTTONLC @"[994] 연모 캐릭터 선택", 994
-PRINTBUTTONLC @"[993] 섹스 프렌드 캐릭터 선택", 993
-PRINTBUTTONLC @"[992] 섹파 캐릭터 선택(연모 제외)", 992
+PRINTBUTTONLC @"[993] 섹프 캐릭터 선택", 993
+PRINTBUTTONLC @"[992] 섹프 캐릭터 선택(연모 제외)", 992
 PRINTL
 ;確定と選択解除ボタン
 IF 呼び出し人数
-	PRINTBUTTONLC @"[998] 이상 {呼び出し人数}명을 호출한다", 998
+	PRINTBUTTONLC @"[998] 이상 {呼び出し人数}명 호출", 998
 ELSE
 	SETCOLOR カラーパレット("グレーアウト")
-	PRINTFORMLC [---] 이상 {呼び出し人数}명을 호출한다
+	PRINTFORMLC [---] 이상 {呼び出し人数}명 호출
 	RESETCOLOR
 ENDIF
-PRINTBUTTONLC @"[996] 선택 전체 해제", 996
+PRINTBUTTONLC @"[996] 선택 모두 해제", 996
 ;PRINTBUTTONLC @"[997] 呼び出し可能キャラを全員呼び出す", 997
 PRINTL 
-PRINTBUTTONLC @"[999] 그만둔다", 999
+PRINTBUTTONLC "[999] 그만두기", 999
 
 BINPUT
 入力内容 = RESULT
@@ -143,6 +164,33 @@ SELECTCASE 入力内容
 	CASE IS >= 10000
 		CALL 所持画像詳細表示(表示候補:(入力内容 - 10000))
 		リスタートフラグ = 1
+	CASE IS >= 1000
+		;履歴から呼び出し
+		IF MATCH(表示候補, 呼び出し履歴:(入力内容 - 1000))
+			対象キャラ = 呼び出し履歴:(入力内容 - 1000)
+			IF MATCH(呼び出し対象, 対象キャラ)
+				FOR LOCAL, 0, VARSIZE("呼び出し対象")
+					IF 呼び出し対象:LOCAL == 対象キャラ
+						呼び出し対象:LOCAL = 0
+						呼び出し人数 --
+						BREAK
+					ENDIF
+				NEXT
+			ELSE
+				FOR LOCAL, 0, VARSIZE("呼び出し対象")
+					IF 呼び出し対象:LOCAL < 1
+						呼び出し対象:LOCAL = 対象キャラ
+						呼び出し人数 ++
+						BREAK
+					ENDIF
+				NEXT
+			ENDIF
+			リスタートフラグ = 1
+		ELSE
+			;呼び出し相手が今呼び出せない
+			PRINTFORMW %NAME:(呼び出し履歴:(入力内容 - 1000))%은(는) 지금 호출할 수 없습니다.
+			リスタートフラグ = 1
+		ENDIF
 	CASE 900
 		現在ページ = MAX(現在ページ - 1, 0)
 		リスタートフラグ = 1
@@ -169,12 +217,25 @@ SELECTCASE 入力内容
 			CFLAG:対象キャラ:同室 = 1
 			SIF RFLAG:コマンド結果受渡し変数 < 1
 				RFLAG:コマンド結果受渡し変数 = 対象キャラ
+			;呼び出し履歴に登録
+			IF MATCH(呼び出し履歴, 対象キャラ)
+				ARRAYREMOVE 呼び出し履歴, FINDELEMENT(呼び出し履歴, 対象キャラ), 1
+				ARRAYSHIFT 呼び出し履歴, 1, 対象キャラ
+			ELSE
+				ARRAYSHIFT 呼び出し履歴, 1, 対象キャラ
+			ENDIF
 		NEXT
 		SIF 呼び出し人数 > 1
 			RFLAG:コマンド結果受渡し変数２ = 1
 		;モード管理フラグを初期化
 		FLAG:モード管理 = 0
 		実行結果 = 0
+		;同室者のダウン後いたずらフラグを消しておく
+		FOR LOCAL, 1, CHARANUM
+			SIF TARGET:LOCAL < 1
+				BREAK
+			TCVAR:(TARGET:LOCAL):ダウン後いたずら = 0
+		NEXT
 	CASE 996
 		; 選択全解除
 		VARSET 呼び出し対象
@@ -266,6 +327,10 @@ RETURN 実行結果
 #DIM 候補数
 #DIM ループ用
 
+;基本イベント中は呼び出せない
+SIF FLAG:イベントうふふ中フラグ
+	RETURN 0
+
 配列長さ = VARSIZE("表示候補")
 候補数 = 0
 FOR ループ用, 1, CHARANUM
@@ -273,7 +338,7 @@ FOR ループ用, 1, CHARANUM
 	SIF CFLAG:ループ用:滞在期間 < 0
 		CONTINUE
 	;セフレでも恋慕でもないキャラは出さない
-	SIF !TALENT:ループ用:恋慕 && !TALENT:ループ用:セフレ
+	SIF !TALENT:ループ用:恋慕 && !TALENT:ループ用:セフレ && !TALENT:ループ用:疑似恋慕
 		CONTINUE
 	;睡眠中はアウト
 	SIF CFLAG:ループ用:睡眠
@@ -361,14 +426,14 @@ IF TALENT:セフレ
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += 7
-	PRINT 섹파(7)
+	PRINT 섹프(7)
 	＋表示フラグ = 1
 ENDIF
 ;ニーア
-IF TARGET == 64
+IF NO:TARGET == 64
 	PRINT  - 
 	実行値 -= 999
-	PRINT 니어(999)
+	PRINT ニーア(999)
 	＋表示フラグ = 1
 ENDIF
 
@@ -458,8 +523,8 @@ RETURN 0
 ;-------------------------------------------------
 @MESSAGE_COM210
 
-PRINTFORM %CALLNAME:PLAYER%는 %CALLNAME:(RFLAG:コマンド結果受渡し変数)%
+PRINTFORM %CALLNAME:PLAYER%은(는)%CALLNAME:(RFLAG:コマンド結果受渡し変数)%
 SIF RFLAG:コマンド結果受渡し変数２
 	PRINT 들
-PRINTL 을 불러냈다
+PRINTL 을(를) 불러냈다
 

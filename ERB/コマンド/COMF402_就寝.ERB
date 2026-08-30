@@ -11,9 +11,9 @@ TSTR:コマンド名受渡 = 취침
 TFLAG:コマンドタイプ受渡 = COMTYPE("単独可能")
 
 @COM_TOOLTIP_402
-LOCALS = <br>■就寝<br>
-LOCALS += "취침하고 다음 날로 넘어가는 커맨드.<br>기상 후 12시간 이상 경과했을 때 선택 가능."
-LOCALS += "<br>COM 타입: 단독 가능<br>획득 소스: 없음"
+LOCALS = <br>■취침<br>
+LOCALS += "취침하고, 다음 날로 넘어가는 커맨드. <br>기상 후 12시간 이상 경과했을 때 선택 가능."
+LOCALS += "<br>COM타입：단독가능<br>획득소스：없음"
 LOCALS += "<br>고유 획득 경험: 없음<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
@@ -66,10 +66,10 @@ SIF TARGET == 0
 
 IF CFLAG:MASTER:現在位置 == CFLAG:TARGET:現在位置
 	IF MODE_存在判定_完全一致("ハーヴィンオナホ系", PLAYER, TARGET)
-		PRINTFORML %CALLNAME:PLAYER%은 %CALLNAME:TARGET%와 이어진 채 잠들었다……
+		PRINTFORML %CALLNAME:PLAYER%은(는), %CALLNAME:TARGET%와(과) 이어진 채 잠이 들었다……
 	ELSEIF CFLAG:TARGET:睡眠
-		PRINTFORML %CALLNAME:PLAYER%은 %CALLNAME:TARGET%와 함께 잠들었다……
+		PRINTFORML %CALLNAME:PLAYER%은(는), %CALLNAME:TARGET%와(과) 함께 잠이 들었다……
 	ELSE
-		PRINTFORML %CALLNAME:PLAYER%은 %CALLNAME:TARGET%의 모습을 보면서 잠들었다……
+		PRINTFORML %CALLNAME:PLAYER%은(는), %CALLNAME:TARGET%의 모습을 보면서 잠이 들었다……
 	ENDIF
 ENDIF

@@ -2,22 +2,22 @@
 @敵BATTLE_STATE_Lv8_ゴブリンシールダー(対象エネミー)
 #DIM 対象エネミー
 敵BATTLE_STATE:対象エネミー:Lv = 9
-敵BATTLE_STATE:対象エネミー:최대HP = 430
+敵BATTLE_STATE:対象エネミー:最大ＨＰ = 430
 敵BATTLE_STATE:対象エネミー:ＨＰ = 430
-敵BATTLE_STATE:対象エネミー:공격력 = 320
-敵BATTLE_STATE:対象エネミー:방어력 = 450
-敵BATTLE_STATE:対象エネミー:회복력 = 200
-敵BATTLE_STATE:対象エネミー:행동속도 = 295
-敵BATTLE_STATE:対象エネミー:DA율 = 0
-敵BATTLE_STATE:対象エネミー:TA율 = 0
-敵BATTLE_STATE:対象エネミー:명중률 = 90
-敵BATTLE_STATE:対象エネミー:회피율 = 5
+敵BATTLE_STATE:対象エネミー:攻撃力 = 320
+敵BATTLE_STATE:対象エネミー:防御力 = 450
+敵BATTLE_STATE:対象エネミー:回復力 = 200
+敵BATTLE_STATE:対象エネミー:行動速度 = 295
+敵BATTLE_STATE:対象エネミー:DA率 = 0
+敵BATTLE_STATE:対象エネミー:TA率 = 0
+敵BATTLE_STATE:対象エネミー:命中率 = 90
+敵BATTLE_STATE:対象エネミー:回避率 = 5
 敵BATTLE_STATE:対象エネミー:属性 = 3
 敵BATTLE_STATE:対象エネミー:所持EXP = 84
 敵BATTLE_STATE:対象エネミー:所持ルピ = 95
 敵BATTLE_STATE:対象エネミー:最大チャージターン = 1
 
-敵BATTLE_STATE_STR:対象エネミー:種族 = 인간형_고블린
+敵BATTLE_STATE_STR:対象エネミー:種族 = 人型_ゴブリン
 
 @敵討伐後処理_Lv8_ゴブリンシールダー(隊列番号)
 #DIM 隊列番号
@@ -47,8 +47,8 @@ IF GETBIT(敵BATTLE_STATE:(戦闘行動キャラ - 10):トリガー行動フラ�
 
 	CALL アビ対象選択テンプレート_自己のみ
 	アビ汎用変数:持続行動回数 = 2
-	アビ汎用文字列:バフ・デバフ枠 = 단일 감싸기
-	アビ汎用文字列:バフ・デバフ対象能力 = 단일 감싸기
+	アビ汎用文字列:バフ・デバフ枠 = 単体かばう
+	アビ汎用文字列:バフ・デバフ対象能力 = 単体かばう
 	CALL アビテンプレート_有利効果_バフ効果セット
 
 	;トリガー使い終わったのでフラグを立てる

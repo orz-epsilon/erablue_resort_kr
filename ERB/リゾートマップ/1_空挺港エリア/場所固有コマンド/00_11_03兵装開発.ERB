@@ -17,7 +17,7 @@ TFLAG:コマンドタイプ受渡 = COMTYPE("単独可能")
 @COM_TOOLTIP_382_1_11
 LOCALS = <br>■병장 개발<br>
 LOCALS += "새로운 탑승기 또는 탑재 병기를 설계하는 커맨드. 그 자리에 캐릭터가 있다면 모두와 함께 설계한다."
-LOCALS += "<br>충분한 진척과 영감이 있다면 새로운 설계도를 획득할 수 있다."
+LOCALS += "<br>충분한 진척과 번뜩임이 있다면 새로운 설계도를 획득할 수 있다."
 LOCALS += "<br>COM 타입: 단독 가능<br>획득 소스: 환락・정복(일정 조건 시)"
 LOCALS += "<br>고유 획득 경험: 없음<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
@@ -128,7 +128,7 @@ SIF RFLAG:コマンド結果受渡し変数 == 0
 	RETURN
 
 IF TARGET > 0
-	PRINTFORML %CALLNAME:PLAYER%은(는)%CALLNAME:TARGET%\@ GET_TARGETNUM() > 1 ? 들 # \@과 신병장 개발을 했다
+	PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%\@ GET_TARGETNUM() > 1 ? 들 # \@과 신병장 개발을 했다
 
 	SELECTCASE RFLAG:コマンド結果受渡し変数
 		CASE -1
@@ -146,26 +146,26 @@ IF TARGET > 0
 				CASE IS < 兵装開発_案出し
 					PRINTFORML %CALLNAME:TARGET%\@ GET_TARGETNUM() > 1 ? 들 # \@은(는), 즐거운 듯 여러 아이디어를 내고 있다…
 				CASE IS < 兵装開発_仕様決め
-					PRINTFORML \@ GET_TARGETNUM() > 1 ? 모두 # 두 사람 \@이 낸 아이디어를 바탕으로, 구체적인 병장안을 확정했다…
+					PRINTFORML \@ GET_TARGETNUM() > 1 ? 모두 # 둘 \@이 낸 아이디어를 바탕으로, 구체적인 병장안을 확정했다…
 				CASEELSE
-					PRINTFORML %CALLNAME:TARGET%\@ GET_TARGETNUM() > 1 ? 들 # \@은(는), 진지한 표정으로 병장안을 설계도에 담고 있다…
+					PRINTFORML %CALLNAME:TARGET%\@ GET_TARGETNUM() > 1 ? 들 # \@은(는), 진지한 표정으로 병장안을 설계도에 옮기고 있다…
 			ENDSELECT
 		CASE 2
 			;完成
-			PRINTFORML \@ GET_TARGETNUM() > 1 ? 모두 # 두 사람 \@의 힘으로, 새로운 병장 「%RSTR:コマンド結果受渡し文字列%」의 설계도가 완성되었다!
+			PRINTFORML \@ GET_TARGETNUM() > 1 ? 모두 # 둘 \@의 힘으로, 새로운 병장 「%RSTR:コマンド結果受渡し文字列%」의 설계도가 완성되었다!
 	ENDSELECT
 ELSE
-	PRINTFORML %CALLNAME:PLAYER%은(는) 새로운 병장 개발을 했다
+	PRINTFORML %CALLNAME:PLAYER%은(는) 신병장 개발을 했다
 
 	SELECTCASE RFLAG:コマンド結果受渡し変数
 		CASE -1
 			;うまくいかなかった
 			IF 兵装開発_進捗 > 0
 				PRINTL 하지만, 진척은 좋지 않았다
-				PRINTL 조금 더 기계나 마법에 능통한 인물에게 도움을 받는 편이 좋을지도 모른다…
+				PRINTL 조금 더 기계나 마법에 정통한 인물의 도움을 받는 편이 좋을지도 모른다…
 			ELSE
 				PRINTL 하지만, 좋은 아이디어가 떠오르지 않았다
-				PRINTL 재미있는 아이디어가 있을 법한 인물을 찾는 편이 좋을지도 모른다…
+				PRINTL 재미있는 아이디어가 있을 법한 인물을 찾아보는 편이 좋을지도 모른다…
 			ENDIF
 		CASE 1
 			;設計中
@@ -173,7 +173,7 @@ ELSE
 				CASE IS < 兵装開発_案出し
 					PRINTL 여러 가지 아이디어가 떠올랐다가 사라져 갔다…
 				CASE IS < 兵装開発_仕様決め
-					PRINTL 이것이다, 라는 아이디어를 바탕으로, 구체적인 병장안을 굳혀 나갔다…
+					PRINTL 이것이다, 싶은 아이디어를 바탕으로, 구체적인 병장안을 확정해 나갔다…
 				CASEELSE
 					PRINTFORML %CALLNAME:PLAYER%은(는) 집중해서 병장안의 제도를 진행했다…
 			ENDSELECT

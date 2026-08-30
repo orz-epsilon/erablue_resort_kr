@@ -73,27 +73,27 @@ IF OPTION変数:MODE全表示フラグ != 3
 
 		SETCOLOR カラーパレット("えっちな色")
 		IF DT_CELL_GET("体位モードデータベース", 配列番号, "弱点フラグ")
-PRINT 약
+			PRINT 약
 			PRINT_IMG "えっちハート"
 		ENDIF
 		IF 系統リスト_アイテム系(実行モード名)
-PRINTFORM [%CALLNAME:対象キャラ番号%이(가)%実行モード名%장착 중
+			PRINTFORM [%CALLNAME:対象キャラ番号%이(가)%実行モード名% 장착 중
 		ELSEIF 系統リスト_触手系(実行モード名)
-PRINTFORM [촉수가%CALLNAME:対象キャラ番号%에%実行モード名%중
+			PRINTFORM [촉수가%CALLNAME:対象キャラ番号%에%実行モード名% 중
 		ELSEIF 系統リスト_自慰系(実行モード名)
-PRINTFORM [%CALLNAME:対象キャラ番号%이(가)%実行モード名%중
+			PRINTFORM [%CALLNAME:対象キャラ番号%이(가)%実行モード名% 중
 		ELSE
 			IF TFLAG:調教モード == 2 && 実行モード名 == "肩組み乳揉み"
 				PRINTFORM [%CALLNAME:実行キャラ番号%이(가)%CALLNAME:対象キャラ番号%에게 가슴 주무르는 중
 			ELSE
-				PRINTFORM [%CALLNAME:実行キャラ番号%이(가)%CALLNAME:対象キャラ番号%에게%実行モード名%중
+				PRINTFORM [%CALLNAME:実行キャラ番号%이(가)%CALLNAME:対象キャラ番号%에%実行モード名% 중
 			ENDIF
 		ENDIF
 		PRINT_IMG "えっちハート"
 		PRINT ]
 		RESETCOLOR
 		IF 系統リスト_ハーヴィンオナホ系(実行モード名) == 0 && 実行モード名 != "全裸散歩"
-PRINTBUTTON "[✕]", @"モード中断_{配列番号受け渡し}"
+			PRINTBUTTON "[✕]", @"モード中断_{配列番号受け渡し}"
 		ENDIF
 		CALL MODE詳細設定表示処理(対象キャラ番号, 実行モード名, 実行キャラ番号)
 		PRINTL 
@@ -102,7 +102,7 @@ ENDIF
 
 IF 表示上限 < DT_ROW_LENGTH("体位モードデータベース")
 	IF OPTION変数:MODE全表示フラグ == 0
-		PRINTFORM 외{モード数カウント - 表示上限, 2}건　　
+		PRINTFORM 그 외{モード数カウント - 表示上限, 2}건　　
 		PRINTBUTTON "[전체 표시]", "モード全表示"
 		PRINT / 
 		PRINTBUTTON "[PLAYER와 TARGET만 표시]", "モード制限表示"
@@ -126,7 +126,7 @@ IF 表示上限 < DT_ROW_LENGTH("体位モードデータベース")
 	ELSE
 		PRINTBUTTON "[전체 표시]", "モード全表示"
 		PRINT / 
-		PRINTBUTTON "[PLAYER와 TARGET만 표시]", "モード省略表示"
+		PRINTBUTTON "[PLAYER와 TARGET만 표시]", "モード制限表示"
 		PRINT / 
 		PRINTBUTTON "[생략 표시]", "モード省略表示"
 		PRINTL
@@ -135,7 +135,7 @@ ELSEIF モード数カウント > 0
 	IF OPTION変数:MODE全表示フラグ == 3
 		PRINTBUTTON "[전체 표시]", "モード全表示"
 		PRINT / 
-		PRINTBUTTON "[PLAYER와 TARGET만 표시]", "モード省略表示"
+		PRINTBUTTON "[PLAYER와 TARGET만 표시]", "モード制限表示"
 		PRINT / 
 		PRINTBUTTON "[생략 표시]", "モード省略表示"
 		PRINTL
@@ -154,7 +154,7 @@ ENDIF
 
 IF 実行キャラ番号 == PLAYER
 	IF MODE系統確認(体位モード, "Ｖ挿入系")
-		PRINT 　　V삽입 강도:
+		PRINT 　　Ｖ삽입 강도:
 		PRINTBUTTON "[-]", @"MODE詳細設定処理_V挿入強さ_{対象キャラ番号}_下降"
 		FOR LOCAL, 0, 6
 			IF V挿入強さ:対象キャラ番号:0 >= LOCAL
@@ -165,7 +165,7 @@ IF 実行キャラ番号 == PLAYER
 		NEXT
 		PRINTBUTTON "[+]", @"MODE詳細設定処理_V挿入強さ_{対象キャラ番号}_上昇"
 		PRINT 　　
-		PRINT V삽입 속도:
+		PRINT Ｖ삽입 속도：
 		PRINTBUTTON "[-]", @"MODE詳細設定処理_V挿入速さ_{対象キャラ番号}_下降"
 		FOR LOCAL, 0, 6
 			IF V挿入速さ:対象キャラ番号:0 >= LOCAL
@@ -177,7 +177,7 @@ IF 実行キャラ番号 == PLAYER
 		PRINTBUTTON "[+]", @"MODE詳細設定処理_V挿入速さ_{対象キャラ番号}_上昇"
 	ENDIF
 	IF MODE系統確認(体位モード, "Ａ挿入系")
-		PRINT 　　A 삽입 강도:
+		PRINT 　　Ａ삽입 강도：
 		PRINTBUTTON "[-]", @"MODE詳細設定処理_A挿入強さ_{対象キャラ番号}_下降"
 		FOR LOCAL, 0, 6
 			IF A挿入強さ:対象キャラ番号:0 >= LOCAL
@@ -188,7 +188,7 @@ IF 実行キャラ番号 == PLAYER
 		NEXT
 		PRINTBUTTON "[+]", @"MODE詳細設定処理_A挿入強さ_{対象キャラ番号}_上昇"
 		PRINT 　　
-		PRINT A 삽입속도:
+		PRINT Ａ삽입 속도：
 		PRINTBUTTON "[-]", @"MODE詳細設定処理_A挿入速さ_{対象キャラ番号}_下降"
 		FOR LOCAL, 0, 6
 			IF A挿入速さ:対象キャラ番号:0 >= LOCAL
@@ -201,7 +201,7 @@ IF 実行キャラ番号 == PLAYER
 	ENDIF
 ELSE
 	IF MODE系統確認(体位モード, "Ｖ挿入系")
-		PRINT 　　V 삽입 강도:   
+		PRINT 　　Ｖ삽입 강도：   
 		FOR LOCAL, 0, 6
 			IF V挿入強さ:対象キャラ番号:0 >= LOCAL
 				PRINT ■
@@ -210,7 +210,7 @@ ELSE
 			ENDIF
 		NEXT
 		PRINT 　   　
-		PRINT V 삽입 속도：   
+		PRINT Ｖ삽입 속도：   
 		FOR LOCAL, 0, 6
 			IF V挿入速さ:対象キャラ番号:0 >= LOCAL
 				PRINT ■
@@ -220,7 +220,7 @@ ELSE
 		NEXT
 	ENDIF
 	IF MODE系統確認(体位モード, "Ａ挿入系")
-		PRINT 　　A 삽입 강도：   
+		PRINT 　　Ａ삽입 강도：   
 		FOR LOCAL, 0, 6
 			IF A挿入強さ:対象キャラ番号:0 >= LOCAL
 				PRINT ■
@@ -229,7 +229,7 @@ ELSE
 			ENDIF
 		NEXT
 		PRINT 　   　
-		PRINT A 삽입 속도：   
+		PRINT Ａ삽입 속도：   
 		FOR LOCAL, 0, 6
 			IF A挿入速さ:対象キャラ番号:0 >= LOCAL
 				PRINT ■
@@ -241,7 +241,7 @@ ELSE
 ENDIF
 IF 実行キャラ番号 == PLAYER || 対象キャラ番号 == PLAYER
 	IF 系統リスト_アイテム系(体位モード) && 体位モード != "アナルビーズ" && 体位モード != "ペニスバンド"
-		PRINTFORM 　　%体位モード% 강도：
+		PRINTFORM 　　%体位モード%강도：
 		PRINTBUTTON "[-]", @"MODE詳細設定処理_%体位モード%強さ_{対象キャラ番号}_下降"
 		判定数値保存 = GETVAR(@"%体位モード%強さ:{対象キャラ番号}:0")
 		FOR LOCAL, 0, 6
@@ -255,7 +255,7 @@ IF 実行キャラ番号 == PLAYER || 対象キャラ番号 == PLAYER
 	ENDIF
 ELSE
 	IF 系統リスト_アイテム系(体位モード) && 体位モード != "アナルビーズ" && 体位モード != "ペニスバンド"
-		PRINTFORM 　　%体位モード% 강도：   
+		PRINTFORM 　　%体位モード%강도：   
 		判定数値保存 = GETVAR(@"%体位モード%強さ:{対象キャラ番号}:0")
 		FOR LOCAL, 0, 6
 			IF 判定数値保存 >= LOCAL
@@ -300,7 +300,7 @@ ELSEIF STRCOUNT(入力値, "モード中断_") > 0
 	対象キャラ番号 = DT_CELL_GET("体位モードデータベース", モードID, "対象キャラ", 1)
 	
 	IF モード名 == "ディープキス" && 連れ込みパターン != "" && 対象キャラ番号 == MASTER
-		PRINTFORMW %CALLNAME:(実行キャラ番号)%이(가) 놓아주지 않아…
+		PRINTFORMW %CALLNAME:(実行キャラ番号)%이(가) 놓아주지 않는다…
 		RETURN 1
 	ENDIF
 	
@@ -323,7 +323,7 @@ ELSEIF STRCOUNT(入力値, "モード中断_") > 0
 	TARGET = LOCAL
 	TFLAG:コマンド条件制御用 = 0
 	IF !RESULT
-		PRINTFORMW 이 복장으로는 벗을 수 없어…
+		PRINTFORMW 이 복장으로는 벗을 수 없다…
 		RETURN 1
 	ENDIF
 	

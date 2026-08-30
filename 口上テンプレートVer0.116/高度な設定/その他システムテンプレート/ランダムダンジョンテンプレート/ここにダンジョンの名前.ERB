@@ -294,14 +294,14 @@ ELSE
 	KSTR:(K++) = 通路の見通しもよく、警戒を緩めて一息付けそうだ。
 	WSTR:(K++) = 少し休憩していきますか？
 	KSTR:(K++) = （PTメンバー全回復・ダンジョンを一度出るまで消滅）
-	KSTR:(K++) = BUTTON_[はい]
-	KSTR:(K++) = BUTTON_[いいえ]
+	KSTR:(K++) = BUTTON_[예]
+	KSTR:(K++) = BUTTON_[아니요]
 	CALL メッセージ欄表示用関数(,,,0)
 	CALL 口上変数初期化
 	$LOOP_MESSAGE
 	INPUTS
 	SELECTCASE RESULTS
-		CASE "[はい]"
+		CASE "[예]"
 			KSTR:(K++) = %CALLNAME:PLAYER%たちは休息をとり、体力を回復した！
 			CALL メッセージ欄表示用関数()
 			ランダムダンジョン配列:(ダンジョン現在位置:0):(ダンジョン現在位置:1):イベント状態 = 休息済
@@ -312,7 +312,7 @@ ELSE
 				BATTLE_STATE:LOCAL:ＨＰ = BATTLE_STATE:LOCAL:最大ＨＰ
 				BATTLE_STATE:LOCAL:ＭＰ = BATTLE_STATE:LOCAL:最大ＭＰ
 			NEXT
-		CASE "[いいえ]"
+		CASE "[아니요]"
 			KSTR:(K++) = まだ休憩するほど疲れてはいない。先に進もう。
 			CALL メッセージ欄表示用関数()
 		CASEELSE

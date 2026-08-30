@@ -16,7 +16,7 @@ TFLAG:コマンドタイプ受渡 = COMTYPE("セクハラ")
 
 @COM_TOOLTIP_358
 LOCALS = <br>■삽입 걷기<br>
-LOCALS += "이미 합의를 얻은 상대를 V, 혹은 A에 삽입한 채 행동할 수 있도록 하는 커맨드。<br>같은 방에 있는 사람이 모두 함락된 경우에만 가능하지만, 함께 은밀 행동 중일 때는 같은 장소에 함락되지 않은 캐릭터가 있어도 가능。"
+LOCALS += "이미 합의를 얻은 상대를 V, 혹은 A에 삽입한 채 행동할 수 있게 하는 커맨드. <br>동실자가 전원 함락된 시에만 가능하지만, 함께 은밀 시에는 같은 장소에 비함락 캐릭터가 있어도 가능."
 LOCALS += "<br>COM 타입: 성희롱<br>획득 소스: 없음"
 LOCALS += "<br>고유 획득 경험: 없음<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
@@ -44,7 +44,7 @@ PRINTL
 LOCAL = 0
 IF GETBIT(TALENT:TARGET:性別, 0) == 1 && TALENT:TARGET:Ｖ感度 != -2
 	IF TEQUIP:TARGET:膣 == 0
-		LOCALS = V 삽입
+		LOCALS = Ｖ삽입
 		SIF TALENT:TARGET:処女
 			LOCALS += "（처녀）"
 		PRINTBUTTONLC @"[1] %LOCALS%", 1
@@ -53,9 +53,9 @@ IF GETBIT(TALENT:TARGET:性別, 0) == 1 && TALENT:TARGET:Ｖ感度 != -2
 ENDIF
 IF TALENT:TARGET:Ａ感度 != -2
 	IF TEQUIP:TARGET:アナル == 0
-		LOCALS = A 삽입
+		LOCALS = Ａ삽입
 		SIF TALENT:TARGET:Ａ処女
-			LOCALS += "（A 처녀）"
+			LOCALS += "（Ａ처녀）"
 		PRINTBUTTONLC @"[2] %LOCALS%", 2
 		LOCAL += 1
 	ENDIF
@@ -180,7 +180,7 @@ ENDIF
 
 IF MODE_存在判定_完全一致("ハーヴィンオナホ系", PLAYER, TARGET)
 	;実行時
-	PRINTFORM %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%을(를) 전라로 벗기고, 뒤를 돌게 하여
+	PRINTFORM %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%을(를) 전라로 벗기고 뒤를 돌려세워
 	SELECTCASE RFLAG:コマンド結果受渡し変数
 		CASE 1
 			PRINTL 비열에 삽입했다
@@ -190,5 +190,5 @@ IF MODE_存在判定_完全一致("ハーヴィンオナホ系", PLAYER, TARGET)
 	PRINTFORML 더욱이 삽입한 채로, 다른 작업을 시작했다……
 ELSE
 	;解除時
-	PRINTFORML %CALLNAME:PLAYER%은(는) 삽입하고 있던 %CALLNAME:TARGET%을(를) 해방했다.
+PRINTFORML %CALLNAME:PLAYER%은(는) 삽입했던 %CALLNAME:TARGET%을(를) 해방했다.
 ENDIF

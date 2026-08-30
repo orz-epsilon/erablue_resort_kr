@@ -53,7 +53,7 @@
 $表示_LOOP
 
 LOCALS = <div rect='200,0,5662,500' border='31' bcolor='#C0C0C0' padding='50,25,50'>
-LOCALS += "전환할 편성을 선택해 주세요.<br>"
+LOCALS += "전환한다편성을 선택해주세요。<br>"
 LOCALS += "<br>"
 LOCALS += "　　　　　　　　　　　　　　　　　　　　　　　　　　　　<button value='998'>[998] 다른 편성을 복사</button>　　<button value='999'>[999] 돌아가기</button>"
 LOCALS += "</div>"
@@ -296,7 +296,7 @@ HTML_PRINT LOCALS
 
 表示id = 編成セット記録配列:編成番号:編成乗機番号
 
-PRINT 탑승기:
+PRINT 탑승기：
 IF DT_SELECT("所持乗機データベース", @"id = {表示id}")
 	PRINTFORML %DT_CELL_GETS("所持乗機データベース", 表示id, "乗機名", 1)%
 	FOR 表示アビ番号, 0, 6
@@ -304,7 +304,7 @@ IF DT_SELECT("所持乗機データベース", @"id = {表示id}")
 			PRINTL
 		SIF 編成セット記録配列:編成番号:(2 + 表示アビ番号) == -1
 			CONTINUE
-		PRINTFORM 무장{表示アビ番号}:
+		PRINTFORM 무장{表示アビ番号}：
 		IF 編成セット記録配列:編成番号:(2 + 表示アビ番号) == -2
 			TRYCALLFORM 乗機兵装関数_%DT_CELL_GETS("所持乗機データベース", 表示id, "乗機名", 1)%_{表示アビ番号}("アビ名")
 			PRINTFORM %TSTR:コマンド名受渡 + "(固有武装)", 20, LEFT%

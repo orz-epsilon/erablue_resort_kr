@@ -16,9 +16,9 @@ PRINTL
 PRINTL 【디버그용】이미지 파일명 체크
 PRINTL 　※ png 파일은 체크되지 않습니다.
 PRINTL
-PRINTL 처리 시간이 오래 걸리는데 실행하시겠습니까?
+PRINTL 처리에 시간이 걸리지만 실행하시겠습니까?
 PRINTBUTTONLC "[0] 예", 0
-PRINTBUTTONLC "[1] 아니요", 1
+PRINTBUTTONLC "[1] 아니오", 1
 BINPUT
 SIF RESULT == 1
 	RETURN
@@ -67,7 +67,7 @@ PRINTL
 PRINTL 결과를 파일로 출력하시겠습니까?
 PRINTL
 PRINTBUTTONLC "[0] 예", 0
-PRINTBUTTONLC "[1] 아니요", 1
+PRINTBUTTONLC "[1] 아니오", 1
 BINPUT
 SIF RESULT == 1
 	RETURN
@@ -251,11 +251,12 @@ ENDIF
 ; 対象フォルダが切り替わったらキャラ固有の要素を更新
 IF FOLDER_NAME != FOLDER_NAME_NOW
 	REGEX_衣装名 '= REGEX_衣装名_BASE
-	REGEX_衣装名 += "|" + デバッグ用_GET_REGEX_キャラ固有設定("의상", FOLDER_NAME)
+	REGEX_衣装名 += "|" + デバッグ用_GET_REGEX_キャラ固有設定("衣装", FOLDER_NAME)
 	REGEX_差分名 '= REGEX_差分名_BASE
-	REGEX_差分名 += "|" + デバッグ用_GET_REGEX_キャラ固有設定("차분", FOLDER_NAME)
+	REGEX_差分名 += "|" + デバッグ用_GET_REGEX_キャラ固有設定("差分", FOLDER_NAME)
 	FOLDER_NAME_NOW '= FOLDER_NAME
 ENDIF
+
 
 ;- 正規表現でパターンと一致するかチェック
 ; まとめてやろうとするとパターンテキストが煩雑になるので分けてチェックする
@@ -266,12 +267,18 @@ REGEX_TEXT '= @"(顔|短冊)_(妊娠)?(%REGEX_衣装名%)[0-9]*(_差分_(%REGEX_
 SIF FINDELEMENT(FILE_NAME, REGEX_TEXT, , , 1) > -1
 	RETURNF 1
 
-; ダンジョン衣装
-; ・顔_ダンジョン衣装.webp、顔_ダンジョン衣装_差分_表情.webp等
-; 　ダンジョン衣装は使用できる差分が「表情」「欲情」「奥義ゲージMAX」の三種類のみ
-REGEX_TEXT '= @"(顔|短冊)_(妊娠)?ダンジョン衣装(_差分_(表情|欲情|奥義ゲージMAX)[0-9]*)?\.webp"
+; 全裸
+; ・顔_全裸.webp、顔_全裸（おしゃれ着）.webp等
+REGEX_TEXT '= @"(顔|短冊)_(妊娠)?全裸(（(%REGEX_衣装名%)）)?(_差分_(%REGEX_差分名%)[0-9]*)?\.webp"
 SIF FINDELEMENT(FILE_NAME, REGEX_TEXT, , , 1) > -1
 	RETURNF 1
+
+; ダンジョン衣装は無くなった（固有衣装の1種類になった）ため廃止
+; ・顔_ダンジョン衣装.webp、顔_ダンジョン衣装_差分_表情.webp等
+; 　ダンジョン衣装は使用できる差分が「表情」「欲情」「奥義ゲージMAX」の三種類のみ
+;REGEX_TEXT '= @"(顔|短冊)_(妊娠)?ダンジョン衣装(_差分_(表情|欲情|奥義ゲージMAX)[0-9]*)?\.webp"
+;SIF FINDELEMENT(FILE_NAME, REGEX_TEXT, , , 1) > -1
+;	RETURNF 1
 
 ; 水着特殊差分
 ; ・顔_水着-ビキニ-.webp、顔_水着-ビキニ-0_差分_表情.webp等
@@ -322,6 +329,8 @@ IF リスト名 == "衣装名定義"
 
 	リスト結合テキスト = デフォルト|おしゃれ着
 	FOR L_CNT, 0, ENUMFUNCBEGINSWITH("CLOTHES_CHANGE_")
+		SIF STRCOUNT(RESULTS:L_CNT, "湯上がり")
+			CONTINUE
 		リスト結合テキスト += @"|%接頭テキスト%%REPLACE(RESULTS:L_CNT, "CLOTHES_CHANGE_", "")%%接尾テキスト%"
 	NEXT
 ELSE
@@ -600,7 +609,7 @@ FOR L_CNT, 0, VARSIZE("ERR_LIST_FOLDER", 1)
 		SAVE_TEXT_DATA += @"합계:{ERR_CNT:L_CNT}건\n"
 		; エラー件数が多すぎてリストサイズをオーバーしていた場合の注意書き
 		SIF ERR_CNT:L_CNT >= LIST_CNT_MAX
-			SAVE_TEXT_DATA += @"※ 건수가 많으므로{LIST_CNT_MAX}건만 출력하고 있습니다\n"
+			SAVE_TEXT_DATA += @"※ 항목 수가 많으므로 {LIST_CNT_MAX}건만 출력합니다\n"
 		; 最後以外は余白を追加
 		SIF L_CNT != (VARSIZE("ERR_LIST_FOLDER", 1) - 1)
 			SAVE_TEXT_DATA += "\n"
@@ -807,7 +816,7 @@ NEXT
 ARRAYMSORT 誤フォルダ番号リスト, 誤フォルダ名リスト, 正フォルダ名リスト
 ; 誤フォルダ名と誤フォルダ名をセットで記憶
 FOR L_CNT, 0, 誤フォルダ件数
-	ERR_TEXT '= @"%誤フォルダ名リスト:L_CNT, 誤フォルダ名長, LEFT%　候補:%正フォルダ名リスト:L_CNT%"
+	ERR_TEXT '= @"%誤フォルダ名リスト:L_CNT, 誤フォルダ名長, LEFT%　후보:%正フォルダ名リスト:L_CNT%"
 	CALL デバッグ用_エラー画像情報管理("フォルダ名エラー", ERR_TEXT)
 NEXT
 

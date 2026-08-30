@@ -129,7 +129,7 @@ SELECTCASE 選択兵器番号
 		;乗機と兵器両方に互いのidを突っ込む
 		DT_CELL_SET "所持兵器データベース", 表示用ステータス格納配列:選択兵器番号:0, "装備乗機id", 対象乗機id, 1
 		DT_CELL_SET "所持乗機データベース", 対象乗機id, @"武装{武装番号}", @"{表示用ステータス格納配列:選択兵器番号:0}", 1
-		PRINTFORMW %DT_CELL_GETS("所持乗機データベース", 対象乗機id, "乗機名", 1)%의 무장%TOFULL(TOSTR(武装番号))%에 %DT_CELL_GETS("所持兵器データベース", 表示用ステータス格納配列:選択兵器番号:0, "兵器名", 1)%을(를) 장비했습니다.
+		PRINTFORMW %DT_CELL_GETS("所持乗機データベース", 対象乗機id, "乗機名", 1)%의 무장%TOFULL(TOSTR(武装番号))%에%DT_CELL_GETS("所持兵器データベース", 表示用ステータス格納配列:選択兵器番号:0, "兵器名", 1)%을(를) 장비했습니다.
 	CASE IS < 1000
 		;詳細表示
 		選択兵器番号 -= 500
@@ -152,10 +152,10 @@ SELECTCASE 選択兵器番号
 		LOCALS += @"%詳細文文字列受け渡し変数%<br>"
 		IF DT_CELL_GET("所持兵器データベース", 表示用ステータス格納配列:選択兵器番号:0, "装備乗機id", 1) > 0
 			id一時保存 = DT_CELL_GET("所持兵器データベース", 表示用ステータス格納配列:選択兵器番号:0, "装備乗機id", 1)
-			LOCALS += @"<br>승기：%DT_CELL_GETS("所持乗機データベース", id一時保存, "乗機名", 1)%의"
+			LOCALS += @"<br>탑승기：%DT_CELL_GETS("所持乗機データベース", id一時保存, "乗機名", 1)%의"
 			FOR LOCAL, 0, 6
 				IF ISNUMERIC(DT_CELL_GETS("所持乗機データベース", id一時保存, @"武装{LOCAL}", 1)) && 表示用ステータス格納配列:選択兵器番号:0 == TOINT(DT_CELL_GETS("所持乗機データベース", id一時保存, @"武装{LOCAL}", 1))
-					LOCALS += @"무장%TOFULL(TOSTR(LOCAL))%에 장비 중<br>"
+LOCALS += @"무장%TOFULL(TOSTR(LOCAL))%에 장비 중<br>"
 					BREAK
 				ENDIF
 			NEXT
@@ -247,7 +247,7 @@ FOR LOCAL, 0, DT_ROW_LENGTH("所持兵器データベース")
 		CASE 1
 			LOCALS += "　탐색"
 		CASE 2
-			LOCALS += "　ＣＴ"
+			LOCALS += "　CT"
 	ENDSELECT
 	LOCALS += @"{DT_CELL_GET("所持兵器データベース", ソート後配列:LOCAL, "残弾数", 1), 6}"
 	IF STRLENS(DT_CELL_GETS("所持兵器データベース", ソート後配列:LOCAL, "兵器カテゴリ", 1)) > 8
@@ -300,7 +300,7 @@ IF 対象乗機id > 0
 			CASE 1
 				LOCALS += "　탐색"
 			CASE 2
-				LOCALS += "　ＣＴ"
+				LOCALS += "　CT"
 		ENDSELECT
 		LOCALS += @"{DT_CELL_GET("所持兵器データベース", ソート後配列_装備不可:LOCAL, "残弾数", 1), 6}"
 		IF STRLENS(DT_CELL_GETS("所持兵器データベース", ソート後配列_装備不可:LOCAL, "兵器カテゴリ", 1)) > 8
@@ -470,13 +470,13 @@ SELECTCASE 選択兵器番号
 		TRYCALLFORM 搭載兵器関数_%DT_CELL_GETS("所持兵器データベース", 表示id, "兵器名", 1)%("フレーバー", 表示id)
 		LOCALS += @"%詳細文文字列受け渡し変数%<br>"
 
-		LOCALS += @"카테고리:%DT_CELL_GETS("所持兵器データベース", 表示id, "兵器カテゴリ", 1), 6%　　거리 적성:%DT_CELL_GETS("所持兵器データベース", 表示id, "兵器距離適性", 1)%<br>"
-		LOCALS += @"공격 보정:{DT_CELL_GET("所持兵器データベース", 表示id, "攻撃力補正_強化後", 1), 6}　　명중 보정:{DT_CELL_GET("所持兵器データベース", 表示id, "命中率補正_強化後", 1), 4}<br>"
-		LOCALS += @"공격 변동:{DT_CELL_GET("所持兵器データベース", 表示id, "攻撃力変動値_強化後", 1), 6}　　명중 변동:{DT_CELL_GET("所持兵器データベース", 表示id, "命中率変動値_強化後", 1), 4}<br>"
+		LOCALS += @"카테고리：%DT_CELL_GETS("所持兵器データベース", 表示id, "兵器カテゴリ", 1), 6%　　거리 적성：%DT_CELL_GETS("所持兵器データベース", 表示id, "兵器距離適性", 1)%<br>"
+		LOCALS += @"공격 보정：{DT_CELL_GET("所持兵器データベース", 表示id, "攻撃力補正_強化後", 1), 6}　　명중 보정：{DT_CELL_GET("所持兵器データベース", 表示id, "命中率補正_強化後", 1), 4}<br>"
+		LOCALS += @"공격 변동：{DT_CELL_GET("所持兵器データベース", 表示id, "攻撃力変動値_強化後", 1), 6}　　명중 변동：{DT_CELL_GET("所持兵器データベース", 表示id, "命中率変動値_強化後", 1), 4}<br>"
 		IF DT_CELL_GET("所持兵器データベース", 表示id, "残弾種別", 1) < 2
-			LOCALS += @"잔탄 종류:%残弾種別名:(DT_CELL_GET("所持兵器データベース", 表示id, "残弾種別", 1))%　　　잔탄 수:{DT_CELL_GET("所持兵器データベース", 表示id, "残弾数_強化後", 1), 4}<br>"
+			LOCALS += @"잔탄 종류：%残弾種別名:(DT_CELL_GET("所持兵器データベース", 表示id, "残弾種別", 1))%　　　잔탄 수：{DT_CELL_GET("所持兵器データベース", 表示id, "残弾数_強化後", 1), 4}<br>"
 		ELSE
-			LOCALS += @"잔탄 종류:%残弾種別名:(DT_CELL_GET("所持兵器データベース", 表示id, "残弾種別", 1))%　　턴 수:{DT_CELL_GET("所持兵器データベース", 表示id, "残弾数_強化後", 1), 4}<br>"
+			LOCALS += @"잔탄 종류：%残弾種別名:(DT_CELL_GET("所持兵器データベース", 表示id, "残弾種別", 1))%　　턴 수：{DT_CELL_GET("所持兵器データベース", 表示id, "残弾数_強化後", 1), 4}<br>"
 		ENDIF
 		LOCALS += @"<br>"
 		詳細文文字列受け渡し変数 = 
@@ -503,7 +503,7 @@ SELECTCASE 選択兵器番号
 				ENDIF
 			NEXT
 			IF 素材id:LOCAL == 0
-				PRINTW 소재명이 올바르지 않습니다.
+				PRINTW 소재 이름이 올바르지 않습니다.
 				RETURN -1
 			ENDIF
 			必要数 = TOINT(分割文字列:1)
@@ -511,7 +511,7 @@ SELECTCASE 選択兵器番号
 				必要数 -= 3
 			ENDIF
 			SETCOLOR 属性数値文字色変換(DT_CELL_GET("所持素材データベース", 素材id:LOCAL, "素材属性", 1))
-			PRINTFORML 　%分割文字列:0%:{必要数, 3}개 / 소지 수{DT_CELL_GET("所持素材データベース", 素材id:LOCAL, "所持素材数", 1)}개
+			PRINTFORML 　%分割文字列:0%：{必要数, 3}개 / 소지 수{DT_CELL_GET("所持素材データベース", 素材id:LOCAL, "所持素材数", 1)}개
 			RESETCOLOR
 			IF DT_CELL_GET("所持素材データベース", 素材id:LOCAL, "所持素材数", 1) < 必要数
 				素材不足フラグ = 1
@@ -521,10 +521,10 @@ SELECTCASE 選択兵器番号
 		IF 素材不足フラグ
 			PRINTL 소재가 부족합니다.
 		ELSE
-			PRINTBUTTON "[0] 생성한다", 0
+			PRINTBUTTON "[0] 생성하기", 0
 		ENDIF
 		PRINTL
-		PRINTBUTTON "[999] 돌아간다", 999
+		PRINTBUTTON "[999] 돌아가기", 999
 		PRINTL
 		BINPUT
 		LOCAL = RESULT
@@ -553,13 +553,13 @@ SELECTCASE 選択兵器番号
 		TRYCALLFORM 搭載兵器関数_%DT_CELL_GETS("所持兵器データベース", 表示id, "兵器名", 1)%("フレーバー", 表示id)
 		LOCALS += @"%詳細文文字列受け渡し変数%<br>"
 
-		LOCALS += @"카테고리:%DT_CELL_GETS("所持兵器データベース", 表示id, "兵器カテゴリ", 1), 6%　　거리 적성:%DT_CELL_GETS("所持兵器データベース", 表示id, "兵器距離適性", 1)%<br>"
-		LOCALS += @"공격 보정:{DT_CELL_GET("所持兵器データベース", 表示id, "攻撃力補正_強化後", 1), 6}　　명중 보정:{DT_CELL_GET("所持兵器データベース", 表示id, "命中率補正_強化後", 1), 4}<br>"
-		LOCALS += @"공격 변동:{DT_CELL_GET("所持兵器データベース", 表示id, "攻撃力変動値_強化後", 1), 6}　　명중 변동:{DT_CELL_GET("所持兵器データベース", 表示id, "命中率変動値_強化後", 1), 4}<br>"
+		LOCALS += @"카테고리：%DT_CELL_GETS("所持兵器データベース", 表示id, "兵器カテゴリ", 1), 6%　　거리 적성：%DT_CELL_GETS("所持兵器データベース", 表示id, "兵器距離適性", 1)%<br>"
+		LOCALS += @"공격 보정：{DT_CELL_GET("所持兵器データベース", 表示id, "攻撃力補正_強化後", 1), 6}　　명중 보정：{DT_CELL_GET("所持兵器データベース", 表示id, "命中率補正_強化後", 1), 4}<br>"
+		LOCALS += @"공격 변동：{DT_CELL_GET("所持兵器データベース", 表示id, "攻撃力変動値_強化後", 1), 6}　　명중 변동：{DT_CELL_GET("所持兵器データベース", 表示id, "命中率変動値_強化後", 1), 4}<br>"
 		IF DT_CELL_GET("所持兵器データベース", 表示id, "残弾種別", 1) < 2
-			LOCALS += @"잔탄 종류:%残弾種別名:(DT_CELL_GET("所持兵器データベース", 表示id, "残弾種別", 1))%　　　잔탄 수:{DT_CELL_GET("所持兵器データベース", 表示id, "残弾数_強化後", 1), 4}<br>"
+			LOCALS += @"잔탄 종류：%残弾種別名:(DT_CELL_GET("所持兵器データベース", 表示id, "残弾種別", 1))%　　　잔탄 수：{DT_CELL_GET("所持兵器データベース", 表示id, "残弾数_強化後", 1), 4}<br>"
 		ELSE
-			LOCALS += @"잔탄 종류:%残弾種別名:(DT_CELL_GET("所持兵器データベース", 表示id, "残弾種別", 1))%　　턴 수:{DT_CELL_GET("所持兵器データベース", 表示id, "残弾数_強化後", 1), 4}<br>"
+			LOCALS += @"잔탄 종류：%残弾種別名:(DT_CELL_GET("所持兵器データベース", 表示id, "残弾種別", 1))%　　턴 수：{DT_CELL_GET("所持兵器データベース", 表示id, "残弾数_強化後", 1), 4}<br>"
 		ENDIF
 		LOCALS += @"<br>"
 		詳細文文字列受け渡し変数 = 
@@ -568,7 +568,7 @@ SELECTCASE 選択兵器番号
 
 		IF DT_CELL_GET("所持兵器データベース", 表示id, "装備乗機id", 1) > 0
 			id一時保存 = DT_CELL_GET("所持兵器データベース", 表示id, "装備乗機id", 1)
-			LOCALS += @"<br>탑승기:%DT_CELL_GETS("所持乗機データベース", id一時保存, "乗機名", 1)%의"
+			LOCALS += @"<br>탑승기：%DT_CELL_GETS("所持乗機データベース", id一時保存, "乗機名", 1)%의"
 			FOR LOCAL, 0, 6
 				IF ISNUMERIC(DT_CELL_GETS("所持乗機データベース", id一時保存, @"武装{LOCAL}", 1)) && 表示id == TOINT(DT_CELL_GETS("所持乗機データベース", id一時保存, @"武装{LOCAL}", 1))
 					LOCALS += @"무장%TOFULL(TOSTR(LOCAL))%에 장비 중<br>"
@@ -584,13 +584,13 @@ SELECTCASE 選択兵器番号
 		TRYCALLFORM 搭載兵器関数_%DT_CELL_GETS("所持兵器データベース", 表示id, "兵器名", 1)%("フレーバー", 表示id)
 		LOCALS += @"%詳細文文字列受け渡し変数%<br>"
 
-		LOCALS += @"카테고리:%DT_CELL_GETS("所持兵器データベース", 表示id, "兵器カテゴリ", 1), 6%　　거리 적성:%DT_CELL_GETS("所持兵器データベース", 表示id, "兵器距離適性", 1)%<br>"
-		LOCALS += @"공격 보정:{DT_CELL_GET("所持兵器データベース", 表示id, "攻撃力補正_強化後", 1), 6}　　명중 보정:{DT_CELL_GET("所持兵器データベース", 表示id, "命中率補正_強化後", 1), 4}<br>"
-		LOCALS += @"공격 변동:{DT_CELL_GET("所持兵器データベース", 表示id, "攻撃力変動値_強化後", 1), 6}　　명중 변동:{DT_CELL_GET("所持兵器データベース", 表示id, "命中率変動値_強化後", 1), 4}<br>"
+		LOCALS += @"카테고리：%DT_CELL_GETS("所持兵器データベース", 表示id, "兵器カテゴリ", 1), 6%　　거리 적성：%DT_CELL_GETS("所持兵器データベース", 表示id, "兵器距離適性", 1)%<br>"
+		LOCALS += @"공격 보정：{DT_CELL_GET("所持兵器データベース", 表示id, "攻撃力補正_強化後", 1), 6}　　명중 보정：{DT_CELL_GET("所持兵器データベース", 表示id, "命中率補正_強化後", 1), 4}<br>"
+		LOCALS += @"공격 변동：{DT_CELL_GET("所持兵器データベース", 表示id, "攻撃力変動値_強化後", 1), 6}　　명중 변동：{DT_CELL_GET("所持兵器データベース", 表示id, "命中率変動値_強化後", 1), 4}<br>"
 		IF DT_CELL_GET("所持兵器データベース", 表示id, "残弾種別", 1) < 2
-			LOCALS += @"잔탄 종류:%残弾種別名:(DT_CELL_GET("所持兵器データベース", 表示id, "残弾種別", 1))%　　　잔탄 수:{DT_CELL_GET("所持兵器データベース", 表示id, "残弾数_強化後", 1), 4}<br>"
+			LOCALS += @"잔탄 종류：%残弾種別名:(DT_CELL_GET("所持兵器データベース", 表示id, "残弾種別", 1))%　　　잔탄 수：{DT_CELL_GET("所持兵器データベース", 表示id, "残弾数_強化後", 1), 4}<br>"
 		ELSE
-			LOCALS += @"잔탄 종류:%残弾種別名:(DT_CELL_GET("所持兵器データベース", 表示id, "残弾種別", 1))%　　턴 수:{DT_CELL_GET("所持兵器データベース", 表示id, "残弾数_強化後", 1), 4}<br>"
+			LOCALS += @"잔탄 종류：%残弾種別名:(DT_CELL_GET("所持兵器データベース", 表示id, "残弾種別", 1))%　　턴 수：{DT_CELL_GET("所持兵器データベース", 表示id, "残弾数_強化後", 1), 4}<br>"
 		ENDIF
 		LOCALS += @"<br>"
 		詳細文文字列受け渡し変数 = 
@@ -599,10 +599,10 @@ SELECTCASE 選択兵器番号
 
 		IF DT_CELL_GET("所持兵器データベース", 表示id, "装備乗機id", 1) > 0
 			id一時保存 = DT_CELL_GET("所持兵器データベース", 表示id, "装備乗機id", 1)
-			LOCALS += @"<br>탑승기:%DT_CELL_GETS("所持乗機データベース", id一時保存, "乗機名", 1)%의"
+			LOCALS += @"<br>탑승기：%DT_CELL_GETS("所持乗機データベース", id一時保存, "乗機名", 1)%의"
 			FOR LOCAL, 0, 6
 				IF ISNUMERIC(DT_CELL_GETS("所持乗機データベース", id一時保存, @"武装{LOCAL}", 1)) && 表示id == TOINT(DT_CELL_GETS("所持乗機データベース", id一時保存, @"武装{LOCAL}", 1))
-					LOCALS += @"무장%TOFULL(TOSTR(LOCAL))%에 장비 중<br>"
+LOCALS += @"무장%TOFULL(TOSTR(LOCAL))%에 장비 중<br>"
 					BREAK
 				ENDIF
 			NEXT

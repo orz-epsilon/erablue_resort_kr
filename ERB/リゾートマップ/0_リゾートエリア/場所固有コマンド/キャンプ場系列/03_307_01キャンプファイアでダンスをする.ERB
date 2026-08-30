@@ -9,7 +9,7 @@ IF 施設改造度:3:0 == 0
 	TSTR:コマンド名受渡 = 
 	RETURNF 0
 ENDIF
-TSTR:コマンド名受渡 = 춤을 추자고 권유하다
+TSTR:コマンド名受渡 = 춤을 추자고 권유한다
 RETURNF 1
 
 ;===================================================
@@ -111,15 +111,15 @@ PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%와 불꽃 주위에서 �
 SELECTCASE RFLAG:コマンド結果受渡し変数
 	CASE IS < 0
 		;失敗時
-		PRINTW 하지만, 스텝을 틀려서 잘 춤추지 못했다…
+		PRINTW 하지만 스텝을 틀려 제대로 춤을 추지 못했다…
 	CASE IS < 10
 		;成功時
-		PRINTW 빙글빙글 돌며, 함께 즐겁게 춤출 수 있었다.
+		PRINTW 빙글빙글 돌며 함께 즐겁게 춤을 출 수 있었다.
 	CASEELSE
 		;大成功時
 		PRINTL 호흡이 잘 맞는 춤으로 기분 좋은 한때를 보낼 수 있었다.
 		SIF CFLAG:ゲージ起動分類 == 1
-			PRINTFORMW 로맨틱한 분위기 속에서, %CALLNAME:TARGET%은(는) 뜨겁게 %CALLNAME:PLAYER%를 응시하고 있다…
+			PRINTFORMW 로맨틱한 분위기 속, %CALLNAME:TARGET%은(는) 뜨겁게 %CALLNAME:PLAYER%를 응시하고 있다…
 ENDSELECT
 
 

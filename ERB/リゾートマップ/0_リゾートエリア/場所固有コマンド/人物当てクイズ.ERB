@@ -3,7 +3,7 @@
 #DIM 入力アイコンID
 #DIM CONST レイヤー番号 = 50
 #DIMS キャラ名,10
-#DIM 有効キャラリスト,2000
+#DIM 有効キャラリスト, キャラクタ数上限
 #DIM 有効キャラ数
 #DIM 最大配置カード枚数
 #DIM 実行配置カード枚数
@@ -23,7 +23,7 @@ FOR LOCAL, 0, CHARANUM
 		ARRAYSHIFT 有効キャラリスト, 1, LOCAL
 	ENDIF
 NEXT
-FOR LOCAL,0,2000
+FOR LOCAL,0,VARSIZE("有効キャラリスト")
 	IF !有効キャラリスト:LOCAL
 		IF !LOCAL
 			RFLAG:コマンド結果受渡し変数 = RAND:2
@@ -35,9 +35,9 @@ FOR LOCAL,0,2000
 	ENDIF
 	RESULT:LOCAL = 有効キャラリスト:LOCAL
 NEXT
-;画像が2000人を超えている時
+; ;画像が上限時
 SIF 有効キャラ数 == 0
-	有効キャラ数 = 2000
+	有効キャラ数 = VARSIZE("有効キャラリスト")
 ;ゲームスタート
 実行配置カード枚数 = MIN(有効キャラ数, 最大配置カード枚数) 
 FOR LOCAL, 0, 20
@@ -46,7 +46,7 @@ NEXT
 FOR LOCAL, 0, 15  
 	座標セット:1:LOCAL = (LOCAL + 5) * -30
 NEXT
-PRINTFORML {有効キャラ数} 명에게서 출제할게
+PRINTFORML {有効キャラ数} 명에게서 문제를 낼게
 GDISPOSE レイヤー番号 + 0 
 GCREATE レイヤー番号 + 0 , CLIENTWIDTH(), CLIENTHEIGHT()
 GSETBRUSH レイヤー番号 + 0 , 0xFF004000
@@ -191,7 +191,7 @@ ELSEIF RESULT == 3
 ELSE
 	PRINTL 리타이어하시겠습니까?
 	PRINTBUTTON "[0] 예",0
-	PRINTBUTTON "[1] 아니요",1
+	PRINTBUTTON "[1] 아니오",1
 	BINPUT
 	SIF RESULT
 		GOTO SHUFFLE

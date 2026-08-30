@@ -15,9 +15,9 @@ TFLAG:コマンドタイプ受渡 = COMTYPE("道具系&Ｖ系")
 オートコマンド許可 = 1
 
 @COM_TOOLTIP_S44_1
-LOCALS = <br>■バイブ責め<br>
-LOCALS += "바이브가 삽입되어 있는 상대에게, 바이브를 움직여 고문하는 커맨드.<br>바이브가 삽입되어 있는 것이 자신인 경우, 바이브 자위가 된다."
-LOCALS += "<br>COM 타입: 도구계<br>획득 소스: 쾌V・접촉・고통"
+LOCALS = <br>■바이브 고문<br>
+LOCALS += "바이브가 삽입된 상대에게 바이브를 움직여 고문하는 커맨드. <br>바이브가 삽입된 것이 자신인 경우, 바이브 자위가 된다."
+LOCALS += "<br>COM 타입: 도구 계열<br>획득 소스: 쾌락V・접촉・고통"
 LOCALS += "<br>고유 획득 경험: 도구 사용 경험(PLAYER)・V 경험(TARGET)<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
@@ -65,11 +65,11 @@ RETURN 1
 ;-------------------------------------------------
 @MESSAGE_COM_S44_1
 #DIM 同時キャラ番号
-PRINTFORM %CALLNAME:PLAYER%는
+PRINTFORM %CALLNAME:PLAYER%은(는)
 IF MODE_存在判定_ターゲット側("バイブ", PLAYER)
-	PRINTFORML 스스로가 물고 있는 바이브를 움직여, 강한 쾌락을 탐했다…
+	PRINTFORML 스스로 물고 있는 바이브를 움직여, 강한 쾌락을 탐했다…
 ELSE
-	PRINTFORML %CALLNAME:TARGET%가 물고 있는 바이브를 움직여, 강한 쾌락을 안겨주었다…
+	PRINTFORML %CALLNAME:TARGET%이(가) 물고 있는 바이브를 움직여, 강한 쾌락을 주었다…
 ENDIF
 
 

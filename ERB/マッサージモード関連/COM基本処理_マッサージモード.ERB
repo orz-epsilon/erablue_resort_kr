@@ -81,7 +81,7 @@ DRAWLINE
 
 RESETCOLOR
 PRINTC 능력 표시(마스터)[804]
-PRINTC 탐색계 정보 일람[830]
+PRINTC 탐색계 정보 목록[830]
 IF TCVAR:TARGET:マッサージ_うつ伏せフラグ
 	PRINTFORMC 　%CALLNAME:TARGET%을(를) 똑바로 눕히다[810]
 ELSE
@@ -443,8 +443,8 @@ ELSEIF RESULT == 804
 	RETURN 1
 ELSEIF RESULT == 810
 	IF PREGNANCY_SIZE(TARGET) >= 2
-		PRINTFORML %CALLNAME:TARGET%은(는) 임신하여 배가 커지고 있다……。
-		PRINTW 엎드려 자는 것은 불가능할 것 같다.
+		PRINTFORML %CALLNAME:TARGET%은(는) 임신해서 배가 불러오고 있다……。
+		PRINTW 엎드려 눕는 것은 어려울 것 같다.
 	ELSE
 		INVERTBIT TCVAR:TARGET:マッサージ_うつ伏せフラグ, 0
 		PRINTFORM %CALLNAME:TARGET%에게
@@ -465,7 +465,7 @@ ELSEIF RESULT == 830
 	表示切り替え文字列 = 探索集約_探索メンバー
 	CALL 探索系集約表示
 	RETURN 1
-; ELSEIF RESULT == 889
+ELSEIF RESULT == 889
 ; 	IF GETBIT(画像サイズ切り替えOPTION記憶, 0)
 ; 		INVERTBIT 画像サイズ切り替えOPTION記憶, 0
 ; 		IF 二人目画像表示用()
@@ -476,9 +476,9 @@ ELSEIF RESULT == 830
 ; 	ELSEIF GETBIT(画像サイズ切り替えOPTION記憶, 4) && 二人目画像表示用()
 ; 		CLEARBIT 画像サイズ切り替えOPTION記憶, 4
 ; 	ELSE
-; 		INVERTBIT 画像サイズ切り替えOPTION記憶, 0
+		INVERTBIT 画像サイズ切り替えOPTION記憶, 0
 ; 	ENDIF
-; 	RETURN 1
+	RETURN 1
 ELSEIF RESULT == 890
 	INVERTBIT あなた射精我慢フラグ, 0
 	RETURN 1
@@ -494,7 +494,12 @@ ELSEIF RESULT == 895
 ELSEIF RESULT == 999
 	;マッサージ終了口上
 	TRYCALLFORM KOJO_EVENT_マッサージ終了_{NO:TARGET}(TARGET)
+	;来店でマッサージした場合はここで同行を解除
+	SIF TCVAR:TARGET:マッサージ来店フラグ && CFLAG:TARGET:同行
+		CFLAG:TARGET:同行 = 0
 	CALL ゲームフェイズ変更("通常モード")
+	SIF FLAG:イベントうふふ中フラグ
+		FLAG:イベントうふふ終了 = 1
 	RETURN 1
 ELSE
 	RETURN 1
@@ -992,16 +997,16 @@ FOR LOCAL, 0, CHARANUM
 				ENDIF
 			CASE "お風呂", "自室入浴"
 				;回復早い、回復遅い
-				BASE:LOCAL:体力 = MIN(MAXBASE:LOCAL:体力, BASE:LOCAL:体力 + ((TIME - TIME:2) * 30 / (3 - TALENT:LOCAL:回復速度)))
+				BASE:LOCAL:体力 = MIN(MAXBASE:LOCAL:体力, BASE:LOCAL:体力 + (((TIME < TIME:2 ? TIME + 1440 # TIME) - TIME:2) * 30 / (3 - TALENT:LOCAL:回復速度)))
 		ENDSELECT
 	ENDIF
 NEXT
 
 ;寝落ち
-IF FLAG:お出かけ先フラグ > 0 && TIME > 1260
+IF FLAG:外出先番号 > 0 && TIME > 1260
 	TFLAG:オートコマンドフラグ = 0
 
-	PRINTW (슬슬 귀가할 시간이다... 하루를 종료합니다)
+	PRINTW （슬슬 귀가할 시간이다… 하루를 종료합니다）
 	;二日酔い処理のため、酩酊が残ってたら絶対値を負に
 	BASE:MASTER:酩酊 = BASE:MASTER:酩酊 * -1
 
@@ -1012,23 +1017,23 @@ IF FLAG:お出かけ先フラグ > 0 && TIME > 1260
 	CALL うふふ終了処理("眠気限界")
 	CALL 飲み会終了処理
 	FLAG:一日終了 = 1
-ELSEIF CFLAG:MASTER:起床予定時刻 > TIME && CFLAG:MASTER:起床予定時刻 - 120 < TIME
+ELSEIF CFLAG:MASTER:起床予定時刻 > TIME && CFLAG:MASTER:起床予定時刻 - 120 < TIME && FLAG:イベントうふふ中フラグ == 0
 	TFLAG:オートコマンドフラグ = 0
 
-	PRINTW (졸음이 한계다... 하루를 종료합니다)
+	PRINTW （졸음이 한계다… 하루를 종료합니다）
 	;二日酔い処理のため、酩酊が残ってたら絶対値を負に
 	BASE:MASTER:酩酊 = BASE:MASTER:酩酊 * -1
 
 	CFLAG:MASTER:睡眠 = 1
 	CFLAG:MASTER:就寝時刻 = DAY * 1440 + TIME
 	IF TARGET > 0 && TALENT:恋慕 && BASE:体力 >= 1
-		PRINTFORMW %CALLNAME%이(가) %CALLNAME:MASTER%을(를) 개인실로 옮겨주었다...
+		PRINTFORMW %CALLNAME%이(가) %CALLNAME:MASTER%을(를) 개인실로 옮겨주었다…
 		CFLAG:MASTER:現在位置 = CFLAG:MASTER:自室位置
 		CFLAG:MASTER:現在マップ種別 = 0
 		CFLAG:現在位置 = CFLAG:MASTER:自室位置
 		CFLAG:現在マップ種別 = 0
 	ELSEIF TARGET == MASTER && PLAYER != MASTER && TALENT:PLAYER:恋慕 && BASE:PLAYER:体力 >= 1
-		PRINTFORMW %CALLNAME:PLAYER%이(가) %CALLNAME:MASTER%을(를) 개인실로 옮겨주었다...
+		PRINTFORMW %CALLNAME:PLAYER%이(가) %CALLNAME:MASTER%을(를) 개인실로 옮겨주었다…
 		CFLAG:MASTER:現在位置 = CFLAG:MASTER:自室位置
 		CFLAG:MASTER:現在マップ種別 = 0
 		CFLAG:現在位置 = CFLAG:MASTER:自室位置
@@ -1047,7 +1052,7 @@ FOR LOCAL, 1, CHARANUM
 		BASE:(TARGET:LOCAL):体力 = 1
 		TCVAR:(TARGET:LOCAL):食いしばりフラグ --
 	ELSEIF BASE:(TARGET:LOCAL):体力 < 1 && !CFLAG:(TARGET:LOCAL):体力限界
-		PRINTFORML (%CALLNAME:(TARGET:LOCAL)%의 체력이 한계에 달했습니다)
+		PRINTFORML （%CALLNAME:(TARGET:LOCAL)%의 체력이 한계에 도달했습니다）
 		TRYCALLFORM KOJO_EVENT_マッサージ体力限界_{NO:(TARGET:LOCAL)}(TARGET:LOCAL)
 		FORCEWAIT
 		IF CFLAG:(TARGET:LOCAL):デート == MASTER + 100
@@ -1109,8 +1114,8 @@ IF TARGET == MASTER
 ELSEIF BASE:TARGET:警戒 >= MAXBASE:TARGET:警戒
 	SETCOLOR カラーパレット("黄")
 	DRAWLINE
-	PRINTL 경계도가 상한에 도달했습니다
-	PRINTFORML %CALLNAME:TARGET%의 호감도가 감소하여, 마사지 모드를 종료합니다
+	PRINTL 警戒度가 상한에 다다랐습니다
+	PRINTFORML %CALLNAME:TARGET%의호감도가 감소하여, マッサージモード를 종료합니다
 	DRAWLINE
 	RESETCOLOR
 	WAIT
@@ -1155,7 +1160,7 @@ IF LOCAL > 0
 	PRINTL
 	PRINTFORML \@ LOCAL / 60 > 0?{LOCAL / 60}시간# \@{LOCAL % 60}분 경과
 ENDIF
-TIME:2 = TIME > 1440 ? TIME - 1440 # TIME
+TIME:2 = TIME >= 1440 ? TIME - 1440 # TIME
 
 WAIT
 

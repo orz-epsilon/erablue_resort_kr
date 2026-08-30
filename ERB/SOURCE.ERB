@@ -3,6 +3,7 @@
 #DIM FLAG保存
 #DIM フラグ保存
 #DIM TARGET保存
+#DIM 表示数
 
 SELECTCOM = TFLAG:SELECTCOM受け渡し
 TFLAG:SELECTCOM受け渡し = -1
@@ -174,6 +175,79 @@ IF 対象キャラ == AUTOCOM_実行番号保存
 ENDIF
 
 TRYCALLFORM KOJO_MESSAGE_COM_%SAVESTR:ゲームフェイズ管理%()
+
+;オノマトペ
+IF !OPTION変数:オノマトペ表示
+	LOCALS '= MODE_取得_順不同(PLAYER, TARGET)
+	表示数 = 0
+	IF LOCALS != ""
+		VARSET RESULTS
+		SPLIT LOCALS, "_", RESULTS
+		FOR LOCAL, 0, RESULT
+			IF 系統リスト_Ｖ挿入系(RESULTS:LOCAL)
+				SIF 表示数 == 0
+					DRAWLINE
+				CALL TEXT_ONOMATOPE("Ｖ挿入系")
+				PRINTL
+				; SETCOLOR カラーパレット("えっちな色")
+				; PRINTFORML （%RESULTS:LOCAL%）
+				; RESETCOLOR
+				表示数 ++
+			ENDIF
+			IF 系統リスト_Ａ挿入系(RESULTS:LOCAL)
+				SIF 表示数 == 0
+					DRAWLINE
+				CALL TEXT_ONOMATOPE("Ａ挿入系")
+				PRINTL
+				; SETCOLOR カラーパレット("えっちな色")
+				; PRINTFORML （%RESULTS:LOCAL%）
+				; RESETCOLOR
+				表示数 ++
+			ENDIF
+			IF 系統リスト_Ｖ自慰系(RESULTS:LOCAL)
+				SIF 表示数 == 0
+					DRAWLINE
+				CALL TEXT_ONOMATOPE("Ｖ自慰系")
+				PRINTL
+				; SETCOLOR カラーパレット("えっちな色")
+				; PRINTFORML （%RESULTS:LOCAL%）
+				; RESETCOLOR
+				表示数 ++
+			ENDIF
+			IF 系統リスト_Ａ自慰系(RESULTS:LOCAL)
+				SIF 表示数 == 0
+					DRAWLINE
+				CALL TEXT_ONOMATOPE("Ａ自慰系")
+				PRINTL
+				; SETCOLOR カラーパレット("えっちな色")
+				; PRINTFORML （%RESULTS:LOCAL%）
+				; RESETCOLOR
+				表示数 ++
+			ENDIF
+			IF 系統リスト_フェラチオ系(RESULTS:LOCAL)
+				SIF 表示数 == 0
+					DRAWLINE
+				CALL TEXT_ONOMATOPE("フェラチオ系")
+				PRINTL
+				; SETCOLOR カラーパレット("えっちな色")
+				; PRINTFORML （%RESULTS:LOCAL%）
+				; RESETCOLOR
+				表示数 ++
+			ENDIF
+			IF RESULTS:LOCAL == "クンニ"
+				SIF 表示数 == 0
+					DRAWLINE
+				CALL TEXT_ONOMATOPE("クンニ")
+				PRINTL
+				; SETCOLOR カラーパレット("えっちな色")
+				; PRINTFORML （%RESULTS:LOCAL%）
+				; RESETCOLOR
+				表示数 ++
+			ENDIF
+		NEXT
+	ENDIF
+ENDIF
+
 CALL 挿入アニメ表示(TARGET, "_挿入", FLAG_挿入アニメフィルタ)
 
 ;キャラ同士オート対応
@@ -221,7 +295,7 @@ FOR 対象キャラ, 1, CHARANUM
 		CALL KOJO_ORGASM_絶頂(対象キャラ)
 		PRINTL
 	ELSEIF NOWEX:対象キャラ:噴乳
-		PRINTFORML %CALLNAME:対象キャラ%은(는) 젖꼭지에서\@ NOWEX:対象キャラ:噴乳 > 1 ? 대량의 # \@모유를 뿜어냈다
+		PRINTFORML %CALLNAME:対象キャラ%은(는) 유두에서 \@ NOWEX:対象キャラ:噴乳 > 1 ? 대량의 # \@ 모유를 뿜어냈다
 		PRINTL 
 	ENDIF
 	;-------------------------------------------------
@@ -286,7 +360,7 @@ FOR 対象キャラ, 1, CHARANUM
 	ENDIF
 
 	IF フラグ保存
-		PRINTFORMW %CALLNAME:対象キャラ%은(는) 절정을 반복하며, 일시적으로 저항할 기력이 없어진 것 같다…
+		PRINTFORMW %CALLNAME:対象キャラ%은(는) 절정을 반복해 일시적으로 저항할 기력이 사라진 듯하다…
 		PRINTL 
 	ENDIF
 NEXT
@@ -516,15 +590,15 @@ SIF RCVAR:ARG:表示カット
 	RETURN 0
 ;PRINTL 　
 SIF SOURCE:ARG:快Ｃ > 0
-	PRINTFORM 쾌감 C({SOURCE:ARG:快Ｃ})
+	PRINTFORM 쾌C({SOURCE:ARG:快Ｃ})
 SIF SOURCE:ARG:快Ｖ > 0
-	PRINTFORM 쾌감 V({SOURCE:ARG:快Ｖ})
+	PRINTFORM 쾌V({SOURCE:ARG:快Ｖ})
 SIF SOURCE:ARG:快Ａ > 0
-	PRINTFORM 쾌감 A({SOURCE:ARG:快Ａ})
+	PRINTFORM 쾌A({SOURCE:ARG:快Ａ})
 SIF SOURCE:ARG:快Ｂ > 0
-	PRINTFORM 쾌감 B({SOURCE:ARG:快Ｂ})
+	PRINTFORM 쾌B({SOURCE:ARG:快Ｂ})
 SIF SOURCE:ARG:快Ｓ > 0
-	PRINTFORM 쾌감 S({SOURCE:ARG:快Ｓ})
+	PRINTFORM 쾌S({SOURCE:ARG:快Ｓ})
 
 IF ARG == PLAYER
 	PRINTL 　
@@ -532,11 +606,11 @@ IF ARG == PLAYER
 ENDIF
 
 SIF SOURCE:ARG:情愛 > 0
-	PRINTFORM 정애({SOURCE:ARG:情愛})
+	PRINTFORM 애정({SOURCE:ARG:情愛})
 SIF SOURCE:ARG:性行動 > 0
 	PRINTFORM 성행동({SOURCE:ARG:性行動})
 SIF SOURCE:ARG:達成 > 0
-	PRINTFORM 달성감({SOURCE:ARG:達成})
+	PRINTFORM 성취감({SOURCE:ARG:達成})
 SIF SOURCE:ARG:苦痛 > 0
 	PRINTFORM 고통({SOURCE:ARG:苦痛})
 SIF SOURCE:ARG:恐怖 > 0
@@ -560,7 +634,7 @@ SIF SOURCE:ARG:受動 > 0
 SIF SOURCE:ARG:不潔 > 0
 	PRINTFORM 불결({SOURCE:ARG:不潔})
 SIF SOURCE:ARG:鬱屈 > 0
-	PRINTFORM 울적({SOURCE:ARG:鬱屈})
+	PRINTFORM 울분({SOURCE:ARG:鬱屈})
 SIF SOURCE:ARG:逸脱 > 0
 	PRINTFORM 일탈({SOURCE:ARG:逸脱})
 SIF SOURCE:ARG:反感 > 0
@@ -574,6 +648,10 @@ PRINTL 　
 @SOURCE_補正処理(対象キャラ)
 #DIM 対象キャラ
 
+;-------------------------------------------------
+;特定部位への刺激による補正
+;-------------------------------------------------
+CALL SOURCE_部位補正(対象キャラ)
 ;-------------------------------------------------
 ;経験加算
 ;-------------------------------------------------

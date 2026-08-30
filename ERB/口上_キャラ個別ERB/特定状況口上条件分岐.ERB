@@ -1,4 +1,4 @@
-﻿;-------------------------------------------------
+;-------------------------------------------------
 ;@特定状況口上条件分岐
 ;処女喪失や初対面など、特定の状況に発動する口上の条件分岐をまとめるファイル
 ;-------------------------------------------------
@@ -18,13 +18,13 @@
 	;-------------------------------------------------
 	IF 初体験日:TARGET:初対面 <= 0 && !CFLAG:PLAYER:隠密
 		IF 初体験日:TARGET:初対面 == 0
-			CALL 履歴データベース登録(CFLAG:MASTER:人物番号, @"처음으로 %CALLNAME:TARGET%と出会った","日常")
-			CALL 履歴データベース登録(CFLAG:TARGET:人物番号, @"처음으로 %CALLNAME:MASTER%と出会った","日常")
+			CALL 履歴データベース登録(CFLAG:MASTER:人物番号, @"初めて%CALLNAME:TARGET%と出会った","日常")
+			CALL 履歴データベース登録(CFLAG:TARGET:人物番号, @"初めて%CALLNAME:MASTER%と出会った","日常")
 			CALL メッセージ呼び出し用構文("初対面")
 		ENDIF
 		IF フレーバー素質:TARGET:素質表示設定 == 2
 			PRINTL
-			PRINTW 初対面時のため、フレーバー素質設定画面を開きます。
+			PRINTW 첫 대면 시이므로, 플레이버 소질 설정 화면을 엽니다.
 			CALL フレーバー素質個別設定画面(TARGET)
 		ENDIF
 		初体験日:TARGET:初対面 = DAY
@@ -80,56 +80,66 @@ DRAWLINE
 ;ここから汎用メッセージ表示関数
 ;-------------------------------------------------
 @PALAM_MESSAGE_処女喪失
-PRINTFORMW %CALLNAME:TARGET%の秘唇から、処女の証である赤い血が垂れ落ちていった……
+PRINTFORMW %CALLNAME:TARGET%의 은밀한 입술에서, 처녀의 증표인 붉은 피가 흘러내렸다……
 
 @PALAM_MESSAGE_連れ込み満足
-PRINTFORML %CALLNAME:TARGET%は満足する絶頂が出来たようだ
-PRINTW そろそろ離してもらえるだろう…
+PRINTFORML %CALLNAME:TARGET%은(는) 만족스러운 절정을 맞이한 것 같다
+PRINTW 슬슬 놓아줄 때가 되었겠지…
 
 @PALAM_MESSAGE_初対面
-PRINTFORML %CALLNAME:PLAYER%は%CALLNAME:TARGET%と初めて出会った
+PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%와 처음 만났다
 FORCEWAIT
 
 @PALAM_MESSAGE_業務訪問_バーテンダー
-PRINTFORMW %CALLNAME:TARGET%がバーカウンターの中で接客をしている。
+PRINTFORMW %CALLNAME:TARGET%이(가) 바 카운터 안에서 손님을 응대하고 있다.
 
 @PALAM_MESSAGE_業務訪問_司書
-PRINTFORMW %CALLNAME:TARGET%は本の整理をしているようだ。
+PRINTFORMW %CALLNAME:TARGET%은(는) 책을 정리하고 있는 것 같다.
 
 @PALAM_MESSAGE_業務訪問_プール監視員
-PRINTFORMW %CALLNAME:TARGET%は溺れている人がいないかプールを見張っている。
+PRINTFORMW %CALLNAME:TARGET%은(는) 익사하는 사람이 없는지 풀장을 감시하고 있다.
 
 @PALAM_MESSAGE_業務訪問_道具屋店員
 PRINTDATA
-	DATAFORM %CALLNAME:TARGET%はレジで接客をしている。
-	DATAFORM %CALLNAME:TARGET%はレジで観光客の相手をしているようだ。
-	DATAFORM %CALLNAME:TARGET%は商品の点検と確認をしている。
-	DATAFORM %CALLNAME:TARGET%は空いた時間で店舗の掃除をしているようだ。
+	DATAFORM %CALLNAME:TARGET%은(는) 계산대에서 손님을 응대하고 있다.
+	DATAFORM %CALLNAME:TARGET%은(는) 계산대에서 관광객을 상대하고 있는 것 같다.
+	DATAFORM %CALLNAME:TARGET%은(는) 상품을 점검하고 확인하고 있다.
+	DATAFORM %CALLNAME:TARGET%은(는) 빈 시간에 가게를 청소하고 있는 것 같다.
 ENDDATA
 PRINTW 
 
 @PALAM_MESSAGE_業務訪問_土産物屋店員
 PRINTDATA
-	DATAFORM %CALLNAME:TARGET%はレジで接客をしている。
-	DATAFORM %CALLNAME:TARGET%はレジで観光客の相手をしているようだ。
-	DATAFORM %CALLNAME:TARGET%は商品の点検と確認をしている。
-	DATAFORM %CALLNAME:TARGET%は空いた時間で店舗の掃除をしているようだ。
+	DATAFORM %CALLNAME:TARGET%은(는) 계산대에서 손님을 응대하고 있다.
+	DATAFORM %CALLNAME:TARGET%은(는) 계산대에서 관광객을 상대하고 있는 것 같다.
+	DATAFORM %CALLNAME:TARGET%은(는) 상품을 점검하고 확인하고 있다.
+DATAFORM %CALLNAME:TARGET%은(는) 남는 시간에 가게를 청소하고 있는 것 같다.
 ENDDATA
 PRINTW 
 
 
 @PALAM_MESSAGE_業務訪問_食事処店員
 IF 知識素質:TARGET:料理人 > 0
-	PRINTFORMW %CALLNAME:TARGET%は厨房で料理の腕を振るっている。
+PRINTFORMW %CALLNAME:TARGET%은(는) 주방에서 요리 솜씨를 발휘하고 있다.
 ELSE
-	PRINTFORMW %CALLNAME:TARGET%は出来上がった料理を客のテーブルへ運んでいる。
+PRINTFORMW %CALLNAME:TARGET%은(는) 완성된 요리를 손님 테이블로 나르고 있다.
 ENDIF
 
 @PALAM_MESSAGE_業務訪問_装飾品店店員
 PRINTDATA
-	DATAFORM %CALLNAME:TARGET%はレジで接客をしている。
-	DATAFORM %CALLNAME:TARGET%はレジで観光客の相手をしているようだ。
-	DATAFORM %CALLNAME:TARGET%は商品の点検と確認をしている。
-	DATAFORM %CALLNAME:TARGET%は空いた時間で店舗の掃除をしているようだ。
+DATAFORM %CALLNAME:TARGET%은(는) 계산대에서 손님을 응대하고 있다.
+DATAFORM %CALLNAME:TARGET%은(는) 계산대에서 관광객을 상대하고 있는 것 같다.
+DATAFORM %CALLNAME:TARGET%은(는) 상품 점검 및 확인을 하고 있다.
+DATAFORM %CALLNAME:TARGET%은(는) 남는 시간에 가게를 청소하고 있는 것 같다.
+ENDDATA
+PRINTW 
+
+@PALAM_MESSAGE_業務訪問_直売所店員
+PRINTDATA
+DATAFORM %CALLNAME:TARGET%은(는) 계산대에서 손님을 응대하고 있다.
+DATAFORM %CALLNAME:TARGET%은(는) 계산대에서 관광객을 상대하고 있는 것 같다.
+DATAFORM %CALLNAME:TARGET%은(는) 상품 점검 및 확인을 하고 있다.
+DATAFORM %CALLNAME:TARGET%은(는) 남는 시간에 가게를 청소하고 있는 것 같다.
+DATAFORM %CALLNAME:TARGET%은(는) 식재료를 가공하여 상품을 만들고 있다.
 ENDDATA
 PRINTW 

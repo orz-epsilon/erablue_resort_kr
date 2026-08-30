@@ -17,7 +17,7 @@ TFLAG:コマンドタイプ受渡 = MASSAGE_COMTYPE("通常マッサージ")
 LOCALS = <br>■허리 지압 마사지<br>
 LOCALS += "체중을 실은 지압으로 허리 근육을 풀어준다. 척추 교정 및 요통 해소 효과가 있다."
 LOCALS += "<br>COM 타입: 일반 마사지<br>획득 소스: 쾌S・접촉・고통・환락"
-LOCALS += "<br>고유 획득 경험: 고통 쾌락 경험(TARGET)<br>"
+LOCALS += "<br>고유 획득 경험:苦痛快楽経験(TARGET)<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
 @MASSAGE_COM6
@@ -78,7 +78,7 @@ RETURN 1
 ;実行時メッセージ
 ;-------------------------------------------------
 @MASSAGE_MESSAGE_COM6
-PRINTFORM %CALLNAME:PLAYER%은(는), 체중을 실은 지압으로%CALLNAME:TARGET%의
+PRINTFORM %CALLNAME:PLAYER%은(는) 체중을 실은 지압으로%CALLNAME:TARGET%의
 	IF TALENT:TARGET:体型 >= 1
 	;肉感的以上
 		PRINTFORM 탱탱한
@@ -86,5 +86,5 @@ PRINTFORM %CALLNAME:PLAYER%은(는), 체중을 실은 지압으로%CALLNAME:TARG
 	;細身以下
 		PRINTFORM 가늘고 가녀린
 	ENDIF
-PRINTFORML 허리 주변 근육을 정성껏 주물러 풀어주었다.
+PRINTFORML 허리 주변 근육을 정성껏 풀어주었다.
 

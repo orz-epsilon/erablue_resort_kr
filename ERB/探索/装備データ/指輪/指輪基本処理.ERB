@@ -7,13 +7,13 @@
 
 ;最大個数制限
 IF DT_ROW_LENGTH("所持指輪データベース") >= 指輪所持最大数
-	PRINTFORMW 반지 소지 수가 최대 수(%TOFULL(TOSTR(指輪所持最大数))%개)를 초과했습니다.
+	PRINTFORMW 반지 소지 개수가 최대 개수（%TOFULL(TOSTR(指輪所持最大数))%개)를 초과했습니다.
 	RETURN -1
 ENDIF
 ;個別の指輪ERBに飛んでステータス補正を入れ込む
 TRYCCALLFORM 指輪ステータス決定_%指輪名%(オプション数, 0, ランダム性能固定フラグ)
 CATCH
-	PRINTFORMW 지정된 반지(%指輪名%,{オプション数},{ランダム性能固定フラグ})를 찾을 수 없습니다.
+	PRINTFORMW 지정된 반지（%指輪名%,{オプション数},{ランダム性能固定フラグ}）를 찾을 수 없습니다.
 	RETURN -1
 ENDCATCH
 
@@ -37,6 +37,11 @@ ENDIF
 #DIM ページ番号
 #DIM ソート番号
 #DIM DB行数
+
+IF CFLAG:キャラ番号:指輪変更禁止
+	PRINTFORMW %NAME:キャラ番号%은(는) 반지를 변경할 수 없습니다.
+	RETURN 0
+ENDIF
 
 ;表示部分
 ;装備中指輪表示
@@ -69,7 +74,7 @@ ELSE
 	LOCALS += "　　　　　　　　　　"
 ENDIF
 IF 装備ステータス補正保存:キャラ番号:装備指輪番号 > 0
-	LOCALS += "　　　　　　<button value='1002'>[1002]장비를 해제하다</button>　　"
+	LOCALS += "　　　　　　<button value='1002'>[1002]장비 제외</button>　　"
 ELSE
 	LOCALS += "　　　　　　　　　　　　　　　　"
 ENDIF
@@ -100,7 +105,7 @@ SELECTCASE LOCAL
 		DT_CELL_SET "所持指輪データベース", 装備ステータス補正保存:キャラ番号:装備指輪番号, "装備キャラ番号", 0, 1
 		装備ステータス補正保存:キャラ番号:装備指輪番号 = 0
 		CALL 装備再計算処理(キャラ番号)
-		PRINTFORMW %CALLNAME:キャラ番号%은(는) 반지를 벗었다.
+		PRINTFORMW %CALLNAME:キャラ番号%은(는) 반지를 뺐다.
 		VARSET 表示用ステータス格納配列:0:0
 		ページ番号 = 0
 		ソート番号 = 0
@@ -168,21 +173,21 @@ IF 表示用ステータス格納配列:1:0 == 0
 		FOR LOCAL:1, 0, 8
 			IF LOCALS:(LOCAL:1 * 2) != ""
 				SELECTCASE LOCALS:(LOCAL:1 * 2)
-					CASE "최대HP"
+					CASE "最大ＨＰ"
 						表示用ステータス格納配列:LOCAL:1 += TOINT(LOCALS:(LOCAL:1 * 2 + 1))
-					CASE "최대MP"
+					CASE "最大ＭＰ"
 						表示用ステータス格納配列:LOCAL:2 += TOINT(LOCALS:(LOCAL:1 * 2 + 1))
-					CASE "공격력"
+					CASE "攻撃力"
 						表示用ステータス格納配列:LOCAL:3 += TOINT(LOCALS:(LOCAL:1 * 2 + 1))
-					CASE "방어력"
+					CASE "防御力"
 						表示用ステータス格納配列:LOCAL:4 += TOINT(LOCALS:(LOCAL:1 * 2 + 1))
-					CASE "회복력"
+					CASE "回復力"
 						表示用ステータス格納配列:LOCAL:5 += TOINT(LOCALS:(LOCAL:1 * 2 + 1))
-					CASE "행동속도"
+					CASE "行動速度"
 						表示用ステータス格納配列:LOCAL:6 += TOINT(LOCALS:(LOCAL:1 * 2 + 1))
-					CASE "DA율"
+					CASE "DA率"
 						表示用ステータス格納配列:LOCAL:7 += TOINT(LOCALS:(LOCAL:1 * 2 + 1))
-					CASE "TA율"
+					CASE "TA率"
 						表示用ステータス格納配列:LOCAL:8 += TOINT(LOCALS:(LOCAL:1 * 2 + 1))
 				ENDSELECT
 			ENDIF
@@ -193,21 +198,21 @@ IF 表示用ステータス格納配列:1:0 == 0
 			SIF LOCALS:(LOCAL:1 * 2) == ""
 				BREAK
 			SELECTCASE LOCALS:(LOCAL:1 * 2)
-				CASE "최대HP"
+				CASE "最大ＨＰ"
 					表示用ステータス格納配列:LOCAL:1 += TOINT(LOCALS:(LOCAL:1 * 2 + 1))
-				CASE "최대MP"
+				CASE "最大ＭＰ"
 					表示用ステータス格納配列:LOCAL:2 += TOINT(LOCALS:(LOCAL:1 * 2 + 1))
-				CASE "공격력"
+				CASE "攻撃力"
 					表示用ステータス格納配列:LOCAL:3 += TOINT(LOCALS:(LOCAL:1 * 2 + 1))
-				CASE "방어력"
+				CASE "防御力"
 					表示用ステータス格納配列:LOCAL:4 += TOINT(LOCALS:(LOCAL:1 * 2 + 1))
-				CASE "회복력"
+				CASE "回復力"
 					表示用ステータス格納配列:LOCAL:5 += TOINT(LOCALS:(LOCAL:1 * 2 + 1))
-				CASE "행동속도"
+				CASE "行動速度"
 					表示用ステータス格納配列:LOCAL:6 += TOINT(LOCALS:(LOCAL:1 * 2 + 1))
-				CASE "DA율"
+				CASE "DA率"
 					表示用ステータス格納配列:LOCAL:7 += TOINT(LOCALS:(LOCAL:1 * 2 + 1))
-				CASE "TA율"
+				CASE "TA率"
 					表示用ステータス格納配列:LOCAL:8 += TOINT(LOCALS:(LOCAL:1 * 2 + 1))
 			ENDSELECT
 		NEXT
@@ -232,7 +237,7 @@ ENDIF
 
 VARSET LOCALS
 LOCALS = <div rect='262,{y軸位置},5537,3625'><nobr>
-LOCALS += "　　　 <button value='2010'>반지 이름</button>　　　　　　　　　　<button value='2001'>HP</button>　　<button value='2002'>MP</button>　　<button value='2003'>공격력</button>　<button value='2004'>방어력</button>　<button value='2005'>회복력</button>　<button value='2006'>행동 속도</button>　<button value='2007'>DA율</button>　<button value='2008'>TA율</button>　장비자<br>"
+LOCALS += "　　　 <button value='2010'>반지 이름</button>　　　　　　　　　　<button value='2001'>ＨＰ</button>　　<button value='2002'>ＭＰ</button>　　<button value='2003'>공격력</button>　<button value='2004'>방어력</button>　<button value='2005'>회복력</button>　<button value='2006'>행동 속도</button>　<button value='2007'>DA율</button>　<button value='2008'>TA율</button>　장착자<br>"
 LOCALS += "--------------------------------------------------------------------------------------------------------------<br>"
 IF 選択中指輪id > 0
 	;まずキャラが装備している指輪の本来の行数を取る

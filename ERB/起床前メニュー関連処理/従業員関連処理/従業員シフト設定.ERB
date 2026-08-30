@@ -1,0 +1,191 @@
+@従業員シフト設定
+#DIM 従業員一覧, 500
+#DIM ソート配列, 500
+#DIM ページ数
+#DIM 変更キャラ
+#DIMS 屋号保存
+#DIM ソートタイプ
+#DIM 空き店舗あり
+#DIMS 常駐業務名
+#DIM 固有仕事数
+#DIMS 固有仕事配列, 50
+#DIMS 固有仕事名
+#DIM 固有仕事キー
+
+変更キャラ = -1
+
+$表示ループ
+VARSET 従業員一覧, -1
+VARSET ソート配列
+VARSET 仕事人数表示用
+
+DRAWLINE
+PRINTL 직원의 휴일 설정을 합니다.
+PRINTL ※개발 중이므로, 작업이 올바르게 작동하지 않을 수 있습니다.
+DRAWLINE
+LOCALS = <div rect='81,31,1937,3762' border='31' bcolor='#C0C0C0'></div><div rect='2050,710,3875,3080' border='31' bcolor='#C0C0C0'></div>
+
+;現在いる従業員を配列へ
+従業員一覧:0 = 0
+LOCAL:1 = 0
+FOR LOCAL, 1, CHARANUM
+	SIF TALENT:LOCAL:従業員 == 0
+		CONTINUE
+	従業員一覧:(LOCAL:1) = LOCAL
+	IF 現在仕事:LOCAL:休養日 == 0
+		ソート配列:(LOCAL:1) = CFLAG:LOCAL:人物番号 % 7 + 1
+	ELSE
+		ソート配列:(LOCAL:1) = 現在仕事:LOCAL:休養日 + 1
+	ENDIF
+	LOCAL:1 += 1
+NEXT
+IF ソートタイプ
+	ARRAYMSORT ソート配列, 従業員一覧
+ENDIF
+
+;一覧表示
+LOCALS += "<div rect='156,156,1737,3662'><nobr>"
+FOR LOCAL, ページ数 * 17, ページ数 * 17 + 17
+	IF 従業員一覧:LOCAL < 0
+		LOCALS += "<br>"
+		CONTINUE
+	ENDIF
+	IF 現在仕事:(従業員一覧:LOCAL):0 == -1
+		LOCALS += @"<font color='#%カラーパレット_HTML("グレーアウト")%'><nonbutton>%CALLNAME:(従業員一覧:LOCAL), 16, LEFT%[상점 경영]</nonbutton></font>"
+	ELSE
+		SIF 変更キャラ == 従業員一覧:LOCAL
+			LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'>"
+		LOCALS += @"<button value='{LOCAL}'>%CALLNAME:(従業員一覧:LOCAL), 16, LEFT%["
+		IF 現在仕事:(従業員一覧:LOCAL):休養日 == 0
+			LOCALS += @"%曜日登録:(CFLAG:(従業員一覧:LOCAL):人物番号 % 7)%"
+		ELSE
+			FOR LOCAL:1, 0, 7
+				IF GETBIT(現在仕事:(従業員一覧:LOCAL):休養日, LOCAL:1)
+					LOCALS += @"%曜日登録:(LOCAL:1)%"
+				ENDIF
+			NEXT
+		ENDIF
+		LOCALS += "]</button>"
+		SIF 変更キャラ == 従業員一覧:LOCAL
+			LOCALS += @"</font>"
+	ENDIF
+	LOCALS += "<br>"
+NEXT
+IF ページ数 > 0
+	LOCALS += "<button value='1000'>　＜ 이전 페이지</button>"
+ELSE
+	LOCALS += "　　　　　　　 "
+ENDIF
+LOCALS += "　　　　"
+IF 従業員一覧:(ページ数 * 17 + 17) > -1
+	LOCALS += "<button value='1001'>다음 페이지 ＞</button>"
+ENDIF
+LOCALS += "<br>"
+LOCALS += "<br>"
+LOCALS += "<button value='999'>[999] 돌아가기</button>　　"
+IF ソートタイプ
+	LOCALS += "요일순 <button value='998'>[전환]</button>"
+ELSE
+	LOCALS += "번호순 <button value='998'>[전환]</button>"
+ENDIF
+LOCALS += "<br>"
+LOCALS += "</nobr></div>"
+
+
+;仕事の種類と現在そこに従事している人数を表示
+LOCALS += "<div rect='2125,770,3675,2812'><nobr>"
+IF 変更キャラ > -1
+	LOCALS += @"현재 휴일：%NAME表示(変更キャラ)%<br>"
+	IF 現在仕事:変更キャラ:休養日 < 10
+		LOCALS += @"■%曜日登録:(CFLAG:変更キャラ:人物番号 % 7)%요일<br>"
+	ELSE
+		LOCALS += "■<br>"
+		FOR LOCAL, 0, 7
+			IF GETBIT(現在仕事:変更キャラ:休養日, LOCAL)
+				LOCALS += @"%曜日登録:LOCAL%요일 "
+			ENDIF
+		NEXT
+		LOCALS += "<br>"
+	ENDIF
+	LOCALS += "<br>"
+ELSE
+ENDIF
+LOCALS += "</nobr></div>"
+
+;仕事切り替え用枠
+LOCALS += "<div rect='2050,31,3875,650' padding='50,25,50' border='31' bcolor='#C0C0C0'>"
+IF 変更キャラ > -1
+	FOR LOCAL, 0, 7
+		IF 現在仕事:変更キャラ:休養日 == 0 && CFLAG:変更キャラ:人物番号 % 7 == LOCAL
+			LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'>[%曜日登録:LOCAL%]</font>"
+		ELSEIF  現在仕事:変更キャラ:休養日 > 0 && GETBIT(現在仕事:変更キャラ:休養日, LOCAL)
+			LOCALS += @"<button value='{LOCAL + 2000}'><font color='#%カラーパレット_HTML("黄")%'>[%曜日登録:LOCAL%]</font></button>"
+		ELSE
+			LOCALS += @"<button value='{LOCAL + 2000}'>[%曜日登録:LOCAL%]</button>"
+		ENDIF
+	NEXT
+ENDIF
+LOCALS += "</div>"
+
+
+
+HTML_PRINT LOCALS
+FOR LOCAL, 0, 34
+	PRINTL
+NEXT
+DRAWLINE
+
+BINPUT
+
+LOCAL = RESULT
+SELECTCASE LOCAL
+	CASE IS >= 2000
+		;もし休養日設定が０なら、既存の休養日のビットも立てる
+		IF 現在仕事:変更キャラ:休養日 == 0
+			SETBIT 現在仕事:変更キャラ:休養日, CFLAG:変更キャラ:人物番号 % 7
+		ENDIF
+		INVERTBIT 現在仕事:変更キャラ:休養日, LOCAL - 2000
+		;休養日がなくなるのは禁止
+		IF 現在仕事:変更キャラ:休養日 == 0
+			PRINTW 휴일 없음으로 설정할 수 없습니다.
+			SETBIT 現在仕事:変更キャラ:休養日, LOCAL - 2000
+		ENDIF
+		;全部休養日は禁止
+		IF 現在仕事:変更キャラ:休養日 == 127
+			PRINTW 모두 휴일로 설정할 수는 없습니다.
+			CLEARBIT 現在仕事:変更キャラ:休養日, LOCAL - 2000
+		ENDIF
+	CASE 1000
+		ページ数 -= 1
+	CASE 1001
+		ページ数 += 1
+	CASE 999
+		ページ数 = 0
+		RETURN 0
+	CASE 998
+		INVERTBIT ソートタイプ, 0
+	CASE 0 TO 499
+		変更キャラ = 従業員一覧:LOCAL
+ENDSELECT
+
+GOTO 表示ループ
+
+
+
+@従業員休暇判定(変更キャラ)
+#FUNCTION
+#DIM 変更キャラ
+
+IF 現在仕事:変更キャラ:休養日 != 0
+	;休養日はビット管理
+	IF GETBIT(現在仕事:変更キャラ:休養日, DAY % 7)
+		RETURNF 1
+	ENDIF
+ELSE
+	;ゲーム中に変動しない数値として、人物番号を使う
+	IF DAY % 7 == CFLAG:変更キャラ:人物番号 % 7
+		RETURNF 1
+	ENDIF
+ENDIF
+
+RETURNF 0

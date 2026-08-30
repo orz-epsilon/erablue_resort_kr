@@ -19,10 +19,10 @@ TFLAG:コマンドタイプ受渡 = COMTYPE("触手系")
 
 
 @COM_TOOLTIP_102
-LOCALS = <br>■촉수구욕<br>
-LOCALS += "캐릭터의 입에 촉수를 넣어 구강 내를 희롱하는 커맨드."
-LOCALS += "<br>COM 타입: 촉수계<br>획득 소스: 쾌S・접촉"
-LOCALS += "<br>고유 획득 경험: 촉수 조작 경험(PLAYER)<br>"
+LOCALS = <br>■촉수 구강 능욕<br>
+LOCALS += "캐릭터의 입에 촉수를 넣어 구강 내부를 희롱하는 커맨드."
+LOCALS += "<br>COM 타입：촉수계<br>획득 소스：쾌S・접촉"
+LOCALS += "<br>고유 획득 경험：촉수 조작 경험(PLAYER)<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
 @COM102
@@ -72,7 +72,7 @@ RETURN 1
 ;-------------------------------------------------
 @MESSAGE_COM102
 #DIM 同時キャラ番号
-PRINTFORM %CALLNAME:PLAYER%은
+PRINTFORM %CALLNAME:PLAYER%은(는)
 
 IF GETBIT(FLAG:モード管理, モードビット_同時)
 	PRINT 수많은 촉수를
@@ -81,10 +81,10 @@ IF GETBIT(FLAG:モード管理, モードビット_同時)
 			PRINT ,
 		PRINTFORM %CALLNAME:(同時モード_選択キャラ:同時キャラ番号)%
 	NEXT
-	PRINT 의 입속으로 쑤셔 넣고, 구강이나 혀를 유린했다
+	PRINT 의 입에 밀어 넣어, 구강 내부와 혀를 유린했다
 	RETURN 0
 ENDIF
 
-PRINTFORML 자신의 촉수를 %CALLNAME:TARGET%의 입속으로 쑤셔 넣어, 구강이나 혀를 유린했다
+PRINTFORML 자신의 촉수를%CALLNAME:TARGET%의 입에 밀어 넣어, 구강 내부와 혀를 유린했다
 
 

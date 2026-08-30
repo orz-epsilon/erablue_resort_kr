@@ -2,14 +2,15 @@
 #DIM 対象キャラ番号
 
 WSTR:(K++) = 마물의 기습이다!
-KSTR:(K++) = 어떻게든 격퇴했지만, 기습을 받은 %CALLNAME:PLAYER%의 복장이 흐트러져
+KSTR:(K++) = 어떻게든 격퇴했지만, 기습을 받은 %CALLNAME:PLAYER%의 옷차림이 흐트러져
 SELECTCASE TALENT:PLAYER:バストサイズ
 	CASE IS <= 0
 		KSTR:(K++) = 가슴 부분이 노출되어 버렸다._PAGE
 	CASEELSE
-		KSTR:(K++) = 풍만한 가슴이 옷에서 흘러넘치고 있다._PAGE
+		KSTR:(K++) = 풍만한 가슴이 옷 밖으로 흘러넘치고 있다._PAGE
 ENDSELECT
 
+CALL ダンジョンハプニング時画像表示処理(対象キャラ番号, "あなたポロリ発生")
 CALL メッセージ欄表示用関数()
 CALL 口上変数初期化
 
@@ -19,10 +20,10 @@ IF 口上有無確認(0, 1) == 0
 	SELECTCASE RFLAG:コマンド結果受渡し変数２
 		CASE 1
 			;無知
-			KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 특별히 신경 쓰지 않고 탐색으로 돌아갔다.
+			KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 딱히 신경 쓰지 않고 탐색으로 돌아갔다.
 		CASE 2
 			;無反応
-			KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 특별히 신경 쓰지 않고 탐색으로 돌아갔다.
+			KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 딱히 신경 쓰지 않고 탐색으로 돌아갔다.
 		CASEELSE
 			;汎用
 			IF TALENT:対象キャラ番号:性別 == TALENT:PLAYER:性別 || TALENT:PLAYER:性別 == 0
@@ -32,7 +33,7 @@ IF 口上有無確認(0, 1) == 0
 				SELECTCASE RFLAG:コマンド結果受渡し変数
 					CASE 1
 						;拒絶
-						KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 순간적으로 외면하며, %CALLNAME:PLAYER%에게 한마디 사과했다.
+						KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 황급히 외면하며, %CALLNAME:PLAYER%에게 한마디 사과했다.
 					CASE 2
 						;受入れ
 						KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 다른 시선으로부터 가드하듯이, %CALLNAME:PLAYER%의 앞으로 이동했다.

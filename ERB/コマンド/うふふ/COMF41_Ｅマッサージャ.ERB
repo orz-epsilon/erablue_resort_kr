@@ -20,9 +20,9 @@ TFLAG:コマンドタイプ受渡 = COMTYPE("道具系")
 
 
 @COM_TOOLTIP_41
-LOCALS = <br>■Ｅマッサージャ<br>
-LOCALS += "진동하는 휴대용 마사지 기구를 사용하여 상대의 클리토리스나 페니스에 강한 자극을 주는 커맨드."
-LOCALS += "<br>COM 타입: 도구계<br>획득 소스: 쾌C・노출・접촉"
+LOCALS = <br>■E 마사지기<br>
+LOCALS += "진동하는 휴대용 마사지 기구를 사용하여, 상대의 클리토리스나 페니스에 강한 자극을 주는 커맨드."
+LOCALS += "<br>COM 타입: 도구 계열<br>획득 소스: 쾌C・노출・접촉"
 LOCALS += "<br>고유 획득 경험: 도구 사용 경험(PLAYER)<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
@@ -99,7 +99,7 @@ RETURN 1
 ;実行時メッセージ
 ;-------------------------------------------------
 @MESSAGE_COM41
-PRINTFORM %CALLNAME:PLAYER%은
+PRINTFORM %CALLNAME:PLAYER%은(는)
 IF GETBIT(TALENT:TARGET:性別, 1)
 	PRINTFORM %CALLNAME:TARGET%의 페니스에
 ELSE
@@ -115,33 +115,33 @@ ELSEIF TEQUIP:下半身下着あり > 0
 	PRINT 속옷 위로
 ENDIF
 
-PRINTL 진동하는 전기 안마기를 눌러 댔다
-PRINTFORM %CALLNAME:TARGET%은
+PRINTL 진동하는 전기 안마기를 눌러 붙였다
+PRINTFORM %CALLNAME:TARGET%는
 ;Ｃ感覚LV3未満＋欲情のPALAMLV3未満
 IF ABL:Ｃ感覚 < 3 && PALAM:欲情 < PALAMLV:3
-	PRINT 몹시 간지러워하는 듯
+	PRINT 매우 간지러워하는 것 같
 ;Ｃ感覚LV3未満＋欲情のPALAMLV3以上
 ELSEIF ABL:Ｃ感覚 < 3 && PALAM:欲情 >= PALAMLV:3
-	PRINT ,…아무 말도 못 하게 된 듯
+	PRINT , …아무 말도 못 하게 된 것 같
 ;恋慕か親愛＋Ｃ感覚LV4以上＋欲情のPALAMLV3未満
 ELSEIF TALENT:恋慕 && ABL:Ｃ感覚 >= 4 && PALAM:欲情 < PALAMLV:3 && PLAYER == MASTER
-	PRINT 기다렸다는 듯 다리를 벌리고, 받아들이는 듯
+	PRINT 기다렸다는 듯 다리를 벌리고 받아들이는 듯
 ;恋慕か親愛＋Ｃ感覚LV4以上＋欲情のPALAMLV3以上＋欲情のPALAMLV5未満
 ELSEIF TALENT:恋慕 && ABL:Ｃ感覚 >= 4 && PALAM:欲情 >= PALAMLV:3 && PALAM:欲情 < PALAMLV:5 && PLAYER == MASTER
 	PRINTFORM 쾌락에 침을 흘리면서, 몇 번이고 %CALLNAME:PLAYER%의 이름을 부르
 ;恋慕か親愛＋Ｃ感覚LV4以上＋欲情のPALAMLV5以上
 ELSEIF TALENT:恋慕 && ABL:Ｃ感覚 >= 4 && PALAM:欲情 >= PALAMLV:5 && PLAYER == MASTER
-	PRINTFORM %CALLNAME:PLAYER%을 끌어안으며 절정의 황홀감에 젖어 있는 듯
+	PRINTFORM %CALLNAME:PLAYER%을(를) 끌어안으며 절정의 황홀감에 잠겨 있는 듯
 ;Ｃ感覚LV3以上＋欲情のPALAMLV3未満
 ELSEIF ABL:Ｃ感覚 >= 3 && PALAM:欲情 < PALAMLV:3
-	PRINT 강렬한 쾌감에 얼굴을 붉히는 듯
+	PRINT 강한 쾌감에 얼굴을 붉히고 있는 듯
 ;Ｃ感覚LV3以上＋欲情のPALAMLV3以上＋欲情のPALAMLV5未満
 ELSEIF ABL:Ｃ感覚 >= 3 && PALAM:欲情 >= PALAMLV:3 && PALAM:欲情 < PALAMLV:5
-	PRINT 넋이 나간 눈으로 쾌락을 탐하는 듯
+	PRINT 넋 나간 눈으로 쾌락을 탐하고 있는 듯
 ;Ｃ感覚LV3以上＋欲情のPALAMLV5以上
 ELSEIF ABL:Ｃ感覚 >= 3 && PALAM:欲情 >= PALAMLV:5
 	PRINT 지금이라도 절정에 달할 것 같은 모습
 ENDIF
-PRINTL 이다…
+PRINTL 다…
 
 

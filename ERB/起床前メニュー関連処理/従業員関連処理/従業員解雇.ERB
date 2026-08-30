@@ -11,7 +11,7 @@ VARSET 従業員一覧
 
 DRAWLINE
 PRINTL 직원을 해고합니다.
-PRINTL 해고한 캐릭터는 호감도 요소: 신뢰도가 내려가므로 주의해 주십시오.
+PRINTL 해고한 캐릭터는호감도要素：信頼도가 내려가니 주의해 주세요.
 PRINTL
 DRAWLINE
 
@@ -52,27 +52,27 @@ LOCALS += "<div rect='2125,156,3675,2812'>"
 IF 選択従業員番号 > 0
 	LOCALS += @"■%NAME表示(従業員一覧:選択従業員番号), 26, LEFT%"
 	LOCALS:1 = %属性数値文字色変換_HTML(基礎BATTLE_STATE:(従業員一覧:選択従業員番号):属性)%
-	LOCALS += @"<font color='#%LOCALS:1%'>속성: %属性数値文字列変換(基礎BATTLE_STATE:(従業員一覧:選択従業員番号):属性)%</font>"
-	LOCALS += @"　특기 무기: %得意武器表示文字列(基礎BATTLE_STATE:(従業員一覧:選択従業員番号):得意武器)%"
+	LOCALS += @"<font color='#%LOCALS:1%'>속성：%属性数値文字列変換(基礎BATTLE_STATE:(従業員一覧:選択従業員番号):属性)%</font>"
+	LOCALS += @"　특기 무기：%得意武器表示文字列(基礎BATTLE_STATE:(従業員一覧:選択従業員番号):得意武器)%"
 	SIF 基礎BATTLE_STATE:(従業員一覧:選択従業員番号):ステータスタイプ保存 > -1
-		LOCALS += @"　타입: %成長タイプ:(基礎BATTLE_STATE:(従業員一覧:選択従業員番号):ステータスタイプ保存)%"
+		LOCALS += @"　타입：%成長タイプ:(基礎BATTLE_STATE:(従業員一覧:選択従業員番号):ステータスタイプ保存)%"
 	LOCALS += "<br><br>"
 	LOCALS += "□ 정보 □---------------------------------------------------------------<br>"
-	LOCALS += @"　종족: %GET_TALENTNAME(200, TALENT:(従業員一覧:選択従業員番号):種族,,従業員一覧:選択従業員番号)%"
+	LOCALS += @"　종족:%GET_TALENTNAME(200, TALENT:(従業員一覧:選択従業員番号):種族,,従業員一覧:選択従業員番号)%"
 	IF TALENT:(従業員一覧:選択従業員番号):エルーン耳
-		LOCALS += "(엘룬 귀)"
+		LOCALS += "（엘룬 귀）"
 	ENDIF
 	IF TALENT:(従業員一覧:選択従業員番号):尻尾あり
-		LOCALS += "(꼬리)"
+		LOCALS += "（꼬리）"
 	ENDIF
 	IF TALENT:(従業員一覧:選択従業員番号):角あり
-		LOCALS += "(뿔 있음)"
+		LOCALS += "（뿔 있음）"
 	ENDIF
 	IF TALENT:(従業員一覧:選択従業員番号):ハーヴィン耳
 		LOCALS += "（하빈 귀）"
 	ENDIF
 	LOCALS += "<br>"
-	LOCALS += "　성별："
+	LOCALS += "　성별:"
 	SELECTCASE TALENT:(従業員一覧:選択従業員番号):性別
 		CASE 1
 			LOCALS += "여성"
@@ -94,14 +94,17 @@ IF 選択従業員番号 > 0
 				LOCALS += "（동정）　"
 			ENDIF
 	ENDSELECT
-	LOCALS += @"가슴 사이즈：%GET_TALENTNAME(205, TALENT:(従業員一覧:選択従業員番号):バストサイズ,,従業員一覧:選択従業員番号)%"
+	LOCALS += @"가슴 크기：%GET_TALENTNAME(205, TALENT:(従業員一覧:選択従業員番号):バストサイズ,,従業員一覧:選択従業員番号)%"
 	LOCALS += "<br>"
 	LOCALS += @"　성지식 레벨：%性知識段階表示(知識素質:(従業員一覧:選択従業員番号):性知識, 従業員一覧:選択従業員番号)%"
-	IF TALENT:(従業員一覧:選択従業員番号):ランダムキャラ
+	IF CFLAG:(従業員一覧:選択従業員番号):性知識成長禁止
+		LOCALS += "（성장✕）"
+	ENDIF
+	IF ランダムキャラ判定(NO:(従業員一覧:選択従業員番号))
 		LOCALS += @"<br>　용모：%GET_TALENTNAME(160, TALENT:(従業員一覧:選択従業員番号):容姿,,従業員一覧:選択従業員番号)%　　"
 		LOCALS += @"체격：%GET_TALENTNAME(161,TALENT:(従業員一覧:選択従業員番号):体格,,従業員一覧:選択従業員番号)%"
 		IF TALENT:(従業員一覧:選択従業員番号):性別 == 3
-			LOCALS += @"<br>　남성기 사이즈：%GET_TALENTNAME(162, TALENT:(従業員一覧:選択従業員番号):男性器サイズ,,従業員一覧:選択従業員番号)%"
+			LOCALS += @"<br>　남성기 크기：%GET_TALENTNAME(162, TALENT:(従業員一覧:選択従業員番号):男性器サイズ,,従業員一覧:選択従業員番号)%"
 		ENDIF
 	ENDIF
 	LOCALS += "<br>"
@@ -220,9 +223,9 @@ SELECTCASE LOCAL
 	CASE 1000
 		PRINTL
 		PRINTFORML 정말로 %NAME表示((従業員一覧:選択従業員番号))%을(를) 해고하시겠습니까?
-		PRINTBUTTON "[0]예", 0
+		PRINTBUTTON "[0]네", 0
 		PRINTL
-		PRINTBUTTON "[1]아니요", 1
+		PRINTBUTTON "[1]아니오", 1
 		PRINTL
 		BINPUT
 		SELECTCASE RESULT
@@ -284,12 +287,13 @@ PRINTFORML %CALLNAME:キャラ番号%의 신뢰도가 하락했습니다…
 ;好感度レベルの再計算
 
 要素最大値 = MAX(CFLAG:キャラ番号:友情度, CFLAG:キャラ番号:信頼度, CFLAG:キャラ番号:恋心度, CFLAG:キャラ番号:性愛度)
+計算後レベル = 0
 FOR ループ用, 0, 100
 	IF 経験値テーブル:ループ用 >= 要素最大値
 		BREAK
 	ENDIF
+	計算後レベル ++
 NEXT
-計算後レベル = ループ用
 
 IF CFLAG:キャラ番号:好感度レベル > 計算後レベル
 	IF あなた特殊能力:フレンドリーセンス

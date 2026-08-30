@@ -1,7 +1,7 @@
 
 @RAPE_COMNAME_S20_4
 #FUNCTIONS
-TSTR:コマンド名受渡 = 뿔을 잡고 허리를 흔들다
+TSTR:コマンド名受渡 = 뿔을 잡고 허리를 흔든다
 
 ;===================================================
 ;コマンドタイプ
@@ -11,10 +11,10 @@ TSTR:コマンド名受渡 = 뿔을 잡고 허리를 흔들다
 TFLAG:コマンドタイプ受渡 = RAPE_COMTYPE("Ｖ系")
 
 @RAPE_COM_TOOLTIP_S20_4
-LOCALS = <br>■뿔을 잡고 허리를 흔들다<br>
-LOCALS += "뒤에서 삽입할 때, 뿔을 잡고 강하게 몰아붙이는 커맨드。<br>후배위, 스탠딩 백 모드일 때만 실행 가능。"
-LOCALS += "<br>RAPE_COM 타입：Ｖ계<br>획득 소스：쾌Ｖ・접촉・고통・불결(일정 조건 시)"
-LOCALS += "<br>고유 획득 경험：Ｖ성교 경험(TARGET)・Ｃ성교 경험_Ｖ삽입(PLAYER)<br>"
+LOCALS = <br>■뿔을 잡고 허리를 흔든다<br>
+LOCALS += "뒤에서 삽입할 때, 뿔을 잡고 강하게 몰아붙이는 커맨드. <br>후배위, 스탠딩 백 모드 시에만 실행 가능."
+LOCALS += "<br>RAPE_COM 타입: V계<br>획득 소스: 쾌V・접촉・고통・불결(일정 조건 시)"
+LOCALS += "<br>고유 획득 경험: V성교 경험(TARGET)・C성교 경험_V삽입(PLAYER)<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
 @RAPE_COM_S20_4
@@ -87,6 +87,6 @@ RETURN 1
 #DIM 同時キャラ番号
 
 PRINTFORM %CALLNAME:PLAYER%은(는)
-PRINTFORML %CALLNAME:TARGET%의 뿔을 잡고, %TEXTR("핸들처럼 다루며/힘껏 움켜쥐고/부러질 정도의 힘을 담아")%면서 %TEXTR("강하게 허리를 박았다/난폭하게 허리를 흔들었다/욕망대로 허리를 박았다")%…
+PRINTFORML %CALLNAME:TARGET%의 뿔을 잡고, %TEXTR("핸들처럼 다루며/힘껏 움켜쥐고/부러질 정도의 힘을 실어")%면서 %TEXTR("강하게 허리를 박았다/난폭하게 허리를 흔들었다/욕망대로 허리를 박았다")%…
 
 

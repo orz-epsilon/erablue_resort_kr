@@ -3,6 +3,9 @@
 ;性欲一定以上で二人きりだとスカートをたくしあげて誘惑してくる
 ;チラ見せと時間が共通だが、チラ見せよりも条件がゆるい
 ;------------------------------------------------------------------------------
+@AUTOCOMNAME7
+RESULTS = スカートたくしあげ
+
 @AUTOCOM7
 CALL SOURCE_CALC_露出_反感無し(AUTOCOM_実行番号保存, PLAYER, 100)
 ;チラ見せと時間共通
@@ -15,15 +18,6 @@ RETURN 1
 ;あなたが必要
 SIF GETBIT(AUTOCOM_相手判別関数(対象キャラ), 0) == 0
 	RETURN 0
-;ターゲットが陥落済み
-SIF 陥落チェック_性的(対象キャラ) == 0
-	RETURN 0
-;初うふふ済
-SIF 初体験日取得("初うふふ", 対象キャラ, MASTER) == 0
-	RETURN 0
-;二人っきりのみ
-SIF GET_TARGETNUM() > 1
-	RETURN 0
 ;スカート必須、鎧はダメ
 SIF TEQUIP:対象キャラ:下半身服あり == 0
 	RETURN 0
@@ -35,7 +29,19 @@ SIF TEQUIP:対象キャラ:下腹部前鎧あり
 SIF CFLAG:対象キャラ:うふふ
 	RETURN 0
 ;２時間に１回のみ発動、チラ見せと時間共通
-SIF TIME - TIME_胸部チラ見せ:対象キャラ:0 < 120
+;SIF TIME - TIME_胸部チラ見せ:対象キャラ:0 < 120
+;	RETURN 0
+;デレイベ
+SIF 特定状況口上用フラグ:対象キャラ:0 == 4
+	RETURN 1
+;ターゲットが陥落済み
+SIF 陥落チェック_性的(対象キャラ) == 0
+	RETURN 0
+;初うふふ済
+SIF 初体験日取得("初うふふ", 対象キャラ, MASTER) == 0
+	RETURN 0
+;羞恥心持ちは二人っきりのみ
+SIF GET_TARGETNUM() > 1 && TALENT:対象キャラ:羞恥心 > 0
 	RETURN 0
 ;性欲一定以上
 SIF BASE:対象キャラ:性欲 < 1000
@@ -49,30 +55,49 @@ SIF 知識素質:対象キャラ:性知識 < -1
 RETURN 1
 
 @MESSAGE_AUTOCOM7
-PRINTFORM %CALLNAME:AUTOCOM_実行番号保存%은 %CALLNAME:PLAYER%를 향해
+PRINTFORM %CALLNAME:AUTOCOM_実行番号保存%은(는)
+IF GET_TARGETNUM() > 1
+	PRINTFORM %CALLNAME:PLAYER%에게만 보이는%TEXTR("듯/각도로")% 몰래,
+ELSE
+	PRINTFORM %CALLNAME:PLAYER%을(를) 향해
+ENDIF
 
 IF TALENT:AUTOCOM_実行番号保存:羞恥心 > 0
-	PRINT 얼굴을 새빨갛게 물들이며
+	PRINTFORM %TEXTR("얼굴을 새빨갛게 물들이며/뺨을 붉히고 시선을 피하며/수줍어하며")%
+ELSEIF GET_TARGETNUM() > 1
+	PRINTFORM %TEXTR("도발적으로 미소 지으며/요염하게 흘겨보며/장난스러운 미소를 지으며/「쉬잇」하고 손가락을 입가에 대며")%
+ELSE
+	PRINTFORM %TEXTR("도발적으로 미소 지으며/요염하게 흘겨보며/장난스러운 미소를 지으며")%
 ENDIF
 
 PRINT 옷을 걷어 올리고,
 
 IF TEQUIP:AUTOCOM_実行番号保存:下半身下着あり == 2
 	IF PALAM:AUTOCOM_実行番号保存:潤滑 > PALAMLV:3
-		PRINT 젖어서 벗겨질 듯한
+		PRINT 젖어서 벗겨지려 하는
 	ELSE
-		PRINT 중요한 부분만을 가리는
+		PRINT 중요한 곳만을 가리는
 	ENDIF
-	PRINTL 작은 마에바리를 보여주며 유혹했다…
+	PRINTL 작은 앞가리개를 보여주며 유혹해왔다…
 ELSEIF TEQUIP:AUTOCOM_実行番号保存:下半身下着あり == 0
 	SIF PALAM:AUTOCOM_実行番号保存:潤滑 > PALAMLV:3
 		PRINT 이미 젖어 있는
-	PRINTL 자신의 은밀한 부분을 보여주며 유혹했다…
+	PRINTL 자신의 은밀한 곳을 보여주며 유혹해왔다…
 ELSE
 	SIF PALAM:AUTOCOM_実行番号保存:潤滑 > PALAMLV:3
 		PRINT 흠뻑 젖은
-	PRINTFORML %今日の下着文字列生成(AUTOCOM_実行番号保存)%을 보여주며 유혹했다…
+	PRINTFORML %今日の下着文字列生成(AUTOCOM_実行番号保存)%을(를) 보여주며 유혹해왔다…
 ENDIF
 
+IF 特定状況口上用フラグ:TARGET:0 == 4
+	PRINTL
+	SETCOLOR カラーパレット("えっちな色")
+	PRINTFORM 걷어 올린 스커트 아래, %CALLNAME:TARGET%의 허벅지 안쪽에
+	PRINT_IMG "デレマス_マーク"
+CALL PRINT_STRL(@"마크가 발견되었다_H_")
+PRINTFORMW %CALLNAME:TARGET%은(는) 오늘의 『신데렐라』였던 것 같다
+	特定状況口上用フラグ:TARGET:0 = 1
+	RESETCOLOR
+ENDIF
 
 

@@ -1,7 +1,7 @@
 
 @COMNAME_S9_7
 #FUNCTIONS
-TSTR:コマンド名受渡 = 바이브 자위
+TSTR:コマンド名受渡 = 바이브 오나니
 
 ;===================================================
 ;コマンドタイプ
@@ -14,7 +14,7 @@ TFLAG:コマンドタイプ受渡 = COMTYPE("うふふ")
 
 
 @COM_TOOLTIP_S9_7
-LOCALS = <br>■바이브 자위<br>
+LOCALS = <br>■바이브 오나니<br>
 LOCALS += "상대가 보는 앞에서 바이브를 삽입하여 자위하는 커맨드."
 LOCALS += "<br>COM 타입: 우후후<br>획득 소스: 노출・쾌B・환락(일정 조건 시)・반감(일정 조건 시)"
 LOCALS += "<br>고유 획득 경험: 자위 경험(자위 실행자), 조교 자위 경험(자위 실행자)<br>"
@@ -107,9 +107,9 @@ RETURN 7
 
 PRINTFORM %CALLNAME:(自慰ターゲット保存)%은(는)
 IF TEQUIP:(自慰ターゲット保存):下半身服あり && TEQUIP:(自慰ターゲット保存):ずらし可
-	PRINT 옷을 밀어내고
+	PRINT 옷을 비켜서
 ELSEIF TEQUIP:(自慰ターゲット保存):下半身下着あり > 0
-	PRINT 속옷을 밀어내고
+	PRINT 속옷을 비켜서
 ENDIF
 PRINTL 바이브를 질에 넣고, 스위치를 켰다…
 
@@ -121,9 +121,9 @@ SIF TFLAG:オートコマンドフラグ > 0
 	RETURN 0
 
 IF EXP:(自慰ターゲット保存):調教自慰経験 <= 10
-	PRINTFORML 누군가에게 보여지면서 하는 자위에는 익숙하지 않은 듯, %CALLNAME:(自慰ターゲット保存)%은(는) 얼굴을 붉히고 %CALLNAME:MASTER%을(를) 노려보고 있다…
+	PRINTFORML 누군가에게 보여지는 자위에는 익숙하지 않은 듯, %CALLNAME:(自慰ターゲット保存)%은(는)얼굴을 붉히고 %CALLNAME:MASTER%을 노려보고 있다…
 ELSEIF EXP:(自慰ターゲット保存):調教自慰経験 <= 50
 	PRINTFORML 조금 익숙해진 듯하지만, 아직 %CALLNAME:MASTER%의 시선이 신경 쓰이는 듯하다…
 ELSE
-	PRINTFORML %CALLNAME:(自慰ターゲット保存)%은(는) %CALLNAME:MASTER%에게 보여지면서 하는 자위에, 묘한 고양감을 느끼고 있다…
+	PRINTFORML %CALLNAME:(自慰ターゲット保存)%은(는) %CALLNAME:MASTER%에게 보여지는 자위에, 묘한 고양감을 느끼고 있다…
 ENDIF

@@ -17,13 +17,13 @@ SELECTCASE 勝敗
 	CASE "勝利"
 		$INPUT_LOOP
 		PRINTFORML %CALLNAME:キャラ番号%에게 어떤 벌칙 게임을 줄까?
-		PRINTBUTTON "[0]이마 때리기", 0
+		PRINTBUTTON "[0] 딱밤 때리기", 0
 		PRINTL 
 		IF TALENT:キャラ番号:飲酒拒否 < 1
-			PRINTBUTTON "[1]술 한 잔 마시기", 1
+			PRINTBUTTON "[1] 술 한 잔 마시기", 1
 			PRINTL 
 		ENDIF
-		PRINTBUTTON "[2]몸에 손대기", 2
+		PRINTBUTTON "[2] 몸에 손대기", 2
 		PRINTL 
 		PRINTL 
 		CALL PRINT_えっちな罰ゲーム(キャラ番号)
@@ -33,13 +33,13 @@ SELECTCASE 勝敗
 		SELECTCASE RESULT
 			CASE 0
 				RFLAG:コマンド結果受渡し変数２ = 0
-				PRINTFORML %CALLNAME:MASTER%은(는) 벌칙 게임으로 %CALLNAME:キャラ番号%의 이마를 가볍게 때렸다.
+				PRINTFORML %CALLNAME:MASTER%은(는) 벌칙 게임으로 %CALLNAME:キャラ番号%에게 가볍게 딱밤을 때렸다.
 				PRINTFORML %CALLNAME:キャラ番号%은(는) 아픈 듯 이마를 손으로 문지르고 있다.
 			CASE 1
 				RFLAG:コマンド結果受渡し変数２ = 1
 				;いずれ子供キャラにはジュースにしたり、酩酊処理を挟んだりするが今は仮実装
 				PRINTFORML %CALLNAME:キャラ番号%은(는) 벌칙 게임으로 술을 한 잔 마셨다.
-				PRINTFORML %CALLNAME:キャラ番号%의 얼굴이 조금 붉어졌다.
+				PRINTFORML %CALLNAME:キャラ番号%의얼굴이 조금 붉어져 있다.
 				IF !初体験日:キャラ番号:初飲酒
 					初体験日:キャラ番号:初飲酒 = DAY
 					TCVAR:キャラ番号:初飲酒フラグ = 1
@@ -99,12 +99,12 @@ SELECTCASE 勝敗
 		SELECTCASE 罰ゲーム候補:(RAND:候補数)
 			CASE "デコピン"
 				RFLAG:コマンド結果受渡し変数２ = 0
-				PRINTFORMW %CALLNAME:キャラ番号%은(는) 벌칙 게임으로 %CALLNAME:PLAYER%의 이마를 가볍게 때렸다.
-				PRINTL 이마가 조금 따끔거린다…
+				PRINTFORMW %CALLNAME:キャラ番号%은(는) 벌칙 게임으로 %CALLNAME:PLAYER%에게 가볍게 딱밤을 때렸다.
+				PRINTL 조금 이마가 따끔거린다…
 			CASE "一気飲み"
 				RFLAG:コマンド結果受渡し変数２ = 1
 				PRINTFORMW %CALLNAME:キャラ番号%은(는) 벌칙 게임으로 %CALLNAME:PLAYER%에게 술을 한 잔 마시게 했다.
-				PRINTFORML %CALLNAME:PLAYER%은(는) 얼굴이 조금 붉어졌다.
+				PRINTFORML %CALLNAME:PLAYER%은(는)얼굴이 조금 붉어져 있다.
 				IF !初体験日:PLAYER:初飲酒
 					初体験日:PLAYER:初飲酒 = DAY
 					TCVAR:PLAYER:初飲酒フラグ = 1
@@ -115,7 +115,7 @@ SELECTCASE 勝敗
 				SIF BASE:PLAYER:酩酊 >= 1000
 					CFLAG:PLAYER:酔いすぎ = 1
 			CASE "下着の色を言う"
-				PRINTFORMW %CALLNAME:キャラ番号%은(는) 벌칙 게임으로 %CALLNAME:PLAYER%에게 「속옷 색깔 말하기」를 요구했다.
+				PRINTFORMW %CALLNAME:キャラ番号%은(는) 벌칙 게임으로 %CALLNAME:PLAYER%에게 「속옷 색깔을 말하기」를 요구했다.
 				RFLAG:コマンド結果受渡し変数２ = 10
 				PRINTFORM %CALLNAME:PLAYER%은(는) %CALLNAME:キャラ番号%에게
 				IF TEQUIP:キャラ番号:下半身下着あり == 1 || TEQUIP:キャラ番号:下半身下着あり == -1
@@ -123,15 +123,15 @@ SELECTCASE 勝敗
 				ELSEIF TEQUIP:キャラ番号:下半身下着あり == 0
 					PRINTW 안 입었다고 몰래 속삭였다.
 				ELSEIF TEQUIP:キャラ番号:下半身下着あり == 2
-					PRINTW 앞치마를 하고 있다고 속삭였다.
+					PRINTW 앞가리개를 하고 있다고 속삭였다.
 				ELSEIF TEQUIP:キャラ番号:下半身下着あり == 3
 					PRINTW 훈도시라고 알려주었다.
 				ELSEIF TEQUIP:キャラ番号:下半身下着あり == 4
 					PRINTW 리본으로 가리고 있을 뿐이라고 속삭였다.
 				ELSEIF TEQUIP:キャラ番号:下半身下着あり == -2
-					PRINTW 피어스로 장식하고 있을 뿐이라고 속삭였다.
+					PRINTW 피어스로 장식했을 뿐이라고 속삭였다.
 				ELSEIF TEQUIP:キャラ番号:下半身下着あり == -3
-					PRINTW 사타구니를 드러내고, 음란한 표기의 명찰이 클리토리스에서 늘어져 있는 것을 보여주었다.
+					PRINTW 사타구니를 드러내고, 음란한 문구의 명찰이 클리토리스에서 늘어져 있는 것을 보여주었다.
 				ENDIF
 				CALL SOURCE_CALC_露出(PLAYER, キャラ番号, 100)
 				CALL SOURCE_CALC_好感度要素_友情度UP(PLAYER, キャラ番号, 10)
@@ -143,10 +143,10 @@ SELECTCASE 勝敗
 				CALL SOURCE_CALC_露出(PLAYER, キャラ番号, 200)
 				CALL SOURCE_CALC_好感度要素_友情度UP(PLAYER, キャラ番号, 10)
 				CALL SOURCE_CALC_好感度要素_性愛度UP(PLAYER, キャラ番号, 50)
-				PRINTFORMW %CALLNAME:PLAYER%은(는) 도발적인 포즈를 보여주면서, %CALLNAME:キャラ番号%의 귓가에 음란한 대사를 속삭였다.
+				PRINTFORMW %CALLNAME:PLAYER%은(는) 도발적인 포즈를 취하며, %CALLNAME:キャラ番号%의 귓가에 음란한 대사를 속삭였다.
 			CASE "乳首当てゲームをする"
-				PRINTFORMW %CALLNAME:キャラ番号%은(는) 벌칙 게임으로 %CALLNAME:PLAYER%에게 「젖꼭지 맞추기 게임」을 요구했다.
-				PRINTFORMW %CALLNAME:PLAYER%은(는) 승낙하고, 양손을 뒤로 돌려 %CALLNAME:キャラ番号%의 손가락을 기다리고 있다.
+				PRINTFORMW %CALLNAME:キャラ番号%은(는) 벌칙 게임으로 %CALLNAME:PLAYER%에게 「유두 맞추기 게임」을 요구했다.
+				PRINTFORMW %CALLNAME:PLAYER%은(는) 승낙하고, 양손을 뒤로 한 채 %CALLNAME:キャラ番号%의 손가락을 기다리고 있다.
 				RFLAG:コマンド結果受渡し変数２ = 12
 				;乳首当てゲーム
 				CALL SOURCE_CALC_露出(PLAYER, キャラ番号, 200)
@@ -156,18 +156,18 @@ SELECTCASE 勝敗
 				SELECTCASE 乳首当て結果判定(PLAYER)
 					CASE 0 TO 4
 						RFLAG:コマンド結果受渡し変数４ = 1
-						PRINTFORMW %CALLNAME:PLAYER%의 가슴에, 젖꼭지를 향해 손가락을 내밀었다.
+						PRINTFORMW %CALLNAME:PLAYER%의 가슴에, 유두를 향해 손가락을 내밀었다.
 						PRINTW 【명중!】
-						PRINTFORMW %CALLNAME:キャラ番号%은(는) 멋지게 %CALLNAME:PLAYER%의 젖꼭지를 찔렀다!
+						PRINTFORMW %CALLNAME:キャラ番号%은(는) 멋지게 %CALLNAME:PLAYER%의 유두를 찔렀다!
 						CALL SOURCE_CALC_快Ｂ(PLAYER, キャラ番号, 100)
 					CASE 5 TO 9
 						RFLAG:コマンド結果受渡し変数４ = -1
-						PRINTFORMW %CALLNAME:PLAYER%의 가슴에, 젖꼭지를 향해 손가락을 내밀었다.
-						PRINTW 【실패…】
-						PRINTFORMW %CALLNAME:キャラ番号%은(는) 유두의 위치를 잘못 본 것 같다.
+						PRINTFORMW %CALLNAME:PLAYER%의 가슴에, 유두를 향해 손가락을 내밀었다.
+PRINTW 【꽝…】
+PRINTFORMW %CALLNAME:キャラ番号%은(는) 젖꼭지 위치를 착각해버린 것 같다.
 				ENDSELECT
 			CASE "尻を揉む"
-				PRINTFORMW %CALLNAME:キャラ番号%은(는) 벌칙 게임으로 %CALLNAME:PLAYER%의 몸에 닿는 것을 선택한 것 같다.
+PRINTFORMW %CALLNAME:キャラ番号%은(는) 벌칙 게임으로 %CALLNAME:PLAYER%의 몸을 만지는 것을 선택한 것 같다.
 				;CALL_COMを経由させる
 				SWAP TARGET, PLAYER
 				LOCAL = SELECTCOM
@@ -181,7 +181,7 @@ SELECTCASE 勝敗
 				SWAP TARGET, PLAYER
 				RFLAG:コマンド結果受渡し変数２ = 13
 			CASE "胸を揉む"
-				PRINTFORMW %CALLNAME:キャラ番号%은(는) 벌칙 게임으로 %CALLNAME:PLAYER%의 몸에 닿는 것을 선택한 것 같다.
+PRINTFORMW %CALLNAME:キャラ番号%은(는) 벌칙 게임으로 %CALLNAME:PLAYER%의 몸을 만지는 것을 선택한 것 같다.
 				;CALL_COMを経由させる
 				SWAP TARGET, PLAYER
 				LOCAL = SELECTCOM
@@ -194,7 +194,7 @@ SELECTCASE 勝敗
 				SWAP TARGET, PLAYER
 				RFLAG:コマンド結果受渡し変数２ = 14
 			CASE "尻尾の付け根を揉む"
-				PRINTFORMW %CALLNAME:キャラ番号%은(는) 벌칙 게임으로 %CALLNAME:PLAYER%의 몸에 닿는 것을 선택한 것 같다.
+PRINTFORMW %CALLNAME:キャラ番号%은(는) 벌칙 게임으로 %CALLNAME:PLAYER%의 몸을 만지는 것을 선택한 것 같다.
 				;CALL_COMを経由させる
 				SWAP TARGET, PLAYER
 				LOCAL = SELECTCOM
@@ -207,7 +207,7 @@ SELECTCASE 勝敗
 				SWAP TARGET, PLAYER
 				RFLAG:コマンド結果受渡し変数２ = 15
 			CASE "肩組み乳揉み"
-				PRINTFORMW %CALLNAME:キャラ番号%은(는) 벌칙 게임으로 %CALLNAME:PLAYER%의 몸에 닿는 것을 선택한 것 같다.
+PRINTFORMW %CALLNAME:キャラ番号%은(는) 벌칙 게임으로 %CALLNAME:PLAYER%의 몸을 만지는 것을 선택한 것 같다.
 				;CALL_COMを経由させる
 				SWAP TARGET, PLAYER
 				LOCAL = SELECTCOM
@@ -220,7 +220,7 @@ SELECTCASE 勝敗
 				SWAP TARGET, PLAYER
 				RFLAG:コマンド結果受渡し変数２ = 16
 			CASE "乳首ひっかき"
-				PRINTFORMW %CALLNAME:キャラ番号%은(는) 벌칙 게임으로 %CALLNAME:PLAYER%의 몸에 닿는 것을 선택한 것 같다.
+PRINTFORMW %CALLNAME:キャラ番号%은(는) 벌칙 게임으로 %CALLNAME:PLAYER%의 몸을 만지는 것을 선택한 것 같다.
 				;CALL_COMを経由させる
 				SWAP TARGET, PLAYER
 				LOCAL = SELECTCOM
@@ -233,7 +233,7 @@ SELECTCASE 勝敗
 				SWAP TARGET, PLAYER
 				RFLAG:コマンド結果受渡し変数２ = 17
 			CASE "股間を弄る"
-				PRINTFORMW %CALLNAME:キャラ番号%은(는) 벌칙 게임으로 %CALLNAME:PLAYER%의 몸에 닿는 것을 선택한 것 같다.
+PRINTFORMW %CALLNAME:キャラ番号%은(는) 벌칙 게임으로 %CALLNAME:PLAYER%의 몸을 만지는 것을 선택한 것 같다.
 				;CALL_COMを経由させる
 				SWAP TARGET, PLAYER
 				LOCAL = SELECTCOM
@@ -258,39 +258,39 @@ TRYCALLFORM KOJO_EVENT_罰ゲーム_{NO:キャラ番号}(キャラ番号)
 RFLAG:罰ゲーム中 = 1
 IF CFLAG:キャラ番号:好感度レベル < 50
 	SETCOLOR 0x666666
-	PRINTPLAIN ▼야한 벌칙 게임 (호감도 레벨이 부족합니다)
+PRINTPLAIN ▼야한 벌칙 게임（호감도 레벨이 부족합니다）
 	PRINTL
 	RESETCOLOR
 ELSE
-	PRINTL ▼야한 벌칙 게임
+PRINTL ▼야한 벌칙 게임
 	;いずれ脱衣も実装する……絶対にだ……
 	IF ABLE_えっちな罰ゲーム(キャラ番号) > 40
 		PRINT ├
-		PRINTBUTTON "[10]속옷 색깔을 말하다", 10
+PRINTBUTTON "[10]속옷 색깔을 말하다", 10
 		PRINTL 
 	ELSE
 		SETCOLOR 0x666666
-		PRINTPLAIN ├[10]속옷 색깔을 말하다 (조건이 부족합니다)
+PRINTPLAIN ├[10]속옷 색깔을 말하다（조건이 부족합니다）
 		PRINTL 
 		RESETCOLOR
 	ENDIF
 	IF ABLE_えっちな罰ゲーム(キャラ番号) > 50
 		PRINT ├
-		PRINTBUTTON "[11]섹시 포즈로 음란한 말을 하다", 11
+PRINTBUTTON "[11]섹시 포즈로 음담패설을 말하다", 11
 		PRINTL 
 	ELSE
 		SETCOLOR 0x666666
-		PRINTPLAIN ├[11]섹시 포즈로 음란한 말을 하다 (조건이 부족합니다)
+PRINTPLAIN ├[11]섹시 포즈로 음담패설을 말하다（조건이 부족합니다）
 		PRINTL 
 		RESETCOLOR
 	ENDIF
 	IF ABLE_えっちな罰ゲーム(キャラ番号) > 65 && TALENT:キャラ番号:Ｂ感度 > -2
 		PRINT ├
-		PRINTBUTTON "[12]유두 맞히기 게임을 하다", 12
+PRINTBUTTON "[12]젖꼭지 맞추기 게임을 하다", 12
 		PRINTL 
 	ELSE
 		SETCOLOR 0x666666
-		PRINTPLAIN ├[12]유두 맞히기 게임을 하다 (조건이 부족합니다)
+		PRINTPLAIN ├[12]젖꼭지 맞추기 게임을 한다（조건이 부족합니다）
 		PRINTL 
 		RESETCOLOR
 	ENDIF
@@ -301,7 +301,7 @@ ELSE
 		PRINTL 
 	ELSE
 		SETCOLOR 0x666666
-		PRINTPLAIN ├[13]엉덩이를 주무르다 (조건이 부족합니다)
+		PRINTPLAIN ├[13]엉덩이를 주무르다（조건이 부족합니다）
 		PRINTL 
 		RESETCOLOR
 	ENDIF
@@ -312,7 +312,7 @@ ELSE
 		PRINTL 
 	ELSE
 		SETCOLOR 0x666666
-		PRINTPLAIN ├[14]가슴을 주무르다 (조건이 부족합니다)
+		PRINTPLAIN ├[14]가슴을 주무르다（조건이 부족합니다）
 		PRINTL 
 		RESETCOLOR
 	ENDIF
@@ -323,18 +323,18 @@ ELSE
 		PRINTL 
 	ELSE
 		SETCOLOR 0x666666
-		PRINTPLAIN ├[15]꼬리 뿌리를 주무르다 (조건이 부족합니다)
+		PRINTPLAIN ├[15]꼬리 뿌리를 주무르다（조건이 부족합니다）
 		PRINTL 
 		RESETCOLOR
 	ENDIF
 	CALL COM_ABLE323
 	IF RESULT && ABLE_えっちな罰ゲーム(キャラ番号) > 80
 		PRINT ├
-		PRINTBUTTON "[16]어깨동무 가슴 주무르기", 16
+		PRINTBUTTON "[16]어깨동무 젖무르기", 16
 		PRINTL 
 	ELSE
 		SETCOLOR 0x666666
-		PRINTPLAIN ├[16]어깨동무 가슴 주무르기 (조건이 부족합니다)
+		PRINTPLAIN ├[16]어깨동무 젖무르기（조건이 부족합니다）
 		PRINTL 
 		RESETCOLOR
 	ENDIF
@@ -345,7 +345,7 @@ ELSE
 		PRINTL 
 	ELSE
 		SETCOLOR 0x666666
-		PRINTPLAIN ├[17]젖꼭지 긁기 (조건이 부족합니다)
+		PRINTPLAIN ├[17]젖꼭지 긁기（조건이 부족합니다）
 		PRINTL 
 		RESETCOLOR
 	ENDIF
@@ -356,7 +356,7 @@ ELSE
 		PRINTL 
 	ELSE
 		SETCOLOR 0x666666
-		PRINTPLAIN └[18]사타구니를 만지작거리다 (조건이 부족합니다)
+		PRINTPLAIN └[18]사타구니를 만지작거리다（조건이 부족합니다）
 		PRINTL 
 		RESETCOLOR
 	ENDIF
@@ -499,13 +499,13 @@ IF FLAG:汎用文章表示切り替えオプション > 0
 		IF TCVAR:PLAYER:弱点コマンドフラグ
 			DRAWLINE
 			SETCOLOR カラーパレット("えっちな色")
-			PRINTFORMW <<<약점 커맨드!! (%CALLNAME:PLAYER%)>>>
+			PRINTFORMW <<<약점 커맨드!!（%CALLNAME:PLAYER%）>>>
 			RESETCOLOR
 		ELSEIF TCVAR:PLAYER:弱点シチュフラグ
 			SETCOLOR カラーパレット("えっちな色")
-			PRINT <<<약점 시츄에이션
+			PRINT <<<약점 시추에이션
 			PRINT_IMG "えっちハート"
-			PRINTFORML (%CALLNAME:PLAYER%)>>>
+			PRINTFORML （%CALLNAME:PLAYER%）>>>
 			RESETCOLOR
 		ENDIF
 	ENDIF
@@ -539,7 +539,7 @@ SELECTCASE ARG
 		IF TALENT:キャラ番号:羞恥心 > 0
 			PRINT 얼굴을 새빨갛게 물들이며
 		ELSEIF TALENT:キャラ番号:羞恥心 < 0
-			PRINT 아무렇지도 않은 얼굴로
+			PRINT 아무렇지도 않은 듯한 얼굴로
 		ELSE
 			PRINT 조금 부끄러운 듯이
 		ENDIF
@@ -556,13 +556,13 @@ SELECTCASE ARG
 		ELSEIF TEQUIP:キャラ番号:下半身下着あり == -2
 			PRINTW 피어스로 장식되어 있을 뿐인 성기를 드러냈다.
 		ELSEIF TEQUIP:キャラ番号:下半身下着あり == -3
-			PRINTW 사타구니를 드러내고, 음란한 표기의 명찰이 음핵에서부터 늘어져 있는 것을 보여주었다.
+			PRINTW 사타구니를 드러내고, 음란한 표기의 명찰이 클리토리스에서 늘어져 있는 것을 보여주었다.
 		ENDIF
 	CASE 11
 		;セクシーポーズで淫語
 		PRINTFORM %CALLNAME:キャラ番号%은(는)
 		IF TALENT:キャラ番号:羞恥心 > 0
-			PRINTL 진심으로 부끄러워하며
+			PRINTL 진심으로 부끄러운 듯
 		ELSEIF TALENT:キャラ番号:羞恥心 < 0
 			PRINTL 조금 내키는 듯한 모습으로
 		ELSE
@@ -571,22 +571,22 @@ SELECTCASE ARG
 		IF 知識素質:キャラ番号:性知識 < 1
 			PRINTW 엉뚱한 포즈와 말을 선보였다.
 		ELSEIF 知識素質:キャラ番号:性知識 < 3
-			PRINTW 어색한 섹시 포즈를 취하고, 온 힘을 다해 야한 말을 늘어놓았다.
+			PRINTW 어색한 섹시 포즈를 취하고, 있는 힘껏 야한 말을 늘어놓았다.
 		ELSEIF 知識素質:キャラ番号:性知識 < 5
-			PRINTW 매혹적인 포즈를 취하고, 성욕을 자극하는 듯한 과격한 말을 했다.
+			PRINTW 매혹적인 포즈를 취하고, 성욕을 자극하는 듯한 과격한 말을 쏟아냈다.
 		ELSE
-			PRINTFORMW 도저히 아이에게는 보여줄 수 없는 끔찍한 포즈를 보여주며, %CALLNAME:MASTER%의 귓가에 음란한 대사를 속삭였다.
+			PRINTFORMW 도저히 아이들에게는 보여줄 수 없는 끔찍한 포즈를 과시하며, %CALLNAME:MASTER%의 귓가에 음란한 대사를 속삭였다.
 		ENDIF
 	CASE 12
 		;乳首当てゲーム
 		IF TALENT:キャラ番号:羞恥心 > 0
-			PRINT 뺨을 붉게 물들이고 눈을 감고 기다린다
+			PRINT 뺨을 붉히고 눈을 감고 기다린다
 		ELSEIF TALENT:キャラ番号:羞恥心 < 0
-			PRINT 맞힐 수 있을까? 하고 웃는다
+			PRINT 맞힐 수 있을까? 라며 웃는다
 		ELSE
 			PRINT 
 		ENDIF
-		PRINTFORMW %CALLNAME:キャラ番号%의 가슴에, 유두를 향해 손가락을 내밀었다.
+		PRINTFORMW %CALLNAME:キャラ番号%의 가슴에, 젖꼭지를 향해 손가락을 내밀었다.
 		CALL 乳首当てゲーム結果メッセージ(キャラ番号)
 	CASE 13
 		CALL MESSAGE_COM320

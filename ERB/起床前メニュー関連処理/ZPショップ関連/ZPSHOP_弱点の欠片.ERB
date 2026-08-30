@@ -115,10 +115,10 @@ PRINTL
 
 IF フィルタフラグ == 0
 	SETCOLOR カラーパレット("黄")
-	PRINTPLAIN [1014] 통상 커맨드　
+	PRINTPLAIN [1014] 일반 커맨드　
 	RESETCOLOR
 ELSE
-	PRINTBUTTON "[1014] 통상 커맨드　", 1014
+	PRINTBUTTON "[1014] 일반 커맨드　", 1014
 ENDIF
 PRINT  / 
 IF フィルタフラグ == 1
@@ -205,7 +205,7 @@ ELSE
 ENDIF
 
 IF PLAYER側
-	返し文字列 += ":PLAYER"
+	返し文字列 += "：PLAYER"
 ENDIF
 
 RETURNF 返し文字列

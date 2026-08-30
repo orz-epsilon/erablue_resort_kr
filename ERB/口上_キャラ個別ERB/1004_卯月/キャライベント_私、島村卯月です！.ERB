@@ -1,4 +1,4 @@
-﻿
+
 @イベント発生条件_キャライベント_私、島村卯月です！
 ;開放条件を満たしたら1を返すこと
 LOCAL = GETCHARA(1004)
@@ -9,32 +9,32 @@ RETURN 0
 
 @イベント関数_キャライベント_私、島村卯月です！(ARG)
 DRAWLINE
-PRINTL ［私、島村卯月です！］
+PRINTL ［저, 시마무라 우즈키예요!］
 DRAWLINE
 PRINTW
-PRINTFORMW %CALLNAME:PLAYER%が門にZPを注ぐ。
-PRINTFORMW すると門が光り輝き、平行世界への道を開いて────中から一人の少女が転がり出てきた。
-PRINTFORMW 少女は桃色の華やかな服装をして、腰に剣を帯びている。騎空士の類だろうか。
+PRINTFORMW %CALLNAME:PLAYER%이 문에 ZP를 쏟아붓는다.
+PRINTFORMW 그러자 문이 빛나며 평행세계로의 길을 열고────그 안에서 한 소녀가 굴러 나왔다.
+PRINTFORMW 소녀는 분홍색의 화려한 복장을 하고 허리에 검을 차고 있다. 기공사 종류일까.
 PRINTL
-PRINTL 卯月：
-PRINTFORMW 「あっ、あれ？　私、楽屋にいたはずじゃ……」
+PRINTL 우즈키:
+PRINTFORMW 「앗, 어라? 저, 대기실에 있었을 텐데……」
 PRINTL
-PRINTFORMW 戸惑い驚く少女に%CALLNAME:PLAYER%は簡単な説明を行う。
-PRINTFORMW ここは元いた世界とは別の世界であること。
-PRINTFORMW いつでも元の世界には戻れること。
-PRINTFORMW リゾートの顧客開拓のために道を繋げたので、良ければ楽しんで行って欲しいということ。
-PRINTFORMW 実際に門の中に戻ってみた少女は納得したのか、落ち着きを取り戻している。
+PRINTFORMW 당황하고 놀라는 소녀에게 %CALLNAME:PLAYER%은 간단한 설명을 해준다.
+PRINTFORMW 이곳은 원래 있던 세계와는 다른 세계라는 것.
+PRINTFORMW 언제든지 원래 세계로 돌아갈 수 있다는 것.
+PRINTFORMW 리조트 고객 개척을 위해 길을 연결했으니, 괜찮다면 즐기고 가줬으면 한다는 것.
+PRINTFORMW 실제로 문 안으로 돌아가 본 소녀는 납득했는지, 안정을 되찾고 있다.
 PRINTL
-PRINTL 卯月：
-PRINTFORMW 「リゾートかぁ、楽しそうですけど……私、お仕事前なんです
-PRINTFORMW 　終わってからまた来てみてもいいですか？」
+PRINTL 우즈키:
+PRINTFORMW 「리조트라니, 즐거울 것 같지만……저, 일하기 전이라서요
+PRINTFORMW 　끝나고 나서 다시 와봐도 될까요?」
 PRINTL
-PRINTFORMW もちろん、と%CALLNAME:PLAYER%は頷いて少女に魔法を掛ける。
-PRINTFORMW 念じればいつでもこちらの世界へ移動出来る魔法だ。と少女に説明する。
+PRINTFORMW 물론이지, 하고 %CALLNAME:PLAYER%는 고개를 끄덕이며 소녀에게 마법을 건다.
+PRINTFORMW 마음을 먹으면 언제든지 이쪽 세계로 이동할 수 있는 마법이라고 소녀에게 설명한다.
 PRINTL
-PRINTL 卯月：
-PRINTFORMW 「ありがとうございます！　仕事が終わったら、絶対遊びに来ますね！
-PRINTFORMW 　私、島村卯月です！　よろしくお願いします！」
+PRINTL 우즈키：
+PRINTFORMW 「감사합니다! 일이 끝나면 꼭 놀러 올게요!
+PRINTFORMW 　저는 시마무라 우즈키입니다! 잘 부탁드립니다!」
 
 CALL イベント完了フラグ汎用処理("私、島村卯月です！")
 

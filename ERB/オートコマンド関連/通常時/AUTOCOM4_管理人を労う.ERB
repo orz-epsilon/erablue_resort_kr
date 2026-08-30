@@ -1,6 +1,9 @@
 ;------------------------------------------------------------------------------
 ;通常時、管理人をねぎらってくれる
 ;------------------------------------------------------------------------------
+@AUTOCOMNAME4
+RESULTS = 管理人を労う
+
 @AUTOCOM4
 CALL SOURCE_CALC_歓楽(AUTOCOM_実行番号保存, PLAYER, 500)
 CALL SOURCE_CALC_好感度要素_信頼度UP(AUTOCOM_実行番号保存, PLAYER, 250)
@@ -30,8 +33,8 @@ RETURN 1
 
 @MESSAGE_AUTOCOM4
 IF TALENT:TARGET:従業員
-	PRINTFORML %CALLNAME:AUTOCOM_実行番号保存%는 %CALLNAME:PLAYER%에게 업무에 대한 노고를 위로하며 차를 내줬다.
+	PRINTFORML %CALLNAME:AUTOCOM_実行番号保存%은(는) %CALLNAME:PLAYER%에게, 업무의 노고를 위로하며 차를 끓여주었다.
 ELSE
-	PRINTFORML %CALLNAME:AUTOCOM_実行番号保存%는 %CALLNAME:PLAYER%에게 평소 업무에 대한 감사 선물로 과자를 줬다.
+	PRINTFORML %CALLNAME:AUTOCOM_実行番号保存%은(는) %CALLNAME:PLAYER%에게, 평소 업무에 대한 답례로 과자를 주었다.
 ENDIF
 

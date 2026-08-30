@@ -72,17 +72,17 @@ IF LOCAL >= 0
 			ENDIF
 		ENDIF
 		SIF 弱点コマンド欄表示名 != ""
-			TSTR:コマンド名受渡 '= 弱点コマンド欄表示名
+TSTR:コマンド名受渡 '= 弱点コマンド欄表示名
 		IF プレイヤー側フラグ
-			CALL 履歴データベース登録(CFLAG:MASTER:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>%CALLNAME:対象キャラ%는 %TSTR:コマンド名受渡%（PLAYER측）가 약하다는 것을 알았다.</font>","うふふ")
-			CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>%CALLNAME:MASTER%에게 %TSTR:コマンド名受渡%（PLAYER측）가 약하다는 것을 알려졌다.</font>","うふふ")
+			CALL 履歴データベース登録(CFLAG:MASTER:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>%CALLNAME:対象キャラ%は%TSTR:コマンド名受渡%（PLAYER側）に弱いとわかった</font>","うふふ")
+			CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>%CALLNAME:MASTER%に%TSTR:コマンド名受渡%（PLAYER側）に弱いと知られてしまった</font>","うふふ")
 		ELSE
-			CALL 履歴データベース登録(CFLAG:MASTER:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>%CALLNAME:対象キャラ%는 %TSTR:コマンド名受渡%가 약하다는 것을 알았다.</font>","うふふ")
-			CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>%CALLNAME:MASTER%에게 %TSTR:コマンド名受渡%가 약하다는 것을 알려졌다.</font>","うふふ")
+			CALL 履歴データベース登録(CFLAG:MASTER:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>%CALLNAME:対象キャラ%は%TSTR:コマンド名受渡%に弱いとわかった</font>","うふふ")
+			CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>%CALLNAME:MASTER%に%TSTR:コマンド名受渡%に弱いと知られてしまった</font>","うふふ")
 		ENDIF
 		IF 弱点全看破チェック(対象キャラ)
-			CALL 履歴データベース登録(CFLAG:MASTER:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>%CALLNAME:対象キャラ%의 약점을 모두 간파했다.</font><img src='えっちハート'>","うふふ実績")
-			CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>%CALLNAME:MASTER%에게 모든 약점을 간파당했다.</font><img src='えっちハート'>","うふふ実績")
+			CALL 履歴データベース登録(CFLAG:MASTER:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>%CALLNAME:対象キャラ%の弱点をすべて看破した</font><img src='えっちハート'>","うふふ実績")
+			CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>%CALLNAME:MASTER%にすべての弱点を看破された</font><img src='えっちハート'>","うふふ実績")
 		ENDIF
 	ENDIF
 ELSE

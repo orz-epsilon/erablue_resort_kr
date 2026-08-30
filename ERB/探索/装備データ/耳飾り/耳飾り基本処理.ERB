@@ -7,14 +7,14 @@
 
 ;最大個数制限
 IF DT_ROW_LENGTH("所持指輪データベース") >= 耳飾り所持最大数
-	PRINTFORMW 반지 소지 수가 최대 수（%TOFULL(TOSTR(耳飾り所持最大数))%개）를 초과했습니다.
+	PRINTFORMW 반지 소지 수가 최대 수(%TOFULL(TOSTR(耳飾り所持最大数))%개)를 초과했습니다.
 	RETURN -1
 ENDIF
 
 ;個別の耳飾りERBに飛んでステータス補正を入れ込む
 TRYCCALLFORM 耳飾りステータス決定_%耳飾り名%(ランダム性能固定フラグ)
 CATCH
-	PRINTFORMW 지정된 귀걸이（%耳飾り名%, {ランダム性能固定フラグ}）를 찾을 수 없습니다.
+	PRINTFORMW 지정된 귀걸이(%耳飾り名%, {ランダム性能固定フラグ})를 찾을 수 없습니다.
 	RETURN -1
 ENDCATCH
 
@@ -36,6 +36,11 @@ ENDIF
 #DIM キャラ番号
 #DIM ページ番号
 #DIMS ソート条件
+
+IF CFLAG:キャラ番号:耳飾り変更禁止
+	PRINTFORMW %NAME:キャラ番号%은(는) 귀걸이를 변경할 수 없습니다.
+	RETURN 0
+ENDIF
 
 ;表示部分
 ;装備中耳飾り表示
@@ -68,7 +73,7 @@ ELSE
 	LOCALS += "　　　　　　　　　　"
 ENDIF
 IF 装備ステータス補正保存:キャラ番号:装備耳飾り番号 > 0
-	LOCALS += "　　　　　　<button value='1002'>[1002]장비를 해제하다</button>　　"
+	LOCALS += "　　　　　　<button value='1002'>[1002]장비 제외</button>　　"
 ELSE
 	LOCALS += "　　　　　　　　　　　　　　　　"
 ENDIF
@@ -119,7 +124,7 @@ SELECTCASE LOCAL
 		DT_CELL_SET "所持耳飾りデータベース", 装備ステータス補正保存:キャラ番号:装備耳飾り番号, "装備キャラ番号", 0, 1
 		装備ステータス補正保存:キャラ番号:装備耳飾り番号 = 0
 		CALL 装備再計算処理(キャラ番号)
-		PRINTFORMW %CALLNAME:キャラ番号%은(는) 귀걸이를 해제했다.
+		PRINTFORMW %CALLNAME:キャラ番号%은(는) 귀걸이를 벗었다.
 		VARSET 表示用ステータス格納配列:0:0
 		ページ番号 = 0
 		RETURN 0
@@ -182,7 +187,7 @@ ELSE
 ENDIF
 
 LOCALS = <div rect='262,{y軸位置},5537,3625'><nobr>
-LOCALS += "　　　<button value='-1'>[귀걸이명]</button> 　　　　　　　 <button value='-2'>[속성]</button><button value='-3'>[오의 보정]</button> 　　　　　　　　　　　　　　　　　　　　　　　장비자<br>"
+LOCALS += "　　　<button value='-1'>[귀걸이 이름]</button> 　　　　　　　 <button value='-2'>[속성]</button><button value='-3'>[오의 보정]</button> 　　　　　　　　　　　　　　　　　　　　　　　장비자<br>"
 LOCALS += "--------------------------------------------------------------------------------------------------------------<br>"
 IF 選択中耳飾りid > 0
 	LOCAL:1 = 選択中耳飾りid

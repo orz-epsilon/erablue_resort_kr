@@ -37,7 +37,7 @@
 #DIM おさわり警告カウンタ
 #DIM おさわり警告フラグ
 #DIM おさわり実効フラグ
-#DIM アクティブコマンドリスト;モードなどでコマンド対象群を切り替える　使用中のコマンドリストを保存する
+#DIM アクティブコマンドリスト;モードなどでコマンド対象群を전환한다　使用中のコマンドリストを保存する
 #DIM 画像位置,2
 #DIM 画像サイズ,2
 
@@ -86,7 +86,7 @@
 #DIM アクセスコマンド最大表示数 = 6
 
 #DIM アクセスコマンドIDリスト,20
-;0=おさわりありの画像のみを表示する　1=なくてもOK 2=なくてもOK解除不可(ありに切り替えるコマンドを表示しない)
+;0=おさわりありの画像のみを表示する　1=なくてもOK 2=なくてもOK解除不可(ありに전환한다コマンドを表示しない)
 {
 	#DIM コマンドIDカラーコード変換 = 0x0000C0, 0x00C000, 0x00C0C0, 0xC00000, 0xC000C0, 
 	0xC0C000, 0xC0C0C0, 0x0000A0, 0x00A000, 0x00A0A0, 
@@ -855,7 +855,7 @@ ENDIF
 	経過TIME保存 += (TIME - TIME:2) / 3
 	TIME = TIME:2 + (TIME - TIME:2) / 3
 
-	TIME = TIME > 1440 ? TIME - 1440 # TIME
+	TIME = TIME >= 1440 ? TIME - 1440 # TIME
 	TIME:2 = TIME
 
 	;マッサージモードの時は警戒度にすり替える
@@ -916,7 +916,7 @@ ENDIF
 				SETCOLOR カラーパレット("えっちな色")
 				PRINT <<<약점 시추에이션
 				PRINT_IMG "えっちハート"
-				PRINTFORML （%CALLNAME:(TARGET:LOCAL)%)>>>
+				PRINTFORML （%CALLNAME:(TARGET:LOCAL)%）>>>
 				RESETCOLOR
 			ENDIF
 		NEXT
@@ -1128,7 +1128,7 @@ IF おさわり実効フラグ
 	CALL 特定キャラモードリセット(TARGET)
 
 	IF BASE:TARGET:体力 == 0
-		プリントメッセージ保存 += @"<br>%CALLNAME:TARGET%の体力が尽きた……"
+		プリントメッセージ保存 += @"<br>%CALLNAME:TARGET%의 체력이 다했다……"
 		GOTO 終了処理
 	ENDIF
 
@@ -1137,16 +1137,16 @@ ENDIF
 IF おさわり警告フラグ
 	VARSET おさわり容認カウンタ
 	IF PALAM:TARGET:欲情 < PALAMLV:2
-		プリントメッセージ保存 += @"<br>%CALLNAME:TARGET%は咎めるような視線をこちらに向けている<br>あまり乗り気ではないようだ……<br>"
+		プリントメッセージ保存 += @"<br>%CALLNAME:TARGET%은(는) 나무라는 듯한 시선을 이쪽으로 향하고 있다<br>별로 내켜 하지 않는 것 같다……<br>"
 	ELSE
-		プリントメッセージ保存 += @"<br>%CALLNAME:TARGET%は咎めるような視線をこちらに向けている<br>もう少し丁寧にやった方がよさそうだ……<br>"
+		プリントメッセージ保存 += @"<br>%CALLNAME:TARGET%은(는) 나무라는 듯한 시선을 이쪽으로 향하고 있다<br>조금 더 정중하게 하는 편이 좋을 것 같다……<br>"
 	ENDIF
 	FOR LOCAL, 0, 10
 		AWAIT 50
 	NEXT
 	おさわり警告カウンタ ++
 	IF おさわり警告カウンタ > 2
-	   プリントメッセージ保存 += @"<br>%CALLNAME:TARGET%に制止されてしまった<br>どうやらここまでのようだ……<br>"
+	   プリントメッセージ保存 += @"<br>%CALLNAME:TARGET%에게 제지당했다<br>아무래도 여기까지인 것 같다……<br>"
 	   HTML_PRINT プリントメッセージ保存
 	   プリントメッセージ保存 = 
 	   GOTO 終了処理
@@ -1162,11 +1162,11 @@ $終了処理
 
 ;PRINTFORM  CLICK {クリックカウンタ} COM {コマンドカウンタ} {(TIME - 開始TIME保存) / 60}時間{(TIME - 開始TIME保存) % 60}分経過
 IF 経過TIME保存 / 60 > 0 ;1h以上経過
-	プリントメッセージ保存 += @"<br>%CALLNAME:PLAYER%は%CALLNAME:TARGET%の身体を{経過TIME保存 / 60}時間{経過TIME保存 % 60}分間たっぷり楽しんだ……"
+	プリントメッセージ保存 += @"<br>%CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%의 몸을 {経過TIME保存 / 60}시간 {経過TIME保存 % 60}분간 실컷 즐겼다……"
 ELSEIF 経過TIME保存 % 60 == 0 ;何もしなかった
-	プリントメッセージ保存 += @"<br>%CALLNAME:PLAYER%は%CALLNAME:TARGET%に伸ばした手を引っ込めた……"
+	プリントメッセージ保存 += @"<br>%CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%에게 뻗었던 손을 거두었다……"
 ELSE
-	プリントメッセージ保存 += @"<br>%CALLNAME:PLAYER%は%CALLNAME:TARGET%の身体を{経過TIME保存 % 60}分間楽しんだ……"
+	プリントメッセージ保存 += @"<br>%CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%의 몸을 {経過TIME保存 % 60}분간 즐겼다……"
 ENDIF
 
 SIF システムコマンド展開フラグ

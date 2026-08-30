@@ -18,7 +18,7 @@ TFLAG:コマンドタイプ受渡 = COMTYPE("道具系")
 @COM_TOOLTIP_39
 LOCALS = <br>■로션<br>
 LOCALS += "로션을 사용하여 윤활도를 상승시키는 커맨드."
-LOCALS += "<br>COM 타입: 도구계<br>획득 소스: 액체·접촉"
+LOCALS += "<br>COM 타입: 도구 계열<br>획득 소스: 액체・접촉"
 LOCALS += "<br>고유 획득 경험: 도구 사용 경험(PLAYER)<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
@@ -65,10 +65,10 @@ RETURN 1
 ;実行時メッセージ
 ;-------------------------------------------------
 @MESSAGE_COM39
-PRINTFORM %CALLNAME:PLAYER%는
+PRINTFORM %CALLNAME:PLAYER%은(는)
 IF TEQUIP:下タイツあり && !TEQUIP:下タイツ破れ
 	PRINTFORM %CALLNAME:TARGET%의
-	PRINTL 하반신에 타이츠 위로 로션을 떨어뜨렸다…
+	PRINTL 하반신에 타이츠 위에서 로션을 떨어뜨렸다…
 	RETURN 0
 ENDIF
 IF TEQUIP:下半身下着あり > 0
@@ -77,7 +77,7 @@ ENDIF
 PRINTFORM %CALLNAME:TARGET%의
 IF GETBIT(TALENT:TARGET:性別, 1)
 	;オトコ
-	PRINTL 딱딱하게 발기한 페니스에 로션을 떨어뜨렸다…
+	PRINTL 단단하게 솟아오른 페니스에 로션을 떨어뜨렸다…
 ELSE
 	PRINTL 사타구니에 로션을 떨어뜨렸다…
 ENDIF

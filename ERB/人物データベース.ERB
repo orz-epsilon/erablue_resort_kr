@@ -1,4 +1,4 @@
-﻿@人物データベースセット
+@人物データベースセット
 DT_CREATE "人物データベース"
 
 ;NAMEと同様のものが入る想定。名前を付けなかった場合は空
@@ -95,31 +95,44 @@ DT_COLUMN_ADD "人物データベース", "経歴"
 #DIM EX_妹ちゃん
 #DIM EX_宇崎月
 #DIM EX_宇崎花
+#DIM EX_宇崎柳
 #DIM EX_古見秀子
 #DIM EX_古見硝子
 #DIM EX_エノメ
 #DIM EX_エシュネ
+#DIM EX_まほ
+#DIM EX_しほ
+#DIM EX_みほ
+#DIM EX_シロヱ
+#DIM EX_シロ
+#DIM EX_ダイア
+#DIM EX_ココア
+#DIM EX_リセット
+#DIM EX_ランス
+#DIM EX_クリア
+#DIM EX_カオス
+
 
 FOR LOCAL, 1, CHARANUM
 	SIF キャラ一致チェック(LOCAL, "[揺らぎの斬姫]ナルメア")
 		ナルメア = CFLAG:LOCAL:人物番号
-	SIF キャラ一致チェック(LOCAL, "[참희의 자모]라르나")
+	SIF キャラ一致チェック(LOCAL, "[斬姫の慈母]ラルナ")
 		ラルナ = CFLAG:LOCAL:人物番号
 	SIF キャラ一致チェック(LOCAL, "[斬姫の厳父]ガムシラ")
 		ガムシラ = CFLAG:LOCAL:人物番号
 	SIF キャラ一致チェック(LOCAL, "[炎舞の紅脚]アリーザ")
 		アリーザ = CFLAG:LOCAL:人物番号
-	SIF キャラ一致チェック(LOCAL, "[염희의 어머니]아리시아")
+	SIF キャラ一致チェック(LOCAL, "[炎姫の母君]アリシア")
 		アリシア = CFLAG:LOCAL:人物番号
 	SIF キャラ一致チェック(LOCAL, "[未完の錬金術師]クラリス")
 		クラリス = CFLAG:LOCAL:人物番号
-	SIF キャラ一致チェック(LOCAL, "[상속의 연금술사]프로메티아")
+	SIF キャラ一致チェック(LOCAL, "[相承の錬金術師]プロメティア")
 		プロメティア = CFLAG:LOCAL:人物番号
 	SIF キャラ一致チェック(LOCAL, "[承継の錬金術師]ハロルド")
 		ハロルド = CFLAG:LOCAL:人物番号
-	SIF キャラ一致チェック(LOCAL, "[북북동의 수호신]샤토라")
+	SIF キャラ一致チェック(LOCAL, "[北北東の守護神]シャトラ")
 		シャトラ = CFLAG:LOCAL:人物番号
-	SIF キャラ一致チェック(LOCAL, "[선대축신]샤토라의 엄마")
+	SIF キャラ一致チェック(LOCAL, "[先代丑神]シャトラのママ")
 		シャトラのママ = CFLAG:LOCAL:人物番号
 	SIF キャラ一致チェック(LOCAL, "[丑神の父]シャトラのパパ")
 		シャトラのパパ = CFLAG:LOCAL:人物番号
@@ -143,11 +156,11 @@ FOR LOCAL, 1, CHARANUM
 		ノイシュ = CFLAG:LOCAL:人物番号
 	SIF キャラ一致チェック(LOCAL, "[蒼醒の志士]オイゲン")
 		オイゲン = CFLAG:LOCAL:人物番号
-	SIF キャラ一致チェック(LOCAL, "[黒騎士]アポロニア")
+	SIF キャラ一致チェック(LOCAL, "[黒騎士]アポロニア・ヴァール")
 		アポロ = CFLAG:LOCAL:人物番号
 	SIF キャラ一致チェック(LOCAL, "[理想の聖母]ヘルツェロイデ")
 		ヘルツェロイデ = CFLAG:LOCAL:人物番号
-	SIF キャラ一致チェック(LOCAL, "[염제]퍼시벌")
+	SIF キャラ一致チェック(LOCAL, "[炎帝]パーシヴァル")
 		パーシヴァル = CFLAG:LOCAL:人物番号
 	SIF キャラ一致チェック(LOCAL, "[氷皇]アグロヴァル")
 		アグロヴァル = CFLAG:LOCAL:人物番号
@@ -200,6 +213,8 @@ FOR LOCAL, 1, CHARANUM
 		EX_宇崎月 = CFLAG:LOCAL:人物番号
 	SIF キャラ一致チェック(LOCAL, "[ウザい後輩]宇崎花")
 		EX_宇崎花 = CFLAG:LOCAL:人物番号
+	SIF キャラ一致チェック(LOCAL, "[宇崎家の次女]宇崎柳")
+		EX_宇崎柳 = CFLAG:LOCAL:人物番号
 	SIF キャラ一致チェック(LOCAL, "[永遠の17才]古見秀子")
 		EX_古見秀子 = CFLAG:LOCAL:人物番号
 	SIF キャラ一致チェック(LOCAL, "[コミュ症です]古見硝子")
@@ -208,7 +223,29 @@ FOR LOCAL, 1, CHARANUM
 		EX_エノメ = CFLAG:LOCAL:人物番号
 	SIF キャラ一致チェック(LOCAL, "[エノメの娘]エシュネ")
 		EX_エシュネ = CFLAG:LOCAL:人物番号
+	SIF キャラ一致チェック(LOCAL, "[西住流戦車道の後継者]西住まほ")
+		EX_まほ = CFLAG:LOCAL:人物番号
+	SIF キャラ一致チェック(LOCAL, "[西住流戦車道・家元]西住しほ")
+		EX_しほ = CFLAG:LOCAL:人物番号
+	SIF キャラ一致チェック(LOCAL, "[あんこうチームの戦車長]西住みほ")
+		EX_みほ = CFLAG:LOCAL:人物番号
+	SIF キャラ一致チェック(LOCAL, "[ごく普通なボンバー主婦]シロヱ")
+		EX_シロヱ = CFLAG:LOCAL:人物番号
+	SIF キャラ一致チェック(LOCAL, "[ごく普通なボンバーガール]シロ")
+		EX_シロ = CFLAG:LOCAL:人物番号
+	SIF キャラ一致チェック(LOCAL, "[大三元ガール]ミツモト・ダイア")
+		EX_ダイア = CFLAG:LOCAL:人物番号
+	SIF キャラ一致チェック(LOCAL, "[小三ガール]ミツモト・ココア")
+		EX_ココア = CFLAG:LOCAL:人物番号
 
+	SIF キャラ一致チェック(LOCAL, "[ランスとパステルの娘]リセット・カラー")	
+		EX_リセット = CFLAG:LOCAL:人物番号
+	SIF キャラ一致チェック(LOCAL, "[鬼畜戦士]ランス")
+		EX_ランス = CFLAG:LOCAL:人物番号
+	SIF キャラ一致チェック(LOCAL, "[チンイツガール]イッシキ・クリア")
+		EX_クリア = CFLAG:LOCAL:人物番号
+	SIF キャラ一致チェック(LOCAL, "[ホンイツガール]イッシキ・カオス")
+		EX_カオス = CFLAG:LOCAL:人物番号
 NEXT
 
 CALL SET_PERSON_母親(ナルメア, ラルナ)
@@ -239,28 +276,38 @@ CALL SET_PERSON_母親(EX_桂心, EX_桂真奈美)
 CALL SET_PERSON_母親(EX_妹ちゃん, EX_アイちゃんママ)
 CALL SET_PERSON_母親(EX_アイ, EX_アイちゃんママ)
 CALL SET_PERSON_母親(EX_宇崎花, EX_宇崎月)
+CALL SET_PERSON_母親(EX_宇崎柳, EX_宇崎月)
 CALL SET_PERSON_母親(EX_古見硝子, EX_古見秀子)
 CALL SET_PERSON_母親(EX_エシュネ, EX_エノメ)
-
-
-
+CALL SET_PERSON_母親(EX_まほ, EX_しほ)
+CALL SET_PERSON_母親(EX_みほ, EX_しほ)
+CALL SET_PERSON_母親(EX_シロ, EX_シロヱ)
+CALL SET_PERSON_母親(EX_ココア, EX_ダイア)
+CALL SET_PERSON_父親(EX_リセット, EX_ランス)
 ;兄弟姉妹が居るキャラの出生順を設定
 ;・兄/姉の方に大きい数値を設定
-CALL SET_PERSON_出生順(ルシウス, 2)
-CALL SET_PERSON_出生順(ティナ, 1)
-CALL SET_PERSON_出生順(アグロヴァル, 3) ; 長男
-CALL SET_PERSON_出生順(パーシヴァル, 1) ; 三男
+;　わかりやすさや、作中で弟妹が新たに誕生したときに対応しやすくするため、長男は-1、次男は-2、三男は-3、のように負の値を用いることを推奨
+;Ｑ．じゃあなんで小さい順に並ぶようにしなかったんですか？
+;Ａ．出生順を持たない人物（＝リゾート内で生まれたキャラ）と混在しても並び替えがうまくいくように……
+CALL SET_PERSON_出生順(ルシウス, -1)
+CALL SET_PERSON_出生順(ティナ, -2)
+CALL SET_PERSON_出生順(アグロヴァル, -1) ; 長男
+CALL SET_PERSON_出生順(パーシヴァル, -3) ; 三男
 
-CALL SET_PERSON_出生順(EX_桂言葉, 2) ;
-CALL SET_PERSON_出生順(EX_桂心, 1) ; 
-CALL SET_PERSON_出生順(EX_アイ, 2) ;
-CALL SET_PERSON_出生順(EX_妹ちゃん, 1) ; 
+CALL SET_PERSON_出生順(EX_桂言葉, -1) ;
+CALL SET_PERSON_出生順(EX_桂心, -2) ; 
+CALL SET_PERSON_出生順(EX_アイ, -1) ;
+CALL SET_PERSON_出生順(EX_妹ちゃん, -2) ; 
+CALL SET_PERSON_出生順(EX_まほ, -1) ;
+CALL SET_PERSON_出生順(EX_みほ, -2) ; 
+CALL SET_PERSON_出生順(EX_クリア, -1) ; 長女
+CALL SET_PERSON_出生順(EX_カオス, -2) ; 次女
 
 
 ;覚え書き:キャラ増えた時に使いそうな親子関係/出生順設定
 ;CALL SET_PERSON_母親(シトリ, ミカボシ)
 ;CALL SET_PERSON_母親(ラモラック, ヘルツェロイデ)
-;CALL SET_PERSON_出生順(ラモラック, 2) ; 次男
+;CALL SET_PERSON_出生順(ラモラック, -2) ; 次男
 
 ;空のキャラを人物データベースに登録する
 @ADD_PERSON()
@@ -356,6 +403,9 @@ SIF GET_PERSON_父親(ID) != 0
 CHILD_COUNT = DT_SELECT("人物データベース", @"母親 = {ID}", , TMP_CHILDREN)
 SIF CHILD_COUNT > 0
 	RETURNF 1
+CHILD_COUNT = DT_SELECT("人物データベース", @"父親 = {ID}", , TMP_CHILDREN)
+SIF CHILD_COUNT > 0
+	RETURNF 1
 RETURNF 0
 
 
@@ -398,7 +448,7 @@ RETURNF TMP_PERSONS:0
 @EXIST_PERSON(ID)
 #FUNCTION
 #DIM ID
-RETURNF DT_CELL_ISNULL("人物データベース", ID, "id", 1) == 0
+RETURNF DT_CELL_ISNULL("인물 데이터베이스", ID, "id", 1) == 0
 
 
 ;人物に設定されている呼び名で最も適切なものを探す（見つからなければ適当な文字列）
@@ -411,11 +461,11 @@ C_ID = FIND_CHARA_FROM_PERSON_ID(ID)
 IF C_ID >= 0
 	RETURNF CALLNAME:C_ID
 ELSEIF DT_CELL_ISNULL("人物データベース", ID, "呼び名", 1) == 0
-	RETURNF DT_CELL_GETS("人物データベース", ID, "呼び名", 1)
+	RETURNF DT_CELL_GETS("인물 데이터베이스", ID, "호칭", 1)
 ELSEIF DT_CELL_ISNULL("人物データベース", ID, "名前", 1) == 0
-	RETURNF REPLACE(DT_CELL_GETS("人物データベース", ID, "名前", 1), "\[[^\]]*\]", "")
+	RETURNF REPLACE(DT_CELL_GETS("인물 데이터베이스", ID, "이름", 1), "\[[^\]]*\]", "")
 ELSE
-	RETURNF "見知らぬ誰か"
+	RETURNF "낯선 누군가"
 ENDIF
 
 
@@ -428,7 +478,7 @@ C_ID = FIND_CHARA_FROM_PERSON_ID(ID)
 IF C_ID >= 0
 	RETURNF NAME:C_ID
 ELSE
-	RETURNF DT_CELL_GETS("人物データベース", ID, "名前", 1)
+	RETURNF DT_CELL_GETS("인물 데이터베이스", ID, "이름", 1)
 ENDIF
 
 @GET_PERSON_呼び名(ID)
@@ -439,7 +489,7 @@ C_ID = FIND_CHARA_FROM_PERSON_ID(ID)
 IF C_ID >= 0
 	RETURNF CALLNAME:C_ID
 ELSE
-	RETURNF DT_CELL_GETS("人物データベース", ID, "呼び名", 1)
+	RETURNF DT_CELL_GETS("인물 데이터베이스", ID, "호칭", 1)
 ENDIF
 
 @GET_PERSON_ナンバー(ID)
@@ -452,7 +502,7 @@ IF C_ID >= 0
 ELSEIF DT_CELL_ISNULL("人物データベース", ID, "ナンバー", 1) == 1
 	RETURNF -1
 ELSE
-	RETURNF DT_CELL_GET("人物データベース", ID, "ナンバー", 1)
+	RETURNF DT_CELL_GET("인물 데이터베이스", ID, "번호", 1)
 ENDIF
 
 @GET_PERSON_性別(ID)
@@ -463,7 +513,7 @@ C_ID = FIND_CHARA_FROM_PERSON_ID(ID)
 IF C_ID >= 0
 	RETURNF TALENT:C_ID:性別
 ELSE
-	RETURNF DT_CELL_GET("人物データベース", ID, "性別", 1)
+	RETURNF DT_CELL_GET("인물 데이터베이스", ID, "성별", 1)
 ENDIF
 
 @GET_PERSON_種族(ID)
@@ -474,7 +524,7 @@ C_ID = FIND_CHARA_FROM_PERSON_ID(ID)
 IF C_ID >= 0
 	RETURNF TALENT:C_ID:種族
 ELSE
-	RETURNF DT_CELL_GET("人物データベース", ID, "種族", 1)
+	RETURNF DT_CELL_GET("인물 데이터베이스", ID, "종족", 1)
 ENDIF
 
 @GET_PERSON_プレゼント好み(ID)
@@ -485,7 +535,7 @@ C_ID = FIND_CHARA_FROM_PERSON_ID(ID)
 IF C_ID >= 0
 	RETURNF CSTR:C_ID:プレゼント好み
 ELSE
-	RETURNF DT_CELL_GETS("人物データベース", ID, "プレゼント好み", 1)
+	RETURNF DT_CELL_GETS("인물 데이터베이스", ID, "선물 취향", 1)
 ENDIF
 
 @GET_PERSON_出会った周回(ID)
@@ -494,7 +544,7 @@ ENDIF
 IF DT_CELL_ISNULL("人物データベース", ID, "出会った周回", 1) == 1
 	RETURNF -1
 ELSE
-	RETURNF DT_CELL_GET("人物データベース", ID, "出会った周回", 1)
+	RETURNF DT_CELL_GET("인물 데이터베이스", ID, "만난 회차", 1)
 ENDIF
 
 @GET_PERSON_出生順(ID)
@@ -503,7 +553,7 @@ ENDIF
 IF DT_CELL_ISNULL("人物データベース", ID, "出生順", 1) == 1
 	RETURNF -129
 ELSE
-	RETURNF DT_CELL_GET("人物データベース", ID, "出生順", 1)
+	RETURNF DT_CELL_GET("인물 데이터베이스", ID, "출생 순서", 1)
 ENDIF
 
 @GET_PERSON_生年日(ID)
@@ -512,23 +562,23 @@ ENDIF
 IF DT_CELL_ISNULL("人物データベース", ID, "生年日", 1) == 1
 	RETURNF -1
 ELSE
-	RETURNF DT_CELL_GET("人物データベース", ID, "生年日", 1)
+	RETURNF DT_CELL_GET("인물 데이터베이스", ID, "생년일", 1)
 ENDIF
 
 @GET_PERSON_母親(ID)
 #FUNCTION
 #DIM ID
-RETURNF DT_CELL_GET("人物データベース", ID, "母親", 1)
+RETURNF DT_CELL_GET("인물 데이터베이스", ID, "어머니", 1)
 
 @GET_PERSON_父親(ID)
 #FUNCTION
 #DIM ID
-RETURNF DT_CELL_GET("人物データベース", ID, "父親", 1)
+RETURNF DT_CELL_GET("인물 데이터베이스", ID, "아버지", 1)
 
 @GET_PERSON_経歴(ID)
 #FUNCTIONS
 #DIM ID
-RETURNF DT_CELL_GETS("人物データベース", ID, "経歴", 1)
+RETURNF DT_CELL_GETS("인물 데이터베이스", ID, "경력", 1)
 
 
 ;各カラムのSET系

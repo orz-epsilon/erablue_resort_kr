@@ -47,7 +47,7 @@ IF GETBIT(TALENT:TARGET:性別, 0) == 1 && TALENT:TARGET:Ｖ感度 != -2 && ITEM
 	IF TEQUIP:TARGET:膣 == 0
 		LOCALS = 바이브
 		SIF TALENT:TARGET:処女
-			LOCALS += "(처녀)"
+			LOCALS += "（처녀）"
 		PRINTBUTTONLC @"[3] %LOCALS%", 3
 		LOCAL += 1
 	ENDIF
@@ -105,7 +105,7 @@ SELECTCASE RFLAG:コマンド結果受渡し変数
 			PRINTL
 			DRAWLINE
 			PRINTL ■강도의 초기값을 선택해 주세요
-			PRINT 　　클리캡 강도:
+			PRINT 　　클리캡 강도：
 			PRINTBUTTON "[-]", -1
 			FOR LOCAL, 0, 6
 				IF 強さ初期値記録 >= LOCAL
@@ -118,7 +118,7 @@ SELECTCASE RFLAG:コマンド結果受渡し変数
 			PRINTL
 			PRINTL
 			PRINTBUTTONLC "[900] 클리캡을 장착한다", 900
-			PRINTBUTTONLC "[999] 돌아간다", 999
+			PRINTBUTTONLC "[999] 돌아가기", 999
 
 			BINPUT
 			LOCAL = RESULT
@@ -154,7 +154,7 @@ SELECTCASE RFLAG:コマンド結果受渡し変数
 			PRINTL
 			DRAWLINE
 			PRINTL ■강도의 초기값을 선택해 주세요
-			PRINT 　　오나홀 강도:
+			PRINT 　　오나홀 강도：
 			PRINTBUTTON "[-]", -1
 			FOR LOCAL, 0, 6
 				IF 強さ初期値記録 >= LOCAL
@@ -167,7 +167,7 @@ SELECTCASE RFLAG:コマンド結果受渡し変数
 			PRINTL
 			PRINTL
 			PRINTBUTTONLC "[900] 오나홀을 장착한다", 900
-			PRINTBUTTONLC "[999] 돌아간다", 999
+			PRINTBUTTONLC "[999] 돌아가기", 999
 
 			BINPUT
 			LOCAL = RESULT
@@ -203,7 +203,7 @@ SELECTCASE RFLAG:コマンド結果受渡し変数
 			PRINTL
 			DRAWLINE
 			PRINTL ■강도의 초기값을 선택해 주세요
-			PRINT 　　바이브 강도:
+			PRINT 　　바이브 강도：
 			PRINTBUTTON "[-]", -1
 			FOR LOCAL, 0, 6
 				IF 強さ初期値記録 >= LOCAL
@@ -216,7 +216,7 @@ SELECTCASE RFLAG:コマンド結果受渡し変数
 			PRINTL
 			PRINTL
 			PRINTBUTTONLC "[900] 바이브를 장착한다", 900
-			PRINTBUTTONLC "[999] 돌아간다", 999
+			PRINTBUTTONLC "[999] 돌아가기", 999
 
 			BINPUT
 			LOCAL = RESULT
@@ -257,7 +257,7 @@ SELECTCASE RFLAG:コマンド結果受渡し変数
 			PRINTL
 			DRAWLINE
 			PRINTL ■강도의 초기값을 선택해 주세요
-			PRINT 　　애널 바이브 강도:
+			PRINT 　　애널 바이브 강도：
 			PRINTBUTTON "[-]", -1
 			FOR LOCAL, 0, 6
 				IF 強さ初期値記録 >= LOCAL
@@ -320,7 +320,7 @@ SELECTCASE RFLAG:コマンド結果受渡し変数
 			PRINTL
 			DRAWLINE
 			PRINTL ■강도의 초기값을 선택해 주세요
-			PRINT 　　니플캡 강도:
+			PRINT 　　니플캡 강도：
 			PRINTBUTTON "[-]", -1
 			FOR LOCAL, 0, 6
 				IF 強さ初期値記録 >= LOCAL
@@ -396,7 +396,7 @@ SELECTCASE 部位フラグ
 	CASE 5
 		LOCALS = 애널 비즈
 	CASE 6
-		LOCALS = 니플캡
+		LOCALS = 니플 캡
 ENDSELECT
 PRINTFORML %LOCALS%장착(%CALLNAME:TARGET%)
 ;-------------------------------------------------
@@ -460,14 +460,14 @@ ELSE
 	IF TALENT:性別嗜好 & 1 && TALENT:PLAYER:性別 == 2
 		PRINT  - 
 		実行値 -= 12
-		PRINT 남성혐오(12)
+		PRINT 남성 혐오(12)
 		＋表示フラグ = 1
 	ENDIF
 	;女嫌い（恋慕で無効）
 	IF TALENT:性別嗜好 & 2 && TALENT:PLAYER:性別 == 1
 		PRINT  - 
 		実行値 -= 12
-		PRINT 여성혐오(12)
+		PRINT 여성 혐오(12)
 		＋表示フラグ = 1
 	ENDIF
 ENDIF
@@ -476,7 +476,7 @@ IF TALENT:セフレ
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += 10
-	PRINT 섹스 프렌드(10)
+	PRINT 섹프(10)
 	＋表示フラグ = 1
 ENDIF
 ;未陥落
@@ -548,14 +548,14 @@ SELECTCASE 部位フラグ
 			SIF ＋表示フラグ
 				PRINT  + 
 			実行値 += ABL:Ｃ感覚 * 2
-			PRINTFORM C감각LV{ABL:Ｃ感覚}({ABL:Ｃ感覚 * 2})
+			PRINTFORM C 감각LV{ABL:Ｃ感覚}({ABL:Ｃ感覚 * 2})
 			＋表示フラグ = 1
 		ENDIF
 		;C経験
 		IF EXP:Ｃ経験 < EXPLV:2
 			PRINT  - 
 			実行値 -= 15
-			PRINT C경험 부족(15)
+			PRINT C 경험 부족(15)
 			＋表示フラグ = 1
 		ENDIF
 	CASE 2
@@ -724,15 +724,15 @@ SELECTCASE RFLAG:コマンド結果受渡し変数
 	CASE 3
 		LOCALS = 바이브
 	CASE 4
-		LOCALS = 애널 바이브
+		LOCALS = 아날 바이브
 	CASE 5
-		LOCALS = 애널 비즈
+		LOCALS = 아날 비즈
 	CASE 6
 		LOCALS = 니플캡
 ENDSELECT
 
 IF 現在地自宅チェック(TARGET) || 現在地自宅チェック(PLAYER) || フィールド展開:うふふ目撃スルー
-	PRINTFORML %CALLNAME:TARGET%에 %LOCALS%을(를) 장착시켰다
+PRINTFORML %CALLNAME:TARGET%에게 %LOCALS%을(를) 장착시켰다
 ELSE
-	PRINTFORML %CALLNAME:TARGET%을(를) 물건 뒤로 데려가, %LOCALS%을(를) 장착시켰다
+PRINTFORML %CALLNAME:TARGET%을(를) 그늘로 데려가, %LOCALS%을(를) 장착시켰다
 ENDIF

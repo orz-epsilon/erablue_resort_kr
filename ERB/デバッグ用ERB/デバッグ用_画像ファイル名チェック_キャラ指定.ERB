@@ -12,14 +12,16 @@
 #DIM  DYNAMIC FOLDER_CNT_ALL
 #DIM  CSV_NO_F
 #DIMS CHARA_NAME_F
+#DIM CSV_FLAG
 
 ;- 対象入力
 PRINTL
-PRINTL 【디버그용】이미지 파일명 체크＠캐릭터 지정판
+PRINTL 【디버그용】이미지 파일명 체크＠캐릭터 지정 버전
 PRINTL 　※ png 파일은 체크되지 않습니다.
 PRINTL
 CALL デバッグ用_画像ファイル名チェック_キャラ指定_CSV番号入力()
 CSV_NO = RESULT
+CSV_FLAG = RESULT:1
 SIF CSV_NO == -1
 	RETURN
 PRINTL
@@ -38,6 +40,16 @@ FOLDER_CNT = デバッグ用_画像ファイル名チェック_フォルダ取�
 FOLDER_CNT_ALL += FOLDER_CNT
 
 FOR L_CNT_F, 0, FOLDER_CNT
+	IF CSV_FLAG
+		ADDCHARA CSV_NO
+		CALL デバッグ用_画像ファイル実装状況出力(FOLDER_LIST:L_CNT_F, CHARANUM-1, FOLDER_NAME)
+		IF RESULT
+			DELCHARA CHARANUM - 1
+			RETURN
+		ELSE
+			DELCHARA CHARANUM - 1
+		ENDIF
+	ENDIF
 	CALL デバッグ用_画像ファイル名チェック_フォルダ(FOLDER_LIST:L_CNT_F)
 NEXT
 
@@ -51,6 +63,16 @@ FOR L_CNT, 0, VARSIZE("デバッグ用_特殊リソースフォルダ")
 	FOLDER_CNT= デバッグ用_画像ファイル名チェック_フォルダ取得(FOLDER_NAME, FOLDER_LIST)
 	FOLDER_CNT_ALL += FOLDER_CNT
 	FOR L_CNT_F, 0, FOLDER_CNT
+		IF CSV_FLAG
+			ADDCHARA CSV_NO
+			CALL デバッグ用_画像ファイル実装状況出力(FOLDER_LIST:L_CNT_F, CHARANUM-1, FOLDER_NAME)
+			IF RESULT
+				DELCHARA CHARANUM - 1
+				RETURN
+			ELSE
+				DELCHARA CHARANUM - 1
+			ENDIF
+		ENDIF
 		CALL デバッグ用_画像ファイル名チェック_フォルダ(FOLDER_LIST:L_CNT_F)
 	NEXT
 NEXT
@@ -71,7 +93,7 @@ PRINTL
 PRINTL 결과를 파일로 출력하시겠습니까?
 PRINTL
 PRINTBUTTONLC "[0] 예", 0
-PRINTBUTTONLC "[1] 아니요", 1
+PRINTBUTTONLC "[1] 아니오", 1
 BINPUT
 SIF RESULT == 1
 	RETURN
@@ -98,7 +120,7 @@ PRINTW
 ;- チェック対象の指定
 PRINTL
 PRINTL
-PRINTL 체크하고 싶은 캐릭터의 CSV 번호를 입력해주세요(0으로 취소)
+PRINTL 체크할 캐릭터의 CSV 번호를 입력해주세요(0으로 취소)
 
 ;入力処理
 INPUT
@@ -115,9 +137,9 @@ ENDIF
 ;- チェック対象の確認
 PRINTL
 PRINTL
-PRINTFORML 체크할 캐릭터는 아래와 같습니까?
+PRINTFORML 체크할 캐릭터는 아래와 같습니다. 괜찮습니까?
 DRAWLINE
-PRINTFORML <CSV 번호>
+PRINTFORML <CSV番号>
 PRINTFORML {CSV_NO}
 PRINTL
 PRINTFORML <이름>
@@ -131,13 +153,15 @@ PRINTFORML {CSV_NO}%CSVCALLNAME(CSV_NO)%
 DRAWLINE
 PRINTBUTTONLC "[0] 예", 0
 PRINTBUTTONLC "[1] 아니오", 1
-PRINTBUTTONLC "[2] 체크를 그만두다", 2
+PRINTBUTTONLC "[2] 체크 중단", 2
+PRINTBUTTONLC "[3] 구현 상황도 출력", 3
 
 ;入力処理
 BINPUT
 SELECTCASE RESULT
 	CASE 0
 		; はい
+		RESULT:1 = 0
 		RETURN CSV_NO
 	CASE 1
 		; いいえ
@@ -145,5 +169,9 @@ SELECTCASE RESULT
 	CASE 2
 		; やめる
 		RETURN -1
+	CASE 3
+		; 実装状況も出力する
+		RESULT:1 = 1
+		RETURN CSV_NO
 ENDSELECT
 [ENDIF]

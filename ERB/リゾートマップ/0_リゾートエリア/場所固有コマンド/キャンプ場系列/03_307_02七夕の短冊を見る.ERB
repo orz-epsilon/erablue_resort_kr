@@ -9,7 +9,7 @@ IF 施設改造度:3:0 == 0
 	TSTR:コマンド名受渡 = 
 	RETURNF 0
 ENDIF
-TSTR:コマンド名受渡 = 단자쿠를 본다
+TSTR:コマンド名受渡 = 세로 이미지를 본다
 RETURNF 1
 
 ;===================================================
@@ -57,21 +57,21 @@ RETURN 1
 ;-------------------------------------------------
 @MESSAGE_COM381_0_307
 
-PRINTFORML %CALLNAME:PLAYER%은(는) 사사 장식의 단자쿠를 보았다
-PRINTFORML %CALLNAME:(RFLAG:コマンド結果受渡し変数)%의 단자쿠가 있다…
+PRINTFORML %CALLNAME:PLAYER%은(는) 대나무 장식의 세로 이미지를 보았다
+PRINTFORML %CALLNAME:(RFLAG:コマンド結果受渡し変数)%의 세로 이미지가 있다…
 
 @MESSAGE_COM381_0_307_非口上時
 IF TALENT:(RFLAG:コマンド結果受渡し変数):恋慕
 	PRINTDATA
-		DATAFORM %CALLNAME:PLAYER%와 매일 알콩달콩하고 싶다고 쓰여 있다…
-		DATAFORM %CALLNAME:PLAYER%와 더 많이 접촉하고 싶다고 쓰여 있다…
-		DATA 사랑하는 사람이 생겨서 행복하기 때문에 소원은 없다고 쓰여 있다…
+		DATAFORM %CALLNAME:PLAYER%와(과) 매일 알콩달콩하고 싶다고 쓰여 있다…
+		DATAFORM %CALLNAME:PLAYER%와(과) 더 많이 교감하고 싶다고 쓰여 있다…
+		DATA 사랑하는 사람이 생겨서 행복하니까 소원은 없다고 쓰여 있다…
 		DATA 연인을 위해서 더 매력적이 되고 싶다고 쓰여 있다
-		DATAFORM %CALLNAME:PLAYER%와 계속 함께할 수 있기를, 이라고 쓰여 있다…
+		DATAFORM %CALLNAME:PLAYER%와(과) 계속 함께 있을 수 있기를, 라고 쓰여 있다…
 	ENDDATA
 ELSE
 	PRINTDATA
-		DATA 자신의 장래에 대한 소원인 것 같다
+		DATA 자신의 미래에 대한 소원인 것 같다
 		DATA 지금 원하는 것에 대한 소원인 것 같다
 		DATA 인간관계에 대한 소원인 것 같다
 		DATA 세계 평화에 대한 소원인 것 같다

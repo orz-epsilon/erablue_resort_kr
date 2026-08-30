@@ -17,7 +17,7 @@ TFLAG:コマンドタイプ受渡 = COMTYPE("日常")
 @COM_TOOLTIP_383_3_3
 LOCALS = <br>■비치 플래그로 놀다<br>
 LOCALS += "상대와 비치 플래그로 함께 노는 커맨드. 미니게임 『비치 플래그』가 발생."
-LOCALS += "<br>COM 타입: 일상<br>획득 소스: 환락・정복"
+LOCALS += "<br>COM 타입：일상<br>획득 소스：환락・정복"
 LOCALS += "<br>고유 획득 경험: 없음<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 		
@@ -36,8 +36,8 @@ PRINTW
 PRINTL READY 표시가 나오면 노릴 플래그를 선택하고 GO 신호를 기다립니다
 PRINTW 신호가 나오면 빠르게 입력해 주세요
 PRINTL
-PRINTL 상대보다 빨리 입력하면 이깁니다
-PRINTW 신호가 나오기 전에 입력하면 플라잉으로 지게 됩니다
+PRINTL 상대보다 빨리 입력하면 승리입니다
+PRINTW 신호가 나오기 전에 입력하면 파울로 패배합니다
 PRINTL 
 PRINTL 
 PRINTL 
@@ -48,7 +48,7 @@ BINPUT
 SELECTCASE RESULT 
 CASE 0
 CASE 1
-	PRINTFORML %CALLNAME:PLAYER%은(는) 그 자리에서 떠났다…
+	PRINTFORML %CALLNAME:PLAYER%은(는) 그 자리에서 벗어났다・・・
 	RETURN
 ENDSELECT
 
@@ -144,6 +144,6 @@ RETURN 1
 SIF !RFLAG:コマンド結果受渡し変数 ;遊べなかった
 	RETURN
 
-PRINTFORM %CALLNAME:PLAYER%은(는)%CALLNAME:TARGET%\@ GET_TARGETNUM() > 1 ? 들 # \@와(과)
-PRINTW 비치 플래그로 즐거웠다
+PRINTFORM %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%\@ GET_TARGETNUM() > 1 ? 들 # \@과(와)
+PRINTW 비치 플래그로 즐거운 시간을 보냈다
 

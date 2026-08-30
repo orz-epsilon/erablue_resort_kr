@@ -1,8 +1,233 @@
 @料理レシピエディタ()
+#DIM DYNAMIC 初期動作
+#DIMS DYNAMIC 料理名
+#DIMS DYNAMIC 設定食材, 10
+#DIMS DYNAMIC その他設定, 10
+#DIM 食材メニュー開閉
+#DIMS ジャンル登録, 50
 
+IF 初期動作 == 0
+	;必要なデータベースをセット
+	VARSET 使用食材
+	VARSET ジャンル登録
+	CALL 素材アイテムデータベースセット
+	CALL 素材アイテム登録処理
+	LOCAL:1 = 0
+	FOR LOCAL, 0, DT_ROW_LENGTH("所持素材データベース")
+		IF DT_CELL_GETS("所持素材データベース", LOCAL, "食材分類") != ""
+			IF MATCH(ジャンル登録, DT_CELL_GETS("所持素材データベース", LOCAL, "食材分類")) == 0
+				ジャンル登録:(LOCAL:1) '= DT_CELL_GETS("所持素材データベース", LOCAL, "食材分類")
+				LOCAL:1 ++
+			ENDIF
+		ENDIF
+	NEXT
+	初期動作 = 1
+ENDIF
 
+LOCALS = 
+LOCALS += "<div rect='81,375,1937,3312' padding='25,50,25' border='31' bcolor='#C0C0C0'>"
 
+LOCALS += "<br>"
+LOCALS += "<button value='100'>[100] 요리명을 설정한다</button>"
+LOCALS += "<br>"
+LOCALS += "<button value='110'>[110] 식재료를 설정한다</button>"
+LOCALS += "<br>"
+IF 食材メニュー開閉 == 0
+	LOCALS += "<button value='110'><font color='#808080'>└ 전개한다</font></button>"
+	LOCALS += "<br>"
+ELSE
+	LOCALS += "<button value='111'>├[111] 메인 식재료를 설정한다</button>"
+	LOCALS += "<br>"
+	LOCALS += "│　<button value='121'>└[121] 식재료 장르를 설정</button>"
+	LOCALS += "<br>"
+	LOCALS += "<button value='112'>├[112] 추가 식재료 1을 설정한다</button>"
+	LOCALS += "<br>"
+	LOCALS += "│　<button value='122'>└[122] 식재료 장르를 설정</button>"
+	LOCALS += "<br>"
+	LOCALS += "<button value='113'>├[113] 추가 식재료 2를 설정한다</button>"
+	LOCALS += "<br>"
+	LOCALS += "│　<button value='123'>└[123] 식재료 장르를 설정</button>"
+	LOCALS += "<br>"
+	LOCALS += "<button value='114'>└[114] 추가 식재료 3을 설정한다</button>"
+	LOCALS += "<br>"
+	LOCALS += " 　<button value='124'>└[124] 식재료 장르를 설정</button>"
+	LOCALS += "<br>"
+ENDIF
+LOCALS += " <button value='115'>[115] 조리 도구를 설정한다</button>"
+LOCALS += "<br>"
+LOCALS += "<br>"
+LOCALS += " <button value='999'>[999] 작성하지 않고 돌아가기</button>"
+LOCALS += "</div>"
 
+LOCALS += "<div rect='2050,375,3875,3312' padding='25,50,25' border='31' bcolor='#C0C0C0'>"
 
+LOCALS += "<br>"
+IF 料理名 == ""
+	LOCALS += @"■<button value='100'>（미정）</button>"
+ELSE
+	LOCALS += @"■<button value='100'>%料理名%</button>"
+ENDIF
+LOCALS += "<br>"
+LOCALS += "<br>"
+LOCALS += "　　메인 식재료："
+IF 設定食材:0 == ""
+	LOCALS += @"<button value='111'>[--------------------]</button>"
+ELSE
+	IF 使用食材:0 > 0
+		LOCALS:1 = %属性数値文字色変換_HTML(DT_CELL_GET("所持素材データベース", 使用食材:0, "素材属性", 1))%
+		LOCALS += @"<font color='#%LOCALS:1%'><button value='111'>[랭크%TOFULL(TOSTR(DT_CELL_GET("所持素材データベース", 使用食材:0, "素材ランク", 1)))%：%設定食材:0%]</button></font>"
+	ELSE
+		;IDがないならジャンルが入ってるはず
+		LOCALS += @"<button value='111'>[%設定食材:0% 계 식재료]</button>"
+	ENDIF
+ENDIF
+LOCALS += "<br>"
+LOCALS += "　　추가 식재료 1："
+IF 設定食材:1 == ""
+	LOCALS += @"<button value='112'>[--------------------]</button>"
+ELSE
+	IF 使用食材:1 > 0
+		LOCALS:1 = %属性数値文字色変換_HTML(DT_CELL_GET("所持素材データベース", 使用食材:1, "素材属性", 1))%
+		LOCALS += @"<font color='#%LOCALS:1%'><button value='112'>[랭크%TOFULL(TOSTR(DT_CELL_GET("所持素材データベース", 使用食材:1, "素材ランク", 1)))%：%設定食材:1%]</button></font>"
+	ELSE
+		;IDがないならジャンルが入ってるはず
+		LOCALS += @"<button value='112'>[%設定食材:1% 계 식재료]</button>"
+	ENDIF
+ENDIF
+LOCALS += "<br>"
+LOCALS += "　　추가 식재료 2："
+IF 設定食材:2 == ""
+	LOCALS += @"<button value='113'>[--------------------]</button>"
+ELSE
+	IF 使用食材:2 > 0
+		LOCALS:1 = %属性数値文字色変換_HTML(DT_CELL_GET("所持素材データベース", 使用食材:2, "素材属性", 1))%
+		LOCALS += @"<font color='#%LOCALS:1%'><button value='113'>[랭크%TOFULL(TOSTR(DT_CELL_GET("所持素材データベース", 使用食材:2, "素材ランク", 1)))%：%設定食材:2%]</button></font>"
+	ELSE
+		;IDがないならジャンルが入ってるはず
+		LOCALS += @"<button value='113'>[%設定食材:2% 계 식재료]</button>"
+	ENDIF
+ENDIF
+LOCALS += "<br>"
+LOCALS += "　　추가 식재료 3："
+IF 設定食材:3 == ""
+	LOCALS += @"<button value='114'>[--------------------]</button>"
+ELSE
+	IF 使用食材:3 > 0
+		LOCALS:1 = %属性数値文字色変換_HTML(DT_CELL_GET("所持素材データベース", 使用食材:3, "素材属性", 1))%
+		LOCALS += @"<font color='#%LOCALS:1%'><button value='114'>[랭크%TOFULL(TOSTR(DT_CELL_GET("所持素材データベース", 使用食材:3, "素材ランク", 1)))%：%設定食材:3%]</button></font>"
+	ELSE
+		;IDがないならジャンルが入ってるはず
+		LOCALS += @"<button value='114'>[%設定食材:3% 계 식재료]</button>"
+	ENDIF
+ENDIF
+LOCALS += "<br>"
+LOCALS += "<br>"
+LOCALS += "　　조리 도구　："
+IF 設定食材:9 == ""
+	LOCALS += @"<button value='115'>[--------------------]</button>"
+ELSE
+	LOCALS += @"<button value='115'>[%設定食材:9%]</button>"
+ENDIF
+LOCALS += "<br>"
+LOCALS += "<br>"
+LOCALS += "　　루피 수입　："
+LOCALS += "<br>"
+LOCALS += "　　ZP 수입　："
+LOCALS += "<br>"
+LOCALS += "<br>"
+LOCALS += "　　특수 효과명："
+IF その他設定:0 == ""
+	LOCALS += @"<button value='116'>[--------------------]</button>"
+ELSE
+	LOCALS += @"<button value='116'>[%その他設定:0%]</button>"
+ENDIF
+LOCALS += "<br>"
+LOCALS += "　　특수 효과　："
 
+LOCALS += "</div>"
 
+LOCALS += "<div rect='4650,375,1500,3312' padding='56'>"
+LOCALS += "<br>"
+LOCALS += "<br>"
+LOCALS += "<br>"
+LOCALS += "<button value='121'>[장르 설정]</button>"
+LOCALS += " <button value='131'>[제외]</button>"
+LOCALS += "<br>"
+LOCALS += "<button value='122'>[장르 설정]</button>"
+LOCALS += " <button value='132'>[제외]</button>"
+LOCALS += "<br>"
+LOCALS += "<button value='123'>[장르 설정]</button>"
+LOCALS += " <button value='133'>[제외]</button>"
+LOCALS += "<br>"
+LOCALS += "<button value='124'>[장르 설정]</button>"
+LOCALS += " <button value='134'>[제외]</button>"
+LOCALS += "</div>"
+
+HTML_PRINT LOCALS
+
+FOR LOCAL, 0, 33
+	PRINTL
+NEXT
+
+BINPUT
+LOCAL = RESULT
+
+SELECTCASE LOCAL
+	CASE 999
+		RETURN 0
+	CASE 100
+		PRINTL
+		PRINTL
+		PRINTL
+		DRAWLINE
+		PRINTL 요리명을 입력해 주세요.
+		DRAWLINE
+		INPUTS
+		料理名 '= RESULTS
+	CASE 110
+		INVERTBIT 食材メニュー開閉, 0
+	CASE 111 TO 114
+		CALL 素材アイテム一覧表示("食材分類 <> ''", 1, 1)
+		IF RESULT == -2
+			使用食材:(LOCAL - 111) = 0
+		ELSEIF RESULT != -1
+			使用食材:(LOCAL - 111) = RESULT
+		ENDIF
+
+		;名前だけ別に保存
+		設定食材:(LOCAL - 111) '= DT_CELL_GETS("所持素材データベース", 使用食材:(LOCAL - 111), "素材アイテム名", 1)
+	CASE 121 TO 124
+		PRINTL
+		PRINTL
+		PRINTL
+		DRAWLINE
+		PRINTL 식재료 장르를 선택해 주세요.
+		DRAWLINE
+		FOR LOCAL:1, 0, VARSIZE("ジャンル登録")
+			SIF ジャンル登録:(LOCAL:1) == ""
+				BREAK
+
+			PRINTBUTTON @"[{LOCAL:1}] %ジャンル登録:(LOCAL:1)%", LOCAL:1
+			PRINTL
+		NEXT
+		PRINTL
+		PRINTBUTTON @"[999] 변경하지 않고 돌아가기", 999
+		PRINTL
+		BINPUT
+		SELECTCASE RESULT
+			CASE 999
+				RESTART
+			CASEELSE
+				設定食材:(LOCAL - 121) '= ジャンル登録:RESULT
+				使用食材:(LOCAL - 121) = 0
+		ENDSELECT
+	CASE 131 TO 134
+		使用食材:(LOCAL - 131) = 0
+		設定食材:(LOCAL - 131) = 
+	CASE 115
+		CALL 調理道具選択処理
+		SIF RESULT != -1
+			設定食材:9 '= 調理器具名:RESULT
+ENDSELECT
+
+RESTART

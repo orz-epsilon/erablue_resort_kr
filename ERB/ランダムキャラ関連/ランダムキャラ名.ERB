@@ -12,7 +12,7 @@ FOR LOCAL, 0, 200
 		CASEELSE
 			LOCALS '= ランダムキャラ名()
 	ENDSELECT
-	;100回重複した場合または男性の場合、完全ランダム作成に切り替える
+	;100回重複した場合または男性の場合、完全ランダム作成に전환한다
 	SIF LOCAL > 99 || ARG:1 == 2
 		LOCALS '= ランダムキャラ名ジェネレータ(ARG, ARG:1)
 	;200回重複した場合さすがに諦める
@@ -90,7 +90,7 @@ STRDATA LOCALS
 	DATA 린
 	DATA 모이라
 	DATA 루시
-	DATA 조안
+	DATA 조앤
 	DATA 조안나
 	DATA 엘리
 	DATA 베로니카
@@ -106,14 +106,14 @@ STRDATA LOCALS
 	DATA 사만다
 	DATA 샌디
 	DATA 빅토리아
-	DATA 안나
+	DATA 아나
 	DATA 아네트
 	DATA 제네비브
 	DATA 시실리
 	DATA 조이스
 	DATA 니콜라
 	DATA 마틸다
-	DATA 엘리스
+	DATA 앨리스
 	DATA 에디스
 	DATA 마저리
 	DATA 데이지
@@ -137,7 +137,7 @@ STRDATA LOCALS
 	DATA 아나이스
 	DATA 애니
 	DATA 디안
-	DATA 파비엔
+	DATA 파비엔느
 	DATA 클라라
 	DATA 아나벨
 	DATA 리트뤼즈
@@ -148,19 +148,19 @@ STRDATA LOCALS
 	DATA 크리스틴
 	DATA 베랑제르
 	DATA 안느
-	DATA 이본느
+	DATA 이본
 	DATA 크리스틴
-	DATA 콘스탄스
+	DATA 콩스탕스
 	DATA 상드린
 	DATA 베로니크
 	DATA 엘리자베트
 	DATA 우다
 	DATA 켄자
-	DATA 시리아
+	DATA 실리아
 	DATA 마들렌
 	DATA 아야
 	DATA 마리아
-	DATA 마를렌
+	DATA 말렌
 	DATA 줄리아
 	DATA 알렉산드라
 	DATA 카즈미
@@ -222,7 +222,7 @@ STRDATA LOCALS
 	DATA 프랑카
 	DATA 슈테피
 	DATA 카타리나
-	DATA 나딘
+	DATA 나디네
 	DATA 이자벨
 	DATA 자스키아
 	DATA 루이제
@@ -264,7 +264,7 @@ STRDATA LOCALS
 	DATA 키아라
 	DATA 리자
 	DATA 크리스티나
-	DATA 타티아나
+	DATA 타치아나
 	DATA 그라치아
 	DATA 구이아
 	DATA 미콜
@@ -291,7 +291,7 @@ STRDATA LOCALS
 	DATA 다리야
 	DATA 폴리나
 	DATA 예브게니야
-	DATA 아나스타샤
+	DATA 아나스타시야
 	DATA 베라
 	DATA 아르스
 	DATA 류보프
@@ -322,7 +322,7 @@ STRDATA LOCALS
 	DATA 아틀레티코
 	DATA 제르맹
 	DATA 제나이드
-	DATA 에우랄리아
+	DATA 에울랄리아
 	DATA 카르마
 	DATA 수사나
 	DATA 이치아르
@@ -351,7 +351,7 @@ STRDATA LOCALS
 	DATA 메이
 	DATA 캐롤
 	DATA 루스
-	DATA 메어리
+	DATA 메리
 	DATA 프랜시스
 	DATA 케이트
 	DATA 앨리슨
@@ -385,7 +385,7 @@ STRDATA LOCALS
 	DATA 미아
 	DATA 실라
 	DATA 사만다
-	DATA 안나
+	DATA 아나
 	DATA 아네트
 	DATA 시실리
 	DATA 니콜라
@@ -402,7 +402,7 @@ STRDATA LOCALS
 	DATA 애니
 	DATA 클라라
 	DATA 마이무나
-	DATA 안느=소피
+	DATA 안느-소피
 	DATA 크리스틴
 	DATA 안느
 	DATA 크리스틴
@@ -410,7 +410,7 @@ STRDATA LOCALS
 	DATA 실리아
 	DATA 아야
 	DATA 마리아
-	DATA 마를렌
+	DATA 말렌
 	DATA 샹탈
 	DATA 노리코
 	DATA 케야라
@@ -442,7 +442,7 @@ STRDATA LOCALS
 	DATA 크리스티네
 	DATA 이나
 	DATA 카트린
-	DATA 프랑카
+	DATA 프란카
 	DATA 슈테피
 	DATA 카타리나
 	DATA 요한나
@@ -469,7 +469,7 @@ STRDATA LOCALS
 	DATA 카테리나
 	DATA 키아라
 	DATA 크리스티나
-	DATA 타티아나
+	DATA 타치아나
 	DATA 미콜
 	DATA 아시아
 	DATA 레티시아
@@ -491,12 +491,12 @@ STRDATA LOCALS
 	DATA 마르타
 	DATA 호아키나
 	DATA 훌리아
-	DATA 앙헬라
+	DATA 안헬라
 	DATA 이레네
 	DATA 누리아
 	DATA 에스테르
 	DATA 아틀레티코
-	DATA 에우랄리아
+	DATA 에울랄리아
 	DATA 카르마
 	DATA 수사나
 	DATA 이치아르
@@ -504,7 +504,7 @@ STRDATA LOCALS
 	DATA 미레이아
 	DATA 아이타나
 	DATA 아란차
-	DATA 릴리
+	DATA 리리
 	DATA 아사아라
 ENDDATA
 RETURNF LOCALS
@@ -518,12 +518,12 @@ STRDATA LOCALS
 	DATA 바네사
 	DATA 안드레아
 	DATA 카라
-	DATA 사만다
+	DATA 사만사
 	DATA 아나
 	DATA 마틸다
 	DATA 사라야
 	DATA 나탈리아
-	DATA 파트리샤
+	DATA 파트리시아
 	DATA 마이무나
 	DATA 아야
 	DATA 마리아
@@ -555,7 +555,7 @@ STRDATA LOCALS
 	DATA 달리아
 	DATA 다리야
 	DATA 아나스타샤
-	DATA 나데즈다
+	DATA 나제즈다
 	DATA 카챠
 	DATA 아드리아나
 	DATA 마르타
@@ -591,7 +591,7 @@ STRDATA LOCALS
 	DATA 아비바
 	DATA 아디나
 	DATA 아니사
-	DATA 아리다
+	DATA 알리다
 	DATA 아나야
 	DATA 아이다
 	DATA 알레한드라
@@ -606,7 +606,7 @@ STRDATA LOCALS
 	DATA 알레사
 	DATA 라이야
 	DATA 카사
-	DATA 라루나
+	DATA 라르나
 	DATA 사나
 	DATA 살마
 	DATA 라이다
@@ -659,7 +659,7 @@ STRDATA LOCALS
 	DATA 레알
 	DATA 마르가리타
 	DATA 밀라그로스
-	DATA 에우랄리아
+	DATA 에울랄리아
 	DATA 알리베르
 	DATA 릴리
 	DATA 아우로라
@@ -668,34 +668,34 @@ STRDATA LOCALS
 	DATA 알레한드라
 	DATA 라루나
 	DATA 카레라
-	DATA 클레올린다
-	DATA 클레리사
+	DATA 크레올린다
+	DATA 크레릿사
 	DATA 마리아렌
 	DATA 마리레
 	DATA 마리로즈
 	DATA 마리엘린
-	DATA 마리리사
+	DATA 마리릿사
 	DATA 라리산드라
 	DATA 라레나
 	DATA 릴리안느
 	DATA 릴리에트
 	DATA 레오닐라
 	DATA 레오리네
-	DATA 레오리네트
+	DATA 레오리네테
 	DATA 레오린다
 	DATA 레나라
 	DATA 레나리아
 	DATA 레나리스
 	DATA 레니라
-	DATA 렐리사
-	DATA 로즈멜리아
+	DATA 레리사
+	DATA 로즈메리아
 	DATA 로즈리즈
 	DATA 로리타
 	DATA 로잘리
 	DATA 로젤린
-	DATA 롤리나
+	DATA 로리나
 	DATA 로레네
-	DATA 로레트
+	DATA 로레테
 	DATA 로렐리아
 	DATA 로렐리타
 	DATA 플로라

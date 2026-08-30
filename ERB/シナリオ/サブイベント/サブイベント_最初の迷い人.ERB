@@ -1,0 +1,129 @@
+
+@イベント発生条件_サブイベント_最初の迷い人
+;開放条件を満たしたら1を返すこと
+SIF イベント完了フラグ確認("「平行世界」という場所")
+	RETURN 1
+RETURN 0
+
+@イベント関数_サブイベント_最初の迷い人(ARG)
+#DIM キャラ番号取得
+
+キャラ番号取得 = GETCHARA(2726)
+
+
+DRAWLINE
+PRINTL ［최초의 헤메이는 사람］
+DRAWLINE
+PRINTW
+PRINTFORMW 식인조의 섬에 있던, 평행세계와 연결된 문.
+PRINTFORMW era는 「편리하게 사용하게」라고 말했지만, 사용하려면 준비가 필요하다……
+PRINTL
+PRINTFORML 우선, 입지가 좋지 않다.
+PRINTFORMW 보스로 자리잡고 있던 식인조를 물리쳤다고는 하지만, 마물은 그리 쉽게 근절할 수 있는 것이 아니다.
+PRINTL
+PRINTFORML 아무리 ZP를 써서 평행세계의 손님을 초대해도「불려져 나온 곳에서 바로 마물에게 습격당했습니다.」라면, 최악의 경우 죽어서 ZP가 헛수고가 된다.
+PRINTFORMW 그렇지 않더라도, 우리가 대접했다고 해도 다시는 이 세계에 오고 싶어 하지 않을 가능성이 높다.
+PRINTL
+PRINTFORMW 어쨌든, 문을 운영하기 전 단계로서 주변 정비와 안전 관리는 시급한 과제다.
+PRINTL
+PRINTFORML 우선 맞이할 안내 역할을 두거나, 맞이용 기공선이 올 때까지의 시간을 안심하고 보낼 수 있는 건물이 필요하다.
+PRINTFORMW 마물 방지용 울타리나 결계, 경우에 따라서는 문과 연결된 동굴 내부의 다른 경로를 차단하는 일도 필요할 것이다.
+PRINTL
+PRINTFORML 그 외에도… 차라리 처음 눈에 띄는 곳에「%リゾート名称%에 오신 것을 환영합니다!」같은 팝한 환영 표지판을 걸어두면
+PRINTFORMW 갑자기 이 세계에 온 손님도 어느 정도 안심할 수 있지 않을까.
+PRINTL
+PRINTFORML 초안을 머릿속에 그리며, 탐험 멤버들을 데리고 %CALLNAME:PLAYER%는 다시 문이 있는 동굴로 향했다.
+PRINTFORMW ……만.
+PRINTL
+PRINTFORMW 「──꺄아아아악!」
+PRINTL
+PRINTFORMW ……늦었을지도 모른다.
+PRINTL
+PRINTFORML 동굴 깊은 곳에서 들려온 날카로운 비명 소리에 %CALLNAME:PLAYER% 일행이 급히 달려가자 예상대로,
+PRINTFORMW 문을 통해 들어온 것으로 보이는 여성이 물의 엘리멘탈에게 둘러싸여, 벽까지 몰려 있는 상황이었다.
+PRINTL
+PRINTFORML 이 거리에서도 한눈에 알아볼 수 있는 미안. 즉, 미래의 단골 후보다! 마물에게 영업 방해 당하고 싶지 않아!
+PRINTFORMW %CALLNAME:PLAYER%의 지시에, 탐험 멤버들은 무기를 들고 달려 나갔다……!
+CALL イベント戦闘初期処理()
+敵BATTLE_STATE_STR:0:エネミー名 = Lv4_水のエレメンタル
+敵BATTLE_STATE_STR:1:エネミー名 = Lv4_水のエレメンタル
+敵BATTLE_STATE_STR:3:エネミー名 = Lv4_水のエレメンタル
+CALL イベント中戦闘用処理()
+IF RESULT == 0
+	;勝利
+	PRINTL 
+	PRINTL 
+	PRINTFORMW %CALLNAME:PLAYER%들은 무사히 마물을 소탕했다.
+	PRINTL
+	CALL PRINT_STRL(@"IMAGEPATH_%CSTR:キャラ番号取得:画像フォルダ%/おびえちひろ")
+	PRINTFORMW 「…………도……도와주신、건가요……？」
+	PRINTL
+	PRINTFORMW 공격받고 있던 여성에게 손을 내밀어 일어나게 하자, 두려워하던 그녀는 점차 차분함을 되찾았다.
+	PRINTL
+	PRINTFORML 문이 열리기도 전에 찾아온, 평행세계에서 온 헤메이는 사람.
+	PRINTFORMW 지난 조사에서는 era가 동행했으니, 몸에서 풍기는 ZP의 기운에 이끌려 오작동이라도 일어난 걸까.
+	PRINTL
+	PRINTFORML 「저기, 감사합니다. 마물? 이라는건, 저는 처음이라……」
+	PRINTFORMW 「아, 저는, 센카와 치히로라고 합니다. 아이돌사무소에서 사무원으로──」
+	PRINTL
+	PRINTFORMW 놀랍게도, 그녀의 세계에는 마물이 없는 것 같다. 생명의 위기를 구해준 치히로는 연신 고개를 숙이며 감사를 표했다.
+	PRINTL
+	PRINTFORML 본인도 아이돌이라고 부를 수 있을 정도로 미인이면서, 아이돌 사무소의 사무원으로 일하고 있다니……
+	PRINTFORMW ……즉, 치히로를 속여서 깊은 관계가 된다면, 이세계 아이돌과도 인연을 만들 수 있을지도 모른다……？
+	PRINTL
+	PRINTFORMW ────어떻게 할까？
+	PRINTL
+	PRINTBUTTON "[0] 이대로 리조트에 초대한다", 0
+	PRINTL
+	PRINTBUTTON "[1] 한번 원래 세계로 돌려보내 준다", 1
+	PRINTL
+	BINPUT
+	PRINTL
+	SELECTCASE RESULT
+	CASE 0
+		PRINTFORMW 그건 정말 무서운 경험이었을 텐데… 부디 우리 리조트에서 마음을 치유해 주었으면 한다.
+		PRINTL
+		PRINTFORMW %CALLNAME:PLAYER%는 아직 상황을 이해하지 못한 치히로를 교묘히 설득해 리조트에 초대했다……
+		PRINTL
+		DRAWLINE
+		PRINTFORML [아이돌 사무소 어시스턴트]센카와 치히로를 리조트에 초대했습니다.
+		;ヒントは消した。わざわざ加入イベントが存在すること自体をヒントとする。
+		IF !FLAG:クリア済み視聴フラグ
+			CFLAG:(キャラ検索("[アイドル事務所のアシスタント]千川ちひろ")):招待不可フラグ = 0
+			IF 滞在キャラ上限 - 滞在キャラ数 - 集客人数 - FLAG:滞在キャラ枠先確保分 > 0
+				解放キャラ招待:(FINDELEMENT(解放キャラ招待, 0)) = キャラ検索("[アイドル事務所のアシスタント]千川ちひろ")
+				FLAG:滞在キャラ枠先確保分 += 1
+			ENDIF
+		ENDIF
+	CASE 1
+		PRINTFORMW 그건 정말로 무서운 경험이었을 텐데… 오늘은 일단 집에 가서 쉬는 것이 좋겠다.
+		PRINTL
+		PRINTFORML %CALLNAME:PLAYER%는 최소한의 기념품이라며, 방금 전의 마물이 떨어트린 성정석 파편을 선물하고,
+		PRINTFORMW 치히로를 문까지 데려다 주고, 원래의 세계로 돌려보냈다……
+		PRINTL
+		DRAWLINE
+		PRINTFORMW 인연이 생기면서, [아이돌 사무소 어시스턴트]센카와 치히로의 초대에 필요한 ZP가 1이 되었습니다.
+		CFLAG:(キャラ検索("[アイドル事務所のアシスタント]千川ちひろ")):ZPショップ値段 = 1
+	ENDSELECT
+ELSEIF RESULT == 1
+	;全滅
+	PRINTL 
+	PRINTL 
+	PRINTW 실수를 해버렸다. 여기서는 일단 물러나자.
+ELSEIF RESULT == -1
+	;逃走
+	PRINTL 
+	PRINTL 
+	PRINTW 생각보다 까다로운 것 같다. 여기서는 일단 물러나자.
+ENDIF
+DRAWLINE
+
+CALL イベント完了フラグ汎用処理("最初の迷い人")
+CALL ダンジョン終了時処理
+
+
+
+
+
+
+

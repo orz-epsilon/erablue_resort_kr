@@ -14,10 +14,10 @@ TSTR:コマンド名受渡 = 거짓 고백시키기
 TFLAG:コマンドタイプ受渡 = COMTYPE("うふふ")
 
 @COM_TOOLTIP_88
-LOCALS = <br>■거짓 고백시키다<br>
+LOCALS = <br>■거짓 고백시키기<br>
 LOCALS += "상대에게 「당신을 향한 사랑의 말」을 강요한다. <br>상대에게 「대출 경험」이 있는 경우에만 가능."
-LOCALS += "<br>마음에도 없는 말이라도 몇 번이고 반복해서 말하게 함으로써, 상대는 그 말에 익숙해지고 기피감은 옅어진다."
-LOCALS += "<br>이윽고 익숙해질 무렵에는, 그 「마음에도 없는」 말이었을 것을 의식의 깊은 곳에 새겨 넣을 수 있을 것이다."
+LOCALS += "<br>진심이 아닌 말이라도 몇 번이고 반복해서 말하게 함으로써, 상대는 그 말에 익숙해지고 기피감은 옅어진다."
+LOCALS += "<br>이윽고 완전히 익숙해질 무렵에는, 그 「진심이 아닐」 터인 말을 의식 깊숙이 각인시킬 수 있을 것이다."
 LOCALS += "<br>COM 타입: 우후후<br>획득 소스: 반감・굴종・애정・연심도・정복(PLAYER)"
 LOCALS += "<br>고유 획득 경험: 없음<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
@@ -107,7 +107,7 @@ RETURN 1
 #DIM ＋表示フラグ
 
 SKIPDISP ARG
-PRINTFORML 거짓 고백하게 만들기(%CALLNAME:TARGET%)
+PRINTFORML 거짓 고백시키기(%CALLNAME:TARGET%)
 ;-------------------------------------------------
 ;実行判定処理
 ;-------------------------------------------------
@@ -149,7 +149,7 @@ IF ABL:マゾ性感
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += ABL:マゾ性感 * 2
-	PRINTFORM 마조감각LV{ABL:マゾ性感}({ABL:マゾ性感 * 2})
+	PRINTFORM 마조 성감LV{ABL:マゾ性感}({ABL:マゾ性感 * 2})
 	＋表示フラグ = 1
 ENDIF
 ;ABL:精液中毒
@@ -180,7 +180,7 @@ ENDIF
 IF TALENT:羞恥心 > 0
 	PRINT  - 
 	実行値 -= 1
-	PRINT 수줍음(1)
+	PRINT 수치심(1)
 	＋表示フラグ = 1
 ENDIF
 
@@ -189,21 +189,21 @@ IF TALENT:倒錯的
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += 10
-	PRINT 도착적(10)
+PRINT 도착적(10)
 	＋表示フラグ = 1
 ENDIF
 
 ;態度
 IF TALENT:態度 == -1
 	SIF ＋表示フラグ
-		PRINT  +
+		PRINT  + 
 	実行値 += 6
-	PRINT 순종적(6)
+PRINT 순종적(6)
 	＋表示フラグ = 1
 ELSEIF TALENT:態度 == 1
 	PRINT  - 
 	実行値 -= 4
-	PRINT 반항적(4)
+PRINT 반항적(4)
 	＋表示フラグ = 1
 ENDIF
 
@@ -212,12 +212,12 @@ IF TALENT:プライド == -1
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += 4
-	PRINT 자존심 낮음(4)
+PRINT 자존심 낮음(4)
 	＋表示フラグ = 1
 ELSEIF TALENT:プライド == 1
 	PRINT  - 
 	実行値 -= 6
-	PRINT 자존심 높음(6)
+PRINT 자존심 높음(6)
 	＋表示フラグ = 1
 ENDIF
 
@@ -225,14 +225,14 @@ ENDIF
 IF TALENT:快感応答 < 0 && !TALENT:淫乱
 	PRINT  - 
 	実行値 -= 1
-	PRINT 쾌감 부정(1)
+PRINT 쾌감 부정(1)
 	＋表示フラグ = 1
 ENDIF
 ;男嫌い（恋慕、親愛で無効）
 IF TALENT:性別嗜好 & 1 && !(TALENT:PLAYER:性別 & 1) && (!TALENT:恋慕 || PLAYER != MASTER)
 	PRINT  - 
 	実行値 -= 12
-	PRINT 남성 혐오(12)
+PRINT 남성 혐오(12)
 	＋表示フラグ = 1
 ENDIF
 
@@ -241,7 +241,7 @@ IF TALENT:セフレ
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += 10
-	PRINT 섹파(10)
+PRINT 섹프(10)
 	＋表示フラグ = 1
 ENDIF
 
@@ -250,7 +250,7 @@ IF CFLAG:発情期フラグ < 0
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += 6
-	PRINT 발정 중(6)
+PRINT 발정 중(6)
 	＋表示フラグ = 1
 ENDIF
 
@@ -258,7 +258,7 @@ ENDIF
 IF TCVAR:言いなり && 寝取らせ_主導キャラ > 0
 	PRINT  - 
 	実行値 -= 100
-	PRINTFORM %CALLNAME:寝取らせ_主導キャラ%가 보고 있음(100)
+PRINTFORM %CALLNAME:寝取らせ_主導キャラ%이(가) 보고 있음(100)
 	＋表示フラグ = 1
 ENDIF
 
@@ -267,7 +267,7 @@ IF TCVAR:言いなり
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += 999
-	PRINT 당신의 뜻대로(999)
+PRINT 당신의 뜻대로(999)
 	＋表示フラグ = 1
 ENDIF
 
@@ -325,26 +325,26 @@ RETURN 1
 @MESSAGE_COM88
 #DIM 入力値
 
-PRINTFORM %CALLNAME:PLAYER%는
+PRINTFORM %CALLNAME:PLAYER%은(는)
 
 IF TCVAR:言いなり == 1
-	PRINTFORM %CALLNAME:寝取らせ_主導キャラ%%TEXTR("가 보는 앞에서/에게 보란듯이")%
+PRINTFORM %CALLNAME:寝取らせ_主導キャラ%%TEXTR("이(가) 보는 앞에서/에게 과시하듯이")%
 ENDIF
 
 IF MODE_存在判定_完全一致("Ｖ挿入系", PLAYER, TARGET)
 	;あなたがチンポ突っ込んでる
-		PRINTFORM %CALLNAME:TARGET%%TEXTR("의 암컷 구멍/의 보지/")%를%TEXTR("제 것인 양/")%범하면서,
+		PRINTFORM %CALLNAME:TARGET%%TEXTR("의 암컷 구멍/의 보지/")%을%TEXTR(" 제 것인 양/")% 범하면서,
 ELSEIF MODE_存在判定_完全一致("Ｖ挿入系", TARGET, PLAYER)
 	;あなたがチンポ咥えこんでる。ペニバンの可能性もあるので詳細な描写は省く
-		PRINTFORM %CALLNAME:TARGET%%TEXTR("를 범하고/에게 자신을 범하게 하며")%,
+		PRINTFORM %CALLNAME:TARGET%%TEXTR("을(를) 범하고/에게 자신을 범하게 하면서")%
 ELSEIF MODE_存在判定_完全一致("Ａ挿入系", PLAYER, TARGET)
 	;あなたがチンポ突っ込んでる
-		PRINTFORM %CALLNAME:TARGET%의%TEXTR("엉덩이 구멍/엉덩이 구멍/엉덩이 보지")%를%TEXTR("제 것인 양/")%범하면서,
+		PRINTFORM %CALLNAME:TARGET%의%TEXTR("항문/엉덩이 구멍/엉덩이 보지")%를%TEXTR("제 것인 양/")%범하면서,
 ELSEIF MODE_存在判定_完全一致("Ａ挿入系", TARGET, PLAYER)
 	;あなたがチンポ咥えこんでる。ペニバンの可能性もあるので詳細な描写は省く
-	PRINTFORM %CALLNAME:TARGET%%TEXTR("를 엉덩이 구멍으로 범하고/에게 자신의 엉덩이 구멍을 범하게 하며")%,
+	PRINTFORM %CALLNAME:TARGET%%TEXTR("을(를) 엉덩이 구멍으로 범하고/에게 자신의 항문을 범하게 하고")%하면서,
 ELSE
-	PRINTFORM ,
+	PRINTFORM 、
 ENDIF
 ;他にもパイズリさせながら、とかもできるはずだけど今回は省略
 
@@ -354,50 +354,50 @@ SELECTCASE CFLAG:TARGET:嘘告白カウント
 CASE 0 TO 5
 ;最初のうちは言わせる内容はシンプルに。相手に「発言内容を選ぶ」及び「こちらの望まない発言をする」余地を与えない
 	IF  (MODE_存在判定_完全一致("Ｖ挿入系", PLAYER, TARGET) && RAND:3 == 0) || (MODE_存在判定_完全一致("Ｖ挿入系", TARGET, PLAYER) && RAND:3 == 0) || (MODE_存在判定_完全一致("Ａ挿入系", PLAYER, TARGET) && RAND:3 == 0) || (MODE_存在判定_完全一致("Ａ挿入系", TARGET, PLAYER) && RAND:3 == 0)
-		PRINTFORM 거짓말이라도 좋으니 %CALLNAME:PLAYER%를 향해 감사의 말을 하도록 강요했다.
+		PRINTFORM 거짓말이라도 좋으니%CALLNAME:PLAYER%에게 감사의 말을 하도록 강요했다.
 		PRINTL
-		PRINTFORM %CALLNAME:TARGET%는 %CALLNAME:PLAYER%에게 범해지면서 나오는 교성을%TEXTR("필사적으로/억지로")%%TEXTR("삼키면서/참으면서")%,
-		PRINTFORML %TEXTR("진심으로 싫다는 듯이/혐오감에 떨리는 목소리로/굴욕감에 떨리는 목소리로")%、「%TEXTR("범해주셔서/섹스해주셔서/안아주셔서")%、%TEXTR("기쁩니다/감사합니다")%」라고 말했다……
+		PRINTFORM %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%에게 범해지는 교성을%TEXTR("필사적으로/애써")%%TEXTR("억누르면서/참으면서")%、
+		PRINTFORML %TEXTR("진심으로 싫다는 듯이/혐오감에 떨리는 목소리로/굴욕감에 떨리는 목소리로")%、「%TEXTR("범해/섹스해/안아")%%TEXTR("줘서/주셔서")%、%TEXTR("기쁩니다/감사합니다")%」라고 말했다……
 	ELSE
-		PRINTFORM 거짓말이라도 좋으니 %CALLNAME:PLAYER%를 향해 사랑의 말을
+		PRINTFORM 거짓말이라도 좋으니%CALLNAME:PLAYER%에게 사랑의 말을
 		PRINTFORML 하도록 강요했다.
 	;	PRINTFORML 言いながら%TEXTR("キスを捧げる/唇を捧げる/キスする")%よう強要した。
 	;	意図せずにファーストキス捧げるの嫌な人もいそうだけど、シチュとしては欲しい気もする。どうしたものか
 		PRINTL
-		PRINTFORM %CALLNAME:TARGET%는
+		PRINTFORM %CALLNAME:TARGET%은(는)
 		IF MODE_存在判定_完全一致("ＶＡ挿入系", PLAYER, TARGET)
 		;あなたがチンポ突っ込んでる
-			PRINTFORM %CALLNAME:PLAYER%에게 범해지면서 나오는 교성을%TEXTR("필사적으로/억지로")%%TEXTR("삼키면서/참으면서")%,
+			PRINTFORM %CALLNAME:PLAYER%에게 범해지는 교성을%TEXTR("필사적으로/애써")%%TEXTR("억누르면서/참으면서")%、
 		ELSEIF MODE_存在判定_完全一致("ＶＡ挿入系", TARGET, PLAYER)
 			;あなたがチンポ咥えこんでる。ペニバンの可能性もあるので詳細な描写は省く
-			PRINTFORM %CALLNAME:PLAYER%와 관계를 맺으며 새어 나오는 신음을%TEXTR("필사적으로/억지로")%%TEXTR("삼키면서/참으면서/억누르면서")%,
+			PRINTFORM %CALLNAME:PLAYER%와 관계하며 새어 나오는 신음을%TEXTR("필사적으로/애써")%%TEXTR("억누르면서/참으면서/죽이면서")%、
 		ENDIF
-		PRINTFORML %TEXTR("진심으로 싫다는 듯이/혐오감에 떨리는 목소리로")% "%CALLNAME:PLAYER%%TEXTR("를 좋아해/사랑해")%"라고 말했다……
+		PRINTFORML %TEXTR("진심으로 싫다는 듯이/혐오감에 떨리는 목소리로")%、「%CALLNAME:PLAYER%%TEXTR("을(를) 좋아해/을(를) 사랑해")%」라고 말했다……
 	ENDIF
 CASE 6 TO 10
 ;フェーズ自体は進行しているものの、いい感じの差分が思いつかない。
 ;むしろ差がつくのはリアクションだとは思うものの、一応分けておく
 	IF  (MODE_存在判定_完全一致("Ｖ挿入系", PLAYER, TARGET) && RAND:3 == 0) || (MODE_存在判定_完全一致("Ｖ挿入系", TARGET, PLAYER) && RAND:3 == 0) || (MODE_存在判定_完全一致("Ａ挿入系", PLAYER, TARGET) && RAND:3 == 0) || (MODE_存在判定_完全一致("Ａ挿入系", TARGET, PLAYER) && RAND:3 == 0)
-		PRINTFORML 거짓말이라도 좋으니 %CALLNAME:PLAYER%에게 감사의 말을 하도록 강요했다.
+		PRINTFORML 거짓말이라도 좋으니%CALLNAME:PLAYER%에게 감사의 말을 하도록 강요했다.
 		PRINTL
-		PRINTFORM %CALLNAME:TARGET%는 %CALLNAME:PLAYER%에게 범해지는 교성을 %TEXTR("필사적으로/힘겹게")%%TEXTR("씹어 삼키면서/참아가면서/억누르면서")%,
-		PRINTFORML %TEXTR("싫다는 듯이/혐오감을 비치는 목소리로/분하다는 듯이/굴욕을 곱씹는 목소리로")% "%TEXTR("범해/섹스해/안아/사용해")%%TEXTR("줘서/주셔서")%, %TEXTR("기뻐요/감사합니다")%"라고 말했다……
+		PRINTFORM %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%에게 범해지는 교성을%TEXTR("필사적으로/애써")%%TEXTR("억누르면서/참으면서/죽이면서")%、
+		PRINTFORML %TEXTR("싫다는 듯이/혐오감을 드러내는 목소리로/분하다는 듯이/굴욕을 곱씹는 목소리로")%、「%TEXTR("범해/섹스해/안아/써")%%TEXTR("줘서/주셔서")%、%TEXTR("기쁩니다/감사합니다")%」라고 말했다……
 	ELSE
-		PRINTFORM 거짓말이라도 좋으니 %CALLNAME:PLAYER%에게 사랑의 말을
-		PRINTFORML 말하도록 시켰다.
+		PRINTFORM 거짓말이라도 좋으니%CALLNAME:PLAYER%에게 사랑의 말을
+		PRINTFORML 말하라고 일렀다.
 		PRINTL
-		PRINTFORM %CALLNAME:TARGET%는
+		PRINTFORM %CALLNAME:TARGET%은(는)
 		IF MODE_存在判定_完全一致("ＶＡ挿入系", PLAYER, TARGET)
 		;あなたがチンポ突っ込んでる
 			PRINTFORM %CALLNAME:PLAYER%
 			SIF TALENT:PLAYER:性別 & 2
-				PRINTFORM 의 %TEXTR("페니스/자지")%
+				PRINTFORM 의%TEXTR("페니스/자지")%
 			PRINTFORM 에게 범해져 교성을 지르면서,
 		ELSEIF MODE_存在判定_完全一致("ＶＡ挿入系", TARGET, PLAYER)
 			;あなたがチンポ咥えこんでる。ペニバンの可能性もあるので詳細な描写は省く
-			PRINTFORM %CALLNAME:PLAYER%와 관계하며 헐떡이는 숨결을 흘리면서,
+			PRINTFORM %CALLNAME:PLAYER%와 교접하며 신음하는 숨결을 흘리면서,
 		ENDIF
-		PRINTFORML %TEXTR("싫다는 듯이/마지못해 하는 듯이/몇 번이고 말하게 하는 것에 질렸다는 듯한 목소리로")% "%CALLNAME:PLAYER%%TEXTR("를 좋아해/사랑해")%"라고 말했다……
+		PRINTFORML %TEXTR("싫다는 듯이/마지못해 하는 듯이/몇 번이나 말하게 하는 것에 질렸다는 듯한 목소리로")%、「%CALLNAME:PLAYER%%TEXTR("을(를) 좋아해/을(를) 사랑해")%」라고 말했다……
 	ENDIF
 CASE 11 TO 24
 ;このあたりから、「誰か」を選択式にして、対象にあなたを選ばせる。
@@ -405,109 +405,109 @@ CASE 11 TO 24
 	IF  (MODE_存在判定_完全一致("Ｖ挿入系", PLAYER, TARGET) && RAND:4 == 0) || (MODE_存在判定_完全一致("Ｖ挿入系", TARGET, PLAYER) && RAND:4 == 0) || (MODE_存在判定_完全一致("Ａ挿入系", PLAYER, TARGET) && RAND:4 == 0) || (MODE_存在判定_完全一致("Ａ挿入系", TARGET, PLAYER) && RAND:4 == 0)
 		PRINTFORML %CALLNAME:PLAYER%에게 감사의 말을 하도록 강요했다.
 		PRINTL
-		PRINTFORM %CALLNAME:TARGET%는 %CALLNAME:PLAYER%에게 범해져 교성을 지르면서,
-		PRINTFORM %TEXTR("망설이면서도/망설이면서도 쾌락이 배어나는 목소리로/쾌락에 녹아내린 목소리로 분하다는 듯이")% "%TEXTR("범해/섹스해/안아/사용해")%%TEXTR("줘서/주셔서")%, %TEXTR("기뻐요/감사합니다")%"라고 %TEXTR("반복해서/몇 번이고")% 말했다……
-		CALL PRINT_STR("、っ_H_」")
-		PRINTFORML %CALLNAME:PLAYER%에게 사랑의 말을
+		PRINTFORM %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%에게 범해져 교성을 지르면서,
+		PRINTFORM %TEXTR("망설이면서도/망설이면서도 쾌락이 스며드는 목소리로/쾌락에 녹아내린 목소리로 분하다는 듯이")%「%TEXTR("범해/섹스해/안아/써")%%TEXTR("줘서/주셔서")%、%TEXTR("기쁩니다/감사합니다")%
+		CALL PRINT_STR("、읏_H_」")
+		PRINTFORML 라고%TEXTR("반복해서/몇 번이고")% 말했다……
 	ELSEIF TCVAR:言いなり == 1
 	;寝取りっクス中。主導キャラが見てる
 		SELECTCASE RAND:3
 		CASE 0
-			PRINTFORM 말하도록 시켰다.
-			PRINTFORML %CALLNAME:TARGET%는
+			PRINTFORM %CALLNAME:PLAYER%에게 사랑의 말을
+			PRINTFORML 말하라고 일렀다.
 			PRINTL
-			PRINTFORM %CALLNAME:PLAYER%
+			PRINTFORM %CALLNAME:TARGET%은(는)
 			IF MODE_存在判定_完全一致("ＶＡ挿入系", PLAYER, TARGET)
 			;あなたがチンポ突っ込んでる
 				PRINTFORM %CALLNAME:PLAYER%
 				SIF TALENT:PLAYER:性別 & 2
 					PRINTFORM 의%TEXTR("페니스/자지")%
-				PRINTFORM 에 범해져 교성을 지르면서,
+				PRINTFORM 에게 범해지며 교성을 지르면서,
 			ELSEIF MODE_存在判定_完全一致("ＶＡ挿入系", TARGET, PLAYER)
 				;あなたがチンポ咥えこんでる。ペニバンの可能性もあるので詳細な描写は省く
-				PRINTFORM %CALLNAME:PLAYER%와 교합하며 헐떡이는 숨결을 흘리면서,
+				PRINTFORM %CALLNAME:PLAYER%와 교접하며 헐떡이는 숨결을 흘리면서,
 			ENDIF
-			PRINTFORML %TEXTR("망설이면서도/망설이면서도 쾌락이 스미는 목소리로/쾌락에 녹아내린 목소리로 분한 듯이")% "%CALLNAME:PLAYER%%TEXTR("이 좋아/이 너무 좋아/를 사랑해")%"라고 %TEXTR("반복해서/몇 번이고")% 말했다……
+			PRINTFORML %TEXTR("망설이면서도/망설이면서도 쾌락이 스며든 목소리로/쾌락에 녹아내린 목소리로 분한 듯이")%、「%CALLNAME:PLAYER%%TEXTR("을(를) 좋아해/을(를) 정말 좋아해/을(를) 사랑해")%」라고%TEXTR("반복해서/몇 번이고")% 말했다……
 		CASE 1
-			PRINTFORML %CALLNAME:寝取らせ_主導キャラ%와의 섹스와 어느 쪽이 더 기분 좋은지 %TEXTR("비교하라고/말하라고")% 일러두었다.
+			PRINTFORML %CALLNAME:寝取らせ_主導キャラ%와의 섹스와 어느 쪽이 더 기분 좋은지%TEXTR("비교하라고/말하라고")% 명했다.
 			PRINTL
-			PRINTFORM %CALLNAME:TARGET%는
+			PRINTFORM %CALLNAME:TARGET%은(는)
 			IF MODE_存在判定_完全一致("ＶＡ挿入系", PLAYER, TARGET)
 			;あなたがチンポ突っ込んでる
 				PRINTFORM %CALLNAME:PLAYER%
 				SIF TALENT:PLAYER:性別 & 2
 					PRINTFORM 의%TEXTR("페니스/자지")%
-				PRINTFORM 에 범해져 교성을 지르면서도
+				PRINTFORM 에게 범해지며 교성을 지르면서도
 			ELSEIF MODE_存在判定_完全一致("ＶＡ挿入系", TARGET, PLAYER)
 				;あなたがチンポ咥えこんでる。ペニバンの可能性もあるので詳細な描写は省く
-				PRINTFORM %CALLNAME:PLAYER%와 교합하며 헐떡이는 숨결을 흘리면서도
+				PRINTFORM %CALLNAME:PLAYER%와 교접하며 헐떡이는 숨결을 흘리면서도
 			ENDIF
-			PRINTFORML %CALLNAME:PLAYER%의 의도를 이해하고, %TEXTR("망설이면서도/망설이면서도 쾌락이 스미는 목소리로/쾌락에 녹아내린 목소리로 분한 듯이")% "%CALLNAME:PLAYER%%TEXTR("와의 섹스/와")%가 더 %TEXTR("좋아/기분 좋아")%"라고 %TEXTR("반복해서/몇 번이고")% 말했다……
+			PRINTFORML %CALLNAME:PLAYER%의 의도를 이해하고, %TEXTR("망설이면서도/망설이면서도 쾌락이 스며든 목소리로/쾌락에 녹아내린 목소리로 분한 듯이")%「%CALLNAME:PLAYER%%TEXTR("와의 섹스/와")%의 쪽이%TEXTR("좋아/기분 좋아")%」라고%TEXTR("반복해서/몇 번이고")% 말했다……
 		CASE 2
-			PRINTFORML %CALLNAME:寝取らせ_主導キャラ%와 누가 더 좋은지 %TEXTR("비교하라고/말하라고")% 일러두었다.
+			PRINTFORML %CALLNAME:寝取らせ_主導キャラ%와 어느 쪽이 더 좋은지%TEXTR("비교하라고/말하라고")% 명했다.
 			PRINTL
-			PRINTFORM %CALLNAME:TARGET%는
+			PRINTFORM %CALLNAME:TARGET%은(는)
 			IF MODE_存在判定_完全一致("ＶＡ挿入系", PLAYER, TARGET)
 			;あなたがチンポ突っ込んでる
 				PRINTFORM %CALLNAME:PLAYER%
 				SIF TALENT:PLAYER:性別 & 2
 					PRINTFORM 의%TEXTR("페니스/자지")%
-				PRINTFORM 에 범해져 교성을 지르면서도
+				PRINTFORM 에게 범해지며 교성을 지르면서도
 			ELSEIF MODE_存在判定_完全一致("ＶＡ挿入系", TARGET, PLAYER)
 				;あなたがチンポ咥えこんでる。ペニバンの可能性もあるので詳細な描写は省く
-				PRINTFORM %CALLNAME:PLAYER%와 교합하며 헐떡이는 숨결을 흘리면서도
+				PRINTFORM %CALLNAME:PLAYER%와 교접하며 신음 섞인 숨결을 흘리면서도
 			ENDIF
-			PRINTFORML %CALLNAME:PLAYER%의 의도를 이해하고, %TEXTR("망설이면서도/망설이면서도 쾌락이 스미는 목소리로/쾌락에 녹아내린 목소리로 분한 듯이")% "%CALLNAME:PLAYER%가 더 좋아"라고 %TEXTR("반복해서/몇 번이고")% 말했다……
+			PRINTFORML %CALLNAME:PLAYER%의 의도를 이해하고, %TEXTR("망설이면서도/망설이면서도 쾌락이 스며든 목소리로/쾌락에 녹아내린 목소리로 분한 듯이")%「%CALLNAME:PLAYER% 쪽이 좋아」라고 %TEXTR("반복해서/몇 번이고")% 말했다……
 		ENDSELECT
 	ELSE
 	;寝取りっクス中じゃない。主導キャラの見てないところでの、プライベートっクス。
 		SELECTCASE RAND:3
 		CASE 0
 			PRINTFORM %CALLNAME:PLAYER%를 향해 사랑의 말을
-			PRINTFORML 말하라고 일러두었다.
+			PRINTFORML 말하라고 시켰다.
 			PRINTL
 			PRINTFORM %CALLNAME:TARGET%는
 			IF MODE_存在判定_完全一致("ＶＡ挿入系", PLAYER, TARGET)
 			;あなたがチンポ突っ込んでる
 				PRINTFORM %CALLNAME:PLAYER%
 				SIF TALENT:PLAYER:性別 & 2
-					PRINTFORM 의%TEXTR("페니스/성기")%
-				PRINTFORM 에게 범해지며 교성을 지르면서,
+					PRINTFORM 의%TEXTR("페니스/자지")%
+				PRINTFORM 에게 범해져 교성을 지르면서,
 			ELSEIF MODE_存在判定_完全一致("ＶＡ挿入系", TARGET, PLAYER)
 				;あなたがチンポ咥えこんでる。ペニバンの可能性もあるので詳細な描写は省く
-				PRINTFORM %CALLNAME:PLAYER%와 교감하며 신음 섞인 숨결을 흘리면서,
+				PRINTFORM %CALLNAME:PLAYER%와 교접하며 신음 섞인 숨결을 흘리면서,
 			ENDIF
-			PRINTFORML %TEXTR("망설이면서도/망설이면서도 쾌락이 스며든 목소리로/쾌락에 녹아내린 목소리로 분한 듯이")%, 「%CALLNAME:PLAYER%%TEXTR("를 좋아해/를 정말 좋아해/를 사랑해")%」라고%TEXTR("반복해서/몇 번이고")% 말했다……
+			PRINTFORML %TEXTR("망설이면서도/망설이면서도 쾌락이 스며든 목소리로/쾌락에 녹아내린 목소리로 분한 듯이")%、「%CALLNAME:PLAYER%%TEXTR("를 좋아해/를 정말 좋아해/를 사랑해")%」라고 %TEXTR("반복해서/몇 번이고")% 말했다……
 		CASE 1
-			PRINTFORML 누구와의 섹스가 가장 기분 좋은지 대답하라고 일렀다.
+			PRINTFORML 누구와의 섹스가 가장 기분 좋은지 대답하라고 시켰다.
 			PRINTL
 			PRINTFORM %CALLNAME:TARGET%는
 			IF MODE_存在判定_完全一致("ＶＡ挿入系", PLAYER, TARGET)
 			;あなたがチンポ突っ込んでる
 				PRINTFORM %CALLNAME:PLAYER%
 				SIF TALENT:PLAYER:性別 & 2
-					PRINTFORM 의%TEXTR("페니스/성기")%
-				PRINTFORM 에게 범해지며 교성을 지르면서
+					PRINTFORM 의%TEXTR("페니스/자지")%
+				PRINTFORM 에게 범해져 교성을 지르면서
 			ELSEIF MODE_存在判定_完全一致("ＶＡ挿入系", TARGET, PLAYER)
 				;あなたがチンポ咥えこんでる。ペニバンの可能性もあるので詳細な描写は省く
-				PRINTFORM %CALLNAME:PLAYER%와 교감하며 신음 섞인 숨결을 흘리면서
+				PRINTFORM %CALLNAME:PLAYER%와 교접하며 신음 섞인 숨결을 흘리면서
 			ENDIF
-			PRINTFORML , %TEXTR("망설이면서도/망설이면서도 쾌락이 스며든 목소리로/쾌락에 녹아내린 목소리로 분한 듯이")% 「%CALLNAME:PLAYER%」라고%TEXTR("반복해서/몇 번이고")% 말했다……
+			PRINTFORML 、%TEXTR("망설이면서도/망설이면서도 쾌락이 스며든 목소리로/쾌락에 녹아내린 목소리로 분한 듯이")%「%CALLNAME:PLAYER%」라고 %TEXTR("반복해서/몇 번이고")% 말했다……
 		CASE 2
-			PRINTFORML 누구를 가장 좋아하는지 대답하라고 일렀다.
+			PRINTFORML 누구를 가장 좋아하는지 대답하라고 시켰다.
 			PRINTL
-			PRINTFORM %CALLNAME:TARGET%는
+			PRINTFORM %CALLNAME:TARGET%은(는)
 			IF MODE_存在判定_完全一致("ＶＡ挿入系", PLAYER, TARGET)
 			;あなたがチンポ突っ込んでる
 				PRINTFORM %CALLNAME:PLAYER%
 				SIF TALENT:PLAYER:性別 & 2
-					PRINTFORM 의%TEXTR("페니스/성기")%
-				PRINTFORM 에게 범해지며 교성을 지르면서
+					PRINTFORM 의%TEXTR("페니스/자지")%
+				PRINTFORM 에게 범해져 교성을 지르며
 			ELSEIF MODE_存在判定_完全一致("ＶＡ挿入系", TARGET, PLAYER)
 				;あなたがチンポ咥えこんでる。ペニバンの可能性もあるので詳細な描写は省く
-				PRINTFORM %CALLNAME:PLAYER%와 교감하며 신음 섞인 숨결을 흘리면서
+				PRINTFORM %CALLNAME:PLAYER%와 교접하며 신음하는 숨결을 흘리면서
 			ENDIF
-			PRINTFORML , %TEXTR("망설이면서도/망설이면서도 쾌락이 스며든 목소리로/쾌락에 녹아내린 목소리로 분한 듯이")% 「%CALLNAME:PLAYER%가 가장 좋아」라고%TEXTR("반복해서/몇 번이고")% 말했다……
+			PRINTFORML 、%TEXTR("망설이면서도/망설이면서도 쾌락이 스며드는 목소리로/쾌락에 녹아내린 목소리로 분한 듯이")%「%CALLNAME:PLAYER%를 가장 좋아해」라고 %TEXTR("반복해서/몇 번이고")% 말했다……
 		ENDSELECT
 	ENDIF
 CASEELSE
@@ -516,35 +516,35 @@ CASEELSE
 	IF  (MODE_存在判定_完全一致("Ｖ挿入系", PLAYER, TARGET) && RAND:5 == 0) || (MODE_存在判定_完全一致("Ｖ挿入系", TARGET, PLAYER) && RAND:5 == 0) || (MODE_存在判定_完全一致("Ａ挿入系", PLAYER, TARGET) && RAND:5 == 0) || (MODE_存在判定_完全一致("Ａ挿入系", TARGET, PLAYER) && RAND:5 == 0)
 		PRINTFORML %CALLNAME:PLAYER%에게 감사의 말을 하도록 강요했다.
 		PRINTL
-		PRINTFORM %CALLNAME:TARGET%는 %CALLNAME:PLAYER%에게 범해져 교성을 지르면서,
-		PRINTFORM %TEXTR("망설이면서도/망설이면서도 쾌락이 배어나는 목소리로/쾌락에 녹아내린 목소리로 분하다는 듯이")%「%TEXTR("범해/섹스해/안아/써")%%TEXTR("줘서/주셔서")%、%TEXTR("기쁩니다/감사합니다")%
-		CALL PRINT_STR("っ_H__H_」")
+		PRINTFORM %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%에게 범해져 교성을 지르며,
+		PRINTFORM %TEXTR("범해/섹스해/안아/써")%%TEXTR("줘서/주셔서")%、%TEXTR("기쁩니다/감사합니다")%
+		CALL PRINT_STR("읏_H__H_」")
 		PRINTFORML 라고 %TEXTR("반복해서/몇 번이고")% 말했다……
 	ELSEIF TCVAR:言いなり == 1
 	;寝取りっクス中。主導キャラが見てる
 		SELECTCASE RAND:5
 		CASE 0
 			PRINTFORM %CALLNAME:PLAYER%에게 사랑의 말을
-			PRINTFORML 하라고 명령했다.
+			PRINTFORML 하라고 시켰다.
 			PRINTL
-			PRINTFORM %CALLNAME:TARGET%는
+			PRINTFORM %CALLNAME:TARGET%은(는)
 			IF MODE_存在判定_完全一致("ＶＡ挿入系", PLAYER, TARGET)
 			;あなたがチンポ突っ込んでる
 				PRINTFORM %CALLNAME:PLAYER%
 				SIF TALENT:PLAYER:性別 & 2
-					PRINTFORM 의 %TEXTR("페니스/좆")%
+					PRINTFORM 의%TEXTR("페니스/자지")%
 				PRINTFORM 에 범해져 교성을 지르면서,
 			ELSEIF MODE_存在判定_完全一致("ＶＡ挿入系", TARGET, PLAYER)
 				;あなたがチンポ咥えこんでる。ペニバンの可能性もあるので詳細な描写は省く
-				PRINTFORM %CALLNAME:PLAYER%와 관계하며 흐느끼는 숨결을 흘리면서,
+				PRINTFORM %CALLNAME:PLAYER%와 교접하며 헐떡이는 숨결을 흘리면서,
 			ENDIF
-			PRINTFORM %TEXTR("완전히 녹아내린 목소리로/쾌락에 완전히 녹아내린 달콤한 목소리로/타락에 굴러떨어진 암컷 같은 아양 떠는 목소리로/쾌락에 타락한 아양 떠는 목소리로/달콤한 목소리로 아양을 떨듯이/「이게 진심이야」라고 확신할 수 있을 정도로 애교 부리는 목소리로")%,
+			PRINTFORM %TEXTR("완전히 녹아내린 목소리로/쾌락에 완전히 녹아내린 달콤한 목소리로/타락에 빠져버린 암컷의 아양 떠는 목소리로/쾌락에 타락해버린 아양 떠는 목소리로/달콤한 목소리로 아양 떨듯이/「이것이 본심이다」라고 확신할 수 있는 응석 부리는 목소리로")%,
 			IF RFLAG:コマンド結果受渡し変数
 				;刷り込みが完了して、性愛快楽を恋慕感情と脳が勘違いしてしまった哀れな末路
 				;・発生判定はソース追加処理参照
 				;イベントが発生したことを記憶(一度発生するとそのうふふ中は再発生しない)
 				寝取らせ_嘘告白特殊イベント発生済 = 1
-				PRINTFORMW %CALLNAME:寝取らせ_主導キャラ%가 보고 있는 앞에서 「%TEXTR("정말 좋아하니까/사랑하니까")% %CALLNAME:PLAYER%의 것으로 만들어 주세요」라고 말해버렸다.
+				PRINTFORMW %CALLNAME:寝取らせ_主導キャラ%이(가) 보고 있는 앞에서 「%TEXTR("정말 좋아하는/사랑하는")% 것이니 %CALLNAME:PLAYER%의 것으로 만들어 주세요」라고 말해버렸다.
 				PRINTL
 				PRINTFORML ──어떻게 할까?
 				PRINTL
@@ -561,82 +561,82 @@ CASEELSE
 				入力値 = RESULT
 				SELECTCASE 入力値
 				CASE 0, 1
-					PRINTFORML ──모처럼 인연을 맺어주었지만, 아무래도 %CALLNAME:寝取らせ_主導キャラ%는 %CALLNAME:TARGET%의 운명의 상대가 아니었던 것 같다.
-					PRINTFORML 압도적인 우월감을 느끼면서, %CALLNAME:PLAYER%는 %CALLNAME:TARGET%를 %CALLNAME:寝取らせ_主導キャラ%에게서 빼앗아, 자신의 것으로 만들었다……
+					PRINTFORML ──모처럼 인연을 맺어 주었지만, 아무래도 %CALLNAME:寝取らせ_主導キャラ%는 %CALLNAME:TARGET%의 운명의 상대가 아니었던 것 같다.
+					PRINTFORML 압도적인 우월감을 느끼면서, %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%을(를) %CALLNAME:寝取らせ_主導キャラ%에게서 빼앗아 자신의 것으로 만들었다……。
 					PRINTL
-					PRINTFORM %CALLNAME:PLAYER%가 주는 쾌락으로 고동친 심장을 ‘사랑’이라고 착각해 버린 가련한 %CALLNAME:TARGET%는, %CALLNAME:PLAYER%에게 [연모] 함락되어
-					CALL PRINT_STRW("しまった……_H__H_")
+					PRINTFORM %CALLNAME:PLAYER%가 주는 쾌락으로 고동친 심장을 『사랑』이라고 착각해버린 가련한 %CALLNAME:TARGET%은(는), %CALLNAME:PLAYER%에게 [연모] 함락되어
+					CALL PRINT_STRW("버렸다……_H__H_")
 					CALL COM88_嘘告白_恋慕陥落処理(TARGET, 寝取らせ_主導キャラ, 入力値)
 				CASEELSE
-					PRINTFORML 모처럼의 제안이지만, %CALLNAME:TARGET%에게는 아직 %CALLNAME:寝取らせ_主導キャラ%와의 관계를 유지하게 해야겠어.
+					PRINTFORML 모처럼의 제안이지만, %CALLNAME:TARGET%에게는 아직 %CALLNAME:寝取らせ_主導キャラ%와의 관계를 유지하게 해두자.
 					PRINTFORML %CALLNAME:PLAYER%는 그 제안을 일축하고, 다시 플레이로 돌아갔다……
 				ENDSELECT
 			ELSE
-				PRINTFORML 「%CALLNAME:PLAYER%%TEXTR("를 좋아해/를 정말 좋아해/를 사랑해")%」라고 %TEXTR("반복해서/몇 번이고")% 말했다……
+				PRINTFORML 「%CALLNAME:PLAYER%%TEXTR("를 좋아한다/를 정말 좋아한다/를 사랑한다")%」라고 %TEXTR("반복해서/몇 번이고")% 말했다……
 			ENDIF
 		CASE 1
-			PRINTFORML %CALLNAME:寝取らせ_主導キャラ%와의 섹스와 어느 쪽이 더 기분 좋은지 %TEXTR("비교하라고/말하라고")% 시켰다.
+			PRINTFORML %CALLNAME:寝取らせ_主導キャラ%와의 섹스와 어느 쪽이 더 기분 좋은지 %TEXTR("비교하라/말하라")%고 명령했다.
 			PRINTL
-			PRINTFORM %CALLNAME:TARGET%는
+			PRINTFORM %CALLNAME:TARGET%은(는)
 			IF MODE_存在判定_完全一致("ＶＡ挿入系", PLAYER, TARGET)
 			;あなたがチンポ突っ込んでる
 				PRINTFORM %CALLNAME:PLAYER%
 				SIF TALENT:PLAYER:性別 & 2
-					PRINTFORM 의%TEXTR("페니스/좆")%
+					PRINTFORM 의 %TEXTR("페니스/자지")%
 				PRINTFORM 에 범해져 교성을 지르면서
 			ELSEIF MODE_存在判定_完全一致("ＶＡ挿入系", TARGET, PLAYER)
 				;あなたがチンポ咥えこんでる。ペニバンの可能性もあるので詳細な描写は省く
-				PRINTFORM %CALLNAME:PLAYER%와 관계하며 신음 섞인 숨을 흘리면서
+				PRINTFORM %CALLNAME:PLAYER%와 교접하며 헐떡이는 숨결을 흘리면서
 			ENDIF
-			PRINTFORM %TEXTR("완전히 녹아내린 목소리로/쾌락에 완전히 녹아내린 달콤한 목소리로/타락에 빠져든 암컷 같은 교태로운 목소리로/쾌락에 타락한 아양 섞인 목소리로/달콤한 목소리로 아양 떨듯이/「이것이 본심이다」라고 확신할 수 있는 어리광 부리는 목소리로")%
-			PRINTFORML 「%CALLNAME:PLAYER%%TEXTR("와의 섹스/와")%가 %TEXTR("더 좋아/더 기분 좋아")%」라고 %TEXTR("반복해서/몇 번이고")% 말했다……
+			PRINTFORM %TEXTR("완전히 녹아내린 목소리로/쾌락에 완전히 녹아내린 달콤한 목소리로/타락에 빠져버린 암컷의 아양 떠는 목소리로/쾌락에 타락해버린 아양 떠는 목소리로/달콤한 목소리로 아양 떨듯이/「이것이 본심이다」라고 확신할 수 있는 응석 부리는 목소리로")%,
+			PRINTFORML 「%CALLNAME:PLAYER%%TEXTR("와의 섹스/와")%가 더 %TEXTR("좋다/기분 좋다")%」라고 %TEXTR("반복해서/몇 번이고")% 말했다……
 		CASE 2
-			PRINTFORML %CALLNAME:寝取らせ_主導キャラ%와 어느 쪽이 더 좋은지 %TEXTR("비교하라고/말하라고")% 시켰다.
+			PRINTFORML %CALLNAME:寝取らせ_主導キャラ%와 어느 쪽이 더 좋은지 %TEXTR("비교하라/말하라")%고 명령했다.
 			PRINTL
-			PRINTFORM %CALLNAME:TARGET%는
+			PRINTFORM %CALLNAME:TARGET%은(는)
 			IF MODE_存在判定_完全一致("ＶＡ挿入系", PLAYER, TARGET)
 			;あなたがチンポ突っ込んでる
 				PRINTFORM %CALLNAME:PLAYER%
 				SIF TALENT:PLAYER:性別 & 2
-					PRINTFORM 의%TEXTR("페니스/좆")%
+					PRINTFORM 의 %TEXTR("페니스/자지")%
 				PRINTFORM 에 범해져 교성을 지르면서
 			ELSEIF MODE_存在判定_完全一致("ＶＡ挿入系", TARGET, PLAYER)
 				;あなたがチンポ咥えこんでる。ペニバンの可能性もあるので詳細な描写は省く
-				PRINTFORM %CALLNAME:PLAYER%와 관계하며 신음 섞인 숨을 흘리면서
+				PRINTFORM %CALLNAME:PLAYER%와 교접하며 헐떡이는 숨결을 흘리면서
 			ENDIF
-			PRINTFORM %TEXTR("완전히 녹아내린 목소리로/쾌락에 완전히 녹아내린 달콤한 목소리로/타락에 빠져든 암컷 같은 교태로운 목소리로/쾌락에 타락한 아양 섞인 목소리로/달콤한 목소리로 아양 떨듯이/「이것이 본심이다」라고 확신할 수 있는 어리광 부리는 목소리로")%
-			PRINTFORML 「%CALLNAME:PLAYER%가 더 좋아」라고 %TEXTR("반복해서/몇 번이고")% 말했다……
+			PRINTFORM %TEXTR("완전히 녹아내린 목소리로/쾌락에 완전히 녹아내린 달콤한 목소리로/타락에 빠져버린 암컷의 아양 떠는 목소리로/쾌락에 타락해버린 아양 떠는 목소리로/달콤한 목소리로 아양 떨듯이/「이것이 본심이다」라고 확신할 수 있는 응석 부리는 목소리로")%,
+			PRINTFORML 「%CALLNAME:PLAYER% 쪽이 더 좋아」라고 %TEXTR("반복해서/몇 번이고")% 말했다……
 		CASE 3
-			PRINTFORML 자신이 누구의 것인지 대답하라고 시켰다.
+			PRINTFORML 자신이 누구의 것인지 대답하라고 명령했다.
 			PRINTL
-			PRINTFORM %CALLNAME:TARGET%은
+			PRINTFORM %CALLNAME:TARGET%은(는)
 			IF MODE_存在判定_完全一致("ＶＡ挿入系", PLAYER, TARGET)
 			;あなたがチンポ突っ込んでる
 				PRINTFORM %CALLNAME:PLAYER%
 				SIF TALENT:PLAYER:性別 & 2
 					PRINTFORM 의%TEXTR("페니스/자지")%
-				PRINTFORM 에게 범해지며 교성을 지르면서
+				PRINTFORM 에 범해져 교성을 지르며
 			ELSEIF MODE_存在判定_完全一致("ＶＡ挿入系", TARGET, PLAYER)
 				;あなたがチンポ咥えこんでる。ペニバンの可能性もあるので詳細な描写は省く
 				PRINTFORM %CALLNAME:PLAYER%와 교접하며 헐떡이는 숨결을 흘리면서
 			ENDIF
-			PRINTFORM %TEXTR("완전히 녹아내린 목소리로/쾌락에 완전히 녹아내린 달콤한 목소리로/타락에 물든 암컷의 교태 섞인 목소리로/쾌락에 타락해버린 교태 섞인 목소리로/달콤한 목소리로 애교 부리듯이/「이게 본심이다」라고 확신할 수 있는 응석 가득한 목소리로")%
+			PRINTFORM %TEXTR("완전히 녹아내린 목소리로/쾌락에 완전히 녹아내린 달콤한 목소리로/타락에 빠져버린 암컷의 아양 떠는 목소리로/쾌락에 타락해버린 아양 떠는 목소리로/달콤한 목소리로 아양 떨듯이/「이것이 본심이다」라고 확신할 수 있는 응석 부리는 목소리로")%、
 			PRINTFORML 「%CALLNAME:PLAYER%의 것」이라고%TEXTR("반복해서/몇 번이고")% 말했다……
 		CASE 4
 			PRINTFORML 누구%TEXTR("의 아이를 낳고 싶은지/에게 아이를 임신당하고 싶은지")% 답하라고 일렀다.
 			PRINTL
-			PRINTFORM %CALLNAME:TARGET%은
+			PRINTFORM %CALLNAME:TARGET%은(는)
 			IF MODE_存在判定_完全一致("ＶＡ挿入系", PLAYER, TARGET)
 			;あなたがチンポ突っ込んでる
 				PRINTFORM %CALLNAME:PLAYER%
 				SIF TALENT:PLAYER:性別 & 2
 					PRINTFORM 의%TEXTR("페니스/자지")%
-				PRINTFORM 에게 범해지며 교성을 지르면서
+				PRINTFORM 에 범해져 교성을 지르며
 			ELSEIF MODE_存在判定_完全一致("ＶＡ挿入系", TARGET, PLAYER)
 				;あなたがチンポ咥えこんでる。ペニバンの可能性もあるので詳細な描写は省く
 				PRINTFORM %CALLNAME:PLAYER%와 교접하며 헐떡이는 숨결을 흘리면서
 			ENDIF
-			PRINTFORM %TEXTR("완전히 녹아내린 목소리로/쾌락에 완전히 녹아내린 달콤한 목소리로/타락에 물든 암컷의 교태 섞인 목소리로/쾌락에 타락해버린 교태 섞인 목소리로/달콤한 목소리로 애교 부리듯이/「이게 본심이다」라고 확신할 수 있는 응석 가득한 목소리로")%
+			PRINTFORM %TEXTR("완전히 녹아내린 목소리로/쾌락에 완전히 녹아내린 달콤한 목소리로/타락에 빠져버린 암컷의 아양 떠는 목소리로/쾌락에 타락해버린 아양 떠는 목소리로/달콤한 목소리로 아양 떨듯이/「이것이 본심이다」라고 확신할 수 있는 응석 부리는 목소리로")%、
 			PRINTFORML 「%CALLNAME:PLAYER%의%TEXTR("아이/아기")%%TEXTR("가 좋아/를 원해")%」라고%TEXTR("반복해서/몇 번이고")% 말했다……
 		ENDSELECT
 	ELSE
@@ -644,85 +644,85 @@ CASEELSE
 		SELECTCASE RAND:5
 		CASE 0
 			PRINTFORM %CALLNAME:PLAYER%를 향해 사랑의 말을
-			PRINTFORML 말하라고 일렀다.
+			PRINTFORML 하라고 일렀다.
 			PRINTL
-			PRINTFORM %CALLNAME:TARGET%은
+			PRINTFORM %CALLNAME:TARGET%은(는)
+			IF MODE_存在判定_完全一致("ＶＡ挿入系", PLAYER, TARGET)
+			;あなたがチンポ突っ込んでる
+				PRINTFORM %CALLNAME:PLAYER%
+				SIF TALENT:PLAYER:性別 & 2
+					PRINTFORM 의%TEXTR("페니스/좆")%
+				PRINTFORM 에 범해져 교성을 지르면서,
+			ELSEIF MODE_存在判定_完全一致("ＶＡ挿入系", TARGET, PLAYER)
+				;あなたがチンポ咥えこんでる。ペニバンの可能性もあるので詳細な描写は省く
+				PRINTFORM %CALLNAME:PLAYER%와 교접하며 헐떡이는 숨결을 흘리면서,
+			ENDIF
+			PRINTFORM %TEXTR("완전히 녹아내린 목소리로/쾌락에 완전히 녹아내린 달콤한 목소리로/타락에 빠져버린 암컷의 아양 떠는 목소리로/쾌락에 타락해버린 아양 떠는 목소리로/달콤한 목소리로 아양 떨듯이/「이것이 본심이다」라고 확신할 수 있는 응석 부리는 목소리로")%,
+			PRINTFORML 「%CALLNAME:PLAYER%%TEXTR("을(를) 좋아해/을(를) 정말 좋아해/을(를) 사랑해")%」라고%TEXTR("반복해서/몇 번이고")% 말했다……
+		CASE 1
+			PRINTFORML 누구와의 섹스가 가장 기분 좋은지 대답하라고 시켰다.
+			PRINTL
+			PRINTFORM %CALLNAME:TARGET%은(는)
+			IF MODE_存在判定_完全一致("ＶＡ挿入系", PLAYER, TARGET)
+			;あなたがチンポ突っ込んでる
+				PRINTFORM %CALLNAME:PLAYER%
+				SIF TALENT:PLAYER:性別 & 2
+					PRINTFORM 의%TEXTR("페니스/좆")%
+				PRINTFORM 에 범해져 교성을 지르면서
+			ELSEIF MODE_存在判定_完全一致("ＶＡ挿入系", TARGET, PLAYER)
+				;あなたがチンポ咥えこんでる。ペニバンの可能性もあるので詳細な描写は省く
+				PRINTFORM %CALLNAME:PLAYER%와 교접하며 헐떡이는 숨결을 흘리면서
+			ENDIF
+			PRINTFORM ,%TEXTR("완전히 녹아내린 목소리로/쾌락에 완전히 녹아내린 달콤한 목소리로/타락에 빠져버린 암컷의 아양 떠는 목소리로/쾌락에 타락해버린 아양 떠는 목소리로/달콤한 목소리로 아양 떨듯이/「이것이 본심이다」라고 확신할 수 있는 응석 부리는 목소리로")%,
+			PRINTFORML 「%CALLNAME:PLAYER%」라고%TEXTR("반복해서/몇 번이고")% 말했다……
+		CASE 2
+			PRINTFORML 누구를 가장 좋아하는지 대답하라고 시켰다.
+			PRINTL
+			PRINTFORM %CALLNAME:TARGET%은(는)
 			IF MODE_存在判定_完全一致("ＶＡ挿入系", PLAYER, TARGET)
 			;あなたがチンポ突っ込んでる
 				PRINTFORM %CALLNAME:PLAYER%
 				SIF TALENT:PLAYER:性別 & 2
 					PRINTFORM 의%TEXTR("페니스/자지")%
-				PRINTFORM 에게 범해지며 신음소리를 지르면서,
+				PRINTFORM 에 범해져 교성을 지르면서
 			ELSEIF MODE_存在判定_完全一致("ＶＡ挿入系", TARGET, PLAYER)
 				;あなたがチンポ咥えこんでる。ペニバンの可能性もあるので詳細な描写は省く
-				PRINTFORM %CALLNAME:PLAYER%와 관계하며 헐떡이는 숨소리를 흘리면서,
+				PRINTFORM %CALLNAME:PLAYER%와 교접하며 신음하는 숨결을 흘리면서
 			ENDIF
-			PRINTFORM %TEXTR("푹 녹아내린 목소리로/쾌락에 완전히 녹아내린 달콤한 목소리로/타락에 빠져든 암컷 같은 교태로운 목소리로/쾌락에 타락한 아양 떠는 목소리로/달콤한 목소리로 아양을 떨듯이/「이것이 본심이다」라고 확신할 수 있는 어리광 가득한 목소리로")%,
-			PRINTFORML 「%CALLNAME:PLAYER%%TEXTR("을/를 좋아해/을/를 정말 좋아해/을/를 사랑해")%」라고 %TEXTR("계속/몇 번이고")% 말했다……
-		CASE 1
-			PRINTFORML 누구와의 섹스가 가장 기분 좋은지 대답하라고 일렀다.
-			PRINTL
-			PRINTFORM %CALLNAME:TARGET%는
-			IF MODE_存在判定_完全一致("ＶＡ挿入系", PLAYER, TARGET)
-			;あなたがチンポ突っ込んでる
-				PRINTFORM %CALLNAME:PLAYER%
-				SIF TALENT:PLAYER:性別 & 2
-					PRINTFORM 의%TEXTR("페니스/좆")%
-				PRINTFORM 에게 범해지며 신음소리를 지르면서
-			ELSEIF MODE_存在判定_完全一致("ＶＡ挿入系", TARGET, PLAYER)
-				;あなたがチンポ咥えこんでる。ペニバンの可能性もあるので詳細な描写は省く
-				PRINTFORM %CALLNAME:PLAYER%와 관계하며 헐떡이는 숨소리를 흘리면서
-			ENDIF
-			PRINTFORM ,%TEXTR("푹 녹아내린 목소리로/쾌락에 완전히 녹아내린 달콤한 목소리로/타락에 빠져든 암컷 같은 교태로운 목소리로/쾌락에 타락한 아양 떠는 목소리로/달콤한 목소리로 아양을 떨듯이/「이것이 본심이다」라고 확신할 수 있는 어리광 가득한 목소리로")%,
-			PRINTFORML 「%CALLNAME:PLAYER%」라고 %TEXTR("계속/몇 번이고")% 말했다……
-		CASE 2
-			PRINTFORML 누구를 가장 좋아하는지 대답하라고 일렀다.
-			PRINTL
-			PRINTFORM %CALLNAME:TARGET%는
-			IF MODE_存在判定_完全一致("ＶＡ挿入系", PLAYER, TARGET)
-			;あなたがチンポ突っ込んでる
-				PRINTFORM %CALLNAME:PLAYER%
-				SIF TALENT:PLAYER:性別 & 2
-					PRINTFORM 의%TEXTR("페니스/좆")%
-				PRINTFORM 에게 범해지며 신음소리를 지르면서
-			ELSEIF MODE_存在判定_完全一致("ＶＡ挿入系", TARGET, PLAYER)
-				;あなたがチンポ咥えこんでる。ペニバンの可能性もあるので詳細な描写は省く
-				PRINTFORM %CALLNAME:PLAYER%와 관계하며 헐떡이는 숨소리를 흘리면서
-			ENDIF
-			PRINTFORM ,%TEXTR("푹 녹아내린 목소리로/쾌락에 완전히 녹아내린 달콤한 목소리로/타락에 빠져든 암컷 같은 교태로운 목소리로/쾌락에 타락한 아양 떠는 목소리로/달콤한 목소리로 아양을 떨듯이/「이것이 본심이다」라고 확신할 수 있는 어리광 가득한 목소리로")%,
-			PRINTFORML 「%CALLNAME:PLAYER%가 가장 좋아」라고 %TEXTR("계속/몇 번이고")% 말했다……
+			PRINTFORM 、%TEXTR("완전히 녹아내린 목소리로/쾌락에 완전히 녹아내린 달콤한 목소리로/타락에 빠져버린 암컷의 아양 떠는 목소리로/쾌락에 타락해버린 아양 떠는 목소리로/달콤한 목소리로 아양 떨듯이/「이것이 본심이다」라고 확신할 수 있는 응석 부리는 목소리로")%、
+			PRINTFORML 「%CALLNAME:PLAYER%를 가장 좋아해」라고%TEXTR("반복해서/몇 번이고")% 말했다……
 		CASE 3
 			PRINTFORML 자신이 누구의 것인지 대답하라고 일렀다.
 			PRINTL
-			PRINTFORM %CALLNAME:TARGET%는
+			PRINTFORM %CALLNAME:TARGET%은(는)
 			IF MODE_存在判定_完全一致("ＶＡ挿入系", PLAYER, TARGET)
 			;あなたがチンポ突っ込んでる
 				PRINTFORM %CALLNAME:PLAYER%
 				SIF TALENT:PLAYER:性別 & 2
 					PRINTFORM 의%TEXTR("페니스/자지")%
-				PRINTFORM 에게 범해져 교성을 지르면서
+				PRINTFORM 에 범해져 교성을 지르면서
 			ELSEIF MODE_存在判定_完全一致("ＶＡ挿入系", TARGET, PLAYER)
 				;あなたがチンポ咥えこんでる。ペニバンの可能性もあるので詳細な描写は省く
-				PRINTFORM %CALLNAME:PLAYER%와 관계하며 헐떡이는 숨결을 흘리면서
+				PRINTFORM %CALLNAME:PLAYER%와 교접하며 신음하는 숨결을 흘리면서
 			ENDIF
-			PRINTFORM %TEXTR("완전히 녹아내린 목소리로/쾌락에 완전히 녹아내린 달콤한 목소리로/타락에 빠져버린 암컷의 아양떠는 목소리로/쾌락에 타락해 버린 아양떠는 목소리로/달콤한 목소리로 아양떨듯이/「이것이 본심이다」라고 확신할 수 있는 응석 부리는 목소리로")%,
+			PRINTFORM %TEXTR("완전히 녹아내린 목소리로/쾌락에 완전히 녹아내린 달콤한 목소리로/타락에 빠져버린 암컷의 아양 떠는 목소리로/쾌락에 타락해버린 아양 떠는 목소리로/달콤한 목소리로 아양 떨듯이/「이것이 본심이다」라고 확신할 수 있는 응석 부리는 목소리로")%、
 			PRINTFORML 「%CALLNAME:PLAYER%의 것」이라고%TEXTR("반복해서/몇 번이고")% 말했다……
 		CASE 4
-			PRINTFORML 누구%TEXTR("의 아이를 낳고 싶은지/에게 아이를 임신당하고 싶은지")% 대답하라고 일렀다.
+			PRINTFORML 누구%TEXTR("의 아이를 낳고 싶은지/에게 아이를 임신하고 싶은지")% 대답하라고 일렀다.
 			PRINTL
-			PRINTFORM %CALLNAME:TARGET%는
+			PRINTFORM %CALLNAME:TARGET%은(는)
 			IF MODE_存在判定_完全一致("ＶＡ挿入系", PLAYER, TARGET)
 			;あなたがチンポ突っ込んでる
 				PRINTFORM %CALLNAME:PLAYER%
 				SIF TALENT:PLAYER:性別 & 2
 					PRINTFORM 의%TEXTR("페니스/자지")%
-				PRINTFORM 에게 범해져 교성을 지르면서
+				PRINTFORM 에게 범해져 교성을 지르며
 			ELSEIF MODE_存在判定_完全一致("ＶＡ挿入系", TARGET, PLAYER)
 				;あなたがチンポ咥えこんでる。ペニバンの可能性もあるので詳細な描写は省く
-				PRINTFORM %CALLNAME:PLAYER%와 관계하며 헐떡이는 숨결을 흘리면서
+				PRINTFORM %CALLNAME:PLAYER%와 관계하며 헐떡이는 숨결을 흘리며
 			ENDIF
-			PRINTFORM %TEXTR("완전히 녹아내린 목소리로/쾌락에 완전히 녹아내린 달콤한 목소리로/타락에 빠져버린 암컷의 아양떠는 목소리로/쾌락에 타락해 버린 아양떠는 목소리로/달콤한 목소리로 아양떨듯이/「이것이 본심이다」라고 확신할 수 있는 응석 부리는 목소리로")%,
-			PRINTFORML 「%CALLNAME:PLAYER%의 %TEXTR("아이/아기")%가 %TEXTR("좋다고/갖고 싶다고")%」%TEXTR("반복해서/몇 번이고")% 말했다……
+			PRINTFORM %TEXTR("완전히 녹아내린 목소리로/쾌락에 완전히 녹아내린 달콤한 목소리로/타락에 빠져버린 암컷의 아양 떠는 목소리로/쾌락에 타락해버린 아양 떠는 목소리로/달콤한 목소리로 아양 떨듯이/「이것이 본심이다」라고 확신할 수 있는 응석 부리는 목소리로")%、
+			PRINTFORML 「%CALLNAME:PLAYER%의%TEXTR("아이/아기")%%TEXTR("가 좋아/를 원해")%」라고%TEXTR("반복해서/몇 번이고")% 말했다……
 		ENDSELECT
 	ENDIF
 ENDSELECT
@@ -771,26 +771,26 @@ IF TALENT:対象キャラ:恋人持ち > 0
 	IF !TALENT:対象キャラ:浮気
 		;浮気素質の取得(寝取らせ時に取得済だと思うけど一応)
 		TALENT:対象キャラ:浮気 = 1
-		PRINTFORM %CALLNAME:対象キャラ%는
+		PRINTFORM %CALLNAME:対象キャラ%은(는)
 		SETCOLOR カラーパレット("えっちな色")
 		PRINT [바람]
 		RESETCOLOR
-		PRINT 을 얻었다……
+		PRINT 을(를) 얻었다……
 	ENDIF
 ELSEIF TALENT:対象キャラ:恋人持ち == -1
 	; 想い人ありの消失
 	TALENT:TARGET:恋人持ち = 0
-	PRINTFORM %CALLNAME:対象キャラ%는
+	PRINTFORM %CALLNAME:対象キャラ%은(는)
 	SETCOLOR カラーパレット("えっちな色")
-	PRINT [사랑하는 사람이 있음]
+	PRINT [마음에 둔 사람 있음]
 	RESETCOLOR
-	PRINT 을 잃었다……
+	PRINT 을(를) 잃었다……
 ENDIF
 
 ;履歴登録
-CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"<img src='えっちハート'><font color='#%カラーパレット_HTML("赤ピンク")%'>%CALLNAME:対象キャラ%를 [연모] 함락시켜, %CALLNAME:寝取られ元キャラ%에게서 빼앗았다.</font><img src='えっちハート'>","うふふ実績")
-CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"<img src='えっちハート'><font color='#%カラーパレット_HTML("赤ピンク")%'>%CALLNAME:PLAYER%에 의해 %CALLNAME:寝取られ元キャラ%에게서 떨어져, 함락소질 [연모]를 얻었다.</font><img src='えっちハート'>","うふふ実績")
-CALL 履歴データベース登録(CFLAG:寝取られ元キャラ:人物番号, @"%CALLNAME:対象キャラ%를 %CALLNAME:PLAYER%에게 빼앗겼다.","うふふ実績")
+CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"<img src='えっちハート'><font color='#%カラーパレット_HTML("赤ピンク")%'>%CALLNAME:対象キャラ%を[恋慕]陥落させ、%CALLNAME:寝取られ元キャラ%から寝取った</font><img src='えっちハート'>","うふふ実績")
+CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"<img src='えっちハート'><font color='#%カラーパレット_HTML("赤ピンク")%'>%CALLNAME:PLAYER%によって%CALLNAME:寝取られ元キャラ%から寝取られ、陥落素質[恋慕]を得た</font><img src='えっちハート'>","うふふ実績")
+CALL 履歴データベース登録(CFLAG:寝取られ元キャラ:人物番号, @"%CALLNAME:対象キャラ%を%CALLNAME:PLAYER%に寝取られた","うふふ実績")
 
 ;寝取られ元キャラとの関係破棄
 SIF 関係破棄フラグ
@@ -821,5 +821,5 @@ IF DT_SELECT(DT_NAME, DT_FILT_EXP, , DT_ID)
 	; DEBUGPRINTFORML {DT_ID}/{人物番号1}/{人物番号2}/%関係性種別%
 	DT_ROW_REMOVE DT_NAME, DT_ID
 ENDIF
-CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"%CALLNAME:寝取られ元キャラ%와의 %関係性種別%관계를 해소했다.","うふふ実績")
+CALL 履歴データベース登録(CFLAG:対象キャラ:人物番号, @"%CALLNAME:寝取られ元キャラ%との%関係性種別%関係を解消した","うふふ実績")
 

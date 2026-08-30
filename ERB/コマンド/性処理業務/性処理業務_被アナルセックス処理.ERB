@@ -3,14 +3,14 @@
 ;-------------------------------------------------
 @性処理NAME_被アナルセックス処理
 #FUNCTIONS
-TSTR:コマンド名受渡 = 피아날섹스 처리
+TSTR:コマンド名受渡 = 被アナルセックス処理
 
 @性処理_TOOLTIP_被アナルセックス処理
 LOCALS = <br>■피아날섹스 처리<br>
-LOCALS += @"%CALLNAME:PLAYER%의 항문에 삽입당하는 성처리. <br>"
-LOCALS += "요구 호감도는 높고, 대부분의 캐릭터는 함락이 전제. <br>"
-LOCALS += "<br>COM 타입: 성처리<br>획득 소스: 쾌C・노출・접촉・봉사・불결"
-LOCALS += "<br>고유 획득 경험: C성교경험_A삽입(TARGET)<br>"
+LOCALS += @"%CALLNAME:PLAYER%의 항문에 삽입당하는 성 처리. <br>"
+LOCALS += "요구 호감도는 높으며, 대부분의 캐릭터는 함락이 전제. <br>"
+LOCALS += "<br>COM 타입: 성 처리<br>획득 소스: 쾌C・노출・접촉・봉사・불결"
+LOCALS += "<br>고유 획득 경험: Ｃ性交経験_Ａ挿入(TARGET)<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
 @性処理_被アナルセックス処理
@@ -88,17 +88,17 @@ DRAWLINE
 
 ;基礎値段
 値段計算 = 60000
-PRINTFORML %"基礎値段", 16, LEFT%：　%NUM_FORMAT(値段計算), 8%루피
+PRINTFORML %"基礎値段", 16, LEFT%:　%NUM_FORMAT(値段計算), 8%루피
 
 
 ;好感度
 LOCAL = (80 - CFLAG:好感度レベル) * -100
 IF LOCAL < 0
 	SETCOLOR カラーパレット("薄ピンク")
-	PRINTFORML %"好感度補正", 16, LEFT%：＋%NUM_FORMAT(LOCAL * -1), 8%루피
+	PRINTFORML %"好感度補正", 16, LEFT%:＋%NUM_FORMAT(LOCAL * -1), 8%루피
 	RESETCOLOR
 ELSE
-	PRINTFORML %"好感度補正", 16, LEFT%：－%NUM_FORMAT(LOCAL), 8%루피
+	PRINTFORML %"好感度補正", 16, LEFT%:－%NUM_FORMAT(LOCAL), 8%루피
 ENDIF
 値段計算 -= LOCAL
 
@@ -106,25 +106,25 @@ ENDIF
 IF BASE:TARGET:体力 < MAXBASE:TARGET:体力 / 4
 	値段計算 += 1500
 	SETCOLOR カラーパレット("薄ピンク")
-	PRINTFORML %"体力低下", 16, LEFT%：＋%NUM_FORMAT(1500), 8%루피
+	PRINTFORML %"体力低下", 16, LEFT%:＋%NUM_FORMAT(1500), 8%루피
 	RESETCOLOR
 ENDIF
 ;酩酊
 IF BASE:酩酊 > MAXBASE:酩酊 / 2
 	値段計算 -= 500
-	PRINTFORML %"酩酊", 16, LEFT%：－%NUM_FORMAT(500), 8%루피
+	PRINTFORML %"酩酊", 16, LEFT%:－%NUM_FORMAT(500), 8%루피
 ENDIF
 
 IF GETBIT(TALENT:TARGET:非童貞, 1) == 0
 	値段計算 += 20000
 	SETCOLOR カラーパレット("薄ピンク")
-	PRINTFORML %"童貞", 16, LEFT%：＋%NUM_FORMAT(20000), 8%루피
+	PRINTFORML %"童貞", 16, LEFT%:＋%NUM_FORMAT(20000), 8%루피
 	RESETCOLOR
 ENDIF
 ;淫乱
 IF TALENT:淫乱
 	値段計算 -= 2500
-	PRINTFORML %"淫乱", 16, LEFT%：－%NUM_FORMAT(2500), 8%루피
+	PRINTFORML %"淫乱", 16, LEFT%:－%NUM_FORMAT(2500), 8%루피
 ENDIF
 
 ;同性愛
@@ -140,21 +140,21 @@ IF 同性愛性癖判定(TARGET,PLAYER) == 1
 			;補正なし
 		CASE 2
 			値段計算 -= 1000
-			PRINTFORML %@"%소질명%(愛好)", 16, LEFT%：－%NUM_FORMAT(1000), 8%루피
+			PRINTFORML %@"%소질명%(愛好)", 16, LEFT%:－%NUM_FORMAT(1000), 8%루피
 		CASE 3
 			値段計算 -= 2500
-			PRINTFORML %@"%소질명%(中毒)", 16, LEFT%：－%NUM_FORMAT(2500), 8%루피
+			PRINTFORML %@"%素質名%(中毒)", 16, LEFT%：－%NUM_FORMAT(2500), 8%ルピ
 		CASEELSE
 			;好奇心
 			IF TALENT:性的興味 > 0
 				値段計算 -= 500
-				PRINTFORML %@"好奇心(%소질명%)", 16, LEFT%：－%NUM_FORMAT(500), 8%루피
+				PRINTFORML %@"好奇心(%素質名%)", 16, LEFT%：－%NUM_FORMAT(500), 8%ルピ
 			ENDIF
 			;保守的
 			IF TALENT:性的興味 < 0
 				値段計算 += 1500
 				SETCOLOR カラーパレット("薄ピンク")
-				PRINTFORML %@"保守的(%소질명%)", 16, LEFT%：＋%NUM_FORMAT(1500), 8%루피
+				PRINTFORML %@"保守的(%素質名%)", 16, LEFT%：＋%NUM_FORMAT(1500), 8%ルピ
 				RESETCOLOR
 			ENDIF
 	ENDSELECT
@@ -164,83 +164,84 @@ ENDIF
 IF TALENT:度胸 > 0
 	値段計算 += 500
 	SETCOLOR カラーパレット("薄ピンク")
-	PRINTFORML %"気丈", 16, LEFT%：＋%NUM_FORMAT(500), 8%루피
+	PRINTFORML %"気丈", 16, LEFT%：＋%NUM_FORMAT(500), 8%ルピ
 	RESETCOLOR
 ENDIF
 ;臆病
 IF TALENT:度胸 < 0
 	値段計算 -= 500
-	PRINTFORML %"臆病", 16, LEFT%：－%NUM_FORMAT(500), 8%루피
+	PRINTFORML %"臆病", 16, LEFT%：－%NUM_FORMAT(500), 8%ルピ
 ENDIF
 ;プライド高い
 IF TALENT:プライド > 0
 	値段計算 += 1500
 	SETCOLOR カラーパレット("薄ピンク")
-	PRINTFORML %"プライド高い", 16, LEFT%：＋%NUM_FORMAT(1500), 8%루피
+	PRINTFORML %"プライド高い", 16, LEFT%：＋%NUM_FORMAT(1500), 8%ルピ
 	RESETCOLOR
 ENDIF
 ;プライド低い
 IF TALENT:プライド < 0
 	値段計算 -= 1000
-	PRINTFORML %"プライド低い", 16, LEFT%：－%NUM_FORMAT(1000), 8%루피
-ENDIF
-;弱味
-IF TALENT:弱味
-	値段計算 -= 2000
-	PRINTFORML %"弱味", 16, LEFT%：－%NUM_FORMAT(2000), 8%루피
+	PRINTFORML %"プライド低い", 16, LEFT%：－%NUM_FORMAT(1000), 8%ルピ
 ENDIF
 
 ;謎の魅力
 IF TALENT:PLAYER:謎の魅力
 	値段計算 -= 1000
-	PRINTFORML %"謎の魅力", 16, LEFT%：－%NUM_FORMAT(1000), 8%루피
+	PRINTFORML %"謎の魅力", 16, LEFT%：－%NUM_FORMAT(1000), 8%ルピ
 ENDIF
 
 ;ABL:奉仕精神
 IF ABL:奉仕精神
 	値段計算 -= ABL:奉仕精神 * 200
-	PRINTFORML %"奉仕精神", 16, LEFT%：－%NUM_FORMAT(ABL:奉仕精神 * 200), 8%루피
+	PRINTFORML %"奉仕精神", 16, LEFT%：－%NUM_FORMAT(ABL:奉仕精神 * 200), 8%ルピ
 ENDIF
 ;汚臭鈍感
 IF TALENT:汚臭耐性 > 0
 	値段計算 -= TALENT:汚臭耐性 * 500
-	PRINTFORML %GET_TALENTNAME(61, TALENT:汚臭耐性,,TARGET), 16, LEFT%：－%NUM_FORMAT(TALENT:汚臭耐性 * 500), 8%루피
+	PRINTFORML %GET_TALENTNAME(61, TALENT:汚臭耐性,,TARGET), 16, LEFT%：－%NUM_FORMAT(TALENT:汚臭耐性 * 500), 8%ルピ
 ENDIF
 ;汚臭敏感
 IF TALENT:汚臭耐性 < 0
 	値段計算 -= TALENT:汚臭耐性 * 1000
 	SETCOLOR カラーパレット("薄ピンク")
-	PRINTFORML %GET_TALENTNAME(61, TALENT:汚臭耐性,,TARGET), 16, LEFT%：＋%NUM_FORMAT(ABS(TALENT:汚臭耐性) * 1000), 8%루피
+	PRINTFORML %GET_TALENTNAME(61, TALENT:汚臭耐性,,TARGET), 16, LEFT%：＋%NUM_FORMAT(ABS(TALENT:汚臭耐性) * 1000), 8%ルピ
 	RESETCOLOR
 ENDIF
 ;献身的
 IF TALENT:献身的
 	値段計算 -= 500
-	PRINTFORML %"献身的", 16, LEFT%：－%NUM_FORMAT(500), 8%루피
+	PRINTFORML %"献身的", 16, LEFT%：－%NUM_FORMAT(500), 8%ルピ
 ENDIF
 ;女嫌い
 IF TALENT:性別嗜好 == 2 && TALENT:PLAYER:性別 == 1
 	値段計算 += 2000
 	SETCOLOR カラーパレット("薄ピンク")
-	PRINTFORML %"女嫌い", 16, LEFT%：＋%NUM_FORMAT(2000), 8%루피
+	PRINTFORML %"女嫌い", 16, LEFT%：＋%NUM_FORMAT(2000), 8%ルピ
 	RESETCOLOR
 ENDIF
 ;男嫌い
 IF TALENT:性別嗜好 == 1 && TALENT:PLAYER:性別 == 2
 	値段計算 += 2000
 	SETCOLOR カラーパレット("薄ピンク")
-	PRINTFORML %"男嫌い", 16, LEFT%：＋%NUM_FORMAT(2000), 8%루피
+	PRINTFORML %"男嫌い", 16, LEFT%：＋%NUM_FORMAT(2000), 8%ルピ
 	RESETCOLOR
+ENDIF
+
+;弱味
+IF TALENT:弱味
+	値段計算 = 値段計算 / 100
+	PRINTFORML %"弱味", 16, LEFT%：99％할인
 ENDIF
 DRAWLINE
 値段計算 = MAX(0, 値段計算)
 IF TALENT:対象キャラ:恋慕
-	PRINTFORML %"合計値段", 16, LEFT%：　%NUM_FORMAT(値段計算), 8%루피　＞　연모로 인해 무료
+PRINTFORML %"合計値段", 16, LEFT%：　%NUM_FORMAT(値段計算), 8%루피　＞　연모로 인해 무료
 	RETURN -1
 ELSEIF 値段計算 > 0
-	PRINTFORML %"合計値段", 16, LEFT%：　%NUM_FORMAT(値段計算), 8%루피
+PRINTFORML %"合計値段", 16, LEFT%：　%NUM_FORMAT(値段計算), 8%루피
 ELSE
-	PRINTFORML %"合計値段", 16, LEFT%：　%"無料", 8%
+PRINTFORML %"合計値段", 16, LEFT%：　%"無料", 8%
 ENDIF
 
 RETURN 値段計算
@@ -291,15 +292,15 @@ RETURN 1
 
 PRINTFORM %CALLNAME:TARGET%은(는)
 IF TALENT:TARGET:恋慕
-	PRINTFORM 사랑스럽게%CALLNAME:PLAYER%을(를) 바라보며
+PRINTFORM 사랑스럽게%CALLNAME:PLAYER%을(를) 바라보며
 ELSEIF TALENT:TARGET:羞恥心
-	PRINTFORM 얼굴을 새빨갛게 물들이며
+PRINTFORM 얼굴을 새빨갛게 붉히며
 ELSEIF TALENT:TARGET:性的興味
-	PRINTFORM 흥미진진한 모습으로
+PRINTFORM 흥미진진한 모습으로
 ELSEIF TALENT:TARGET:セフレ
-	PRINTFORM %CALLNAME:PLAYER%의 반응을 재미있어하며
+PRINTFORM %CALLNAME:PLAYER%의 반응을 재미있어하며
 ELSE
-	PRINT 사무적인 손길로
+PRINT 사무적인 손길로
 ENDIF
 
 PRINTFORM %CALLNAME:PLAYER%의 항문에 삽입하고,

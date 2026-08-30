@@ -12,7 +12,7 @@ TFLAG:コマンドタイプ受渡 = COMTYPE("セクハラ")
 
 @COM_TOOLTIP_353
 LOCALS = <br>■성교를 부탁한다<br>
-LOCALS += "상대에게 부탁하여, 침대로 유혹해 성교를 하는 커맨드. <br>호감도 레벨이 내려가는 유일한 커맨드. 성교까지 필요한 횟수는 소질에 따라 증감한다. <br>또한, 성지식이 마이너스인 경우는 반드시 성공한다."
+LOCALS += "상대에게 부탁하여 침대로 유혹해 성교를 하는 커맨드. <br>호감도 레벨이 내려가는 유일한 커맨드. 성교까지 필요한 횟수는 소질에 따라 증감한다. <br>또한, 성지식이 마이너스인 경우에는 반드시 성공한다."
 LOCALS += "<br>COM 타입: 성희롱<br>획득 소스: 없음"
 LOCALS += "<br>고유 획득 경험: 없음<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
@@ -213,9 +213,9 @@ IF CFLAG:TARGET:お願いックス蓄積値 > 99
 		ENDIF
 		;泥酔時かつ初うふふの場合、翌日釘刺しに来る
 		IF BASE:酩酊 >= 500 && 知識素質:TARGET:性知識 > -1
-			CSTR:TARGET:特殊起床パターン記録 = 첫 헤헤헤 만취 섹스 후
+			CSTR:TARGET:特殊起床パターン記録 = 첫 우후후 만취 섹스 후
 		ELSEIF TCVAR:トランス残り時間 > 0 && 知識素質:TARGET:性知識 > -1
-			CSTR:TARGET:特殊起床パターン記録 = 첫 헤헤헤 순간의 착각 섹스 후
+			CSTR:TARGET:特殊起床パターン記録 = 첫 우후후 착각 섹스 후
 		ENDIF
 	ENDIF
 	TCVAR:TARGET:性交渉成功フラグ = 1
@@ -327,23 +327,23 @@ RETURN 1
 IF RFLAG:コマンド結果受渡し変数
 	PRINTFORM %CALLNAME:TARGET%은(는)
 	IF 知識素質:TARGET:性知識 < 0
-		PRINT 잘 이해하지 못하는 모습으로
+		PRINT 잘 이해하지 못하는 듯한 모습으로
 	ELSEIF 性癖素質:TARGET:ゆきずりセックス
 		PRINT 아무것도 아닌 것처럼, 가볍게
 	ELSEIF RFLAG:コマンド結果受渡し変数２ < 16
-		PRINT 결국 굴복한 모습으로
+		PRINT 결국 굴복한 듯한 모습으로
 	ENDIF
 	PRINTFORML %CALLNAME:PLAYER%의 소원에 응해주었다.
 	IF 知識素質:TARGET:性知識 < 0
 		PRINT 무엇을 하는지 이해하지 못한 채,
 	ELSEIF BEDROOM(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置)
-		PRINT 침대에 누워,
+		PRINT 침대에 드러누워,
 	ELSEIF BATHROOM(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置)
-		PRINT 욕조에서 일어서,
+		PRINT 욕조에서 일어서서,
 	ELSEIF SWIMROOM(CFLAG:PLAYER:現在マップ種別, CFLAG:TARGET:現在位置) && CSTR:TARGET:着せ替え服 == "水着"
 		PRINT 수영복에서 물을 뚝뚝 흘린 채,
 	ENDIF
-	PRINTFORML %CALLNAME:TARGET%은(는)%CALLNAME:PLAYER%이(가) 어떻게 할지 기다리고 있다…
+	PRINTFORML %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%이(가) 어떻게 할지 기다리고 있다…
 	IF RFLAG:コマンド結果受渡し変数３
 		PRINTFORM %CALLNAME:TARGET%은(는)
 		SETCOLOR カラーパレット("えっちな色")
@@ -356,24 +356,24 @@ IF RFLAG:コマンド結果受渡し変数
 		PRINTL
 		;淫乱のキャラは1回でセフレになって文章と齟齬が出るので表示しない
 		SIF !TALENT:TARGET:淫乱
-			PRINTFORML %CALLNAME:TARGET%은(는)%CALLNAME:PLAYER%와 몇 번인가 몸을 겹쳐, 저항감이 옅어진 것 같다…
+			PRINTFORML %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%와 몇 번인가 몸을 겹쳐, 저항감이 옅어진 것 같다…
 		PRINTFORM %CALLNAME:TARGET%은(는)
 		SETCOLOR カラーパレット("えっちな色")
-		PRINT [섹스 프렌드]
+		PRINT [섹프]
 		RESETCOLOR
 		PRINT 을(를) 얻었다
 		PRINTL
 		IF GETBIT(RFLAG:コマンド結果受渡し変数４, 1)
 			;
 			IF GETBIT(TALENT:TARGET:陥落不可, 0)
-				PRINTFORML %CALLNAME:TARGET%의[함락 불가]이(가)[연모 불가]으로 변화했습니다.
+				PRINTFORML %CALLNAME:TARGET%의 [함락 불가]가 [연모 불가]로 변화했습니다.
 			ELSE
-				PRINTFORML %CALLNAME:TARGET%의[섹스 프렌드 불가]이(가) 소멸했습니다.
+				PRINTFORML %CALLNAME:TARGET%의 [섹프 불가]가 소멸했습니다.
 			ENDIF
 		ENDIF
 	ENDIF
 ELSE
-	PRINTFORM %CALLNAME:TARGET%은(는)%CALLNAME:PLAYER%의 소원을
+	PRINTFORM %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%의 소원을
 	IF RFLAG:コマンド結果受渡し変数２ < 16
 		PRINT 단호하게
 	ELSEIF RFLAG:コマンド結果受渡し変数２ < 31
@@ -391,16 +391,16 @@ ELSE
 		LOCAL = (100 - CFLAG:TARGET:お願いックス蓄積値) / RFLAG:コマンド結果受渡し変数２
 	IF LOCAL < 1
 		;次でイケる
-		PRINTL 한 번 더 밀어붙이면 될 것 같은 기분이 든다…
+		PRINTL 한 번만 더 밀어붙이면 될 것 같은 기분이 든다…
 	ELSEIF LOCAL < 2
 		;あと２回
 		PRINTL 조만간 소원을 들어줄 것 같은 기분이 든다…
 	ELSEIF LOCAL < 4
 		;あと３～４回
-		PRINTL 소원을 들어주려면 아직 몇 번 더 횟수를 거듭할 필요가 있을 것이다…
+		PRINTL 소원을 들어주게 하려면, 아직 몇 번 더 시도해야 할 것이다…
 	ELSEIF LOCAL < 10
 		;５～１０回
-		PRINTL 소원을 들어주려면 꽤 인내가 필요할 것 같다…
+		PRINTL 소원을 들어주게 하려면, 꽤 인내가 필요할 것 같다…
 	ELSE
 		;それ以上
 		PRINTL 어떤 수단을 강구하지 않는 한, 이대로는 거의 불가능한 이야기일 것이다…
@@ -408,7 +408,7 @@ ELSE
 
 	IF あなた特殊能力:フレンドリーセンス
 		PRINTL
-		PRINTFORML 부탁 축적치:{CFLAG:TARGET:お願いックス蓄積値, 2} / 100
+		PRINTFORML 부탁 축적치：{CFLAG:TARGET:お願いックス蓄積値, 2} / 100
 		PRINTL ※100에 도달하면 부탁 성공
 	ENDIF
 ENDIF

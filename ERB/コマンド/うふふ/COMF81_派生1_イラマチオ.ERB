@@ -1,9 +1,9 @@
 
 @COMNAME_S81_1
 #FUNCTIONS
-TSTR:コマンド名受渡 = 이라마치오
+TSTR:コマンド名受渡 = イラマチオ
 SIF TALENT:TARGET:角あり
-	TSTR:コマンド名受渡 = 핸들 이라마
+	TSTR:コマンド名受渡 = ハンドルイラマ
 
 
 ;===================================================
@@ -23,8 +23,8 @@ TFLAG:コマンドタイプ受渡 = COMTYPE("うふふ")
 ;オートコマンド許可 = 1
 
 @COM_TOOLTIP_S81_1
-LOCALS = <br>■펠라치오<br>
-LOCALS += "상대의 목구멍까지 페니스를 넣는 커맨드.<br>대상에게 뿔이 있을 때, 「핸들 이라마」로 변화하며 효과가 상승한다."
+LOCALS = <br>■이라마치오<br>
+LOCALS += "상대의 목구멍 깊숙이 페니스를 넣는 커맨드. <br>대상에게 뿔이 있을 시, 「핸들 이라마」로 변화하며 효과가 상승한다."
 LOCALS += "<br>COM 타입: 우후후<br>획득 소스: 쾌S・노출・접촉・봉사・고통・불결"
 LOCALS += "<br>고유 획득 경험: 구강성교 경험(TARGET)<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
@@ -124,7 +124,7 @@ IF MARK:苦痛刻印
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += MARK:苦痛刻印 * 1
-	PRINTFORM 고통 각인LV{MARK:苦痛刻印}({MARK:苦痛刻印 * 1})
+	PRINTFORM 고통각인LV{MARK:苦痛刻印}({MARK:苦痛刻印 * 1})
 	＋表示フラグ = 1
 ENDIF
 ;PALAM:欲情
@@ -132,7 +132,7 @@ IF GETPALAMLV(PALAM:欲情, 5)
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += GETPALAMLV(PALAM:欲情, 5) * 1
-	PRINTFORM 색정LV{GETPALAMLV(PALAM:欲情, 5)}({GETPALAMLV(PALAM:欲情, 5) * 1})
+	PRINTFORM 발정LV{GETPALAMLV(PALAM:欲情, 5)}({GETPALAMLV(PALAM:欲情, 5) * 1})
 	＋表示フラグ = 1
 ENDIF
 ;汚臭鈍感
@@ -140,14 +140,14 @@ IF TALENT:汚臭耐性 > 0
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += 1
-	PRINT 악취 둔감(1)
+	PRINT 오취둔감(1)
 	＋表示フラグ = 1
 ENDIF
 ;汚臭敏感
 IF TALENT:汚臭耐性 < 0
 	PRINT  - 
 	実行値 -= 3
-	PRINT 악취 민감(3)
+	PRINT 오취민감(3)
 	＋表示フラグ = 1
 ENDIF
 ;献身的
@@ -162,13 +162,13 @@ ENDIF
 IF TALENT:性別嗜好 & 1 && !(TALENT:PLAYER:性別 & 1) && (!TALENT:恋慕 || PLAYER != MASTER)
 	PRINT  - 
 	実行値 -= 5
-	PRINT 남자 혐오(5)
+	PRINT 남성혐오(5)
 	＋表示フラグ = 1
 ENDIF
 ;恋慕
 IF TALENT:恋慕
 	SIF ＋表示フラグ
-		PRINT  +
+		PRINT  + 
 	実行値 += 5
 	PRINT 연모(5)
 	＋表示フラグ = 1
@@ -187,7 +187,16 @@ IF TCVAR:言いなり
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += 999
-	PRINT 당신의 말대로(999)
+	PRINT 당신의 뜻대로(999)
+	＋表示フラグ = 1
+ENDIF
+
+;特殊言いなり
+IF TCVAR:特殊言いなり
+	SIF ＋表示フラグ
+		PRINT  + 
+	実行値 += 999
+	PRINTFORM %特殊言いなり分岐(TARGET)%(999)
 	＋表示フラグ = 1
 ENDIF
 
@@ -231,8 +240,8 @@ RETURN 1
 ;-------------------------------------------------
 @MESSAGE_COM_S81_1
 IF TALENT:TARGET:角あり
-	PRINTFORML %CALLNAME:PLAYER%은 %CALLNAME:TARGET%의 뿔을 잡고, 목구멍 깊숙이까지 페니스를 삼키게 했다…
+	PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%의 뿔을 가지고, 목구멍 깊숙이까지 페니스를 삼키게 했다…
 ELSE
-	PRINTFORML %CALLNAME:PLAYER%은 %CALLNAME:TARGET%의 목구멍 깊숙이까지 페니스를 삼키게 했다…
+	PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%의 목구멍 깊숙이까지 페니스를 삼키게 했다…
 ENDIF
 

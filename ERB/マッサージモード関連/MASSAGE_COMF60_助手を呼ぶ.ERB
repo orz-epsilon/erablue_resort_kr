@@ -24,7 +24,7 @@ TFLAG:コマンドタイプ受渡 = MASSAGE_COMTYPE("通常マッサージ")
 
 @MASSAGE_COM_TOOLTIP_60
 LOCALS = <br>■조수를 부르다<br>
-LOCALS += "마사지를 보조할 조수 한 명을 불러냅니다. 조수가 존재할 때, 마사지 효과가 상승합니다."
+LOCALS += "마사지를 보조할 조수 한 명을 불러냅니다. 조수가 존재할 시, 마사지 효과가 상승합니다."
 LOCALS += "<br>불러낸 조수와 마사지를 시술하는 역할을 교대할 수 있습니다."
 LOCALS += "<br>COM 타입: 일반 마사지<br>획득 소스: 없음"
 LOCALS += "<br>고유 획득 경험: 없음<br>"
@@ -85,7 +85,7 @@ ENDIF
 
 PRINTL
 DRAWLINE
-PRINTL 누구를 부르겠습니까?
+PRINTL 누구를 부르시겠습니까?
 DRAWLINE
 LOCAL:1 = 0
 ;キャラの表示
@@ -114,7 +114,7 @@ FOR LOCAL, (現在ページ * 表示人数), ((現在ページ * 表示人数) +
 	ELSEIF BASE:(表示候補:LOCAL):性欲 > 1000
 		SETCOLOR カラーパレット("薄ピンク")
 	ENDIF
-	PRINTFORM 성욕:{BASE:(表示候補:LOCAL):性欲, 4}　
+	PRINT 성욕:{BASE:(表示候補:LOCAL):性欲, 4}　
 	RESETCOLOR
 	; 発情期表示
 	IF CFLAG:(表示候補:LOCAL):発情期フラグ < 0
@@ -132,7 +132,7 @@ FOR LOCAL, (現在ページ * 表示人数), ((現在ページ * 表示人数) +
 		PRINT 연모
 		RESETCOLOR
 	ELSEIF TALENT:(表示候補:LOCAL):セフレ
-		PRINT 섹스 프렌드
+		PRINT 섹프
 	ENDIF
 	PRINTL
 NEXT
@@ -151,15 +151,15 @@ ENDIF
 PRINTL
 ;確定と選択解除ボタン
 IF 呼び出し人数
-	PRINTBUTTONLC @"[998] %CALLNAME:(呼び出し対象:0)%을(를) 부르다", 998
+	PRINTBUTTONLC @"[998] %CALLNAME:(呼び出し対象:0)%을(를) 호출한다", 998
 ELSE
 	SETCOLOR カラーパレット("グレーアウト")
-	PRINTFORMLC [---] ---을(를) 부르다
+	PRINTFORMLC [---] ---을(를) 호출한다
 	RESETCOLOR
 ENDIF
 PRINTBUTTONLC @"[996] 선택 해제", 996
 PRINTL 
-PRINTBUTTONLC "[999] 그만두다", 999
+PRINTBUTTONLC "[999] 그만둔다", 999
 
 BINPUT
 入力内容 = RESULT
@@ -257,7 +257,7 @@ RETURN 1
 #DIM 対象キャラ
 
 IF RFLAG:コマンド結果受渡し変数 > 0
-	PRINTFORML %CALLNAME:PLAYER%은(는) 조수로서 %CALLNAME:(RFLAG:コマンド結果受渡し変数)%을(를) 불렀다
+	PRINTFORML %CALLNAME:PLAYER%은(는) 조수로서 %CALLNAME:(RFLAG:コマンド結果受渡し変数)%을(를) 호출했다
 ELSE
-	PRINTFORML %CALLNAME:MASTER%은(는) 조수인 %CALLNAME:ABS(RFLAG:コマンド結果受渡し変数)%을(를) 돌려보냈다
+	PRINTFORML %CALLNAME:MASTER%은(는) 조수 %CALLNAME:ABS(RFLAG:コマンド結果受渡し変数)%을(를) 돌려보냈다
 ENDIF

@@ -2,14 +2,14 @@
 @ビカラ陰陽()
 #FUNCTION
 	IF ビカラ付け耳フラグ
-		RETURNF "陽"
+		RETURNF "양"
 	ELSE
-		RETURNF "陰"
+		RETURNF "음"
 	ENDIF
 	
 @KOJO_COM_6_300(対象キャラ)
 IF ビカラ陰陽() == "陽"
-	  KSTR:(K++) = 「今は付け耳アリだよ～！」
+	  KSTR:(K++) = 「지금은 덧귀 있어～！」
 ELSEIF ビカラ陰陽() == "陰"
-	 KSTR:(K++) = 「今は付け耳ないよぉ……」
+	 KSTR:(K++) = 「지금은 덧귀 없어어……」
 ENDIF

@@ -7,17 +7,19 @@
 
 SELECTCASE ARG
 	CASE 0
-		RETURNF "リゾートエリア"
+		RETURNF "리조트 구역"
 	CASE 1
-		RETURNF "空艇港エリア"
+		RETURNF "비행선 항구 구역"
 	CASE 2
-		RETURNF "居住区エリア"
+		RETURNF "주거 구역"
 	CASE 3
-		RETURNF "海エリア"
+		RETURNF "바다 구역"
+	CASE 4
+		RETURNF "목장 구역"
 	CASE 100
-		RETURNF @"%SUBSTRING(開催予定祭り名, 9)%マップ"
+		RETURNF @"%SUBSTRING(開催予定祭り名, 9)%맵"
 	CASE 999
-		RETURNF "宿泊エリア"
+		RETURNF "숙박 구역"
 ENDSELECT
 
 ;---------------------------------------------------------------
@@ -46,7 +48,7 @@ SELECTCASE マップ番号
 				RETURNF 8
 			CASE 1503 TO 1515
 				RETURNF 15
-			CASE 2001 TO 2020
+			CASE 2001 TO 2040
 				RETURNF 20
 		ENDSELECT
 	CASE 2
@@ -54,7 +56,7 @@ SELECTCASE マップ番号
 		SELECTCASE 現在地番号
 			CASE 1 TO 20
 				RETURNF 0
-			CASE 101 TO 104
+			CASE 101 TO 105
 				RETURNF 1
 		ENDSELECT
 	CASE 3
@@ -197,6 +199,8 @@ SELECTCASE ARG:2
 		RETURNF CAN_MOVE_2(ARG, ARG:1)
 	CASE 3
 		RETURNF CAN_MOVE_3(ARG, ARG:1)
+	CASE 4
+		RETURNF CAN_MOVE_4(ARG, ARG:1)
 	CASE 100
 		RETURNF CAN_MOVE_100(ARG, ARG:1)
 	CASE 200 TO 499
@@ -223,6 +227,8 @@ SELECTCASE ARG:1
 		RETURNF 存在しない移動先_2(ARG)
 	CASE 3
 		RETURNF 存在しない移動先_3(ARG)
+	CASE 4
+		RETURNF 存在しない移動先_4(ARG)
 	CASE 100
 		RESULT保存 = RESULT
 		RESULT = 1
@@ -268,21 +274,21 @@ SIF ARG:1 < 0
 
 IF ARG == 999
 	IF ARG:1 == 999
-		RETURNF "eraの部屋"
+		RETURNF "era의 방"
 	ELSEIF ARG:1 < 1000
 		IF 滞在者部屋割り配列:(ARG:1) < 1
 			LOCALS = 체류자 없음
 		ELSE
 			LOCALS = %CALLNAME:(滞在者部屋割り配列:(ARG:1))%
 		ENDIF
-		RETURNF @"客室{ARG:1}号室：%LOCALS%"
+		RETURNF @"객실{ARG:1}호실：%LOCALS%"
 	ELSEIF ARG:1 < 2000
 		IF 従業員部屋割り配列:(ARG:1 - 1000) < 1
 			LOCALS = 사용자 없음
 		ELSE
 			LOCALS = %CALLNAME:(従業員部屋割り配列:(ARG:1 - 1000))%
 		ENDIF
-		RETURNF @"従業員室{ARG:1}号室：%LOCALS%"
+		RETURNF @"직원실{ARG:1}호실：%LOCALS%"
 	ELSE
 		IF スイートルーム部屋割り配列:(ARG:1 - 2000) == ""
 			LOCALS = 사용자 없음
@@ -290,12 +296,12 @@ IF ARG == 999
 			VARSET 配列分解文字列
 			SPLIT スイートルーム部屋割り配列:(ARG:1 - 2000), "_", 配列分解文字列
 			IF STRCOUNT(スイートルーム部屋割り配列:(ARG:1 - 2000), "_") > 2
-				LOCALS = %CALLNAME:(TOINT(配列分解文字列:1))% 외
+				LOCALS = %CALLNAME:(TOINT(配列分解文字列:1))%외
 			ELSE
 				LOCALS = %CALLNAME:(TOINT(配列分解文字列:1))%
 			ENDIF
 		ENDIF
-		RETURNF @"スイートルーム{ARG:1}号室：%LOCALS%"
+		RETURNF @"스위트룸{ARG:1}호실：%LOCALS%"
 	ENDIF
 ENDIF
 
@@ -345,5 +351,5 @@ ENDIF
 #DIM 目的地
 #DIM 移動キャラ
 
-PRINTFORML 이동 오류입니다.TIME{TIME}：이동 캐릭터%CALLNAME:移動キャラ%：리조트 맵{CFLAG:移動キャラ:現在位置}>{目的地}：스케줄%移動スケジュール文字列:移動キャラ:(スケジュール状態:移動キャラ:現在スケジュール):スケジュール%
+PRINTFORML 이동 오류입니다. 시간{TIME}：이동 캐릭터%CALLNAME:移動キャラ%：리조트 맵{CFLAG:移動キャラ:現在位置}>{目的地}：스케줄%移動スケジュール文字列:移動キャラ:(スケジュール状態:移動キャラ:現在スケジュール):スケジュール%
 THROW エラーメッセージをコピーして報告をお願いします

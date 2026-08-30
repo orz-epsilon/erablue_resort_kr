@@ -1,0 +1,64 @@
+@客室テーマ変更()
+
+DRAWLINE
+PRINTL 원하는 테마를 선택해주세요.
+DRAWLINE
+FOR LOCAL, 1, VARSIZE("客室テーマ")
+	SIF 客室テーマ:LOCAL < 1
+		CONTINUE
+	; TSTR:ツールチップ受渡 = 
+	; CALLFORM 客室テーマ_%ERDNAME(客室テーマ, 客室テーマ:LOCAL)%
+	PRINTBUTTON @"[{LOCAL}] %ERDNAME(客室テーマ, LOCAL)%", LOCAL
+	PRINTL
+NEXT
+PRINTL
+PRINTBUTTON "[999] 돌아가기", 999
+PRINTL
+PRINTL
+BINPUT
+PRINTL
+PRINTL
+SELECTCASE RESULT
+	CASE 999
+		RETURN 0
+	CASEELSE
+		客室テーマ:設定テーマ = RESULT
+		PRINTFORMW 객실 테마를 「%ERDNAME(客室テーマ, RESULT)%」으로 변경했습니다.
+ENDSELECT
+
+
+@客室テーマ_簡素な部屋(動作モード)
+#DIMS 動作モード
+
+SELECTCASE 動作モード
+	CASE "部屋説明"
+		TSTR:ツールチップ受渡 = 
+		TSTR:ツールチップ受渡 += "　특별히 바뀐 점 없는 일반적인 객실. <br>"
+		TSTR:ツールチップ受渡 += "<br>"
+		TSTR:ツールチップ受渡 += "<br>"
+		TSTR:ツールチップ受渡 += "　효과:없음<br>"
+ENDSELECT
+
+@客室テーマ_アロハスな部屋(動作モード)
+#DIMS 動作モード
+
+SELECTCASE 動作モード
+	CASE "部屋説明"
+		TSTR:ツールチップ受渡 = 
+		TSTR:ツールチップ受渡 += "　슈퍼 리조트 알로하스를 이미지한 남국풍 방. <br>"
+		TSTR:ツールチップ受渡 += "　조개껍데기나 유목, 히비스커스 등 바다와 자연을 느끼게 하는 디자인이 특징. <br>"
+		TSTR:ツールチップ受渡 += "<br>"
+		TSTR:ツールチップ受渡 += "　효과:없음<br>"
+ENDSELECT
+
+@客室テーマ_東方風の部屋(動作モード)
+#DIMS 動作モード
+
+SELECTCASE 動作モード
+	CASE "部屋説明"
+		TSTR:ツールチップ受渡 = 
+		TSTR:ツールチップ受渡 += "　아마토 그란데 공역의 문화를 이미지한 방. <br>"
+		TSTR:ツールチップ受渡 += "　다다미나 후스마라고 불리는 독특한 인테리어와 맨발로 지내는 신선함이 특징. <br>"
+		TSTR:ツールチップ受渡 += "　침구만은 손님이 사용하기 편리하도록 침대가 설치되어 있다. <br>"
+		TSTR:ツールチップ受渡 += "　효과:없음<br>"
+ENDSELECT

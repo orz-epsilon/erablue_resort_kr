@@ -4,7 +4,7 @@
 ;-------------------------------------------------
 @COMNAME105
 #FUNCTIONS
-TSTR:コマンド名受渡 = 촉수 결박
+TSTR:コマンド名受渡 = 촉수 속박
 
 
 ;===================================================
@@ -19,10 +19,10 @@ TFLAG:コマンドタイプ受渡 = COMTYPE("触手系")
 
 
 @COM_TOOLTIP_105
-LOCALS = <br>■촉수 결박<br>
-LOCALS += "캐릭터를 촉수로 결박하여 움직임을 제한하는 커맨드. <br> 모드 적용 중에는 자동 커맨드가 반응하지 않는다."
-LOCALS += "<br>COM 타입: 촉수계<br>획득 소스: 쾌S・접촉・노출"
-LOCALS += "<br>고유 획득 경험: 촉수 조작 경험(PLAYER)<br>"
+LOCALS = <br>■촉수 속박<br>
+LOCALS += "캐릭터를 촉수로 속박하여 움직임을 제한하는 커맨드. <br>모드 적용 중에는 자동 커맨드가 반응하지 않는다."
+LOCALS += "<br>COM 타입：촉수계<br>획득 소스：쾌S・접촉・노출"
+LOCALS += "<br>고유 획득 경험：촉수 조작 경험(PLAYER)<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
 @COM105
@@ -68,19 +68,19 @@ RETURN 1
 ;-------------------------------------------------
 @MESSAGE_COM105
 #DIM 同時キャラ番号
-PRINTFORM %CALLNAME:PLAYER%은
+PRINTFORM %CALLNAME:PLAYER%은(는)
 
 IF GETBIT(FLAG:モード管理, モードビット_同時)
-	PRINT 여러 촉수를
+	PRINT 수많은 촉수를
 	FOR 同時キャラ番号, 0, 同時モード_選択数
 		SIF 同時キャラ番号 > 0
-			PRINT ,
+			PRINT 、
 		PRINTFORM %CALLNAME:(同時モード_選択キャラ:同時キャラ番号)%
 	NEXT
 	PRINT 의 몸에 휘감아, 자유를 봉했다.
 	RETURN 0
 ENDIF
 
-PRINTFORM 자신의 촉수를 %CALLNAME:TARGET%의 몸에 휘감아, 자유를 봉했다.
+PRINTFORM 자신의 촉수를%CALLNAME:TARGET%의 몸에 휘감아, 자유를 봉했다.
 
 

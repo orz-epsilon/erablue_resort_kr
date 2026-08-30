@@ -1,16 +1,16 @@
-﻿
+
 @敵BATTLE_STATE_Lv4_人食い鳥(ARG)
 敵BATTLE_STATE:ARG:Lv = 4
-敵BATTLE_STATE:ARG:최대HP = 280
+敵BATTLE_STATE:ARG:最大ＨＰ = 280
 敵BATTLE_STATE:ARG:ＨＰ = 280
-敵BATTLE_STATE:ARG:공격력 = 300
-敵BATTLE_STATE:ARG:방어력 = 250
-敵BATTLE_STATE:ARG:회복력 = 0
-敵BATTLE_STATE:ARG:행동속도 = 300
-敵BATTLE_STATE:ARG:DA율 = 10
-敵BATTLE_STATE:ARG:TA율 = 0
-敵BATTLE_STATE:ARG:명중률 = 95
-敵BATTLE_STATE:ARG:회피율 = 0
+敵BATTLE_STATE:ARG:攻撃力 = 300
+敵BATTLE_STATE:ARG:防御力 = 250
+敵BATTLE_STATE:ARG:回復力 = 0
+敵BATTLE_STATE:ARG:行動速度 = 300
+敵BATTLE_STATE:ARG:DA率 = 10
+敵BATTLE_STATE:ARG:TA率 = 0
+敵BATTLE_STATE:ARG:命中率 = 95
+敵BATTLE_STATE:ARG:回避率 = 0
 敵BATTLE_STATE:ARG:属性 = 2
 敵BATTLE_STATE:ARG:所持EXP = 22
 敵BATTLE_STATE:ARG:所持ルピ = 20
@@ -41,7 +41,7 @@ CALL ドロップ判定処理(ドロップ確率, ドロップアイテム)
 #DIMS 追加エネミー名, 1
 
 CALL 口上変数初期化
-KSTR:(K++) = %敵BATTLE_STATE_STR:(戦闘行動キャラ - 10):エネミー名%は仲間を呼んだ！
+KSTR:(K++) = %敵BATTLE_STATE_STR:(戦闘行動キャラ - 10):エネミー名%은(는) 동료를 불렀다!
 CALL メッセージ欄表示用関数()
 
 アビテンプレート用_アビ名 = 仲間呼び
@@ -65,9 +65,9 @@ FOR LOCAL, 0, 10
 NEXT
 
 IF 追加完了フラグ == 1
-	WSTR:(K++) = %追加エネミー名:0%が現れた！
+	WSTR:(K++) = %追加エネミー名:0%이(가) 나타났다!
 ELSE
-	WSTR:(K++) = しかし、誰も来なかった……
+	WSTR:(K++) = 하지만, 아무도 오지 않았다……
 ENDIF
 
 ;エネミー画像を発生させるために再描画

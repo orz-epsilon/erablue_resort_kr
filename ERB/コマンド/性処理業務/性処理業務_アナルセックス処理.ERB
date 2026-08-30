@@ -7,10 +7,10 @@ TSTR:コマンド名受渡 = 항문 성교 처리
 
 @性処理_TOOLTIP_アナルセックス処理
 LOCALS = <br>■항문 성교 처리<br>
-LOCALS += @"%CALLNAME:PLAYER%의 페니스를 A삽입으로 문질러 받는 성처리. <br>"
-LOCALS += "요구 호감도는 높고, 대부분의 캐릭터는 함락이 전제. <br>"
-LOCALS += "<br>COM 타입: 성처리<br>획득 소스: 쾌A・노출・접촉・봉사・불결"
-LOCALS += "<br>고유 획득 경험: A성교 경험(TARGET)<br>"
+LOCALS += @"%CALLNAME:PLAYER%의 페니스를 A삽입으로 애무받는 성 처리. <br>"
+LOCALS += "요구호감도는 높고, 대부분의 캐릭터는 함락이 전제. <br>"
+LOCALS += "<br>COM 타입: 성 처리<br>획득 소스: 쾌A・노출・접촉・봉사・불결"
+LOCALS += "<br>고유 획득 경험: Ａ性交経験(TARGET)<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
 @性処理_アナルセックス処理
@@ -103,17 +103,17 @@ DRAWLINE
 
 ;基礎値段
 値段計算 = 60000
-PRINTFORML %"基礎値段", 16, LEFT%:　%NUM_FORMAT(値段計算), 8%루피
+PRINTFORML %"基礎値段", 16, LEFT%：　%NUM_FORMAT(値段計算), 8%루피
 
 
 ;好感度
 LOCAL = (80 - CFLAG:好感度レベル) * -100
 IF LOCAL < 0
 	SETCOLOR カラーパレット("薄ピンク")
-	PRINTFORML %"好感度補正", 16, LEFT%:＋%NUM_FORMAT(LOCAL * -1), 8%루피
+	PRINTFORML %"好感度補正", 16, LEFT%：＋%NUM_FORMAT(LOCAL * -1), 8%루피
 	RESETCOLOR
 ELSE
-	PRINTFORML %"好感度補正", 16, LEFT%:－%NUM_FORMAT(LOCAL), 8%루피
+	PRINTFORML %"好感度補正", 16, LEFT%：－%NUM_FORMAT(LOCAL), 8%루피
 ENDIF
 値段計算 -= LOCAL
 
@@ -121,18 +121,18 @@ ENDIF
 IF BASE:TARGET:体力 < MAXBASE:TARGET:体力 / 4
 	値段計算 += 1500
 	SETCOLOR カラーパレット("薄ピンク")
-	PRINTFORML %"体力低下", 16, LEFT%:＋%NUM_FORMAT(1500), 8%루피
+	PRINTFORML %"体力低下", 16, LEFT%：＋%NUM_FORMAT(1500), 8%루피
 	RESETCOLOR
 ENDIF
 ;酩酊
 IF BASE:酩酊 > MAXBASE:酩酊 / 2
 	値段計算 -= 500
-	PRINTFORML %"酩酊", 16, LEFT%:－%NUM_FORMAT(500), 8%루피
+	PRINTFORML %"酩酊", 16, LEFT%：－%NUM_FORMAT(500), 8%루피
 ENDIF
 ;淫乱
 IF TALENT:淫乱
 	値段計算 -= 2500
-	PRINTFORML %"淫乱", 16, LEFT%:－%NUM_FORMAT(2500), 8%루피
+	PRINTFORML %"淫乱", 16, LEFT%：－%NUM_FORMAT(2500), 8%루피
 ENDIF
 
 ;同性愛
@@ -148,21 +148,21 @@ IF 同性愛性癖判定(TARGET,PLAYER) == 1
 			;補正なし
 		CASE 2
 			値段計算 -= 1000
-			PRINTFORML %@"%소질명%(愛好)", 16, LEFT%:－%NUM_FORMAT(1000), 8%루피
+			PRINTFORML %@"%소질명%(愛好)", 16, LEFT%：－%NUM_FORMAT(1000), 8%루피
 		CASE 3
 			値段計算 -= 2500
-			PRINTFORML %@"%소질명%(中毒)", 16, LEFT%:－%NUM_FORMAT(2500), 8%루피
+			PRINTFORML %@"%소질명%(中毒)", 16, LEFT%：－%NUM_FORMAT(2500), 8%루피
 		CASEELSE
 			;好奇心
 			IF TALENT:性的興味 > 0
 				値段計算 -= 500
-				PRINTFORML %@"好奇心(%재능명%)", 16, LEFT%：－%NUM_FORMAT(500), 8%루피
+				PRINTFORML %@"好奇心(%素質名%)", 16, LEFT%：－%NUM_FORMAT(500), 8%루피
 			ENDIF
 			;保守的
 			IF TALENT:性的興味 < 0
 				値段計算 += 1500
 				SETCOLOR カラーパレット("薄ピンク")
-				PRINTFORML %@"保守的(%재능명%)", 16, LEFT%：＋%NUM_FORMAT(1500), 8%루피
+				PRINTFORML %@"保守的(%素質名%)", 16, LEFT%：＋%NUM_FORMAT(1500), 8%루피
 				RESETCOLOR
 			ENDIF
 	ENDSELECT
@@ -191,11 +191,6 @@ ENDIF
 IF TALENT:プライド < 0
 	値段計算 -= 1000
 	PRINTFORML %"プライド低い", 16, LEFT%：－%NUM_FORMAT(1000), 8%루피
-ENDIF
-;弱味
-IF TALENT:弱味
-	値段計算 -= 2000
-	PRINTFORML %"弱味", 16, LEFT%：－%NUM_FORMAT(2000), 8%루피
 ENDIF
 
 ;謎の魅力
@@ -232,6 +227,12 @@ IF TALENT:性別嗜好 == 1 && TALENT:PLAYER:性別 == 2
 	SETCOLOR カラーパレット("薄ピンク")
 	PRINTFORML %"男嫌い", 16, LEFT%：＋%NUM_FORMAT(2000), 8%루피
 	RESETCOLOR
+ENDIF
+
+;弱味
+IF TALENT:弱味
+	値段計算 = 値段計算 / 100
+	PRINTFORML %"弱味", 16, LEFT%：99％할인
 ENDIF
 DRAWLINE
 値段計算 = MAX(0, 値段計算)
@@ -289,11 +290,11 @@ RETURN 1
 
 @MESSAGE_性処理_アナルセックス処理
 
-PRINTFORM %CALLNAME:TARGET%는
+PRINTFORM %CALLNAME:TARGET%은(는)
 IF TALENT:TARGET:恋慕
 	PRINTFORM 사랑스럽게 %CALLNAME:PLAYER%을(를) 바라보며
 ELSEIF TALENT:TARGET:羞恥心
-	PRINTFORM 얼굴을 새빨갛게 물들이며
+	PRINTFORM 얼굴을 새빨갛게 붉히며
 ELSEIF TALENT:TARGET:性的興味
 	PRINTFORM 흥미진진한 모습으로
 ELSEIF TALENT:TARGET:セフレ

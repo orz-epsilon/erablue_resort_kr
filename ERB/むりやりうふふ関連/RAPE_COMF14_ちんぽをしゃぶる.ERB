@@ -4,7 +4,7 @@
 ;-------------------------------------------------
 @RAPE_COMNAME14
 #FUNCTIONS
-TSTR:コマンド名受渡 = 성기를 빨다
+TSTR:コマンド名受渡 = 자지를 빨다
 
 
 ;===================================================
@@ -16,9 +16,9 @@ TFLAG:コマンドタイプ受渡 = RAPE_COMTYPE("うふふ")
 
 
 @RAPE_COM_TOOLTIP_14
-LOCALS = <br>■성기를 빨다<br>
+LOCALS = <br>■자지를 빨다<br>
 LOCALS += "상대의 페니스를 입으로 빨아 애무한다. <br>펠라치오 모드가 되어, 모드를 변경하거나 성행위를 종료할 때까지 지속적으로 특정 소스가 발생한다. <br>가슴 애무 중에 하면 [가슴 펠라]로 변화한다."
-LOCALS += "<br>RAPE_COM 타입: 우후후<br>획득 소스: 노출・접촉・봉사・불결"
+LOCALS += "<br>RAPE_COM타입: 우후후<br>획득 소스: 노출・접촉・봉사・불결"
 LOCALS += "<br>고유 획득 경험: 구강성교 경험(PLAYER)<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
@@ -150,9 +150,9 @@ RETURN 1
 PRINTFORM %CALLNAME:PLAYER%은(는)
 IF CFLAG:TARGET:睡眠
 	IF TCVAR:TARGET:泥酔眠姦
-		PRINTFORM 만취했다
+		PRINTFORM 술에 취해 쓰러진
 	ELSE
-		PRINTFORM 잠들었다
+		PRINTFORM 잠든
 	ENDIF
 ENDIF
 PRINTFORM %CALLNAME:TARGET%의
@@ -163,21 +163,21 @@ PRINTFORM %CALLNAME:TARGET%의
 	IF TALENT:非童貞 == 0
 		PRINTFORM 동정
 	ELSEIF TALENT:イキやすさ == 1
-		PRINTFORM %TEXTR("하찮은/나약한")%
+		PRINTFORM %TEXTR("잡몹/흐느적")%
 	ELSEIF TALENT:Ｃ感度 == 1
 		PRINTFORM 민감
 	ENDIF
 	
 	IF TALENT:男性器サイズ <= -1
-		PRINTFORM %TEXTR("성기/성기/작은 성기")%
+		PRINTFORM %TEXTR("자지/고추/미니 자지")%
 	ELSEIF TALENT:男性器サイズ == 0
-		PRINTFORM %TEXTR("성기/성기/페니스")%
+		PRINTFORM %TEXTR("자지/고추/페니스")%
 	ELSEIF TALENT:男性器サイズ == 1
 		PRINTFORM %TEXTR("큰 자지/큰 자지")%
 	ELSEIF TALENT:男性器サイズ == 2
 		PRINTFORM %TEXTR("큰 자지/큰 자지")%
 	ENDIF
 
-PRINTFORML 을(를)%TEXTR("입/입술")%에 물고, %TEXTR("끈적하게 혀로 핥아 빨아주었다/쾌락에 움찔움찔 튀어 오르는 것을 입안에서 즐겼다/타액을 듬뿍 바르면서 빨아주었다")%
+PRINTFORML 을(를) %TEXTR("입/입술")%에 물고, %TEXTR("끈적하게 혀로 핥아 빨아주었다/쾌락에 움찔움찔 뛰는 것을 입안에서 즐겼다/타액을 듬뿍 바르면서 빨아주었다")%
 
 

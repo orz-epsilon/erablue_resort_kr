@@ -512,7 +512,7 @@ SPRITEANIMECREATE "汎用アニメスプライト", X幅, Y幅
 ;表示ミリ秒を画像ファイル名から取得
 VARSET 画像名分割
 一時文字列 '= REPLACE(REPLACE(RESULTS:0, ESCAPE("\\"), "/"), @"resources/%指定フォルダ%/", "")
-一時文字列 '= REPLACE(一時文字列, ".webp", "")
+	一時文字列 '= REPLACE(一時文字列, ".webp", "")
 SPLIT 一時文字列, "_", 画像名分割
 IF ISNUMERIC(画像名分割:1)
 	表示ミリ秒 = TOINT(画像名分割:1)

@@ -1,16 +1,16 @@
 
 @敵BATTLE_STATE_Lv10_ならず者の構成員(ARG)
 敵BATTLE_STATE:ARG:Lv = 10
-敵BATTLE_STATE:ARG:최대HP = 900
+敵BATTLE_STATE:ARG:最大ＨＰ = 900
 敵BATTLE_STATE:ARG:ＨＰ = 900
-敵BATTLE_STATE:ARG:공격력 = 200
-敵BATTLE_STATE:ARG:방어력 = 125
-敵BATTLE_STATE:ARG:회복력 = 0
-敵BATTLE_STATE:ARG:행동속도 = 100
-敵BATTLE_STATE:ARG:DA율 = 0
-敵BATTLE_STATE:ARG:TA율 = 100
-敵BATTLE_STATE:ARG:명중률 = 70
-敵BATTLE_STATE:ARG:회피율 = 0
+敵BATTLE_STATE:ARG:攻撃力 = 200
+敵BATTLE_STATE:ARG:防御力 = 125
+敵BATTLE_STATE:ARG:回復力 = 0
+敵BATTLE_STATE:ARG:行動速度 = 100
+敵BATTLE_STATE:ARG:DA率 = 0
+敵BATTLE_STATE:ARG:TA率 = 100
+敵BATTLE_STATE:ARG:命中率 = 70
+敵BATTLE_STATE:ARG:回避率 = 0
 敵BATTLE_STATE:ARG:属性 = 6
 敵BATTLE_STATE:ARG:所持EXP = 100
 敵BATTLE_STATE:ARG:所持ルピ = 50
@@ -18,7 +18,7 @@
 
 敵BATTLE_STATE:ARG:ランダム不許可フラグ = 1
 
-敵BATTLE_STATE_STR:ARG:種族 = 人型_불량배
+敵BATTLE_STATE_STR:ARG:種族 = 人型_ならず者
 
 @敵討伐後処理_Lv10_ならず者の構成員(隊列番号)
 #DIM 隊列番号
@@ -44,4 +44,38 @@ CALL ドロップ判定処理(ドロップ確率, ドロップアイテム)
 CALL アビ対象選択テンプレート_味方ランダムＸ体(1)
 アビ汎用変数:効果割合 = 150
 アビ汎用変数:防御無視オプション_割合 = 25
+
+
+; @敵トリガー行動_Lv10_ならず者の構成員
+; #DIM 攻撃回数
+
+
+; IF GETBIT(敵BATTLE_STATE:(戦闘行動キャラ - 10):トリガー行動フラグ, 2) == 0
+
+; 	アビ汎用文字列:実行時メッセージ１ = %敵BATTLE_STATE_STR:(戦闘行動キャラ - 10):エネミー名%は身を隠した！
+
+; 	CALL アビ対象選択テンプレート_自己のみ
+; 	アビ汎用文字列:バフ・デバフ枠 = 潜伏
+; 	アビ汎用文字列:バフ・デバフ対象能力 = 潜伏
+; 	アビ汎用変数:持続ターン = -1
+; 	CALL アビテンプレート_有利効果_バフ効果セット
+
+; 	;トリガーフラグをセット
+; 	SETBIT 敵BATTLE_STATE:(戦闘行動キャラ - 10):トリガー行動フラグ, 2
+; ELSE
+; 	RETURN 0
+; ENDIF
+
+; RETURN 1
+
+
+; @固有バフ・デバフ処理_エネミー_Lv10_ならず者の構成員_被ダメージ(隊列番号, 特殊補正後数値)
+; #DIM 隊列番号
+; #DIM 特殊補正後数値
+
+; IF 現在ターン数 % 2
+; 	RETURN 0
+; ENDIF
+
+; RETURN 特殊補正後数値
 

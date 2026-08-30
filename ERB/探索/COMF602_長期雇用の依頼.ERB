@@ -16,9 +16,9 @@ TFLAG:コマンドタイプ受渡 = COMTYPE("探索")
 
 @COM_TOOLTIP_602
 LOCALS = <br>■장기 고용 의뢰<br>
-LOCALS += "상대를 고용하여 리조트에 머무르면서 탐색을 돕는 계약을 맺는다. <br>"
-LOCALS += "이 계약이 계속되는 동안은, 상대는 리조트에 계속 머무른다. <br>"
-LOCALS += "<br>COM 타입: 탐색<br>획득 소스: 없음"
+LOCALS += "상대를 고용하여 리조트에 머무르면서 탐색을 돕도록 계약을 맺습니다. <br>"
+LOCALS += "이 계약이 지속되는 동안 상대는 리조트에 계속 머무릅니다. <br>"
+LOCALS += "<br>COM 타입: 탐색<br>취득 소스: 없음"
 LOCALS += "<br>고유 획득 경험: 없음<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
@@ -28,26 +28,33 @@ CALL ユニーク客人数チェック()
 DRAWLINE
 IF CFLAG:TARGET:長期雇用
 	PRINTL ※이미 장기 고용 중입니다
-	PRINTFORML %CALLNAME:TARGET%의 장기 고용을 취소하시겠습니까?　(현재 소비 중인 루피: 1일 / 1000루피)
+	PRINTFORML %CALLNAME:TARGET%의 장기 고용을 취소하시겠습니까?　（현재 소비 중 루피: 1일 / 1000루피）
 ELSEIF CFLAG:TARGET:スイートルーム滞在フラグ && 滞在キャラ数 >= 滞在キャラ上限
-	PRINTL ※장기 고용하면 스위트룸에서 일반 객실로 이동합니다.
+	PRINTL ※장기 고용 시, 스위트룸에서 일반 객실로 이동합니다.
 	PRINTW ※일반 객실에 빈방이 없으므로 장기 고용할 수 없습니다.
 	RETURN -1
 ELSE
-	PRINTL 탐색 지원을 장기간 의뢰함으로써, 매일 루피를 소비하는 대신 캐릭터가 귀가하지 않게 됩니다.
+	PRINTL 탐색을 장기간 돕도록 의뢰하면, 매일 루피를 소비하는 대신 캐릭터가 귀가하지 않게 됩니다.
 	PRINTL ※탐색 파티에서 제외하는 것은 가능합니다.
 	SIF CFLAG:TARGET:スイートルーム滞在フラグ
-		PRINTL ※장기 고용하면 스위트룸에서 일반 객실로 이동합니다.
-	PRINTFORML %CALLNAME:TARGET%을(를) 장기 고용하시겠습니까?　(필요 루피: 1일 / 1000루피)
+		PRINTL ※장기 고용 시, 스위트룸에서 일반 객실로 이동합니다.
+	PRINTFORML %CALLNAME:TARGET%을(를) 장기 고용하시겠습니까?　（필요 루피: 1일 / 1000루피）
 ENDIF
 
 
-PRINTBUTTON "[0]예", 0
+;スイート滞在時は空き部屋必須
+IF CFLAG:TARGET:スイートルーム滞在フラグ && !滞在者部屋空き確認()
+	SETCOLOR カラーパレット("グレーアウト")
+	PRINTPLAIN [0]예
+	RESETCOLOR
+	PRINT 　　※일반 객실에 빈방이 없습니다
+ELSE
+	PRINTBUTTON "[0]예", 0
+ENDIF
 PRINTL
-PRINTBUTTON "[1]아니요", 1
+PRINTBUTTON "[1]아니오", 1
 PRINTL
-$INPUT_LOOP
-INPUT
+BINPUT
 
 SELECTCASE RESULT
 	CASE 0
@@ -65,9 +72,6 @@ SELECTCASE RESULT
 		ENDIF
 	CASE 1
 		RETURN -1
-	CASEELSE
-		REUSELASTLINE 
-		GOTO INPUT_LOOP
 ENDSELECT
 
 RETURN 1
@@ -107,8 +111,8 @@ RETURN 1
 @MESSAGE_COM602
 
 IF CFLAG:TARGET:長期雇用
-	PRINTFORML %CALLNAME:TARGET%을(를) 장기 고용했습니다.
-	PRINTL (하루 종료 시 루피 1000이 소비됩니다)
+PRINTFORML %CALLNAME:TARGET%을(를) 장기 고용했습니다.
+PRINTL （하루 종료 시에 루피가 1000 소비됩니다）
 ELSE
-	PRINTFORML %CALLNAME:TARGET%의 장기 고용을 취소했습니다.
+PRINTFORML %CALLNAME:TARGET%의 장기 고용을 취소했습니다.
 ENDIF

@@ -20,7 +20,7 @@ TFLAG:コマンドタイプ受渡 = RAPE_COMTYPE("Ａ系")
 LOCALS = <br>■항문을 후비다<br>
 LOCALS += "상대의 항문을 손가락으로 후빈다."
 LOCALS += "A 경험이 적을 때는 바깥쪽부터, 익숙해지면 손가락을 삽입하여 후빈다"
-LOCALS += "<br>RAPE_COM 타입: A계<br>획득 소스: 쾌A・노출・접촉・고통"
+LOCALS += "<br>RAPE_COM타입：A계<br>획득 출처：쾌A・노출・접촉・고통"
 LOCALS += "<br>고유 획득 경험: 없음<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
@@ -106,7 +106,7 @@ IF EXP:Ａ経験 <= 10
 	PRINTFORM 굳게 닫힌 항문을 손가락으로 후비듯이 자극하고
 ;Ａ経験100以上＋欲望のPALAMLV3以上
 ELSEIF EXP:Ａ経験 >= 100 && PALAM:欲情 >= PALAMLV:3
-	PRINTFORM 항문에 손가락을 찔러 넣어 직장을 휘저어
+	PRINTFORM 항문에 손가락을 쑤셔 넣어 직장을 휘저어
 ELSE
 	PRINTFORM 항문을 손가락으로 후비듯이 자극하고
 ENDIF

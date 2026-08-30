@@ -4,7 +4,7 @@
 ;-------------------------------------------------
 @COMNAME4
 #FUNCTIONS
-TSTR:コマンド名受渡 = 애널 핥기
+TSTR:コマンド名受渡 = 항문 핥기
 
 
 
@@ -19,8 +19,8 @@ TFLAG:コマンドタイプ受渡 = COMTYPE("Ａ系")
 
 
 @COM_TOOLTIP_4
-LOCALS = <br>■아날 핥기<br>
-LOCALS += "상대의 애널을 혀로 애무하는 커맨드. <br>실행자가 [혀놀림][고양이 혀]를 가지고 있을 경우, 효과가 증감한다."
+LOCALS = <br>■항문 핥기<br>
+LOCALS += "상대의 항문을 혀로 애무하는 커맨드. <br>실행자가 [혀놀림][고양이 혀]를 가지고 있을 경우, 효과가 증감한다."
 LOCALS += "<br>COM 타입: A계<br>획득 소스: 쾌A・노출・접촉・액체"
 LOCALS += "<br>고유 획득 경험: 없음<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
@@ -62,7 +62,7 @@ SIF TALENT:PLAYER:猫舌
 CALL 初体験日登録処理(PLAYER, TARGET, "ファーストキス", DAY * 1440 + TIME, GETPLACENAME(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置), "アナル", "", 1)
 IF RESULT
 	RCVAR:PLAYER:ファーストキス中フラグ = 1
-	CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>%CALLNAME:TARGET%의 [항문]에 첫 키스를 바쳤다.</font><img src='えっちハート'>","うふふ")
+	CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>%CALLNAME:TARGET%の[アナル]にファーストキスを捧げた</font><img src='えっちハート'>","うふふ")
 ENDIF
 
 
@@ -125,7 +125,7 @@ RETURN 1
 ;実行時メッセージ
 ;-------------------------------------------------
 @MESSAGE_COM4
-PRINTFORM %CALLNAME:PLAYER%는
+PRINTFORM %CALLNAME:PLAYER%은(는)
 PRINTFORM %CALLNAME:TARGET%의
 ;Ａ経験10以下
 IF EXP:Ａ経験 <= 10
@@ -134,6 +134,6 @@ ENDIF
 PRINT 항문을 정성껏 핥아 풀고
 ;Ａ経験100以上＋欲望のPALAMLV3以上
 SIF EXP:Ａ経験 >= 100 && PALAM:欲情 >= PALAMLV:3
-	PRINT , 혀끝을 밀어 넣어 구멍 안까지 휘저어
-PRINTL 주었다…
+	PRINT , 혀끝을 찔러 넣어 구멍 안까지 휘저어 주었
+PRINTL 다…
 

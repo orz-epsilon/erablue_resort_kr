@@ -20,8 +20,8 @@ ENDSELECT
 #DIM NEW_ALLOWVERSION
 #DIM VERCOUNT
 
-PRINTL erablue_resort 버전업 어시스턴트입니다(개발자용)
-PRINTL 버전업 준비를 하시겠습니까?
+PRINTL erablue_resort 버전 업그레이드 어시스턴트입니다(개발자용)
+PRINTL 버전 업그레이드를 준비하시겠습니까?
 PRINTBUTTONLC "[0]예", 0
 PRINTBUTTONLC "[1]아니오", 1
 
@@ -34,15 +34,15 @@ NEW_ALLOWVERSION = MAX(GAMEBASE_ALLOWVERSION, NEW_VERSION - 2)
 
 CALL VERUP用ファイル生成(NEW_VERSION)
 
-PRINTFORML ./CSV/GameBase.csv의 "버전,{GAMEBASE_VERSION}"을 "버전,{NEW_VERSION}"으로
-PRINTFORML "버전 차이 인정,{GAMEBASE_ALLOWVERSION}"을 "버전 차이 인정,{NEW_ALLOWVERSION}"으로 덮어쓰세요
+PRINTFORML ./CSV/GameBase.csv 파일의 "バージョン,{GAMEBASE_VERSION}"을 "バージョン,{NEW_VERSION}"으로
+PRINTFORML "バージョン違い認める,{GAMEBASE_ALLOWVERSION}"을 "バージョン違い認める,{NEW_ALLOWVERSION}"으로 바꿔주세요
 PRINTL 
-PRINTFORML ./ERB_EDITFILE/VERUP_{NEW_VERSION}.ERB를 ./ERB/버전업 관련/에 두고, 대신 다음을 삭제하세요:
+PRINTFORML ./ERB_EDITFILE/VERUP_{NEW_VERSION}.ERB 파일을 ./ERB/バージョンアップ関連/ 에 두고, 대신 다음을 삭제해주세요:
 FOR VERCOUNT, GAMEBASE_ALLOWVERSION, NEW_ALLOWVERSION
-	PRINTFORML ./ERB/버전업 관련/VERUP_{VERCOUNT}.ERB
+	PRINTFORML ./ERB/バージョンアップ関連/VERUP_{VERCOUNT}.ERB
 NEXT
 PRINTL 
-PRINTL 내부에서 사용되는 팔로우 변수의 정의도 적절히 삭제하세요
+PRINTL 내부에서 사용되는 팔로우 변수의 정의도 적절히 삭제해주세요
 WAIT
 
 CLEARLINE LINECOUNT
@@ -54,23 +54,23 @@ RETURN 0
 REDRAW 0
 CLEARLINE LINECOUNT
 
-PRINTFORML ;Ver%TOSTR(バージョン, "0,.000")%과 구 버전과의 호환을 위한 처리
-PRINTFORML ;Ver%TOSTR(バージョン+3, "0,.000")%으로 했을 때 지울, 호환을 {バージョン+1}으로
+PRINTFORML ;Ver%TOSTR(バージョン, "0,.000")%と旧バージョンとの互換のための処理
+PRINTFORML ;Ver%TOSTR(バージョン+3, "0,.000")%にしたとき消す、互換を{バージョン+1}に
 HTML_PRINT "<br>"
-PRINTL ;추가 TALENT, 추가 CSTR 체크
+PRINTL ;追加TALENT、追加CSTRのチェック
 PRINTFORML @VERUP_{バージョン}_CHARA(ARG)
 HTML_PRINT "<br>"
-PRINTL ;그 외 광역 변수 덮어쓰기 등
+PRINTL ;기타広域変数の書き換えなど
 PRINTFORML @VERUP_{バージョン}()
 HTML_PRINT "<br>"
-PRINTL ; IF 어떤 팔로우 == 0
-PRINTL ; 	;어떤 팔로우 처리
-PRINTL ; 	;ここで"なんらかフォロー = 1"하지 않는다
+PRINTL ; IF なんらかフォロー == 0
+PRINTL ; 	;なんらかのフォロー処理
+PRINTL ; 	;ここで"なんらかフォロー = 1"しない
 PRINTL ; ENDIF
 HTML_PRINT "<br>"
-PRINTL ;대응 처리용 플래그를 대응 완료 상태로 설정
+PRINTL 대응 처리용 플래그를 대응 완료 상태로 설정
 PRINTFORML @VERUP_{バージョン}_FINISH()
-PRINTL ; なんらかフォロー = 1
+PRINTL ; 뭔가 팔로우 = 1
 HTML_PRINT "<br>"
 
 OUTPUTLOG @"ERB_EDITFILE/VERUP_{バージョン}.ERB", 1

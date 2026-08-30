@@ -13,7 +13,7 @@
 #DIMS コメント_解説, 1, 9
 #DIM L_SPR, 4
 #DIMS コメント種類 = "コメント_業務中", "コメント_状況別", "コメント_好感度", "コメント_解説"
-#DIMS 業務中リスト = "ロビー受付", "バーテンダー", "司書", "プール監視員", "道具屋", "土産物屋", "食事処", "装飾品店"
+#DIMS 業務中リスト = "ロビー受付", "バーテンダー", "司書", "プール監視員", "道具屋", "土産物屋", "食事処", "装飾品店", "直売所"
 #DIMS 状況別リスト = "飲み会", "睡眠中", "一緒に隠れている最中", "デート中", "一緒に遊んでいる最中", "同行中", "隠れているあなたに気づいていない時", "野外オナニー中"
 #DIMS 好感度リスト = "友情度", "信頼度", "恋心度", "性愛度", "固有好感度", "恋慕度"
 #DIMS 関係名, 6, 6
@@ -103,10 +103,10 @@ $コメント_LOOP
 ログ保存用文字列 =
 Column_M = <div rect='81,0,5850,594' border='31' bcolor='#C0C0C0'></div>
 Column_M += @"<div rect='156,62,5775,531'>"
-Column_M += @"캐릭터 이미지 아래에 한 줄만 표시되는 코멘트나, 호감도에 따라 변화하는 코멘트 및 캐릭터 해설을 간략하게 설정합니다<br>"
+Column_M += @"캐릭터 이미지 아래에 한 줄만 표시되는 코멘트나, 호감도에 따라 변화하는 코멘트 및 캐릭터 해설을 간이적으로 설정합니다<br>"
 Column_M += @"■------------------------------------------------------------------------------------------------------------■<br>"
 Column_M += @"등록 번호：{CSV番号}　이름：%キャラ名%<br>"
-Column_M += @"1인칭　：\@ CSTR:一人称 != "" ? %CSTR:一人称%# (미설정)\@　　2인칭　：\@ CSTR:二人称 != "" ? %CSTR:二人称%# (미설정)\@<br>"
+Column_M += @"1인칭　：\@ CSTR:一人称 != "" ? %CSTR:一人称%# （미설정）\@　　2인칭　：\@ CSTR:二人称 != "" ? %CSTR:二人称%# （미설정）\@<br>"
 Column_M += @"</div>"
 
 Column_M += @"<div rect='81,625,1937,2812' border='31' bcolor='#C0C0C0'></div><div rect='2050,625,3875,2812' border='31' bcolor='#C0C0C0'></div>"
@@ -125,7 +125,7 @@ ENDIF
 Column_M += @"<button value='{L_SPR:1}'>[{L_SPR:1}] 호감도 코멘트를 설정한다</button>"
 Column_M += @"<br>"
 IF INRANGE(表示モード, L_SPR:1, L_SPR:1+5)
-	Column_M += @"<button value='{L_SPR:1 + 1}'>├[{L_SPR:1 + 1}] 우정 코멘트를 설정한다</button>"
+	Column_M += @"<button value='{L_SPR:1 + 1}'>├[{L_SPR:1 + 1}] 우정도 코멘트를 설정한다</button>"
 	Column_M += @"<br>"
 	Column_M += @"<button value='{L_SPR:1 + 2}'>├[{L_SPR:1 + 2}] 신뢰도 코멘트를 설정한다</button>"
 	Column_M += @"<br>"
@@ -162,7 +162,7 @@ Column_M += @"<button value='701'>[701] 작업 상황을 불러온다</button>"
 Column_M += @"<br>"
 Column_M += @"<button value='800'>[800] 이것으로 결정한다</button>"
 Column_M += @"<br>"
-Column_M += @"<button value='999'>[999] 돌아간다</button>"
+Column_M += @"<button value='999'>[999] 돌아가기</button>"
 Column_M += @"</div>"
 
 Column_S = <div rect='2125,687,3675,2812'>
@@ -171,7 +171,7 @@ SELECTCASE 表示モード
 	CASE 100 TO L_SPR:0 - 1
 		;業務中コメント
 		Column_S += @"업무 중에 표시되는 한마디 코멘트를 설정합니다<br>"
-		Column_S += @"바리에이션을 늘렸을 경우, 그 중에서 동일한 확률로 1개가 선택되어 표시됩니다<br>"
+		Column_S += @"바리에이션을 늘렸을 경우, 그중에서 동일한 확률로 1개가 선택되어 표시됩니다<br>"
 		Column_S += "-----------------------------------------------------------------------<br>"
 		FOR LOCAL, 0, VARSIZE("業務中リスト")
 			LOCAL:1 = (100 + LOCAL) * 10
@@ -195,7 +195,7 @@ SELECTCASE 表示モード
 	CASE L_SPR:0 TO L_SPR:1 - 1
 		;状況別コメント
 		Column_S += @"특정 상황에서 표시되는 한마디 코멘트를 설정합니다<br>"
-		Column_S += @"바리에이션을 늘렸을 경우, 그 중에서 동일한 확률로 1개가 선택되어 표시됩니다<br>"
+		Column_S += @"바리에이션을 늘렸을 경우, 그중에서 동일한 확률로 1개가 선택되어 표시됩니다<br>"
 		Column_S += "-----------------------------------------------------------------------<br>"
 		FOR LOCAL, 0, VARSIZE("状況別リスト")
 			LOCAL:1 = (L_SPR:0 + LOCAL) * 10
@@ -204,14 +204,14 @@ SELECTCASE 表示モード
 				CONTINUE
 			FOR L_CNT, 0, 10
 				IF L_CNT == 9
-					Column_S += @"<font color='#%カラーパレット_HTML("黄")%'>　　　　 바리에이션은 더 이상 늘릴 수 없습니다</font><br>"
+					Column_S += @"<font color='#%カラーパレット_HTML("黄")%'>　　　　 더 이상 바리에이션을 늘릴 수 없습니다</font><br>"
 				ELSEIF コメント_状況別:LOCAL:L_CNT != ""
 					Column_S += @"<button value='{LOCAL:1+L_CNT+1}'>　[{LOCAL:1+L_CNT+1}] "
 					CALL PRINT_STR_メッセージ用(コメント_状況別:LOCAL:L_CNT)
 					Column_S += @"<font color='#808080'>{L_CNT+1}.</font>%RESULTS%</button><br>"
 				ELSE
 					Column_S += @"<button value='{LOCAL:1+L_CNT+1}'><font color='#808080'>"
-					Column_S += @"　[{LOCAL:1+L_CNT+1}] 다양성을 늘리다</font></button><br>"
+					Column_S += @"　[{LOCAL:1+L_CNT+1}] 바리에이션 늘리기</font></button><br>"
 					BREAK
 				ENDIF
 			NEXT
@@ -220,12 +220,12 @@ SELECTCASE 表示モード
 		;好感度コメント
 		LOCAL = MAX(表示モード % L_SPR:1 - 1, 0)
 		LOCAL:1 = (L_SPR:1 + LOCAL) * 10
-		Column_S += @"상태 화면의 관계란에 표시되는, 각종 호감도의<br>종류・단계에 따라 표시되는 코멘트를 설정합니다<br>"
-		Column_S += @"(간이 에디터이므로 각 한 줄만 설정할 수 없습니다. <br>　장문으로 하고 싶다면 출력 후의 ERB 파일을 편집해 주십시오)<br>"
+		Column_S += @"스테이터스 화면의 관계란에 표시되는, 각종 호감도의<br>종류・단계에 따라 표시되는 코멘트를 설정합니다<br>"
+		Column_S += @"(간이 에디터이므로 각 한 줄만 설정할 수 있습니다. <br>　장문으로 하고 싶다면 출력 후의 ERB 파일을 편집해 주십시오)<br>"
 		Column_S += "-----------------------------------------------------------------------<br>"
 		Column_S += @"・%好感度リスト:LOCAL%<br>"
 		FOR L_CNT, 0, 6
-			Column_S += @"<button value='{LOCAL:1 + L_CNT+1}'>\@ CSTR:キャラ固有好感度要素 != ""? (%CSTR:キャラ固有好感度要素%)# \@<font color='#808080'>"
+			Column_S += @"<button value='{LOCAL:1 + L_CNT+1}'>\@ CSTR:キャラ固有好感度要素 != ""? （%CSTR:キャラ固有好感度要素%）# \@<font color='#808080'>"
 			Column_S += @"　[{LOCAL:1+L_CNT+1}]</font> %関係名:LOCAL:L_CNT, 16, LEFT%："
 			IF コメント_好感度:LOCAL:L_CNT != ""
 				CALL PRINT_STR_メッセージ用(コメント_好感度:LOCAL:L_CNT)
@@ -239,7 +239,7 @@ SELECTCASE 表示モード
 	CASE L_SPR:2 TO L_SPR:3 - 1
 		;キャラ解説
 		LOCAL:1 = L_SPR:2 * 10
-		Column_S += @"상태 화면에 표시되는, 캐릭터 해설문을 설정합니다<br>"
+		Column_S += @"스테이터스 화면에 표시되는, 캐릭터 해설문을 설정합니다<br>"
 		Column_S += "-----------------------------------------------------------------------<br>"
 		FOR L_CNT, 0, 10
 			IF L_CNT == 9
@@ -250,7 +250,7 @@ SELECTCASE 表示モード
 				Column_S += @"　[{LOCAL:1+L_CNT+1}] %RESULTS%</button><br>"
 			ELSE
 				Column_S += @"<button value='{LOCAL:1+L_CNT+1}'><font color='#808080'>"
-				Column_S += @"　[{LOCAL:1+L_CNT+1}] \@ !L_CNT? (미설정)# 줄 수를 늘리다\@</font></button><br>"
+				Column_S += @"　[{LOCAL:1+L_CNT+1}] \@ !L_CNT? （미설정）# 행 수를 늘리다\@</font></button><br>"
 				BREAK
 			ENDIF
 		NEXT
@@ -283,13 +283,13 @@ SELECTCASE LOCAL
 	CASE 600
 		;一人称を入力
 		SETTEXTBOX CSTR:一人称
-		PRINTL 1인칭을 입력해 주십시오
+		PRINTL 1인칭을 입력해 주세요
 		INPUTS
 		CSTR:一人称 '= RESULTS
 	CASE 601
 		;二人称を入力
 		SETTEXTBOX CSTR:二人称
-		PRINTL 2인칭을 입력해 주십시오
+		PRINTL 2인칭을 입력해 주세요
 		INPUTS
 		CSTR:二人称 '= RESULTS
 	CASE 700
@@ -360,7 +360,7 @@ FOR LOCAL, 0, VARSIZE("コメント種類")
 NEXT
 LOCALS += @"%CSTR:一人称%/%CSTR:二人称%\n"
 SAVETEXT LOCALS, @"dat/コメント一時保存/{CSV番号}_%キャラ名%_{GETTIME()/100000}.txt"
-PRINTFORMW dat/코멘트 임시 저장/{CSV番号}_%キャラ名%_{GETTIME()/100000}.txt에 저장했습니다.
+PRINTFORMW dat/コメント一시保存/{CSV番号}_%キャラ名%_{GETTIME()/100000}.txt에 저장했습니다.
 
 GOTO コメント_LOOP
 
@@ -389,7 +389,7 @@ SELECTCASE LOCAL
 	CASE 999
 		GOTO コメント_LOOP
 	CASEELSE
-		PRINTFORML 현재 작업을 중단하고, 저장된 작업 상황　%LOCALS:LOCAL%　을(를) 불러옵니다.
+		PRINTFORML 현재 작업을 중단하고, 저장되어 있는 작업 상황　%LOCALS:LOCAL%　을(를) 불러옵니다.
 		CALL CHOICE("本当によろしいですか？", "はい", "いいえ")
 		SIF RESULT
 			GOTO コメント_LOOP
@@ -432,66 +432,68 @@ GOTO コメント_INIT
 $ERB出力
 CLEARLINE MAX(LINECOUNT, 500)
 
-PRINTL ;・사용법
-PRINTFORML ;「{CSV番号}」을(를) 캐릭터 번호로 치환하고, 각 함수에 처리를 넣는다
+PRINTL ;・使い方
+PRINTFORML ;「{CSV番号}」をキャラクター番号に置換し、それぞれの関数に処理を入れる
 PRINTL ;--------------------------------------------------
-PRINTL ;통상 화면 한마디 구상
+PRINTL ;通常画面一言대사
 PRINTL ;--------------------------------------------------
-PRINTFORML @구상_INFO화면_한마디코멘트_{CSV番号}(対象キャラ)
+PRINTFORML @대사_INFO画面_一言コメント_{CSV番号}(対象キャラ)
 PRINTL #DIM 対象キャラ
-PRINTL CALL 口上変数初期化
+PRINTL CALL 대사変数初期化
 HTML_PRINT "<br>"
-PRINTL ;구상과 같은 감각으로 사용하기 위해 서식을 통일하고 있지만, 통상 화면에 표시되므로
-PRINTL ;기본적으로 WAIT 계열은 사용하지 않는 것을 권장
-PRINTL ;또한, 한 줄만 표시하는 것을 상정. 두 줄 이상은 기본적으로 금지
-PRINTL ;※우후후 중에는 표시되지 않습니다
+PRINTL ;대사と同じ感覚で使う為に書式を統一しているが、通常시の画面で表示されるので
+PRINTL ;基本的にWAIT系列は使わないことを推奨
+PRINTL ;また、一行のみの表示を想定。二行以上は基本的に禁止
+PRINTL ;※うふふ中には表示されません
 HTML_PRINT "<br>"
-PRINTL ;이하는 분기의 예
-PRINTL ;근무 중 한마디 구상
+PRINTL ;以下は분岐の例
+PRINTL ;仕事中の一言대사
 PRINTL IF TALENT:対象キャラ:従業員 && TCVAR:対象キャラ:休暇中 == 0 && CFLAG:対象キャラ:現在位置 == 現在仕事:対象キャラ:1 % 10000 && CFLAG:対象キャラ:現在マップ種別 == 現在仕事:対象キャラ:1 / 10000
 PRINTL 	SELECTCASE 現在仕事:対象キャラ:1
 PRINTL 		CASE 2
-PRINTL 			;로비에서 접수 중
+PRINTL 			;ロビーで受付中
 CALL コメント出力(コメント_業務中, 業務中リスト, "ロビー受付", "			")
 PRINTL 		CASE 503
-PRINTL 			;바에서 바텐더 중
+PRINTL 			;バーエリアでバーテンダー中
 CALL コメント出力(コメント_業務中, 業務中リスト, "バーテンダー", "			")
 PRINTL 		CASE 506
-PRINTL 			;도서실에서 사서 중
+PRINTL 			;図書室で司書中
 CALL コメント出力(コメント_業務中, 業務中リスト, "司書", "			")
 PRINTL 		CASE 1503, 15
-PRINTL 			;수영장에서 감시원 중
+PRINTL 			;プールで監視員中
 CALL コメント出力(コメント_業務中, 業務中リスト, "プール監視員", "			")
 PRINTL 		CASE IS > 10000
-PRINTL 			;각종 점포에서 가게 지킴이 중
+PRINTL 			;各種店舗で店番中
 PRINTL 			CALLFORMF 空艇港店舗名表示_{空艇港店舗状況:(現在仕事:対象キャラ:1 - 10000):0}(現在仕事:対象キャラ:1 - 10000)
 PRINTL 			SELECTCASE REPLACE(TSTR:場所名受渡, "『.*』", "")
-PRINTL 				CASE "도구점"
+PRINTL 				CASE "道具屋"
 CALL コメント出力(コメント_業務中, 業務中リスト, "道具屋", "					")
-PRINTL 				CASE "기념품점"
+PRINTL 				CASE "土産物屋"
 CALL コメント出力(コメント_業務中, 業務中リスト, "土産物屋", "					")
-PRINTL 				CASE "식당"
+PRINTL 				CASE "食事処"
 CALL コメント出力(コメント_業務中, 業務中リスト, "食事処", "					")
-PRINTL 				CASE "장신구점"
+PRINTL 				CASE "装飾品店"
 CALL コメント出力(コメント_業務中, 業務中リスト, "装飾品店", "					")
+PRINTL 				CASE "直売所"
+CALL コメント出力(コメント_業務中, 業務中リスト, "直売所", "					")
 PRINTL 			ENDSELECT
 PRINTL 	ENDSELECT
 PRINTL ENDIF
-PRINTL ;이 시점에서 대사가 입력되어 있다면 표시로 건너뛴다
+PRINTL ;この시点で대사が入ってるなら表示へ飛ばす
 PRINTL SIF KSTR:0 != ""
 PRINTL 	GOTO 表示位置
-PRINTL ;상황에 따라 분기
+PRINTL ;状況で분岐
 HTML_PRINT "<br>"
 PRINTL IF CFLAG:対象キャラ:飲み会
-PRINTL 	;술자리 중
+PRINTL 	;飲み会中
 CALL コメント出力(コメント_状況別, 状況別リスト, "飲み会", "	")
 PRINTL ELSEIF CFLAG:対象キャラ:睡眠
-PRINTL 	;수면 중
+PRINTL 	;睡眠中
 CALL コメント出力(コメント_状況別, 状況別リスト, "睡眠中", "	")
 PRINTL ELSEIF CFLAG:対象キャラ:デート
-PRINTL 	;데이트 중
-PRINTL 	;데이트 상대의 캐릭터 번호 + 100이 들어있다
-PRINTL 	;당신이 상대라면 「CFLAG:対象キャラ:デート == MASTER + 100」
+PRINTL 	;デート中
+PRINTL 	;デートの相手のキャラ番号 + 100が入っている
+PRINTL 	;당신 상대라면「CFLAG:対象キャラ:デート == MASTER + 100」
 CALL コメント出力(コメント_状況別, 状況別リスト, "デート中", "	")
 PRINTL ELSEIF CFLAG:対象キャラ:一緒に遊ぶ
 PRINTL 	;함께 노는 중
@@ -500,7 +502,7 @@ PRINTL ELSEIF CFLAG:対象キャラ:同行
 PRINTL 	;동행 중
 CALL コメント出力(コメント_状況別, 状況別リスト, "同行中", "	")
 PRINTL ELSEIF CFLAG:PLAYER:隠密 && CFLAG:対象キャラ:隠密
-PRINTL 	;함께 은밀 중
+PRINTL 	;함께 은밀 행동 중
 CALL コメント出力(コメント_状況別, 状況別リスト, "一緒に隠れている最中", "	")
 PRINTL ELSEIF CFLAG:PLAYER:隠密 && !CFLAG:対象キャラ:隠密
 PRINTL 	;당신이 숨어있고, 캐릭터는 당신을 눈치채지 못했다
@@ -509,25 +511,25 @@ PRINTL ELSEIF !CFLAG:PLAYER:隠密 && CFLAG:対象キャラ:隠密
 PRINTL 	;캐릭터의 야외 자위 중
 CALL コメント出力(コメント_状況別, 状況別リスト, "野外オナニー中", "	")
 PRINTL ENDIF
-PRINTL ;이 시점에서 대사가 있다면 표시로 이동
+PRINTL ;이 시점에 대사가 들어가 있다면 표시로 이동한다
 PRINTL SIF KSTR:0 != ""
 PRINTL 	GOTO 表示位置
 HTML_PRINT "<br>"
 PRINTL ;가장 많은 호감도 요소로 분기
-PRINTL ;간이 버전이므로 스테이터스 화면의 코멘트를 이용. 세부적으로 정하고 싶다면 나중에 편집해주세요
+PRINTL ;간이 버전이므로 스테이터스 화면의 코멘트를 이용한다. 세부적으로 정하고 싶다면 나중에 편집해 주세요
 PRINTL SELECTCASE MAXRAND(CFLAG:対象キャラ:友情度, CFLAG:対象キャラ:信頼度, CFLAG:対象キャラ:恋心度, CFLAG:対象キャラ:性愛度)
 PRINTL 	CASE 0
-PRINTL 		;우정도
-PRINTFORML 		CALL 口上_ステータス画面_友情コメント_{CSV番号}(対象キャラ, 1)
+PRINTL 		;우정
+PRINTFORML 		CALL 대사_ステータス画面_友情コメント_{CSV番号}(対象キャラ, 1)
 PRINTL 	CASE 1
 PRINTL 		;신뢰도
-PRINTFORML 		CALL 口上_ステータス画面_信頼コメント_{CSV番号}(対象キャラ, 1)
+PRINTFORML 		CALL 대사_ステータス画面_信頼コメント_{CSV番号}(対象キャラ, 1)
 PRINTL 	CASE 2
 PRINTL 		;연심도
-PRINTFORML 		CALL 口上_ステータス画面_恋心コメント_{CSV番号}(対象キャラ, 1)
+PRINTFORML 		CALL 대사_ステータス画面_恋心コメント_{CSV番号}(対象キャラ, 1)
 PRINTL 	CASE 3
-PRINTL 		;성애도
-PRINTFORML 		CALL 口上_ステータス画面_性愛コメント_{CSV番号}(対象キャラ, 1)
+PRINTL 		;性愛度
+PRINTFORML 		CALL 대사_ステータス画面_性愛コメント_{CSV番号}(対象キャラ, 1)
 PRINTL ENDSELECT
 HTML_PRINT "<br>"
 PRINTL IF K > 1
@@ -540,31 +542,31 @@ PRINTL CALL PRINT_STATEコメント表示(対象キャラ, 2)
 HTML_PRINT "<br>"
 HTML_PRINT "<br>"
 PRINTL ;--------------------------------------------------
-PRINTL ;상태 화면 한마디 대사_우정
+PRINTL ;ステータス画面一言대사_友情
 PRINTL ;--------------------------------------------------
-PRINTFORML @口上_ステータス画面_友情コメント_{CSV番号}(対象キャラ, ARG=0)
+PRINTFORML @대사_ステータス画面_友情コメント_{CSV番号}(対象キャラ, ARG=0)
 PRINTL #DIM 対象キャラ
-PRINTL CALL 口上変数初期化
+PRINTL CALL 대사変数初期化
 HTML_PRINT "<br>"
-PRINTL ;대사와 같은 감각으로 사용하기 위해 서식을 통일하고 있지만, 상태 화면에 표시되므로
-PRINTL ;기본적으로 WAIT 계열은 사용하지 않는 것을 권장
-PRINTL ;이것도 간이 버전이므로 한 줄로만 제한
+PRINTL ;대사と同じ感覚で使う為に書式を統一しているが、ステータス画面で表示されるので
+PRINTL ;基本的にWAIT系列は使わないことを推奨
+PRINTL ;こちらも簡易版なので一行のみに限定
 HTML_PRINT "<br>"
 PRINTL SELECTCASE CFLAG:対象キャラ:友情度
 PRINTL 	CASE IS == 0
-PRINTL 		;첫 만남
+PRINTL 		;初対面
 PRINTFORML 		KSTR:(K++) = %コメント_好感度:0:0%
 PRINTL 	CASE IS <= 経験値テーブル:(関係閾値:1)
-PRINTL 		;타인
+PRINTL 		;他人
 PRINTFORML 		KSTR:(K++) = %コメント_好感度:0:1%
 PRINTL 	CASE IS <= 経験値テーブル:(関係閾値:2)
-PRINTL 		;아는 사람
+PRINTL 		;안면이 있는 사이
 PRINTFORML 		KSTR:(K++) = %コメント_好感度:0:2%
 PRINTL 	CASE IS <= 経験値テーブル:(関係閾値:3)
 PRINTL 		;친구
 PRINTFORML 		KSTR:(K++) = %コメント_好感度:0:3%
 PRINTL 	CASE IS <= 経験値テーブル:(関係閾値:4)
-PRINTL 		;절친
+PRINTL 		;친한 친구
 PRINTFORML 		KSTR:(K++) = %コメント_好感度:0:4%
 PRINTL 	CASEELSE
 PRINTL 		;둘도 없는 친구
@@ -577,11 +579,11 @@ HTML_PRINT "<br>"
 PRINTL CALL PRINT_STATEコメント表示(対象キャラ)
 HTML_PRINT "<br>"
 PRINTL ;--------------------------------------------------
-PRINTL ;상태 화면 한마디 인사_신뢰
+PRINTL ;상태 화면 한마디 대사_신뢰
 PRINTL ;--------------------------------------------------
-PRINTFORML @口上_ステータス画面_信頼コメント_{CSV番号}(対象キャラ, ARG=0)
+PRINTFORML @대사_ステータス画面_信頼コメント_{CSV番号}(対象キャラ, ARG=0)
 PRINTL #DIM 対象キャラ
-PRINTL CALL 口上変数初期化
+PRINTL CALL 대사変数初期化
 PRINTL SELECTCASE CFLAG:対象キャラ:信頼度
 PRINTL 	CASE IS == 0
 PRINTL 		;첫 만남
@@ -590,80 +592,80 @@ PRINTL 	CASE IS <= 経験値テーブル:(関係閾値:1)
 PRINTL 		;타인
 PRINTFORML 		KSTR:(K++) = %コメント_好感度:1:1%
 PRINTL 	CASE IS <= 経験値テーブル:(関係閾値:2)
-PRINTL 		;아는 사람
+PRINTL 		;얼굴見知り
 PRINTFORML 		KSTR:(K++) = %コメント_好感度:1:2%
 PRINTL 	CASE IS <= 経験値テーブル:(関係閾値:3)
-PRINTL 		;지기
+PRINTL 		;知己
 PRINTFORML 		KSTR:(K++) = %コメント_好感度:1:3%
 PRINTL 	CASE IS <= 経験値テーブル:(関係閾値:4)
-PRINTL 		;파트너
+PRINTL 		;相棒
 PRINTFORML 		KSTR:(K++) = %コメント_好感度:1:4%
 PRINTL 	CASEELSE
-PRINTL 		;수어지교
+PRINTL 		;水魚の交わり
 PRINTFORML 		KSTR:(K++) = %コメント_好感度:1:5%
 PRINTL ENDSELECT
 HTML_PRINT "<br>"
 PRINTL SIF ARG
 PRINTL 	RETURN
 HTML_PRINT "<br>"
-PRINTL CALL PRINT_STATE코멘트 표시(対象キャラ)
+PRINTL CALL PRINT_STATEコメント表示(対象キャラ)
 HTML_PRINT "<br>"
 PRINTL ;--------------------------------------------------
-PRINTL ;상태 화면 한마디 인사_연심
+PRINTL ;ステータス画面一言대사_恋心
 PRINTL ;--------------------------------------------------
-PRINTFORML @口上_ステータス画面_恋心コメント_{CSV番号}(対象キャラ, ARG=0)
+PRINTFORML @대사_ステータス画面_恋心コメント_{CSV番号}(対象キャラ, ARG=0)
 PRINTL #DIM 対象キャラ
-PRINTL CALL 口上変数初期化
+PRINTL CALL 대사変数初期化
 PRINTL SELECTCASE CFLAG:対象キャラ:恋心度
 PRINTL 	CASE IS == 0
-PRINTL 		;첫 만남
+PRINTL 		;初対面
 PRINTFORML 		KSTR:(K++) = %コメント_好感度:2:0%
 PRINTL 	CASE IS <= 経験値テーブル:(関係閾値:1)
-PRINTL 		;타인
+PRINTL 		;他人
 PRINTFORML 		KSTR:(K++) = %コメント_好感度:2:1%
 PRINTL 	CASE IS <= 経験値テーブル:(関係閾値:2)
-PRINTL 		;아는 사람
+PRINTL 		;얼굴見知り
 PRINTFORML 		KSTR:(K++) = %コメント_好感度:2:2%
 PRINTL 	CASE IS <= 経験値テーブル:(関係閾値:3)
-PRINTL 		;신경 쓰이는 사람
+PRINTL 		;気になる人
 PRINTFORML 		KSTR:(K++) = %コメント_好感度:2:3%
 PRINTL 	CASE IS <= 経験値テーブル:(関係閾値:4)
-PRINTL 		;연인
+PRINTL 		;想い人
 PRINTFORML 		KSTR:(K++) = %コメント_好感度:2:4%
 PRINTL 	CASEELSE
-PRINTL 		;가장 사랑하는 사람
+PRINTL 		;最愛の人
 PRINTFORML 		KSTR:(K++) = %コメント_好感度:2:5%
 PRINTL ENDSELECT
 HTML_PRINT "<br>"
 PRINTL SIF ARG
 PRINTL 	RETURN
 HTML_PRINT "<br>"
-PRINTL CALL PRINT_STATE코멘트 표시(対象キャラ)
+PRINTL CALL PRINT_STATEコメント表示(対象キャラ)
 HTML_PRINT "<br>"
 PRINTL ;--------------------------------------------------
-PRINTL ;스테이터스 화면 한마디 구상_성애
+PRINTL ;ステータス画面一言대사_性愛
 PRINTL ;--------------------------------------------------
-PRINTFORML @口上_ステータス画面_性愛コメント_{CSV番号}(対象キャラ, ARG=0)
+PRINTFORML @대사_ステータス画面_性愛コメント_{CSV番号}(対象キャラ, ARG=0)
 PRINTL #DIM 対象キャラ
-PRINTL CALL 口上変数初期化
+PRINTL CALL 대사変数初期化
 PRINTL SELECTCASE CFLAG:対象キャラ:性愛度
 PRINTL 	CASE IS == 0
-PRINTL 		;첫 만남
+PRINTL 		;初対面
 PRINTFORML 		KSTR:(K++) = %コメント_好感度:3:0%
 PRINTL 	CASE IS <= 経験値テーブル:(関係閾値:1)
-PRINTL 		;타인
+PRINTL 		;他人
 PRINTFORML 		KSTR:(K++) = %コメント_好感度:3:1%
 PRINTL 	CASE IS <= 経験値テーブル:(関係閾値:2)
-PRINTL 		;아는 사람
+PRINTL 		;얼굴 아는 사이
 PRINTFORML 		KSTR:(K++) = %コメント_好感度:3:2%
 PRINTL 	CASE IS <= 経験値テーブル:(関係閾値:3)
-PRINTL 		;성벽에 맞다
+PRINTL 		;성벽에 맞음
 PRINTFORML 		KSTR:(K++) = %コメント_好感度:3:3%
 PRINTL 	CASE IS <= 経験値テーブル:(関係閾値:4)
 PRINTL 		;자위의 대상
 PRINTFORML 		KSTR:(K++) = %コメント_好感度:3:4%
 PRINTL 	CASEELSE
-PRINTL 		;육욕의 포로
+PRINTL 		;육욕의 노예
 PRINTFORML 		KSTR:(K++) = %コメント_好感度:3:5%
 PRINTL ENDSELECT
 HTML_PRINT "<br>"
@@ -673,11 +675,11 @@ HTML_PRINT "<br>"
 PRINTL CALL PRINT_STATEコメント表示(対象キャラ, 1)
 HTML_PRINT "<br>"
 PRINTL ;--------------------------------------------------
-PRINTL ;스테이터스 화면 한마디 구상_고유 요소
+PRINTL ;스테이터스 화면 한마디 대사_고유 요소
 PRINTL ;--------------------------------------------------
-PRINTFORML @口上_ステータス画面_キャラ固有好感度要素コメント_{CSV番号}(対象キャラ, ARG=0)
+PRINTFORML @대사_ステータス画面_キャラ固有호감度要素コメント_{CSV番号}(対象キャラ, ARG=0)
 PRINTL #DIM 対象キャラ
-PRINTL CALL 口上変数初期化
+PRINTL CALL 대사変数初期化
 PRINTL SELECTCASE CFLAG:対象キャラ:キャラ固有好感度
 PRINTL 	CASE IS == 0
 PRINTL 		;첫 만남
@@ -705,11 +707,11 @@ HTML_PRINT "<br>"
 PRINTL CALL PRINT_STATEコメント表示(対象キャラ, 1)
 HTML_PRINT "<br>"
 PRINTL ;--------------------------------------------------
-PRINTL ;스테이터스 화면 한마디 구상_연모
+PRINTL ;상태 화면 한마디 대사_연모
 PRINTL ;--------------------------------------------------
-PRINTFORML @口上_ステータス画面_恋慕コメント_{CSV番号}(対象キャラ, ARG=0)
+PRINTFORML @대사_ステータス画面_恋慕コメント_{CSV番号}(対象キャラ, ARG=0)
 PRINTL #DIM 対象キャラ
-PRINTL CALL 口上変数初期化
+PRINTL CALL 대사変数初期化
 PRINTL PRINTL 
 PRINTL SELECTCASE CFLAG:対象キャラ:恋慕レベル
 PRINTL 	CASE IS == 0
@@ -719,29 +721,30 @@ PRINTL 	CASE IS <= 関係閾値:1
 PRINTL 		;조금 신경 쓰임
 PRINTFORML 		KSTR:(K++) = %コメント_好感度:5:1%
 PRINTL 	CASE IS <= 関係閾値:2
-PRINTL 		;왠지 좋을지도
+PRINTL 		;왠지 괜찮을지도
 PRINTFORML 		KSTR:(K++) = %コメント_好感度:5:2%
 PRINTL 	CASE IS <= 関係閾値:3
-PRINTL 		;호의를 자각
+PRINTL 		;好意を自覚
 PRINTFORML 		KSTR:(K++) = %コメント_好感度:5:3%
 PRINTL 	CASE IS <= 関係閾値:4
-PRINTL 		;러브러브
+PRINTL 		;ラブラブ
 PRINTFORML 		KSTR:(K++) = %コメント_好感度:5:4%
 PRINTL 	CASEELSE
-PRINTL 		;가장 사랑하는 사람
+PRINTL 		;最愛の人
 PRINTFORML 		KSTR:(K++) = %コメント_好感度:5:5%
 PRINTL ENDSELECT
 HTML_PRINT "<br>"
 PRINTL SIF ARG
 PRINTL 	RETURN
 HTML_PRINT "<br>"
-PRINTL CALL PRINT_STATE코멘트 표시(対象キャラ, 1)
+PRINTL CALL PRINT_STATEコメント表示(対象キャラ, 1)
 HTML_PRINT "<br>"
 PRINTL ;--------------------------------------------------
-PRINTL ;캐릭터에 대한 해설
+PRINTL ;キャラについての解説
 PRINTL ;--------------------------------------------------
-PRINTFORML @対象キャラ
-PRINTL ;EX 캐릭터의 출처를 해설하거나, 캐릭터의 설정·배경을 해설하는 것
+PRINTFORML @대사_ステータス画面_キャラ解説_{CSV番号}(対象キャラ)
+PRINTL #DIM 対象キャラ
+PRINTL ;EXキャラの出典を解説したり、キャラの設定・背景を解説するもの
 HTML_PRINT "<br>"
 IF コメント_解説:0:0 != ""
 	FOR LOCAL, 0, VARSIZE("コメント_解説", 2)
@@ -756,35 +759,44 @@ ELSE
 	PRINTL KSTR:(K++) = 　
 ENDIF
 
-IF !EXISTFUNCTION(@"口上側初期パラメータ変更_{CSV番号}") && EXISTCSV(CSV番号) && (CSVCSTR(CSV番号, GETNUM(CSTR, "一人称")) != CSTR:一人称 || CSVCSTR(CSV番号, GETNUM(CSTR, "二人称")) != CSTR:二人称)
+IF !EXISTFUNCTION(@"口上側初期パラメータ変更_{CSV番号}") && EXISTCSV(CSV番号) && CSTR:一人称 != "" && CSTR:二人称 != "" && (CSVCSTR(CSV番号, GETNUM(CSTR, "一人称")) != CSTR:一人称 || CSVCSTR(CSV番号, GETNUM(CSTR, "二人称")) != CSTR:二人称)
 	HTML_PRINT "<br>"
 	PRINTL ;--------------------------------------------------
-	PRINTL ;초기 파라미터 변경
+	PRINTL ;初期パラメータ変更
 	PRINTL ;--------------------------------------------------
-	PRINTFORML @구상측 초기 파라미터 변경_{CSV番号}
-	PRINTL ;NEWGAME 시에 호출되는 함수, 로드 시에는 호출되지 않음에 주의
-	PRINTL ;TALENT를 ONOFF하거나, EXP의 취득이나 초기 ABL의 변경 등을 여기에 기술할 것
+	PRINTFORML @대사側初期パラメータ変更_{CSV番号}
+PRINTL ;NEWGAME시에 호출되는 함수, 로드 시에는 호출되지 않음에 주의
+PRINTL ;TALENT를 ONOFF하거나, EXP 획득 및 초기 ABL 변경 등을 여기에 기술할 것
+PRINTL;설정하는 경우에만 [SKIPSTART][SKIPEND]를 삭제할 것 (공란으로 덮어쓰기 방지)
 	PRINTL LOCAL = GETCHARA({CSV番号})
 	HTML_PRINT "<br>"
-	PRINTL ;캐릭터가 자신을 지칭할 때의 호칭
+	SIF CSTR:一人称 == ""
+		PRINTL [SKIPSTART]
+PRINTL ;캐릭터가 자신을 지칭할 때의 호칭
 	PRINTFORML CSTR:LOCAL:一人称 = %CSTR:一人称%
+	SIF CSTR:一人称 == ""
+		PRINTL [SKIPEND]
 	HTML_PRINT "<br>"
-	PRINTL ;캐릭터가 당신을 지칭할 때의 호칭
+	SIF CSTR:二人称 == ""
+		PRINTL [SKIPSTART]
+PRINTL ;캐릭터가 당신을 지칭할 때의 호칭
 	PRINTFORML CSTR:LOCAL:二人称 = %CSTR:二人称%
+	SIF CSTR:二人称 == ""
+		PRINTL [SKIPEND]
 	HTML_PRINT "<br>"
 	PRINTL ;--------------------------------------------------
-	PRINTL ;로드 시 파라미터 변경
+PRINTL ;로드 시 파라미터 변경
 	PRINTL ;--------------------------------------------------
-	PRINTL @口上側LOADENDパラメータ変更_{CSV番号}
-	PRINTL ;로드 시 호출되는 변수. NEWGAME 시 호출되지 않음에 주의
-	PRINTL ;위 함수만으로는 나중에 추가했을 때 버그가 발생하므로 추가
+PRINTL @대사側LOADENDパラメータ変更_{CSV番号}
+PRINTL ;로드 시에 호출되는 변수. NEWGAME시에는 호출되지 않음에 주의
+PRINTL ;위 함수만으로는 나중에 추가했을 때 버그가 발생하므로 추가
 	PRINTL LOCAL = GETCHARA({CSV番号})
 	HTML_PRINT "<br>"
-	PRINTL ;캐릭터가 자신을 지칭할 때의 호칭
+PRINTL ;캐릭터가 자신을 지칭할 때의 호칭
 	PRINTL IF CSTR:LOCAL:一人称 == ""
 	PRINTFORML 	CSTR:LOCAL:一人称 = %CSTR:一人称%
 	PRINTL ENDIF
-	PRINTL ;캐릭터가 당신을 지칭할 때의 호칭
+PRINTL ;캐릭터가 당신을 지칭할 때의 호칭
 	PRINTL IF CSTR:LOCAL:二人称 == ""
 	PRINTFORML 	CSTR:LOCAL:二人称 = %CSTR:二人称%
 	PRINTL ENDIF
@@ -792,8 +804,8 @@ IF !EXISTFUNCTION(@"口上側初期パラメータ変更_{CSV番号}") && EXISTC
 ENDIF
 
 OUTPUTLOG @"ERB_EDITFILE/口上_{CSV番号}_%キャラ名%_ステータス画面.ERB", 1
-PRINTFORML ERB_EDITFILE 폴더에 출력했습니다. 「ERB/구상_캐릭터 개별 ERB/{CSV番号}_%キャラ名%」 폴더로 이동시켜 주십시오
-PRINTFORMW (게임에 반영하려면 Emuera 본체를 다시 시작해야 합니다)
+PRINTFORML ERB_EDITFILE 폴더에 출력했습니다. 「ERB/대사_캐릭터 개별ERB/{CSV番号}_%キャラ名%」 폴더로 이동시켜 주세요
+PRINTFORMW （게임에 반영하려면 Emuera 본체를 재시작해야 합니다）
 DELCHARA CHARANUM-1, CHARANUM-2
 RETURN 0
 

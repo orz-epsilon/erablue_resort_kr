@@ -18,7 +18,7 @@ SIF CFLAG:TARGET:睡眠
 
 @COM_TOOLTIP_204
 LOCALS = <br>■아래 옷을 벗기다<br>
-LOCALS += "상대의 하반신 옷을 벗기는 커맨드.<br>상하 일체형 옷의 경우, [옷을 벗기다]로 합류한다."
+LOCALS += "상대의 하반신 옷을 벗기는 커맨드。<br>상하 일체형 옷의 경우, [옷을 벗기다]에 합류한다."
 LOCALS += "<br>COM 타입: 우후후<br>획득 소스: 없음"
 LOCALS += "<br>고유 획득 경험: 없음<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
@@ -82,7 +82,7 @@ IF ABL:露出癖
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += ABL:露出癖 * 10
-	PRINTFORM 노출벽LV{ABL:露出癖}({ABL:露出癖 * 10})
+	PRINTFORM 노출증LV{ABL:露出癖}({ABL:露出癖 * 10})
 	＋表示フラグ = 1
 ENDIF
 IF MARK:快楽刻印
@@ -104,14 +104,14 @@ ENDIF
 IF TALENT:羞恥心 > 0
 	PRINT  - 
 	実行値 -= 1
-	PRINT 수줍음(1)
+	PRINT 수치심(1)
 	＋表示フラグ = 1
 ENDIF
 ;男嫌い（恋慕、親愛で無効）
 IF TALENT:性別嗜好 & 1 && !(TALENT:PLAYER:性別 & 1) && (!TALENT:恋慕 || PLAYER != MASTER)
 	PRINT  - 
 	実行値 -= 5
-	PRINT 남자 기피(5)
+	PRINT 남성 혐오(5)
 	＋表示フラグ = 1
 ENDIF
 ;恋慕
@@ -127,7 +127,7 @@ IF TALENT:セフレ
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += 3
-	PRINT 섹파(3)
+	PRINT 섹프(3)
 	＋表示フラグ = 1
 ENDIF
 ;野外
@@ -156,7 +156,16 @@ IF TCVAR:言いなり
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += 999
-	PRINT 당신 뜻대로(999)
+	PRINT 당신의 뜻대로(999)
+	＋表示フラグ = 1
+ENDIF
+
+;特殊言いなり
+IF TCVAR:特殊言いなり
+	SIF ＋表示フラグ
+		PRINT  + 
+	実行値 += 999
+	PRINTFORM %特殊言いなり分岐(TARGET)%(999)
 	＋表示フラグ = 1
 ENDIF
 
@@ -220,11 +229,22 @@ RETURN 1
 ;実行時メッセージ
 ;-------------------------------------------------
 @MESSAGE_COM204
-PRINTFORML %CALLNAME:PLAYER%는 %CALLNAME:TARGET%의 하의를 벗겼다…
+PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%의 아래 옷을 벗겼다…
 
 
 
 IF RFLAG:コマンド結果受渡し変数
-	PRINTFORML 다른 사람들의 시선이 있는 곳에서 옷을 벗었기에, %CALLNAME:TARGET%는 어딘가 불편해하는 것 같다…
+	PRINTFORML 남들 앞에서 벗은 탓에, %CALLNAME:TARGET%은(는) 어딘가 불안해하는 것 같다…
 ENDIF
 
+
+IF 特定状況口上用フラグ:TARGET:0 == 4
+	PRINTL
+	SETCOLOR カラーパレット("えっちな色")
+	PRINTFORM 벗긴 %CALLNAME:TARGET%의 허벅지 안쪽에
+	PRINT_IMG "デレマス_マーク"
+	CALL PRINT_STRL(@"표식을 발견했다_H_")
+	PRINTFORMW %CALLNAME:TARGET%은(는) 오늘의 『신데렐라』였던 것 같다
+	特定状況口上用フラグ:TARGET:0 = 1
+	RESETCOLOR
+ENDIF

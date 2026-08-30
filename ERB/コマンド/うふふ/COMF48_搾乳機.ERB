@@ -4,7 +4,7 @@
 ;-------------------------------------------------
 @COMNAME48
 #FUNCTIONS
-TSTR:コマンド名受渡 = 착유기
+TSTR:コマンド名受渡 = 搾乳機
 
 ;弱点コマンド欄に専用の文字列を表示したい場合、これを設定すること
 弱点コマンド欄表示名 = 搾乳機
@@ -22,9 +22,9 @@ TFLAG:コマンドタイプ受渡 = COMTYPE("道具系")
 
 
 @COM_TOOLTIP_48
-LOCALS = <br>■착유기<br>
-LOCALS += "젖꼭지에 모유를 짜는 기구를 부착하여 자극을 주는 커맨드. <br>착유기 장비 상태가 되어, 제거하거나 성행위를 종료할 때까지 지속적으로 쾌락이 발생한다. <br>[모유 체질]이 아니면 실행할 수 없다. <br>성벽 소질[착유 플레이]을 소지하고 있지 않으면 실행할 수 없다. <br>함몰 유두의 경우, [젖꼭지 괴롭힘] 커맨드로 발기시키지 않으면 실행할 수 없다."
-LOCALS += "<br>COM 타입: 도구계<br>획득 소스: 쾌B・노출・접촉・고통"
+LOCALS = <br>■搾乳機<br>
+LOCALS += "젖꼭지에 모유를 짜는 기구를 부착하여 자극을 주는 커맨드。<br>착유기 장비 상태가 되며, 제외하거나 성행위를 종료할 때까지 지속적으로 쾌락이 발생한다。<br>[모유 체질]이 아니면 실행할 수 없다。<br>성벽 소질[착유 플레이]을 소지하고 있지 않으면 실행할 수 없다。<br>함몰 유두의 경우, [젖꼭지 괴롭히기] 커맨드로 발기시키지 않으면 실행할 수 없다。"
+LOCALS += "<br>COM 타입: 도구 계열<br>획득 소스: 쾌B・노출・접촉・고통"
 LOCALS += "<br>고유 획득 경험: 도구 사용 경험(PLAYER)・젖꼭지 개발(TARGET)<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
@@ -51,7 +51,7 @@ IF OPTION変数:搾乳機強さ初期値 == -1
 	PRINTL
 	PRINTL
 	PRINTBUTTONLC "[900] 착유기를 장착한다", 900
-	PRINTBUTTONLC "[999] 돌아간다", 999
+	PRINTBUTTONLC "[999] 돌아가기", 999
 
 	BINPUT
 	LOCAL = RESULT
@@ -169,14 +169,14 @@ RETURN 1
 ;-------------------------------------------------
 @MESSAGE_COM48
 #DIM 同時キャラ番号
-PRINTFORM %CALLNAME:PLAYER%는
+PRINTFORM %CALLNAME:PLAYER%은(는)
 IF GETBIT(FLAG:モード管理, モードビット_同時)
 	FOR 同時キャラ番号, 0, 同時モード_選択数
 		SIF 同時キャラ番号 > 0
-			PRINT ,
+			PRINT 、
 		PRINTFORM %CALLNAME:(同時モード_選択キャラ:同時キャラ番号)%
 	NEXT
-	PRINT 전원에게 착유기를 장착했다
+	PRINT 모두에게 착유기를 장착했다
 	RETURN 0
 ENDIF
 PRINTFORML %CALLNAME:TARGET%에게 착유기를 장착했다

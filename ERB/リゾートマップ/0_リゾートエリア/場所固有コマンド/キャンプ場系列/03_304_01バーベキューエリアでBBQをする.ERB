@@ -22,7 +22,7 @@ TFLAG:コマンドタイプ受渡 = COMTYPE("日常")
 @COM_TOOLTIP_380_0_304
 LOCALS = <br>■BBQ를 하다<br>
 LOCALS += "그 자리에 있는 캐릭터 전원과 BBQ를 하며 식사하는 커맨드. 일정 확률로 대성공, 성공, 실패, 대실패로 분기. <br>소지하고 있는 식재료를 제공하면 효과가 상승한다."
-LOCALS += "<br>COM 타입: 일상<br>획득 소스: 환락・정복"
+LOCALS += "<br>COM타입：일상<br>취득 소스：환락・정복"
 LOCALS += "<br>고유 획득 경험: 없음<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 		
@@ -90,8 +90,8 @@ SELECTCASE RESULT保存
 		提供食材:(RESULT保存 - 1000) = -1
 		GOTO 食材_LOOP
 	CASE 998
-		PRINTL 가지고 있는 식재료를 추가 제공함으로써, 식사의 효과를 상승시킬 수 있습니다.
-		PRINTL (호감도 상승량이 증가하는 등)
+		PRINTL 소지한 식재료를 추가 제공함으로써, 식사의 효과를 상승시킬 수 있습니다.
+		PRINTL （호감도의 상승량이 증가하는 등）
 		PRINTL 추가하지 않아도 마이너스 보정이 걸리거나 하는 일은 없습니다.
 		PRINTW 또한, 캐릭터의 좋아하는 것을 제공하면 효과 상승량이 증가합니다. (미구현)
 		GOTO 食材_LOOP
@@ -209,7 +209,7 @@ LOCAL:1 = 300
 
 FOR LOCAL:2, 0, 5
 	IF 提供食材:(LOCAL:2) != -1
-		LOCAL:0 += 食材効力(DT_CELL_GETS("所持素材データベース", 提供食材:(LOCAL:2), "소재 아이템명", 1))
+		LOCAL:0 += 食材効力(DT_CELL_GETS("所持素材データベース", 提供食材:(LOCAL:2), "素材アイテム名", 1))
 	ENDIF
 NEXT
 
@@ -278,14 +278,14 @@ RETURN 1
 ;-------------------------------------------------
 @MESSAGE_COM380_0_304
 
-PRINTFORM %CALLNAME:PLAYER%은(는)%CALLNAME:TARGET%\@ GET_TARGETNUM() > 1 ? 들 # \@와
+PRINTFORM %CALLNAME:PLAYER%은(는)%CALLNAME:TARGET%\@ GET_TARGETNUM() > 1 ? 들 # \@과
 PRINT 바비큐를 했다
 
 SELECTCASE RFLAG:コマンド結果受渡し変数
 	CASE -2
 		;大失敗時
 		PRINTL 했지만,
-		PRINTW 요리를 크게 실패해서 아무것도 먹지 못했다…
+		PRINTW 요리를 크게 망쳐서 아무것도 먹지 못했다…
 	CASE -1
 		;失敗時
 		PRINTL 
@@ -293,11 +293,11 @@ SELECTCASE RFLAG:コマンド結果受渡し変数
 	CASE 1
 		;成功時
 		PRINTL 
-		PRINTFORMW %CALLNAME:(RFLAG:コマンド結果受渡し変数２)%이 맛있게 구운 고기로 배가 불렀다
+		PRINTFORMW %CALLNAME:(RFLAG:コマンド結果受渡し変数２)%이(가) 맛있게 구운 고기로 배가 불렀다
 	CASE 2
 		;大成功時
 		PRINTL 
-		PRINTFORMW %CALLNAME:(RFLAG:コマンド結果受渡し変数２)%이 구운 꼬치는 일품이라, \@ GET_TARGETNUM() > 1 ? 모두는 # 둘 다\@대만족하며 배가 불렀다!
+		PRINTFORMW %CALLNAME:(RFLAG:コマンド結果受渡し変数２)%이(가) 구운 꼬치는 일품이었고, \@ GET_TARGETNUM() > 1 ? 모두는 # 둘 다\@ 대만족하며 배가 불렀다!
 ENDSELECT
 
-PRINTFORML (섭취 칼로리:{RFLAG:コマンド結果受渡し変数３}kcal)
+PRINTFORML （섭취 칼로리: {RFLAG:コマンド結果受渡し変数３}kcal）

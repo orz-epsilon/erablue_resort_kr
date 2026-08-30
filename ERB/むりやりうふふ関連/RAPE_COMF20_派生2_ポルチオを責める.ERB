@@ -1,14 +1,14 @@
 
 @RAPE_COMNAME_S20_2
 #FUNCTIONS
-TSTR:コマンド名受渡 = 포르치오를 괴롭히다
+TSTR:コマンド名受渡 = 포르치오를 공격한다
 LOCAL = 0
 SIF MODE_確認_完全一致("正常位", PLAYER, TARGET) > -1
 	LOCAL += 1
 SIF MODE_確認_完全一致("屈曲位", PLAYER, TARGET) > -1
 	LOCAL += 1
 SIF LOCAL && BASE:PLAYER:勃起 >= 1500 && MAX(PALAM:PLAYER:快Ｃ, PALAM:PLAYER:快Ｖ, PALAM:PLAYER:快Ａ, PALAM:PLAYER:快Ｂ, PALAM:PLAYER:快Ｓ) >= PALAMLV:3 + ((PALAMLV:4 - PALAMLV:3) * 5 / 10)
-	TSTR:コマンド名受渡 = 강제 씨앗 박기 프레스
+	TSTR:コマンド名受渡 = 강제 종부 프레스
 
 ;===================================================
 ;コマンドタイプ
@@ -27,8 +27,8 @@ IF TSTR:コマンド名受渡 == "ポルチオを責める"
 ELSE
 	LOCALS += "상대를 임신시키려고, 몸 전체를 이용해 페니스를 자궁구에 강하게 깊숙이 밀어붙이는 커맨드. <br>V 삽입계 모드 시에만 실행 가능."
 ENDIF
-LOCALS += "<br>RAPE_COM타입: V계<br>획득 소스: 쾌V・접촉・고통・불결(일정 조건 시)"
-LOCALS += "<br>고유 획득 경험: V 성교 경험(TARGET)・포르치오 개발(TARGET)・C 성교 경험_V 삽입(PLAYER)<br>"
+LOCALS += "<br>RAPE_COM 타입: V계<br>획득 소스: 쾌V・접촉・고통・불결(일정 조건 시)"
+LOCALS += "<br>고유 획득 경험: V성교 경험(TARGET)・포르치오 개발(TARGET)・C성교 경험_V삽입(PLAYER)<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
 @RAPE_COM_S20_2
@@ -101,7 +101,7 @@ RETURN 1
 PRINTFORM %CALLNAME:PLAYER%은(는)
 
 IF RFLAG:コマンド結果受渡し変数
-	PRINTFORML %CALLNAME:TARGET%에 덮쳐, 전신을 밀착시켜%TEXTR("체중을 실어/움직임을 봉쇄하고")%, %TEXTR("페니스/귀두")%를 자궁구로%TEXTR("밀어 넣었다/밀착시켰다/밀어붙였다")%
+	PRINTFORML %CALLNAME:TARGET%에 덮쳐 올라, 전신을 밀착시켜%TEXTR("체중을 실어/움직임을 봉쇄하고")%、%TEXTR("페니스/귀두")%를 자궁구로%TEXTR("밀어 넣었다/밀착시켰다/들이밀었다")%
 ELSE
 	PRINTFORML %CALLNAME:TARGET%의 질내를 앞뒤로 움직이며, 안쪽 자궁구 부근에 있는 성감대를 압박했다
 	IF RFLAG:コマンド結果受渡し変数２

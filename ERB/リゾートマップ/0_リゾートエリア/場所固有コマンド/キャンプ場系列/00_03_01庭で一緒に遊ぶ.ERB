@@ -4,7 +4,7 @@
 ;-------------------------------------------------
 @COMNAME_PLACE_380_0_3
 #FUNCTION
-TSTR:コマンド名受渡 = 함께 놀다
+TSTR:コマンド名受渡 = 함께 놀기
 IF 施設改造度:3:0
 	TSTR:コマンド名受渡 = 
 	RETURNF 0
@@ -19,9 +19,9 @@ RETURNF 1
 TFLAG:コマンドタイプ受渡 = COMTYPE("日常")
 
 @COM_TOOLTIP_380_0_3
-LOCALS = <br>■함께 놀다<br>
+LOCALS = <br>■함께 놀기<br>
 LOCALS += "그 자리에 있는 모든 캐릭터와 정원에서 함께 노는 커맨드. 일정 확률로 대성공, 성공, 실패로 분기. <br>공놀이, 모의전, 산책 세 가지 중 무작위로 선택된다."
-LOCALS += "<br>COM 타입: 일상<br>획득 소스: 환락・정복(일정 조건 시)・고통(일정 조건 시)"
+LOCALS += "<br>COM 타입：일상<br>획득 소스：환락・정복(일정 조건 시)・고통(일정 조건 시)"
 LOCALS += "<br>고유 획득 경험: 없음<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
@@ -144,7 +144,7 @@ RETURN 1
 ;-------------------------------------------------
 @MESSAGE_COM380_0_3
 
-PRINTFORM %CALLNAME:PLAYER%은(는)%CALLNAME:TARGET%\@ GET_TARGETNUM() > 1 ? 들 # \@와(과)
+PRINTFORM %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%\@ GET_TARGETNUM() > 1 ? 達 # \@와
 SELECTCASE RFLAG:コマンド結果受渡し変数３
 	CASE 1
 		;ボール遊び
@@ -161,15 +161,15 @@ SELECTCASE RFLAG:コマンド結果受渡し変数
 	CASE IS <= -1
 		;失敗時
 		PRINTL 하지만,
-		PRINTW 별로 분위기가 달아오르지 않았다…
+		PRINTW 별로 즐겁지 않았다…
 	CASE IS <= 9
 		;成功時
 		PRINTL 
-		PRINTFORMW \@ GET_TARGETNUM() > 1 ? 모두 함께 # 둘이서\@즐거운 시간을 보낼 수 있었다…
+		PRINTFORMW \@ GET_TARGETNUM() > 1 ? 모두 함께 # 둘이서\@ 즐거운 시간을 보낼 수 있었다…
 	CASEELSE
 		;大成功時
 		PRINTL 
-		PRINTFORMW \@ GET_TARGETNUM() > 1 ? 모두 함께 # 둘이서\@매우 분위기가 달아올랐다!
+		PRINTFORMW \@ GET_TARGETNUM() > 1 ? 모두 함께 # 둘이서\@ 정말 즐거웠다!
 ENDSELECT
 
 

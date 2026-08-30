@@ -12,8 +12,8 @@ TFLAG:コマンドタイプ受渡 = COMTYPE("日常")
 
 @COM_TOOLTIP_318
 LOCALS = <br>■깨우다<br>
-LOCALS += "어떤 이유로 낮에 잠들어 있는 상대를 깨우는 커맨드. <br>아침에는 깨울 수 없다."
-LOCALS += "<br>COM 타입: 일상<br>획득 소스: 없음"
+LOCALS += "어떤 이유로든 일 중에 잠들어 있는 상대를 깨우는 커맨드.<br>아침에는 깨울 수 없다."
+LOCALS += "<br>COM 타입：일상<br>획득 소스：없음"
 LOCALS += "<br>고유 획득 경험: 없음<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
@@ -44,5 +44,5 @@ RETURN 1
 ;実行時メッセージ
 ;-------------------------------------------------
 @MESSAGE_COM318
-PRINTFORML %CALLNAME:PLAYER%은(는) 잠들어 버린%CALLNAME:TARGET%의 몸을 흔들어 깨웠다.
+PRINTFORML %CALLNAME:PLAYER%은(는) 잠들어 있는%CALLNAME:TARGET%의 몸을 흔들어, 깨웠다.
 

@@ -18,7 +18,7 @@ TFLAG:コマンドタイプ受渡 = COMTYPE("単独可能")
 LOCALS = <br>■편지를 보내다<br>
 LOCALS += "일정 이상의 호감도를 가진 캐릭터에게 편지를 보내는 커맨드. 관광객에게는 보낼 수 없다."
 LOCALS += "<br>캐릭터의 호감도가 상승하고, 다음 날 아침에 답장이 온다."
-LOCALS += "<br>COM 타입: 단독 가능<br>획득 소스: 없음"
+LOCALS += "<br>COM타입：단독 가능<br>획득소스：없음"
 LOCALS += "<br>고유 획득 경험: 없음<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
@@ -157,11 +157,11 @@ BINPUT
 LOCAL = RESULT
 SELECTCASE LOCAL
 	CASE 9999
-		RETURN 0
+		RETURN -1
 	CASE 9998
 		;CALL 能力表示チュートリアル()
 		GOTO 表示処理_LOOP
-	CASE 2000, 3000, 3100, 4000
+	CASE 2000, 3000, 3100, 3101, 3102, 4000
 		CALL フィルタソートボタンセット実行部(LOCAL, 2000, 3000, 3100, 4000)
 		ページ数 = 0
 		RESTART
@@ -278,15 +278,15 @@ RETURN 1
 
 SELECTCASE FLAG:手紙種類記録
 	CASE 0
-		手紙文字列 = 보통 편지
+		手紙文字列 = 평범한 편지
 	CASE 1
 		手紙文字列 = 러브레터
 	CASE 2
 		手紙文字列 = 비밀 편지
 ENDSELECT
 
-PRINTFORML %CALLNAME:PLAYER%은(는)%CALLNAME:(RFLAG:コマンド結果受渡し変数)%에게%手紙文字列%을(를) 보냈다.
-PRINTL (답장은 내일 아침에 옵니다)
+PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:(RFLAG:コマンド結果受渡し変数)%에게 %手紙文字列%을(를) 보냈다.
+PRINTL （답장은 다음 날 아침에 옵니다）
 
 
 @手紙送付キャラ確認(対象キャラ, 最初から詳細)
@@ -321,17 +321,17 @@ CALL キャラ簡易紹介(対象キャラ)
 リロールボタン有効 = 対象画像数 > 5
 PRINTL
 ; 確認メッセージ
-PRINTFORML %GET_NAME(対象キャラ)%에게 편지를 보냅니다.
+PRINTFORML %%GET_NAME(対象キャラ)%%에게 편지를 보냅니다.
 PRINTL 괜찮습니까?
 ; ボタン表示
 PRINTBUTTONLC "[0]예", 0
-PRINTBUTTONLC "[1]아니요", 1
+PRINTBUTTONLC "[1]아니오", 1
 PRINTBUTTONLC "[10]상세 능력", 10
 PRINTL
 PRINTBUTTONLC "[2]이전 캐릭터", 2
 PRINTBUTTONLC "[3]다음 캐릭터", 3
 SIF リロールボタン有効
-	PRINTBUTTONLC "[4]이미지 랜덤 표시를 리롤", 4
+	PRINTBUTTONLC "[4]이미지 랜덤 표시 다시 굴리기", 4
 PRINTL
 
 ; 入力ループ
@@ -435,25 +435,25 @@ RETURN 実行結果
 
 ;手紙種類を決定
 DRAWLINE
-PRINTFORML %NAME:対象キャラ%에게 어떤 편지를 보냅니까?
+PRINTFORML %NAME:対象キャラ%에게 어떤 편지를 보낼까요?
 DRAWLINE
 ;通常手紙は条件なし
-手紙文字列 = [0] 보통 편지를 보낸다
+手紙文字列 = [0] 평범한 편지를 보낸다
 PRINTBUTTON @"%手紙文字列, 30, LEFT%", 0
-PRINTL : 우정도↑↑　신뢰도↑
+PRINTL ：우정도↑↑　신뢰도↑
 ;ラブレター
 手紙文字列 = [1] 러브레터를 보낸다
 IF CFLAG:対象キャラ:恋慕レベル >= 関係閾値:2
 	PRINTBUTTON @"%手紙文字列, 30, LEFT%", 1
-	PRINTL : 연심도↑↑　연모도↑
+	PRINTL ：연심도↑↑　연모도↑
 ELSE
 	SETCOLOR カラーパレット("グレーアウト")
 	PRINTPLAINFORM %手紙文字列, 30, LEFT%
-	PRINTFORML : 연모 레벨{関係閾値:2}필요
+	PRINTFORML ：연모 레벨{関係閾値:2}필요
 	RESETCOLOR
 ENDIF
 ;秘密の手紙
-手紙文字列 = [2] 비밀 편지를 보내다
+手紙文字列 = [2] 비밀 편지를 보낸다
 IF 陥落チェック_性的(対象キャラ)
 	PRINTBUTTON @"%手紙文字列, 30, LEFT%", 2
 	PRINTL ：성애도↑↑　성욕↑
@@ -532,13 +532,13 @@ SELECTCASE FLAG:手紙種類記録
 		IF KSTR:0 == ""
 			;口上がない場合の汎用
 			PRINTDATA
-				DATAFORM 편지에 대한 감사와,
+				DATAFORM 편지에 대한 답례와,
 				DATAFORM 계절 인사와,
 				DATAFORM 정중한 인사와,
 			ENDDATA
 			PRINTDATAL
 				DATAFORM %CALLNAME:対象キャラ%의 근황이 적혀 있다.
-				DATAFORM %CALLNAME:対象キャラ%이 최근 시작한 취미에 대한 내용이 적혀 있다.
+				DATAFORM %CALLNAME:対象キャラ%가 최근 시작한 취미에 대한 내용이 적혀 있다.
 				DATAFORM %CALLNAME:MASTER%은(는) 최근 어떻게 지내는지 궁금해하는 말이 적혀 있다.
 			ENDDATA
 		ENDIF
@@ -571,8 +571,8 @@ SELECTCASE FLAG:手紙種類記録
 				DATAFORM 정중한 인사와,
 			ENDDATA
 			PRINTDATAL
-				DATAFORM %CALLNAME:MASTER%에 만나고 싶다는 마음이 적혀 있다.
-				DATAFORM 최근 문득 %CALLNAME:MASTER%의 얼굴이 떠오른다고 적혀 있다.
+				DATAFORM %CALLNAME:MASTER%을(를) 만나고 싶다는 마음이 적혀 있다.
+				DATAFORM 최근 자꾸 %CALLNAME:MASTER%의 얼굴이 떠오른다고 적혀 있다.
 				DATAFORM %CALLNAME:対象キャラ%도 %CALLNAME:MASTER%와 같은 마음일지도 모른다고 적혀 있다.
 			ENDDATA
 		ENDIF
@@ -593,7 +593,7 @@ SELECTCASE FLAG:手紙種類記録
 		BASE:対象キャラ:性欲 = MIN(BASE:対象キャラ:性欲 + (MAXBASE:対象キャラ:性欲 / 10), MAXBASE:対象キャラ:性欲)
 
 		DRAWLINE
-		PRINTFORML %CALLNAME:対象キャラ%에게서 비밀 편지의 답장이 왔다.
+		PRINTFORML %CALLNAME:対象キャラ%에게서 비밀 편지 답장이 왔다.
 		PRINTL
 		;口上呼び出し
 		TRYCALLFORM KOJO_EVENT_手紙返事_秘密の手紙_{NO:対象キャラ}(対象キャラ)
@@ -606,7 +606,7 @@ SELECTCASE FLAG:手紙種類記録
 			ENDDATA
 			PRINTDATAL
 				DATAFORM 자신도 %CALLNAME:MASTER%와 야한 짓을 하고 싶다고 적혀 있다.
-				DATAFORM 언제 밤에 일정이 비어있는지가 적혀 있다.
+				DATAFORM 언제 밤에 시간이 비는지가 적혀 있다.
 				DATAFORM 음란한 말로 %CALLNAME:MASTER%을(를) 유혹하는 말이 적혀 있다.
 			ENDDATA
 		ENDIF

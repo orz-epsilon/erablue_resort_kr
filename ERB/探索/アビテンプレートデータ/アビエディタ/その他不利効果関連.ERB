@@ -1,0 +1,327 @@
+
+@アビエディタ_その他不利効果追加(変更ID = 0, アビ段階 = 0, 取得条件)
+;アビ文字列１ 不利効果の種類
+;アビ文字列２ 延長・短縮対象
+;アビ文字列３ 
+;アビ文字列４ 
+;アビ文字列５
+;アビ数値１ 効果倍率
+;アビ数値２ 効果固定値
+;アビ数値３ 
+;アビ数値４ 基礎成功率
+;アビ数値５
+#DIM 効果順番
+#DIM DYNAMIC 効果倍率
+#DIM DYNAMIC 効果固定値
+#DIMS DYNAMIC 不利効果
+#DIMS DYNAMIC 効果対象
+#DIM DYNAMIC 効果成功率
+#DIMS DYNAMIC 延長・短縮対象
+#DIM アビ段階
+#DIM 変更ID
+#DIMS HTML文字列
+#DIMS 計算式タイプ
+#DIMS 取得条件
+
+;効果の最初かどうかを判定
+IF 変更ID == 0
+	;アビ段階が同じ効果がある、かつ新規効果追加状態＝最初ではない
+	LOCAL = DT_SELECT("アビエディタデータベース", @"アビ段階 = {アビ段階}")
+	効果順番 = LOCAL
+ELSE
+	;既存効果変更の場合、行数を見る
+	FOR LOCAL, 0, DT_ROW_LENGTH("アビエディタデータベース")
+		IF DT_CELL_GET("アビエディタデータベース", LOCAL, "id") == 変更ID
+			効果順番 = LOCAL
+			BREAK
+		ENDIF
+	NEXT
+ENDIF
+
+IF 変更ID
+	効果対象 '= DT_CELL_GETS("アビエディタデータベース", 変更ID, "アビ対象", 1)
+	不利効果 '= DT_CELL_GETS("アビエディタデータベース", 変更ID, "アビ文字列１", 1)
+	延長・短縮対象 '= DT_CELL_GETS("アビエディタデータベース", 変更ID, "アビ文字列２", 1)
+	効果倍率 = DT_CELL_GET("アビエディタデータベース", 変更ID, "アビ数値１", 1)
+	効果固定値 = DT_CELL_GET("アビエディタデータベース", 変更ID, "アビ数値２", 1)
+	効果成功率 = DT_CELL_GET("アビエディタデータベース", 変更ID, "アビ数値４", 1)
+	アビ段階 = DT_CELL_GET("アビエディタデータベース", 変更ID, "アビ段階", 1)
+ENDIF
+IF 効果対象 == ""
+	IF 効果順番 < 1
+		効果対象 = 敵単体
+	ELSE
+		効果対象 = 上と同じ相手
+	ENDIF
+ENDIF
+SIF 不利効果 == ""
+	不利効果 = スロウ
+
+$動作LOOP
+;バフの計算式タイプ取得
+計算式タイプ '= アビエディタ_ＭＰ自動計算_不利効果種類(不利効果)
+IF (不利効果 == "バフ効果短縮" || 不利効果 == "デバフ効果延長") && 延長・短縮対象 == ""
+	延長・短縮対象 = ターン
+ENDIF
+
+DRAWLINE
+PRINTL 불리 효과 설정을 선택해주세요.
+DRAWLINE
+
+PRINTL ・현재 효과
+PRINT 　　
+PRINTFORM %効果対象%에게
+IF STRFIND(RSTR:表示設定受け渡し, "［］") >= 0
+	PRINT ［
+	IF 効果倍率 > 0
+		PRINTFORM {効果倍率}％
+	ENDIF
+	IF 効果固定値 > 0
+		SIF 効果倍率 > 0
+			PRINT ＋
+		PRINTFORM {効果固定値}
+	ENDIF
+	IF STRFIND(RSTR:表示設定受け渡し, "期間表示") >= 0
+		PRINTFORM %延長・短縮対象%
+	ENDIF
+	PRINTFORM ］의
+ENDIF
+PRINTFORM %不利効果% 효과를 부여한다.
+IF 効果成功率 > 0
+	PRINTFORM 성공률{効果成功率}％.
+ENDIF
+PRINTL
+DRAWLINE
+
+HTML文字列 = 
+HTML文字列 += "<div rect='50, 0, 5000, 3000' padding='50,25,50' color='#101010' border='31' bcolor='#C0C0C0'><nobr>"
+HTML文字列 += @"<button value='1'>[1] 효과 대상을 변경한다</button>　　　　　　현재：%効果対象%<br>"
+HTML文字列 += @"<button value='2'>[2] 불리 효과를 변경한다</button>　　　　　　현재：%不利効果%<br>"
+IF STRFIND(計算式タイプ, "割合") >= 0
+	HTML文字列 += @"<button value='3'>[3] 효과 배율을 변경한다</button>　　　　　　현재：{効果倍率}％<br>"
+ELSE
+	HTML文字列 += @"<font color='#%カラーパレット_HTML("グレーアウト")%'>[3] 효과 배율을 변경한다</font><br>"
+ENDIF
+IF STRFIND(計算式タイプ, "固定値") >= 0
+	HTML文字列 += @"<button value='4'>[4] 효과 고정값을 변경한다</button>　　　　　현재：{効果固定値}<br>"
+ELSE
+	HTML文字列 += @"<font color='#%カラーパレット_HTML("グレーアウト")%'>[4] 효과 고정값을 변경한다</font><br>"
+ENDIF
+IF 不利効果 == "バフ効果短縮"
+	HTML文字列 += @"<button value='5'>[5] 연장할 지속 종류를 변경한다</button>　　현재：%延長・短縮対象%<br>"
+ELSEIF 不利効果 == "デバフ効果延長"
+	HTML文字列 += @"<button value='5'>[5] 단축할 지속 종류를 변경한다</button>　　현재：%延長・短縮対象%<br>"
+ENDIF
+HTML文字列 += "<br>"
+HTML文字列 += "<br>"
+HTML文字列 += @"<button value='998'>[998] 이 설정으로 효과를 결정한다</button><br>"
+HTML文字列 += @"<button value='999'>[999] 저장하지 않고 돌아간다</button><br>"
+HTML文字列 += "</div>"
+
+
+HTML_PRINT HTML文字列, 1
+FOR LOCAL, 0, 35
+	PRINTL
+NEXT
+
+BINPUT
+PRINTL
+PRINTL
+SELECTCASE RESULT
+	CASE 1
+		CALL アビエディタ_対象選択(効果対象, 効果順番)
+	CASE 2
+		CALL アビエディタ_その他不利効果種類選択(不利効果)
+	CASE 3
+		DRAWLINE
+		PRINTFORML 효과 배율을 입력해 주세요. 현재：{効果倍率}％
+		PRINTL
+		INPUT
+		IF RESULT < 0
+			PRINTW 음수 값은 지정할 수 없습니다
+		ENDIF
+		効果倍率 = RESULT
+	CASE 4
+		DRAWLINE
+		PRINTFORML 효과 고정값을 입력해 주세요. 현재：{効果固定値}
+		PRINTL
+		INPUT
+		IF RESULT < 0
+			PRINTW 음수 값은 지정할 수 없습니다
+		ENDIF
+		効果固定値 = RESULT
+	CASE 5
+		DRAWLINE
+		PRINTFORML 연장할 지속 종류를 선택해 주세요. 현재：%延長・短縮対象%
+		PRINTL
+		PRINTBUTTON "[0] 턴을 연장한다", 0
+		PRINTL
+		PRINTBUTTON "[1] 회 (효과 횟수)를 연장한다", 1
+		PRINTL
+		PRINTBUTTON "[2] 행동 (행동 횟수)을 연장한다", 2
+		PRINTL
+		PRINTBUTTON "[3] 피해 (피해 횟수)를 연장한다", 3
+		PRINTL
+		BINPUT
+		SELECTCASE RESULT
+			CASE 0
+				延長・短縮対象 = ターン
+			CASE 1
+				延長・短縮対象 = 回
+			CASE 2
+				延長・短縮対象 = 行動
+			CASE 3
+				延長・短縮対象 = 被ダメ
+		ENDSELECT
+	CASE 998
+		IF STRFIND(計算式タイプ, "割合") < 0
+			効果倍率 = 0
+		ENDIF
+		IF STRFIND(計算式タイプ, "固定値") < 0
+			効果固定値 = 0
+		ENDIF
+		IF 不利効果 != "バフ効果短縮" && 不利効果 != "デバフ効果延長"
+			延長・短縮対象 = 
+		ENDIF
+		IF 変更ID
+			;既存効果変更
+			DT_CELL_SET "アビエディタデータベース", 変更ID, "アビ対象", 効果対象, 1
+			DT_CELL_SET "アビエディタデータベース", 変更ID, "アビ数値１", 効果倍率, 1
+			DT_CELL_SET "アビエディタデータベース", 変更ID, "アビ数値２", 効果固定値, 1
+			DT_CELL_SET "アビエディタデータベース", 変更ID, "アビ数値４", 効果成功率, 1
+			DT_CELL_SET "アビエディタデータベース", 変更ID, "アビ文字列１", 不利効果, 1
+			DT_CELL_SET "アビエディタデータベース", 変更ID, "アビ文字列２", 延長・短縮対象, 1
+			PRINTW 버프 효과를 변경했습니다.
+		ELSE
+			;新規効果追加
+			{
+			DT_ROW_ADD 
+			"アビエディタデータベース", "効果順番", 効果順番, "アビ段階", アビ段階, "アビ効果種別", "その他不利効果", "アビ対象", 効果対象, 
+			"アビ数値１", 効果倍率, "アビ数値２", 効果固定値, "アビ数値４", 効果成功率,
+			"アビ文字列１", 不利効果, "アビ文字列２", 延長・短縮対象
+			}
+PRINTW 새로운 불리 효과를 추가했습니다.
+		ENDIF
+		RETURN 1
+	CASE 999
+		RETURN 0
+ENDSELECT
+
+GOTO 動作LOOP
+
+
+
+@アビエディタ_その他不利効果種類選択(不利効果)
+#DIMS REF 不利効果
+#DIM 表示数
+
+DRAWLINE
+PRINTFORML 설정할 불리 효과를 선택해주세요. 현재:%不利効果%
+DRAWLINE
+PRINTBUTTONLC @"[0] 슬로우", 0
+PRINTL
+PRINTBUTTONLC @"[1] 트레한", 1
+PRINTL
+PRINTBUTTONLC @"[2] 즉사", 2
+PRINTL
+PRINTBUTTONLC @"[3] 버프 효과 단축", 3
+PRINTL
+PRINTBUTTONLC @"[4] 디버프 효과 연장", 4
+PRINTL
+PRINTBUTTONLC @"[5] 오의 게이지 DOWN", 5
+PRINTL
+PRINTBUTTONLC @"[6] 버프 제거", 6
+PRINTL
+PRINTL
+PRINTBUTTONLC "[499] 기타 불리 효과 설명", 499
+PRINTL
+DRAWLINE
+PRINTL
+	
+BINPUT
+PRINTL
+PRINTL
+SELECTCASE RESULT
+	CASE 0
+		不利効果 = スロウ
+	CASE 1
+		不利効果 = トレハン
+	CASE 2
+		不利効果 = 即死
+	CASE 3
+		不利効果 = バフ効果短縮
+	CASE 4
+		不利効果 = デバフ効果延長
+	CASE 5
+		不利効果 = 奥義ゲージDOWN
+	CASE 6
+		不利効果 = バフ消去
+	CASE 499
+		DRAWLINE
+		PRINTL ・슬로우
+		PRINTL 　　효과량만큼 적의 차지 턴을 감소시킵니다.
+		PRINTL 　　효과 고정값만 효과를 발휘합니다.
+		PRINTL
+		PRINTL ・트레한
+		PRINTL 　　효과량만큼 적에게 효과 고정값의 횟수만큼 트레한 효과(아이템 드롭률 상승 효과)를 부여합니다.
+		PRINTL 　　효과 고정값만 효과를 발휘합니다.
+		PRINTL
+		PRINTL ・즉사
+		PRINTL 　　적의 HP를 0으로 만듭니다. 보스에게는 효과가 없습니다.
+		PRINTL 　　효과 비율, 효과 고정값 모두 효과를 발휘하지 않습니다.
+		PRINTL
+		PRINTL ・버프 효과 단축
+		PRINTL 　　대상에게 걸려있는 모든 버프의 효과 시간을 효과 고정값만큼 단축합니다.
+		PRINTL 　　단축 대상이 다를 경우, 효과를 발휘하지 않습니다. (지속 횟수 버프에 턴 단축을 걸어도 무의미함 등)
+		PRINTL 　　효과 고정값만 효과를 발휘합니다.
+		PRINTL
+		PRINTL ・디버프 효과 연장
+		PRINTL 　　대상에게 걸려있는 모든 디버프의 효과 시간을 효과 고정값만큼 연장합니다.
+		PRINTL 　　연장 대상이 다를 경우, 효과를 발휘하지 않습니다. (지속 횟수 디버프에 턴 연장을 걸어도 무의미함 등)
+		PRINTL 　　효과 고정값만 효과를 발휘합니다.
+		PRINTL
+		PRINTL ・오의 게이지 DOWN
+		PRINTL 　　대상의 오의 게이지를 감소시킵니다.
+		PRINTL 　　적에게는 효과를 발휘하지 않습니다.
+		PRINTL 　　효과 비율은 현재 값에 대한 비율로 오의 게이지를 감소시킵니다.
+		PRINTL 　　효과 고정값은 실수로 오의 게이지를 감소시킵니다.
+		PRINTL
+		PRINTL ・버프 제거
+		PRINTL 　　대상에게 걸려있는 버프를 효과 고정값의 개수만큼 제거합니다.
+		PRINTL 　　제거 불가능한 버프에 대해서는 효과를 발휘하지 않습니다.
+		PRINTL 　　효과 고정값만 효과를 발휘합니다.
+		PRINTL
+		WAIT
+		RESTART
+ENDSELECT
+
+
+@アビエディタ_ＭＰ自動計算_不利効果種類(不利効果)
+#FUNCTIONS
+#DIMS 不利効果
+
+;自動計算に使う係数と、計算式タイプを返す
+
+SELECTCASE 不利効果
+	CASE "スロウ"
+		RSTR:表示設定受け渡し = "［］"
+		RETURNF "고정값"
+	CASE "トレハン"
+		RSTR:表示設定受け渡し = "［］"
+		RETURNF "고정값"
+	CASE "即死"
+		RSTR:表示設定受け渡し = ""
+		RETURNF ""
+	CASE "バフ効果短縮"
+		RSTR:表示設定受け渡し = "［］_기간 표시"
+		RETURNF "고정값"
+	CASE "デバフ効果延長"
+		RSTR:表示設定受け渡し = "［］_기간 표시"
+		RETURNF "고정값"
+	CASE "奥義ゲージDOWN"
+		RSTR:表示設定受け渡し = "［］"
+RETURNF "割合_固定値"
+	CASE "バフ消去"
+RSTR:表示設定受け渡し = "［］"
+RETURNF "固定値"
+ENDSELECT

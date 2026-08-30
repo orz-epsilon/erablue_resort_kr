@@ -8,8 +8,15 @@ TOOLTIP_SETFONTSIZE 12
 TOOLTIP_SETDURATION 100000
 CALL モブ観光客算出
 
+;一日切り替え時に衣装取得
+CALL キャラ衣装取得チェック()
+
 
 DO
+
+;画像リソースを全解放
+SPRITEDISPOSEALL 0
+TFLAG:口上用画像表示番号 = 0
 
 CALL リゾートランク上昇チェック()
 CALL イベント発生条件チェック()
@@ -18,11 +25,21 @@ CALL ユニーク客人数チェック()
 SIF FLAG:外出解放フラグ < 1
 	CALL 外出先存在チェック()
 
+
+;ルピマイナスチェック
+CALL ルピマイナスイベント()
+
+PRINTL
+PRINTL
+PRINTL
+PRINTL
+PRINTL
+PRINTL
 DRAWLINE
 LOCALS = %月算出()%
-PRINTFORM {RESULT}년차 %LOCALS% {DAY % 30 + 1}일(%GET_DAY()%)
-PRINTFORML （소지금:%NUM_FORMAT(MONEY)%%MONEYLABEL% 소지ZP:%ZP所持量全文字列()%）
-PRINTFORM %リゾート名称%인기도:%リゾート人気度全文字列()%
+PRINTFORM {RESULT}년째 %LOCALS% {DAY % 30 + 1}日(%GET_DAY()%)
+PRINTFORML （보유금: %NUM_FORMAT(MONEY)%%MONEYLABEL% 보유 ZP: %ZP所持量全文字列()%）
+PRINTFORM %リゾート名称%　인기도: %リゾート人気度全文字列()%
 CALL 人気度上限算出()
 IF リゾート人気度 >= RESULT / 1000
 	SETCOLOR 0xC0C070
@@ -30,7 +47,7 @@ IF リゾート人気度 >= RESULT / 1000
 	RESETCOLOR
 ENDIF
 PRINTL
-PRINTFORML 리조트 랭크:%リゾートランク文字列:リゾートランク%
+PRINTFORML 리조트 랭크: %リゾートランク文字列:リゾートランク%
 SETCOLOR カラーパレット("えっちな色")
 PRINT 필드 효과:
 RESETCOLOR
@@ -55,7 +72,7 @@ NEXT
 IF LOCAL:1 == 0
 	LOCALS = 없음
 ELSE
-	LOCALS += @"　1일 ZP 소비：{消費ZP, 3}ZP"
+	LOCALS += @"　消費ZP/1일：{消費ZP, 3}ZP"
 	LOCALS += "</font>"
 ENDIF
 HTML_PRINT LOCALS, 1
@@ -70,176 +87,189 @@ FOR LOCAL, 1, CHARANUM
 	SIF CFLAG:LOCAL:滞在期間 == 1
 		LOCAL:1 += 1
 NEXT
-PRINTFORML 네임드 캐릭터 체류 인원:%NUM_FORMAT(滞在キャラ数), 3%명 / 최대%NUM_FORMAT(滞在キャラ上限), 3%명　　　오늘 귀가 예정자:%NUM_FORMAT(LOCAL:1), 3%명
-PRINTFORM 오늘의 일반 관광객 수:%NUM_FORMAT(モブ観光客数), 5%명　　　　
-PRINTFORML 고용 중인 직원 캐릭터 수:%NUM_FORMAT(従業員人数), 3%명
+PRINTFORML 네임드 캐릭터 체류 인원: %NUM_FORMAT(滞在キャラ数), 3%명 / 최대 %NUM_FORMAT(滞在キャラ上限), 3%명　　　오늘 귀가 예정: %NUM_FORMAT(LOCAL:1), 3%명
+PRINTFORM 오늘의 모브 관광객 수: %NUM_FORMAT(モブ観光客数), 5%명　　　　
+PRINTFORML 고용 중인 종업원 캐릭터 수: %NUM_FORMAT(従業員人数), 3%명
+;食材ゲージ
+PRINT 식재료 재고:
+CALL PRINT_COLORBAR, FLAG:食材在庫量, 1000, 600, 100, BARCOLORSET("黄"), RESULT:1
+PRINTFORM ({FLAG:食材在庫量}/1000)
+PRINTL
 DRAWLINE
-LOCALS = <div rect='94, 0, 5937, 1062' border='31' bcolor='#C0C0C0'></div>
-LOCALS += "<div rect='156, 94, 5812, 937'>"
+LOCALS = 
+LOCALS += "<div rect='5500, 94, 4312, 2537' padding='50,25,50' border='31' bcolor='#C0C0C0'>"
 LOCALS += 起床前メニュー上部分表示文章()
 LOCALS += "</div>"
 HTML_PRINT LOCALS, 1
-FOR LOCAL, 0, 10
-	PRINTL 
-NEXT
+; FOR LOCAL, 0, 10
+; 	PRINTL 
+; NEXT
 LOCALS = <font color='#f39800'>-----[게임 진행]-------------------------------------------------------------------------------------------</font><br>
-LOCALS += "<button value='100'>[100] - 기상</button>　　　　　　　　　　　　　 "
+LOCALS += "<button value='100'>[100] - 기상</button>　　　　　　　　　　　　　　"
 IF STRFIND(TSTR:NEWイベントフラグ, "EVENT") >= 0
-	LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'><button value='120'>[120] - 이벤트　리스트</button></font><font color='#%カラーパレット_HTML("真っ赤")%'> NEW!</font> 　　　　　　"
+	LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'><button value='120'>[120] - 이벤트 목록</button></font><font color='#%カラーパレット_HTML("真っ赤")%'> NEW!</font> 　　　　　　"
 ELSEIF チュートリアルフラグ:イベントリスト == 0
-	LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'><button value='120'>[120] - 이벤트　리스트</button></font>　<font color='#%カラーパレット_HTML("真っ赤")%'>NEW!</font>　　　　　　"
+	LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'><button value='120'>[120] - 이벤트 목록</button></font>　<font color='#%カラーパレット_HTML("真っ赤")%'>NEW!</font>　　　　　　"
 ELSE
-	LOCALS += "<button value='120'>[120] - 이벤트　리스트</button>　　　　　　　　　"
+	LOCALS += "<button value='120'>[120] - 이벤트 목록</button>　　　　　　　　　"
 ENDIF
 IF チュートリアルフラグ:探索へ出かける == 0
-	LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'><button value='101'>[101] - 탐색에　나가기</button></font>　<font color='#%カラーパレット_HTML("真っ赤")%'>NEW!</font>　　　　　　"
+	LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'><button value='101'>[101] - 탐색하러 간다</button></font>　<font color='#%カラーパレット_HTML("真っ赤")%'>NEW!</font>　　　　　　"
 ELSE
-	LOCALS += "<button value='101'>[101] - 탐색에　나가기</button>　　　　　　　　　"
+	LOCALS += "<button value='101'>[101] - 탐색하러 간다</button>　　　　　　　　　"
 ENDIF
 LOCALS += "<br>"
 IF FLAG:外出解放フラグ
-	LOCALS += @"<button value='102'>[102] - 외출하다</button>　　　　　　　　　　　  "
+	LOCALS += @"<button value='102'>[102] - 외출한다</button>　　　　　　　　　　　　"
 ELSE
 	IF OPTION変数:ツールチップ切り替え == 0
-		LOCALS += @"<font color='#%カラーパレット_HTML("グレーアウト")%'><nonbutton title='外出先が見つかりません'>[102] - 외출하다</nonbutton></font>　　　　　　　　　　　　"
+		LOCALS += @"<font color='#%カラーパレット_HTML("グレーアウト")%'><nonbutton title='외출할 곳을 찾지 못했습니다'>[102] - 외출한다</nonbutton></font>　　　　　　　　　　　　"
 	ELSE
-		LOCALS += @"<font color='#%カラーパレット_HTML("グレーアウト")%'>[102] - 외출하다</font>　　　　　　　　　　　　"
+		LOCALS += @"<font color='#%カラーパレット_HTML("グレーアウト")%'>[102] - 외출한다</font>　　　　　　　　　　　　"
 	ENDIF
 ENDIF
 IF リゾートランク >= 2
 	IF STRFIND(TSTR:NEWイベントフラグ, "ENDHING") >= 0
-		LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'><button value='300'>[300] - 엔딩　이벤트</button></font> <font color='#%カラーパレット_HTML("真っ赤")%'>NEW!</font> 　　"
+		LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'><button value='300'>[300] - 엔딩 이벤트</button></font> <font color='#%カラーパレット_HTML("真っ赤")%'>NEW!</font> 　　"
 	ELSE
-		LOCALS += "<button value='300'>[300] - 엔딩　이벤트</button>　　　　　　"
+		LOCALS += "<button value='300'>[300] - 엔딩 이벤트</button>　　　　　　"
 	ENDIF
 ELSE
 	IF OPTION変数:ツールチップ切り替え == 0
-		LOCALS += @"<font color='#%カラーパレット_HTML("グレーアウト")%'><nonbutton title='実行条件：リゾートランクＤ以上'>[300] - 엔딩　이벤트</nonbutton></font>　　　　　　"
+		LOCALS += @"<font color='#%カラーパレット_HTML("グレーアウト")%'><nonbutton title='실행 조건: 리조트 랭크 D 이상'>[300] - 엔딩 이벤트</nonbutton></font>　　　　　　"
 	ELSE
-		LOCALS += @"<font color='#%カラーパレット_HTML("グレーアウト")%'>[300] - 엔딩　이벤트</font>　　　　　　"
+		LOCALS += @"<font color='#%カラーパレット_HTML("グレーアウト")%'>[300] - 엔딩 이벤트</font>　　　　　　"
 	ENDIF
 ENDIF
 IF DT_SELECT("エンディング用変数配列", "イベント完了フラグ > 0")
-	LOCALS += "<button value='301'>[301] - 달성된　엔딩　시청</button>"
+	LOCALS += "<button value='301'>[301] - 달성한 엔딩 보기</button>"
 ENDIF
 
 LOCALS += "<br><br>"
 LOCALS += "<font color='#f39800'>-----[리조트]---------------------------------------------------------------------------------------------</font><br>"
 IF 滞在キャラ数 >= 滞在キャラ上限
 	IF OPTION変数:ツールチップ切り替え == 0
-		LOCALS += "<font color='#666666'><nonbutton title='<br>체류 인원 상한<br>'>[110] - 리조트　홍보</nonbutton></font>　　　　　　　　　　"
+		LOCALS += "<font color='#666666'><nonbutton title='<br>체류 인원 상한<br>'>[110] - 리조트 광고를 낸다</nonbutton></font>　　　　　　"
 	ELSE
-		LOCALS += "<font color='#666666'><nonbutton>[110] - 리조트　홍보</nonbutton></font>　　　　　　　　　　"
+		LOCALS += "<font color='#666666'><nonbutton>[110] - 리조트 광고를 낸다</nonbutton></font>　　　　　　"
 	ENDIF
 ELSE
 	IF チュートリアルフラグ:最初の広告 == 0
-		LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'><button value='110'>[110] - 리조트　홍보</button></font>　<font color='#%カラーパレット_HTML("真っ赤")%'>NEW!</font>　　　　　    "
+		LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'><button value='110'>[110] - 리조트 광고를 낸다</button></font>　<font color='#%カラーパレット_HTML("真っ赤")%'>NEW!</font>　　　"
 	ELSE
-		LOCALS += "<button value='110'>[110] - 리조트　홍보</button>　　　　　　　　　　"
+		LOCALS += "<button value='110'>[110] - 리조트 광고를 낸다</button>　　　　　　"
 	ENDIF
 ENDIF
 
-LOCALS += "<button value='111'>[111] - 경영계획</button>　　　　　　　　　　　　"
+LOCALS += "<button value='111'>[111] - 경영 계획</button>　　　　　　　　　　　　"
 
 IF ダンジョンクリアフラグ_沿岸部の森
 	IF チュートリアルフラグ:従業員設定 == 0
-		LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'><button value='113'>[113] - 종업원　설정</button></font>　<font color='#%カラーパレット_HTML("真っ赤")%'>NEW!</font>　　　　　　　　"
+		LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'><button value='113'>[113] - 종업원 설정</button></font>　<font color='#%カラーパレット_HTML("真っ赤")%'>NEW!</font>　　　　　　　　"
 	ELSE
-		LOCALS += "<button value='113'>[113] - 종업원　설정</button>　　　　　　　　　　　"
+		LOCALS += "<button value='113'>[113] - 종업원 설정</button>　　　　　　　　　　　"
 	ENDIF
 ELSE
 	IF OPTION変数:ツールチップ切り替え == 0
-		LOCALS += "<font color='#666666'><nonbutton title='<br>미개방 기능<br>던전 「해안 숲」 클리어로 해방<br>'>[113] - 종업원　설정</nonbutton></font>　　　　　　　　　　　"
+		LOCALS += "<font color='#666666'><nonbutton title='<br>미개방 기능<br>던전 「연안부의 숲」 클리어 시 해방<br>'>[113] - 종업원 설정</nonbutton></font>　　　　　　　　　　　"
 	ELSE
-		LOCALS += "<font color='#666666'><nonbutton>[113] - 종업원　설정</nonbutton></font>　　　　　　　　　　　"
+		LOCALS += "<font color='#666666'><nonbutton>[113] - 종업원 설정</nonbutton></font>　　　　　　　　　　　"
 	ENDIF
 ENDIF
 LOCALS += "<br>"
 IF ダンジョンクリアフラグ_沿岸部の森
 	IF チュートリアルフラグ:雇用レポート == 0
-		LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'><button value='130'>[130] - 고용　레포트</button></font>　<font color='#%カラーパレット_HTML("真っ赤")%'>NEW!</font>　　　　　　　"
+		LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'><button value='130'>[130] - 고용 리포트</button></font>　<font color='#%カラーパレット_HTML("真っ赤")%'>NEW!</font>　　　　　　　"
 	ELSE
-		LOCALS += "<button value='130'>[130] - 고용　레포트</button>　　　　　　　　　  "
+		LOCALS += "<button value='130'>[130] - 고용 리포트</button>　　　　　　　　　　"
 	ENDIF
 ELSE
 	IF OPTION変数:ツールチップ切り替え == 0
-		LOCALS += "<font color='#666666'><nonbutton title='<br>미개방 기능<br>던전 「해안 숲」 클리어로 해방<br>'>[130] - 고용　레포트</nonbutton></font>　　　　　　　　　　"
+		LOCALS += "<font color='#666666'><nonbutton title='<br>미개방 기능<br>던전 「연안부의 숲」 클리어 시 해방<br>'>[130] - 고용 리포트</nonbutton></font>　　　　　　　　　　"
 	ELSE
-		LOCALS += "<font color='#666666'><nonbutton>[130] - 고용　레포트</nonbutton></font>　　　　　　　　　　"
+		LOCALS += "<font color='#666666'><nonbutton>[130] - 고용 리포트</nonbutton></font>　　　　　　　　　　"
 	ENDIF
 ENDIF
-LOCALS += "<button value='131'>[131] - 숙박　구역　확인</button>　　　　　　　　　"
+LOCALS += "<button value='131'>[131] - 숙박 구역 확인</button>　　　　　　　　　"
 
+IF MATCH(開拓エリア開発番号, 大規模番号_牧場エリア) > 0
+	; IF チュートリアルフラグ:従業員設定 == 0
+	; 	LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'><button value='113'>[113] - 종업원 설정</button></font>　<font color='#%カラーパレット_HTML("真っ赤")%'>NEW!</font>　　　　　　　　"
+	; ELSE
+	; 	LOCALS += "<button value='132'>[132] - 家畜設定</button>　　　　　　　　　　　　"
+	; ENDIF
+	LOCALS += "<button value='132'>[132] - 가축 설정</button>　　　　　　　　　　　　"
+ENDIF
 
 
 
 LOCALS += "<br><br>"
 LOCALS += "<font color='#f39800'>-----[캐릭터]-----------------------------------------------------------------------------------------</font><br>"
 IF チュートリアルフラグ:能力表示 == 0
-	LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'><button value='121'>[121] - 능력　표시</button></font>　<font color='#%カラーパレット_HTML("真っ赤")%'>NEW!</font>　　　　　　　　"
+	LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'><button value='121'>[121] - 능력 표시</button></font>　<font color='#%カラーパレット_HTML("真っ赤")%'>NEW!</font>　　　　　　　　　"
 ELSE
-	LOCALS += "<button value='121'>[121] - 능력　표시</button>　　　　　　　　　　　"
+	LOCALS += "<button value='121'>[121] - 능력 표시</button>　　　　　　　　　　　　"
 ENDIF
 IF チュートリアルフラグ:探索系情報 == 0
-	LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'><button value='122'>[122] - 탐색　파티　확인</button></font>　<font color='#%カラーパレット_HTML("真っ赤")%'>NEW!</font>　　　　　　"
+	LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'><button value='122'>[122] - 탐색계 정보 목록</button></font>　<font color='#%カラーパレット_HTML("真っ赤")%'>NEW!</font>　　　　　　"
 ELSE
-	LOCALS += "<button value='122'>[122] - 탐색　파티　확인</button>　　　　　　　　　"
+	LOCALS += "<button value='122'>[122] - 탐색계 정보 목록</button>　　　　　　　　　"
 ENDIF
 IF 施設改造度:5:6
 	IF チュートリアルフラグ:性癖開拓 == 0
-		LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'><button value='123'>[123] - 성벽　개척</button></font>　<font color='#%カラーパレット_HTML("真っ赤")%'>NEW!</font>　　　　　　　　　"
+		LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'><button value='123'>[123] - 성벽 개척</button></font>　<font color='#%カラーパレット_HTML("真っ赤")%'>NEW!</font>　　　　　　　　　"
 	ELSE
-		LOCALS += "<button value='123'>[123] - 성벽　개척</button>　　　　　　　　　　　　"
+		LOCALS += "<button value='123'>[123] - 성벽 개척</button>　　　　　　　　　　　　"
 	ENDIF
 ELSE
 	IF OPTION変数:ツールチップ切り替え == 0
-		LOCALS += "<font color='#666666'><nonbutton title='<br>미개방 기능<br>시설 개조 「유희실 계열: 도서실」 달성으로 해방<br>'>[123] - 성벽　개척</nonbutton></font>　　　　　　　　　　　　"
+		LOCALS += "<font color='#666666'><nonbutton title='<br>미개방 기능<br>시설 개조 「오락실 계열: 도서실」 달성 시 해방<br>'>[123] - 성벽 개척</nonbutton></font>　　　　　　　　　　　　"
 	ELSE
-		LOCALS += "<font color='#666666'><nonbutton>[123] - 성벽　개척</nonbutton></font>　　　　　　　　　　　　"
+		LOCALS += "<font color='#666666'><nonbutton>[123] - 성벽 개척</nonbutton></font>　　　　　　　　　　　　"
 	ENDIF
 ENDIF
 LOCALS += "<br>"
 IF チュートリアルフラグ:干渉力強化 == 0
-	LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'><button value='124'>[124] - 간섭력　강화</button></font>　<font color='#%カラーパレット_HTML("真っ赤")%'>NEW!</font>　　　　　　　"
+	LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'><button value='124'>[124] - 간섭력 강화</button></font>　<font color='#%カラーパレット_HTML("真っ赤")%'>NEW!</font>　　　　　　　　"
 ELSE
-	LOCALS += "<button value='124'>[124] - 간섭력　강화</button>　　　　　　　　　　"
+	LOCALS += "<button value='124'>[124] - 간섭력 강화</button>　　　　　　　　　　　"
 ENDIF
 IF チュートリアルフラグ:縁結び == 0
-	LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'><button value='125'>[125] - 인연　맺어주기</button></font>　<font color='#%カラーパレット_HTML("真っ赤")%'>NEW!</font>　　　　　　"
+	LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'><button value='125'>[125] - 인연 맺기</button></font>　<font color='#%カラーパレット_HTML("真っ赤")%'>NEW!</font>　　　　　　"
 ELSE
-	LOCALS += "<button value='125'>[125] - 인연　맺어주기</button>　　　　　　　　　　　　　"
+	LOCALS += "<button value='125'>[125] - 인연 맺기</button>　　　　　　　　　　　　　"
 ENDIF
 LOCALS += "<br><br>"
 LOCALS += "<font color='#f39800'>-----[상점류]-------------------------------------------------------------------------------------------</font><br>"
 IF チュートリアルフラグ:通信販売 == 0
-	LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'><button value='114'>[114] - 통신판매</button></font>　<font color='#%カラーパレット_HTML("真っ赤")%'>NEW!</font>　　　　　　　　　"
+	LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'><button value='114'>[114] - 통신 판매</button></font>　<font color='#%カラーパレット_HTML("真っ赤")%'>NEW!</font>　　　　　　　　　"
 ELSE
-	LOCALS += "<button value='114'>[114] - 통신판매</button>　　　　　　　　　　　　"
+	LOCALS += "<button value='114'>[114] - 통신 판매</button>　　　　　　　　　　　　"
 ENDIF
 IF チュートリアルフラグ:ZPショップ == 0
-	LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'><button value='115'>[115] - ZP상점</button></font>　<font color='#%カラーパレット_HTML("真っ赤")%'>NEW!</font>　　　　　　　　"
+	LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'><button value='115'>[115] - ZP 상점</button></font>　<font color='#%カラーパレット_HTML("真っ赤")%'>NEW!</font>　　　　　　　　"
 ELSE
-	LOCALS += "<button value='115'>[115] - ZP상점</button>　　　　　　　　　　　"
+	LOCALS += "<button value='115'>[115] - ZP 상점</button>　　　　　　　　　　　"
 ENDIF
 LOCALS += "<br><br>"
 LOCALS += "<font color='#f39800'>-----[리조트 내 시설]---------------------------------------------------------------------------------------</font><br>"
 コマンド表示数 = 0
 IF イベント完了フラグ確認("大拡張！空艇港") > 0
 	IF チュートリアルフラグ:よろず屋依頼 == 0
-		LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'><button value='116'>[116] - 해결사에　의뢰를　내다</button></font>　<font color='#%カラーパレット_HTML("真っ赤")%'>NEW!</font>　　　"
+		LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'><button value='116'>[116] - 만물상에 의뢰한다</button></font>　<font color='#%カラーパレット_HTML("真っ赤")%'>NEW!</font>　　　"
 	ELSE
-		LOCALS += @"<button value='116'>[116] - 해결사에　의뢰를　내다</button>　　　　　　"
+		LOCALS += @"<button value='116'>[116] - 만물상에 의뢰한다</button>　　　　　　"
 	ENDIF
 	IF チュートリアルフラグ:輸入品店 == 0
-		LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'><button value='117'>[117] - 수입품　상점</button></font>　<font color='#%カラーパレット_HTML("真っ赤")%'>NEW!</font>　　　　　　　　　"
+		LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'><button value='117'>[117] - 수입품점</button></font>　<font color='#%カラーパレット_HTML("真っ赤")%'>NEW!</font>　　　　　　　　　"
 	ELSE
-		LOCALS += @"<button value='117'>[117] - 수입품　상점</button>　　　　　　　　　　　　"
+		LOCALS += @"<button value='117'>[117] - 수입품점</button>　　　　　　　　　　　　"
 	ENDIF
 	IF イベント完了フラグ確認("異世界の衣服？") > 0
 		IF チュートリアルフラグ:異世界裁店 == 0
-			LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'><button value='118'>[118] - 이세계　재봉점</button></font>　<font color='#%カラーパレット_HTML("真っ赤")%'>NEW!</font>　　　　　　　　"
+			LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'><button value='118'>[118] - 이세계 재단점</button></font>　<font color='#%カラーパレット_HTML("真っ赤")%'>NEW!</font>　　　　　　　　"
 		ELSE
-			LOCALS += @"<button value='118'>[118] - 이세계　재봉점</button>　　　　　　　　　　　"
+			LOCALS += @"<button value='118'>[118] - 이세계 재단점</button>　　　　　　　　　　　"
 		ENDIF
 	ENDIF
 	LOCALS += "<br>"
@@ -264,38 +294,38 @@ NEXT
 IF 港改造度:11:0
 	SIF コマンド表示数
 		LOCALS += "<br>"
-	LOCALS += @"<button value='150'>[150] - 탈것　작성</button>　　　　　　　　　　　　"
-	LOCALS += @"<button value='151'>[151] - 탑재병기　작성</button>　　　　　　　　　　"
-	LOCALS += @"<button value='152'>[152] - 고대　장비　재생 </button>　　　　　　　　"
+	LOCALS += @"<button value='150'>[150] - 탑승기 제작</button>　　　　　　　　　　　　"
+	LOCALS += @"<button value='151'>[151] - 탑재 병기 제작</button>　　　　　　　　　　"
+	LOCALS += @"<button value='152'>[152] - 낡은 장비 재생</button>　　　　　　　　"
 	LOCALS += "<br>"
 ENDIF
 IF 高速船作成済フラグ
 	IF チュートリアルフラグ:高速船派遣 == 0
-		LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'><button value='153'>[153] - 고속선　파견</button></font>　<font color='#%カラーパレット_HTML("真っ赤")%'>NEW!</font>　　　　　　　　"
+		LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'><button value='153'>[153] - 고속선 파견</button></font>　<font color='#%カラーパレット_HTML("真っ赤")%'>NEW!</font>　　　　　　　　"
 	ELSE
-		LOCALS += @"<button value='153'>[153] - 고속선　파견</button>　　　　　　　　　　　"
+		LOCALS += @"<button value='153'>[153] - 고속선 파견</button>　　　　　　　　　　　"
 	ENDIF
 ENDIF
 LOCALS += "<br><br>"
 LOCALS += "<font color='#f39800'>-----[아이템류]-------------------------------------------------------------------------------------------</font><br>"
 IF チュートリアルフラグ:写真一覧 == 0
-	LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'><button value='135'>[135] - 사진　목록</button></font>　<font color='#%カラーパレット_HTML("真っ赤")%'>NEW!</font>　　　　　　　　　"
+	LOCALS += @"<font color='#%カラーパレット_HTML("黄")%'><button value='135'>[135] - 사진 목록</button></font>　<font color='#%カラーパレット_HTML("真っ赤")%'>NEW!</font>　　　　　　　　　"
 ELSE
-	LOCALS += @"<button value='135'>[135] - 사진　목록</button>　　　　　　　　　　　　"
+	LOCALS += @"<button value='135'>[135] - 사진 목록</button>　　　　　　　　　　　　"
 ENDIF
 IF DT_ROW_LENGTH("ミルクデータベース") > 0
-	LOCALS += @"<button value='136'>[136] - 밀크　목록</button>　　　　　　　　　　　"
+	LOCALS += @"<button value='136'>[136] - 모유 목록</button>　　　　　　　　　　　"
 ENDIF
 LOCALS += "<br><br>"
 LOCALS += "<font color='#f39800'>-----[옵션]-------------------------------------------------------------------------------------------</font><br>"
-LOCALS += "<button value='200'>[200] - OPTION</button> 　　　　　　　　　　　　"
+LOCALS += "<button value='200'>[200] - OPTION</button>　　　　　　　　　　　　　"
 LOCALS += "<button value='201'>[201] - SAVE</button>　　　　　　　　　　　　　　"
 LOCALS += "<button value='202'>[202] - LOAD</button>　　　　　　　　　　　　　　"
 LOCALS += "<br>"
-LOCALS += "<button value='203'>[203] - 게임　헬프</button>　　　　　　　　　　"
+LOCALS += "<button value='203'>[203] - 게임 도움말</button>　　　　　　　　　　"
 LOCALS += "<br>"
 SIF FLAG:エンディング後フラグ
-	LOCALS += "<button value='900'>[900] - 강하게　NEWGAME</button>　　　　　　　　　　"
+	LOCALS += "<button value='900'>[900] - 강한 상태로 NEWGAME</button>　　　　　　　　　　"
 LOCALS += "<br><br>"
 [IF_DEBUG]
 LOCALS += "<button value='9999'>[9999] - 디버그용</button>　　　　　　　　　　"
@@ -333,7 +363,7 @@ SELECTCASE RESULT
 	CASE 102
 		CALL 外出先一覧表示()
 		IF RESULT > 0
-			FLAG:お出かけ先フラグ = RESULT
+			FLAG:外出先番号 = RESULT
 			SAVESTR:ゲームフェイズ管理 = 通常モード
 
 			;念の為イベントうふふ用のフラグを消しとく
@@ -374,7 +404,7 @@ SELECTCASE RESULT
 		IF チュートリアルフラグ:探索系情報 == 0
 			CALL 探索系情報チュートリアル()
 		ENDIF
-		表示切り替え文字列 = 탐색 집약_탐색 멤버
+		表示切り替え文字列 = 探索集約_探索メンバー
 		CALL 探索系集約表示
 	CASE 123
 		SIF 施設改造度:5:6
@@ -387,6 +417,8 @@ SELECTCASE RESULT
 		CALL 雇用レポート表示
 	CASE 131
 		CALL 宿泊エリア処理(1)
+	CASE 132
+		CALL COM380_4_4()
 	CASE 135
 		CALL 所持写真一覧表示
 	CASE 136
@@ -443,7 +475,7 @@ LOOP 1
 
 IF モブ観光客数 > 0
 	DRAWLINE
-	PRINTFORMW 오늘의 일반 관광객 수는{モブ観光客数, 4}명입니다.
+	PRINTFORMW 오늘의 모브 관광객 수는{モブ観光客数, 4}명입니다.
 	DRAWLINE
 ENDIF
 
@@ -453,6 +485,10 @@ CALL キャラ番号配列_初期化_シャッフル(順番シャッフル用配
 LOCALS = 
 LOCAL:1 = 0
 VARSET 教師レベル保存
+
+;ルーチンセット前にルーチン上書き用変数をリセット
+クーポン_遊戯場 = 0
+
 FOR LOCAL, 0, シャッフル数
 	SIF CFLAG:(順番シャッフル用配列:LOCAL):滞在期間 < 0
 		CONTINUE
@@ -488,11 +524,11 @@ CALL デートルーチンセット決定()
 CALL 関係性同行決定()
 
 IF LOCALS != ""
-	HTML_PRINT @"本日は以下の従業員が休暇中です。<br>%LOCALS%"
+	HTML_PRINT @"本일は以下の従業員が休暇中です。<br>%LOCALS%"
 	DRAWLINE
 	WAIT
 ENDIF
 
 ;クイック表示用に種別セット
-SIF FLAG:お出かけ先フラグ < 1
+SIF FLAG:外出先番号 < 1
 	TFLAG:マップ種別 = 派生マップ番号取得(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置)

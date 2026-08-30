@@ -1,0 +1,217 @@
+
+
+;-------------------------------------------------
+;家畜設定
+;-------------------------------------------------
+@COMNAME_PLACE_380_4_4
+#FUNCTION
+TSTR:コマンド名受渡 = 가축 설정
+RETURNF 1
+
+;===================================================
+;コマンドタイプ
+;===================================================
+@COMTYPE_380_4_4
+#FUNCTION
+TFLAG:コマンドタイプ受渡 = COMTYPE("単独可能")
+
+@COM_TOOLTIP_380_4_4
+LOCALS = <br>■가축 설정<br>
+LOCALS += "축사에서 어떤 가축을 키울지 결정하는 커맨드. 시간 소비 없음."
+LOCALS += "<br>COM타입：단독가능<br>획득소스：없음"
+LOCALS += "<br>고유 획득 경험: 없음<br>"
+TSTR:ツールチップ受渡 = %LOCALS%
+		
+@COM380_4_4
+#DIM 消費ルピ
+
+家畜設定上限 = 4
+
+DRAWLINE
+
+
+LOCALS = <div rect='81,31,5925,2412' padding='50,25,50' border='31' bcolor='#C0C0C0'>
+LOCALS += "<br>■현재 가축 목록<br><br>"
+LOCALS += "・제1 축사<br>"
+消費ルピ = 0
+FOR LOCAL, 0, 家畜設定上限
+	IF 現在設定家畜:LOCAL != ""
+		詳細文文字列受け渡し変数 = 
+		詳細文文字列受け渡し変数２ = 
+		TRYCALLFORM 家畜情報_%現在設定家畜:LOCAL%("基礎情報", LOCAL)
+		消費ルピ += RESULT
+		LOCALS += @"　<button title='<br>%詳細文文字列受け渡し変数%<br>%詳細文文字列受け渡し変数２%' value='{LOCAL}'>[%現在設定家畜:LOCAL%]</button><br>"
+	ELSE
+		LOCALS += @"　<button value='{LOCAL}'>[--------------------]</button><br>"
+	ENDIF
+NEXT
+LOCALS += @"<br>"
+LOCALS += @"　유지비:%NUM_FORMAT(消費ルピ), 8%루피"
+LOCALS += @"<br>"
+LOCALS += @"<br>"
+;LOCALS += @"<br><button value='996'>[996] システムの説明</button>"
+LOCALS += @"<br><button value='999'>[999] 돌아가기</button>"
+LOCALS += "</div>"
+LOCALS += "<div rect='3156,100,2770,2270' padding='50,25,50' border='20' bcolor='#C0C0C0'>"
+FOR LOCAL, 0, 家畜設定上限
+	SIF 現在設定家畜:LOCAL == ""
+		CONTINUE
+	LOCALS += @"■%現在設定家畜:LOCAL%의 특수 효과<br>"
+
+	詳細文文字列受け渡し変数２ = 
+	TRYCALLFORM 家畜情報_%現在設定家畜:LOCAL%("基礎情報", LOCAL)
+
+	IF 詳細文文字列受け渡し変数２ != ""
+		LOCALS += @"%詳細文文字列受け渡し変数２%<br><br>"
+	ELSE
+		LOCALS += "　없음<br><br>"
+	ENDIF
+NEXT
+LOCALS += "</div>"
+
+
+HTML_PRINT LOCALS, 1
+FOR LOCAL, 0, 22
+	PRINTL
+NEXT
+
+; IF チュートリアルフラグ:食事設定 == 0
+; 	RESULT = 996
+; ELSE
+	BINPUT
+;ENDIF
+LOCAL = RESULT
+SELECTCASE LOCAL
+	CASE 0 TO 家畜設定上限 - 1
+		CALL 家畜設定画面(LOCAL)
+		; LOCAL:1 = RESULT
+		; IF LOCAL:1 == -2
+		; 	現在設定メニュー:LOCAL = 0
+		; ELSEIF LOCAL:1 > 0 && !MATCH(現在設定メニュー, LOCAL:1)
+		; 	現在設定メニュー:LOCAL = LOCAL:1
+		; ENDIF
+		RESTART
+	; CASE 996
+	; 	CALL 食事メニュー設定チュートリアル()
+	; 	RESTART
+	CASE 999
+		RETURN -1
+ENDSELECT
+
+;-------------------------------------------------
+;実行判定
+;-------------------------------------------------
+@COM_ABLE380_4_4
+;条件に合う場合0（不許可）を返す
+;どの条件にも引っかからないなら1（許可）を返す
+;一括管理
+SIF GLOBAL_COMABLE(380)
+	RETURN RESULT
+;睡眠中
+SIF CFLAG:睡眠
+	RETURN 0
+;隠密中はダメ
+SIF CFLAG:PLAYER:隠密
+	RETURN 0
+RETURN 1
+
+;-------------------------------------------------
+;実行時メッセージ
+;-------------------------------------------------
+@MESSAGE_COM380_4_4
+;ただの設定コマンドなのでメッセージなし
+
+
+
+@家畜設定画面(選択番号)
+#DIM 候補数
+#DIM 選択番号
+#DIMS 家畜名
+#DIMS 関数配列, 100
+
+VARSET RESULTS
+VARSET 関数配列
+候補数 = ENUMFUNCBEGINSWITH("家畜情報_")
+ARRAYCOPY "RESULTS", "関数配列"
+
+DRAWLINE
+PRINT 현재 설정 가축:
+IF 現在設定家畜:選択番号 != ""
+	PRINTFORML %現在設定家畜:選択番号%
+	SELECTCASE 現在設定家畜:選択番号
+		CASE "デジタマ"
+			PRINT ※가축을 전환하면 디지타마의 성장 정도가 리셋됩니다.
+	ENDSELECT
+ELSE
+	PRINT --------------------
+ENDIF
+PRINTL
+DRAWLINE
+
+FOR LOCAL, 0, 候補数
+	RESULT = 0
+	TRYCALLFORM %関数配列:LOCAL%("出現条件")
+	IF RESULT
+		家畜名 = %SUBSTRING(関数配列:LOCAL, 9)%
+		SIF 現在設定家畜:選択番号 == 家畜名
+			CONTINUE
+		詳細文文字列受け渡し変数 = 
+		詳細文文字列受け渡し変数２ = 
+		TRYCALLFORM %関数配列:LOCAL%("基礎情報")
+		HTML_PRINT @"<button title='<br>%詳細文文字列受け渡し変数%<br>%詳細文文字列受け渡し変数２%' value='{LOCAL}'>[{LOCAL}] %家畜名%</button>"
+	ENDIF
+NEXT
+PRINTL
+PRINTBUTTON "[999] 변경하지 않고 돌아가기", 999
+PRINTL
+PRINTL
+BINPUT
+PRINTL
+PRINTL
+PRINTL
+
+LOCAL = RESULT
+SELECTCASE LOCAL
+	CASE 999
+		RETURN 0
+	CASEELSE
+		現在設定家畜:選択番号 '= SUBSTRING(関数配列:LOCAL, 9)
+		家畜_記録変数:選択番号 = 0
+		RETURN 0
+ENDSELECT
+
+
+
+@特別飼育区_ランダムキャラ追加(管理番号, 進化先No)
+#DIM 管理番号
+#DIM キャラ番号
+#DIM 部屋番号
+#DIM 進化先No
+
+キャラ番号 = CHARANUM
+
+ADDCHARA 進化先No
+CALL ランダムキャラデータ復元(Ｒキャラ追加候補記録, キャラ番号, 管理番号)
+
+CALL ADD_PERSON_FROM_CHARA(キャラ番号)
+CALL コマンド存在チェック
+CALL キャラクター初期化(キャラ番号)
+
+;汎用立ち絵を使わないよう、生成後に汎用立ち絵登録文字列を消す
+CSTR:キャラ番号:汎用立ち絵登録文字列 = 
+
+CFLAG:キャラ番号:招待不可フラグ = 0
+CALL ステータス記録_ランダムキャラデータベース(Ｒキャラ追加候補記録, 管理番号, CFLAG:キャラ番号:人物番号)
+
+;定住処理
+TALENT:キャラ番号:定住者 = 3
+CFLAG:キャラ番号:滞在期間 = 999
+FOR 部屋番号, 0, 特別飼育区広さ()
+	IF 飼育区部屋割り配列:部屋番号 == ""
+		飼育区部屋割り配列:部屋番号 = {キャラ番号}_
+		BREAK
+	ENDIF
+NEXT
+CFLAG:LOCAL:信頼度 += 経験値テーブル:30
+CALL FAVOR_LvUPCheck(LOCAL)
+CALL 口上変数初期化

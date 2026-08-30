@@ -1,7 +1,7 @@
 
 @COMNAME_S20_2
 #FUNCTIONS
-TSTR:コマンド名受渡 = 귀를 막는다
+TSTR:コマンド名受渡 = 귀를 막다
 
 ;===================================================
 ;コマンドタイプ
@@ -13,10 +13,10 @@ TFLAG:コマンドタイプ受渡 = COMTYPE("うふふ_被挿入中_セクハラ
 オートコマンド許可 = 1
 
 @COM_TOOLTIP_S20_2
-LOCALS = <br>■耳をふさぐ<br>
-LOCALS += "키스 계열 모드 중, 상대의 귀를 막아 키스에 집중시키는 커맨드. <br>[혀놀림][고양이 혀]에 따라 효과가 증감."
-LOCALS += "<br>COM 타입: 우후후or피삽입 중or성희롱<br>획득 소스: 노출・접촉・쾌S・불결・고통(일정 조건 시)"
-LOCALS += "<br>고유 획득 경험: 키스 경험(PLAYER＆TARGET)<br>"
+LOCALS = <br>■귀를 막다<br>
+LOCALS += "키스 계열 모드 중, 상대의 귀를 막아 키스에 집중시키는 커맨드.<br>[혀놀림][고양이 혀]에 따라 효과가 증감."
+LOCALS += "<br>COM 타입：우후후or피삽입중or성희롱<br>획득 소스：노출・접촉・쾌S・불결・고통(일정 조건 시)"
+LOCALS += "<br>고유 획득 경험：키스 경험(PLAYER＆TARGET)<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
 @COM_S20_2
@@ -94,4 +94,4 @@ RETURN 1
 ;実行時メッセージ
 ;-------------------------------------------------
 @MESSAGE_COM_S20_2
-PRINTFORML %CALLNAME:PLAYER%는 입술을 맞대면서 %CALLNAME:TARGET%의 귀를 막아, 키스 소리에만 집중하게 했다…
+PRINTFORML %CALLNAME:PLAYER%은(는) 입술을 맞대며 %CALLNAME:TARGET%의 귀를 막고, 키스의 물소리에만 집중시켰다…

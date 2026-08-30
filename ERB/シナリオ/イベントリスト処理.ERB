@@ -11,19 +11,20 @@ VARSET LOCAL
 VARSET LOCALS
 VARSET NEWフラグ用リスト
 
+TFLAG:口上用画像表示番号 = 0
 表示候補数 = DT_ROW_LENGTH("各イベント用変数配列")
 SPLIT TSTR:NEWイベントフラグ, "_", NEWフラグ用リスト
 
 DRAWLINE
 IF FLAG:クリア済み視聴フラグ
-	PRINTL 재시청할 클리어 완료 이벤트를 선택해주세요. (표시할 수 없는 타이틀은 툴팁으로 확인 가능)
-	PRINTL ※기본적으로 재시청 시에는 보상 등을 얻을 수 없습니다. 이벤트 중에 「◯◯을(를) 입수했다」고 나와도 얻을 수 없습니다.
+	PRINTL 다시 볼 클리어한 이벤트를 선택해 주세요.（전부 표시되지 않는 제목은 툴팁에서 확인할 수 있습니다）
+	PRINTL ※기본적으로 다시 보기에서는 보상 등을 얻을 수 없습니다. 이벤트 중에 「◯◯을(를) 입수했다」고 나와도 얻을 수 없습니다.
 	;PRINTBUTTON "[9998] イベントリストへ戻る", 9998
-	HTML_PRINT @"<div rect='0,0,5400,200'><button value='9998'>[9998] イベントリストへ戻る</button></div>", 1
+	HTML_PRINT @"<div rect='0,0,5400,200'><button value='9998'>[9998] 이벤트 목록へ돌아가기</button></div>", 1
 ELSE
-	PRINTL 시작할 이벤트를 선택해주세요. (표시할 수 없는 타이틀은 툴팁으로 확인 가능)
+	PRINTL 시작할 이벤트를 선택해 주세요.（전부 표시되지 않는 제목은 툴팁에서 확인할 수 있습니다）
 	;PRINTBUTTON "[9998] クリア済みイベントを再視聴する", 9998
-	HTML_PRINT @"<div rect='0,0,5400,200'><button value='9998'>[9998] クリア済みイベントを再視聴する</button></div>", 1
+	HTML_PRINT @"<div rect='0,0,5400,200'><button value='9998'>[9998] 클리어한 이벤트 다시 보기</button></div>", 1
 ENDIF
 PRINTL
 DRAWLINE
@@ -128,7 +129,7 @@ FOR LOCAL, 0, 表示候補数
 					カテゴリ別表示数:3 ++
 			ENDSELECT
 		ENDIF
-		IF DT_CELL_GET("各イベント用変数配列", LOCAL, "イベント再発生CT") == -2
+		IF DT_CELL_GET("各イベント用変数配列", LOCAL, "イベント再発生CT") == -2 && DT_CELL_GET("各イベント用変数配列", LOCAL, "イベント完了フラグ") != 0
 			;CT-2は再発生でないと起こり得ないはず
 			LOCALS:10 = 
 			LOCALS:11 = 
@@ -306,6 +307,8 @@ SELECTCASE LOCAL
 ENDSELECT
 
 @イベント発生条件チェック
+#DIM スキップフラグ
+
 FOR LOCAL, 0, DT_ROW_LENGTH("各イベント用変数配列")
 	;初回発生チェック
 	イベント消滅日数渡し = 0
@@ -345,13 +348,13 @@ FOR LOCAL, 0, DT_ROW_LENGTH("各イベント用変数配列")
 			IF DT_CELL_GET("各イベント用変数配列", LOCAL, "イベント完了フラグ") == 0
 				SELECTCASE DT_CELL_GETS("各イベント用変数配列", LOCAL, "イベントカテゴリ")
 					CASE "メインシナリオ"
-						PRINTFORML 메인 시나리오［%DT_CELL_GETS("各イベント用変数配列", LOCAL, "イベント名")%］가 새로 발생했다!
+						PRINTFORML 메인 시나리오［%DT_CELL_GETS("各イベント用変数配列", LOCAL, "イベント名")%］가 새롭게 발생했다!
 					CASE "サブイベント"
-						PRINTFORML 서브 이벤트［%DT_CELL_GETS("各イベント用変数配列", LOCAL, "イベント名")%］가 새로 발생했다!
+						PRINTFORML 서브 이벤트［%DT_CELL_GETS("各イベント用変数配列", LOCAL, "イベント名")%］가 새롭게 발생했다!
 					CASE "キャライベント"
-						PRINTFORML 캐릭터 이벤트［%DT_CELL_GETS("各イベント用変数配列", LOCAL, "イベント名")%］가 새로 발생했다!
+						PRINTFORML 캐릭터 이벤트［%DT_CELL_GETS("各イベント用変数配列", LOCAL, "イベント名")%］가 새롭게 발생했다!
 					CASE "突発イベント"
-						PRINTFORML 돌발 이벤트［%DT_CELL_GETS("各イベント用変数配列", LOCAL, "イベント名")%］가 새로 발생했다!
+						PRINTFORML 돌발 이벤트［%DT_CELL_GETS("各イベント用変数配列", LOCAL, "イベント名")%］가 새롭게 발생했다!
 				ENDSELECT
 				FORCEWAIT
 				LOCAL:1 = 1
@@ -374,7 +377,7 @@ FOR LOCAL, 0, DT_ROW_LENGTH("各イベント用変数配列")
 			PRINTL
 			DRAWLINE
 		ENDIF
-		PRINTFORML %DT_CELL_GETS("各イベント用変数配列", LOCAL, "イベントカテゴリ")%［%DT_CELL_GETS("各イベント用変数配列", LOCAL, "イベント名")%］가 재발생했다!
+		PRINTFORML %DT_CELL_GETS("各イベント用変数配列", LOCAL, "イベントカテゴリ")%［%DT_CELL_GETS("各イベント用変数配列", LOCAL, "イベント名")%］이(가) 재발생했다!
 		FORCEWAIT
 		;再発生済みと再発生前を区別するためにCTに-2を入れる
 		DT_CELL_SET "各イベント用変数配列", LOCAL, "イベント再発生CT", -2
@@ -388,6 +391,8 @@ FOR LOCAL, 0, DT_ROW_LENGTH("各イベント用変数配列")
 			DT_CELL_SET "各イベント用変数配列", LOCAL, "イベント消滅確率", イベント消滅確率渡し
 		ENDIF
 	ENDIF
+
+	スキップフラグ = 0
 	IF DT_CELL_GET("各イベント用変数配列", LOCAL, "イベント発生フラグ") == 1 && DT_CELL_GET("各イベント用変数配列", LOCAL, "イベント完了フラグ") == 0
 		;条件消失チェック、単純にフラグを戻すだけなので条件が整った時に即再発生する
 		RESULT = 0
@@ -406,15 +411,17 @@ FOR LOCAL, 0, DT_ROW_LENGTH("各イベント用変数配列")
 			DT_CELL_SET "各イベント用変数配列", LOCAL, "イベント消滅確率", 0
 			DT_CELL_SET "各イベント用変数配列", LOCAL, "イベント再発生CT", 0
 			DT_CELL_SET "各イベント用変数配列", LOCAL, "イベント再発生確率", 0
+			スキップフラグ = 1
 		ENDIF
-	ELSEIF DT_CELL_GET("各イベント用変数配列", LOCAL, "イベント消滅CT") == -1
+	ENDIF
+	IF DT_CELL_GET("各イベント用変数配列", LOCAL, "イベント消滅CT") == -1 && スキップフラグ == 0
 		;自然消滅チェック、こっちは再発生CTや確率がセット出来る
 		IF LOCAL:1 == 0
 			PRINTL
 			PRINTL
 			DRAWLINE
 		ENDIF
-		PRINTFORML %DT_CELL_GETS("各イベント用変数配列", LOCAL, "イベントカテゴリ")%［%DT_CELL_GETS("各イベント用変数配列", LOCAL, "イベント名")%］이 소멸했다…
+		PRINTFORML %DT_CELL_GETS("各イベント用変数配列", LOCAL, "イベントカテゴリ")%［%DT_CELL_GETS("各イベント用変数配列", LOCAL, "イベント名")%］이(가) 소멸했다…
 		FORCEWAIT
 		;消失済みと消失前を区別するためにCTに-2を入れる
 		DT_CELL_SET "各イベント用変数配列", LOCAL, "イベント消滅CT", -2
@@ -440,7 +447,7 @@ FOR LOCAL, 0, DT_ROW_LENGTH("エンディング用変数配列")
 				PRINTL
 				DRAWLINE
 			ENDIF
-				PRINTFORML 엔딩［%DT_CELL_GETS("エンディング用変数配列", LOCAL, "イベント名")%］이 새로 발생했다!
+				PRINTFORML 엔딩［%DT_CELL_GETS("エンディング用変数配列", LOCAL, "イベント名")%］이 새롭게 발생했다!
 			FORCEWAIT
 			LOCAL:1 = 1
 			TSTR:NEWイベントフラグ += @"ENDHING{DT_CELL_GET("エンディング用変数配列", LOCAL, "id")}_"
@@ -531,7 +538,7 @@ ENDIF
 
 ;再視聴中は常に勝利を返す
 IF FLAG:クリア済み視聴フラグ
-	PRINTL 시청 패턴을 선택해 주세요.
+	PRINTL 시청 패턴을 선택해주세요.
 	PRINTBUTTONLC "[0] 승리", 0
 	PRINTBUTTONLC "[1] 패배", 1
 	PRINTBUTTONLC "[-1] 도주", -1
@@ -550,8 +557,12 @@ ENDIF
 ;汎用恋慕・セフレ解除時の調整
 IF STRFIND(表示文字列, "【汎用】") >= 0 && (STRFIND(表示文字列, "[恋慕不可]解除") >= 0 || STRFIND(表示文字列, "[セフレ不可]解除") >= 0 || STRFIND(表示文字列, "結婚イベント") >= 0)
 	;二つ名部分を削除
-	RETURNF "【汎用】" + SUBSTRING(表示文字列, STRFIND(表示文字列, "]") + 1, -1)
+	RETURNF "【범용】" + SUBSTRING(表示文字列, STRFIND(表示文字列, "]") + 1, -1)
 ENDIF
+RESULTS = 
+TRYCALLFORMF イベント関数_イベント表示名制御_%表示文字列%
+SIF RESULTS != ""
+	RETURNF RESULTS
 
 RETURNF 表示文字列
 
@@ -571,7 +582,7 @@ IF 候補数 < 2
 ENDIF
 
 ;警告を出す
-PRINTL ※이 이벤트를 시청하면, 다음 이벤트는 시청할 수 없게 됩니다.
+PRINTL ※이 이벤트를 시청하면, 다음 이벤트들을 시청할 수 없게 됩니다.
 FOR 候補番号, 1, 候補数 + 1
 	;選択イベントは飛ばす
 	SIF RESULT:候補番号 == DT_CELL_GET("各イベント用変数配列", 行番号, "id")
@@ -580,10 +591,10 @@ FOR 候補番号, 1, 候補数 + 1
 	PRINTFORML 　「%DT_CELL_GETS("各イベント用変数配列", RESULT:候補番号, "イベント名", 1)%」
 NEXT
 PRINTL
-PRINTL 괜찮으시겠습니까?
+PRINTL 괜찮습니까?
 
-PRINTBUTTONLC "[0] 시청한다", 0
-PRINTBUTTONLC "[1] 돌아간다", 1
+PRINTBUTTONLC "[0] 시청하기", 0
+PRINTBUTTONLC "[1] 돌아가기", 1
 PRINTL
 
 BINPUT

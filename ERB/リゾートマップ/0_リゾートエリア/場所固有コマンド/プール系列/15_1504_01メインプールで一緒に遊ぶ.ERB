@@ -122,32 +122,32 @@ RETURN 1
 ;-------------------------------------------------
 @MESSAGE_COM380_0_1504
 
-PRINTFORM %CALLNAME:PLAYER%은(는)%CALLNAME:TARGET%\@ GET_TARGETNUM() > 1 ? 들 # \@과
+PRINTFORM %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%\@ GET_TARGETNUM() > 1 ? 들 # \@과(와)
 SELECTCASE RFLAG:コマンド結果受渡し変数３
 	CASE 1
 		;普通に遊ぶ
 		PRINT 수영장에서 물놀이를 했다
 	CASE 2
 		;競争
-		PRINT 누가 가장 빨리 헤엄칠 수 있는지 경쟁했다
+		PRINT 누가 가장 빨리 헤엄치는지 경쟁했다
 	CASE 3
 		;浮き輪で浮かぶ
-		PRINT 느긋하게 튜브로 수면에 떠올랐다
+		PRINT 느긋하게 튜브를 타고 수면에 떠 있었다
 ENDSELECT
 
 SELECTCASE RFLAG:コマンド結果受渡し変数
 	CASE IS <= -1
 		;失敗時
 		PRINTL 하지만,
-		PRINTW 별로 분위기가 달아오르지 않았다…
+		PRINTW 별로 즐겁지 않았다…
 	CASE IS <= 9
 		;成功時
 		PRINTL 
-		PRINTFORMW \@ GET_TARGETNUM() > 1 ? 모두 함께 # 둘이서\@즐거운 시간을 보낼 수 있었다…
+		PRINTFORMW \@ GET_TARGETNUM() > 1 ? 모두 함께 # 둘이서\@ 즐거운 시간을 보낼 수 있었다…
 	CASEELSE
 		;大成功時
 		PRINTL 
-		PRINTFORMW \@ GET_TARGETNUM() > 1 ? 모두 함께 # 둘이서\@매우 분위기가 달아올랐다!
+		PRINTFORMW \@ GET_TARGETNUM() > 1 ? 모두 함께 # 둘이서\@ 정말 즐거웠다!
 ENDSELECT
 
 

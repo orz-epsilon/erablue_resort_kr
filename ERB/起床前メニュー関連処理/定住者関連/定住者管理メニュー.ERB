@@ -1,0 +1,61 @@
+@定住者管理メニュー処理
+#LOCALSIZE 1
+#LOCALSSIZE 1
+
+SIF !開拓エリア解放フラグ:0 || MATCH(開拓エリア開発番号, 大規模番号_居住区エリア) <= 0
+	RETURN 0
+
+DRAWLINE
+PRINTL 거주구역의 정착민을 관리할 수 있습니다.
+DRAWLINE
+LOCALS '= "<div rect='81,31,1937,2812' border='31' bcolor='#C0C0C0'></div><div rect='2050,31,3875,2812' border='31' bcolor='#C0C0C0'></div>"
+LOCALS += "<div rect='156,156,1937,2812'>"
+IF 定住エリア満杯()
+	LOCALS += "<font color='#666666'>[---] 거주구역이 가득 찼습니다</font>"
+	LOCALS += "<br>"
+	LOCALS += "<font color='#666666'>[---] 거주구역이 가득 찼습니다</font>"
+ELSE
+	LOCALS += "<button value='100'>[100] 새로운 주민을 유치한다</button>"
+	LOCALS += "<br>"
+	CALL EXキャラ誘致条件確認
+	IF RESULT == 0
+		LOCALS += "<font color='#666666'>[---] 특별한 주민 후보가 존재하지 않습니다</font>"
+	ELSE
+		LOCALS += "<button value='101'>[101] 특별한 주민을 유치한다</button>"
+	ENDIF
+ENDIF
+LOCALS += "<br>"
+LOCALS += "<button value='130'>[130] 주택가 구역 관리</button>"
+LOCALS += "<br>"
+LOCALS += "<br>"
+LOCALS += "<button value='998'>[998] 시스템 설명</button>"
+LOCALS += "<br>"
+LOCALS += "<button value='999'>[999] 돌아가기</button>"
+LOCALS += "</div>"
+
+HTML_PRINT LOCALS
+FOR LOCAL, 0, 25
+	PRINTL
+NEXT
+DRAWLINE
+
+IF チュートリアルフラグ:定住者管理 == 0
+	RESULT = 998
+ELSE
+	BINPUT
+ENDIF
+LOCAL = RESULT
+SELECTCASE LOCAL
+	CASE 100
+		CALL 定住者誘致
+	CASE 101
+		CALL EX定住者誘致
+	CASE 130
+		CALL 居住区管理メニュー
+	CASE 998
+		CALL 定住者管理チュートリアル()
+	CASE 999
+		RETURN 0
+ENDSELECT
+
+RESTART

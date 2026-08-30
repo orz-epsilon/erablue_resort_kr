@@ -32,18 +32,18 @@ CALL アビテンプレ変数リセット
 
 ;ここでダメージに使うステータス数値を算出
 ;攻撃、防御、回復のうち一番高いステータスが採用される
-CALL バフ込み数値算出("공격력")
+CALL バフ込み数値算出("攻撃力")
 LOCAL = RESULT
-LOCALS = 공격력
-CALL バフ込み数値算出("방어력")
+LOCALS = 攻撃力
+CALL バフ込み数値算出("防御力")
 IF LOCAL < RESULT
 	LOCAL = RESULT
-	LOCALS = 방어력
+	LOCALS = 防御力
 ENDIF
-CALL バフ込み数値算出("회복력")
+CALL バフ込み数値算出("回復力")
 IF LOCAL < RESULT
 	LOCAL = RESULT
-	LOCALS = 회복력
+	LOCALS = 回復力
 ENDIF
 
 ;ダメージ処理

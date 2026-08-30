@@ -51,6 +51,34 @@ RETURN 1
 
 PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%에게 마사지를 시작했다.
 
+IF 特定状況口上用フラグ:TARGET:0 == 2
+	PRINTL
+	SETCOLOR カラーパレット("えっちな色")
+	PRINTFORM 시술복으로 갈아입은 %CALLNAME:TARGET%의 가슴팍에
+	PRINT_IMG "デレマス_マーク"
+	CALL PRINT_STRL(@"마크를 발견했다_H_")
+	PRINTFORMW %CALLNAME:TARGET%은(는) 오늘의 『신데렐라』였던 것 같다
+	特定状況口上用フラグ:TARGET:0 = 1
+	RESETCOLOR
+ELSEIF 特定状況口上用フラグ:TARGET:0 == 3
+	PRINTL
+	SETCOLOR カラーパレット("えっちな色")
+	PRINTFORM 시술복으로 갈아입은 %CALLNAME:TARGET%의 배꼽 아래에
+	PRINT_IMG "デレマス_マーク"
+	CALL PRINT_STRL(@"마크를 발견했다_H_")
+	PRINTFORMW %CALLNAME:TARGET%은(는) 오늘의 『신데렐라』였던 것 같다
+	特定状況口上用フラグ:TARGET:0 = 1
+ELSEIF 特定状況口上用フラグ:TARGET:0 == 4
+	PRINTL
+	SETCOLOR カラーパレット("えっちな色")
+	PRINTFORM 시술복으로 갈아입은 %CALLNAME:TARGET%의 허벅지 안쪽에
+	PRINT_IMG "デレマス_マーク"
+	CALL PRINT_STRL(@"마크를 발견했다_H_")
+	PRINTFORMW %CALLNAME:TARGET%은(는) 오늘의 『신데렐라』였던 것 같다
+	特定状況口上用フラグ:TARGET:0 = 1
+	RESETCOLOR
+ENDIF
+
 IF PREGNANCY_SIZE(TARGET) >= 2 && EXIST画像FILE("resources/" + CSTR:TARGET:画像フォルダ + "/マッサージ開始_妊娠")
 	CALL PRINT_STRW(@"IMAGEPATH_%CSTR:TARGET:画像フォルダ%/マッサージ開始_妊娠")
 ELSEIF EXIST画像FILE("resources/" + CSTR:TARGET:画像フォルダ + "/マッサージ開始")

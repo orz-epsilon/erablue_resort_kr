@@ -155,14 +155,14 @@ ENDIF
 ;広告対象の表示
 PRINTL
 DRAWLINE
-PRINTL ZP를 소비하여, 본래라면 리조트를 방문할 수 없는 캐릭터를 인도합니다.
+PRINTL ZP를 소비하여, 원래라면 리조트를 방문할 수 없는 캐릭터를 인도합니다.
 PRINTL 어떤 캐릭터를 인도하시겠습니까?
 IF ZPキャラ無料回数
 	SETCOLOR カラーパレット("黄")
-	PRINTFORML 남은 {ZPキャラ無料回数, 2}회 무료!
+	PRINTFORML 남은{ZPキャラ無料回数, 2}회 무료!
 	RESETCOLOR
 ENDIF
-PRINTFORML 소지 ZP:%ZP所持量全文字列()%
+PRINTFORML 소지ZP:%ZP所持量全文字列()%
 DRAWLINE
 IF 選択モード
 	; 個別選択
@@ -218,9 +218,9 @@ ELSE
 	PRINT 　　　
 	IF 選択シリーズ < 0
 		IF シリーズモード
-			PRINTBUTTON "[시리즈를 개별 표시]", 9101
+			PRINTBUTTON "[시리즈 개별 표시]", 9101
 		ELSE
-			PRINTBUTTON "[시리즈를 한꺼번에 표시]", 9101
+			PRINTBUTTON "[시리즈 일괄 표시]", 9101
 		ENDIF
 	ENDIF
 	PRINTL
@@ -271,7 +271,7 @@ ELSE
 				;登録が終わったら表示終了
 				BREAK
 			ENDIF
-			PRINTBUTTON @"[{LOCAL, 3}] %出典作品配列:LOCAL, 41, LEFT%: 남은{出典情報配列:LOCAL, 3}명", LOCAL
+			PRINTBUTTON @"[{LOCAL, 3}] %出典作品配列:LOCAL, 41, LEFT%：남은{出典情報配列:LOCAL, 3}명", LOCAL
 			PRINTL 
 		NEXT
 		SKIPDISP 0
@@ -283,7 +283,7 @@ PRINTSL "-" * LINE_LEN
 
 ;ページめくり表示
 BTN_NUM   = 9001
-BTN_TEXT '= @"[前ページへ]"
+BTN_TEXT '= @"[이전 페이지로]"
 IF 現在ページ > 0
 	PRINTBUTTON BTN_TEXT, BTN_NUM
 ELSE
@@ -301,7 +301,7 @@ PRINTS " " * (ページ番号文字列長 / 2 + (ページ番号文字列長 % 2
 
 ; 1ページ次へ
 BTN_NUM   = 9011
-BTN_TEXT '= @"[次ページへ]"
+BTN_TEXT '= @"[다음 페이지로]"
 IF 現在ページ < 最大ページ
 	PRINTBUTTON BTN_TEXT, BTN_NUM
 ELSE
@@ -358,7 +358,7 @@ ELSE
 ENDIF
 PRINTL
 
-;- その他ボタン
+;- 기타ボタン
 ;フィルタソートボタン
 フィルタボタン番号 = 9020
 ソートボタン番号   = 9030
@@ -438,9 +438,13 @@ WHILE 1
 			現在ページ = 最大ページ
 			リスタートフラグ = 1
 			BREAK
-		CASE フィルタボタン番号, ソートボタン番号, ソート順ボタン番号, 素質絞込ボタン番号
+		CASE フィルタボタン番号, ソートボタン番号, ソート順ボタン番号, ソート順ボタン番号 + 1, ソート順ボタン番号 + 2, 素質絞込ボタン番号
 			;- キャラフィルタソート設定
+			;出典フィルタに全作品を強制表示させる(通常表示だとグラブルしか表示されないため)
+			出典フィルタ強制全表示フラグ = 1
 			CALL フィルタソートボタンセット実行部(入力番号, フィルタボタン番号, ソートボタン番号, ソート順ボタン番号, 素質絞込ボタン番号)
+			;他処理に影響しないようにすぐにOFF
+			出典フィルタ強制全表示フラグ = 0
 			リスト更新判定 = 1
 			現在ページ = 0
 			リスタートフラグ = 1
@@ -466,10 +470,10 @@ WHILE 1
 			BREAK
 		CASE 9998
 			;- シリーズまとめて招待処理
-			PRINTFORML %出典作品配列:選択シリーズ%의 캐릭터 {出典情報配列:選択シリーズ}명을 불러옵니다.
-			PRINTL 괜찮습니까?
+			PRINTFORML %出典作品配列:選択シリーズ%의 캐릭터 {出典情報配列:選択シリーズ} 이름을 인도합니다.
+			PRINTL 괜찮으시겠습니까?
 			PRINTBUTTONLC "[0]예", 0 
-			PRINTBUTTONLC "[1]아니요", 1
+			PRINTBUTTONLC "[1]아니오", 1
 			PRINTL
 			BINPUT
 			IF RESULT == 0
@@ -481,7 +485,7 @@ WHILE 1
 						BREAK
 
 					IF CFLAG:(出典表示候補:対象キャラ):ZPショップ値段 > FLAG:ZP所持量 && ZPキャラ無料回数 < 1
-						PRINTW ZP가 부족하여 정지합니다
+						PRINTW ZP가 부족해서 정지합니다
 						RESTART
 					ENDIF
 
@@ -736,13 +740,13 @@ PRINTFORML %GET_NAME(対象キャラ)%을(를) 인도합니다.
 PRINTL 괜찮습니까?
 ; ボタン表示
 PRINTBUTTONLC "[0]예", 0
-PRINTBUTTONLC "[1]아니요", 1
+PRINTBUTTONLC "[1]아니오", 1
 PRINTBUTTONLC "[10]상세 능력", 10
 PRINTL
 PRINTBUTTONLC "[2]이전 캐릭터", 2
 PRINTBUTTONLC "[3]다음 캐릭터", 3
 SIF リロールボタン有効
-	PRINTBUTTONLC "[4]이미지 랜덤 표시를 리롤", 4
+	PRINTBUTTONLC "[4]이미지 랜덤 표시 다시 굴리기", 4
 PRINTL
 
 ; 入力ループ

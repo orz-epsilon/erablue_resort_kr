@@ -26,8 +26,8 @@ TFLAG:コマンドタイプ受渡 = COMTYPE("Ｖ系")
 
 @COM_TOOLTIP_3
 LOCALS = <br>■손가락 삽입<br>
-LOCALS += "상대의 질에 손가락을 넣어 애무를 하는 커맨드. <br>처녀에게 할 경우, 큰 고통을 수반한다."
-LOCALS += "<br>COM 타입: V계<br>획득 소스: 쾌V・노출・접촉・고통"
+LOCALS += "상대의 질에 손가락을 넣어 애무하는 커맨드.<br>처녀에게 행할 경우, 큰 고통이 따른다."
+LOCALS += "<br>COM 타입：V계<br>획득 소스：쾌V・노출・접촉・고통"
 LOCALS += "<br>고유 획득 경험: 없음<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
@@ -118,45 +118,45 @@ RETURN 1
 @MESSAGE_COM3
 #DIM 同時キャラ番号
 ;下半身着衣
-PRINTFORM %CALLNAME:PLAYER%는
+PRINTFORM %CALLNAME:PLAYER%은(는)
 IF GETBIT(FLAG:モード管理, モードビット_同時)
 	FOR 同時キャラ番号, 0, 同時モード_選択数
 		SIF 同時キャラ番号 > 0
-			PRINT ,
+			PRINT 、
 		PRINTFORM %CALLNAME:(同時モード_選択キャラ:同時キャラ番号)%
 	NEXT
-	PRINT 의 음부에 손가락을 천천히 삽입했다…
+	PRINT 의 비열에 손가락을 천천히 삽입했다…
 	RETURN 0
 ENDIF
 
 SIF TEQUIP:下半身服あり
-		PRINTFORM 옷 속에 손을 집어넣어
+		PRINTFORM 옷 안에 손을 집어넣어
 PRINTFORM %CALLNAME:TARGET%의
 ;処女
 IF TALENT:処女 == 1
 	PRINT 남자를 모르는
 ;潤滑LV4以上
 ELSEIF PALAM:潤滑 >= PALAMLV:4
-	PRINT 축축하게 젖은
+	PRINT 흠뻑 젖은
 ENDIF
 ;小柄体型の有無で分岐
 IF TALENT:種族 < 0
-	PRINT 어린 보지
+	PRINT 어린 틈새
 ELSE
-	PRINT 음부
+	PRINT 비열
 ENDIF
 PRINTFORML 에 손가락을 천천히 삽입했다…
 IF NOWEX:Ｖ絶頂
 	IF TALENT:処女 == 1
-		PRINTFORML %CALLNAME:TARGET%는 %CALLNAME:PLAYER%에게 매달려, 삽입된 손가락을 픽픽 조이고 있다…
+		PRINTFORML %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%에 매달려, 삽입된 손가락을 움찔움찔 조여오고 있다…
 	ELSE
-		PRINTFORML %CALLNAME:TARGET%는 침을 흘리며, 스스로 허리를 흔들어 쾌락을 탐하고 있다…
+		PRINTFORML %CALLNAME:TARGET%은(는) 침을 흘리며, 스스로 허리를 흔들어 쾌락을 탐하고 있다…
 	ENDIF
 ELSE
 	IF TALENT:処女 == 1
-		PRINTFORML %CALLNAME:TARGET%는 낯선 감촉에 몸을 굳히고 있다…
+		PRINTFORML %CALLNAME:TARGET%은(는) 낯선 감촉에 몸을 굳히고 있다…
 	ELSE
-		PRINTFORML %CALLNAME:TARGET%는 질 안에서 꿈틀거리는 손가락의 감촉에 달콤한 교성을 내지르고 있다…
+		PRINTFORML %CALLNAME:TARGET%은(는) 질 안에서 움직이는 손가락의 감촉에 달콤한 교성을 내고 있다…
 	ENDIF
 ENDIF
 

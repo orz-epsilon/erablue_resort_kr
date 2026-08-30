@@ -2,7 +2,7 @@
 #DIM 対象キャラ番号
 
 WSTR:(K++) = 마물의 기습이다!
-KSTR:(K++) = 어떻게든 격퇴했지만, 기습을 받은%CALLNAME:対象キャラ番号%의 복장이 흐트러져
+KSTR:(K++) = 어떻게든 격퇴했지만, 기습을 받은 %CALLNAME:対象キャラ番号%의 옷이 흐트러져
 SELECTCASE TALENT:対象キャラ番号:バストサイズ
 	CASE IS <= 0
 		KSTR:(K++) = 가슴 부분이 노출되어 버렸다._PAGE
@@ -10,6 +10,7 @@ SELECTCASE TALENT:対象キャラ番号:バストサイズ
 		KSTR:(K++) = 풍만한 가슴이 옷 밖으로 흘러넘치고 있다._PAGE
 ENDSELECT
 
+CALL ダンジョンハプニング時画像表示処理(対象キャラ番号, "ポロリ発生")
 CALL メッセージ欄表示用関数()
 CALL 口上変数初期化
 
@@ -28,23 +29,23 @@ IF 口上有無確認(0, 1) == 0
 			SELECTCASE RFLAG:コマンド結果受渡し変数
 				CASE 1
 					;拒絶
-					KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 싫은 표정을 지으며 옷을 고치고, %CALLNAME:MASTER%을(를) 노려보고 있다……
+					KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 싫은 표정을 지으며 옷을 고치고, %CALLNAME:MASTER%를 노려보고 있다……
 				CASE 2
 					;受入れ
 					KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 한숨을 쉬며 옷을 고치고, 탐색으로 돌아갔다.
 				CASE 3
 					;喜び
-					KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 복장도 고치지 않고%CALLNAME:MASTER%에게 다친 곳은 없는지 걱정해 주고 있다.
+					KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 옷차림도 되돌리지 않고 %CALLNAME:MASTER%에게 다친 곳은 없는지 걱정해 주고 있다.
 			ENDSELECT
 		CASE 4 TO 5
 			;拒否,余裕
 			SELECTCASE RFLAG:コマンド結果受渡し変数
 				CASE 1
 					;拒絶
-					KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 복장을 고치고, 기습에 대한 경계를 새롭게 하고 있다.
+					KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 옷차림을 고치고, 기습에 대한 경계를 새롭게 하고 있다.
 				CASE 2
 					;受入れ
-					KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 복장을 고치면서 모두에게 다친 곳은 없는지 걱정해 주고 있다.
+					KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 옷차림을 고치면서 모두에게 다친 곳은 없는지 걱정해 주고 있다.
 				CASE 3
 					;喜び
 					KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 재빨리 옷을 고치고, %CALLNAME:MASTER%에게 다친 곳은 없는지 걱정해 주고 있다.
@@ -60,27 +61,27 @@ IF 口上有無確認(0, 1) == 0
 					KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 새빨간 얼굴로 가슴을 가리고, 시선에서 벗어나려는 듯 옷을 고쳤다.
 				CASE 3
 					;喜び
-					KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 얼굴을 붉게 물들이고 옷을 고치며, 이쪽을 바라보고 있다……
+					KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 얼굴을 붉히며 옷을 고치고, 이쪽을 바라보고 있다……
 			ENDSELECT
 		CASE 7
 			;愉悦
 			SELECTCASE RFLAG:コマンド結果受渡し変数
 				CASE 1
 					;拒絶
-KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 구경값을 받으려고 농담하고 있다.
+KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 구경값을 받을까 하고 농담하고 있다.
 				CASE 2
 					;受入れ
-KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 서비스 장면이라고 농담하고 있다.
+KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 서비스 신이라며 농담하고 있다.
 				CASE 3
 					;喜び
-KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) %CALLNAME:PLAYER%이(가) 입혀줄 거야? 라고 요염하게 웃고 있다.
+KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) %CALLNAME:PLAYER%이(가) 입혀줄 거야? 라며 요염하게 웃고 있다.
 			ENDSELECT
 		CASE 8
 			;汎用
 			SELECTCASE RFLAG:コマンド結果受渡し変数
 				CASE 1
 					;拒絶
-KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 조금 불쾌한 표정을 지으며 옷을 되돌리고, 탐색으로 돌아갔다.
+KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 조금 불쾌한 듯한 얼굴을 하고 옷을 다시 입고, 탐색으로 돌아갔다.
 				CASE 2
 					;受入れ
 KSTR:(K++) = %CALLNAME:対象キャラ番号%은(는) 쓴웃음을 지으며 옷매무새를 가다듬고 있다.
@@ -122,7 +123,7 @@ ENDSELECT
 SIF TALENT:判定キャラ番号:性別 == 2
 	RETURN 0
 ;すでに上半身裸だと発生しない
-SIF !TEQUIP:判定キャラ番号:上半身服あり && !TEQUIP:判定キャラ番号:上半身鎧あり && !TEQUIP:判定キャラ番号:上タイツあり && !TEQUIP:判定キャラ番号:上半身下着あり
+SIF !TEQUIP:判定キャラ番号:上半身服あり && !TEQUIP:判定キャラ番号:上半身鎧あり && !TEQUIP:判定キャラ番号:上タイツあり && TEQUIP:判定キャラ番号:上半身下着あり < 1
 	RETURN 0
 
 

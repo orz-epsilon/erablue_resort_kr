@@ -1,4 +1,4 @@
-
+﻿
 @MAP_VIEWING_0(AA)
 #DIMS REF AA, 0
 ;マップの保存文字列名を指定
@@ -8,11 +8,10 @@ TRYCALLFORM MAP_RESORT_0_{TFLAG:マップ種別}(AA)
 #DIMS 処理モード
 SELECTCASE 処理モード
 	CASE "エリア名"
-		TSTR:場所名受渡 = 리조트 구역
+		TSTR:場所名受渡 = リゾートエリア
 	CASE "エリア移動可能場所"
 		RETURN 1
 ENDSELECT
-
 @MAP_RESORT_0_0(AA)
 #DIMS REF AA, 0
 AA:00 = 　　　　　　　　　　　■
@@ -43,18 +42,23 @@ AA:24 = 　　　　　　　　■　　　　　　　　　　　｜　　　
 AA:25 = 　　　　　　　　■■■■　01　■■■■■■■■■■■■■■■■■
 AA:26 = 　　　　　　　　　　　　　　 
 AA:27 = 
-AA:28 = 01：현관　　　　02：로비　　　　03：정원　　　　04：식당　　　　05：운동장
-AA:29 = 06：복도　　　　07：남자탈의실　08：여자탈의실　09：남탕　　　　10：남자노천탕
-AA:30 = 11：여탕　　　　12：여자노천탕　13：남자라커룸　14：여자라커룸　15：수영장
-AA:31 = 16：스태프룸　　　　　　　　　　　　　　　　　　　　　　　　　　20：내 방
+AA:28 = 01：현관　　　　02：로비　　　　03：정원　　　　04：식당　　　　05：오락실
+AA:29 = 06：복도　　　　07：남자 탈의실　08：여자 탈의실　09：남탕　　　　10：남자 노천탕
+AA:30 = 11：여탕　　　　12：여자 노천탕　13：남자 탈의실　14：여자 탈의실　15：수영장
+AA:31 = 16：스태프룸　　　　　　　　　　　　　　　　　　　　　　　　　20：내 방으로
+; AA:28 = 01：玄関　　　　02：ロビー　　　03：庭　　　　　04：食堂　　　　05：遊戯場
+; AA:29 = 06：廊下　　　　07：男子脱衣所　08：女子脱衣所　09：男湯　　　　10：男露天風呂
+; AA:30 = 11：女湯　　　　12：女露天風呂　13：男子更衣室　14：女子更衣室　15：プール
+; AA:31 = 16：スタッフルーム　　　　　　　　　　　　　　　　　　　　　　　20：自室へ
 
 IF 施設改造度:3:0
 	AA:21 = 　　←03　　　　■─┘　　　02　　　　　■　　　　04　　　　　■
-	AA:28 = 01：현관　　　　02：로비　　　　03：도박장　　　04：식당　　　　05：운동장
+	AA:28 = 01：현관　　　　02：로비　　　　03：캠프장　　　04：식당　　　　05：오락실
+	; AA:28 = 01：玄関　　　　02：ロビー　　　03：キャンプ場　04：食堂　　　　05：遊戯場
 ENDIF
 IF 施設改造度:4:0
 	AA:21 '= REPLACE(AA:21, "04　", "04→")
-	AA:28 '= REPLACE(AA:28, "식당　　　　", "레스토랑　　")
+	AA:28 '= REPLACE(AA:28, "식당　　　　", "레스토랑　")
 ENDIF
 IF 施設改造度:5:0
 	AA:11 = 　　　　　■　　■　　■　　　　↑　　　　■　　■　　■
@@ -65,8 +69,10 @@ ENDIF
 IF 施設改造度:7:0
 	AA:08 += "　　　　　■■■■■■■■■■■"
 	AA:09 += "　↑■↑　■"
-	AA:29 = 06：복도　　　　07：남자탈의실　08：여자탈의실
-	AA:30 = 13：남자라커룸　14：여자라커룸　15：수영장
+	AA:29 = 06：복도　　　　07：남자 탈의실　08：여자 탈의실
+	AA:30 = 13：남자 탈의실　14：여자 탈의실　15：수영장
+	; AA:29 = 06：廊下　　　　07：男子脱衣所　08：女子脱衣所
+	; AA:30 = 13：男子更衣室　14：女子更衣室　15：プール
 ELSE
 	AA:00 += "　　　　　■■■■■■■■■■■■■■■　　　　　■"
 	AA:01 += "　　　　　｜　　　　　　■　　　　　　｜　　　　　■"
@@ -89,46 +95,44 @@ ENDIF
 #FUNCTION
 SELECTCASE ARG
 	CASE 1
-		TSTR:場所名受渡 = 현관
+		TSTR:場所名受渡 = 玄関
 	CASE 2
-		TSTR:場所名受渡 = 로비
+		TSTR:場所名受渡 = ロビー
 	CASE 3
-		TSTR:場所名受渡 = 정원
+		TSTR:場所名受渡 = 庭
 		SIF 施設改造度:3:0
-			TSTR:場所名受渡 = 캠프장
+			TSTR:場所名受渡 = キャンプ場
 	CASE 4
-		TSTR:場所名受渡 = 식당
+		TSTR:場所名受渡 = 食堂
 	CASE 5
-		TSTR:場所名受渡 = 유희장
+		TSTR:場所名受渡 = 遊戯場
 	CASE 6
-		TSTR:場所名受渡 = 복도
+		TSTR:場所名受渡 = 廊下
 	CASE 7
-		TSTR:場所名受渡 = 남자 탈의실
+		TSTR:場所名受渡 = 男子脱衣所
 	CASE 8
-		TSTR:場所名受渡 = 여자 탈의실
+		TSTR:場所名受渡 = 女子脱衣所
 	CASE 9
-		TSTR:場所名受渡 = 남탕
+		TSTR:場所名受渡 = 男湯
 	CASE 10
-		TSTR:場所名受渡 = 남자 노천탕
+		TSTR:場所名受渡 = 男露天風呂
 	CASE 11
-		TSTR:場所名受渡 = 여탕
+		TSTR:場所名受渡 = 女湯
 	CASE 12
-		TSTR:場所名受渡 = 여자 노천탕
+		TSTR:場所名受渡 = 女露天風呂
 	CASE 13
-		TSTR:場所名受渡 = 남자 라커룸
+		TSTR:場所名受渡 = 男子更衣室
 	CASE 14
-		TSTR:場所名受渡 = 여자 라커룸
+		TSTR:場所名受渡 = 女子更衣室
 	CASE 15
-		TSTR:場所名受渡 = 수영장
+		TSTR:場所名受渡 = プール
 	CASE 16
-		TSTR:場所名受渡 = 스태프룸
+		TSTR:場所名受渡 = スタッフルーム
 	CASE 20
-		TSTR:場所名受渡 = 내 방
+		TSTR:場所名受渡 = 自室
 		SIF 施設改造度:20:0
-			TSTR:場所名受渡 = 자택
+			TSTR:場所名受渡 = 自宅
 ENDSELECT
-
-
 @DRAW_MAP_BG_0_0(SLICED, 表示文字列)
 #DIMS REF 表示文字列
 #DIMS SLICED
@@ -139,7 +143,186 @@ SELECTCASE SLICED
 		表示文字列 += @"%SLICED%"
 ENDSELECT
 
+;============================================================
+; 한국어 표시 전용 변환 함수
+; 내부 로직에는 GETPLACENAME의 일본어 반환값을 그대로 사용하고,
+; 화면에 표시할 때만 이 함수를 거쳐 한국어로 변환한다.
+; 사용 예: %場所名韓国語変換(GETPLACENAME(...))%
+;============================================================
+@場所名韓国語変換(場所名)
+#FUNCTIONS
+#DIMS 場所名
+#DIMS 変換結果
+
+SELECTCASE 場所名
+	CASE "リゾートエリア"
+		RETURNF "리조트 구역"
+	CASE "玄関"
+		RETURNF "현관"
+	CASE "ロビー"
+		RETURNF "로비"
+	CASE "庭"
+		RETURNF "정원"
+	CASE "キャンプ場"
+		RETURNF "캠프장"
+	CASE "食堂"
+		RETURNF "식당"
+	CASE "遊戯場"
+		RETURNF "오락실"
+	CASE "廊下"
+		RETURNF "복도"
+	CASE "男子脱衣所"
+		RETURNF "남자 탈의실"
+	CASE "女子脱衣所"
+		RETURNF "여자 탈의실"
+	CASE "男湯"
+		RETURNF "남탕"
+	CASE "男露天風呂"
+		RETURNF "남자 노천탕"
+	CASE "女湯"
+		RETURNF "여탕"
+	CASE "女露天風呂"
+		RETURNF "여자 노천탕"
+	CASE "男子更衣室"
+		RETURNF "남자 탈의실"
+	CASE "女子更衣室"
+		RETURNF "여자 탈의실"
+	CASE "プール"
+		RETURNF "수영장"
+	CASE "スタッフルーム"
+		RETURNF "스태프룸"
+	CASE "自室"
+		RETURNF "내 방"
+	CASE "自宅"
+		RETURNF "집"
+
+	; 캠프장
+	CASE "メインテント"
+		RETURNF "메인 텐트"
+	CASE "バーベキューエリア"
+		RETURNF "바비큐 구역"
+	CASE "渓流エリア"
+		RETURNF "계곡 구역"
+	CASE "サウナテント"
+		RETURNF "사우나 텐트"
+	CASE "キャンプファイアー"
+		RETURNF "캠프파이어"
+	CASE "訓練場"
+		RETURNF "훈련장"
+
+	; 식당 파생
+	CASE "カウンター席"
+		RETURNF "카운터석"
+	CASE "テーブル席"
+		RETURNF "테이블석"
+	CASE "窓際席"
+		RETURNF "창가석"
+	CASE "厨房"
+		RETURNF "주방"
+
+	; 오락실 파생
+	CASE "バーエリア"
+		RETURNF "바 에리어"
+	CASE "ボードゲームエリア"
+		RETURNF "보드게임 에리어"
+	CASE "卓球場"
+		RETURNF "탁구장"
+	CASE "図書室"
+		RETURNF "도서실"
+
+	; 온천
+	CASE "脱衣所"
+		RETURNF "탈의실"
+	CASE "洗い場"
+		RETURNF "세면장"
+	CASE "内風呂"
+		RETURNF "실내탕"
+	CASE "変わり湯"
+		RETURNF "이벤트탕"
+	CASE "サウナルーム"
+		RETURNF "사우나실"
+	CASE "露天風呂"
+		RETURNF "노천탕"
+	CASE "壺湯"
+		RETURNF "항아리탕"
+	CASE "覗き用隠し通路"
+		RETURNF "엿보기용 비밀 통로"
+	CASE "マッサージルーム"
+		RETURNF "마사지실"
+
+	; 수영장
+	CASE "プールサイド"
+		RETURNF "풀사이드"
+	CASE "メインプール"
+		RETURNF "메인 풀"
+	CASE "ボールプール"
+		RETURNF "볼 풀"
+	CASE "流れるプール"
+		RETURNF "유수 풀"
+	CASE "男子更衣室へ"
+		RETURNF "남자 탈의실로"
+	CASE "女子更衣室へ"
+		RETURNF "여자 탈의실로"
+
+	; 자택
+	CASE "自宅玄関"
+		RETURNF "집 현관"
+	CASE "トイレ"
+		RETURNF "화장실"
+	CASE "和室"
+		RETURNF "일본식 방"
+	CASE "リビング"
+		RETURNF "거실"
+	CASE "キッチン"
+		RETURNF "주방"
+	CASE "お風呂場"
+		RETURNF "욕실"
+	CASE "自宅庭"
+		RETURNF "집 정원"
+	CASE "リゾートエリアへ"
+		RETURNF "리조트 구역으로"
+	CASE "空き部屋"
+		RETURNF "빈 방"
+	CASE "２階トイレ"
+		RETURNF "2층 화장실"
+	CASE "ラウンジ"
+		RETURNF "라운지"
+	CASEELSE
+		; 동적 「○○の部屋」는 끝의 「の部屋」만 한국어로 바꾼다.
+		変換結果 '= REPLACE(場所名, "の部屋$", "의 방")
+		RETURNF 変換結果
+ENDSELECT
 
 
+; 상주 업무명도 같은 원칙으로 표시할 때만 변환한다.
+@常駐業務名韓国語変換(業務名)
+#FUNCTIONS
+#DIMS 業務名
 
+SELECTCASE 業務名
+	CASE "ロビー受付"
+		RETURNF "로비 접수"
+	CASE "バーテンダー"
+		RETURNF "바텐더"
+	CASE "司書"
+		RETURNF "사서"
+	CASE "プール監視員"
+		RETURNF "수영장 감시원"
+	CASE "道具屋"
+		RETURNF "도구점"
+	CASE "土産物屋"
+		RETURNF "기념품점"
+	CASE "食事処"
+		RETURNF "식당"
+	CASE "装飾品店"
+		RETURNF "장식품점"
+	CASE "漁師"
+		RETURNF "어부"
+	CASE "シーガイド"
+		RETURNF "시 가이드"
+	CASE "直売所"
+		RETURNF "직판장"
+	CASEELSE
+		RETURNF 業務名
+ENDSELECT
 

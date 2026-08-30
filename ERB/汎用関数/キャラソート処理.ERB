@@ -1,7 +1,7 @@
 ;---------------------------------------------------------
 ;ソート情報登録
 ;---------------------------------------------------------
-@ソート情報登録(キャラ番号, 登録番号)
+@ソート情報登録(キャラ番号, 登録番号 = 0)
 #FUNCTION
 #DIM キャラ番号
 #DIM 登録番号
@@ -10,51 +10,57 @@
 
 ;ソート順 = 1
 ;ソート処理
-;SIF キャラ一覧ソート:0 == ""
+;SIF キャラ一覧ソート:登録番号 == ""
 ;	RETURNF 0
 
-IF STRCOUNT(キャラ一覧ソート:1, "昇順")
+IF STRCOUNT(キャラ一覧ソート:(登録番号 + 1), "昇順")
 	ソート順 = 1
-ELSEIF STRCOUNT(キャラ一覧ソート:1, "降順")
+ELSEIF STRCOUNT(キャラ一覧ソート:(登録番号 + 1), "降順")
 	ソート順 = -1
 ELSE
 	ソート順 = 1
 ENDIF
 
-IF STRCOUNT(キャラ一覧ソート:0, "好感度レベル")
+IF STRCOUNT(キャラ一覧ソート:登録番号, "好感度レベル")
 	ソート値 = CFLAG:キャラ番号:好感度レベル
-ELSEIF STRCOUNT(キャラ一覧ソート:0, "恋慕レベル")
+ELSEIF STRCOUNT(キャラ一覧ソート:登録番号, "恋慕レベル")
 	ソート値 = CFLAG:キャラ番号:恋慕レベル
-ELSEIF GETNUM(ABL, キャラ一覧ソート:0) >= 0
-	ソート値 = ABL:キャラ番号:(キャラ一覧ソート:0)
-ELSEIF GETNUM(装備ステータス補正保存, キャラ一覧ソート:0) >= 0
-	ソート値 = 基礎BATTLE_STATE:キャラ番号:(キャラ一覧ソート:0) + 装備ステータス補正保存:キャラ番号:(キャラ一覧ソート:0)
-ELSEIF STRCOUNT(キャラ一覧ソート:0, "Lv")
-	ソート値 = 基礎BATTLE_STATE:キャラ番号:(キャラ一覧ソート:0)
-ELSEIF GETNUM(知識素質, キャラ一覧ソート:0) >= 0
-	ソート値 = 知識素質:キャラ番号:(キャラ一覧ソート:0)
-ELSEIF STRCOUNT(キャラ一覧ソート:0, "コマンド回数")
+ELSEIF GETNUM(ABL, キャラ一覧ソート:登録番号) >= 0
+	ソート値 = ABL:キャラ番号:(キャラ一覧ソート:登録番号)
+ELSEIF GETNUM(装備ステータス補正保存, キャラ一覧ソート:登録番号) >= 0
+	ソート値 = 基礎BATTLE_STATE:キャラ番号:(キャラ一覧ソート:登録番号) + 装備ステータス補正保存:キャラ番号:(キャラ一覧ソート:登録番号)
+ELSEIF STRCOUNT(キャラ一覧ソート:登録番号, "Lv")
+	ソート値 = 基礎BATTLE_STATE:キャラ番号:(キャラ一覧ソート:登録番号)
+ELSEIF GETNUM(知識素質, キャラ一覧ソート:登録番号) >= 0
+	ソート値 = 知識素質:キャラ番号:(キャラ一覧ソート:登録番号)
+ELSEIF STRCOUNT(キャラ一覧ソート:登録番号, "コマンド回数")
 	ソート値 = CFLAG:キャラ番号:コマンドタゲ回数記録
-ELSEIF GETNUM(性癖素質, キャラ一覧ソート:0) > 0
-	ソート値 = 性癖素質:キャラ番号:(キャラ一覧ソート:0)
-ELSEIF STRCOUNT(キャラ一覧ソート:0, "画像数")
+ELSEIF GETNUM(性癖素質, キャラ一覧ソート:登録番号) > 0
+	ソート値 = 性癖素質:キャラ番号:(キャラ一覧ソート:登録番号)
+ELSEIF STRCOUNT(キャラ一覧ソート:登録番号, "画像数")
 	ソート値 = GET_RESOURCES_COUNT(キャラ番号)
-ELSEIF STRCOUNT(キャラ一覧ソート:0, "呼び名")
+ELSEIF STRCOUNT(キャラ一覧ソート:登録番号, "出典")
+	ソート値 = ソート値取得_出典(キャラ番号)
+ELSEIF STRCOUNT(キャラ一覧ソート:登録番号, "呼び名")
 	ソート値 = ソート値取得_呼び名(キャラ番号)
-ELSEIF STRCOUNT(キャラ一覧ソート:0, "感覚合計")
+ELSEIF STRCOUNT(キャラ一覧ソート:登録番号, "感覚合計")
 	ソート値 = ソート値取得_感覚合計(キャラ番号)
-ELSEIF STRCOUNT(キャラ一覧ソート:0, "身長")
+ELSEIF STRCOUNT(キャラ一覧ソート:登録番号, "身長")
 	ソート値 = BASE:キャラ番号:身長
-ELSEIF STRCOUNT(キャラ一覧ソート:0, "バスト")
+ELSEIF STRCOUNT(キャラ一覧ソート:登録番号, "バスト")
 	ソート値 = 補正込みバストサイズ(キャラ番号)
-ELSEIF STRCOUNT(キャラ一覧ソート:0, "ウエスト")
+ELSEIF STRCOUNT(キャラ一覧ソート:登録番号, "ウエスト")
 	ソート値 = 補正込みウエストサイズ(キャラ番号)
-ELSEIF STRCOUNT(キャラ一覧ソート:0, "ヒップ")
+ELSEIF STRCOUNT(キャラ一覧ソート:登録番号, "ヒップ")
 	ソート値 = 補正込みヒップサイズ(キャラ番号)
+ELSEIF キャラ一覧ソート:登録番号 == "" && 登録番号 == 0
+	ソート値 = キャラ番号
 ELSE
-	ソート値 = 0
+	RETURNF 0
 ENDIF
-RETURNF (ソート値 * 10000 * ソート順)+ キャラ番号 + 1
+
+;RETURNF (ソート値 * 10000 * ソート順)+ キャラ番号 + 1
+RETURNF (ソート値 * 10000 * ソート順) + 1
 
 ;---------------------------------------------------------
 ;ソート情報表示
@@ -70,9 +76,9 @@ SIF キャラ一覧ソート:0 == ""
 	RETURNF ""
 
 IF STRCOUNT(キャラ一覧ソート:0, "好感度レベル")
-	RETURNF @"好感度レベル：Lv{CFLAG:対象キャラ:好感度レベル, 3}"
+	RETURNF @"호감도 레벨：Lv{CFLAG:対象キャラ:好感度レベル, 3}"
 ELSEIF STRCOUNT(キャラ一覧ソート:0, "恋慕レベル")
-	RETURNF @"恋慕レベル：Lv{CFLAG:対象キャラ:恋慕レベル, 3}"
+	RETURNF @"연모 레벨：Lv{CFLAG:対象キャラ:恋慕レベル, 3}"
 ELSEIF GETNUM(ABL, キャラ一覧ソート:0) >= 0
 	RETURNF @"%ABLNAME:(GETNUM(ABL, キャラ一覧ソート:0))%：{ABL:対象キャラ:(キャラ一覧ソート:0), 2}"
 ELSEIF GETNUM(装備ステータス補正保存, キャラ一覧ソート:0) >= 0
@@ -82,33 +88,35 @@ ELSEIF STRCOUNT(キャラ一覧ソート:0, "Lv")
 ELSEIF GETNUM(知識素質, キャラ一覧ソート:0) >= 0
 	RETURNF @"%ERDNAME(知識素質, GETNUM(知識素質, キャラ一覧ソート:0))%：{知識素質:対象キャラ:(キャラ一覧ソート:0)}"
 ELSEIF STRCOUNT(キャラ一覧ソート:0, "コマンド回数")
-	RETURNF @"コマンド回数：{CFLAG:対象キャラ:コマンドタゲ回数記録, 4}"
+	RETURNF @"커맨드 횟수：{CFLAG:対象キャラ:コマンドタゲ回数記録, 4}"
 ELSEIF GETNUM(性癖素質, キャラ一覧ソート:0) > 0
 	RETURNF @"%ERDNAME(性癖素質, GETNUM(性癖素質, キャラ一覧ソート:0))%：{性癖素質:対象キャラ:(キャラ一覧ソート:0)}"
 ELSEIF STRCOUNT(キャラ一覧ソート:0, "画像数")
-	RETURNF @"画像数：{GET_RESOURCES_COUNT(対象キャラ), 4}"
+	RETURNF @"이미지 수：{GET_RESOURCES_COUNT(対象キャラ), 4}"
+ELSEIF STRCOUNT(キャラ一覧ソート:0, "出典")
+	RETURNF @"출처：%ソート用出典名取得(対象キャラ)%"
 ELSEIF STRCOUNT(キャラ一覧ソート:0, "呼び名")
 	IF 短縮フラグ
-		RETURNF @"呼び名：%NAME表示省略(CALLNAME:対象キャラ, 10), 10, LEFT%"
+		RETURNF @"호칭：%NAME表示省略(CALLNAME:対象キャラ, 10), 10, LEFT%"
 	ELSE
-		RETURNF @"呼び名：%CALLNAME:対象キャラ%"
+		RETURNF @"호칭：%CALLNAME:対象キャラ%"
 	ENDIF
 ELSEIF STRCOUNT(キャラ一覧ソート:0, "感覚合計")
-	LOCALS '= GET_TALENTNAME(GETNUM(TALENT, "イキやすさ"), TALENT:対象キャラ:절정 용이성)
+	LOCALS '= GET_TALENTNAME(GETNUM(TALENT, "イキやすさ"), TALENT:対象キャラ:イキやすさ)
 	IF LOCALS != ""
 		LOCALS '= @"＋ %LOCALS%"
 	ELSE
 		LOCALS '= @"   　　　"
 	ENDIF
-	RETURNF @"感覚合計：{ソート値取得_感覚合計(対象キャラ, 1), 2} %LOCALS%"
+	RETURNF @"감각 합계：{ソート値取得_感覚合計(対象キャラ, 1), 2} %LOCALS%"
 ELSEIF STRCOUNT(キャラ一覧ソート:0, "身長")
-	RETURNF @"身長：%DECIMAL_STRING(BASE:対象キャラ:身長, 1)%cm"
+	RETURNF @"신장:%DECIMAL_STRING(BASE:対象キャラ:身長, 1)%cm"
 ELSEIF STRCOUNT(キャラ一覧ソート:0, "バスト")
-	RETURNF @"バスト：%DECIMAL_STRING(補正込みバストサイズ(対象キャラ), 1)%cm%GET_CUPSIZE(対象キャラ)%"
+	RETURNF @"가슴둘레:%DECIMAL_STRING(補正込みバストサイズ(対象キャラ), 1)%cm%GET_CUPSIZE(対象キャラ)%"
 ELSEIF STRCOUNT(キャラ一覧ソート:0, "ウエスト")
-	RETURNF @"ウエスト：%DECIMAL_STRING(補正込みウエストサイズ(対象キャラ), 1)%cm"
+	RETURNF @"허리둘레:%DECIMAL_STRING(補正込みウエストサイズ(対象キャラ), 1)%cm"
 ELSEIF STRCOUNT(キャラ一覧ソート:0, "ヒップ")
-	RETURNF @"ヒップ：%DECIMAL_STRING(補正込みヒップサイズ(対象キャラ), 1)%cm"
+	RETURNF @"엉덩이둘레:%DECIMAL_STRING(補正込みヒップサイズ(対象キャラ), 1)%cm"
 ENDIF
 
 ;---------------------------------------------------------
@@ -120,19 +128,80 @@ JUMP SHOW_CHARADATA_SORT()
 
 ;本体
 @SHOW_CHARADATA_SORT
+#DIM 編集番号
+
 DRAWLINE
 PRINTL 캐릭터 표시를 임의의 조건으로 정렬합니다.
 PRINT 현재 정렬 조건:
-IF キャラ一覧ソート:0 != ""
-	PRINTFORM %キャラ一覧ソート:0%(%キャラ一覧ソート:1%)
+IF 編集番号 == 0
+	SETCOLOR カラーパレット("黄")
+	IF キャラ一覧ソート:0 != ""
+		PRINTPLAINFORM [%キャラ一覧ソート:0%(%キャラ一覧ソート:1%)]
+	ELSE
+		PRINTPLAIN [없음 (캐릭터 번호순)]
+	ENDIF
+	PRINT (편집 중)
+	RESETCOLOR
 ELSE
-	PRINT 없음(캐릭터 번호순)
+	IF キャラ一覧ソート:0 != ""
+		PRINTBUTTON @"[%キャラ一覧ソート:0%(%キャラ一覧ソート:1%)]", "編集0"
+	ELSE
+		PRINTBUTTON @"[없음 (캐릭터 번호순)]", "編集0"
+	ENDIF
+	PRINT 　　　　　
 ENDIF
-PRINT 　　　
 IF STRCOUNT(キャラ一覧ソート:1, "昇順")
-	PRINTBUTTON "[내림차순으로]", "降順"
+	PRINTBUTTON "[내림차순으로 정렬]", "降順1"
 ELSEIF STRCOUNT(キャラ一覧ソート:1, "降順")
-	PRINTBUTTON "[오름차순으로]", "昇順"
+	PRINTBUTTON "[오름차순으로 정렬]", "昇順1"
+ENDIF
+PRINTL
+PRINT 　　　　　　　　　
+IF 編集番号 == 2
+	SETCOLOR カラーパレット("黄")
+	IF キャラ一覧ソート:2 != ""
+		PRINTPLAINFORM [%キャラ一覧ソート:2%(%キャラ一覧ソート:3%)]
+	ELSE
+		PRINTPLAIN [없음]
+	ENDIF
+	PRINT (편집 중)
+	RESETCOLOR
+ELSE
+	IF キャラ一覧ソート:2 != ""
+		PRINTBUTTON @"[%キャラ一覧ソート:2%(%キャラ一覧ソート:3%)]", "編集2"
+	ELSE
+		PRINTBUTTON @"[없음]", "編集2"
+	ENDIF
+	PRINT 　　　　　
+ENDIF
+IF STRCOUNT(キャラ一覧ソート:3, "昇順")
+	PRINTBUTTON "[내림차순으로 정렬]", "降順2"
+ELSEIF STRCOUNT(キャラ一覧ソート:3, "降順")
+	PRINTBUTTON "[오름차순으로 정렬]", "昇順2"
+ENDIF
+PRINTL
+PRINT 　　　　　　　　　
+IF 編集番号 == 4
+	SETCOLOR カラーパレット("黄")
+	IF キャラ一覧ソート:4 != ""
+		PRINTPLAINFORM [%キャラ一覧ソート:4%(%キャラ一覧ソート:5%)]
+	ELSE
+		PRINTPLAIN [없음]
+	ENDIF
+	PRINT （편집 중）
+	RESETCOLOR
+ELSE
+	IF キャラ一覧ソート:4 != ""
+		PRINTBUTTON @"[%キャラ一覧ソート:4%(%キャラ一覧ソート:5%)]", "編集4"
+	ELSE
+		PRINTBUTTON @"[없음]", "編集4"
+	ENDIF
+	PRINT 　　　　　
+ENDIF
+IF STRCOUNT(キャラ一覧ソート:5, "昇順")
+	PRINTBUTTON "[내림차순으로 정렬]", "降順3"
+ELSEIF STRCOUNT(キャラ一覧ソート:5, "降順")
+	PRINTBUTTON "[오름차순으로 정렬]", "昇順3"
 ENDIF
 PRINTL
 DRAWLINE
@@ -140,8 +209,9 @@ PRINTL ■ 정렬 조건 목록
 PRINTBUTTONLC "[없음(캐릭터 번호순)]", "なし"
 PRINTBUTTONLC "[호감도 레벨]", "好感度レベル"
 PRINTBUTTONLC "[연모 레벨]", "恋慕レベル"
-PRINTBUTTONLC "[커맨드 횟수]", "コマンド回数"
+PRINTBUTTONLC "[명령 횟수]", "コマンド回数"
 PRINTBUTTONLC "[이미지 수]", "画像数"
+PRINTBUTTONLC "[출전]", "出典"
 PRINTBUTTONLC "[호칭]", "呼び名"
 ;#;PRINTBUTTONLC "[チョロさ]", "チョロさ"
 PRINTL
@@ -160,7 +230,7 @@ PRINTBUTTONLC "[마조 성감]", "マゾ性感"
 PRINTBUTTONLC "[새디 성감]", "サド性感"
 PRINTBUTTONLC "[동성애]", "同性愛"
 PRINTBUTTONLC "[장난감 기호]", "玩具嗜好"
-PRINTBUTTONLC "[기교]", "技巧"
+PRINTBUTTONLC "[기술]", "技巧"
 PRINTBUTTONLC "[도구 취급]", "道具扱い"
 PRINTL
 DRAWLINE
@@ -171,16 +241,16 @@ PRINTBUTTONLC "[엉덩이]", "ヒップ"
 PRINTL
 DRAWLINE
 PRINTBUTTONLC "[Lv]", "Lv"
-PRINTBUTTONLC "[최대HP]", "최대HP"
-PRINTBUTTONLC "[최대MP]", "최대MP"
-PRINTBUTTONLC "[공격력]", "공격력"
-PRINTBUTTONLC "[방어력]", "방어력"
-PRINTBUTTONLC "[회복력]", "회복력"
-PRINTBUTTONLC "[행동 속도]", "행동속도"
-PRINTBUTTONLC "[DA율]", "DA율"
-PRINTBUTTONLC "[TA율]", "TA율"
-PRINTBUTTONLC "[명중률]", "명중률"
-PRINTBUTTONLC "[회피율]", "회피율"
+PRINTBUTTONLC "[최대 HP]", "最大ＨＰ"
+PRINTBUTTONLC "[최대 MP]", "最大ＭＰ"
+PRINTBUTTONLC "[공격력]", "攻撃力"
+PRINTBUTTONLC "[방어력]", "防御力"
+PRINTBUTTONLC "[회복력]", "回復力"
+PRINTBUTTONLC "[행동 속도]", "行動速度"
+PRINTBUTTONLC "[DA율]", "DA率"
+PRINTBUTTONLC "[TA율]", "TA率"
+PRINTBUTTONLC "[명중률]", "命中率"
+PRINTBUTTONLC "[회피율]", "回避率"
 PRINTL
 DRAWLINE
 FOR LOCAL, 1, 100
@@ -205,6 +275,7 @@ RESULT = 0
 RESULTS = 
 INPUTANY
 IF RESULT == 999
+	編集番号 = 0
 	RETURN 0
 ENDIF
 LOCALS = %RESULTS%
@@ -213,19 +284,48 @@ SELECTCASE LOCALS
 		キャラ一覧ソート:0 = 
 		キャラ一覧ソート:1 = 
 		RETURN 0
-	CASE "昇順"
+	CASE "編集0"
+		編集番号 = 0
+		RESTART
+	CASE "編集2"
+		編集番号 = 2
+		RESTART
+	CASE "編集4"
+		編集番号 = 4
+		RESTART
+	CASE "昇順1"
 		IF STRCOUNT(キャラ一覧ソート:1, "降順")
 			キャラ一覧ソート:1 = 昇順
 		ENDIF
-		RETURN 0
-	CASE "降順"
+		RESTART
+	CASE "降順1"
 		IF STRCOUNT(キャラ一覧ソート:1, "昇順")
 			キャラ一覧ソート:1 = 降順
 		ENDIF
-		RETURN 0
+		RESTART
+	CASE "昇順2"
+		IF STRCOUNT(キャラ一覧ソート:3, "降順")
+			キャラ一覧ソート:3 = 昇順
+		ENDIF
+		RESTART
+	CASE "降順2"
+		IF STRCOUNT(キャラ一覧ソート:3, "昇順")
+			キャラ一覧ソート:3 = 降順
+		ENDIF
+		RESTART
+	CASE "昇順3"
+		IF STRCOUNT(キャラ一覧ソート:5, "降順")
+			キャラ一覧ソート:5 = 昇順
+		ENDIF
+		RESTART
+	CASE "降順3"
+		IF STRCOUNT(キャラ一覧ソート:5, "昇順")
+			キャラ一覧ソート:5 = 降順
+		ENDIF
+		RESTART
 	CASEELSE
 		DO
-			IF GROUPMATCH(LOCALS, "好感度レベル", "恋慕レベル", "Lv", "コマンド回数", "画像数", "呼び名", "感覚合計")
+			IF GROUPMATCH(LOCALS, "好感度レベル", "恋慕レベル", "Lv", "コマンド回数", "画像数", "出典", "呼び名", "感覚合計")
 				;非能力系ソート
 			ELSEIF GETNUM(ABL, LOCALS) >= 0
 				;ABLソート
@@ -245,13 +345,13 @@ SELECTCASE LOCALS
 				;どれにも当てはまらない場合は×
 				BREAK
 			ENDIF
-			キャラ一覧ソート:0 = %LOCALS%
+			キャラ一覧ソート:編集番号 = %LOCALS%
 			IF STRCOUNT(キャラ一覧ソート:1, "昇順")
-				キャラ一覧ソート:1 = 昇順
+				キャラ一覧ソート:(編集番号 + 1) = 昇順
 			ELSE
-				キャラ一覧ソート:1 = 降順
+				キャラ一覧ソート:(編集番号 + 1) = 降順
 			ENDIF
-			RETURN 0
+			RESTART
 		LOOP 1
 ENDSELECT
 REUSELASTLINE 
@@ -260,11 +360,13 @@ GOTO INPUT_LOOP_ANY
 ;---------------------------------------------------------
 ;ソート順反転処理
 ;---------------------------------------------------------
-@ソート順反転処理()
-IF STRCOUNT(キャラ一覧ソート:1, "昇順")
-	キャラ一覧ソート:1 = 降順
+@ソート順反転処理(ソート番号)
+#DIM ソート番号
+
+IF STRCOUNT(キャラ一覧ソート:ソート番号, "昇順")
+	キャラ一覧ソート:ソート番号 = 降順
 ELSE
-	キャラ一覧ソート:1 = 昇順
+	キャラ一覧ソート:ソート番号 = 昇順
 ENDIF
 
 ;---------------------------------------------------------
@@ -309,13 +411,77 @@ RETURNF 感度合計
 
 IF CHARANUM > CHARANUM記憶
 	;キャラ数が増えたらリスト更新
-	;・現状キャラが減ることはないので増えた時だけ更新する。
+	;・현재キャラが減ることはないので増えた時だけ更新する。
 	;　キャラが減るケースが追加された場合は更新タイミングの修正が必要。
 	CHARANUM記憶 = CHARANUM
 	CALLF 呼び名ソート値リスト更新(呼び名ソート値リスト)
 ENDIF
 
 RETURNF 呼び名ソート値リスト:対象キャラ
+
+
+;---------------------------------------------------------
+;ソート用情報取得関数 出典名取得
+;---------------------------------------------------------
+@ソート用出典名取得(対象キャラ)
+#FUNCTIONS
+#DIM 対象キャラ
+
+;既存の出典フィルタと同様、出演作品が空欄のキャラはグラブル出典として扱う
+SIF CSTR:対象キャラ:出演作品 == ""
+	RETURNF "그랑블루 판타지"
+RETURNF CSTR:対象キャラ:出演作品
+
+
+;---------------------------------------------------------
+;ソート用情報取得関数 出典ソート値取得
+;---------------------------------------------------------
+@ソート値取得_出典(対象キャラ)
+#FUNCTION
+#DIM 対象キャラ
+#DIM 出典ソート値リスト, キャラクタ数上限
+#DIM CHARANUM記憶
+
+IF CHARANUM > CHARANUM記憶
+	;キャラ数が増えたら出典順リストを更新する
+	CHARANUM記憶 = CHARANUM
+	CALLF 出典ソート値リスト更新(出典ソート値リスト)
+ENDIF
+
+RETURNF 出典ソート値リスト:対象キャラ
+
+
+;---------------------------------------------------------
+;ソート用情報取得関数 出典ソート値用のリスト更新
+;---------------------------------------------------------
+@出典ソート値リスト更新(出典ソート値リスト)
+#FUNCTION
+#DIM  REF 出典ソート値リスト
+#DIMS DYNAMIC 出典名リスト    , キャラクタ数上限
+#DIM  DYNAMIC キャラ番号リスト, キャラクタ数上限
+#DIMS 前回出典名
+#DIM  出典順位
+#DIM  キャラ番号
+#DIM  L_CNT
+
+;出典名を文字列順に並べ、同じ出典には同じ順位を割り当てる
+VARSET 出典ソート値リスト
+FOR キャラ番号, 0, CHARANUM
+	出典名リスト:キャラ番号 '= ソート用出典名取得(キャラ番号)
+	キャラ番号リスト:キャラ番号 = キャラ番号
+NEXT
+ARRAYMSORT 出典名リスト, キャラ番号リスト
+
+出典順位 = -1
+FOR L_CNT, 0, CHARANUM
+	IF L_CNT == 0 || 出典名リスト:L_CNT != 前回出典名
+		出典順位 ++
+		前回出典名 '= 出典名リスト:L_CNT
+	ENDIF
+	キャラ番号 = キャラ番号リスト:L_CNT
+	出典ソート値リスト:キャラ番号 = 出典順位
+NEXT
+RETURNF 0
 
 
 ;---------------------------------------------------------

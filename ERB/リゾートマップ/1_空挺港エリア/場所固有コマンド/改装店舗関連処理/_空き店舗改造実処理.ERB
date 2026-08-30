@@ -9,15 +9,15 @@ IF 空艇港店舗屋号記録:店番号 == ""
 ENDIF
 
 DRAWLINE
-PRINTL 공정항 에리어의 점포를 개장합니다.
+PRINTL 비행선 항구 지역의 점포를 개조합니다.
 PRINTL 어떤 점포로 하시겠습니까?
 DRAWLINE
 LOCALS = <div rect='81,0,1912,344' border='31' bcolor='#C0C0C0'></div>
-LOCALS += @"<div rect='156,62,1912,281'>소지 루피:%NUM_FORMAT(MONEY)%<br>소지 ZP　:%ZP所持量全文字列()%</div>"
+LOCALS += @"<div rect='156,62,1912,281'>보유 루피:%NUM_FORMAT(MONEY)%<br>보유 ZP　:%ZP所持量全文字列()%</div>"
 LOCALS += "<div rect='81,375,1937,2812' border='31' bcolor='#C0C0C0'></div><div rect='2050,375,3875,2812' border='31' bcolor='#C0C0C0'></div>"
 LOCALS += "<div rect='156,500,1937,2812'>"
 CALLFORMF 空艇港店舗名表示_{空艇港店舗状況:店番号:0}(店番号)
-LOCALS += @"<button value='99'>[99] 현재 점포:%TSTR:場所名受渡%</button>"
+LOCALS += @"<button value='99'>[99] 현재 점포：%TSTR:場所名受渡%</button>"
 LOCALS += "<br>"
 IF 空艇港店舗状況:店番号:0 != 0
 	LOCALS += "<button value='100'>[100] 빈 방</button>"
@@ -37,6 +37,10 @@ IF 空艇港店舗状況:店番号:0 != 3
 ENDIF
 IF 空艇港店舗状況:店番号:0 != 4
 	LOCALS += @"<button value='104'>[104] 장식품점</button>"
+	LOCALS += "<br>"
+ENDIF
+IF 空艇港店舗状況:店番号:0 != 5 && (MATCH(開拓エリア開発番号, 大規模番号_海エリア) > 0 || MATCH(開拓エリア開発番号, 大規模番号_牧場エリア) > 0)
+	LOCALS += @"<button value='105'>[105] 직판장</button>"
 	LOCALS += "<br>"
 ENDIF
 LOCALS += "<button value='999'>[999] 돌아가기</button>"
@@ -60,7 +64,7 @@ SELECTCASE LOCAL
 	CASE 99
 		画面表示用変数 = 0
 		RESTART
-	CASE 100 TO 104
+	CASE 100 TO 105
 		IF 空艇港店舗状況:店番号:0 == LOCAL - 100
 			REUSELASTLINE 
 			GOTO INPUT_LOOP
@@ -80,7 +84,7 @@ SELECTCASE LOCAL
 		ENDIF
 		CALLFORMF 空艇港店舗名表示_{画面表示用変数 - 100}(店番号)
 		DRAWLINE
-		PRINTFORMW %NUM_FORMAT(LOCAL:1)%루피를 소비하여, 점포를 %TSTR:場所名受渡%으로 개장했습니다.
+		PRINTFORMW %NUM_FORMAT(LOCAL:1)%루피를 소비하여 점포를%TSTR:場所名受渡%으로 개조했습니다.
 		空艇港店舗状況:店番号:0 = 画面表示用変数 - 100
 		画面表示用変数 = 0
 		MONEY -= LOCAL:1
@@ -104,7 +108,7 @@ SELECTCASE LOCAL
 			空艇港店舗屋号記録:店番号 = %RESULTS%
 			PRINTL 
 			PRINTL 
-			PRINTFORMW 상호명을 %空艇港店舗屋号記録:店番号%으로 변경했습니다.
+			PRINTFORMW 상호명을%空艇港店舗屋号記録:店番号%으로 변경했습니다.
 		ENDIF
 		RESTART
 	CASE 11
@@ -125,26 +129,26 @@ SELECTCASE 画面表示用変数
 		LOCALS += 建物文章受け渡し文字列
 		IF 空艇港店舗状況:店番号:0 != 0
 			LOCALS += "<br>"
-			LOCALS += "<button value='10'>[10] 상호를 입력한다</button><br>"
-			LOCALS += "<button value='11'>[11] 상호를 무작위로 변경한다</button><br>"
+			LOCALS += "<button value='10'>[10] 상호명을 입력한다</button><br>"
+			LOCALS += "<button value='11'>[11] 상호명을 무작위로 변경한다</button><br>"
 			LOCALS += "<br>"
 		ENDIF
 		LOCALS += "</div>"
-	CASE 100 TO 104
+	CASE 100 TO 105
 		LOCALS = <div rect='2125,500,3775,2812'>
 		CALLFORM 空艇港店舗解説文_{画面表示用変数 - 100}(建物文章受け渡し文字列, 店番号)
 		LOCALS += 建物文章受け渡し文字列
 		LOCALS += "<br>"
 		IF 画面表示用変数 != 100
-			LOCALS += "<button value='10'>[10] 상호를 입력한다</button><br>"
-			LOCALS += "<button value='11'>[11] 상호를 무작위로 변경한다</button><br>"
+			LOCALS += "<button value='10'>[10] 상호명을 입력한다</button><br>"
+			LOCALS += "<button value='11'>[11] 상호명을 무작위로 변경한다</button><br>"
 			LOCALS += "<br>"
 		ENDIF
-		LOCALS += "이 상태로 개조하시겠습니까?<br>"
+		LOCALS += "이 상태로 개조하시겠습니까？<br>"
 		LOCALS += @"필요 루피：%NUM_FORMAT(RESULT), 7%"
 		LOCALS += "<br>"
 		LOCALS += "<button value='0'>[0]예</button><br>"
-		LOCALS += "<button value='1'>[1]아니요</button><br>"
+		LOCALS += "<button value='1'>[1]아니오</button><br>"
 		LOCALS += "</div>"
 ENDSELECT
 
@@ -207,11 +211,11 @@ STRDATA 屋号_上
 	DATA 탐험
 	DATA 단검
 	DATA 강도끼
-	DATA 예리한 창
+	DATA 예창
 	DATA 마법 지팡이
 	DATA 강궁
 	DATA 대총
-	DATA 낙금
+	DATA 악기
 	DATA 철권
 	DATA 명도
 	DATA 추억
@@ -227,7 +231,7 @@ STRDATA 屋号_上
 	DATA 복룡
 	DATA 봉리
 	DATA 불패
-	DATA 분신
+	DATA 분진
 	DATA 무적
 	DATA 일심
 	DATA 위풍
@@ -255,13 +259,13 @@ STRDATA 屋号_上
 	DATA 새벽
 	DATA 추수
 	DATA 청운
-	DATA 창공
-	DATA 옥향
+	DATA 창궁
+	DATA 찰나
 	DATA 박빙
 	DATA 비취
 	DATA 백야
 	DATA 명월
-	DATA 구가
+	DATA 앙가
 	DATA 잔향
 	DATA 만뢰
 	DATA 산호
@@ -280,6 +284,8 @@ STRDATA 屋号_上
 	DATA 호박
 	DATA 호안
 	DATA 에치고
+	DATA 행복
+	DATA 근육
 ENDDATA
 
 STRDATA 屋号_下
@@ -288,13 +294,18 @@ STRDATA 屋号_下
 	DATA 당
 	DATA 본점
 	DATA 스토어
-	DATA 숍
+	DATA 상점
 	DATA 사
 	DATA 기획
 	DATA 공방
 	DATA 마켓
 	DATA 시장
 	DATA 창고
+	DATA 처
+	DATA 암자
+	DATA 마트
+	DATA 정
+	DATA 랜드
 ENDDATA
 
 RETURNF 屋号_上 + 屋号_下

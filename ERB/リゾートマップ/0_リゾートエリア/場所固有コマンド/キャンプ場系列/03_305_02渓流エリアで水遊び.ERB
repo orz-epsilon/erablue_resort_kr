@@ -102,20 +102,20 @@ RETURN 1
 ;実行時メッセージ
 ;-------------------------------------------------
 @MESSAGE_COM381_0_305
-PRINTFORM %CALLNAME:PLAYER%은(는)%CALLNAME:TARGET%\@ GET_TARGETNUM() > 1 ? 들 # \@과 강가에서 물놀이를 했다
+PRINTFORM %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%\@ GET_TARGETNUM() > 1 ? 들 # \@와(과) 강가에서 물놀이를 했다
 SELECTCASE RFLAG:コマンド結果受渡し変数
 	CASE IS <= -1
 		;失敗時
 		PRINTL 하지만,
-		PRINTW 별로 분위기가 달아오르지 않았다…
+		PRINTW 별로 신나지 않았다…
 	CASE IS <= 9
 		;成功時
 		PRINTL 
-		PRINTFORMW \@ GET_TARGETNUM() > 1 ? 모두 함께 # 둘이서\@즐거운 시간을 보낼 수 있었다…
+		PRINTFORMW \@ GET_TARGETNUM() > 1 ? 다 같이 # 둘이서\@ 즐거운 시간을 보냈다…
 	CASEELSE
 		;大成功時
 		PRINTL 
-		PRINTFORMW \@ GET_TARGETNUM() > 1 ? 모두 함께 # 둘이서\@정말 분위기가 달아올랐다!
+		PRINTFORMW \@ GET_TARGETNUM() > 1 ? 다 같이 # 둘이서\@ 정말 신났다!
 ENDSELECT
 
 

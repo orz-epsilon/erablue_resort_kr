@@ -15,8 +15,8 @@ TFLAG:コマンドタイプ受渡 = COMTYPE("セクハラ弱")
 
 @COM_TOOLTIP_S306_6
 LOCALS = <br>■배를 쓰다듬다<br>
-LOCALS += "상대의 복부를 쓰다듬는 커맨드. <br>임신 진행 상태가 일정 이상일 경우에만 실행 가능."
-LOCALS += "<br>COM 타입: 성희롱<br>획득 소스: 접촉・노출・쾌S・환락(일정 조건 시)・불쾌(일정 조건 시)・반감(일정 조건 시)"
+LOCALS += "상대의 복부를 쓰다듬는 커맨드。<br>임신 진행 상태가 일정 이상인 경우에만 실행 가능。"
+LOCALS += "<br>COM 타입：성희롱<br>획득 소스：접촉・노출・쾌S・환락(일정 조건 시)・불쾌(일정 조건 시)・반감(일정 조건 시)"
 LOCALS += "<br>고유 획득 경험: 없음<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
@@ -187,7 +187,7 @@ RETURN 1
 ;選択から飛んでくるのでABLEは常に0
 RETURN 0
 
-@身体に触れる_ABLE_배를쓰다듬다
+@身体に触れる_ABLE_お腹を撫でる
 ;一括管理
 SIF GLOBAL_COMABLE_S("306_6") && !RFLAG:罰ゲーム中
 	RETURN RESULT
@@ -242,9 +242,9 @@ SELECTCASE RFLAG:コマンド結果受渡し変数２
 				ENDIF
 			CASE 2
 				IF 知識素質:TARGET:性知識 == -1 && EXP:TARGET:出産経験
-PRINTFORML %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%와(과) 함께 자신의 배를 쓰다듬고 있다
+					PRINTFORML %CALLNAME:TARGET%은(는)%CALLNAME:PLAYER%와 함께 自분의 배를 쓰다듬고 있다
 				ELSE
-PRINTFORML %CALLNAME:TARGET%은(는) 살쪘다고 생각하는 복부를 만져져 부끄러워하고 있다
+					PRINTFORML %CALLNAME:TARGET%은(는) 살쪘다고 착각하고 있는 복부를 만져져, 부끄러워하고 있다
 				ENDIF
 			CASE 3
 				;喜び時は喜ぶ
@@ -255,46 +255,46 @@ PRINTFORML %CALLNAME:TARGET%은(는) 간지러운 듯 웃고 있다
 		SELECTCASE RFLAG:コマンド結果受渡し変数
 			CASE 1 TO 2
 				;拒絶と受け入れ時は反応なし
-PRINTFORML %CALLNAME:TARGET%은(는) 아무런 반응도 보이지 않고 태연하다
+PRINTFORML %CALLNAME:TARGET%은(는) 아무런 반응도 보이지 않고, 태연하다
 			CASE 3
 				;喜び時はちょっと喜ぶ
-PRINTFORML %CALLNAME:TARGET%은(는) 태연하지만, 살짝 얼굴을 붉히고 %CALLNAME:PLAYER%에게 몸을 비벼왔다…
+PRINTFORML %CALLNAME:TARGET%은(는) 태연하지만, 조금 얼굴을 붉히고 %CALLNAME:PLAYER%에게 몸을 비벼왔다…
 		ENDSELECT
 	CASE 3
 		;嫌悪
 		SELECTCASE RFLAG:コマンド結果受渡し変数
 			CASE 1
 				;拒絶
-PRINTFORML %CALLNAME:TARGET%은(는) 싫은 듯한 얼굴로 %CALLNAME:PLAYER%의 손을 떼어냈다…
+PRINTFORML %CALLNAME:TARGET%은(는) 싫다는 듯한 얼굴로 %CALLNAME:PLAYER%의 손을 떼어냈다…
 			CASE 2
 				;受け入れ
 PRINTFORML %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%을(를) 무시하고, 마음껏 쓰다듬게 하고 있다
 			CASE 3
 				;喜び
-PRINTFORML %CALLNAME:TARGET%은(는) 무시하고 시선을 피하고 있지만, 살짝 뺨을 붉히고 있다…
+PRINTFORML %CALLNAME:TARGET%은(는) 무시하고 시선을 피하고 있지만, 조금 뺨을 붉히고 있다…
 		ENDSELECT
 	CASE 4
 		;拒否
 		SELECTCASE RFLAG:コマンド結果受渡し変数
 			CASE 1
 				;拒絶
-PRINTFORML %CALLNAME:TARGET%은(는) 함부로 그곳을 만져서는 안 된다고, %CALLNAME:PLAYER%의 손을 거부했다
+PRINTFORML %CALLNAME:TARGET%은(는) 함부로 그곳에 손대지 말라며, %CALLNAME:PLAYER%의 손을 거부했다
 			CASE 2
 				;受け入れ
-PRINTFORML %CALLNAME:TARGET%은(는) 불만스러운 얼굴을 하고 있지만, %CALLNAME:PLAYER%의 손을 거부하지는 않는 것 같다…
+PRINTFORML %CALLNAME:TARGET%은(는) 불만스러운 얼굴을 하고 있지만, %CALLNAME:PLAYER%의 손을 거부하지는 않는 듯하다…
 			CASE 3
 				;喜び
-PRINTFORML %CALLNAME:TARGET%은(는) 나쁘지 않은 기분인 듯, %CALLNAME:PLAYER%이(가) 마음대로 하게 하고 있다…
+PRINTFORML %CALLNAME:TARGET%은(는) 나쁘지 않은 기색으로, %CALLNAME:PLAYER%의 마음대로 하게 놔두고 있다…
 		ENDSELECT
 	CASE 5
 		;余裕
 		SELECTCASE RFLAG:コマンド結果受渡し変数
 			CASE 1
 				;拒絶
-PRINTFORML %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%을(를) 꾸짖으며, 함부로 임산부를 만져서는 안 된다고 타이르다
+PRINTFORML %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%을(를) 꾸짖으며, 함부로 임산부에게 손대지 말라고 타이르듯 말했다
 			CASE 2
 				;受け入れ
-PRINTFORML %CALLNAME:TARGET%은(는) 곤란한 듯 웃으며, 말로만 주의를 %CALLNAME:PLAYER%에게 주고 있다
+PRINTFORML %CALLNAME:TARGET%은(는) 곤란한 듯 웃으며, %CALLNAME:PLAYER%에게 말로만 주의를 주고 있다
 			CASE 3
 				;喜び
 PRINTFORML %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%이(가) 쓰다듬기 쉽도록, 몸을 기대왔다…
@@ -307,7 +307,7 @@ PRINTFORML %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%이(가) 쓰다듬기 쉽�
 PRINTFORML %CALLNAME:TARGET%은(는) 새빨개져서, %CALLNAME:PLAYER%의 손을 쳐냈다…
 			CASE 2
 				;受け入れ
-PRINTFORML %CALLNAME:TARGET%은(는) 얼굴을 붉히면서, %CALLNAME:PLAYER%에게 당하는 대로 되어 있다
+PRINTFORML %CALLNAME:TARGET%은(는) 얼굴을 붉히면서, %CALLNAME:PLAYER%에게 당하는 대로 가만히 있다
 			CASE 3
 				;喜び
 PRINTFORML %CALLNAME:TARGET%은(는) 붉어진 얼굴로 %CALLNAME:PLAYER%을(를) 응시하며, %CALLNAME:PLAYER%의 손에 자신의 손을 겹쳤다…
@@ -317,10 +317,10 @@ PRINTFORML %CALLNAME:TARGET%은(는) 붉어진 얼굴로 %CALLNAME:PLAYER%을(�
 		SELECTCASE RFLAG:コマンド結果受渡し変数
 			CASE 1
 				;拒絶
-PRINTFORML %CALLNAME:TARGET%은(는) 재미있다는 듯 미소 지으며, 그런 만지는 방식으로는 아기가 화를 낸다고 지적해왔다
+PRINTFORML %CALLNAME:TARGET%은(는) 재미있다는 듯 미소 지으며, 그런 식으로 만지면 아기가 화낼 거라고 지적했다
 			CASE 2
 				;受け入れ
-PRINTFORML %CALLNAME:TARGET%은(는) \@CFLAG:TARGET:아이의 아버지 == PLAYER?아버지의 자각이 생겼나#훌륭한 것이겠지\@, 라고 농담조로 %CALLNAME:PLAYER%을(를) 놀리고 있다…
+PRINTFORML %CALLNAME:TARGET%은(는) \@CFLAG:TARGET:子の父親 == PLAYER?아버지로서의 자각이 생겼나#훌륭한 일이겠지\@, 라며 농담 삼아 %CALLNAME:PLAYER%을(를) 놀리고 있다…
 			CASE 3
 				;喜び
 PRINTFORML %CALLNAME:TARGET%은(는) 스스로 복부를 %CALLNAME:PLAYER%에게 밀어붙이며, 요염한 표정으로 %CALLNAME:PLAYER%을(를) 도발하고 있다…
@@ -333,10 +333,10 @@ PRINTFORML %CALLNAME:TARGET%은(는) 스스로 복부를 %CALLNAME:PLAYER%에게
 PRINTFORML %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%에게 복부를 만져지는 것을 싫어하고 있다…
 			CASE 2
 				;受け入れ
-PRINTFORML %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%에게 몸을 기대고, 복부를 더듬어지는 것을 받아들이고 있다
+PRINTFORML %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%에게 몸을 기대며, 복부를 더듬어지는 것을 받아들이고 있다
 			CASE 3
 				;喜び
-PRINTFORML %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%의 손에 자신의 손을 겹치고, 미소 지으며 %CALLNAME:PLAYER%을(를) 응시하고 있다…
+PRINTFORML %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%의 손에 자신의 손을 포개고, 미소 지으며 %CALLNAME:PLAYER%을(를) 바라보고 있다…
 		ENDSELECT
 ENDSELECT
 

@@ -8,7 +8,7 @@ IF 施設改造度:5:0 == 0
 	TSTR:コマンド名受渡 = 
 	RETURNF 0
 ENDIF
-TSTR:コマンド名受渡 = 탁구를 하다
+TSTR:コマンド名受渡 = 탁구를 친다
 RETURNF 1
 ;===================================================
 ;コマンドタイプ
@@ -37,11 +37,11 @@ ENDIF
 ;賭け内容の決定
 IF RFLAG:コマンド結果受渡し変数
 	PRINTFORML %CALLNAME:TARGET%이(가) 뭔가 내기를 하지 않겠냐고 권유했다.
-	PRINTBUTTON "[0]1000루피를 걸다", 0
+	PRINTBUTTON "[0]1000 루피를 건다", 0
 	PRINTL 
-	PRINTBUTTON "[1]벌칙 게임을 걸다", 1
+	PRINTBUTTON "[1]벌칙 게임을 건다", 1
 	PRINTL 
-	PRINTBUTTON "[9]걸지 않는다", 9
+	PRINTBUTTON "[9]내기하지 않는다", 9
 	PRINTL 
 	INPUT
 
@@ -111,7 +111,7 @@ RETURN 1
 ;-------------------------------------------------
 @MESSAGE_COM380_0_505
 
-PRINTFORML %CALLNAME:PLAYER%와(과) %CALLNAME:TARGET%은(는) 탁구로\@ RFLAG:コマンド結果受渡し変数３ == 0 ? 놀았다 # 승부했다 \@。
+PRINTFORML %CALLNAME:PLAYER%와(과) %CALLNAME:TARGET%은(는) 탁구로\@ RFLAG:コマンド結果受渡し変数３ == 0 ? 놀았다 # 승부했다 \@.
 
 ;賭け事処理
 ;口上などの表示順のためここで処理
@@ -123,11 +123,11 @@ IF RFLAG:コマンド結果受渡し変数
 			PRINTFORML 내기는 무승부였다…
 		CASE 1
 			;ルピ増加
-			PRINTFORML 내기에서 승리하여, %CALLNAME:TARGET%에게서 1000루피를 받았다
+			PRINTFORML 내기에서 승리하여, %CALLNAME:TARGET%에게서 1000 루피를 받았다
 			MONEY += 1000
 		CASE -1
 			;ルピ減少
-			PRINTFORML 내기에서 패배하여, %CALLNAME:TARGET%에게 1000루피를 지불했다…
+			PRINTFORML 내기에서 패배하여, %CALLNAME:TARGET%에게 1000 루피를 지불했다…
 			MONEY -= 1000
 		CASE 2
 			;罰ゲーム処理を呼ぶ

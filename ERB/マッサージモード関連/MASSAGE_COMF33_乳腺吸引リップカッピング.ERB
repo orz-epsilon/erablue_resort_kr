@@ -3,7 +3,7 @@
 ;-------------------------------------------------
 @MASSAGE_COMNAME33
 #FUNCTIONS
-TSTR:コマンド名受渡 = 유선 흡입 립 커핑
+TSTR:コマンド名受渡 = 유선 흡인 립 커핑
 
 
 ;===================================================
@@ -14,12 +14,12 @@ TSTR:コマンド名受渡 = 유선 흡입 립 커핑
 TFLAG:コマンドタイプ受渡 = MASSAGE_COMTYPE("エロマッサージ")
 
 @MASSAGE_COM_TOOLTIP_33
-LOCALS = <br>■유선 흡입 립 커핑<br>
-LOCALS += "젖꼭지 빨기 모드에는 돌입하지 않는 단발 커맨드."
-LOCALS += "<br>손님의 젖꼭지 안쪽――유선에 쌓여버린 노폐물을, 당신의 입술로 ‘빨아내’ 준다."
+LOCALS = <br>■유선 흡인 립 커핑<br>
+LOCALS += "젖꼭지 흡입 모드에는 돌입하지 않는 단발성 커맨드."
+LOCALS += "<br>손님의 젖꼭지 안쪽――유선에 쌓여버린 노폐물을, 당신의 입술로 『빨아내』 준다."
 LOCALS += "<br>덧붙여, 커핑이란 착유기 같은 컵(부항)을 배 등에 흡착시켜,"
 LOCALS += "<br>혈관 내에 정체되어 있는 피(어혈)를 체표 가까이까지 빨아내는, 실재하는 마사지이다."
-LOCALS += "<br>당연히 입 같은 건 사용하지 않지만 사소한 것은 신경 쓰지 말아야 한다."
+LOCALS += "<br>당연히 입 같은 걸 쓸 리가 없지만 사소한 건 신경 쓰지 마라."
 LOCALS += "<br>COM 타입: 에로 마사지<br>획득 소스: 쾌B・노출・접촉・환락"
 LOCALS += "<br>고유 획득 경험: 없음<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
@@ -151,16 +151,16 @@ RETURN 1
 PRINTFORM %CALLNAME:PLAYER%은(는), %CALLNAME:TARGET%의
 SIF RFLAG:コマンド結果受渡し変数 == 1
 	PRINTFORM 가슴의 시술복을 벗기고,
-PRINTFORML %TEXTR("팽팽하게 솟아오른/단단하게 뭉친")%%CALLNAME:TARGET%의 젖꼭지를 %TEXTR("입에 머금고/입에 물고/입술로 감싸고/혀로 집어 올리자")%, %TEXTR("고무가 삐걱거리는 듯한 소리를 내며/뺨과 혀를 꿈틀거리며/입술로 유륜에서 짜내듯이/유선에 막혀있는 것까지")%정성껏 빨아 올렸다.
+PRINTFORML %TEXTR("팽팽하게 솟아오른/단단하게 뭉친")%%CALLNAME:TARGET%의 젖꼭지를%TEXTR("입에 머금고/입에 물고/입술로 감싸 안고/혀로 집어 올리자")% 그러자, %TEXTR("고무가 삐걱거리는 듯한 소리를 내며/뺨과 혀를 꿈틀거리며/입술로 유륜에서 짜내듯이/유선에 막혀있는 것까지")%정성껏 빨아올렸다.
 
 ;削りが十分な時は追加のメッセージ
 IF (BASE:TARGET:理性 + BASE:TARGET:警戒) < 700
 	PRINTW 
 	SELECTCASE RAND:2
 	CASE 0
-		PRINTFORM %CALLNAME:TARGET%은(는) %TEXTR("눈가를 흐물흐물 녹이며/녹아내린 얼굴로 헤벌쭉 입을 벌리고/법열에 눈가를 녹이며")%,
+		PRINTFORM %CALLNAME:TARGET%은(는)%TEXTR("황홀하게 눈가를 녹이며/황홀한 얼굴로 헤프게 입을 벌리고/법열에 눈가를 녹이며")%,
 	CASE 1
-		PRINTFORM %CALLNAME:TARGET%은(는) 헤벌쭉 풀린 입에서 %TEXTR("아무렇지도 않은 소리/쾌락에 물든 교성/음란한 소리")%를 %TEXTR("내며/흘리며/흘리면서")%,
+		PRINTFORM %CALLNAME:TARGET%은(는) 헤프게 풀린 입에서%TEXTR("망측한 소리/쾌락에 물든 교성/음란한 소리")%를%TEXTR("내며/흘리며/흘리면서")%,
 	ENDSELECT
-	PRINTFORML %CALLNAME:PLAYER%%TEXTR("의 '마사지'/의 구강 기술/가 주는 쾌락")%%TEXTR("에 젖꼭지를 내주고 있다/에 취해 있다/에 당하는 대로 있다/을 받아들이고 있다/을 감수하고 있다")%…
+	PRINTFORML %CALLNAME:PLAYER%%TEXTR("의 『마사지』/의 구강 기술/가 주는 쾌락")%%TEXTR("에 젖꼭지를 내주고 있다/에 취해 있다/에 당하는 대로 되어 있다/을 받아들이고 있다/을 감수하고 있다")%…
 ENDIF

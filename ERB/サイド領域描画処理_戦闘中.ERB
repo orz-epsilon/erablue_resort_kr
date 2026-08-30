@@ -1,4 +1,4 @@
-﻿@サイド領域描画_戦闘中
+@サイド領域描画_戦闘中
 #DIMS 表示文字列
 #DIMS 追加表示文字列
 
@@ -13,12 +13,12 @@ TRYCALLFORM サイド描画表示種類_%サイド描画表示種類_戦闘用%(
 ;下部分表示
 LOCAL = 5925
 LOCAL:1 = 500
-表示文字列 += @"<div rect='{LOCAL}, 4260, {LOCAL:1}, 200' padding='25,15,0' color='#101010' border='31' bcolor='#C0C0C0'><button value='サイド領域_サイド切り替え_表示なし'>表示なし</button></div>"
+表示文字列 += @"<div rect='{LOCAL}, 4260, {LOCAL:1}, 200' padding='25,15,0' color='#101010' border='31' bcolor='#C0C0C0'><button value='サイド領域_サイド切り替え_表示なし'>표시 없음</button></div>"
 SIF サイド描画表示種類_戦闘用 == "表示なし"
 	表示文字列 += @"<div rect='{LOCAL + 25}, 4240, {LOCAL:1 - 40}, 60' color='#101010'></div>"
 LOCAL += LOCAL:1 + 50
 LOCAL:1 = 500
-表示文字列 += @"<div rect='{LOCAL}, 4260, {LOCAL:1}, 200' padding='25,0,0' color='#101010' border='31' bcolor='#C0C0C0'><button value='サイド領域_サイド切り替え_戦闘ログ'>戦闘ログ</button></div>"
+表示文字列 += @"<div rect='{LOCAL}, 4260, {LOCAL:1}, 200' padding='25,0,0' color='#101010' border='31' bcolor='#C0C0C0'><button value='サイド領域_サイド切り替え_戦闘ログ'>전투 로그</button></div>"
 SIF サイド描画表示種類_戦闘用 == "戦闘ログ"
 	表示文字列 += @"<div rect='{LOCAL + 25}, 4240, {LOCAL:1 - 40}, 60' color='#101010'></div>"
 
@@ -71,13 +71,13 @@ NEXT
 IF STRCOUNT(ログ表示用文字列, "<br>") > 35
 	追加表示文字列 += "<div rect='6000, 4125, 3825, 100'>　　　　　"
 	IF STRCOUNT(ログ表示用文字列, "<br>") > 35 + サイド描画縦スクロール保存
-		追加表示文字列 += "<button value='サイド領域_スクロール_上'>[上へスクロール]</button>"
+		追加表示文字列 += "<button value='サイド領域_スクロール_上'>[위로 스크롤]</button>"
 	ELSE
 		追加表示文字列 += "　　　　　　　　"
 	ENDIF
 	追加表示文字列 += "　　　　　　　　　　　　"
 	SIF サイド描画縦スクロール保存 > 0
-		追加表示文字列 += "<button value='サイド領域_スクロール_下'>[下へスクロール] </button>"
+		追加表示文字列 += "<button value='サイド領域_スクロール_下'>[아래로 스크롤] </button>"
 	追加表示文字列 += "</div>"
 ENDIF
 

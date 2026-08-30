@@ -1,0 +1,360 @@
+;-------------------------------------------------
+;星晶令呪を行使する
+;コミュニケーション系コマンド、レベル1
+;-------------------------------------------------
+@COMNAME180
+#FUNCTIONS
+TSTR:コマンド名受渡 = 성정령주를 행사한다
+
+
+;===================================================
+;コマンドタイプ
+;===================================================
+@COMTYPE_180
+#FUNCTION
+TFLAG:コマンドタイプ受渡 = COMTYPE("うふふ_被挿入中_セクハラ")
+
+@COM_TOOLTIP_180
+LOCALS = <br>■성정령주를 행사한다
+LOCALS += "<br>정력과 ZP를 소모해 상대에게 절대적인 명령을 내리는 커맨드."
+LOCALS += "<br>특정 소질을 가진 상대에게만 효과가 있다."
+LOCALS += @"<br>정력은, 단적으로 말해 마력이다. 엄청난 정력을 가진 %CALLNAME:PLAYER%는 다시 말해, 엄청난 마력을 품고 있는 것과 같다."
+LOCALS += "<br>ZP가 이 세계에 ‘소환한’ 연결을 더듬어가, 만능 에너지 자원인 ZP와 결합해 해방한다면,"
+LOCALS += "<br>다른 세계에서 온 영령이라는 존재라고 할지라도 저항하는 것이 불가능할 것이다."
+LOCALS += "<br>COM타입：우후후or삽입중or성희롱"
+LOCALS += "<br>획득 소스：정복(PLAYER)・고통(특정 조건 시)・반감(특정 조건 시)"
+LOCALS += "<br>고유 획득 경험: 없음<br>"
+TSTR:ツールチップ受渡 = %LOCALS%
+
+
+@COM180
+;-------------------------------------------------
+;ソース追加処理
+;-------------------------------------------------
+
+CALL SOURCE_CALC_征服(PLAYER, TARGET, 1000)
+IF 陥落チェック(TARGET) == 0
+	;抵抗しようとすることで発生する苦痛
+	CALL SOURCE_CALC_苦痛(TARGET, PLAYER, 500)
+	CALL SOURCE_CALC_反感(TARGET, PLAYER, 1000)
+ENDIF
+RCVAR:TARGET:苦痛コマンドフラグ = 1
+RCVAR:PLAYER:嗜虐コマンドフラグ = 1
+
+;サドは嗜虐快楽
+SIF ABL:PLAYER:サド性感
+	EXP:PLAYER:嗜虐快楽経験 ++
+
+
+;-------------------------------------------------
+;経験の処理
+;-------------------------------------------------
+
+
+RETURN 1
+
+
+
+;-------------------------------------------------
+;実行判定
+;-------------------------------------------------
+@COM_ABLE180
+;実行判定
+SIF SAVESTR:ゲームフェイズ管理 != "通常モード"
+	RETURN 0
+;一括管理
+SIF GLOBAL_COMABLE(180)
+	RETURN RESULT
+IF あなた特殊能力:星晶令呪回路 >= 2 && TALENT:TARGET:従業員
+	;星晶令呪回路・改なら従業員にも使える
+ELSEIF あなた特殊能力:星晶令呪回路 > 0 && サーヴァント判定(TARGET)
+	;相手が固有素質の中に［サーヴァント］[ムーンキャンサー]を持つなら使える
+	;デミサーヴァントはどうしようね？本家ではできないけどこっちはできるとかしてもいい
+ELSE
+	RETURN 0
+ENDIF
+
+;口を何かに使ってるなら無理
+IF TEQUIP:PLAYER:口
+	RETURN 0
+ENDIF
+
+;精力の残りが9000以上、ZP10以上所持
+SIF BASE:PLAYER:精力 <= 9000
+	RETURN 0
+SIF FLAG:ZP所持量 < 10
+	RETURN 0
+
+;オートコマンド中の制限
+IF FLAG:オートコマンド判定中フラグ
+	RETURN 0
+ENDIF
+
+RETURN 1
+
+;-------------------------------------------------
+;実行時メッセージ
+;-------------------------------------------------
+@MESSAGE_COM180
+#DIM 同時キャラ番号
+#DIM 令呪消費軽減フラグ
+
+;消費軽減フラグを折っておく
+;原作的には多分、無効な命令でも使った時と同様に消耗してしまう気がするが……
+;ZPを使用する以上、多分星晶獣eraを通しているので、そこで止めてくれていると思おう
+令呪消費軽減フラグ = 0
+
+PRINTFORMW %CALLNAME:PLAYER%는 자신의 체내 정력을 특수한 마력으로 변환하고,%CALLNAME:TARGET%에게 명령을 전했다.
+PRINTL
+PRINTFORMW ────령주를 통해 고한다。%CALLNAME:TARGET%여────
+PRINTL
+PRINTBUTTON "[0] 지금 바로 절정해라!", 0
+PRINTL
+PRINTBUTTON "[1] 오늘 하루 복종해라", 1
+PRINTL
+PRINTBUTTON "[2] 발정해라", 2
+PRINTL
+PRINTBUTTON "[3] 그 몸을 회복해라", 3
+PRINTL
+;女性である（女性器がある）
+IF GETBIT(TALENT:TARGET:性別, 0)
+	PRINTBUTTON "[4] 임신할 수 있는 몸이 되어라", 4
+	PRINTL
+ELSE
+	SETCOLOR カラーパレット("グレーアウト")
+	PRINTFORML [4] 임신할 수 있는 몸이 되어라
+	RESETCOLOR
+ENDIF
+
+;男性である（男性器がある）
+IF GETBIT(TALENT:TARGET:性別, 1)
+	PRINTBUTTON "[5] 고환을 풀차지한 채 풀발기해라", 5
+	PRINTL
+ELSE
+	SETCOLOR カラーパレット("グレーアウト")
+	PRINTFORML [5] 환을 풀차지한 채 풀발기해라
+	RESETCOLOR
+ENDIF
+
+PRINTBUTTON @"[6] %CALLNAME:PLAYER%에게 반해라！", 6
+PRINTL
+PRINTBUTTON "[9] 역시 아무것도 아니에요", 9
+PRINTL
+BINPUT
+
+
+SELECTCASE RESULT
+	;今すぐ絶頂しろ！
+	CASE 0
+		PRINTFORM 명령과 함께 쏟아진 %CALLNAME:PLAYER%의 마력은, %CALLNAME:TARGET%의 몸을
+		SETCOLOR カラーパレット("えっちな色")
+		IF 0
+		ELSEIF !RAND:3
+			PRINT 부르르
+		ELSEIF !RAND:2
+			PRINT 흠칫
+		ELSE
+			PRINT 멈칫
+		ENDIF
+		PRINT_IMG "えっちハート"
+		RESETCOLOR
+		PRINTFORMW 　뛰게 했다……
+
+		;快Sを5万ぶちこむ
+		CALL SOURCE_CALC_快Ｓ(TARGET, PLAYER, 50000)
+	;１日言いなりになれ！
+	CASE 1
+		PRINTFORML %CALLNAME:TARGET%는 %CALLNAME:PLAYER%의 명령에 저항하지 못하고, 억울한 표정으로 얼굴을 일그러뜨리며 몸의 자유를 포기했다……
+		PRINTFORML 이걸로 %CALLNAME:TARGET%는 오늘 하루 %CALLNAME:PLAYER%의
+		SETCOLOR カラーパレット("えっちな色")
+		PRINT [말하는대로]
+		RESETCOLOR
+		PRINTFORMW 다. 어떤 일을 시킬까……
+		TCVAR:特殊言いなり = 3
+	;発情せよ
+	CASE 2
+		;この辺は処理わからん。実機でやってみた感じ発情期は付与できるが発情はしない(危険日にはならない)感じ
+		;桃色の風みたいな一時的発情があればそれがいちばん丸い
+		PRINTFORM 명령과 함께 쏟아진 %CALLNAME:PLAYER%의 마력은, %CALLNAME:TARGET%의 몸을 강제로
+		SETCOLOR カラーパレット("えっちな色")
+		PRINT [발정]
+		RESETCOLOR
+		PRINTFORMW 시켰다……
+		TCVAR:強制発情フラグ = 1
+		CFLAG:TARGET:発情期フラグ = -1
+	;その身を修復せよ
+	CASE 3
+		;FGOだと３画使って全員HP最大で復活！の「霊基復元」もあるけど、これは単体用の「霊基修復」想定
+		PRINTFORMW 명령과 함께 쏟아진 %CALLNAME:PLAYER%의 마력은,%CALLNAME:TARGET%의 몸을 강제로 완전 회복시켰다.
+		;現在体力を最大体力で上書き
+		;なんらかのなんかで最大体力を一時的に上回っている場合もあるので、MAX()を使っておく
+		BASE:TARGET:体力 = MAX(MAXBASE:TARGET:体力, BASE:TARGET:体力)
+	;孕める体になれ！
+	;……女性のみ。一応こちらでも弾くおまじないをかけておく。
+	CASE 4
+		;女性BITが立っていない、またはV感度が-2（女性器が無い）場合はこっち
+		IF !GETBIT(TALENT:TARGET:性別, 0) || TALENT:TARGET:Ｖ感度 == -2
+			PRINTFORML ……어디선가, era의 목소리가 들려온다.
+			PRINTL 　
+			CALL 画像表示("顔エラ","LEFT",,,,1,)
+			PRINTFORML 성정수era：
+			PRINTFORML 「앗차, 지금 이 장소에서 간단하게 바꿀 수 있는 것은 아닌 모양이다.
+			PRINTFORML 　여성기를 만드는 부분부터니까……
+			PRINTFORML 　밤에 다시 ZP를 사용해주게」
+			PRINTFORMW 　
+			令呪消費軽減フラグ = 1
+		;既に妊娠している場合
+		ELSEIF TALENT:TARGET:妊娠
+			PRINTFORML ……어디선가, era의 목소리가 들려온다.
+			PRINTL 　
+			CALL 画像表示("顔エラ","LEFT",,,,1,)
+			PRINTFORML 성정수era：
+			PRINTFORML 「어라?　이미 임신해 있는 모양이다만.
+			PRINTFORML 　더욱 더 임신할 수 있게 만드는 것은, 생리적,신체적으로 좋지 않다.
+			PRINTFORML 　다음에 다시 사용해주게.」
+			PRINTFORMW 　
+			令呪消費軽減フラグ = 1
+		;妊娠不可である場合
+		;妊娠不可は、１が理由不問、２は初潮前
+		ELSEIF TALENT:TARGET:妊娠不可
+			PRINTFORM 명령과 함께 쏟아진 %CALLNAME:PLAYER%의 마력은, %CALLNAME:TARGET%의 몸을
+			SETCOLOR カラーパレット("えっちな色")
+			PRINT [임신가능]
+			RESETCOLOR
+			PRINTFORML 으로 변화시켰다.
+			TALENT:TARGET:妊娠不可 = 0
+
+			PRINTFORM 거기에, 남은 마력이 %CALLNAME:TARGET%의 난소를 자극하여
+			SETCOLOR カラーパレット("えっちな色")
+			PRINT [배란]
+			RESETCOLOR
+			PRINTFORMW 한 모양이다……
+			TCVAR:TARGET:排卵誘発薬 += 1
+		;妊娠不可でないなら排卵日にさせるだけ
+		ELSE
+			;排卵誘発剤から処理そのまま
+			PRINTFORM 명령과 함께 쏟아진 %CALLNAME:PLAYER%의 마력은, %CALLNAME:TARGET%의 난소를 자극하여
+			SETCOLOR カラーパレット("えっちな色")
+			PRINT [배란]
+			RESETCOLOR
+			PRINTFORMW 시켰다……
+			TCVAR:TARGET:排卵誘発薬 += 1
+		ENDIF
+	;金玉フルチャージ状態になってフル勃起しろ
+	;同上のおまじないかけておくね。
+	CASE 5
+		;男性BITが立っていない、またはC感度が-2（男性器が無い）場合はこっち
+		IF !GETBIT(TALENT:TARGET:性別, 1) || TALENT:TARGET:Ｃ感度 == -2
+			PRINTFORML ……어디선가, era의 목소리가 들려온다.
+			PRINTL 　
+			CALL 画像表示("顔エラ","LEFT",,,,1,)
+			PRINTFORML 성정수era：
+			PRINTFORML 「앗차, 지금 이 장소에서 간단하게 바꿀 수 있는 것은 아닌 모양이다.
+			PRINTFORML 　남성기를 만드는 부분부터니까……
+			PRINTFORML 　밤에 다시 ZP를 사용해주게」
+			PRINTFORMW 　
+			令呪消費軽減フラグ = 1
+		;射精不可であるかEDである場合
+		;射精不可は、１が理由不問、２は精通前
+		ELSEIF TALENT:TARGET:射精不可 || TALENT:TARGET:ＥＤ
+			;EDがある場合
+			IF TALENT:TARGET:ＥＤ
+				PRINTFORML 명령과 함께 쏟아진 %CALLNAME:PLAYER%의 마력은, %CALLNAME:TARGET%의 남성 자신을 엄청나게 기운차게 만들었다!
+				PRINTFORM 발기 부전을 앓고 있었던 %CALLNAME:TARGET%의 사타구니가 강력하게 
+				SETCOLOR カラーパレット("えっちな色")
+				PRINT 발기！
+				RESETCOLOR
+				PRINTFORML 　했다！
+			;射精不可だけ
+			ELSE
+				PRINTFORM 명령과 함께 쏟아진 %CALLNAME:PLAYER%의 마력은, %CALLNAME:TARGET%의 몸을 
+				SETCOLOR カラーパレット("えっちな色")
+				PRINT [사정가능]
+				RESETCOLOR
+				PRINTFORML 으로 변화시켰다.
+				;排卵誘発剤から処理そのまま
+				PRINTFORM 거기에, 남은 마력이%CALLNAME:TARGET%의 남성기를 자극하여, 강력하게
+				SETCOLOR カラーパレット("えっちな色")
+				PRINT 발기
+				RESETCOLOR
+				PRINTFORML 시켰다……
+			ENDIF
+			;射精不可とEDを解除しておく
+			TALENT:TARGET:射精不可 = 0
+			TALENT:TARGET:ＥＤ = 0
+
+			;フル勃起させてキンタマフルチャージ
+			BASE:TARGET:勃起 = 1500
+			BASE:TARGET:精力 = MAXBASE:TARGET:精力
+			;さらに、孕ませパワーも大増加
+			RCVAR:TARGET:妊娠率補正_加算値 += 50
+
+		;射精不可でもEDでもないなら金玉フルチャージでフル勃起させるだけ
+		ELSE
+			;排卵誘発剤から処理そのまま
+			PRINTFORM 명령과 함께 쏟아진 %CALLNAME:PLAYER%의 마력은, %CALLNAME:TARGET%의 고환을 자극하여,
+			SETCOLOR カラーパレット("えっちな色")
+			PRINT 발기
+			RESETCOLOR
+			PRINTFORMW 시켰다……
+
+			;フル勃起させてキンタマフルチャージ
+			BASE:TARGET:勃起 = 1500
+			BASE:TARGET:精力 = MAXBASE:TARGET:精力
+			;さらに、孕ませパワーも大増加
+			RCVAR:TARGET:妊娠率補正_加算値 += 50
+		ENDIF
+	;俺に惚れろ！
+	CASE 6
+		PRINTFORML ……어디선가, era의 목소리가 들려온다.
+		PRINTL 　
+		CALL 画像表示("顔エラ","LEFT",,,,1,)
+		PRINTFORML 성정수era：
+		PRINTFORML 「미안하지만 그건 다른 제품으로 해주게.
+		PRINTFORML 　뭐, 해당 제품을 가지고 있지 않아?　부족해?
+		PRINTFORML 　로그인을 열심히 해주게」
+		PRINTFORML 　
+		PRINTFORML ……뇌리에 era 도장의 아니마 전단지가 떠오르기 시작했다. 젠장.
+		PRINTFORMW 　
+		令呪消費軽減フラグ = 1
+	;あっなんでもないです……
+	CASE 9
+		;対象がサーヴァント
+		IF サーヴァント判定(TARGET)
+			PRINTFORML ……역시 아무것도 아니에요.
+			PRINTFORML 뒤로 물러났지만, %CALLNAME:TARGET%는 조금 기분이 상한 것 같다.
+			PRINTFORML 서번트에게 원치 않는 령주를 사용하는 것은 기분 좋은 일이 아닐 것이다.
+			PRINTFORML 농담으로라도 쓰지 않는 편이 좋을 것 같다.
+		;対象が非サーヴァント
+		ELSE
+			PRINTFORML ……역시 아무것도 아니에요.
+			PRINTFORML 뒤로 물러났지만, %CALLNAME:TARGET%는 고개를 갸웃거렸다.
+		ENDIF
+		令呪消費軽減フラグ = 1
+
+ENDSELECT
+
+
+;消費軽減フラグが立っていないなら、精力・ZPを消耗する
+IF 令呪消費軽減フラグ == 0
+	PRINTFORML 
+	PRINTFORML 성정령주를 사용한 탓에, 정력과 ZP를 소모했다.
+	PRINTFORML 정력 -9000
+	PRINTFORML   ZP -10
+
+	BASE:PLAYER:精力 -= 9000
+	FLAG:ZP所持量 -= 10
+;消費軽減フラグが立っている
+;無消費でもいいんだけど連打させないようにする……？
+ELSE
+	PRINTFORML 
+	PRINTFORML 성정령주 중단의 반동이 %CALLNAME:PLAYER%의 몸을 덮쳤다!
+	PRINTFORML （그리고 ZP를 조금 빼앗겻다.）
+	PRINTFORML 정력 -1000
+	PRINTFORML   ZP -5
+
+	BASE:PLAYER:精力 -= 1000
+	FLAG:ZP所持量 -= 5
+
+ENDIF
+

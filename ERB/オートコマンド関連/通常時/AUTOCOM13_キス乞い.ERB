@@ -2,24 +2,31 @@
 ;合意済みの相手
 ;ムード・性欲一定以上で二人きりだとうふふのお誘いが来る
 ;------------------------------------------------------------------------------
+@AUTOCOMNAME13
+RESULTS = キス乞い
+
 @AUTOCOM13
 ;チラ見せと時間共通
-DRAWLINE
-IF (TALENT:AUTOCOM_実行番号保存:恋慕 || (CFLAG:AUTOCOM_実行番号保存:恋心度 > 経験値テーブル:(関係閾値:3) && DT_SELECT("初体験データベース", @"体験キャラ人物番号 = {CFLAG:AUTOCOM_実行番号保存:人物番号} And 相手キャラ人物番号 = {CFLAG:MASTER:人物番号} And 体験名 = 'キス'"))) && 性癖素質:AUTOCOM_実行番号保存:キス < 3
-	PRINTFORML %CALLNAME:AUTOCOM_実行番号保存%은 조금 부끄러운 듯 얼굴을 붉히며 %CALLNAME:PLAYER%를 향해 키스하고 싶다고 말했다……
+IF TALENT:AUTOCOM_実行番号保存:自由奔放
+	RESULT = 0
 ELSE
-	PRINTFORML %CALLNAME:AUTOCOM_実行番号保存%은 욕정 어린 한숨을 내쉬고 입술 틈새로 축축한 혀를 내밀며
-	PRINTFORML %CALLNAME:PLAYER%를 향해 키스하고 싶다고 졸라왔다……
+	DRAWLINE
+	IF (TALENT:AUTOCOM_実行番号保存:恋慕 || (CFLAG:AUTOCOM_実行番号保存:恋心度 > 経験値テーブル:(関係閾値:3) && DT_SELECT("初体験データベース", @"体験キャラ人物番号 = {CFLAG:AUTOCOM_実行番号保存:人物番号} And 相手キャラ人物番号 = {CFLAG:MASTER:人物番号} And 体験名 = 'キス'"))) && 性癖素質:AUTOCOM_実行番号保存:キス < 3
+		PRINTFORML %CALLNAME:AUTOCOM_実行番号保存%은(는) 조금 부끄러운 듯 얼굴을 붉히고 %CALLNAME:PLAYER%을(를) 향해 키스하고 싶다고 말했다……
+	ELSE
+		PRINTFORML %CALLNAME:AUTOCOM_実行番号保存%은(는) 욕정이 담긴 한숨을 내쉬며 입술 틈새로 젖은 혀를 내밀고
+		PRINTFORML %CALLNAME:PLAYER%을(를) 향해 키스하고 싶다고 졸라왔다……
+	ENDIF
+	TRYCALLFORM KOJO_AUTOCOM_キス乞い口上_{NO:AUTOCOM_実行番号保存}(AUTOCOM_実行番号保存)
+	PRINTL
+	PRINTL 요구에 응하시겠습니까?
+	PRINTBUTTON "[0] 예", 0
+	PRINTL
+	PRINTBUTTON "[1] 아니오", 1
+	PRINTL
+	TIME_キス乞い:AUTOCOM_実行番号保存:0 = TIME
+	BINPUT
 ENDIF
-TRYCALLFORM KOJO_AUTOCOM_キス乞い口上_{NO:AUTOCOM_実行番号保存}(AUTOCOM_実行番号保存)
-PRINTL
-PRINTL 요구에 응하시겠습니까?
-PRINTBUTTON "[0] 네", 0
-PRINTL
-PRINTBUTTON "[1] 아니요", 1
-PRINTL
-TIME_キス乞い:AUTOCOM_実行番号保存:0 = TIME
-BINPUT
 IF RESULT == 0
 	;許可
 	RFLAG:コマンド結果受渡し変数 = 1
@@ -162,16 +169,24 @@ RETURN 1
 IF RFLAG:コマンド結果受渡し変数
 	;許可時
 	IF (TALENT:AUTOCOM_実行番号保存:恋慕 || (CFLAG:AUTOCOM_実行番号保存:恋心度 > 経験値テーブル:(関係閾値:3) && DT_SELECT("初体験データベース", @"体験キャラ人物番号 = {CFLAG:AUTOCOM_実行番号保存:人物番号} And 相手キャラ人物番号 = {CFLAG:MASTER:人物番号} And 体験名 = 'キス'"))) && 性癖素質:AUTOCOM_実行番号保存:キス < 3
-		PRINTFORML %CALLNAME:PLAYER%은 %CALLNAME:AUTOCOM_実行番号保存%의 유혹에 흔쾌히 응했다
-		PRINTFORML %CALLNAME:PLAYER%은 %CALLNAME:AUTOCOM_実行番号保存%의 옅게 붉어진 뺨에 손을 얹고, 입술에 자신의 입술을 포갰다……
+		IF TALENT:AUTOCOM_実行番号保存:自由奔放
+			PRINTFORML %CALLNAME:AUTOCOM_実行番号保存%은(는) %CALLNAME:PLAYER%의 뺨에 손을 얹고, 입술에 자신의 입술을 포갰다……
+		ELSE
+			PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:AUTOCOM_実行番号保存%의 유혹에 기꺼이 응했다
+			PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:AUTOCOM_実行番号保存%의 살짝 붉게 물든 뺨에 손을 얹고, 입술에 자신의 입술을 포갰다……
+		ENDIF
 	ELSE
-		PRINTFORML %CALLNAME:PLAYER%은 %CALLNAME:AUTOCOM_実行番号保存%의 유혹에 흔쾌히 응했다
-		PRINTFORML %CALLNAME:PLAYER%은 %CALLNAME:AUTOCOM_実行番号保存%의 기대로 떨리는 입술에 입술을 대고, %CALLNAME:AUTOCOM_実行番号保存%의 혀를 받아들여 혀를 얽었다……
+		IF TALENT:AUTOCOM_実行番号保存:自由奔放
+			PRINTFORML %CALLNAME:AUTOCOM_実行番号保存%은(는) %CALLNAME:PLAYER%의 입술에 입술을 맞대고,, %CALLNAME:PLAYER%의 혀를 맞이하며 혀를 얽었다……
+		ELSE
+			PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:AUTOCOM_実行番号保存%의 유혹에 기꺼이 응했다
+			PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:AUTOCOM_実行番号保存%의 기대에 떨리는 입술에 입술을 맞대고, %CALLNAME:AUTOCOM_実行番号保存%의 혀를 맞이하며 혀를 얽었다……
+		ENDIF
 	ENDIF
 ELSE
 	;拒否時
-	PRINTFORML %CALLNAME:PLAYER%은 %CALLNAME:AUTOCOM_実行番号保存%의 유혹을 거절했다
-	PRINTFORML %CALLNAME:AUTOCOM_実行番号保存%은 아쉬워하는 것 같다……
+	PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:AUTOCOM_実行番号保存%의 유혹을 거절했다
+	PRINTFORML %CALLNAME:AUTOCOM_実行番号保存%은(는) 아쉬워하는 듯하다……
 ENDIF
 
 

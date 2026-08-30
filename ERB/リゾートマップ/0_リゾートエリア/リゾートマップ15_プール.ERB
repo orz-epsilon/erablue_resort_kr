@@ -1,4 +1,4 @@
-
+﻿
 
 @マップ紹介_15
 ;とりあえず5行
@@ -39,27 +39,27 @@ AA:23 = 　　　　　　　　　　　　　　￣￣￣￣￣￣￣　　　
 AA:24 = ━━━━━━━━━━━━━━━━━━━━━■■■■■■■■■■■■■13■14■
 AA:25 = 　　　　　　　　　　　　　　　　　　　　　■　　　　　　　　　　　　↓　↓
 AA:26 = 
-AA:27 = ミ：プールサイド　　　　四：メインプール　　　　五：ボールプール
-AA:28 = 六：流れるプール　　　　オ：男子更衣室へ　　　　エ：女子更衣室へ
+AA:27 = ミ：풀사이드　　　　　　四：메인 풀　　　　　　五：볼 풀
+AA:28 = 六：유수 풀　　　　　　オ：남자 탈의실로　　　エ：여자 탈의실로
+; AA:27 = ミ：プールサイド　　　　四：メインプール　　　　五：ボールプール
+; AA:28 = 六：流れるプール　　　　オ：男子更衣室へ　　　　エ：女子更衣室へ
 
 @GETPLACENAME_0_15(ARG)
 #FUNCTION
 SELECTCASE ARG
 	CASE 1503
-		TSTR:場所名受渡 = 풀사이드
+		TSTR:場所名受渡 = プールサイド
 	CASE 1504
-		TSTR:場所名受渡 = 메인 풀
+		TSTR:場所名受渡 = メインプール
 	CASE 1505
-		TSTR:場所名受渡 = 볼 풀
+		TSTR:場所名受渡 = ボールプール
 	CASE 1506
-		TSTR:場所名受渡 = 유수 풀
+		TSTR:場所名受渡 = 流れるプール
 	CASE 1513
-		TSTR:場所名受渡 = 남자 탈의실로
+		TSTR:場所名受渡 = 男子更衣室へ
 	CASE 1514
-		TSTR:場所名受渡 = 여자 탈의실로
+		TSTR:場所名受渡 = 女子更衣室へ
 ENDSELECT
-
-
 @DRAW_MAP_BG_0_15(SLICED, 表示文字列)
 #DIMS REF 表示文字列
 #DIMS SLICED
@@ -90,11 +90,11 @@ ENDSELECT
 #FUNCTIONS
 ;100~199と999は大本のメニュー操作で使うため、使用しないこと
 
-LOCALS = 리조트 하우스와 연결된 수영장을 개조합니다. <br><br>
+LOCALS = 리조트 하우스와 연결된 풀을 개조합니다. <br><br>
 IF 施設改造度:15:0 < 1
-	LOCALS += @"■<button value='200'>[수영장 개조]</button> Lv{施設改造度:15:0}>{施設改造度:15:0 + 1} （필요:200,000루피）<br>"
+	LOCALS += @"■<button value='200'>[풀 개조]</button> Lv{施設改造度:15:0}>{施設改造度:15:0 + 1} (필요:200,000루피)<br>"
 ELSE
-	LOCALS += @"■[수영장 개조] Lv{施設改造度:15:0}：상한<br>"
+	LOCALS += @"■[풀 개조] Lv{施設改造度:15:0}:상한<br>"
 ENDIF
 
 RETURNF LOCALS
@@ -104,8 +104,8 @@ RETURNF LOCALS
 SELECTCASE ARG
 	CASE 200
 		DRAWLINE
-		PRINTL 수영장에 다음 시설이 도입됩니다.
-		PRINTBUTTON "■수영장 개별 맵 해방", 1500
+		PRINTL 풀에 다음 시설이 도입됩니다.
+		PRINTBUTTON "■풀 개별 맵 해방", 1500
 		PRINTL 
 		PRINTBUTTON "■풀사이드 도입", 1501
 		PRINTL 
@@ -116,7 +116,7 @@ SELECTCASE ARG
 		PRINTBUTTON "■유수풀 도입", 1504
 		PRINTL 
 		PRINTL 
-		PRINTL 수영장을 개조하시겠습니까? (필요: 200,000루피)
+		PRINTL 수영장을 개조하시겠습니까? (필요:200,000루피)
 		PRINTBUTTONLC "[0] 예", 0
 		PRINTBUTTONLC "[1] 아니오", 1
 		INPUT
@@ -129,7 +129,7 @@ SELECTCASE ARG
 				施設改造度:15:0 = 1
 				MONEY -= 200000
 				PRINTL 수영장을 개조했습니다!
-				PRINTW (滞在キャラ上限＋５)
+				PRINTW (체류 캐릭터 상한＋５)
 				CALL 滞在可能キャラ数再計算
 				CALL RESET_GRAPH_0
 				CALL 履歴データベース登録(CFLAG:MASTER:人物番号, @"プールをLv1に改造した","実績")
@@ -142,12 +142,12 @@ SELECTCASE ARG
 				RETURN
 			CASE 1500
 				DRAWLINE
-				PRINTL 맵 해방으로, 수영장으로 이동하면 개별 맵으로 이동하게 됩니다.
+				PRINTL 맵 해방으로 인해, 수영장으로 이동하면 개별 맵으로 이동하게 됩니다.
 				PRINTL 개조가 진행되면 맵이 더욱 확장되어 내부 시설을 강화할 수 있게 됩니다. (미구현입니다)
 				PRINTW
 			CASE 1501
 				DRAWLINE
-				PRINTL 일광욕을 즐기거나, 수영하다 지쳤을 때 쉴 수 있는 공간입니다.
+				PRINTL 일광욕을 즐기거나, 수영하다 지쳤을 때 쉴 수 있는 구역입니다.
 				PRINTL 조건이 갖춰지면 노점을 열 수도 있게 됩니다. (미구현입니다)
 				PRINTW
 			CASE 1502
@@ -158,13 +158,13 @@ SELECTCASE ARG
 			CASE 1503
 				DRAWLINE
 				PRINTL 많은 공이 떠다니는 얕은 수영장입니다.
-				PRINTL 하빈족도 발이 닿는 깊이라 안심하고 놀 수 있습니다.
+				PRINTL 하빈도 발이 닿는 깊이라 안심하고 놀 수 있습니다.
 				PRINTL 물총 등의 놀이 도구도 비치되어 있습니다.
 				PRINTW
 			CASE 1504
 				DRAWLINE
 				PRINTL 마법으로 항상 물이 흐르는 수영장입니다.
-				PRINTL 보통 수영장과는 또 다른 즐거움을 맛볼 수 있을 것입니다.
+				PRINTL 일반적인 수영장과는 또 다른 즐거움을 맛볼 수 있을 겁니다.
 				PRINTL 여성 캐릭터와 함께 놀면, 노출 이벤트가 발생할 수 있습니다.
 				PRINTW
 		ENDSELECT

@@ -69,7 +69,7 @@ FOR COUNT, 0, 消耗品種類数
 			;era様に鬼灯の香は効かない
 			SETCOLOR カラーパレット("グレーアウト")
 			PRINTPLAINFORM %BUTTON_TEXT%
-			PRINT (성정수 era에는 효과가 없습니다)
+			PRINT （星晶獣era에는 효과가 없습니다）
 		ELSEIF ITEM:(選択肢配列:COUNT) > 0 && 使用条件配列:COUNT
 			PRINTBUTTON BUTTON_TEXT, COUNT
 		ELSE
@@ -111,7 +111,7 @@ SELECTCASE リザルト保存
 			CASE "鬼灯の香"
 				IF TFLAG:マッサージ_鬼灯の香使用時間 != 0
 					;使用済み
-					PRINTW 꽈리 향은 이미 피워져 있다.
+					PRINTW 귀등의 향은(는) 이미 피워져 있다.
 				ELSE
 					;使用時間をセット
 					TFLAG:マッサージ_鬼灯の香使用時間 = DAY * 1440 + TIME
@@ -154,6 +154,6 @@ SELECTCASE RSTR:コマンド結果受渡し文字列
 	CASE "オイル"
 		PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%의 몸에 오일을 떨어뜨렸다…
 	CASE "鬼灯の香"
-		PRINTFORML %CALLNAME:PLAYER%은(는) %TEXTR("릴랙스용 향/릴랙세이션 아로마")%이라고 말하며 향로에 불을 붙이고, 꽈리 향을 피우기 시작했다…
-		PRINTFORML 조용히 피어오르는 연기는 달콤하고, 느긋하게 방에 가득 차서, 이윽고%CALLNAME:TARGET%의 %TEXTR("이성/의식/경계심")%을 %TEXTR("녹여서/녹여서")%%TEXTR("갈/줄")% 것이다…
+		PRINTFORML %CALLNAME:PLAYER%은(는) %TEXTR("릴랙스용 향/릴랙스 아로마")%이라고 말하며 향로에 불을 붙여, 귀등의 향을(를) 피우기 시작했다…
+		PRINTFORML 조용히 피어오르는 연기는 달콤하게, 느긋하게 방에 가득 차고, 이윽고%CALLNAME:TARGET%의%TEXTR("이성/의식/경계심")%을(를)%TEXTR("녹여서/녹여서")%%TEXTR("갈/줄")% 것이다…
 ENDSELECT

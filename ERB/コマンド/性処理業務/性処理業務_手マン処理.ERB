@@ -3,12 +3,12 @@
 ;-------------------------------------------------
 @性処理NAME_手マン処理
 #FUNCTIONS
-TSTR:コマンド名受渡 = 수음 처리
+TSTR:コマンド名受渡 = 핸드잡 처리
 
 @性処理_TOOLTIP_手マン処理
-LOCALS = <br>■수음 처리<br>
-LOCALS += @"%CALLNAME:PLAYER%의 클리나 질구를 손으로 애무받는 성처리. <br>"
-LOCALS += "성처리 업무 중 가장 간편하고 저렴하다. <br>"
+LOCALS = <br>■핸드잡 처리<br>
+LOCALS += @"%CALLNAME:PLAYER%의 클리토리스나 질구를 손으로 애무하는 성처리.<br>"
+LOCALS += "성처리 업무 중 가장 간편하고 저렴하다.<br>"
 LOCALS += "<br>COM 타입: 성처리<br>획득 소스: 노출・접촉・봉사・불결"
 LOCALS += "<br>고유 획득 경험: 수음 경험(TARGET)<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
@@ -79,7 +79,7 @@ RETURN 1
 #DIM 値段計算
 #DIMS 素質名
 
-PRINTFORML 수음 처리 계산(%CALLNAME:TARGET%)
+PRINTFORML 핸드잡 처리 계산(%CALLNAME:TARGET%)
 DRAWLINE
 
 
@@ -98,7 +98,7 @@ IF NO:TARGET > 1000
 	;5000円のつもり。これでも相場よりちょい高めのつもりで値段交渉してる。
 		値段計算 = 500
 	ENDSELECT
-	PRINTFORML %"基本料金", 25, LEFT%: %NUM_FORMAT(値段計算), 8%루피
+	PRINTFORML %"基本料金", 25, LEFT%：　%NUM_FORMAT(値段計算), 8%루피
 ELSEIF TALENT:幼稚
 	;幼稚
 	;性知識うんぬん以前に、そもそもお金の価値に対する理解が足りていない。
@@ -108,16 +108,16 @@ ELSEIF TALENT:幼稚
 	SELECTCASE RAND:10
 	;４割で超高額提示
 	CASE 0
-		PRINTFORML %"基本料金", 25, LEFT%: 십만 루피!
+		PRINTFORML %"基本料金", 25, LEFT%：　십만 루피!
 		値段計算 = 100000
 	CASE 1 TO 3
-		PRINTFORML %"基本料金", 25, LEFT%: 만 루피!
+		PRINTFORML %"基本料金", 25, LEFT%：　일만 루피!
 		値段計算 = 10000
 	CASE 4 TO 6
-		PRINTFORML %"基本料金", 25, LEFT%: 천 루피!
+		PRINTFORML %"基本料金", 25, LEFT%：　천 루피!
 		値段計算 = 1000
 	CASE 7 TO 9
-		PRINTFORML %"基本料金", 25, LEFT%: 백 루피면 돼!
+		PRINTFORML %"基本料金", 25, LEFT%：　백 루피면 돼!
 		値段計算 = 100
 	ENDSELECT
 ELSEIF 知識素質:高貴 > 0
@@ -132,7 +132,7 @@ ELSEIF 知識素質:高貴 > 0
 	;王侯貴族に連なるような高貴なおくちを10万円で堪能できると考えるとこれでも結構リーズナブル。良心的な価格設定でございます。
 		値段計算 = 3000
 	ENDIF
-	PRINTFORML %"基本料金", 25, LEFT%: %NUM_FORMAT(値段計算), 8%루피
+	PRINTFORML %"基本料金", 25, LEFT%：　%NUM_FORMAT(値段計算), 8%루피
 ELSEIF 知識素質:性知識 < 0
 ;性知識マイナス勢
 ;お金の価値が分からないわけではないが、カラダの価値の相場を知らないので直感的にいま欲しい金額を言ってくる。
@@ -150,11 +150,11 @@ ELSEIF 知識素質:性知識 < 0
 	CASE 4
 		値段計算 = 500
 	ENDSELECT
-	PRINTFORML %"基本料金", 25, LEFT%: %NUM_FORMAT(値段計算), 8%루피
+	PRINTFORML %"基本料金", 25, LEFT%：　%NUM_FORMAT(値段計算), 8%루피
 ELSEIF TALENT:非戦闘キャラ
 ;非戦闘キャラは、「戦うことで稼げる」キャラより相対的に肉体の価値が安く、「カラダを売って稼ぐ」ことへの抵抗感が戦闘キャラより薄いイメージ
 	値段計算 = 800
-	PRINTFORML %"基本料金", 25, LEFT%: %NUM_FORMAT(値段計算), 8%루피
+	PRINTFORML %"基本料金", 25, LEFT%：　%NUM_FORMAT(値段計算), 8%루피
 ELSEIF TALENT:性転換 == 1
 ;元女だと嫌がって値段を高めに設定する(でも結局買われてしゃぶらされてしまう)
 	値段計算 = 2000
@@ -364,7 +364,7 @@ SIF 値段計算 < 0
 	値段計算 = 0
 
 ;割引クーポンはひとつまでです！
-IF TALENT:対象キャラ:恋慕
+IF TALENT:対象キャラ:恋慕 || TALENT:対象キャラ:疑似恋慕
 	DRAWLINE
 	PRINTFORML 할인
 ;恋慕は完全無料
@@ -380,7 +380,7 @@ PRINTFORML 할인
 ;せっかく値段が出るんだしタダで抱かせてもらうよりも「100円で買ってあげた」みたいののほうが尊厳を性的搾取できている感が出るので
 ;本来は30,000ルピ……ですが！なんと！今回に限り！お客様だけに！99%オフの300ルピで！！のほうが絶対にシコれる。古事記にもそう書かれている。
 	SETCOLOR カラーパレット("赤ピンク")
-PRINTFORM %"弱み", 25, LEFT%:　　　　　99% 오프
+PRINTFORM %"弱み", 25, LEFT%：　　　　　99％ 할인
 	CALL PRINT_STRL(@"_H_")
 	RESETCOLOR
 	値段計算 /= 100
@@ -399,9 +399,9 @@ ELSE
 	値段計算 = MAX(0, 値段計算)
 ENDIF
 IF 値段計算 > 0
-PRINTFORML %"合計値段", 25, LEFT%:　%NUM_FORMAT(値段計算), 8%루피
+PRINTFORML %"合計値段", 25, LEFT%：　%NUM_FORMAT(値段計算), 8%루피
 ELSE
-PRINTFORM %"合計値段", 25, LEFT%:　%"無料", 8%
+PRINTFORM %"合計値段", 25, LEFT%：　%"無料", 8%
 	CALL PRINT_STRL(@"_H_")
 ENDIF
 
@@ -453,34 +453,34 @@ RETURN 1
 
 PRINTFORM %CALLNAME:TARGET%은(는)
 IF TALENT:TARGET:恋慕
-PRINTFORM 요구받는 것이 기쁜지 미소로
+PRINTFORM 요구받는 것이 기쁜 건지 웃는 얼굴로
 ELSEIF TALENT:TARGET:弱味 || (TALENT:性別嗜好 == 2 && TALENT:PLAYER:性別 == 1)
 ;これだけ露骨に浮かぶバリエーションが多い……なんでやろな？
-PRINTFORM %TEXTR("마지못해 하는 듯한 느낌으로/싫은 듯 얼굴을 찌푸리면서도 마지못해/불쾌한 듯 눈살을 찌푸리면서도 마지못해/싫은 듯 이쪽을 노려보면서도 마지못해")%
+PRINTFORM %TEXTR("마지못해 하는 듯이/싫은 듯 얼굴을 찌푸리면서도 마지못해/불쾌한 듯 눈살을 찌푸리면서도 마지못해/싫은 듯 이쪽을 노려보면서도 마지못해")%
 ELSEIF TALENT:TARGET:恋人持ち == 3
-PRINTFORM 지금은 고인이 된 반려에게 작게 사죄를 말하면서도
+PRINTFORM 고인이 된 반려에게 작게 사죄를 말하면서도
 ELSEIF TALENT:TARGET:恋人持ち == 2
 PRINTFORM 반려에게 작게 사죄를 말하면서도
 ELSEIF TALENT:TARGET:恋人持ち == 1
 PRINTFORM 연인에게 작게 사죄를 말하면서도
 ELSEIF TALENT:TARGET:恋人持ち == -1
-PRINTFORM 마음에 둔 사람에게 작게 사죄를 말하면서도
+PRINTFORM 마음속 연인에게 작게 사죄를 말하면서도
 ELSEIF TALENT:TARGET:セフレ
-PRINTFORM 히죽히죽 놀리는 듯한 미소를 띠고
+PRINTFORM 능글능글하게 놀리는 듯한 미소를 지으며
 ELSEIF TALENT:TARGET:精神的余裕 == 2
 PRINTFORM 천박하다고 한숨을 쉬면서도
 ELSEIF TALENT:TARGET:ギャル
 PRINTFORM 태연하게
 ELSEIF TALENT:TARGET:羞恥心
-PRINTFORM %TEXTR("얼굴을 새빨갛게 하고/부끄러워 고개를 숙이며")%면서
+PRINTFORM %TEXTR("얼굴을 새빨갛게 붉히고/부끄러워 고개를 숙이며")%면서
 ELSEIF TALENT:TARGET:性的興味
-PRINTFORM %TEXTR("흥미진진한/기대에 찬")%모습으로
+	PRINTFORM %TEXTR("흥미진진한/기대에 찬")% 모습으로
 ELSEIF TALENT:TARGET:性欲 <= -1
-PRINTFORM 어디까지나 사무적으로
+	PRINTFORM 어디까지나 사무적으로
 ELSE
-PRINTFORM 부끄러워하면서도
+	PRINTFORM 부끄러워하면서도
 ENDIF
-PRINTFORMW %TEXTR("승낙/승낙")%하고, %CALLNAME:PLAYER%%TEXTR("와 가까운 물그림자로 숨었다/를 가까운 물그림자로 이끌었다/에게 이끌려 가까운 물그림자에 숨었다")%……
+PRINTFORMW %TEXTR("승낙/수락")%하고, %CALLNAME:PLAYER%%TEXTR("와 가까운 물그림자 속으로 숨었다/를 가까운 물그림자 속으로 이끌었다/에게 이끌려 가까운 물그림자에 숨었다")%……
 PRINTL
 PRINTFORMW ────
 PRINTL
@@ -519,27 +519,27 @@ ENDIF
 
 IF TEQUIP:PLAYER:下半身服あり == 1
 	IF TEQUIP:PLAYER:スカートめくり可 == 1
-		PRINTFORM 눈앞에서 스커트를 걷어올렸다
+		PRINTFORM 눈앞에서 스커트를 걷어 올렸다
 	ELSE
-		PRINTFORM 눈앞에서 옷을 벗겨 드러냈다
+		PRINTFORM 눈앞에서 옷을 벗어 보였다
 	ENDIF
 ELSE
 	PRINTFORM 눈앞에 드러냈다
 ENDIF
-PRINTFORML %CALLNAME:PLAYER%의 성기에, %CALLNAME:TARGET%는 살며시 손가락을 훑어%TEXTR("부드럽게 주무르듯이/손가락 끝으로 원을 그리듯이 주물러")%애무한다.
+PRINTFORML %CALLNAME:PLAYER%의 성기에, %CALLNAME:TARGET%는 가만히 손가락을 훑으며 %TEXTR("부드럽게 주무르듯이/손가락 끝으로 원을 그리듯이 주물러")% 애무한다.
 PRINTL
 
 IF GETBIT(TALENT:PLAYER:性別, 1) == 1
 ;ふたなり
-	CALL PRINT_STR(@"くちっ_H_くちゅっ_H_")
-	PRINTFORML 하고 물소리를 울리는 핸드잡의%TEXTR("감촉/쾌감")%에 허리를 떨면서, %CALLNAME:PLAYER%가 함께 자지도 주물러 달라고 부탁하자,
+	CALL PRINT_STR(@"쿠읏_H_쿠읏_H_")
+	PRINTFORML 하고 물소리를 울리는 핸드잡의 %TEXTR("감촉/쾌감")%에 허리를 떨면서, %CALLNAME:PLAYER%가 함께 자지도 주물러 달라고 부탁하자,
 	IF 陥落チェック(TARGET)
-		PRINTFORMW %CALLNAME:TARGET%는 어쩔 수 없다는 듯 웃으며 핸드잡과는 반대 손으로 %CALLNAME:PLAYER%의 페니스에 살며시 손을 댔다.
+		PRINTFORMW %CALLNAME:TARGET%는 어쩔 수 없다는 듯 웃으며 핸드잡과는 반대 손으로 %CALLNAME:PLAYER%의 페니스에 가만히 손을 댔다.
 		PRINTL
-		PRINTFORML 끝에서 스며 나오는 선주와 %CALLNAME:PLAYER%의 애액으로 미끄러움을 좋게 하면서, %CALLNAME:TARGET%는 핸드잡을 하면서 능숙하게 %CALLNAME:PLAYER%의 후타나리 자지를 주무른다.
+		PRINTFORML 끝에서 스며 나오는 선행정과 %CALLNAME:PLAYER%의 애액으로 미끄러움을 좋게 하면서, %CALLNAME:TARGET%는 핸드잡을 하면서 능숙하게 %CALLNAME:PLAYER%의 후타나리 자지를 주무른다.
 		PRINTL
-		PRINTFORML 이윽고 헌신적인 %CALLNAME:TARGET%의 손기술의 쾌감에 %CALLNAME:PLAYER%가 허리를 튀기며 절정을 맞이하자,
-		PRINTFORMW %CALLNAME:TARGET%는 정액%TEXTR("이 튀지 않도록/으로 옷을 더럽히지 않도록/이 머리에 묻지 않도록")%손바닥으로 사정을 받아주었다……。
+		PRINTFORML 이윽고 헌신적인 %CALLNAME:TARGET%의 손기술의 쾌감에 %CALLNAME:PLAYER%가 허리를 튕기며 절정을 맞이하자,
+		PRINTFORMW %CALLNAME:TARGET%는 정액%TEXTR("이 튀지 않도록/으로 옷을 더럽히지 않도록/이 머리카락에 묻지 않도록")% 손바닥으로 사정을 받아 주었다…….
 		;一瞬咥えただけだから口淫経験とかは増えない方針で
 		EXP:PLAYER:射精経験 += 1
 		EXP:対象キャラ:手淫経験 += 1
@@ -548,16 +548,16 @@ IF GETBIT(TALENT:PLAYER:性別, 1) == 1
 		CASE 0
 			PRINTL
 			PRINTFORM 이윽고 %CALLNAME:PLAYER%의 사정이 진정된 것을 확인하자, %CALLNAME:TARGET%는 손바닥에 고인 정액을
-			CALL PRINT_STR(@"すん_H_")
-			PRINTFORMW 하고 한 번 냄새를 맡고, %CALLNAME:PLAYER%를 올려다보며 히죽 웃어 보이고, 흥분을 부추기듯이 낼름낼름 핥아 먹었다……。
+			CALL PRINT_STR(@"킁_H_")
+			PRINTFORMW 하고 한 번 킁킁거리며, %CALLNAME:PLAYER%을(를) 올려다보며 히죽 웃어 보이고, 흥분을 부추기듯 낼름낼름 핥아 먹었다……。
 			PRINTL
 			EXP:対象キャラ:精飲経験 += 1
 			精液ごっくん = 1
 		CASE 1
 			PRINTL
-PRINTFORM %CALLNAME:PLAYER%이(가) 손바닥에 고인 정액을 마셔달라고 부탁하자, %CALLNAME:TARGET%은(는) 쓴웃음을 지으면서도,
-			CALL PRINT_STR(@"ずずっ_H_じゅるるっ_H_")
-PRINTFORMW 하고 소리를 내며 들이마셔 사정 직후의%CALLNAME:PLAYER%의 흥분을 부추겼다……。
+			PRINTFORM %CALLNAME:PLAYER%이(가) 손바닥에 고인 정액을 마셔달라고 부탁하자, %CALLNAME:TARGET%은(는) 쓴웃음을 지으면서도,
+			CALL PRINT_STR(@"쭈릅_H_꿀꺽꿀꺽_H_")
+			PRINTFORMW 하고 소리를 내며 들이마셔 사정 직후의 %CALLNAME:PLAYER%의 흥분을 부추겼다……。
 			PRINTL
 			EXP:対象キャラ:精飲経験 += 1
 			精液ごっくん = 1
@@ -567,39 +567,39 @@ PRINTFORMW 하고 소리를 내며 들이마셔 사정 직후의%CALLNAME:PLAYER
 		手コキ = 1
 	ELSEIF TALENT:TARGET:弱味 || (TALENT:性別嗜好 == 2 && TALENT:PLAYER:性別 == 1) || TALENT:TARGET:恋人持ち >= 1 || TALENT:TARGET:恋人持ち == -1
 	;嫌がりそうな子ら
-PRINTFORMW %CALLNAME:TARGET%은(는) 망설이면서도 핸드잡과는 반대 손으로%CALLNAME:PLAYER%의 페니스에 살며시 손을 댔다.
+		PRINTFORMW %CALLNAME:TARGET%은(는) 망설이면서도 핑거링과는 반대 손으로 %CALLNAME:PLAYER%의 페니스에 살며시 손을 댔다.
 		PRINTL
-PRINTFORML %CALLNAME:TARGET%은(는)%TEXTR("눈살을 찌푸리며/얼굴을 찡그리며")%면서도, 끝에서 스며 나오는 선주와%CALLNAME:PLAYER%의 애액으로 미끄러움을 좋게 하고, 핸드잡을 하면서 능숙하게%CALLNAME:PLAYER%의 후타나리 꼬추를 주무른다.
+		PRINTFORML %CALLNAME:TARGET%은(는) %TEXTR("눈살을 찌푸리며/얼굴을 찡그리며")%면서도, 끝에서 스며 나오는 선주액과 %CALLNAME:PLAYER%의 애액으로 미끄러움을 좋게 하고, 핑거링을 하면서 능숙하게 %CALLNAME:PLAYER%의 후타나리 거시기를 주물렀다.
 		PRINTL
-PRINTFORML 이윽고 헌신적인%CALLNAME:TARGET%의 손기술 쾌감에%CALLNAME:PLAYER%이(가) 허리를 튀기며 절정을 맞이하자,
-PRINTFORMW %CALLNAME:TARGET%은(는) 정액%TEXTR("이 튀지 않도록/으로 옷을 더럽히지 않도록/이 머리카락에 묻지 않도록")% 손바닥으로 사정을 받아냈다……。
+		PRINTFORML 이윽고 헌신적인 %CALLNAME:TARGET%의 손기술 쾌감에 %CALLNAME:PLAYER%이(가) 허리를 튕기며 절정을 맞이하자,
+		PRINTFORMW %CALLNAME:TARGET%은(는) 정액이 %TEXTR("튀지 않도록/옷을 더럽히지 않도록/머리카락에 묻지 않도록")% 손바닥으로 사정을 받아냈다……。
 		EXP:PLAYER:射精経験 += 1
 		EXP:対象キャラ:手淫経験 += 1
 		EXP:対象キャラ:精液経験 += 1
 		SELECTCASE RAND:3
 		CASE 0
 			PRINTL
-PRINTFORM %CALLNAME:PLAYER%이(가) 손바닥에 고인 정액을 마셔달라고 부탁하자%CALLNAME:TARGET%은(는) 진심으로 싫은 듯 얼굴을 찡그렸지만,
-			CALL PRINT_STR(@"ずずっ_H_じゅるるっ_H_")
-PRINTFORMW 하고 소리를 내며 들이마셔 마셨다……。
+			PRINTFORM %CALLNAME:PLAYER%이(가) 손바닥에 고인 정액을 마셔달라고 부탁하자 %CALLNAME:TARGET%은(는) 진심으로 싫다는 듯이 얼굴을 찡그렸지만,
+			CALL PRINT_STR(@"쭈릅_H_꿀꺽꿀꺽_H_")
+			PRINTFORMW 하고 소리를 내며 들이마셔 전부 마셨다……。
 			PRINTL
 			EXP:対象キャラ:精飲経験 += 1
 			精液ごっくん = 1
 		CASE 1
 			PRINTL
-PRINTFORMW %CALLNAME:PLAYER%은(는) 손바닥에 고인 정액을 마셔달라고 부탁했지만, %CALLNAME:TARGET%은(는) 진심으로 싫은 듯 얼굴을 찡그리고 그것을 단호하게 거절했다……。
+			PRINTFORMW %CALLNAME:PLAYER%은(는) 손바닥에 고인 정액을 마셔달라고 부탁했지만, %CALLNAME:TARGET%은(는) 진심으로 싫다는 듯이 얼굴을 찡그리며 그것을 단호하게 거절했다……。
 			PRINTL
 		CASE 2
 			PRINTL
 		ENDSELECT
 		手コキ = 1
 	ELSE
-PRINTFORMW %CALLNAME:TARGET%은(는) 승낙하고, 핸드잡과는 반대 손으로%CALLNAME:PLAYER%의 페니스에 살며시 손을 댔다.
+		PRINTFORMW %CALLNAME:TARGET%은(는) 승낙하고, 핑거링과는 반대 손으로 %CALLNAME:PLAYER%의 페니스에 살며시 손을 댔다.
 		PRINTL
-PRINTFORML 끝에서 스며 나오는 선주와%CALLNAME:PLAYER%의 애액으로 미끄러움을 좋게 하면서, %CALLNAME:TARGET%은(는) 핸드잡을 하면서 능숙하게%CALLNAME:PLAYER%의 후타나리 꼬추를 주무른다.
+		PRINTFORML 끝에서 스며 나오는 선주액과 %CALLNAME:PLAYER%의 애액으로 미끄러움을 좋게 하면서, %CALLNAME:TARGET%은(는) 핑거링을 하면서 능숙하게 %CALLNAME:PLAYER%의 후타나리 거시기를 주무른다.
 		PRINTL
-PRINTFORML 이윽고 헌신적인%CALLNAME:TARGET%의 손기술 쾌감에%CALLNAME:PLAYER%이(가) 허리를 튀기며 절정을 맞이하자,
-PRINTFORMW %CALLNAME:TARGET%은(는) 정액%TEXTR("이 튀지 않도록/으로 옷을 더럽히지 않도록/이 머리카락에 묻지 않도록")% 손바닥으로 사정을 받아주었다……。
+		PRINTFORML 이윽고 헌신적인%CALLNAME:TARGET%의 손기술 쾌감에%CALLNAME:PLAYER%이 허리를 튀기며 절정을 맞이하자,
+		PRINTFORMW %CALLNAME:TARGET%은(는) 정액이%TEXTR("튀지 않도록/으로 옷을 더럽히지 않도록/이 머리에 묻지 않도록")% 손바닥으로 사정을 받아주었다……。
 		;一瞬咥えただけだから口淫経験とかは増えない方針で
 		EXP:PLAYER:射精経験 += 1
 		EXP:対象キャラ:手淫経験 += 1
@@ -607,15 +607,15 @@ PRINTFORMW %CALLNAME:TARGET%은(는) 정액%TEXTR("이 튀지 않도록/으로 �
 		SELECTCASE RAND:3
 		CASE 0
 			PRINTL
-PRINTFORM %CALLNAME:PLAYER%이(가) 손바닥에 고인 정액을 마셔달라고 부탁하자%CALLNAME:TARGET%은(는) 얼굴을 찡그리고 망설였지만, 이윽고
-			CALL PRINT_STR(@"ずずっ_H_じゅるるっ_H_")
-PRINTFORMW 하고 소리를 내며 들이마셔%CALLNAME:PLAYER%의 정액을 마셔주었다……。
+			PRINTFORM %CALLNAME:PLAYER%이 손바닥에 고인 정액을 마셔달라고 부탁하자%CALLNAME:TARGET%은(는) 얼굴을 찌푸리며 망설였지만, 이윽고
+			CALL PRINT_STR(@"쭈읍_H_꿀꺽_H_")
+			PRINTFORMW 하고 소리를 내며 들이켜%CALLNAME:PLAYER%의 정액을 마셔주었다……。
 			PRINTL
 			EXP:対象キャラ:精飲経験 += 1
 			精液ごっくん = 1
 		CASE 1
 			PRINTL
-			PRINTFORMW %CALLNAME:PLAYER%은(는) 손바닥에 고인 정액을 마셔주길 부탁했지만, %CALLNAME:TARGET%은(는) 싫다는 듯 얼굴을 찌푸리며 그것을 단호하게 거절했다……。
+			PRINTFORMW %CALLNAME:PLAYER%은(는) 손바닥에 고인 정액을 마셔달라고 부탁했지만,%CALLNAME:TARGET%은(는) 싫다는 듯 얼굴을 찌푸리며 그것을 단호하게 거절했다……。
 			PRINTL
 		CASE 2
 			PRINTL
@@ -625,30 +625,30 @@ PRINTFORMW 하고 소리를 내며 들이마셔%CALLNAME:PLAYER%의 정액을 �
 ELSE
 	SELECTCASE RAND:2
 	CASE 0
-		CALL PRINT_STR(@"くちっ_H_くちゅっ_H_")
-		PRINTFORM 하고 물소리를 울리는 핸드잡의%TEXTR("감촉/쾌감")%에 허리를 떨면서, %CALLNAME:PLAYER%이(가) 키스도 해달라고
+		CALL PRINT_STR(@"쪽_H_쪽_H_")
+		PRINTFORM 하고 물소리를 울리는 핸드잡의%TEXTR("감촉/쾌감")%에 허리를 떨면서,%CALLNAME:PLAYER%이 키스도 해달라고
 		IF 陥落チェック(TARGET)
-			PRINTFORML 조르면,
-			PRINTFORM %CALLNAME:TARGET%은(는) %TEXTR("상냥하게/애태우듯이 음탕하게")% 미소 지으며,
-			CALL PRINT_STR(@"ちゅっ_H_ちゅぱっ_H_")
-			PRINTFORMW 하고 일부러 소리를 내며 %CALLNAME:PLAYER%에게 키스해 주었다……。
+			PRINTFORML 조르자,
+			PRINTFORM %CALLNAME:TARGET%은(는)%TEXTR("상냥하게/애태우듯이 음탕하게")% 미소 지으며,
+			CALL PRINT_STR(@"쪽_H_쪽_H_")
+			PRINTFORMW 하고 일부러 소리를 내며%CALLNAME:PLAYER%에게 키스해주었다……。
 			PRINTL
 			キス = 1
 		ELSEIF TALENT:TARGET:弱味 || (TALENT:性別嗜好 == 2 && TALENT:PLAYER:性別 == 1) || TALENT:TARGET:恋人持ち >= 1 || TALENT:TARGET:恋人持ち == -1
 			PRINTFORML 주문하자,
-			PRINTFORMW %CALLNAME:TARGET%은(는) 질색하면서도 주문에 응하고, 싫다는 듯 눈살을 찌푸리면서도 %CALLNAME:PLAYER%에게 입맞춤했다……。
+			PRINTFORMW %CALLNAME:TARGET%은(는) 질색하면서도 주문에 응해, 싫다는 듯 눈살을 찌푸리면서도%CALLNAME:PLAYER%에게 입맞춤했다……。
 			PRINTL
 			キス = 1
 		ELSE
 			IF 初体験済みチェック("ファーストキス", TARGET) == 0
 				PRINTFORML 주문했지만,
-				PRINTFORMW %CALLNAME:TARGET%에게는 %TEXTR("그건 안 된다고/싫다고 고개를 가로저으며")% 거절당하고 말았다……。
+				PRINTFORMW %CALLNAME:TARGET%은(는) %TEXTR("그건 안 된다고/싫다고 고개를 저으며")% 거절당하고 말았다……。
 				PRINTL
 			ELSE
 				PRINTFORML 주문하자,
-				PRINTFORM %CALLNAME:TARGET%은(는) 주문에 응하고,
-				CALL PRINT_STR(@"ちゅ_H_")
-				PRINTFORMW 하고 작게 립 소리를 내며 %CALLNAME:PLAYER%에게 입맞춤했다……。
+				PRINTFORM %CALLNAME:TARGET%은(는) 주문에 응하며,
+				CALL PRINT_STR(@"츄_H_")
+				PRINTFORMW 하고 작게 입술 소리를 내며 %CALLNAME:PLAYER%에게 입 맞췄다……。
 				PRINTL
 				キス = 1
 			ENDIF
@@ -664,19 +664,19 @@ ELSE
 		CALL 初体験日登録処理(PLAYER, TARGET, "キス", DAY * 1440 + TIME, GETPLACENAME(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置), "唇", "", 0)
 		CALL 初体験日登録処理(TARGET, PLAYER, "キス", DAY * 1440 + TIME, GETPLACENAME(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置), "唇", "", 0)
 	CASE 1
-		CALL PRINT_STR(@"くちっ_H_くちゅっ_H_")
-		PRINTFORM 하고 물소리를 울리는 핸드잡의%TEXTR("감촉/쾌감")%에 허리를 떨면서, %CALLNAME:PLAYER%이(가) 가슴도 만져달라고
+		CALL PRINT_STR(@"쿠읏_H_쿠츗_H_")
+		PRINTFORM 하고 물소리를 울리는 핸드잡의 %TEXTR("감촉/쾌감")%에 허리를 떨면서, %CALLNAME:PLAYER%이(가) 가슴도 만져달라고
 		IF 陥落チェック(TARGET)
-			PRINTFORML 조르면,
-			PRINTFORMW %CALLNAME:TARGET%은(는) %TEXTR("애태우듯이 음탕하게/능글능글하게")% 웃으며, %TEXTR("빙글빙글 유두를 밀어 넣듯이/손가락 끝으로 유두 주변을 애태우듯이/손바닥 전체로 움켜쥐듯이/욕망을 쏟아붓듯이 거칠게 주무르며/부드러움을 즐기듯이 주무르며")%%CALLNAME:PLAYER%의 가슴을 애무했다……。
+			PRINTFORML 조르자,
+			PRINTFORMW %CALLNAME:TARGET%은(는) %TEXTR("애태우듯이 음탕하게/능글맞게")% 웃으며, %TEXTR("빙글빙글 유두를 밀어 넣듯이/손가락 끝으로 유두 주변을 애태우듯이/손바닥 전체로 움켜쥐듯이/욕망을 쏟아붓듯이 거칠게 주무르며/부드러움을 즐기듯이 주무르며")% %CALLNAME:PLAYER%의 가슴을 애무했다……。
 			PRINTL
 		ELSEIF TALENT:TARGET:弱味 || (TALENT:性別嗜好 == 2 && TALENT:PLAYER:性別 == 1) || TALENT:TARGET:恋人持ち >= 1 || TALENT:TARGET:恋人持ち == -1
-			PRINTFORML 주문하면,
-			PRINTFORMW %CALLNAME:TARGET%은(는) 질색하면서도 주문에 응해, %CALLNAME:PLAYER%의 가슴을 거칠게 주물렀다……。
+			PRINTFORML 주문하자,
+			PRINTFORMW %CALLNAME:TARGET%은(는) 질색하면서도 주문에 응하며, %CALLNAME:PLAYER%의 가슴을 거칠게 주물렀다……。
 			PRINTL
 		ELSE
-			PRINTFORML 주문하면,
-			PRINTFORM %CALLNAME:TARGET%은(는) 주문에 응해, %TEXTR("빙글빙글 유두를 밀어 넣듯이/손가락 끝으로 유두 주변을 애태우듯이/손바닥 전체로 움켜쥐듯이/부드러움을 즐기듯이 주물러/욕망을 쏟아붓듯이 거칠게 주물러")%%CALLNAME:PLAYER%의 가슴을 애무했다……。
+			PRINTFORML 주문하자,
+			PRINTFORM %CALLNAME:TARGET%은(는) 주문에 응하며, %TEXTR("빙글빙글 유두를 밀어 넣듯이/손가락 끝으로 유두 주변을 애태우듯이/손바닥 전체로 움켜쥐듯이/부드러움을 즐기듯이 주무르며/욕망을 쏟아붓듯이 거칠게 주무르며")% %CALLNAME:PLAYER%의 가슴을 애무했다……。
 			PRINTL
 		ENDIF
 		胸揉み = 1
@@ -770,7 +770,7 @@ ENDIF
 
 ;オプションは基本的に割引クーポン対象外となっております～
 ;恋慕は完全無料
-IF TALENT:対象キャラ:恋慕
+IF TALENT:対象キャラ:恋慕 || TALENT:対象キャラ:疑似恋慕
 	DRAWLINE
 	PRINTFORML 할인
 	SETCOLOR カラーパレット("ピンク")
@@ -782,7 +782,7 @@ ELSEIF TALENT:対象キャラ:弱味
 	DRAWLINE
 	PRINTFORML 할인
 	SETCOLOR カラーパレット("赤")
-	PRINTFORM %"弱み", 25, LEFT%：　　　　　99% 오프
+	PRINTFORM %"弱み", 25, LEFT%：　　　　　99％ 할인
 	RESETCOLOR
 	CALL PRINT_STRL(@"_H_")
 	値段計算 /= 100

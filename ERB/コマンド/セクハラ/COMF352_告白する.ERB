@@ -1,9 +1,9 @@
 
 @COMNAME352
 #FUNCTIONS
-TSTR:コマンド名受渡 = 고백하다
+TSTR:コマンド名受渡 = 고백한다
 SIF CFLAG:TARGET:起床時告白済み
-	TSTR:コマンド名受渡 = 고백을 받아들이다
+	TSTR:コマンド名受渡 = 고백을 받아들인다
 
 ;===================================================
 ;コマンドタイプ
@@ -13,8 +13,8 @@ SIF CFLAG:TARGET:起床時告白済み
 TFLAG:コマンドタイプ受渡 = COMTYPE("セクハラ")
 
 @COM_TOOLTIP_352
-LOCALS = <br>■고백하다<br>
-LOCALS += "상대와 연인 상태가 되기 위한 커맨드. <br>상대를 연모 대상으로 삼은 후, 연모 레벨이 일정 이상 필요."
+LOCALS = <br>■고백한다<br>
+LOCALS += "상대와 연인 상태가 되기 위한 커맨드. <br>상대를 연모 대상으로 만든 후에, 연모 레벨이 일정 이상 필요."
 LOCALS += "<br>COM 타입: 성희롱<br>획득 소스: 없음"
 LOCALS += "<br>고유 획득 경험: 없음<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
@@ -41,12 +41,12 @@ IF RFLAG:コマンド結果受渡し変数 == 1
 	IF CFLAG:PLAYER:現在マップ種別 == 100 ;お祭り会場
 		TRYCALLFORMF GETPLACENAME_100_%開催予定祭り名%(CFLAG:MASTER:現在位置)
 		IF TSTR:場所名受渡 != ""
-			CALL 履歴データベース登録(CFLAG:MASTER:人物番号, @"%CALLNAME:TARGET%에게 %TSTR:場所名受渡%에서 고백했다.","日常")
-			CALL 履歴データベース登録(CFLAG:TARGET:人物番号, @"%CALLNAME:MASTER%에게 %TSTR:場所名受渡%에서 고백당했다.","日常")
+			CALL 履歴データベース登録(CFLAG:MASTER:人物番号, @"%CALLNAME:TARGET%に%TSTR:場所名受渡%で告白した","日常")
+			CALL 履歴データベース登録(CFLAG:TARGET:人物番号, @"%CALLNAME:MASTER%に%TSTR:場所名受渡%で告白された","日常")
 		ENDIF
 	ENDIF
-	CALL 履歴データベース登録(CFLAG:MASTER:人物番号, @"<img src='えっちハート'><font color='#%カラーパレット_HTML("赤ピンク")%'>%CALLNAME:TARGET%를 [연모]함락시켰다.</font><img src='えっちハート'>","うふふ実績")
-	CALL 履歴データベース登録(CFLAG:TARGET:人物番号, @"<img src='えっちハート'><font color='#%カラーパレット_HTML("赤ピンク")%'>함락소질[연모]를 얻었다.</font><img src='えっちハート'>","うふふ実績")
+	CALL 履歴データベース登録(CFLAG:MASTER:人物番号, @"<img src='えっちハート'><font color='#%カラーパレット_HTML("赤ピンク")%'>%CALLNAME:TARGET%を[恋慕]陥落させた</font><img src='えっちハート'>","うふふ実績")
+	CALL 履歴データベース登録(CFLAG:TARGET:人物番号, @"<img src='えっちハート'><font color='#%カラーパレット_HTML("赤ピンク")%'>陥落素質[恋慕]を得た</font><img src='えっちハート'>","うふふ実績")
 	IF TALENT:TARGET:恋人持ち > 0
 		RFLAG:コマンド結果受渡し変数３ = 1
 		TALENT:TARGET:浮気 = 1
@@ -63,8 +63,8 @@ ELSEIF RFLAG:コマンド結果受渡し変数 == 2
 	IF CFLAG:PLAYER:現在マップ種別 == 100 ;お祭り会場
 		TRYCALLFORMF GETPLACENAME_100_%開催予定祭り名%(CFLAG:MASTER:現在位置)
 		IF TSTR:場所名受渡 != ""
-			CALL 履歴データベース登録(CFLAG:MASTER:人物番号, @"%CALLNAME:TARGET%에게 %TSTR:場所名受渡%에서 고백했다.","日常")
-			CALL 履歴データベース登録(CFLAG:TARGET:人物番号, @"%CALLNAME:MASTER%에게 %TSTR:場所名受渡%에서 고백당했다.","日常")
+			CALL 履歴データベース登録(CFLAG:MASTER:人物番号, @"%CALLNAME:TARGET%に%TSTR:場所名受渡%で告白した","日常")
+			CALL 履歴データベース登録(CFLAG:TARGET:人物番号, @"%CALLNAME:MASTER%に%TSTR:場所名受渡%で告白された","日常")
 		ENDIF
 	ENDIF
 	;固有の疑似恋慕素質名を取得、ない場合はデフォルト名
@@ -75,8 +75,8 @@ ELSEIF RFLAG:コマンド結果受渡し変数 == 2
 		CSTR:TARGET:擬似恋慕陥落名称 = 연인
 	ENDIF
 
-	CALL 履歴データベース登録(CFLAG:MASTER:人物番号, @"<img src='えっちハート'><font color='#%カラーパレット_HTML("赤ピンク")%'>%CALLNAME:TARGET%을 [의사연모（%CSTR:TARGET:擬似恋慕陥落名称%）]함락시켰다.</font><img src='えっちハート'>","うふふ実績")
-	CALL 履歴データベース登録(CFLAG:TARGET:人物番号, @"<img src='えっちハート'><font color='#%カラーパレット_HTML("赤ピンク")%'>의사연모 함락소질[%CSTR:TARGET:擬似恋慕陥落名称%]을 얻었다.</font><img src='えっちハート'>","うふふ実績")
+	CALL 履歴データベース登録(CFLAG:MASTER:人物番号, @"<img src='えっちハート'><font color='#%カラーパレット_HTML("赤ピンク")%'>%CALLNAME:TARGET%を[疑似恋慕（%CSTR:TARGET:擬似恋慕陥落名称%）]陥落させた</font><img src='えっちハート'>","うふふ実績")
+	CALL 履歴データベース登録(CFLAG:TARGET:人物番号, @"<img src='えっちハート'><font color='#%カラーパレット_HTML("赤ピンク")%'>疑似恋慕陥落素質[%CSTR:TARGET:擬似恋慕陥落名称%]を得た</font><img src='えっちハート'>","うふふ実績")
 	IF TALENT:TARGET:恋人持ち > 0
 		RFLAG:コマンド結果受渡し変数３ = 1
 		TALENT:TARGET:浮気 = 1
@@ -123,55 +123,55 @@ RETURN 1
 ;-------------------------------------------------
 @MESSAGE_COM352
 IF RFLAG:コマンド結果受渡し変数 == 0
-	PRINTFORML 아직 %CALLNAME:TARGET%에게 고백해도 받아주지 않을 것이다…
+	PRINTFORML 아직%CALLNAME:TARGET%에게 고백해도 받아주지 않을 것이다…
 	PRINTL 조금 더 사이를 돈독히 한 후에 하자.
 ELSEIF RFLAG:コマンド結果受渡し変数 == -1
 	PRINTFORML %CALLNAME:TARGET%에게는 이미 연인이 있다.
 	PRINTL 관계를 어지럽히는 것은 그만두자.
 ELSEIF CFLAG:TARGET:起床時告白済み
 	;起床時告白の後
-	PRINTFORML %CALLNAME:PLAYER%는 이전에 %CALLNAME:TARGET%에게 받은 고백을 승낙한다고 전했다
-	PRINTFORML %CALLNAME:TARGET%는 %CALLNAME:PLAYER%와의 연인이 된 것을 매우 기뻐하고 있다…
-	PRINTFORML %CALLNAME:TARGET%는 [연모]를 얻었습니다.
+	PRINTFORML %CALLNAME:PLAYER%은(는) 이전에, %CALLNAME:TARGET%에게 받은 고백을 승낙한다고 전했다
+	PRINTFORML %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%와의 연인이 된 것을 매우 기뻐하고 있다…
+	PRINTFORML %CALLNAME:TARGET%은(는) [연모]을(를) 얻었습니다.
 	IF RFLAG:コマンド結果受渡し変数３ == 1
-		PRINTFORM %CALLNAME:TARGET%는
+		PRINTFORM %CALLNAME:TARGET%은(는)
 		SETCOLOR カラーパレット("えっちな色")
 		PRINT [바람]
 		RESETCOLOR
 		PRINT 을(를) 얻었다……
 	ELSEIF RFLAG:コマンド結果受渡し変数３ == 2
-		PRINTFORM %CALLNAME:TARGET%는
+		PRINTFORM %CALLNAME:TARGET%은(는)
 		SETCOLOR カラーパレット("えっちな色")
 		PRINT [짝사랑 상대 있음]
 		RESETCOLOR
 		PRINT 을(를) 잃었다……
 	ENDIF
 ELSEIF RFLAG:コマンド結果受渡し変数 == 1
-	PRINTFORML %CALLNAME:PLAYER%는 결심하고 %CALLNAME:TARGET%에게 연정을 전했다…
-	PRINTFORML %CALLNAME:TARGET%는 기뻐하며, %CALLNAME:PLAYER%의 마음을 받아주었다…
-	PRINTFORML %CALLNAME:TARGET%는 [연모]를 얻었습니다.
+	PRINTFORML %CALLNAME:PLAYER%은(는) 마음을 굳게 먹고 %CALLNAME:TARGET%에게 연정을 전했다…
+	PRINTFORML %CALLNAME:TARGET%은(는) 기뻐하며, %CALLNAME:PLAYER%의 마음을 받아주었다…
+	PRINTFORML %CALLNAME:TARGET%은(는) ［연모］을(를) 얻었습니다.
 	IF RFLAG:コマンド結果受渡し変数３ == 1
-		PRINTFORM %CALLNAME:TARGET%는
+		PRINTFORM %CALLNAME:TARGET%은(는)
 		SETCOLOR カラーパレット("えっちな色")
 		PRINT [바람]
 		RESETCOLOR
 		PRINT 을(를) 얻었다……
 	ELSEIF RFLAG:コマンド結果受渡し変数３ == 2
-		PRINTFORM %CALLNAME:TARGET%는
+		PRINTFORM %CALLNAME:TARGET%은(는)
 		SETCOLOR カラーパレット("えっちな色")
 		PRINT [짝사랑 상대 있음]
 		RESETCOLOR
 		PRINT 을(를) 잃었다……
 	ENDIF
 ELSEIF RFLAG:コマンド結果受渡し変数 == 2
-	PRINTFORML %CALLNAME:PLAYER%는 결심하고 %CALLNAME:TARGET%에게 연정을 전했다…
-	PRINTFORML %CALLNAME:TARGET%은(는) 아직 사랑을 완전히 이해하지 못한 것 같지만, %CALLNAME:PLAYER%에 대해서는 왠지 특별한 사람처럼 느끼고 있었던 것 같다
-	PRINTFORML 이 마음이 사랑임을 알고, %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%의 마음을 받아주었다…
+	PRINTFORML %CALLNAME:PLAYER%은(는) 마음을 굳게 먹고 %CALLNAME:TARGET%에게 연정을 전했다…
+	PRINTFORML %CALLNAME:TARGET%은(는) 아직 사랑을 완전히 이해하지 못한 듯했지만, %CALLNAME:PLAYER%을(를) 왠지 모르게 특별한 사람처럼 느끼고 있었던 것 같다
+	PRINTFORML 이 감정이 사랑임을 알고, %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%의 마음을 받아들여 주었다…
 	PRINTFORML %CALLNAME:TARGET%은(는) ［%CSTR:TARGET:擬似恋慕陥落名称%］을(를) 얻었습니다.
 	IF RFLAG:コマンド結果受渡し変数３ == 1
 		PRINTFORM %CALLNAME:TARGET%은(는)
 		SETCOLOR カラーパレット("えっちな色")
-		PRINT [바람기]
+		PRINT [바람]
 		RESETCOLOR
 		PRINT 을(를) 얻었다……
 	ELSEIF RFLAG:コマンド結果受渡し変数３ == 2

@@ -3,7 +3,7 @@
 ;-------------------------------------------------
 @COMNAME13
 #FUNCTIONS
-TSTR:コマンド名受渡 = 성기 노출
+TSTR:コマンド名受渡 = 보여주기
 
 ;===================================================
 ;コマンドタイプ
@@ -14,9 +14,9 @@ TFLAG:コマンドタイプ受渡 = COMTYPE("うふふ")
 オートコマンド許可 = 1
 
 @COM_TOOLTIP_13
-LOCALS = <br>■전시용 창<br>
-LOCALS += "상대에게 음경을 보여주어 성욕을 부추기는 커맨드."
-LOCALS += "<br>COM 타입: 우후후<br>획득 소스: 욕정・굴종・정복"
+LOCALS = <br>■보여주기<br>
+LOCALS += "상대에게 음경을 보여주어 성욕을 자극하는 커맨드."
+LOCALS += "<br>COM 타입：우후후<br>획득 소스：욕정・굴종・정복"
 LOCALS += "<br>고유 획득 경험: 없음<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
@@ -96,20 +96,82 @@ RETURN 1
 ;実行時メッセージ
 ;-------------------------------------------------
 @MESSAGE_COM13
-PRINTFORM %CALLNAME:PLAYER%는 %CALLNAME:TARGET%의 얼굴에 발기한
+#DIM 発情素養
+
+発情素養 = 0
+
+SIF TALENT:性欲 != -2 && TALENT:自制心 != 2 && TALENT:無関心 != 1 && TALENT:Ｃ感度 != -2 && TALENT:Ｖ感度 != -2
+	発情素養 = 1
+
+PRINTFORM %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%의 얼굴에 발기한
 SELECTCASE TALENT:PLAYER:男性器サイズ
 	CASE -2
-		PRINT 사랑스러운, 어린아이 같은
+		PRINT 사랑스러운, 아이 같은
 	CASE -1
-		PRINT 작은 편의
+		PRINT 작은
 	CASE 0
 	CASE 1
-		PRINT 남들보다 큰
+		PRINT 보통 이상의
 	CASE 2
 		PRINT 규격 외로 거대한
 ENDSELECT
 
-PRINTL 음경을 가까이 대고 보여주었다……
+PRINTL 음경을 가까이 대고, 보여주었다……
 
-SIF 知識素質:性知識 < 0
-	PRINTFORM %CALLNAME:TARGET%는 %CALLNAME:PLAYER%가 무엇을 하는지 몰라 어리둥절한 표정을 짓고 있다
+
+IF (TALENT:PLAYER:男性器サイズ >= 1 && TALENT:汚臭耐性 < 0 && 発情素養 == 1) || (TALENT:PLAYER:男性器サイズ >= 1 && TALENT:性欲 > 0)
+;なんとなくデカチンポ前提にしてみた。ZP素質やらフィールドやらで制御しようってなった場合はここらへん弄るとよき。その場合は地の文もちょっと弄って
+	IF 知識素質:性知識 < 0 && TALENT:性別 == 1 && CFLAG:TARGET:発情期フラグ >= 0 && RAND:5 > 0
+		PRINTL 
+		PRINTFORML %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%이(가) 무엇을 하는지 몰라 어리둥절한 얼굴을 하고 있지만,
+		PRINTFORML 그 눈은 신기하게도 %CALLNAME:PLAYER%의 페니스에 이끌려, 황홀한 얼굴로 냄새를 맡고는 꼼지락거리며 허벅지를 비비고 있다……
+		PRINTW
+		PRINTFORML %CALLNAME:PLAYER%의 페니스 냄새와 열기를 가까이서 느낀 것으로,
+		PRINTFORM %CALLNAME:TARGET%은(는) 암컷의 본능이 일깨워져,
+		SETCOLOR カラーパレット("えっちな色")
+		PRINT [발정]
+		RESETCOLOR
+		PRINTFORML 해버린 것 같다……
+		TCVAR:強制発情フラグ = 1
+		CFLAG:TARGET:発情期フラグ = -1
+	ELSEIF CFLAG:TARGET:発情期フラグ >= 0
+		PRINTFORM 육봉의 맹렬함을 눈앞에 들이밀어진 %CALLNAME:TARGET%은(는)
+		IF 陥落チェック(TARGET) == 0
+			IF TALENT:プライド > 1 || TALENT:ツンデレ
+				PRINTFORML 그 자존심 때문인지 필사적으로 시선을 피하려는 모습이었지만,
+				PRINTFORML 힐끗힐끗 곁눈질로 훔쳐보고는 무의식적으로 꼼지락거리며 허벅지를 비비고 있다……
+			ELSEIF 固有素質チェック(TARGET, "メスガキ") || (TALENT:応答 == 1 && TALENT:TARGET:年齢層 == 10) || (TALENT:応答 == 1 && BASE:TARGET:年齢 <= 14 && BASE:TARGET:年齢 != 0) || TALENT:態度 == 1
+			;メスガキ、生意気な子供、反抗的
+				PRINTFORML 갑자기 숨을 삼키고, 건방진 말만 하던 입을 다물고 목을 울리며,
+				PRINTFORML 겁먹은 듯, 혹은 아첨하는 듯한 표정으로 페니스를 바라보며는 꼼지락거리며 허벅지를 비비고 있다……
+			ELSEIF TALENT:度胸 == 1 || TALENT:応答 == -1
+			;大人しい、臆病
+				PRINTFORML 겁먹은 듯 숨을 삼키고,
+				PRINTFORML 어깨를 움츠리면서도 아첨하는 듯한 표정으로 페니스를 바라보며는 꼼지락거리며 허벅지를 비비고 있다……
+			ELSE
+				PRINTFORML 그 위용에 꿀꺽 목을 울리며, 꼼지락거리며 허벅지를 비비고 있다……
+			ENDIF
+		ELSEIF TALENT:経験豊富 || TALENT:淫乱
+			PRINTFORML 그 위용에 황홀한 듯 숨을 쉬며,
+			PRINTFORML 기대와 열기가 담긴 뜨거운 시선을 보내면서 꼼지락거리며 허벅지를 비비고 있다……
+		ELSE
+			PRINTFORML 그 위용에 꿀꺽 목을 울리며, 꼼지락거리며 허벅지를 비비고 있다……
+		ENDIF
+		PRINTW
+		PRINTFORML %CALLNAME:PLAYER%의 페니스의 냄새와 열기를 가까이에서 느낀 것으로 인해,
+		PRINTFORM %CALLNAME:TARGET%은(는) 암컷의 본능이 일깨워져,
+		SETCOLOR カラーパレット("えっちな色")
+		PRINT [발정]
+		RESETCOLOR
+		PRINTFORML 버린 것 같다……
+		TCVAR:強制発情フラグ = 1
+		CFLAG:TARGET:発情期フラグ = -1
+	ELSE
+	;発情してる
+		PRINTFORML 완전히 발정한 %CALLNAME:TARGET%은(는) 뺨을 붉히고, %TEXTR("열기가 담긴/축축한")% 거친 숨을 내쉬면서
+		PRINTFORML %CALLNAME:PLAYER%의 페니스%TEXTR("를 뚫어지게 쳐다보며/에서 눈을 떼지 못하고")% 있다……。
+	ENDIF
+ELSEIF 知識素質:性知識 < 0 
+	PRINTL 
+	PRINTFORM %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%가 무엇을 하는지 몰라, 어리둥절한 얼굴을 하고 있다
+ENDIF

@@ -4,9 +4,9 @@
 ;-------------------------------------------------
 @COMNAME5
 #FUNCTIONS
-TSTR:コマンド名受渡 = 애널 애무
+TSTR:コマンド名受渡 = 항문 애무
 SIF GETBIT(FLAG:モード管理, モードビット_同時)
-	TSTR:コマンド名受渡 = 동시에 애널 애무
+	TSTR:コマンド名受渡 = 동시에 항문 애무
 
 
 
@@ -25,9 +25,9 @@ TFLAG:コマンドタイプ受渡 = COMTYPE("Ａ系")
 
 @COM_TOOLTIP_5
 LOCALS = <br>■항문 애무<br>
-LOCALS += "상대의 애널을 손가락이나 도구로 애무하는 커맨드."
-LOCALS += "<br>COM 타입: A계<br>획득 소스：쾌A・노출・접촉・고통"
-LOCALS += "<br>고유 득경험：없음<br>"
+LOCALS += "상대의 항문을 손가락이나 도구로 애무하는 커맨드."
+LOCALS += "<br>COM 타입：A계<br>획득 소스：쾌A・노출・접촉・고통"
+LOCALS += "<br>고유 획득 경험: 없음<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
 @COM5
@@ -101,14 +101,14 @@ RETURN 1
 ;-------------------------------------------------
 @MESSAGE_COM5
 #DIM 同時キャラ番号
-PRINTFORM %CALLNAME:PLAYER%는
+PRINTFORM %CALLNAME:PLAYER%은(는)
 IF GETBIT(FLAG:モード管理, モードビット_同時)
 	FOR 同時キャラ番号, 0, 同時モード_選択数
 		SIF 同時キャラ番号 > 0
 			PRINT ,
 		PRINTFORM %CALLNAME:(同時モード_選択キャラ:同時キャラ番号)%
 	NEXT
-	PRINT 의 아날을 만졌다…
+	PRINT 의 항문을 만졌다…
 	RETURN 0
 ENDIF
 
@@ -130,10 +130,10 @@ ENDIF
 ; ELSEIF MODE_存在判定_完全一致("Ａ挿入系", PLAYER, TARGET)
 ; 	PRINTFORML %CALLNAME:TARGET%を犯しながらアヌスにいたずらをした…
 ; ELSE
-	PRINTFORM %CALLNAME:TARGET%의 아날을 만지작거렸
+	PRINTFORM %CALLNAME:TARGET%의 항문을 만지
 	;Ａ経験100以上＋欲望のPALAMLV3以上
 	SIF PALAM:欲情 >= PALAMLV:3 && EXP:Ａ経験 >= EXPLV:3
-		PRINT 고, 손가락으로 직장까지 휘저었
-PRINTL 다…
+		PRINT 며, 손가락 끝으로 직장까지 휘저어
+PRINTL 댔다…
 ; ENDIF
 

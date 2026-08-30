@@ -15,7 +15,7 @@ TFLAG:コマンドタイプ受渡 = COMTYPE("セクハラ弱")
 @COM_TOOLTIP_S306_12
 LOCALS = <br>■뿔 브러시<br>
 LOCALS += "상대의 뿔을 브러시로 닦는 커맨드."
-LOCALS += "<br>COM 타입: 성희롱<br>획득 소스: 접촉・노출・쾌S・환락(일정 조건 시)・불쾌(일정 조건 시)・반감(일정 조건 시)"
+LOCALS += "<br>COMタイプ：성희롱<br>取得ソース：接触・露出・快Ｓ・歓楽(一定条件시)・不快(一定条件시)・反感(一定条件시)"
 LOCALS += "<br>고유 획득 경험: 없음<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
@@ -140,7 +140,7 @@ RETURN 1
 ;選択から飛んでくるのでABLEは常に0
 RETURN 0
 
-@身体に触れる_ABLE_뿔브러시
+@身体に触れる_ABLE_角ブラシ
 ;一括管理
 SIF GLOBAL_COMABLE_S("306_12") && !RFLAG:罰ゲーム中
 	RETURN RESULT
@@ -179,10 +179,10 @@ SELECTCASE RFLAG:コマンド結果受渡し変数２
 		SELECTCASE RFLAG:コマンド結果受渡し変数
 			CASE 1 TO 2
 				;拒絶と受け入れに違い無し
-				PRINTFORML %CALLNAME:TARGET%은(는) 무슨 용건일까, 하고 고개를 갸웃거리고 있다
+				PRINTFORML %CALLNAME:TARGET%은(는) 무슨 용건이냐는 듯 고개를 갸웃거린다
 			CASE 3
 				;喜び時は喜ぶ
-				PRINTFORML %CALLNAME:TARGET%은(는) 뿔을 닦아주어 기뻐하는 듯하다
+				PRINTFORML %CALLNAME:TARGET%은(는) 뿔을 닦아주자 기쁜 듯한 표정을 짓는다
 		ENDSELECT
 	CASE 2
 		;無反応
@@ -192,33 +192,33 @@ SELECTCASE RFLAG:コマンド結果受渡し変数２
 				PRINTFORML %CALLNAME:TARGET%은(는) 아무런 반응도 보이지 않고, 태연하다
 			CASE 3
 				;喜び時はちょっと喜ぶ
-				PRINTFORML %CALLNAME:TARGET%은(는) 태연하지만, 어딘가 기뻐하는 듯한 분위기를 느낀다
+				PRINTFORML %CALLNAME:TARGET%은(는) 태연하지만, 어딘가 기쁜 듯한 분위기를 풍긴다
 		ENDSELECT
 	CASE 3
 		;嫌悪
 		SELECTCASE RFLAG:コマンド結果受渡し変数
 			CASE 1
 				;拒絶
-				PRINTFORML %CALLNAME:TARGET%은(는) 싫은 얼굴로 %CALLNAME:PLAYER%의 손을 뿌리쳤다…
+				PRINTFORML %CALLNAME:TARGET%은(는) 싫다는 듯한 얼굴로 %CALLNAME:PLAYER%의 손을 뿌리쳤다…
 			CASE 2
 				;受け入れ
-				PRINTFORML %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%을(를) 무시하고, 마음대로 정리하게 놔두고 있다
+				PRINTFORML %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%을(를) 무시하고, 마음대로 정리하게 둔다
 			CASE 3
 				;喜び
-PRINTFORML %CALLNAME:TARGET%은(는) 무시하는 듯하지만, %CALLNAME:PLAYER%이 뿔을 닦기 쉽도록 조금 몸을 기대왔다…
+				PRINTFORML %CALLNAME:TARGET%은(는) 무시하는 듯하지만, %CALLNAME:PLAYER%이(가) 뿔을 닦기 쉽도록 살짝 몸을 기대왔다…
 		ENDSELECT
 	CASE 4
 		;拒否
 		SELECTCASE RFLAG:コマンド結果受渡し変数
 			CASE 1
 				;拒絶
-PRINTFORML %CALLNAME:TARGET%은(는) 함부로 만져서는 안 된다며, %CALLNAME:PLAYER%의 손을 거부했다
+PRINTFORML %CALLNAME:TARGET%은(는) 함부로 만져서는 안 된다며 %CALLNAME:PLAYER%의 손을 거부했다
 			CASE 2
 				;受け入れ
 PRINTFORML %CALLNAME:TARGET%은(는) 불만스러운 얼굴을 하고 있지만, %CALLNAME:PLAYER%의 손을 거부하지는 않는 것 같다…
 			CASE 3
 				;喜び
-PRINTFORML %CALLNAME:TARGET%은(는) 싫지 않은 듯, %CALLNAME:PLAYER%이(가) 하고 싶은 대로 내버려 두고 있다…
+PRINTFORML %CALLNAME:TARGET%은(는) 싫지 않은 듯한 모습으로, %CALLNAME:PLAYER%이(가) 하고 싶은 대로 내버려 두고 있다…
 		ENDSELECT
 	CASE 5
 		;余裕
@@ -228,10 +228,10 @@ PRINTFORML %CALLNAME:TARGET%은(는) 싫지 않은 듯, %CALLNAME:PLAYER%이(가
 PRINTFORML %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%을(를) 꾸짖으며, 다른 사람의 뿔을 함부로 만져서는 안 된다고 타이르듯 말했다
 			CASE 2
 				;受け入れ
-PRINTFORML %CALLNAME:TARGET%은(는) 곤란한 듯 웃으며, 말로만 주의를 %CALLNAME:PLAYER%에게 주고 있다
+PRINTFORML %CALLNAME:TARGET%은(는) 곤란한 듯 웃으며, 말로만 %CALLNAME:PLAYER%에게 주의를 주고 있다
 			CASE 3
 				;喜び
-PRINTFORML %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%이 뿔을 닦기 쉽도록, 몸을 기대왔다…
+PRINTFORML %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%이(가) 뿔을 닦기 쉽도록, 몸을 가까이 가져왔다…
 		ENDSELECT
 	CASE 6
 		;羞恥
@@ -241,7 +241,7 @@ PRINTFORML %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%이 뿔을 닦기 쉽도�
 PRINTFORML %CALLNAME:TARGET%은(는) 새빨개져서, %CALLNAME:PLAYER%에게서 조금 거리를 두어 버렸다…
 			CASE 2
 				;受け入れ
-PRINTFORML %CALLNAME:TARGET%은(는) 얼굴을 붉히면서, %CALLNAME:PLAYER%에게 당하는 대로 내버려 두고 있다
+PRINTFORML %CALLNAME:TARGET%은(는) 얼굴을 붉히면서, %CALLNAME:PLAYER%이(가) 하는 대로 내버려 두고 있다
 			CASE 3
 				;喜び
 PRINTFORML %CALLNAME:TARGET%은(는) 붉어진 얼굴로 %CALLNAME:PLAYER%을(를) 바라보며, 작은 목소리로 고맙다고 말했다
@@ -251,13 +251,13 @@ PRINTFORML %CALLNAME:TARGET%은(는) 붉어진 얼굴로 %CALLNAME:PLAYER%을(�
 		SELECTCASE RFLAG:コマンド結果受渡し変数
 			CASE 1
 				;拒絶
-PRINTFORML %CALLNAME:TARGET%은(는) 재미있다는 듯 미소 지으며, %CALLNAME:PLAYER%의 정리 방식이 엉망이라며 지적해왔다
+PRINTFORML %CALLNAME:TARGET%은(는) 재미있다는 듯 미소 지으며, %CALLNAME:PLAYER%의 정리 방식이 엉망이라며 지적했다
 			CASE 2
 				;受け入れ
-PRINTFORML %CALLNAME:TARGET%은(는) 뿔만으로 괜찮냐며, 농담조로 %CALLNAME:PLAYER%을(를) 놀리고 있다…
+PRINTFORML %CALLNAME:TARGET%은(는) 뿔만으로 괜찮겠냐며, 농담 섞인 말로 %CALLNAME:PLAYER%을(를) 놀리고 있다…
 			CASE 3
 				;喜び
-PRINTFORML %CALLNAME:TARGET%은(는) 뿔 외에도 만져도 되는데 라며, 요염한 표정으로 %CALLNAME:PLAYER%을(를) 도발하고 있다…
+PRINTFORML %CALLNAME:TARGET%은(는) 뿔 말고 다른 곳도 만져도 된다며, 요염한 표정으로 %CALLNAME:PLAYER%을(를) 도발하고 있다…
 		ENDSELECT
 	CASE 8
 		;汎用
@@ -270,7 +270,7 @@ PRINTFORML %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%에게 만져지는 것을
 PRINTFORML %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%의 손길을 싫어하지 않고, 받아들이고 있다
 			CASE 3
 				;喜び
-				PRINTFORML %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%에게 뿔을 닦아달라고 하는 것을 조금 기쁘게 생각하는 것 같다…
+PRINTFORML %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%에게 뿔을 닦아주는 것을 조금 기쁘게 생각하는 것 같다…
 		ENDSELECT
 ENDSELECT
 

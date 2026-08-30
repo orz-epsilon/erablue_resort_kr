@@ -98,7 +98,7 @@ LOCAL:51 = 400 ;ゲージ一本のライフ量
 ;
 ;HPブロック
 	LOCAL:2 = BATTLE_STATE:LOCAL:ＨＰ
-	LOCAL:3 = BATTLE_STATE:LOCAL:최대HP
+	LOCAL:3 = BATTLE_STATE:LOCAL:最大ＨＰ
 	GDRAWTEXT レイヤー番号, @"HP:{LOCAL:2, 4}/{LOCAL:3, 4}", 120, 30
 	GSETBRUSH レイヤー番号, 0xFF808080
 	GFILLRECTANGLE レイヤー番号, 231, LOCAL:21, MAX(143 + 4, 1), LOCAL:23 * 2 + LOCAL:22 + 2
@@ -118,7 +118,7 @@ LOCAL:51 = 400 ;ゲージ一本のライフ量
 ;MPブロック
 	GSETBRUSH レイヤー番号, 0xFFC0C0C0
 	LOCAL:2 = BATTLE_STATE:LOCAL:ＭＰ
-	LOCAL:3 = BATTLE_STATE:LOCAL:최대MP
+	LOCAL:3 = BATTLE_STATE:LOCAL:最大ＭＰ
 	GDRAWTEXT レイヤー番号, @"MP:{LOCAL:2, 4}/{LOCAL:3, 4}", 120, 50
 	GSETBRUSH レイヤー番号, 0xFF808080
 	GFILLRECTANGLE レイヤー番号, 231, LOCAL:31, MAX(143 + 4, 1), LOCAL:33 * 2 + LOCAL:32 + 2
@@ -165,7 +165,7 @@ LOCAL:51 = 400 ;ゲージ一本のライフ量
 {
 ;HPブロック,太さを変えるテスト
 	LOCAL:2 = BATTLE_STATE:LOCAL:ＨＰ
-	LOCAL:3 = BATTLE_STATE:LOCAL:최대HP
+	LOCAL:3 = BATTLE_STATE:LOCAL:最大ＨＰ
 	GDRAWTEXT レイヤー番号, @"HP:{LOCAL:2, 4}/{LOCAL:3, 4}", 120, 30
 	GSETBRUSH レイヤー番号, 0xFF808080
 	GFILLRECTANGLE レイヤー番号, 231, LOCAL:21, MAX(143 + 4, 1), 12
@@ -209,7 +209,7 @@ LOCAL:51 = 400 ;ゲージ一本のライフ量
 {
 	;HPブロック,位置を変えるテスト
 	LOCAL:2 = BATTLE_STATE:LOCAL:ＨＰ
-	LOCAL:3 = BATTLE_STATE:LOCAL:최대HP
+	LOCAL:3 = BATTLE_STATE:LOCAL:最大ＨＰ
 	GSETBRUSH レイヤー番号, 0xFF808080
 	GFILLRECTANGLE レイヤー番号, LOCAL:24, LOCAL:21, MAX(LOCAL:25 + 4, 1), LOCAL:23 * 2 + LOCAL:22
 	IF LOCAL:2 < LOCAL:3 / 3
@@ -239,7 +239,7 @@ LOCAL:51 = 400 ;ゲージ一本のライフ量
 	;MPブロック
 	GSETBRUSH レイヤー番号, 0xFFC0C0C0
 	LOCAL:2 = BATTLE_STATE:LOCAL:ＭＰ
-	LOCAL:3 = BATTLE_STATE:LOCAL:최대MP
+	LOCAL:3 = BATTLE_STATE:LOCAL:最大ＭＰ
 	GDRAWTEXT レイヤー番号, @"MP:{LOCAL:2, 4}/{LOCAL:3, 4}", 120, 50
 	GSETBRUSH レイヤー番号, 0xFF808080
 	GFILLRECTANGLE レイヤー番号, 231, LOCAL:31, MAX(143 + 4, 1), LOCAL:33 * 2 + LOCAL:32
@@ -282,7 +282,7 @@ LOCAL:51 = 400 ;ゲージ一本のライフ量
 {
 	;もとの値を退避
 	LOCAL:2 = BATTLE_STATE:LOCAL:ＨＰ
-	LOCAL:3 = BATTLE_STATE:LOCAL:최대HP
+	LOCAL:3 = BATTLE_STATE:LOCAL:最大ＨＰ
 	GDRAWTEXT レイヤー番号, @"HP:{LOCAL:2, 4}/{LOCAL:3, 4}", 120, 30
 	GSETBRUSH レイヤー番号, 0xFF808080
 	GFILLRECTANGLE レイヤー番号, 231, 42, MAX(143 + 4, 1), 6
@@ -308,7 +308,7 @@ LOCAL:51 = 400 ;ゲージ一本のライフ量
 
 	GSETBRUSH レイヤー番号, 0xFFC0C0C0
 	LOCAL:2 = BATTLE_STATE:LOCAL:ＭＰ
-	LOCAL:3 = BATTLE_STATE:LOCAL:최대MP
+	LOCAL:3 = BATTLE_STATE:LOCAL:最大ＭＰ
 	GDRAWTEXT レイヤー番号, @"MP:{LOCAL:2, 4}/{LOCAL:3, 4}", 120, 50
 	GSETBRUSH レイヤー番号, 0xFF808080
 	GFILLRECTANGLE レイヤー番号, 231, 62, MAX(143 + 4, 1), 6
@@ -404,6 +404,7 @@ IF ダンジョン表示モード == "マップ画面"
 	LOCALS += "　<button value='p'>[p]던전에서 나가기</button>"
 	LOCALS += "　　　　　<button value='o'>[o]OPTION</button></div>"
 	LOCALS += @"%TSTR:メッセージ欄文字列受け渡し_下側%"
+	LOCALS += イベント画像表示処理("ダンジョン画面")
 
 	HTML_PRINT LOCALS, 1
 	
@@ -427,6 +428,8 @@ ELSEIF ダンジョン表示モード == "アイテム画面"
 	LOCALS += "</div><br>"
 	;LOCALS += "<div rect='200,2937,4375,125'><nonbutton><font color='yellow'>[i]アイテム</font></nonbutton>　<nonbutton><font color='#666666'>[m]素材アイテム一覧</font></nonbutton>　<nonbutton><font color='#666666'>[t]仲間と会話</font></nonbutton>　<nonbutton><font color='#666666'>[p]ダンジョンから抜ける</font></nonbutton></div>"
 	LOCALS += @"%TSTR:メッセージ欄文字列受け渡し_下側%"
+	LOCALS += イベント画像表示処理("ダンジョン画面")
+
 	HTML_PRINT LOCALS, 1
 	
 	RETURN 36
@@ -436,19 +439,22 @@ ENDIF
 @ダンジョン能力表示キャラ切り替え(ARG)
 DRAWLINE
 IF ARG > 0
-	PRINTBUTTONLC "[100]이전 캐릭터로", 100
+	PRINTBUTTONLC "[100]이전 캐릭터へ", 100
 ELSE
 	PRINTLC  
 ENDIF
 IF BATTLE_STATE:(ARG + 1):キャラ登録番号 > 0
-	PRINTBUTTONLC "[101]다음 캐릭터로", 101
+	PRINTBUTTONLC "[101]다음 캐릭터へ", 101
 ELSE
 	PRINTLC  
 ENDIF
 PRINTL
-PRINTBUTTONLC "[110]반지 장비 변경", 110
-PRINTBUTTONLC "[111]귀걸이 장비 변경", 111
-PRINTBUTTONLC "[112]직업의 증표 장비 변경", 112
+SIF CFLAG:(BATTLE_STATE:ARG:キャラ登録番号):指輪変更禁止 == 0
+	PRINTBUTTONLC "[110]반지 장비 변경", 110
+SIF CFLAG:(BATTLE_STATE:ARG:キャラ登録番号):耳飾り変更禁止 == 0
+	PRINTBUTTONLC "[111]귀걸이 장비 변경", 111
+SIF CFLAG:(BATTLE_STATE:ARG:キャラ登録番号):ジョブ証変更禁止 == 0
+	PRINTBUTTONLC "[112]직업의 증표 장비 변경", 112
 PRINTL
 PRINTBUTTONLC "[113]컷인 개별 설정 변경", 113
 IF EXISTFUNCTION(@"スタイル変更_{NO:(BATTLE_STATE:ARG:キャラ登録番号)}")
@@ -629,7 +635,7 @@ SELECTCASE INPUT保存
 				探索中カウント:交代候補_サブ:LOCAL = 探索中カウント:INPUT保存:LOCAL
 				探索中カウント:INPUT保存:LOCAL = 交代ステータス保存
 			NEXT
-			PRINTFORMW %CALLNAME:(BATTLE_STATE:交代候補_サブ:キャラ登録番号)%와 %CALLNAME:(BATTLE_STATE:INPUT保存:キャラ登録番号)%을(를) 교대했습니다.
+			PRINTFORMW %CALLNAME:(BATTLE_STATE:交代候補_サブ:キャラ登録番号)%와(과) %CALLNAME:(BATTLE_STATE:INPUT保存:キャラ登録番号)%을(를) 교대했습니다.
 			交代候補_メイン = -1
 			交代候補_サブ = -1
 			RESTART
@@ -653,7 +659,7 @@ SELECTCASE INPUT保存
 				探索中カウント:INPUT保存:LOCAL = 探索中カウント:交代候補_メイン:LOCAL
 				探索中カウント:交代候補_メイン:LOCAL = 交代ステータス保存
 			NEXT
-			PRINTFORMW %CALLNAME:(BATTLE_STATE:INPUT保存:キャラ登録番号)%와 %CALLNAME:(BATTLE_STATE:交代候補_メイン:キャラ登録番号)%을(를) 교대했습니다.
+			PRINTFORMW %CALLNAME:(BATTLE_STATE:INPUT保存:キャラ登録番号)%와(과) %CALLNAME:(BATTLE_STATE:交代候補_メイン:キャラ登録番号)%을(를) 교대했습니다.
 			交代候補_メイン = -1
 			交代候補_サブ = -1
 			RESTART
@@ -691,3 +697,61 @@ SELECTCASE RESULTS
 		CLEARLINE 1
 		GOTO LOOP_MESSAGE
 ENDSELECT
+
+
+@イベント画像表示処理(画面種類)
+#FUNCTIONS
+#DIMS 画面種類
+#DIMS ファイル名
+#DIMS 返し文字列
+#DIM 縦幅
+#DIM 横幅
+#DIM グラID
+
+SIF イベント画像表示文字列 == ""
+	RETURNF ""
+
+;画面種類に応じた位置に文字列に登録されている画像を表示する
+
+;画像は存在する？
+SELECTCASE EXIST画像FILE(@"%イベント画像表示文字列%")
+	CASE 2
+		ファイル名 = %イベント画像表示文字列%.webp
+	CASE 1
+		ファイル名 = %イベント画像表示文字列%.png
+	CASEELSE
+		;ファイルがないので戻る
+		RETURNF ""
+ENDSELECT
+
+;画像を取得
+;何番でもいいけどとりあえず口上に合わせて20000以降を使用
+グラID = 20000 + TFLAG:口上用画像表示番号
+TFLAG:口上用画像表示番号 ++
+
+GDISPOSE グラID
+SPRITEDISPOSE @"イベント画像{グラID}"
+GCREATEFROMFILE グラID, ファイル名
+SPRITECREATE @"イベント画像{グラID}", グラID
+
+;サイズ取得
+;文字サイズ割合に変換
+縦幅 = GHEIGHT(グラID) / GETCONFIG("フォントサイズ") * 100
+横幅 = GWIDTH(グラID) / GETCONFIG("フォントサイズ") * 100
+
+;サイズに合わせてdivを作成
+SELECTCASE 画面種類
+	CASE "ダンジョン画面"
+		返し文字列 = <div rect='{2900 - (横幅 / 2)}, {1500 - (縦幅 / 2)}, {横幅}, {縦幅}'
+	CASE "戦闘画面"
+		返し文字列 = <div rect='{2900 - (横幅 / 2)}, {1500 - (縦幅 / 2) + 987}, {横幅}, {縦幅}'
+ENDSELECT
+
+返し文字列 += @"padding='25' color='#%TOSTR(GETBGCOLOR(), "X")%' border='30' bcolor='#C0C0C0'>"
+
+返し文字列 += @"<img src='イベント画像{グラID}' height='{縦幅 + 50}' width='{横幅 + 50}'>"
+
+返し文字列 += "</div>"
+
+RETURNF 返し文字列
+

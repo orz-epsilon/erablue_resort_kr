@@ -14,7 +14,7 @@ TFLAG:コマンドタイプ受渡 = COMTYPE("うふふ_被挿入中_セクハラ
 
 @COM_TOOLTIP_S20_4
 LOCALS = <br>■타액 교환<br>
-LOCALS += "키스계 모드 중, 상대 입의 타액을 흘려 상대에게서도 타액을 받는 커맨드.<br>[혀놀림][고양이혀]에 따라 효과가 증감."
+LOCALS += "키스 계열 모드 중, 상대방 입의 타액을 흘려보내고 상대방으로부터도 타액을 받는 커맨드. <br>[혀놀림][고양이 혀]에 따라 효과가 증감."
 LOCALS += "<br>COM 타입: 우후후or피삽입 중or성희롱<br>획득 소스: 노출・접촉・쾌S・불결・고통(일정 조건 시)"
 LOCALS += "<br>고유 획득 경험: 키스 경험(PLAYER＆TARGET)<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
@@ -192,7 +192,7 @@ IF ABL:奉仕精神
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += ABL:奉仕精神 * 4
-	PRINTFORM 봉사 정신LV{ABL:奉仕精神}({ABL:奉仕精神 * 4})
+	PRINTFORM 봉사정신LV{ABL:奉仕精神}({ABL:奉仕精神 * 4})
 	＋表示フラグ = 1
 ENDIF
 
@@ -200,7 +200,7 @@ IF MARK:快楽刻印
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += MARK:快楽刻印 * 2
-	PRINTFORM 쾌락 각인LV{MARK:快楽刻印}({MARK:快楽刻印 * 2})
+	PRINTFORM 쾌락각인LV{MARK:快楽刻印}({MARK:快楽刻印 * 2})
 	＋表示フラグ = 1
 ENDIF
 
@@ -217,7 +217,7 @@ ENDIF
 IF TALENT:羞恥心 > 0
 	PRINT  - 
 	実行値 -= 1
-	PRINT 수줍음(1)
+	PRINT 수치심(1)
 	＋表示フラグ = 1
 ENDIF
 ;汚臭鈍感
@@ -277,7 +277,7 @@ ELSEIF TALENT:キス嗜好 == 2
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += 999
-	PRINT 키스마(999)
+	PRINT 키스광(999)
 	＋表示フラグ = 1
 ENDIF
 
@@ -286,7 +286,7 @@ IF TCVAR:言いなり
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += 999
-	PRINT 당신의 말대로(999)
+	PRINT 당신의 뜻대로(999)
 	＋表示フラグ = 1
 ENDIF
 
@@ -299,7 +299,7 @@ SIF 実行値 == 必要実行値
 	PRINT  = 
 SIF 実行値 > 必要実行値
 	PRINT  > 
-PRINTFORM 실행치{必要実行値}
+PRINTFORM 실행값{必要実行値}
 
 WAIT
 SKIPDISP 0
@@ -338,7 +338,7 @@ RETURN 1
 @MESSAGE_COM_S20_4
 
 IF RFLAG:コマンド結果受渡し変数
-	PRINTFORML %CALLNAME:PLAYER%와 %CALLNAME:TARGET%는 혀를 얽어 넣으며 번갈아 침을 흘려 넣어 타액을 교환했다…
+	PRINTFORML %CALLNAME:PLAYER%과(와) %CALLNAME:TARGET%는 혀를 얽히게 하면서 번갈아 타액을 흘려 넣으며 타액을 교환했다…
 ELSE
-	PRINTFORML %CALLNAME:PLAYER%는 입술을 맞대며 %CALLNAME:TARGET%의 입에 타액을 흘려 넣었다…
+	PRINTFORML %CALLNAME:PLAYER%은(는) 입술을 맞대면서 %CALLNAME:TARGET%의 입에 타액을 흘려 넣었다…
 ENDIF

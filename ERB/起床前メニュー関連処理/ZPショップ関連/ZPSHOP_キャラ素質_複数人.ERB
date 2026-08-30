@@ -1,0 +1,1349 @@
+
+@ZP_素質変化_複数人モード()
+#DIM キャラ番号
+
+PRINTL
+DRAWLINE
+PRINTL ZP를 소비하여 여러 사람의 소질을 변화시킬 수 있습니다.
+PRINTL (변화시킬 수 없는 캐릭터가 선택된 경우, 해당 캐릭터는 건너뜁니다)
+PRINTL (ZP가 도중에 소진된 경우, 처리는 그곳에서 멈춥니다)
+PRINTL 어떤 소질을 변화시키겠습니까?
+PRINTFORML 소지ZP:{FLAG:ZP所持量}.{(ZP小数点以下所持量 % 1000) / 100}{(ZP小数点以下所持量 % 100) / 10}{(ZP小数点以下所持量 % 10)}
+DRAWLINE
+PRINTBUTTONLC "[1]감각계 소질을 강화한다", 1
+PRINTL
+PRINTBUTTONLC "[2]유방을 변화시킨다", 2
+PRINTL
+PRINTBUTTONLC "[3]남성기를 변화시킨다", 3
+PRINTL
+PRINTBUTTONLC "[4]성별을 변화시킨다", 4
+PRINTL
+PRINTBUTTONLC "[5]종족을 변화시킨다", 5
+PRINTL
+PRINTBUTTONLC "[6]임신을 가능하게 한다", 6
+PRINTL
+PRINTBUTTONLC "[7]수태 체질을 변화시킨다", 7
+PRINTL
+PRINTBUTTONLC "[8]발정기 소질을 변화시킨다", 8
+PRINTL
+; PRINTBUTTONLC "[9]体格・体型を変化させる", 9
+; PRINTL
+IF あなた特殊能力:ハーレム >= 2
+	;ハーレム一人前以上だと他者にハーレムの心得を付与可能
+	PRINTBUTTONLC "[10]하렘의 마음가짐을 습득시킨다", 10
+	PRINTL
+ENDIF
+; PRINTBUTTONLC "[30]弱点コマンドを追加する", 30
+; PRINTL
+DRAWLINE
+PRINTBUTTONLC "[100]소질［장유］을 소거한다", 100
+PRINTL
+
+DRAWLINE
+PRINTL
+PRINTBUTTONLC "[999]돌아가기", 999
+PRINTL
+
+$INPUT_LOOP
+BINPUT
+SELECTCASE RESULT
+	CASE 1
+		CALL 敏感素質変化_複数人()
+		RESTART
+	CASE 2
+		CALL バスト素質変化_複数人()
+		RESTART
+	CASE 3
+		CALL 男性器素質変化_複数人()
+		RESTART
+	CASE 4
+		CALL 性別素質変化_複数人()
+		RESTART
+	CASE 5
+		CALL 種族素質変化_複数人()
+		RESTART
+	CASE 6
+		CALL 妊娠不可素質変化_複数人()
+		RESTART
+	CASE 7
+		CALL 受胎体質素質変化_複数人()
+		RESTART
+	CASE 8
+		CALL 発情期素質設定_複数人()
+		RESTART
+	; CASE 9
+	; 	CALL 体格・体型素質設定_複数人()
+	; 	RESTART
+	CASE 10
+		CALL ハーレムの心得素質設定_複数人()
+		RESTART
+	; CASE 20
+	; 	CALL フレーバー素質再設定_複数人()
+	; 	RESTART
+	; CASE 30
+	; 	CALL 弱点コマンド追加_複数人()
+	; 	RESTART
+	CASE 100
+		PRINTL
+		DRAWLINE
+		PRINTFORML 특성 [장유]를 제거하고, 획득에 필요한 커맨드 실행 횟수를 리셋합니다. (ZP 소비 없음)
+		PRINTL 다시 조건을 만족하면 특성을 재획득할 수 있습니다.
+		PRINTL 
+		PRINTL 특성 [장유]를 제거하시겠습니까?
+		PRINTBUTTONLC "[0] 제거한다", 0
+		PRINTBUTTONLC "[1] 제거하지 않는다", 1
+		PRINTL
+		PRINTL
+		BINPUT
+		PRINTL
+		IF RESULT == 0
+			FOR LOCAL, 0, キャラクタ数上限
+				SIF 汎用キャラ配列:LOCAL < 0
+					BREAK
+				SIF TALENT:(汎用キャラ配列:LOCAL):長乳 == 0
+					CONTINUE
+				PRINTFORM %GET_NAME(汎用キャラ配列:LOCAL, 1, 50), 50, LEFT%
+				CFLAG:(汎用キャラ配列:LOCAL):おっぱい引っぱりカウント = 0
+				TALENT:(汎用キャラ配列:LOCAL):長乳 = 0
+			NEXT
+			PRINTFORMW 이상의 캐릭터에 대해 처리를 실행했습니다.
+		ENDIF
+		RESTART
+	CASE 995
+		RESTART
+	CASE 996
+		RETURN 1
+	CASE 997
+		RETURN 2
+	CASE 998
+		CALL キャラメイク設定
+		RESTART
+	CASE 999
+		RETURN -1
+ENDSELECT
+
+
+
+@敏感素質変化_複数人()
+#DIM 対象キャラ
+#DIM CONST COST_TO_敏感 = 300
+#DIM CONST COST_TO_通常 = 100
+#DIM CONST COST_TO_鈍感 = 300
+#DIM 必要COST
+#DIM 必要COST_計算値
+#DIM 素質番号
+#DIMS 段階名
+
+DRAWLINE
+PRINTL ZP를 소비하여 캐릭터에게 민감계 특성을 부여할 수 있습니다.
+PRINTL 어떤 부위를 민감화하시겠습니까?
+PRINTFORML 소지ZP:{FLAG:ZP所持量}.{(ZP小数点以下所持量 % 1000) / 100}{(ZP小数点以下所持量 % 100) / 10}{(ZP小数点以下所持量 % 10)}
+DRAWLINE
+FOR LOCAL:1 , 101, 106
+	PRINTFORM %TALENTNAME:(LOCAL:1)%　　
+	PRINTBUTTON @"[{LOCAL:1 * 10}]둔감까지 상승", LOCAL:1 * 10
+	PRINT 　　　
+	PRINTBUTTON @"[{LOCAL:1 * 10 + 1}]보통까지 상승", LOCAL:1 * 10 + 1
+	PRINT 　　　
+	PRINTBUTTON @"[{LOCAL:1 * 10 + 2}]민감까지 상승", LOCAL:1 * 10 + 2
+	PRINTL
+NEXT
+
+PRINTBUTTON @"[241] [즉시 절정]을 얻는다", 241
+PRINTFORML 　　　필요ZP:{COST_TO_敏感 * 2}（1캐릭터분）
+
+PRINTBUTTON @"[242] [조루]를 얻는다", 242
+PRINTFORML 　　　필요ZP:{COST_TO_敏感}（1キャラ분）
+
+PRINTBUTTON @"[243] 절정하기 쉬운 소질을 삭제한다", 243
+PRINTFORML 　　　필요ZP:{COST_TO_通常}（1キャラ분）
+
+PRINTBUTTON @"[244] [지루]를 얻는다", 244
+PRINTFORML 　　　필요ZP:{COST_TO_通常 / 2}（1캐릭터분）
+
+PRINTBUTTON @"[250] [ED]를 얻는다", 250
+PRINTFORML 　　　필요ZP:{COST_TO_通常}（1キャラ분）
+
+PRINTBUTTON @"[251] [ED]를 삭제한다", 251
+PRINTFORML 　　　필요ZP:{COST_TO_通常}（1キャラ분）
+
+PRINTL
+PRINTBUTTON "[999]돌아가기", 999
+$INPUT_LOOP2
+BINPUT
+LOCAL:1 = RESULT
+SELECTCASE LOCAL:1
+	CASE 999
+		RETURN 0
+	CASE IS > 1000
+		;1010~はそれぞれの素質変化
+		SELECTCASE LOCAL:1 % 10
+			CASE 0
+				;鈍感まで上げ
+				段階名 = 鈍感
+			CASE 1
+				;通常まで上げ
+				段階名 = 通常
+			CASE 2
+				;敏感まで上げ
+				段階名 = 敏感
+		ENDSELECT
+		PRINTFORML %TALENTNAME:(LOCAL:1 / 10)%을(를)%段階名%까지 상승시키겠습니까?
+		PRINTL ※이미 그 이상의 소질을 가진 경우에는 변동하지 않습니다.
+		PRINTFORML （소지 ZP:{FLAG:ZP所持量}.{(ZP小数点以下所持量 % 1000) / 100}{(ZP小数点以下所持量 % 100) / 10}{(ZP小数点以下所持量 % 10)}）
+		PRINTBUTTONLC "[0]예", 0
+		PRINTBUTTONLC "[1]아니오", 1
+		BINPUT
+		IF RESULT == 0
+			必要COST = 0
+			FOR LOCAL, 0, キャラクタ数上限
+				SIF 汎用キャラ配列:LOCAL < 0
+					BREAK
+				必要COST_計算値 = 0
+				SELECTCASE LOCAL:1 % 10
+					CASE 0
+						;鈍感まで上げ
+						SIF TALENT:(汎用キャラ配列:LOCAL):(LOCAL:1 / 10) >= -1
+							CONTINUE
+						必要COST_計算値 += COST_TO_鈍感
+					CASE 1
+						;通常まで上げ
+						SIF TALENT:(汎用キャラ配列:LOCAL):(LOCAL:1 / 10) >= 0
+							CONTINUE
+						SIF TALENT:(汎用キャラ配列:LOCAL):(LOCAL:1 / 10) == -2
+							必要COST_計算値 += COST_TO_鈍感
+						必要COST_計算値 += COST_TO_通常
+					CASE 2
+						;敏感まで上げ
+						SIF TALENT:(汎用キャラ配列:LOCAL):(LOCAL:1 / 10) >= 1
+							CONTINUE
+						SIF TALENT:(汎用キャラ配列:LOCAL):(LOCAL:1 / 10) == -2
+							必要COST_計算値 += COST_TO_鈍感 + COST_TO_通常
+						SIF TALENT:(汎用キャラ配列:LOCAL):(LOCAL:1 / 10) == -1
+							必要COST_計算値 += COST_TO_通常
+						必要COST_計算値 += COST_TO_敏感
+				ENDSELECT
+				IF 必要COST + 必要COST_計算値 > FLAG:ZP所持量
+					PRINTL 필요 ZP가 부족하여 처리를 중지했습니다.
+					BREAK
+				ENDIF
+				必要COST += 必要COST_計算値
+				IF TALENT:(汎用キャラ配列:LOCAL):(LOCAL:1 / 10) == 0
+					PRINTFORM %GET_NAME(汎用キャラ配列:LOCAL, 1, 50), 50, LEFT%: 일반 > 
+				ELSE
+					PRINTFORM %GET_NAME(汎用キャラ配列:LOCAL, 1, 50), 50, LEFT%: %GET_TALENTNAME(LOCAL:1 / 10, TALENT:(汎用キャラ配列:LOCAL):(LOCAL:1 / 10), , 汎用キャラ配列:LOCAL)% > 
+				ENDIF
+				IF LOCAL:1 % 10 == 1
+					PRINTL 일반
+				ELSE
+					PRINTFORML %GET_TALENTNAME(LOCAL:1 / 10, LOCAL:1 % 10 - 1, , 汎用キャラ配列:LOCAL)%
+				ENDIF
+				TALENT:(汎用キャラ配列:LOCAL):(LOCAL:1 / 10) = LOCAL:1 % 10 - 1
+			NEXT
+			FLAG:ZP所持量 -= 必要COST
+			
+			IF 必要COST <= 0
+				PRINTW 변경 조건을 만족하는 캐릭터가 존재하지 않습니다.
+			ELSE
+				PRINTFORMW 이상의 캐릭터에 대해 처리를 실행했습니다. (소비ZP:{必要COST}）
+			ENDIF
+		ENDIF
+		RETURN 0
+	CASE 241
+		素質番号 = 241
+		PRINTFORML ［즉 이키］을(를) 가지지 않은 캐릭터에게 습득시키겠습니까?
+		PRINTFORML ※다른 이키 쉬움 소질을 덮어씁니다
+		PRINTFORML (소지 ZP:{FLAG:ZP所持量}.{(ZP小数点以下所持量 % 1000) / 100}{(ZP小数点以下所持量 % 100) / 10}{(ZP小数点以下所持量 % 10)})
+		PRINTBUTTONLC "[0]예", 0
+		PRINTBUTTONLC "[1]아니오", 1
+		BINPUT
+		IF RESULT == 0
+			必要COST = 0
+			FOR LOCAL, 0, キャラクタ数上限
+				SIF 汎用キャラ配列:LOCAL < 0
+					BREAK
+				必要COST_計算値 = COST_TO_敏感 * 2
+				IF TALENT:(汎用キャラ配列:LOCAL):イキやすさ != 2
+					IF 必要COST + 必要COST_計算値 > FLAG:ZP所持量
+						PRINTL 필요 ZP가 부족하여 처리를 중지했습니다.
+						BREAK
+					ENDIF
+					IF TALENT:(汎用キャラ配列:LOCAL):イキやすさ == 0
+						PRINTFORM %GET_NAME(汎用キャラ配列:LOCAL, 1, 50), 50, LEFT%: 일반 > 
+					ELSE
+						PRINTFORM %GET_NAME(汎用キャラ配列:LOCAL, 1, 50), 50, LEFT%: %GET_TALENTNAME(素質番号, TALENT:(汎用キャラ配列:LOCAL):素質番号, , 汎用キャラ配列:LOCAL)% > 
+					ENDIF
+					PRINTL 즉 이키
+					TALENT:(汎用キャラ配列:LOCAL):素質番号 = 2
+					必要COST += 必要COST_計算値
+				ENDIF
+			NEXT
+			FLAG:ZP所持量 -= 必要COST
+			
+			IF 必要COST <= 0
+				PRINTW 변경 조건을 만족하는 캐릭터가 존재하지 않습니다.
+			ELSE
+				PRINTFORMW 이상의 캐릭터에 대해 처리를 실행했습니다. (소비ZP:{必要COST}）
+			ENDIF
+		ENDIF
+		RETURN 0
+	CASE 242
+		素質番号 = 242
+		PRINTFORML {必要COST}ZP를 지불하고, ［조루］을(를) 습득하시겠습니까?
+		PRINTFORML ※다른 절정하기 쉬움 소질을 덮어씁니다
+		PRINTFORML （소지 ZP：{FLAG:ZP所持量}.{(ZP小数点以下所持量 % 1000) / 100}{(ZP小数点以下所持量 % 100) / 10}{(ZP小数点以下所持量 % 10)}）
+		PRINTBUTTONLC "[0]예", 0
+		PRINTBUTTONLC "[1]아니오", 1
+		BINPUT
+		IF RESULT == 0
+			必要COST = 0
+			FOR LOCAL, 0, キャラクタ数上限
+				SIF 汎用キャラ配列:LOCAL < 0
+					BREAK
+				必要COST_計算値 = COST_TO_敏感
+				IF TALENT:(汎用キャラ配列:LOCAL):イキやすさ != 1
+					IF 必要COST + 必要COST_計算値 > FLAG:ZP所持量
+						PRINTL 필요 ZP가 부족하여 처리를 정지했습니다.
+						BREAK
+					ENDIF
+					IF TALENT:(汎用キャラ配列:LOCAL):イキやすさ == 0
+						PRINTFORM %GET_NAME(汎用キャラ配列:LOCAL, 1, 50), 50, LEFT%: 보통 > 
+					ELSE
+						PRINTFORM %GET_NAME(汎用キャラ配列:LOCAL, 1, 50), 50, LEFT%: %GET_TALENTNAME(素質番号, TALENT:(汎用キャラ配列:LOCAL):素質番号, , 汎用キャラ配列:LOCAL)% > 
+					ENDIF
+					PRINTL 조루
+					TALENT:(汎用キャラ配列:LOCAL):素質番号 = 1
+					必要COST += 必要COST_計算値
+				ENDIF
+			NEXT
+			FLAG:ZP所持量 -= 必要COST
+			
+			IF 必要COST <= 0
+				PRINTW 변경 조건을 만족하는 캐릭터가 존재하지 않습니다.
+			ELSE
+				PRINTFORMW 이상의 캐릭터에 대해 처리를 실행했습니다.（소비ZP:{必要COST}）
+			ENDIF
+		ENDIF
+		RETURN 0
+	CASE 243
+		素質番号 = 243
+		PRINTFORML {必要COST}ZP를 지불하고, 절정하기 쉬움 소질을 삭제하시겠습니까?
+		PRINTFORML ※다른 절정하기 쉬움 소질을 덮어씁니다
+		PRINTFORML （소지 ZP：{FLAG:ZP所持量}.{(ZP小数点以下所持量 % 1000) / 100}{(ZP小数点以下所持量 % 100) / 10}{(ZP小数点以下所持量 % 10)}）
+		PRINTBUTTONLC "[0]예", 0
+		PRINTBUTTONLC "[1]아니오", 1
+		BINPUT
+		IF RESULT == 0
+			必要COST = 0
+			FOR LOCAL, 0, キャラクタ数上限
+				SIF 汎用キャラ配列:LOCAL < 0
+					BREAK
+				必要COST_計算値 = COST_TO_通常
+				IF TALENT:(汎用キャラ配列:LOCAL):イキやすさ != 0
+					IF 必要COST + 必要COST_計算値 > FLAG:ZP所持量
+						PRINTL 필요 ZP가 부족하여 처리를 정지했습니다.
+						BREAK
+					ENDIF
+					PRINTFORM %GET_NAME(汎用キャラ配列:LOCAL, 1, 50), 50, LEFT%: %GET_TALENTNAME(素質番号, TALENT:(汎用キャラ配列:LOCAL):素質番号, , 汎用キャラ配列:LOCAL)% > 
+					PRINTL 보통
+					TALENT:(汎用キャラ配列:LOCAL):素質番号 = 0
+					必要COST += 必要COST_計算値
+				ENDIF
+			NEXT
+			FLAG:ZP所持量 -= 必要COST
+			
+			IF 必要COST <= 0
+				PRINTW 변경 조건을 만족하는 캐릭터가 존재하지 않습니다.
+			ELSE
+				PRINTFORMW 이상의 캐릭터에 대해 처리를 실행했습니다.（소비ZP:{必要COST}）
+			ENDIF
+		ENDIF
+		RETURN 0
+	CASE 244
+		素質番号 = 244
+		必要COST = COST_TO_通常 / 2
+		PRINTFORML {必要COST}ZP를 지불하고, ［지루］를 취득하시겠습니까?
+		PRINTFORML ※다른 절정 민감도 소질을 덮어씁니다
+		PRINTFORML （보유 ZP：{FLAG:ZP所持量}.{(ZP小数点以下所持量 % 1000) / 100}{(ZP小数点以下所持量 % 100) / 10}{(ZP小数点以下所持量 % 10)}）
+		PRINTBUTTONLC "[0]예", 0
+		PRINTBUTTONLC "[1]아니오", 1
+		BINPUT
+		IF RESULT == 0
+			必要COST = 0
+			FOR LOCAL, 0, キャラクタ数上限
+				SIF 汎用キャラ配列:LOCAL < 0
+					BREAK
+				必要COST_計算値 = COST_TO_通常 / 2
+				IF TALENT:(汎用キャラ配列:LOCAL):イキやすさ != -1
+					IF 必要COST + 必要COST_計算値 > FLAG:ZP所持量
+						PRINTL 필요 ZP가 부족하여 처리를 중지했습니다.
+						BREAK
+					ENDIF
+					IF TALENT:(汎用キャラ配列:LOCAL):イキやすさ == 0
+						PRINTFORM %GET_NAME(汎用キャラ配列:LOCAL, 1, 50), 50, LEFT%: 보통 > 
+					ELSE
+						PRINTFORM %GET_NAME(汎用キャラ配列:LOCAL, 1, 50), 50, LEFT%: %GET_TALENTNAME(素質番号, TALENT:(汎用キャラ配列:LOCAL):素質番号, , 汎用キャラ配列:LOCAL)% > 
+					ENDIF
+					PRINTL 지루
+					TALENT:(汎用キャラ配列:LOCAL):素質番号 = -1
+					必要COST += 必要COST_計算値
+				ENDIF
+			NEXT
+			FLAG:ZP所持量 -= 必要COST
+			
+			IF 必要COST <= 0
+				PRINTW 변경 조건을 만족하는 캐릭터가 존재하지 않습니다.
+			ELSE
+				PRINTFORMW 이상의 캐릭터에 대해 처리를 실행했습니다. (소비ZP:{必要COST}）
+			ENDIF
+		ENDIF
+		RETURN 0
+	CASE 250
+		必要COST = COST_TO_通常
+		PRINTFORML {必要COST}ZP를 지불하고, [ＥＤ]를 취득하시겠습니까?
+		PRINTFORML ※페니스를 소지한 캐릭터에게만 적용됩니다
+		PRINTFORML （보유 ZP：{FLAG:ZP所持量}.{(ZP小数点以下所持量 % 1000) / 100}{(ZP小数点以下所持量 % 100) / 10}{(ZP小数点以下所持量 % 10)}）
+		PRINTBUTTONLC "[0]예", 0
+		PRINTBUTTONLC "[1]아니오", 1
+		BINPUT
+		IF RESULT == 0
+			必要COST = 0
+			必要COST_計算値 = COST_TO_通常
+			FOR LOCAL, 0, キャラクタ数上限
+				SIF 汎用キャラ配列:LOCAL < 0
+					BREAK
+				SIF !GETBIT(TALENT:(汎用キャラ配列:LOCAL):性別, 1)
+					CONTINUE
+				IF TALENT:(汎用キャラ配列:LOCAL):ＥＤ != 1
+					IF 必要COST + 必要COST_計算値 > FLAG:ZP所持量
+						PRINTL 필요 ZP가 부족하여 처리를 중지했습니다.
+						BREAK
+					ENDIF
+					PRINTFORML %GET_NAME(汎用キャラ配列:LOCAL, 1, 50), 50, LEFT%
+					TALENT:(汎用キャラ配列:LOCAL):ＥＤ = 1
+					必要COST += 必要COST_計算値
+				ENDIF
+			NEXT
+			FLAG:ZP所持量 -= 必要COST
+			
+			IF 必要COST <= 0
+				PRINTW 변경 조건을 만족하는 캐릭터가 존재하지 않습니다.
+			ELSE
+				PRINTFORMW 이상의 캐릭터에 대해 처리를 실행했습니다. (소비ZP:{必要COST}）
+			ENDIF
+		ENDIF
+		RETURN 0
+	CASE 251
+		必要COST = COST_TO_通常
+		PRINTFORML {必要COST}ZP를 지불하고, [ＥＤ]를 삭제하시겠습니까?
+		PRINTFORML ※페니스를 소지한 캐릭터에게만 적용됩니다
+		PRINTFORML （보유 ZP：{FLAG:ZP所持量}.{(ZP小数点以下所持量 % 1000) / 100}{(ZP小数点以下所持量 % 100) / 10}{(ZP小数点以下所持量 % 10)}）
+		PRINTBUTTONLC "[0]예", 0
+		PRINTBUTTONLC "[1]아니오", 1
+		BINPUT
+		IF RESULT == 0
+			必要COST = 0
+			必要COST_計算値 = COST_TO_通常
+			FOR LOCAL, 0, キャラクタ数上限
+				SIF 汎用キャラ配列:LOCAL < 0
+					BREAK
+				SIF !GETBIT(TALENT:(汎用キャラ配列:LOCAL):性別, 1)
+					CONTINUE
+				IF TALENT:(汎用キャラ配列:LOCAL):ＥＤ != 0
+					IF 必要COST + 必要COST_計算値 > FLAG:ZP所持量
+						PRINTL 필요 ZP가 부족하여 처리를 중지했습니다.
+						BREAK
+					ENDIF
+					PRINTFORML %GET_NAME(汎用キャラ配列:LOCAL, 1, 50), 50, LEFT%
+					TALENT:(汎用キャラ配列:LOCAL):ＥＤ = 0
+					必要COST += 必要COST_計算値
+				ENDIF
+			NEXT
+			FLAG:ZP所持量 -= 必要COST
+			
+			IF 必要COST <= 0
+				PRINTW 변경 조건을 만족하는 캐릭터가 존재하지 않습니다.
+			ELSE
+				PRINTFORMW 이상의 캐릭터에 대해 처리를 실행했습니다.（소비ZP:{必要COST}）
+			ENDIF
+		ENDIF
+		RETURN 0
+	CASEELSE
+		REUSELASTLINE 
+		GOTO INPUT_LOOP2
+ENDSELECT
+
+@バスト素質変化_複数人()
+#DIM CONST COST_胸定数 = 20
+#DIM 必要COST
+#DIM 必要COST_計算値
+
+DRAWLINE
+PRINTL ZP를 소비하여 캐릭터의 가슴 크기 등을 변화시킬 수 있습니다.
+PRINTL 원하는 크기를 선택해 주세요.
+PRINTFORML 보유ZP:{FLAG:ZP所持量}.{(ZP小数点以下所持量 % 1000) / 100}{(ZP小数点以下所持量 % 100) / 10}{(ZP小数点以下所持量 % 10)}
+DRAWLINE
+PRINTFORML 소비ZP:（현재の胸のサイズと変更後のサイズの差）✕{COST_胸定数}ZP（1キャラ분）
+FOR LOCAL:1 , -2, 4
+	PRINTBUTTON @"[{LOCAL:1}]%GET_TALENTNAME(205, LOCAL:1), 20, LEFT%으로 변경", LOCAL:1
+	PRINTL
+NEXT
+IF 素質切り替えOPTION記憶:陥没乳首_なし == 0
+	PRINTL
+	PRINTBUTTON @"[10] 함몰 유두 소질을 부여한다", 10
+	PRINTFORML :{COST_胸定数}ZP（1캐릭터분）
+	PRINTBUTTON @"[11] 함몰 유두 소질을 삭제한다", 11
+	PRINTFORML :{COST_胸定数}ZP（1캐릭터분）
+ENDIF
+PRINTL
+PRINTBUTTON "[999]돌아가기", 999
+$INPUT_LOOP3
+BINPUT
+LOCAL:1 = RESULT
+SELECTCASE LOCAL:1
+	CASE 999
+		RETURN 0
+	CASE 10
+		PRINTFORML 함몰 유두 소질을 부여하시겠습니까?
+		PRINTFORML （보유 ZP：{FLAG:ZP所持量}.{(ZP小数点以下所持量 % 1000) / 100}{(ZP小数点以下所持量 % 100) / 10}{(ZP小数点以下所持量 % 10)}）
+		PRINTBUTTONLC "[0]예", 0
+		PRINTBUTTONLC "[1]아니오", 1
+		BINPUT
+		IF RESULT == 0
+			必要COST = 0
+			FOR LOCAL, 0, キャラクタ数上限
+				SIF 汎用キャラ配列:LOCAL < 0
+					BREAK
+				SIF TALENT:(汎用キャラ配列:LOCAL):陥没乳首
+					CONTINUE
+				SIF GETBIT(TALENT:(汎用キャラ配列:LOCAL):性別, 0) == 0
+					CONTINUE
+				必要COST_計算値 = COST_胸定数
+				IF 必要COST + 必要COST_計算値 > FLAG:ZP所持量
+					PRINTL 필요 ZP가 부족하여 처리를 중지했습니다.
+					BREAK
+				ENDIF
+				必要COST += 必要COST_計算値
+				PRINTFORML %GET_NAME(汎用キャラ配列:LOCAL, 1, 50), 50, LEFT%: 함몰유두 추가
+				TALENT:(汎用キャラ配列:LOCAL):陥没乳首 = 1
+			NEXT
+			FLAG:ZP所持量 -= 必要COST
+			
+			IF 必要COST <= 0
+				PRINTW 변경 조건을 만족하는 캐릭터가 존재하지 않습니다.
+			ELSE
+				PRINTFORMW 이상의 캐릭터에 대해 처리를 실행했습니다. (소비ZP:{必要COST}）
+			ENDIF
+		ENDIF
+
+		RETURN 0
+	CASE 11
+		PRINTFORML 함몰유두 소질을 삭제하시겠습니까?
+		PRINTFORML (소지 ZP: {FLAG:ZP所持量}.{(ZP小数点以下所持量 % 1000) / 100}{(ZP小数点以下所持量 % 100) / 10}{(ZP小数点以下所持量 % 10)})
+		PRINTBUTTONLC "[0]예", 0
+		PRINTBUTTONLC "[1]아니오", 1
+		BINPUT
+		IF RESULT == 0
+			必要COST = 0
+			FOR LOCAL, 0, キャラクタ数上限
+				SIF 汎用キャラ配列:LOCAL < 0
+					BREAK
+				SIF TALENT:(汎用キャラ配列:LOCAL):陥没乳首 == 0
+					CONTINUE
+				SIF GETBIT(TALENT:(汎用キャラ配列:LOCAL):性別, 0) == 0
+					CONTINUE
+				必要COST_計算値 = COST_胸定数
+				IF 必要COST + 必要COST_計算値 > FLAG:ZP所持量
+					PRINTL 필요 ZP가 부족하여 처리를 중지했습니다.
+					BREAK
+				ENDIF
+				必要COST += 必要COST_計算値
+				PRINTFORML %GET_NAME(汎用キャラ配列:LOCAL, 1, 50), 50, LEFT%: 함몰유두 삭제
+				TALENT:(汎用キャラ配列:LOCAL):陥没乳首 = 0
+			NEXT
+			FLAG:ZP所持量 -= 必要COST
+			
+			IF 必要COST <= 0
+				PRINTW 변경 조건을 만족하는 캐릭터가 존재하지 않습니다.
+			ELSE
+				PRINTFORMW 이상의 캐릭터에 대해 처리를 실행했습니다. (소비ZP:{必要COST}）
+			ENDIF
+		ENDIF
+	CASE -2 TO 3
+		;バスト変化
+		PRINTFORML 가슴サイズ를 [%GET_TALENTNAME(205, LOCAL:1)%]으로 변경하시겠습니까?
+		PRINTFORML (소지 ZP: {FLAG:ZP所持量}.{(ZP小数点以下所持量 % 1000) / 100}{(ZP小数点以下所持量 % 100) / 10}{(ZP小数点以下所持量 % 10)})
+		PRINTBUTTONLC "[0]예", 0
+		PRINTBUTTONLC "[1]아니오", 1
+		BINPUT
+		IF RESULT == 0
+			必要COST = 0
+			FOR LOCAL, 0, キャラクタ数上限
+				SIF 汎用キャラ配列:LOCAL < 0
+					BREAK
+				SIF TALENT:(汎用キャラ配列:LOCAL):バストサイズ == LOCAL:1
+					CONTINUE
+				SIF GETBIT(TALENT:(汎用キャラ配列:LOCAL):性別, 0) == 0
+					CONTINUE
+				必要COST_計算値 = ABS(TALENT:(汎用キャラ配列:LOCAL):バストサイズ - LOCAL:1) * COST_胸定数
+				IF 必要COST + 必要COST_計算値 > FLAG:ZP所持量
+					PRINTL 필요 ZP가 부족하여 처리를 중지했습니다.
+					BREAK
+				ENDIF
+				必要COST += 必要COST_計算値
+				PRINTFORM %GET_NAME(汎用キャラ配列:LOCAL, 1, 50), 50, LEFT%: %GET_TALENTNAME(205, TALENT:(汎用キャラ配列:LOCAL):バストサイズ, , 汎用キャラ配列:LOCAL), 15, LEFT% > 
+				PRINTFORML %GET_TALENTNAME(205, LOCAL:1, , 汎用キャラ配列:LOCAL)%
+				TALENT:(汎用キャラ配列:LOCAL):バストサイズ = LOCAL:1
+			NEXT
+			FLAG:ZP所持量 -= 必要COST
+			
+			IF 必要COST <= 0
+				PRINTW 변경 조건을 만족하는 캐릭터가 존재하지 않습니다.
+			ELSE
+				PRINTFORMW 이상의 캐릭터에 대해 처리를 실행했습니다. (소비ZP:{必要COST}）
+			ENDIF
+		ENDIF
+
+		RETURN 0
+ENDSELECT
+
+
+
+@男性器素質変化_複数人()
+#DIM CONST COST_男性器定数 = 20
+#DIM CONST COST_TO_射精可能 = 300
+#DIM 必要COST
+#DIM 必要COST_計算値
+
+DRAWLINE
+PRINTL ZP를 소비하여 캐릭터의 남성기 크기 등을 변화시킬 수 있습니다.
+PRINTL 원하는 크기를 선택해 주세요
+PRINTFORML 소지ZP:{FLAG:ZP所持量}.{(ZP小数点以下所持量 % 1000) / 100}{(ZP小数点以下所持量 % 100) / 10}{(ZP小数点以下所持量 % 10)}
+DRAWLINE
+PRINTFORML 소비ZP:（현재の男性器サイズと変更後のサイズの差）✕{COST_男性器定数}ZP（1キャラ분）
+FOR LOCAL:1 , -2, 3
+	PRINTBUTTON @"[{LOCAL:1}]%GET_TALENTNAME(162, LOCAL:1), 20, LEFT%", LOCAL:1
+	PRINTL
+NEXT
+PRINTL
+PRINTBUTTON @"[10] 사정 불가・미정통을 삭제한다:{COST_TO_射精可能}ZP（1캐릭터분）", 10
+PRINTL
+PRINTL 
+PRINTBUTTON "[999]돌아가기", 999
+$INPUT_LOOP3
+BINPUT
+LOCAL:1 = RESULT
+SELECTCASE LOCAL:1
+	CASE 999
+		RETURN 0
+	CASE -2 TO 2
+		;サイズ変化
+		PRINTFORML 남성기를 ［%GET_TALENTNAME(162, LOCAL:1)%］(으)로 변경하시겠습니까?
+		PRINTFORML （소지 ZP：{FLAG:ZP所持量}.{(ZP小数点以下所持量 % 1000) / 100}{(ZP小数点以下所持量 % 100) / 10}{(ZP小数点以下所持量 % 10)}）
+		PRINTBUTTONLC "[0]예", 0
+		PRINTBUTTONLC "[1]아니오", 1
+		BINPUT
+		IF RESULT == 0
+			必要COST = 0
+			FOR LOCAL, 0, キャラクタ数上限
+				SIF 汎用キャラ配列:LOCAL < 0
+					BREAK
+				SIF TALENT:(汎用キャラ配列:LOCAL):男性器サイズ == LOCAL:1
+					CONTINUE
+				SIF GETBIT(TALENT:(汎用キャラ配列:LOCAL):性別, 1) == 0
+					CONTINUE
+				必要COST_計算値 = ABS(TALENT:(汎用キャラ配列:LOCAL):男性器サイズ - LOCAL:1) * COST_男性器定数
+				IF 必要COST + 必要COST_計算値 > FLAG:ZP所持量
+					PRINTL 필요 ZP가 부족하여 처리를 중지했습니다.
+					BREAK
+				ENDIF
+				必要COST += 必要COST_計算値
+				PRINTFORM %GET_NAME(汎用キャラ配列:LOCAL, 1, 50), 50, LEFT%: %GET_TALENTNAME(162, TALENT:(汎用キャラ配列:LOCAL):男性器サイズ, , 汎用キャラ配列:LOCAL), 12, LEFT% > 
+				PRINTFORML %GET_TALENTNAME(162, LOCAL:1, , 汎用キャラ配列:LOCAL)%
+				TALENT:(汎用キャラ配列:LOCAL):男性器サイズ = LOCAL:1
+			NEXT
+			FLAG:ZP所持量 -= 必要COST
+			
+			IF 必要COST <= 0
+				PRINTW 변경 조건을 만족하는 캐릭터가 존재하지 않습니다.
+			ELSE
+				PRINTFORMW 이상의 캐릭터에 대해 처리를 실행했습니다.（소비ZP:{必要COST}）
+			ENDIF
+		ENDIF
+
+		RETURN 0
+	CASE 10
+		PRINTFORML ［사정 불가］［미정통］을 삭제하시겠습니까?
+		PRINTFORML （소지 ZP：{FLAG:ZP所持量}.{(ZP小数点以下所持量 % 1000) / 100}{(ZP小数点以下所持量 % 100) / 10}{(ZP小数点以下所持量 % 10)}）
+		PRINTBUTTONLC "[0]예", 0
+		PRINTBUTTONLC "[1]아니오", 1
+		BINPUT
+		IF RESULT == 0
+			必要COST = 0
+			FOR LOCAL, 0, キャラクタ数上限
+				SIF 汎用キャラ配列:LOCAL < 0
+					BREAK
+				SIF TALENT:(汎用キャラ配列:LOCAL):射精不可 == 0
+					CONTINUE
+				SIF GETBIT(TALENT:(汎用キャラ配列:LOCAL):性別, 1) == 0
+					CONTINUE
+				必要COST_計算値 = COST_TO_射精可能
+				IF 必要COST + 必要COST_計算値 > FLAG:ZP所持量
+					PRINTL 필요 ZP가 부족하여 처리를 중지했습니다.
+					BREAK
+				ENDIF
+				必要COST += 必要COST_計算値
+				PRINTFORML %GET_NAME(汎用キャラ配列:LOCAL, 1, 50), 50, LEFT%: %GET_TALENTNAME(246, TALENT:(汎用キャラ配列:LOCAL):射精不可, , 汎用キャラ配列:LOCAL), 12, LEFT% > 없음
+				TALENT:(汎用キャラ配列:LOCAL):射精不可 = 0
+			NEXT
+			FLAG:ZP所持量 -= 必要COST
+			
+			IF 必要COST <= 0
+				PRINTW 변경 조건을 만족하는 캐릭터가 존재하지 않습니다.
+			ELSE
+				PRINTFORMW 이상의 캐릭터에 대해 처리를 실행했습니다.（소비ZP:{必要COST}）
+			ENDIF
+		ENDIF
+
+		RETURN 0
+ENDSELECT
+
+@性別素質変化_複数人()
+#DIM 必要COST_計算値
+#DIM CONST COST_性別定数 = 30
+#DIM 必要COST
+#DIM 変更位置
+#DIM 元の性別
+
+DRAWLINE
+PRINTL ZP를 소비하여 캐릭터의 성별을 변화시킬 수 있습니다.
+PRINTL 발정 후타나리 등, 일시적으로 성별이 변화하는 상태의 경우, 변화 전의 성별을 변경합니다.
+PRINTL 원하는 성별을 선택해 주세요.
+PRINTL ※기타・무성으로의 변화는 불가능합니다. 원래 해당 성별인 경우, 성별을 변화시키면 원래대로 되돌릴 수 없게 됩니다.
+PRINTL ※임신 중에는 성별 변경이 불가능합니다.
+PRINTFORML 소지ZP:{FLAG:ZP所持量}.{(ZP小数点以下所持量 % 1000) / 100}{(ZP小数点以下所持量 % 100) / 10}{(ZP小数点以下所持量 % 10)}
+DRAWLINE
+FOR LOCAL:1, 1, 3
+	PRINTBUTTON @"[{LOCAL:1}]%GET_TALENTNAME(2, LOCAL:1), 20, LEFT%:{COST_性別定数}ZP(1캐릭터분)", LOCAL:1
+	PRINTL
+NEXT
+IF 素質切り替えOPTION記憶:ふたなり_女性 == 0
+	IF OPTION変数:ふたなり玉設定 == 0
+		PRINTBUTTON @"[3]후타나리 구슬 없음　　　:{COST_性別定数}ZP(1캐릭터분)", 3
+		PRINTL
+		PRINTBUTTON @"[4]후타나리 구슬 있음　　　:{COST_性別定数}ZP(1캐릭터분)", 4
+	ELSEIF OPTION変数:ふたなり玉設定 == 1
+		PRINTBUTTON @"[3]후타나리 구슬 없음　　　:{COST_性別定数}ZP(1캐릭터분)", 3
+	ELSEIF OPTION変数:ふたなり玉設定 == 2
+		PRINTBUTTON @"[4]후타나리 구슬 있음　　　:{COST_性別定数}ZP(1캐릭터분)", 4
+	ENDIF
+	PRINTL
+ENDIF
+PRINTBUTTON "[999]돌아가기", 999
+$INPUT_LOOP3
+BINPUT
+LOCAL:1 = RESULT
+SELECTCASE LOCAL:1
+	CASE 999
+		RETURN 0
+	CASE 1 TO 4
+		SELECTCASE LOCAL:1
+			CASE 3
+				PRINTFORML 성별을 [후타나리 (구슬 없음)](으)로 변경하시겠습니까?
+			CASE 4
+				PRINTFORML 성별을 [후타나리 (구슬 있음)](으)로 변경하시겠습니까?
+			CASEELSE
+				PRINTFORML 성별을 [%GET_TALENTNAME(2, LOCAL:1)%](으)로 변경하시겠습니까?
+		ENDSELECT
+		PRINTFORML (소지 ZP:{FLAG:ZP所持量}.{(ZP小数点以下所持量 % 1000) / 100}{(ZP小数点以下所持量 % 100) / 10}{(ZP小数点以下所持量 % 10)})
+		PRINTBUTTONLC "[0]예", 0
+		PRINTBUTTONLC "[1]아니오", 1
+		BINPUT
+		IF RESULT == 0
+			必要COST = 0
+			FOR LOCAL, 0, キャラクタ数上限
+				SIF 汎用キャラ配列:LOCAL < 0
+					BREAK
+				SIF TALENT:(汎用キャラ配列:LOCAL):妊娠 && GETBIT(LOCAL:1, 0) == 0
+					CONTINUE
+				SELECTCASE LOCAL:1
+					CASE 3
+						SIF TALENT:(汎用キャラ配列:LOCAL):性別 == 3 && フレーバー素質:(汎用キャラ配列:LOCAL):ふたなり時_玉ありなし == 1
+							CONTINUE
+					CASE 4
+						SIF TALENT:(汎用キャラ配列:LOCAL):性別 == 3 && フレーバー素質:(汎用キャラ配列:LOCAL):ふたなり時_玉ありなし == 2
+							CONTINUE
+					CASEELSE
+						SIF TALENT:(汎用キャラ配列:LOCAL):性別 == LOCAL:1
+							CONTINUE
+				ENDSELECT
+				必要COST_計算値 = COST_性別定数
+				IF 必要COST + 必要COST_計算値 > FLAG:ZP所持量
+					PRINTL 필요 ZP가 부족하여 처리를 중지했습니다.
+					BREAK
+				ENDIF
+				必要COST += 必要COST_計算値
+				
+				元の性別 = TALENT:(汎用キャラ配列:LOCAL):性別
+				PRINTFORM %GET_NAME(汎用キャラ配列:LOCAL, 1, 50), 50, LEFT%: %GET_TALENTNAME(2, TALENT:(汎用キャラ配列:LOCAL):性別, , 汎用キャラ配列:LOCAL), 8, LEFT% > 
+				SELECTCASE LOCAL:1
+					CASE 3
+						PRINTFORML %GET_TALENTNAME(2, 3, , 汎用キャラ配列:LOCAL)%（고환 없음）
+						TALENT:(汎用キャラ配列:LOCAL):性別 = 3
+						IF フレーバー素質:(汎用キャラ配列:LOCAL):素質表示設定 == 0
+							フレーバー素質:(汎用キャラ配列:LOCAL):素質表示設定 = 1
+							フレーバー素質:(汎用キャラ配列:LOCAL):陰毛濃さ = 0
+							フレーバー素質:(汎用キャラ配列:LOCAL):乳首大きさ = 0
+							フレーバー素質:(汎用キャラ配列:LOCAL):乳輪大きさ = 0
+							フレーバー素質:(汎用キャラ配列:LOCAL):性器種類 = 0
+							フレーバー素質:(汎用キャラ配列:LOCAL):クリ大きさ = 0
+							フレーバー素質:(汎用キャラ配列:LOCAL):ほくろ位置 = 0
+						ENDIF
+						フレーバー素質:(汎用キャラ配列:LOCAL):ふたなり時_玉ありなし = 1
+					CASE 4
+						PRINTFORML %GET_TALENTNAME(2, 3, , 汎用キャラ配列:LOCAL)%（고환 있음）
+						TALENT:(汎用キャラ配列:LOCAL):性別 = 3
+						IF フレーバー素質:(汎用キャラ配列:LOCAL):素質表示設定 == 0
+							フレーバー素質:(汎用キャラ配列:LOCAL):素質表示設定 = 1
+							フレーバー素質:(汎用キャラ配列:LOCAL):陰毛濃さ = 0
+							フレーバー素質:(汎用キャラ配列:LOCAL):乳首大きさ = 0
+							フレーバー素質:(汎用キャラ配列:LOCAL):乳輪大きさ = 0
+							フレーバー素質:(汎用キャラ配列:LOCAL):性器種類 = 0
+							フレーバー素質:(汎用キャラ配列:LOCAL):クリ大きさ = 0
+							フレーバー素質:(汎用キャラ配列:LOCAL):ほくろ位置 = 0
+						ENDIF
+						フレーバー素質:(汎用キャラ配列:LOCAL):ふたなり時_玉ありなし = 2
+					CASEELSE
+						PRINTFORML %GET_TALENTNAME(2, LOCAL:1, , 汎用キャラ配列:LOCAL)%
+						TALENT:(汎用キャラ配列:LOCAL):性別 = LOCAL:1
+				ENDSELECT
+				
+				;性転換後処理
+				SIF !TALENT:(汎用キャラ配列:LOCAL):性転換 && 元の性別 == 2
+					TALENT:(汎用キャラ配列:LOCAL):処女 = 1
+				CALL ZP_SHOP_性別特徴変換(汎用キャラ配列:LOCAL, 元の性別, TALENT:(汎用キャラ配列:LOCAL):性別)
+				IF RESULT == 0
+					SETBIT 変更位置, 0
+					SETBIT 変更位置, 1
+					SETBIT 変更位置, 2
+					SETBIT 変更位置, 3
+					IF 身長固定キャラ(汎用キャラ配列:LOCAL)
+						CLEARBIT 変更位置, 0
+					; ELSE
+					; 	;身長任意設定
+					; 	CALL 性別変化時_身長任意設定(汎用キャラ配列:LOCAL)
+					; 	SIF RESULT == 1
+					; 		CLEARBIT 変更位置, 0
+					ENDIF
+					IF バスト固定キャラ(汎用キャラ配列:LOCAL)
+						CLEARBIT 変更位置, 1
+					ENDIF
+					SIF 変更位置
+						CALL SET_BODYSIZE(汎用キャラ配列:LOCAL, 変更位置)
+				ENDIF
+				;性転換が0なら元の性別(ふたなりは-3)を代入し、再度元の性別やふたなりになった場合は-をかけて非表示に
+				IF !TALENT:(汎用キャラ配列:LOCAL):性転換
+					IF TALENT:(汎用キャラ配列:LOCAL):性別 == 2 && (元の性別 == 1 || (元の性別 == 3 && 素質切り替えOPTION記憶:ふたなり_女性))
+						TALENT:(汎用キャラ配列:LOCAL):性転換 = 1
+					ELSEIF TALENT:(汎用キャラ配列:LOCAL):性別 == 1 && 元の性別 == 2
+						TALENT:(汎用キャラ配列:LOCAL):性転換 = 2
+					ELSE
+						TALENT:(汎用キャラ配列:LOCAL):性転換 = 元の性別 * -1
+					ENDIF
+				ELSEIF TALENT:(汎用キャラ配列:LOCAL):性転換 < 0 && TALENT:(汎用キャラ配列:LOCAL):性転換 > -3 && TALENT:(汎用キャラ配列:LOCAL):性別 != TALENT:(汎用キャラ配列:LOCAL):性転換 * -1 && (TALENT:(汎用キャラ配列:LOCAL):性別 == 1 || TALENT:(汎用キャラ配列:LOCAL):性別 == 2)
+					TALENT:(汎用キャラ配列:LOCAL):性転換 *= -1
+				ELSEIF TALENT:(汎用キャラ配列:LOCAL):性転換 > 0
+					TALENT:(汎用キャラ配列:LOCAL):性転換 *= -1
+				ENDIF
+				;ふたなり、その他の場合は何に変化しても元女・元男はつかない
+				;元性別も処理しておく
+				CFLAG:(汎用キャラ配列:LOCAL):元性別保存 = TALENT:(汎用キャラ配列:LOCAL):性別
+			NEXT
+			FLAG:ZP所持量 -= 必要COST
+			
+			IF 必要COST <= 0
+				PRINTW 변경 조건을 만족하는 캐릭터가 존재하지 않습니다.
+			ELSE
+				PRINTFORMW 이상의 캐릭터에 대해 처리를 실행했습니다. (소비ZP:{必要COST}）
+			ENDIF
+		ENDIF
+
+		RETURN 0
+ENDSELECT
+
+
+
+@種族素質変化_複数人()
+#DIM 対象キャラ
+#DIM 必要COST
+#DIM CONST COST_種族変化 = 200
+#DIMS 特殊種族一時保存
+#DIM 必要COST_計算値
+
+DRAWLINE
+PRINTL ZP를 소비하여 캐릭터의 종족을 변화시킬 수 있습니다.
+PRINTL 임의의 종족을 선택해주세요
+PRINTFORML 소지ZP:{FLAG:ZP所持量}.{(ZP小数点以下所持量 % 1000) / 100}{(ZP小数点以下所持量 % 100) / 10}{(ZP小数点以下所持量 % 10)}
+DRAWLINE
+FOR LOCAL:1 , 1, 7
+	PRINTBUTTON @"[{LOCAL:1}]%GET_TALENTNAME(200, LOCAL:1,,対象キャラ), 14, LEFT%필요ZP:{COST_種族変化}（1キャラ분）", LOCAL:1
+	PRINTL
+NEXT
+PRINTBUTTON "[999]돌아가기", 999
+BINPUT
+LOCAL:1 = RESULT
+SELECTCASE LOCAL:1
+	CASE 999
+		RETURN 0
+	CASE 1 TO 6
+		特殊種族一時保存 = 
+		IF LOCAL:1 == 6
+			DRAWLINE
+			PRINTL 추가 종족명을 지정할 수 있습니다.
+			PRINTL 임의의 종족명을 입력해주세요.
+			INPUTS
+			特殊種族一時保存 = %RESULTS%
+			PRINTL
+			DRAWLINE
+			PRINTFORML 종족을 ［%GET_TALENTNAME(200, LOCAL:1)%（%特殊種族一時保存%）］(으)로 변경하시겠습니까?
+		ELSE
+			PRINTFORML 종족을 ［%GET_TALENTNAME(200, LOCAL:1)%］(으)로 변경하시겠습니까?
+		ENDIF
+		PRINTFORML （소지 ZP：{FLAG:ZP所持量}.{(ZP小数点以下所持量 % 1000) / 100}{(ZP小数点以下所持量 % 100) / 10}{(ZP小数点以下所持量 % 10)}）
+		PRINTBUTTONLC "[0]예", 0
+		PRINTBUTTONLC "[1]아니오", 1
+		BINPUT
+		IF RESULT == 0
+			必要COST = 0
+			FOR LOCAL, 0, キャラクタ数上限
+				SIF 汎用キャラ配列:LOCAL < 0
+					BREAK
+				SIF TALENT:(汎用キャラ配列:LOCAL):種族 == LOCAL:1
+					CONTINUE
+				SIF TALENT:(汎用キャラ配列:LOCAL):種族 == 6 && CSTR:(汎用キャラ配列:LOCAL):特殊種族 == 特殊種族一時保存
+				必要COST_計算値 = COST_種族変化
+				IF 必要COST + 必要COST_計算値 > FLAG:ZP所持量
+					PRINTL 필요 ZP가 부족하여 처리를 중지했습니다.
+					BREAK
+				ENDIF
+				必要COST += 必要COST_計算値
+				PRINTFORM %GET_NAME(汎用キャラ配列:LOCAL, 1, 50), 50, LEFT%: %GET_TALENTNAME(200, TALENT:(汎用キャラ配列:LOCAL):種族, , 汎用キャラ配列:LOCAL), 12, LEFT% > %GET_TALENTNAME(200, LOCAL:1, , 汎用キャラ配列:LOCAL)%
+				SIF 特殊種族一時保存 != ""
+					PRINTFORM （%特殊種族一時保存%）
+				PRINTL  
+
+				CSTR:(汎用キャラ配列:LOCAL):特殊種族 = %特殊種族一時保存%
+				TALENT:(汎用キャラ配列:LOCAL):種族 = LOCAL:1
+				CALL ZP_SHOP_種族特徴変換(汎用キャラ配列:LOCAL, TALENT:(汎用キャラ配列:LOCAL):種族, LOCAL:1)
+				SIF RESULT == 0
+					CALL SET_BODYSIZE(汎用キャラ配列:LOCAL,0)
+			NEXT
+			FLAG:ZP所持量 -= 必要COST
+			
+			IF 必要COST <= 0
+				PRINTW 변경 조건을 만족하는 캐릭터가 존재하지 않습니다.
+			ELSE
+				PRINTFORMW 이상의 캐릭터에 대해 처리를 실행했습니다. (소비ZP:{必要COST}）
+			ENDIF
+		ENDIF
+
+		RETURN 0
+ENDSELECT
+
+
+@妊娠不可素質変化_複数人()
+#DIM 対象キャラ
+#DIM CONST COST_TO_妊娠可能 = 300
+#DIM 必要COST
+#DIM 必要COST_計算値
+
+DRAWLINE
+PRINTL ZP를 소비하여 임신 불가 소질을 삭제할 수 있습니다.
+PRINTFORML ［임신 불가］［초경 전］을 삭제하시겠습니까? 소비ZP:{COST_TO_妊娠可能}（1キャラ분）
+PRINTFORML （소지 ZP: {FLAG:ZP所持量}.{(ZP小数点以下所持量 % 1000) / 100}{(ZP小数点以下所持量 % 100) / 10}{(ZP小数点以下所持量 % 10)}）
+PRINTBUTTONLC "[0]예", 0
+PRINTBUTTONLC "[1]아니오", 1
+BINPUT
+IF RESULT == 0
+	必要COST = 0
+	FOR LOCAL, 0, キャラクタ数上限
+		SIF 汎用キャラ配列:LOCAL < 0
+			BREAK
+		SIF TALENT:(汎用キャラ配列:LOCAL):妊娠不可 == 0
+			CONTINUE
+		SIF GETBIT(TALENT:(汎用キャラ配列:LOCAL):性別, 0) == 0
+			CONTINUE
+		必要COST_計算値 = COST_TO_妊娠可能
+		IF 必要COST + 必要COST_計算値 > FLAG:ZP所持量
+			PRINTL 필요 ZP가 부족하여 처리를 중지했습니다.
+			BREAK
+		ENDIF
+		必要COST += 必要COST_計算値
+		PRINTFORML %GET_NAME(汎用キャラ配列:LOCAL, 1, 50), 50, LEFT%: %GET_TALENTNAME(238, TALENT:(汎用キャラ配列:LOCAL):妊娠不可, , 汎用キャラ配列:LOCAL), 12, LEFT% > 없음
+		TALENT:(汎用キャラ配列:LOCAL):妊娠不可 = 0
+	NEXT
+	FLAG:ZP所持量 -= 必要COST
+	
+	IF 必要COST <= 0
+		PRINTW 변경 조건을 만족하는 캐릭터가 존재하지 않습니다.
+	ELSE
+		PRINTFORMW 이상의 캐릭터에 대해 처리를 실행했습니다. (소비ZP:{必要COST}）
+	ENDIF
+ENDIF
+
+RETURN 0
+
+@受胎体質素質変化_複数人()
+#DIM CONST COST_TO_受胎 = 100
+#DIM 必要COST
+#DIM CONST 必要蓄積度 = 2, 2, 400, 1200
+#DIM 必要COST_計算値
+
+DRAWLINE
+PRINTL ZP를 소비하여 캐릭터의 수태 체질을 변화시킬 수 있습니다.
+PRINTL 원하는 체질을 선택해 주세요
+PRINTL ※모체에 대한 부담이 크므로, 특수한 상황에서의 임신·출산 경험이 필요합니다.
+PRINTL 　짧은 기간에 출산을 하거나, 쌍둥이 등 다태아 출산을 반복함으로써 해방됩니다.
+PRINTL ※조건을 만족하지 않는 캐릭터는 건너뜁니다.
+PRINTFORML 소지ZP:{FLAG:ZP所持量}.{(ZP小数点以下所持量 % 1000) / 100}{(ZP小数点以下所持量 % 100) / 10}{(ZP小数点以下所持量 % 10)}
+DRAWLINE
+FOR LOCAL:1 , 0, 4
+PRINTBUTTON @"[{LOCAL:1}]%受胎体質素質名(LOCAL:1)%　소비ZP:{COST_TO_受胎}（1キャラ분）", LOCAL:1
+	PRINTL
+NEXT
+PRINTBUTTON "[999]돌아가기", 999
+$INPUT_LOOP3
+BINPUT
+LOCAL:1 = RESULT
+SELECTCASE LOCAL:1
+	CASE 999
+		RETURN 0
+	CASE 0 TO 3
+		PRINTFORML 수태 체질을 ［%受胎体質素質名(LOCAL:1)%］(으)로 변경하시겠습니까?
+		PRINTFORML （보유 ZP: {FLAG:ZP所持量}.{(ZP小数点以下所持量 % 1000) / 100}{(ZP小数点以下所持量 % 100) / 10}{(ZP小数点以下所持量 % 10)}）
+		PRINTBUTTONLC "[0]예", 0
+		PRINTBUTTONLC "[1]아니오", 1
+		BINPUT
+		
+		IF RESULT == 0
+			必要COST = 0
+			FOR LOCAL, 0, キャラクタ数上限
+				SIF 汎用キャラ配列:LOCAL < 0
+					BREAK
+				SIF TALENT:(汎用キャラ配列:LOCAL):受胎体質 == LOCAL:1
+					CONTINUE
+				SIF CFLAG:(汎用キャラ配列:LOCAL):特殊妊娠蓄積度 < 必要蓄積度:(LOCAL:1)
+					CONTINUE
+				SIF GETBIT(TALENT:(汎用キャラ配列:LOCAL):性別, 0) == 0
+					CONTINUE
+				必要COST_計算値 = COST_TO_受胎
+				IF 必要COST + 必要COST_計算値 > FLAG:ZP所持量
+					PRINTL 필요 ZP가 부족하여 처리를 중지했습니다.
+					BREAK
+				ENDIF
+				必要COST += 必要COST_計算値
+				PRINTFORML %GET_NAME(汎用キャラ配列:LOCAL, 1, 50), 50, LEFT%: %受胎体質素質名(TALENT:(汎用キャラ配列:LOCAL):受胎体質), 12, LEFT% > %受胎体質素質名(LOCAL:1)%
+				TALENT:(汎用キャラ配列:LOCAL):受胎体質 = LOCAL:1
+			NEXT
+			FLAG:ZP所持量 -= 必要COST
+			IF 必要COST <= 0
+				PRINTW 변경 조건을 만족하는 캐릭터가 존재하지 않습니다.
+			ELSE
+				PRINTFORMW 이상의 캐릭터에 대해 처리를 실행했습니다.（소비ZP:{必要COST}）
+			ENDIF
+		ENDIF
+
+		RETURN 0
+ENDSELECT
+
+@発情期素質設定_複数人(対象キャラ)
+#DIM 対象キャラ
+#DIM 表示番号
+#DIM 発情不可フラグ
+#DIM 必要COST
+#DIM 必要COST_計算値
+#DIM CONST COST_TO_発情期 = 20
+VARSET LOCALS
+表示番号 = 0
+発情不可フラグ = 0
+
+DRAWLINE
+PRINTL ZP를 소비하여 캐릭터의 발정기를 설정하거나, 특수 발정을 부여/삭제할 수 있습니다.
+PRINTL 종족によっては一部の特殊発情が外せないことがあります。
+PRINTFORML 보유ZP:{FLAG:ZP所持量}.{(ZP小数点以下所持量 % 1000) / 100}{(ZP小数点以下所持量 % 100) / 10}{(ZP小数点以下所持量 % 10)}
+DRAWLINE
+PRINT 발정기를
+PRINTBUTTON "　[100] 없음으로 변경", 100
+PRINTBUTTON "　[0] 있음으로 변경", 0
+PRINTFORML  …  없음: 1ZP 있음: {COST_TO_発情期}ZP (캐릭터 1명분)
+PRINTL
+PRINT 욕정 부스트(대)를
+PRINTBUTTON "　[101] 없음으로 변경", 101
+PRINTBUTTON "　[1] 있음으로 변경", 1
+PRINTFORML  …  {COST_TO_発情期}ZP（1 캐릭터분）
+PRINT 모유 체질화를
+PRINTBUTTON "　[102] 없음으로 변경", 102
+PRINTBUTTON "　[2] 있음으로 변경", 2
+PRINTFORML  …  {COST_TO_発情期}ZP（1 캐릭터분）
+PRINT 후타나리화를
+PRINTBUTTON "　[103] 없음으로 변경", 103
+PRINTBUTTON "　[3] 있음으로 변경", 3
+PRINTFORML  …  {COST_TO_発情期}ZP（1 캐릭터분）
+PRINT 위험일 주기 단축을
+PRINTBUTTON "　[104] 없음으로 변경", 104
+PRINTBUTTON "　[4] 있음으로 변경", 4
+PRINTFORML  …  {COST_TO_発情期}ZP（1 캐릭터분）
+PRINT 체력 자동 회복을
+PRINTBUTTON "　[105] 없음으로 변경", 105
+PRINTBUTTON "　[5] 있음으로 변경", 5
+PRINTFORML  …  {COST_TO_発情期}ZP（1 캐릭터분）
+PRINT 과민 체질（쾌락・고통＋）을
+PRINTBUTTON "　[106] 없음으로 변경", 106
+PRINTBUTTON "　[6] 있음으로 변경", 6
+PRINTFORML  …  {COST_TO_発情期}ZP（1 캐릭터분）
+PRINT 함몰 유두 상시 발기를
+PRINTBUTTON "　[107] 없음으로 변경", 107
+PRINTBUTTON "　[7] 있음으로 변경", 7
+PRINTFORML  …  {COST_TO_発情期}ZP（1 캐릭터분）
+PRINT 여체화를
+PRINTBUTTON "　[108] 없음으로 변경", 108
+PRINTBUTTON "　[8] 있음으로 변경", 8
+PRINTFORML  …  {COST_TO_発情期}ZP（1 캐릭터분）
+PRINTL
+PRINTBUTTON "　[999] 돌아가기", 999
+PRINTL
+PRINTL
+
+BINPUT
+LOCAL:1 = RESULT
+SELECTCASE LOCAL:1
+	CASE 100
+		PRINTFORML 발정기를 없음 으로 변경합니다.괜찮습니까?
+		PRINTL ※특수 발정은종족에 부수되는 것을 제외하고 리셋됩니다.
+		PRINTFORML （소지ZP：{FLAG:ZP所持量}.{(ZP小数点以下所持量 % 1000) / 100}{(ZP小数点以下所持量 % 100) / 10}{(ZP小数点以下所持量 % 10)}）
+		PRINTBUTTONLC "[0]예", 0
+		PRINTBUTTONLC "[1]아니오", 1
+		BINPUT
+		
+		IF RESULT == 0
+			必要COST = 0
+			FOR LOCAL, 0, キャラクタ数上限
+				SIF 汎用キャラ配列:LOCAL < 0
+					BREAK
+				SIF 発情期存在判定(汎用キャラ配列:LOCAL) == 0
+					CONTINUE
+				必要COST_計算値 = 1
+				IF 必要COST + 必要COST_計算値 > FLAG:ZP所持量
+					PRINTL 필요ZP가 부족하여 처리를 정지했습니다.
+					BREAK
+				ENDIF
+				必要COST += 必要COST_計算値
+				PRINTFORML %GET_NAME(汎用キャラ配列:LOCAL, 1, 50), 50, LEFT%: 발정기 삭제
+				TALENT:(汎用キャラ配列:LOCAL):発情期あり = -1
+				IF CFLAG:(汎用キャラ配列:LOCAL):発情期フラグ < 0 && GETBIT(TALENT:(汎用キャラ配列:LOCAL):発情期あり, 3) && TALENT:(汎用キャラ配列:LOCAL):性別 == 3
+					;女性器ないキャラがふたなり化妊娠中の時は戻さない
+					IF GETBIT(CFLAG:(汎用キャラ配列:LOCAL):元性別保存, 0) != 0 || TALENT:(汎用キャラ配列:LOCAL):妊娠 == 0
+						TALENT:(汎用キャラ配列:LOCAL):性別 = CFLAG:(汎用キャラ配列:LOCAL):元性別保存
+					ENDIF
+				ENDIF
+				IF CFLAG:(汎用キャラ配列:LOCAL):発情期フラグ < 0 && GETBIT(TALENT:(汎用キャラ配列:LOCAL):発情期あり, 8) && TALENT:(汎用キャラ配列:LOCAL):性別 == 1
+					;女性器ないキャラが女体化妊娠中の時は戻さない
+					IF GETBIT(CFLAG:(汎用キャラ配列:LOCAL):元性別保存, 0) != 0 || TALENT:(汎用キャラ配列:LOCAL):妊娠 == 0
+						TALENT:(汎用キャラ配列:LOCAL):性別 = CFLAG:(汎用キャラ配列:LOCAL):元性別保存
+					ENDIF
+				ENDIF
+			NEXT
+			FLAG:ZP所持量 -= 必要COST
+			IF 必要COST <= 0
+				PRINTW 변경 조건을 만족하는 캐릭터가 존재하지 않습니다.
+			ELSE
+				PRINTFORMW 이상의 캐릭터에 대해 처리를 실행했습니다.（소비ZP:{必要COST}）
+			ENDIF
+		ENDIF
+	CASE 0
+		PRINTL 발정기를 있음 으로 변경합니다.괜찮습니까?
+		PRINTFORML （소지ZP：{FLAG:ZP所持量}.{(ZP小数点以下所持量 % 1000) / 100}{(ZP小数点以下所持量 % 100) / 10}{(ZP小数点以下所持量 % 10)}）
+		PRINTBUTTONLC "[0] 예", 0
+		PRINTBUTTONLC "[1] 아니오", 1
+		BINPUT
+		IF RESULT == 0
+			必要COST = 0
+			FOR LOCAL, 0, キャラクタ数上限
+				SIF 汎用キャラ配列:LOCAL < 0
+					BREAK
+				SIF 発情期存在判定(汎用キャラ配列:LOCAL)
+					CONTINUE
+				SIF TALENT:(汎用キャラ配列:LOCAL):性欲 == -2
+					CONTINUE
+				SIF TALENT:(汎用キャラ配列:LOCAL):性別 == 0
+					CONTINUE
+				SIF TALENT:(汎用キャラ配列:LOCAL):妊娠不可 == 2
+					CONTINUE
+				SIF TALENT:(汎用キャラ配列:LOCAL):射精不可 == 2
+					CONTINUE
+				必要COST_計算値 = COST_TO_発情期
+				IF 必要COST + 必要COST_計算値 > FLAG:ZP所持量
+					PRINTL 필요ZP가 부족하여 처리를 정지했습니다.
+					BREAK
+				ENDIF
+				必要COST += 必要COST_計算値
+				PRINTFORML %GET_NAME(汎用キャラ配列:LOCAL, 1, 50), 50, LEFT%: 발정기 추가
+				TALENT:(汎用キャラ配列:LOCAL):発情期あり = 1
+			NEXT
+			FLAG:ZP所持量 -= 必要COST
+			IF 必要COST <= 0
+				PRINTW 변경 조건을 만족하는 캐릭터가 존재하지 않습니다.
+			ELSE
+				PRINTFORMW 이상의 캐릭터에 대해 처리를 실행했습니다.（소비ZP:{必要COST}）
+			ENDIF
+		ENDIF
+	CASE 999
+		RETURN 0
+	CASEELSE
+		SELECTCASE LOCAL:1 % 100
+			CASE 1
+				PRINT 욕정 부스트 (대)
+			CASE 2
+PRINT 모유 체질화
+			CASE 3
+PRINT 후타나리화
+			CASE 4
+PRINT 위험일 주기 단축
+			CASE 5
+PRINT 체력 자동 회복
+			CASE 6
+PRINT 과민 체질（쾌락・고통＋）
+			CASE 7
+PRINT 함몰 유두 상시 발기
+			CASE 8
+PRINT 여체화
+		ENDSELECT
+		IF LOCAL:1 > 100
+PRINTL 을(를) 없음으로 변경합니다. 괜찮습니까?
+		ELSE
+PRINTL 을(를) 있음으로 변경합니다. 괜찮습니까?
+		ENDIF
+		IF LOCAL:1 == 8
+PRINTL ※후타나리화의 발정이 있을 경우, 그쪽이 우선됩니다.
+		ENDIF
+PRINTFORML 사용 ZP： {必要COST}
+		PRINTBUTTONLC "[0] 예", 0
+		PRINTBUTTONLC "[1] 아니오", 1
+		BINPUT
+		IF RESULT == 0
+			必要COST = 0
+			FOR LOCAL, 0, キャラクタ数上限
+				SIF 汎用キャラ配列:LOCAL < 0
+					BREAK
+				SIF 発情期存在判定(汎用キャラ配列:LOCAL) == 0
+					CONTINUE
+				IF LOCAL:1 > 100
+					SIF GETBIT(TALENT:(汎用キャラ配列:LOCAL):発情期あり, LOCAL:1 % 100) == 0
+						CONTINUE
+				ELSE
+					SIF GETBIT(TALENT:(汎用キャラ配列:LOCAL):発情期あり, LOCAL:1 % 100)
+						CONTINUE
+				ENDIF
+				必要COST_計算値 = COST_TO_発情期
+				IF 必要COST + 必要COST_計算値 > FLAG:ZP所持量
+PRINTL 필요 ZP가 부족하여 처리를 중지했습니다.
+					BREAK
+				ENDIF
+				必要COST += 必要COST_計算値
+				PRINTFORM %GET_NAME(汎用キャラ配列:LOCAL, 1, 50), 50, LEFT%: 
+				SELECTCASE LOCAL:1 % 100
+					CASE 1
+PRINT 욕정 부스트（대）
+					CASE 2
+PRINT 모유 체질화
+					CASE 3
+PRINT 후타나리화
+					CASE 4
+PRINT 위험일 주기 단축
+					CASE 5
+PRINT 체력 자동 회복
+					CASE 6
+PRINT 과민 체질 (쾌락・고통＋)
+					CASE 7
+PRINT 함몰 유두 상시 발기
+					CASE 8
+PRINT 여체화
+				ENDSELECT
+				IF LOCAL:1 > 100
+PRINTL 삭제
+				ELSE
+PRINTL 추가
+				ENDIF
+				IF LOCAL:1 == 103 && CFLAG:(汎用キャラ配列:LOCAL):発情期フラグ < 0 && GETBIT(TALENT:(汎用キャラ配列:LOCAL):発情期あり, 3) && TALENT:(汎用キャラ配列:LOCAL):性別 == 3
+					;女性器ないキャラがふたなり化妊娠中の時は戻さない
+					IF GETBIT(CFLAG:(汎用キャラ配列:LOCAL):元性別保存, 0) != 0 || TALENT:(汎用キャラ配列:LOCAL):妊娠 == 0
+						TALENT:(汎用キャラ配列:LOCAL):性別 = CFLAG:(汎用キャラ配列:LOCAL):元性別保存
+					ENDIF
+				ENDIF
+				IF LOCAL:1 == 108 && CFLAG:(汎用キャラ配列:LOCAL):発情期フラグ < 0 && GETBIT(TALENT:(汎用キャラ配列:LOCAL):発情期あり, 8) && TALENT:(汎用キャラ配列:LOCAL):性別 == 1
+					;女性器ないキャラが女体化妊娠中の時は戻さない
+					IF GETBIT(CFLAG:(汎用キャラ配列:LOCAL):元性別保存, 0) != 0 || TALENT:(汎用キャラ配列:LOCAL):妊娠 == 0
+						TALENT:(汎用キャラ配列:LOCAL):性別 = CFLAG:(汎用キャラ配列:LOCAL):元性別保存
+					ENDIF
+				ENDIF
+				INVERTBIT TALENT:(汎用キャラ配列:LOCAL):発情期あり, LOCAL:1 % 100
+			NEXT
+			FLAG:ZP所持量 -= 必要COST
+			IF 必要COST <= 0
+PRINTW 변경 조건을 만족하는 캐릭터가 존재하지 않습니다.
+			ELSE
+PRINTFORMW 이상의 캐릭터에 대해 처리를 실행했습니다. (소비ZP:{必要COST}）
+			ENDIF
+		ENDIF
+
+ENDSELECT
+
+RESTART
+
+@ハーレムの心得素質設定_複数人()
+#DIM 対象キャラ
+#DIM CONST 消費ZP = 200
+#DIM 必要COST
+#DIM 必要COST_計算値
+
+DRAWLINE
+PRINTFORML 캐릭터에게 하렘의 마음가짐을 습득시킵니다.
+PRINTFORML 연모의 인연 맺기를 할 때, 자신이 연모를 이미 가지고 있어도 인연 맺기가 진행되도록 합니다.
+PRINTFORML 변경 시에 {消費ZP}ZP (1 캐릭터분) 소비합니다.
+PRINTFORML 소지ZP:{FLAG:ZP所持量}.{(ZP小数点以下所持量 % 1000) / 100}{(ZP小数点以下所持量 % 100) / 10}{(ZP小数点以下所持量 % 10)}
+DRAWLINE
+PRINTBUTTON "[0] 습득한다", 0
+PRINTL
+PRINTBUTTON "[999] 습득하지 않고 돌아가기", 999
+PRINTL
+PRINTL
+
+
+BINPUT
+LOCAL = RESULT
+SELECTCASE LOCAL
+	CASE 999
+		RETURN 0
+	CASE 0
+		必要COST = 0
+		FOR LOCAL, 0, キャラクタ数上限
+			SIF 汎用キャラ配列:LOCAL < 0
+				BREAK
+			SIF TALENT:(汎用キャラ配列:LOCAL):ハーレムの心得
+				CONTINUE
+			必要COST_計算値 = 消費ZP
+			IF 必要COST + 必要COST_計算値 > FLAG:ZP所持量
+PRINTL 필요 ZP가 부족하여 처리를 중지했습니다.
+				BREAK
+			ENDIF
+			必要COST += 必要COST_計算値
+			PRINTFORML %GET_NAME(汎用キャラ配列:LOCAL, 1, 50), 50, LEFT%: 하렘의 마음가짐 추가
+			TALENT:(汎用キャラ配列:LOCAL):ハーレムの心得 = 1
+		NEXT
+		FLAG:ZP所持量 -= 必要COST
+		IF 必要COST <= 0
+			PRINTW 변경 조건을 만족하는 캐릭터가 존재하지 않습니다.
+		ELSE
+			PRINTFORMW 이상의 캐릭터에 대해 처리를 실행했습니다.（소비ZP:{必要COST}）
+		ENDIF
+ENDSELECT

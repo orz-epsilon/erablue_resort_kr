@@ -27,10 +27,11 @@ TFLAG:コマンドタイプ受渡 = COMTYPE("うふふ")
 同時モード拡張許可 = 1
 オートコマンド許可 = 1
 連続オート許可 = 1
+ダウン中許可 = 1
 
 @COM_TOOLTIP_0
-LOCALS = <br>■愛撫<br>
-LOCALS += "상대에게 가벼운 애무를 하는 커맨드.<br>실행자가 [혀놀림][능숙한 손가락][고양이 혀]를 가지고 있을 경우, 효과가 증감한다."
+LOCALS = <br>■애무<br>
+LOCALS += "상대에게 가벼운 애무를 하는 커맨드. <br>실행자가 [혀놀림][능숙한 손가락][고양이 혀]를 가지고 있을 경우, 효과가 증감한다."
 LOCALS += "<br>COM 타입: 우후후<br>획득 소스: 쾌C・쾌B・쾌S・노출・접촉"
 LOCALS += "<br>고유 획득 경험: 없음<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
@@ -121,7 +122,7 @@ RETURN 1
 @MESSAGE_COM0
 #DIM 同時キャラ番号
 
-PRINTFORM %CALLNAME:PLAYER%는
+PRINTFORM %CALLNAME:PLAYER%은(는)
 IF GETBIT(FLAG:モード管理, 1)
 	LOCAL = -1
 	IF MODE_存在判定_プレイヤー側("Ｖ挿入系", PLAYER)
@@ -141,7 +142,7 @@ IF GETBIT(FLAG:モード管理, 1)
 			PRINT ,
 		PRINTFORM %CALLNAME:(同時モード_選択キャラ:同時キャラ番号)%
 	NEXT
-	PRINTL 의 몸을 정성스럽게 애무했다…
+	PRINTL 의 몸을 정성껏 애무했다…
 ELSE
 	;膣とアナルに入れてるのがあれば持ち主を特定
 	SIF MODE_存在判定_順不同("ＶＡ挿入系", PLAYER, TARGET)
@@ -150,7 +151,7 @@ ELSE
 	;小柄体型
 	SIF TALENT:種族 == 4
 		PRINT 자그마한
-	PRINTL 몸을 정성스럽게 애무했다…
+	PRINTL 몸을 정성껏 애무했다…
 ENDIF
 
 
@@ -160,22 +161,22 @@ ENDIF
 
 IF NOWEX:Ｃ絶頂 || NOWEX:Ｖ絶頂 || NOWEX:Ａ絶頂 || NOWEX:Ｂ絶頂
 	IF MODE_存在判定_完全一致("Ｖ挿入系", PLAYER, TARGET)
-		PRINTFORML %CALLNAME:TARGET%의 질은 %CALLNAME:PLAYER%가 몸에 닿을 때마다 움찔거리며 수축했고
+		PRINTFORML %CALLNAME:TARGET%의 질은%CALLNAME:PLAYER%이(가) 몸에 닿을 때마다 움찔움찔 수축하며
 	ELSEIF MODE_存在判定_完全一致("Ａ挿入系", PLAYER, TARGET)
-		PRINTFORML %CALLNAME:TARGET%의 항문은 %CALLNAME:PLAYER%가 몸에 닿을 때마다 움찔거리며 수축했고
+		PRINTFORML %CALLNAME:TARGET%의 항문은%CALLNAME:PLAYER%이(가) 몸에 닿을 때마다 움찔움찔 수축하며
 	ELSE
-		PRINTFORML %CALLNAME:TARGET%는 %CALLNAME:PLAYER%가 몸에 닿을 때마다 움찔거리며 떨었고
+		PRINTFORML %CALLNAME:TARGET%은(는)%CALLNAME:PLAYER%이(가) 몸에 닿을 때마다 움찔움찔 떨며
 	ENDIF
 	IF EXP_UP(27,TARGET)
-		PRINTFORML 쾌락에 녹아내린 얼굴로 %CALLNAME:PLAYER%의 입술을 찾아왔다…
+		PRINTFORML 쾌락에 녹아내린 얼굴로%CALLNAME:PLAYER%의 입술을 찾아왔다…
 	ELSE
 		PRINTFORML 주어지는 쾌락에 신음하고 있다…
 	ENDIF
 ELSE
 	IF MODE_存在判定_完全一致("ＶＡ挿入系", PLAYER, TARGET)
-		PRINTFORM %CALLNAME:TARGET%는 물고 있던 페니스를 조이면서
+		PRINTFORM %CALLNAME:TARGET%은(는) 머금은 페니스를 조이면서
 	ELSE
-		PRINTFORM %CALLNAME:TARGET%는 %CALLNAME:PLAYER%에게 바싹 달라붙어 기대면서
+		PRINTFORM %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%에게 바싹 달라붙으면서
 	ENDIF
 	IF EXP_UP(27,TARGET)
 		PRINTFORML %CALLNAME:PLAYER%의 입술을 찾아왔다…

@@ -3,9 +3,9 @@
 ;===================================================
 @COMNAME_S90_1
 #FUNCTIONS
-TSTR:コマンド名受渡 = 밀착한다
+TSTR:コマンド名受渡 = 밀착하다
 SIF PLAYER == MASTER && あなた特殊能力:サキュバスボディ > 0
-	TSTR:コマンド名受渡 = 에이스 오브 스페이드
+	TSTR:コマンド名受渡 = 스페이드 에이스
 
 
 ;===================================================
@@ -25,8 +25,8 @@ TFLAG:コマンドタイプ受渡 = COMTYPE("うふふ")
 CALLF COMNAME_S90_1()
 TSTR:ツールチップ受渡 '= @"<br>■%TSTR:コマンド名受渡%<br>"
 TSTR:ツールチップ受渡 += "조개 맞대기를 한 채, 서로의 몸을 밀착시켜 전신을 하나로 만드는 커맨드."
-TSTR:ツールチップ受渡 += "<br>COM타입：우후후<br>취득 소스：쾌C・쾌B・쾌S・노출・접촉・불결"
-TSTR:ツールチップ受渡 += "<br>고유 취득 경험：젖꼭지 개발(PLAYER＆TARGET・일정 조건 시)<br>"
+TSTR:ツールチップ受渡 += "<br>COM 타입: 우후후<br>획득 소스: 쾌C・쾌B・쾌S・노출・접촉・불결"
+TSTR:ツールチップ受渡 += "<br>고유 획득 경험: 유두 개발(PLAYER＆TARGET・일정 조건 시)<br>"
 
 
 ;===================================================
@@ -131,23 +131,23 @@ RETURN 1
 ;実行時メッセージ
 ;===================================================
 @MESSAGE_COM_S90_1
-PRINTFORM %CALLNAME:PLAYER%는 %CALLNAME:TARGET% 위에 덮쳐 올라, 온몸을 밀착시키고
+PRINTFORM %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%에게 덮쳐 올라, 전신을 밀착시키고
 IF ABS(体格差計算(PLAYER, TARGET)) >= 2
 ELSEIF (!TALENT:TARGET:陥没乳首 || TCVAR:TARGET:陥没乳首露出フラグ) && (!TALENT:PLAYER:陥没乳首 || TCVAR:PLAYER:陥没乳首露出フラグ)
 	SIF PALAM:PLAYER:欲情 >= PALAMLV:3 || PALAM:TARGET:欲情 >= PALAMLV:3
 		PRINT 완전히 단단해진
-	PRINT 젖꼭지와 젖꼭지,
+	PRINT 유두와 유두,
 ENDIF
 SIF PALAM:PLAYER:潤滑 >= PALAMLV:4 || PALAM:TARGET:潤滑 >= PALAMLV:4
 	PRINT 축축하게 젖은
-PRINTL 음순과 음순을 빈틈없이 포개었다
+PRINTL 음순과 음순을 딱 맞대었다
 SELECTCASE RAND:4
 	CASE 0
-		PRINTFORML 마치 하나의 생명체였던 것처럼 %CALLNAME:TARGET%와 섞여 하나가 된 %CALLNAME:PLAYER%는, 그대로 허리를 흔들어 서로의 몸을 탐하기 시작했다…
+		PRINTFORML 하나의 생물이었던 것처럼 %CALLNAME:TARGET%와 뒤섞인 %CALLNAME:PLAYER%는, 그대로 허리를 흔들어 서로의 몸을 탐하기 시작했다…
 	CASE 1
-		PRINTFORML 무겁고 끈적한 소리와 함께 찾아오는 쾌감에, %CALLNAME:PLAYER%와 %CALLNAME:TARGET%의 허리 움직임은 점차 격렬해져 간다…
+		PRINTFORML 무겁고 끈적한 소리와 함께 찾아오는 쾌감에, %CALLNAME:PLAYER%와 %CALLNAME:TARGET%의 허리 움직임은 서서히 격렬해져 간다…
 	CASE 2
-		PRINTFORML 녹아내려 경계가 사라질 듯한 쾌락에, %CALLNAME:PLAYER%와 %CALLNAME:TARGET%는 정신없이 서로를 애무하고 있다…
+		PRINTFORML 녹아내려 경계가 사라질 것 같은 쾌락에, %CALLNAME:PLAYER%와 %CALLNAME:TARGET%은(는) 정신없이 서로를 애무하고 있다…
 	CASE 3
-		PRINTFORML 그대로 %CALLNAME:PLAYER%가 허리를 움직이기 시작하자, 밀어붙인 음순은 끈적하게 형태를 바꾸며, %CALLNAME:TARGET%의 여성기를 구석구석 자극했다…
+		PRINTFORML 그대로 %CALLNAME:PLAYER%이(가) 허리를 움직이기 시작하자, 맞댄 음순은 끈적하게 형태를 바꾸며, %CALLNAME:TARGET%의 여성기를 구석구석 자극했다…
 ENDSELECT

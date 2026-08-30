@@ -19,9 +19,9 @@ TSTR:ツールチップ受渡 =
 TRYCALLFORM 固有非エロ陥落_フレーバー変更_{NO:TARGET}(TARGET, "取得コマンド解説")
 IF TSTR:ツールチップ受渡 == ""
 	LOCALS = <br>■맹우의 맹세<br>
-	LOCALS += "상대와 강한 신뢰 관계를 맺기 위한 커맨드. <br>호감도 요소: 신뢰가 일정치 이상일 때 사용 가능. <br>캐릭터에 따라서는 커맨드명・획득하는 소질명이 변동하는 경우가 있다. <br>캐릭터에 따라서는 호감도 요소: 신뢰 이외의 조건이 존재하는 경우가 있다."
-	LOCALS += "<br>COM 타입: 일상<br>획득 소스: 없음"
-	LOCALS += "<br>고유 획득 경험: 없음<br>"
+	LOCALS += "상대와 강한 신뢰 관계를 맺기 위한 커맨드. <br>호감도要素：信頼이 일정치 이상일 때 사용 가능. <br>캐릭터에 따라서는 커맨드명・획득하는 소질명이 변동하는 경우가 있다. <br>캐릭터에 따라서는 호감도要素：信頼 이외의 조건이 존재할 수 있다."
+	LOCALS += "<br>COMタイプ：일常<br>取得ソース：없음"
+	LOCALS += "<br>固有の取得経験：없음<br>"
 	TSTR:ツールチップ受渡 = %LOCALS%
 ENDIF
 
@@ -52,6 +52,10 @@ SIF SAVESTR:ゲームフェイズ管理 != "通常モード"
 ;一括管理
 SIF GLOBAL_COMABLE(319)
 	RETURN RESULT
+
+;一旦era相手は封印
+SIF NO:TARGET == 998
+	RETURN 0
 
 RESULT = 0
 TRYCALLFORM 固有非エロ陥落_フレーバー変更_{NO:TARGET}(TARGET, "コマンド条件")
@@ -95,7 +99,7 @@ RETURN 1
 CALL 口上変数初期化
 TRYCALLFORM 固有非エロ陥落_フレーバー変更_{NO:TARGET}(TARGET, "実行メッセージ")
 IF 口上有無確認(0, 1) == 0
-	PRINTFORML %CALLNAME:PLAYER%와(과) %CALLNAME:TARGET%은(는) 강한 인연으로 맺어져 있다……!
+	PRINTFORML %CALLNAME:PLAYER%와 %CALLNAME:TARGET%은(는) 강한 인연으로 맺어져 있다……!
 	PRINTFORML 두 사람은 다시 한번 서로의 신뢰를 확인했다!
-	PRINTFORML %CALLNAME:TARGET%은(는) [맹우]를 얻었다!
+	PRINTFORML %CALLNAME:TARGET%은(는) ［맹우］를 얻었다!
 ENDIF

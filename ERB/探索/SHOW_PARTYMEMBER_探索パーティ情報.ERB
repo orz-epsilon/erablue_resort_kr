@@ -34,9 +34,9 @@ FOR ループ用, 0, 14
 NEXT
 
 SIF 人数合計 > 0
-	LOCALS += @"평균Lv:{レベル合計 / 人数合計, 2}　최대Lv:{最大レベル, 2}　최소Lv:{最小レベル, 2}　<br>"
+	LOCALS += @"평균 Lv:{レベル合計 / 人数合計, 2}　최대 Lv:{最大レベル, 2}　최소 Lv:{最小レベル, 2}　<br>"
 SIF 人数合計 < 1
-	LOCALS += @"<font color='#%カラーパレット_HTML("グレーアウト")%'>평균Lv:--　최대Lv:--　최소Lv:--　</font><br>"
+	LOCALS += @"<font color='#%カラーパレット_HTML("グレーアウト")%'>평균 Lv:--　최대 Lv:--　최소 Lv:--　</font><br>"
 LOCALS += "<br>"
 
 ;知識情報

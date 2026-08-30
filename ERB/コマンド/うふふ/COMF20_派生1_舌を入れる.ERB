@@ -13,8 +13,8 @@ TFLAG:コマンドタイプ受渡 = COMTYPE("うふふ_被挿入中_セクハラ
 オートコマンド許可 = 1
 
 @COM_TOOLTIP_S20_1
-LOCALS = <br>■舌を入れる<br>
-LOCALS += "키스 모드 중, 상대의 입안에 혀를 넣어 얽히게 하는 커맨드. <br>딥 키스 모드로 이행. <br>[혀놀림][고양이혀]에 따라 효과가 증감."
+LOCALS = <br>■혀를 넣는다<br>
+LOCALS += "키스 모드 중, 상대의 입안에 혀를 넣어 얽히게 하는 커맨드。<br>딥 키스 모드로 이행。<br>[혀놀림][고양이혀]에 따라 효과가 증감。"
 LOCALS += "<br>COM 타입: 우후후or피삽입중or성희롱<br>획득 소스: 노출・접촉・쾌S・불결・고통(일정 조건 시)"
 LOCALS += "<br>고유 획득 경험: 키스 경험(PLAYER＆TARGET)<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
@@ -84,14 +84,14 @@ EXP:PLAYER:キス経験 ++
 CALL 初体験日登録処理(PLAYER, TARGET, "ファーストキス", DAY * 1440 + TIME, GETPLACENAME(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置), "唇", "", 1)
 IF RESULT
 	RCVAR:PLAYER:ファーストキス中フラグ = 1
-	CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>%CALLNAME:TARGET%의 [입술]에 첫 키스를 바쳤다.</font><img src='えっちハート'>","うふふ")
+	CALL 履歴データベース登録(CFLAG:PLAYER:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>%CALLNAME:TARGET%の[唇]にファーストキスを捧げた</font><img src='えっちハート'>","うふふ")
 ENDIF
 CALL 初体験日登録処理(PLAYER, TARGET, "キス", DAY * 1440 + TIME, GETPLACENAME(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置), "唇", "", 0)
 
 CALL 初体験日登録処理(TARGET, PLAYER, "ファーストキス", DAY * 1440 + TIME, GETPLACENAME(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置), "唇", "", 1)
 IF RESULT
 	RCVAR:TARGET:ファーストキス中フラグ = 1
-	CALL 履歴データベース登録(CFLAG:TARGET:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>%CALLNAME:PLAYER%의 [입술]에 첫 키스를 바쳤다.</font><img src='えっちハート'>","うふふ")
+	CALL 履歴データベース登録(CFLAG:TARGET:人物番号, @"<font color='#%カラーパレット_HTML("薄ピンク")%'>%CALLNAME:PLAYER%の[唇]にファーストキスを捧げた</font><img src='えっちハート'>","うふふ")
 ENDIF
 CALL 初体験日登録処理(TARGET, PLAYER, "キス", DAY * 1440 + TIME, GETPLACENAME(CFLAG:PLAYER:現在マップ種別, CFLAG:PLAYER:現在位置), "唇", "", 0)
 
@@ -121,7 +121,7 @@ IF ABL:欲望
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += ABL:欲望 * 1
-	PRINTFORM 욕망 LV{ABL:欲望}({ABL:欲望 * 1})
+	PRINTFORM 욕망LV{ABL:欲望}({ABL:欲望 * 1})
 	＋表示フラグ = 1
 ENDIF
 ;ABL:奉仕精神
@@ -129,7 +129,7 @@ IF ABL:奉仕精神
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += ABL:奉仕精神 * 4
-	PRINTFORM 봉사 정신 LV{ABL:奉仕精神}({ABL:奉仕精神 * 4})
+	PRINTFORM 봉사정신LV{ABL:奉仕精神}({ABL:奉仕精神 * 4})
 	＋表示フラグ = 1
 ENDIF
 
@@ -137,7 +137,7 @@ IF MARK:快楽刻印
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += MARK:快楽刻印 * 2
-	PRINTFORM 쾌락 각인 LV{MARK:快楽刻印}({MARK:快楽刻印 * 2})
+	PRINTFORM 쾌락각인LV{MARK:快楽刻印}({MARK:快楽刻印 * 2})
 	＋表示フラグ = 1
 ENDIF
 
@@ -146,7 +146,7 @@ IF GETPALAMLV(PALAM:欲情, 5)
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += GETPALAMLV(PALAM:欲情, 5) * 1
-	PRINTFORM 욕정 LV{GETPALAMLV(PALAM:欲情, 5)}({GETPALAMLV(PALAM:欲情, 5) * 1})
+	PRINTFORM 욕정LV{GETPALAMLV(PALAM:欲情, 5)}({GETPALAMLV(PALAM:欲情, 5) * 1})
 	＋表示フラグ = 1
 ENDIF
 
@@ -154,7 +154,7 @@ ENDIF
 IF TALENT:羞恥心 > 0
 	PRINT  - 
 	実行値 -= 1
-	PRINT 부끄러움(1)
+	PRINT 수치심(1)
 	＋表示フラグ = 1
 ENDIF
 ;汚臭鈍感
@@ -162,14 +162,14 @@ IF TALENT:汚臭耐性 > 0
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += 1
-	PRINT 오취 둔감(1)
+	PRINT 오취둔감(1)
 	＋表示フラグ = 1
 ENDIF
 ;汚臭敏感
 IF TALENT:汚臭耐性 < 0
 	PRINT  - 
 	実行値 -= 1
-	PRINT 오취 민감(1)
+	PRINT 오취민감(1)
 	＋表示フラグ = 1
 ENDIF
 ;献身的
@@ -184,7 +184,7 @@ ENDIF
 IF TALENT:快感応答 < 0 && !TALENT:淫乱
 	PRINT  - 
 	実行値 -= 1
-	PRINT 쾌감 부정(1)
+	PRINT 쾌감의 부정(1)
 	＋表示フラグ = 1
 ENDIF
 ;恋慕
@@ -192,7 +192,7 @@ IF TALENT:恋慕
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += 5
-	PRINT 사랑(5)
+	PRINT 연모(5)
 	＋表示フラグ = 1
 ENDIF
 ;親愛
@@ -214,7 +214,7 @@ ELSEIF TALENT:キス嗜好 == 2
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += 999
-	PRINT 키스 마(999)
+	PRINT 키스광(999)
 	＋表示フラグ = 1
 ENDIF
 
@@ -223,7 +223,16 @@ IF TCVAR:言いなり
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += 999
-	PRINT 당신의 말대로(999)
+	PRINT 당신 뜻대로(999)
+	＋表示フラグ = 1
+ENDIF
+
+;特殊言いなり
+IF TCVAR:特殊言いなり
+	SIF ＋表示フラグ
+		PRINT  + 
+	実行値 += 999
+	PRINTFORM %特殊言いなり分岐(TARGET)%(999)
 	＋表示フラグ = 1
 ENDIF
 
@@ -274,11 +283,11 @@ RETURN 1
 @MESSAGE_COM_S20_1
 PRINTFORM %CALLNAME:PLAYER%
 IF TALENT:TARGET:恋慕
-	PRINTFORML 가 %CALLNAME:TARGET%의 입술에 혀를 대자,
-	PRINTFORML %CALLNAME:TARGET%는 스스로 입을 벌려 혀와 혀를 얽어매었다…
+	PRINTFORML 이(가)%CALLNAME:TARGET%의 입술에 혀로 닿자,
+	PRINTFORML %CALLNAME:TARGET%은(는) 스스로 입을 벌려 혀와 혀를 얽어매었다…
 ELSE
-	PRINTFORML 는 %CALLNAME:TARGET%의 입술 틈새로 혀를 밀어 넣어, 혀와 혀를 얽어매었다…
+	PRINTFORML 은(는)%CALLNAME:TARGET%의 입술 틈새로 혀를 밀어 넣어, 혀끼리 얽어매었다…
 ENDIF
 
 SIF TCVAR:TARGET:泥酔眠姦 && TCVAR:TARGET:言いなり
-	PRINTFORM 취해서 %CALLNAME:PLAYER%를 연모하는 사람으로 착각하고 있는 %CALLNAME:TARGET%는 %TEXTR("기쁜 듯이/적극적으로")% 혀를 얽어왔다…
+PRINTFORM 술에 취해%CALLNAME:PLAYER%를 연인으로 착각하고 있는%CALLNAME:TARGET%은(는), %TEXTR("기쁜 듯이/적극적으로")% 혀를 얽어매왔다…

@@ -15,10 +15,10 @@ TFLAG:コマンドタイプ受渡 = MASSAGE_COMTYPE("エロマッサージ")
 
 @MASSAGE_COM_TOOLTIP_32
 LOCALS = <br>■정액 부글부글 고환 마사지<br>
-LOCALS += "고환을 손으로 부드럽게 주물러 마사지해 준다."
-LOCALS += "<br>마사지 후에는 일시적으로 건강한 정자를 생산할 수 있게 되어 임신율이 올라간다고 한다."
-LOCALS += "<br>COM 타입: 에로 마사지<br>취득 소스: 쾌C・노출・접촉・봉사(PLAYER)・불결(PLAYER)"
-LOCALS += "<br>고유 취득 경험: 없음<br>"
+LOCALS += "고환을 손으로 부드럽게 주무르고 마사지해 준다."
+LOCALS += "<br>마사지 후에는 일시적으로 건강한 정자를 만들어낼 수 있게 되어, 임신율이 올라간다고 한다."
+LOCALS += "<br>COM 타입: 에로 마사지<br>획득 소스: 쾌C・노출・접촉・봉사(PLAYER)・불결(PLAYER)"
+LOCALS += "<br>고유 획득 경험: 없음<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
 @MASSAGE_COM32
@@ -26,6 +26,7 @@ TSTR:ツールチップ受渡 = %LOCALS%
 ;ソース追加処理
 ;-------------------------------------------------
 
+RCVAR:TARGET:睾丸コマンドフラグ = 6
 ;基盤ができたあとで理性を削る処理を入れる
 
 ;快感はフェラの6割くらいにしとく
@@ -45,8 +46,7 @@ SIF TALENT:PLAYER:猫舌
 CALL SOURCE_CALC_奉仕(PLAYER, TARGET, 300)
 CALL SOURCE_CALC_不潔(PLAYER, TARGET, 250)
 
-;精力を少しだけ回復する。連打可能なコマンドなので気持ち少なめ
-BASE:TARGET:精力 += 50
+;精力を少しだけ回復する処理は睾丸責め共通処理へ移動
 ;妊娠率……もとい孕ませパワーが10%上昇する
 RCVAR:TARGET:妊娠率補正_加算値 += 10
 
@@ -106,7 +106,7 @@ SIF GLOBAL_MASSAGE_COMABLE(32)
 	RETURN RESULT
 
 ;相手がオトコか玉ありふたなりじゃなきゃダメ。
-SIF TALENT:TARGET:性別 <= 1 || (TALENT:TARGET:性別 == 3 && (フレーバー素質:TARGET:ふたなり時_玉ありなし != 2 && OPTION変数:ふたなり玉設定 != 2))
+SIF !GETBIT(TALENT:TARGET:性別, 1) || (TALENT:TARGET:性別 == 3 && フレーバー素質:TARGET:ふたなり時_玉ありなし != フレーバー素質_ふたなり時_玉あり && OPTION変数:ふたなり玉設定 != 2)
 	RETURN 0
 ;相手にちんこがない場合駄目
 SIF TALENT:TARGET:Ｃ感度 == -2
@@ -137,32 +137,32 @@ PRINTFORM %CALLNAME:PLAYER%은(는),
 		PRINTFORM %CALLNAME:TARGET%의 시술복을 벗기고,
 	ENDIF
 	
-PRINTFORML %CALLNAME:TARGET%의 %TEXTR("음낭/고환")%을(를) 손바닥으로 감싸고,
+PRINTFORML %CALLNAME:TARGET%의%TEXTR("음낭/불알")%을 손바닥으로 감싸고,
 
-CALL PRINT_STR(@"「がんばれ_H_ がんばれ_H_」")
+CALL PRINT_STR(@"「힘내라_H_ 힘내라_H_」")
 PRINTFORM 라고 격려의 말을 건네며 부드럽게 마사지했다……。
 PRINTL
-PRINTFORM %CALLNAME:TARGET%은(는)
+PRINTFORM %CALLNAME:TARGET%는
 IF BASE:TARGET:勃起 < 1000
 	;巨根以上
 	IF TALENT:TARGET:男性器サイズ >= 1
-		PRINTFORML %TEXTR("큰 자지/거근")%을(를) 꼿꼿하게 발기시키고,
+		PRINTFORML %TEXTR("커다란 자지/거근")%을 꼿꼿하게 발기시키고,
 	ELSEIF TALENT:TARGET:男性器サイズ <= -1
 		;短小以下
-		PRINTFORML 엄지손가락 크기의 %TEXTR("자지/고추/페니스")%를 굳건히 단단하게 하여,
+		PRINTFORML 엄지손가락 크기의%TEXTR("자지/고추/페니스")%를 기특하게 단단하게 만들고,
 	ELSE
 	;普通サイズ
-		PRINTFORML %TEXTR("육봉/자지")%를 꼿꼿하게 발기시키고,
+		PRINTFORML %TEXTR("육봉/자지")%을 딱딱하게 발기시키고,
 	ENDIF
 ENDIF
 
 	SELECTCASE RAND:2
 	CASE 0
-		PRINTFORM %TEXTR("황홀하게 눈가를 녹이며/녹아내린 얼굴로 헤프게 입을 벌리고/법열에 눈가를 녹이며")%,
+		PRINTFORM %TEXTR("황홀하게 눈가를 녹이며/황홀한 얼굴로 헤프게 입을 벌리고/법열에 눈가를 녹이며")%,
 	CASE 1
-		PRINTFORM %CALLNAME:TARGET%은(는) 헤프게 풀린 입에서 %TEXTR("아름다운 목소리/헤픈 목소리/여자아이 같은 귀여운 목소리")%를 %TEXTR("내며/흘리며/흘리면서")%,
+		PRINTFORM %CALLNAME:TARGET%은(는) 헤프게 벌어진 입에서%TEXTR("아무렇게나 내는 소리/헤픈 소리/여자아이 같은 귀여운 소리")%를%TEXTR("내며/흘리며/흘리면서")%、
 	ENDSELECT
-	PRINTFORML %CALLNAME:PLAYER%%TEXTR("의 『마사지』/의 손기술")%%TEXTR("에 취해 있다/에 당하는 대로 되어 있다/를 받아들이고 있다/를 감수하고 있다")%…
+	PRINTFORML %CALLNAME:PLAYER%%TEXTR("의 『마사지』/의 손길")%%TEXTR("에 취해 있다/에 당하는 대로 되어 있다/를 받아들이고 있다/를 감수하고 있다")%…
 
 PRINTW 
-PRINTFORML %CALLNAME:TARGET%의 고환은 %CALLNAME:PLAYER%의 마사지에 의해 활성화되어, %TEXTR("건강한/싱싱한/힘찬")% 정자를 만들어내는 %TEXTR("기력/활력/정력")%이 넘쳐흘렀다!
+PRINTFORML %CALLNAME:TARGET%의 고환은 %CALLNAME:PLAYER%의 마사지에 의해 활성화되어, %TEXTR("건강한/싱싱한/힘찬")%정자를 만들어낼%TEXTR("기력/활력/정력")%이 넘쳐흘렀다!

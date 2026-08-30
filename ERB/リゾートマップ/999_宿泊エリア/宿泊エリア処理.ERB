@@ -10,6 +10,8 @@ IF 宿泊エリア表示種別 == 2
 	表示エリア種類 = 500
 ELSEIF 宿泊エリア表示種別 == 1
 	表示エリア種類 = 600
+ELSEIF 宿泊エリア表示種別 == 4
+	表示エリア種類 = 700
 ELSE
 	表示エリア種類 = 200
 ENDIF
@@ -32,10 +34,18 @@ IF 確認フラグ
 			LOCALS += "<br>"
 			LOCALS += "<button value='400'>[400] 스위트룸</button>"
 			LOCALS += "<br>"
-			LOCALS += "<button value='500'>[500] 주택가</button>"
-			LOCALS += "<br>"
-			LOCALS += "<button value='600'>[600] 비행선 항구 상업지구</button>"
-			LOCALS += "<br>"
+			IF MATCH(開拓エリア開発番号, 大規模番号_居住区エリア) > 0
+				LOCALS += "<button value='500'>[500] 주택가</button>"
+				LOCALS += "<br>"
+			ENDIF
+			IF 港改造度:0:0 > 0
+				LOCALS += "<button value='600'>[600] 공정항 상업지구</button>"
+				LOCALS += "<br>"
+			ENDIF
+			IF MATCH(開拓エリア開発番号, 大規模番号_牧場エリア) > 0
+				LOCALS += "<button value='700'>[700] 목장 특별 사육 구역</button>"
+				LOCALS += "<br>"
+			ENDIF
 		CASE 300
 			LOCALS += "<button value='200'>[200] 숙박객 구역</button>"
 			LOCALS += "<br>"
@@ -43,10 +53,18 @@ IF 確認フラグ
 			LOCALS += "<br>"
 			LOCALS += "<button value='400'>[400] 스위트룸</button>"
 			LOCALS += "<br>"
-			LOCALS += "<button value='500'>[500] 주택가</button>"
-			LOCALS += "<br>"
-			LOCALS += "<button value='600'>[600] 비행선 항구 상업지구</button>"
-			LOCALS += "<br>"
+			IF MATCH(開拓エリア開発番号, 大規模番号_居住区エリア) > 0
+				LOCALS += "<button value='500'>[500] 주택가</button>"
+				LOCALS += "<br>"
+			ENDIF
+			IF 港改造度:0:0 > 0
+				LOCALS += "<button value='600'>[600] 공정항 상업지구</button>"
+				LOCALS += "<br>"
+			ENDIF
+			IF MATCH(開拓エリア開発番号, 大規模番号_牧場エリア) > 0
+				LOCALS += "<button value='700'>[700] 목장 특별 사육 구역</button>"
+				LOCALS += "<br>"
+			ENDIF
 		CASE 400
 			LOCALS += "<button value='200'>[200] 숙박객 구역</button>"
 			LOCALS += "<br>"
@@ -54,10 +72,18 @@ IF 確認フラグ
 			LOCALS += "<br>"
 			LOCALS += "<nonbutton><font color='#FFFF00'>[400] 스위트룸</font></nonbutton>"
 			LOCALS += "<br>"
-			LOCALS += "<button value='500'>[500] 주택가</button>"
-			LOCALS += "<br>"
-			LOCALS += "<button value='600'>[600] 비행선 항구 상업구</button>"
-			LOCALS += "<br>"
+			IF MATCH(開拓エリア開発番号, 大規模番号_居住区エリア) > 0
+				LOCALS += "<button value='500'>[500] 주택가</button>"
+				LOCALS += "<br>"
+			ENDIF
+			IF 港改造度:0:0 > 0
+				LOCALS += "<button value='600'>[600] 비행선 항구 상업 지구</button>"
+				LOCALS += "<br>"
+			ENDIF
+			IF MATCH(開拓エリア開発番号, 大規模番号_牧場エリア) > 0
+				LOCALS += "<button value='700'>[700] 목장 특별 사육 구역</button>"
+				LOCALS += "<br>"
+			ENDIF
 		CASE 500
 			LOCALS += "<button value='200'>[200] 숙박객 구역</button>"
 			LOCALS += "<br>"
@@ -67,8 +93,14 @@ IF 確認フラグ
 			LOCALS += "<br>"
 			LOCALS += "<nonbutton><font color='#FFFF00'>[500] 주택가</font></nonbutton>"
 			LOCALS += "<br>"
-			LOCALS += "<button value='600'>[600] 비행선 항구 상업구</button>"
-			LOCALS += "<br>"
+			IF 港改造度:0:0 > 0
+				LOCALS += "<button value='600'>[600] 비행선 항구 상업 지구</button>"
+				LOCALS += "<br>"
+			ENDIF
+			IF MATCH(開拓エリア開発番号, 大規模番号_牧場エリア) > 0
+				LOCALS += "<button value='700'>[700] 목장 특별 사육 구역</button>"
+				LOCALS += "<br>"
+			ENDIF
 		CASE 600
 			LOCALS += "<button value='200'>[200] 숙박객 구역</button>"
 			LOCALS += "<br>"
@@ -76,9 +108,32 @@ IF 確認フラグ
 			LOCALS += "<br>"
 			LOCALS += "<button value='400'>[400] 스위트룸</button>"
 			LOCALS += "<br>"
-			LOCALS += "<button value='500'>[500] 주택가</button>"
+			IF MATCH(開拓エリア開発番号, 大規模番号_居住区エリア) > 0
+				LOCALS += "<button value='500'>[500] 주택가</button>"
+				LOCALS += "<br>"
+			ENDIF
+			LOCALS += "<nonbutton><font color='#FFFF00'>[600] 비행선 항구 상업 지구</font></nonbutton>"
 			LOCALS += "<br>"
-			LOCALS += "<nonbutton><font color='#FFFF00'>[600] 비행선 항구 상업구</font></nonbutton>"
+			IF MATCH(開拓エリア開発番号, 大規模番号_牧場エリア) > 0
+				LOCALS += "<button value='700'>[700] 목장 특별 사육 구역</button>"
+				LOCALS += "<br>"
+			ENDIF
+		CASE 700
+			LOCALS += "<button value='200'>[200] 숙박객 구역</button>"
+			LOCALS += "<br>"
+			LOCALS += "<button value='300'>[300] 직원 개인실</button>"
+			LOCALS += "<br>"
+			LOCALS += "<button value='400'>[400] 스위트룸</button>"
+			LOCALS += "<br>"
+			IF MATCH(開拓エリア開発番号, 大規模番号_居住区エリア) > 0
+				LOCALS += "<button value='500'>[500] 주택가</button>"
+				LOCALS += "<br>"
+			ENDIF
+			IF 港改造度:0:0 > 0
+				LOCALS += "<button value='600'>[600] 비행선 항구 상업 구역</button>"
+				LOCALS += "<br>"
+			ENDIF
+			LOCALS += "<nonbutton><font color='#FFFF00'>[700] 목장 특별 사육 구역</font></nonbutton>"
 			LOCALS += "<br>"
 	ENDSELECT
 ELSE
@@ -112,7 +167,10 @@ ELSE
 				LOCALS += "<br>"
 			ENDIF
 		CASE 600
-			LOCALS += "<nonbutton><font color='#FFFF00'>[600] 공정항 상업구</font></nonbutton>"
+			LOCALS += "<nonbutton><font color='#FFFF00'>[600] 공정항 상업지구</font></nonbutton>"
+			LOCALS += "<br>"
+		CASE 700
+			LOCALS += "<nonbutton><font color='#FFFF00'>[700] 목장 특별 사육 구역</font></nonbutton>"
 			LOCALS += "<br>"
 	ENDSELECT
 ENDIF
@@ -127,7 +185,7 @@ IF 確認フラグ
 		LOCALS += @"<button value='998'><font color='#%カラーパレット_HTML("赤")%'>[998] 퇴거시키다</font></button>"
 	ENDIF
 ELSEIF 宿泊エリア表示種別 == 2
-	LOCALS += "<button value='999'>[999] 주거 구역으로 돌아가기</button>"
+	LOCALS += "<button value='999'>[999] 거주구로 돌아가기</button>"
 	LOCALS += "<br>"
 	LOCALS += "<br>"
 	LOCALS += "<br>"
@@ -135,6 +193,8 @@ ELSEIF 宿泊エリア表示種別 == 2
 	LOCALS += @"<button value='998'><font color='#%カラーパレット_HTML("赤")%'>[998] 퇴거시키다</font></button>"
 ELSEIF 宿泊エリア表示種別 == 1
 	LOCALS += "<button value='999'>[999] 공정항으로 돌아가기</button>"
+ELSEIF 宿泊エリア表示種別 == 4
+	LOCALS += "<button value='999'>[999] 목장으로 돌아가기</button>"
 ELSE
 	IF CFLAG:GETCHARA(998):滞在期間 > 0
 		LOCALS += "<button value='990'>[990] era의 방으로 가기</button>"
@@ -156,6 +216,8 @@ SELECTCASE 表示エリア種類
 		CALL 居住区エリア_住宅街_表示(ページ数)
 	CASE 600
 		CALL 空艇港エリア_商業区_表示(ページ数)
+	CASE 700
+		CALL 牧場エリア_特別飼育区_表示(ページ数)
 ENDSELECT
 ;RESULTにページ数上限が入っている
 LOCAL:10 = RESULT
@@ -210,6 +272,14 @@ SELECTCASE LOCAL
 		表示エリア種類 = 600
 		ページ数 = 0
 		GOTO RESTART_LABEL
+	CASE 700
+		IF 表示エリア種類 == 700
+			REUSELASTLINE 
+			GOTO INPUT_LOOP
+		ENDIF
+		表示エリア種類 = 700
+		ページ数 = 0
+		GOTO RESTART_LABEL
 	CASE 1000
 		IF ページ数 < 1
 			REUSELASTLINE 
@@ -227,6 +297,9 @@ SELECTCASE LOCAL
 	CASE 999
 		IF 確認フラグ
 			RETURN 0
+		ELSEIF 宿泊エリア表示種別 == 4
+			CFLAG:PLAYER:現在マップ種別 = 4
+			CFLAG:MASTER:現在位置 = 1
 		ELSEIF 宿泊エリア表示種別 == 2
 			CFLAG:PLAYER:現在マップ種別 = 2
 			CFLAG:MASTER:現在位置 = 1
@@ -251,10 +324,18 @@ SELECTCASE LOCAL
 			SELECTCASE 表示エリア種類
 				CASE 200
 					PRINTL ■숙박 캐릭터
-					PRINTFORML %NAME表示(滞在者部屋割り配列:LOCAL)%
+					IF 滞在者部屋割り配列:LOCAL < 1
+						PRINTL 없음
+					ELSE
+						PRINTFORML %NAME表示(滞在者部屋割り配列:LOCAL)%
+					ENDIF
 				CASE 300
 					PRINTL ■직원 캐릭터
-					PRINTFORML %NAME表示(従業員部屋割り配列:LOCAL)%
+					IF 従業員部屋割り配列:LOCAL < 1
+						PRINTL 없음
+					ELSE
+						PRINTFORML %NAME表示(従業員部屋割り配列:LOCAL)%
+					ENDIF
 				CASE 400
 					PRINTL ■숙박 캐릭터
 					VARSET 部屋主配列
@@ -267,7 +348,7 @@ SELECTCASE LOCAL
 						PRINTFORML %NAME表示(部屋主配列:ループ用)%
 					NEXT
 				CASE 500
-					PRINTL ■거주 캐릭터
+PRINTL ■거주 캐릭터
 					VARSET 部屋主配列
 					VARSET RESULTS
 					SPLIT 定住者部屋割り配列:LOCAL, "_", RESULTS
@@ -278,7 +359,7 @@ SELECTCASE LOCAL
 						PRINTFORML %NAME表示(部屋主配列:ループ用)%
 					NEXT
 				CASE 600
-					PRINTL ■점주 캐릭터
+PRINTL ■점주 캐릭터
 					VARSET 部屋主配列
 					VARSET RESULTS
 					SPLIT 商業区店割り配列:LOCAL:店員配列, "_", RESULTS
@@ -289,16 +370,27 @@ SELECTCASE LOCAL
 						
 						SELECTCASE 部屋主配列:ループ用
 							CASE -1
-								PRINTFORML 모브 아저씨
+			PRINTFORML 모브 아저씨
 							CASE -2
-								PRINTFORML 모브 아주머니
+			PRINTFORML 모브 아주머니
 							CASE -3
-								PRINTFORML 모브 청년
+			PRINTFORML 모브 청년
 							CASE -4
-								PRINTFORML 모브 여성
+			PRINTFORML 모브 여성
 							CASEELSE
 								PRINTFORML %NAME表示(部屋主配列:ループ用)%
 						ENDSELECT
+					NEXT
+				CASE 700
+PRINTL ■사육 캐릭터
+					VARSET 部屋主配列
+					VARSET RESULTS
+					SPLIT 飼育区部屋割り配列:LOCAL, "_", RESULTS
+					FOR ループ用, 0, RESULT
+						SIF RESULTS:ループ用 == ""
+							BREAK
+						部屋主配列:ループ用 = TOINT(RESULTS:ループ用)
+						PRINTFORML %NAME表示(部屋主配列:ループ用)%
 					NEXT
 			ENDSELECT
 			DRAWLINE
@@ -309,10 +401,12 @@ SELECTCASE LOCAL
 		IF LOCAL == 990
 			;eraの部屋
 			CALL 入室不可処理(999, 999)
+		ELSEIF 宿泊エリア表示種別 == 4
+			CALL 入室不可処理(4, LOCAL + 1000)
 		ELSEIF 宿泊エリア表示種別 == 2
-			CALL 入室不可処理(2, LOCAL)
+			CALL 入室不可処理(2, LOCAL + 1000)
 		ELSEIF 宿泊エリア表示種別 == 1
-			CALL 入室不可処理(1, LOCAL)
+			CALL 入室不可処理(1, LOCAL + 1000)
 		ELSE
 			IF 表示エリア種類 == 200
 				CALL 入室不可処理(999, LOCAL)
@@ -367,7 +461,7 @@ SELECTCASE LOCAL
 				ENDIF
 			NEXT
 		ELSEIF 表示エリア種類 == 500
-			CFLAG:PLAYER:現在マップ種別 = 2
+			CFLAG:PLAYER:現在マップ種別 = 大規模番号_居住区エリア
 			CFLAG:MASTER:現在位置 = LOCAL + 1000
 			CALL 移動時モード消去(PLAYER)
 			FOR LOCAL,1,CHARANUM
@@ -377,7 +471,17 @@ SELECTCASE LOCAL
 				ENDIF
 			NEXT
 		ELSEIF 表示エリア種類 == 600
-			CFLAG:PLAYER:現在マップ種別 = 1
+			CFLAG:PLAYER:現在マップ種別 = 大規模番号_空艇港エリア
+			CFLAG:MASTER:現在位置 = LOCAL + 1000
+			CALL 移動時モード消去(PLAYER)
+			FOR LOCAL,1,CHARANUM
+				IF 追従中キャラ(LOCAL)
+					CFLAG:LOCAL:現在位置 = CFLAG:MASTER:現在位置
+					CFLAG:LOCAL:現在マップ種別 = CFLAG:MASTER:現在マップ種別
+				ENDIF
+			NEXT
+		ELSEIF 表示エリア種類 == 700
+			CFLAG:PLAYER:現在マップ種別 = 大規模番号_牧場エリア
 			CFLAG:MASTER:現在位置 = LOCAL + 1000
 			CALL 移動時モード消去(PLAYER)
 			FOR LOCAL,1,CHARANUM
@@ -396,12 +500,12 @@ VARSET LOCAL
 
 LOCALS = <div rect='1375,0,5000,125'>
 IF ページ数 > 0
-	LOCALS += "<button value='1000'>[1000]이전 객실 구역으로</button>　　　　　　　　　　"
+LOCALS += "<button value='1000'>[1000]이전 객실 구역으로</button>　　　　　　　　　　"
 ELSE
-	LOCALS += "　　　　　　　　　　　　　　　　　　　　　"
+LOCALS += "　　　　　　　　　　　　　　　　　　　　　"
 ENDIF
 IF ページ数 < (滞在キャラ上限 - 1) / 16
-	LOCALS += "<button value='1001'>[1001]다음 객실 구역으로</button>"
+LOCALS += "<button value='1001'>[1001]다음 객실 구역으로</button>"
 ENDIF
 LOCALS += "</div>"
 
@@ -413,19 +517,19 @@ FOR LOCAL, (ページ数 * 16), (ページ数 * 16) + 4
 		BREAK
 	IF 滞在者部屋割り配列:LOCAL > 0
 		IF CFLAG:(滞在者部屋割り配列:LOCAL):現在位置 == LOCAL && CFLAG:(滞在者部屋割り配列:LOCAL):現在マップ種別 == 999
-			LOCALS:1 = 재실 중
+		LOCALS:1 = 재실 중
 			LOCALS:2 = #C0C000
 		ELSE
-			LOCALS:1 = 부재
+		LOCALS:1 = 부재 중
 			LOCALS:2 = #C0C0C0
 		ENDIF
 		LOCALS += @"<div rect='{1375 + (LOCAL - (ページ数 * 16)) * 1187},31,1125,587' border='31' bcolor='%LOCALS:2%'><button value='{LOCAL}'><img src='透過アイコン' srcb='透過アイコン_選択' height='587' width='1125'></button></div>"
 		LOCALS += @"<div width='500' height='125' xpos='{1694 + (LOCAL - (ページ数 * 16)) * 1187}' ypos='562' color='#101010'></div>"
-		LOCALS += @"<div rect='{1450 + (LOCAL - (ページ数 * 16)) * 1187},156,1000,362'>■체류자<br>%CALLNAME:(滞在者部屋割り配列:LOCAL)%<br>（%LOCALS:1%）</div>"
+	LOCALS += @"<div rect='{1450 + (LOCAL - (ページ数 * 16)) * 1187},156,1000,362'>■체류자<br>%CALLNAME:(滞在者部屋割り配列:LOCAL)%<br>（%LOCALS:1%）</div>"
 	ELSE
 		LOCALS += @"<div rect='{1375 + (LOCAL - (ページ数 * 16)) * 1187},31,1125,587' border='31' bcolor='#333333'><button value='{LOCAL}'><img src='透過アイコン' srcb='透過アイコン_選択' height='587' width='1125'></button></div>"
 		LOCALS += @"<div width='500' height='125' xpos='{1694 + (LOCAL - (ページ数 * 16)) * 1187}' ypos='562' color='#101010'></div>"
-		LOCALS += @"<div rect='{1450 + (LOCAL - (ページ数 * 16)) * 1187},156,1000,362'>■체류자<br>없음</div>"
+	LOCALS += @"<div rect='{1450 + (LOCAL - (ページ数 * 16)) * 1187},156,1000,362'>■체류자<br>없음</div>"
 	ENDIF
 NEXT
 FOR LOCAL, (ページ数 * 16) + 4, (ページ数 * 16) + 8
@@ -433,10 +537,10 @@ FOR LOCAL, (ページ数 * 16) + 4, (ページ数 * 16) + 8
 		BREAK
 	IF 滞在者部屋割り配列:LOCAL > 0
 		IF CFLAG:(滞在者部屋割り配列:LOCAL):現在位置 == LOCAL && CFLAG:(滞在者部屋割り配列:LOCAL):現在マップ種別 == 999
-			LOCALS:1 = 재실 중
+		LOCALS:1 = 재실 중
 			LOCALS:2 = #C0C000
 		ELSE
-			LOCALS:1 = 부재
+			LOCALS:1 = 부재중
 			LOCALS:2 = #C0C0C0
 		ENDIF
 		LOCALS += @"<div rect='{1375 + (LOCAL - (4 + ページ数 * 16)) * 1187},831,1125,587' border='31' bcolor='%LOCALS:2%'><button value='{LOCAL}'><img src='透過アイコン' srcb='透過アイコン_選択' height='587' width='1125'></button></div>"
@@ -456,7 +560,7 @@ FOR LOCAL, (ページ数 * 16) + 8, (ページ数 * 16) + 12
 			LOCALS:1 = 재실 중
 			LOCALS:2 = #C0C000
 		ELSE
-			LOCALS:1 = 부재
+			LOCALS:1 = 부재중
 			LOCALS:2 = #C0C0C0
 		ENDIF
 		LOCALS += @"<div rect='{1375 + (LOCAL - (8 + ページ数 * 16)) * 1187},1456,1125,587' border='31' bcolor='%LOCALS:2%'><button value='{LOCAL}'><img src='透過アイコン' srcb='透過アイコン_選択' height='587' width='1125'></button></div>"
@@ -476,7 +580,7 @@ FOR LOCAL, (ページ数 * 16) + 12, (ページ数 * 16) + 16
 			LOCALS:1 = 재실 중
 			LOCALS:2 = #C0C000
 		ELSE
-			LOCALS:1 = 부재
+			LOCALS:1 = 부재중
 			LOCALS:2 = #C0C0C0
 		ENDIF
 		LOCALS += @"<div rect='{1375 + (LOCAL - (12 + ページ数 * 16)) * 1187},2256,1125,587' border='31' bcolor='%LOCALS:2%'><button value='{LOCAL}'><img src='透過アイコン' srcb='透過アイコン_選択' height='587' width='1125'></button></div>"
@@ -743,6 +847,17 @@ IF 対象キャラ == MASTER
 	RETURNF CFLAG:MASTER:自室位置
 ENDIF
 
+IF TFLAG:外出中フラグ > 0
+	IF CFLAG:対象キャラ:滞在期間 > 0
+		RESULT:1 = -1
+		TRYCALLFORMF 外出先_自宅設定_{FLAG:外出先番号}
+		部屋検索_マップ種別 = FLAG:外出先番号
+		RETURNF RESULT:1
+	ELSE
+		RETURNF -1
+	ENDIF
+ENDIF
+
 ;eraの部屋
 IF NO:対象キャラ == 998
 	部屋検索_マップ種別 = 999
@@ -777,7 +892,7 @@ ELSEIF TALENT:対象キャラ:定住者 == 2
 	;同棲はリゾートエリア
 	部屋検索_マップ種別 = 0
 	;家の算出
-	FOR LOCAL, 0, 10
+	FOR LOCAL, 0, 20
 		IF 同棲部屋割り配列:LOCAL == 対象キャラ
 			SELECTCASE LOCAL
 				CASE 0
@@ -792,8 +907,49 @@ ELSEIF TALENT:対象キャラ:定住者 == 2
 					RETURNF 2016
 				CASE 5
 					RETURNF 2017
+				CASE 6
+					RETURNF 2018
+				CASE 7
+					RETURNF 2019
+				CASE 8
+					RETURNF 2021
+				CASE 9
+					RETURNF 2022
+				CASE 10
+					RETURNF 2023
+				CASE 11
+					RETURNF 2024
+				CASE 12
+					RETURNF 2025
+				CASE 13
+					RETURNF 2026
+				CASE 14
+					RETURNF 2027
+				CASE 15
+					RETURNF 2028
+				CASE 16
+					RETURNF 2029
+				CASE 17
+					RETURNF 2030
+				CASE 18
+					RETURNF 2031
+				CASE 19
+					RETURNF 2032
 			ENDSELECT
 		ENDIF
+	NEXT
+ELSEIF TALENT:対象キャラ:定住者 == 3
+	;牧場での特別飼育のランダムキャラ
+	部屋検索_マップ種別 = 大規模番号_牧場エリア
+	;家の算出
+	FOR LOCAL, 0, VARSIZE("飼育区部屋割り配列")
+		SIF 飼育区部屋割り配列:LOCAL == ""
+			CONTINUE
+		;部屋の居住者を見る
+		SIF STRFIND(飼育区部屋割り配列:LOCAL, @"_{対象キャラ}_") > -1
+			RETURNF LOCAL + 1000
+		SIF STRFIND(飼育区部屋割り配列:LOCAL, @"{対象キャラ}_") == 0
+			RETURNF LOCAL + 1000
 	NEXT
 ELSEIF TALENT:対象キャラ:従業員
 	FOR LOCAL, 0, 従業員部屋数
@@ -804,7 +960,7 @@ ELSEIF TALENT:対象キャラ:従業員
 ELSEIF CFLAG:対象キャラ:スイートルーム滞在フラグ
 	RETURNF CFLAG:対象キャラ:スイートルーム滞在フラグ - 100 + 2000
 ELSE
-	FOR LOCAL, 0, 100
+	FOR LOCAL, 0, 滞在キャラ上限
 		IF 滞在者部屋割り配列:LOCAL == 対象キャラ
 			RETURNF LOCAL
 		ENDIF
@@ -812,18 +968,25 @@ ELSE
 ENDIF
 
 ;部屋がない場合のフォロー
-IF CFLAG:対象キャラ:滞在期間 > 0 && TALENT:対象キャラ:分身 < 1
-	IF TALENT:対象キャラ:従業員
-		FOR LOCAL, 0, 従業員部屋数
-			IF 従業員部屋割り配列:(LOCAL) < 1
-				従業員部屋割り配列:(LOCAL) = 対象キャラ
-				RETURNF LOCAL + 1000
-			ENDIF
-		NEXT
-	ELSEIF TALENT:対象キャラ:定住者 == 1
+IF CFLAG:対象キャラ:滞在期間 > 0 && TALENT:対象キャラ:分身 < 1 && !TCVAR:対象キャラ:日帰りフラグ
+	IF TALENT:対象キャラ:定住者 == 1
 		FOR LOCAL, 0, VARSIZE("定住者部屋割り配列")
 			IF 定住者部屋割り配列:(LOCAL) == ""
 				定住者部屋割り配列:(LOCAL) = {対象キャラ}_
+				RETURNF LOCAL + 1000
+			ENDIF
+		NEXT
+	ELSEIF TALENT:対象キャラ:定住者 == 3
+		FOR LOCAL, 0, VARSIZE("飼育区部屋割り配列")
+			IF 飼育区部屋割り配列:(LOCAL) == ""
+				飼育区部屋割り配列:(LOCAL) = {対象キャラ}_
+				RETURNF LOCAL + 1000
+			ENDIF
+		NEXT
+	ELSEIF TALENT:対象キャラ:従業員
+		FOR LOCAL, 0, 従業員部屋数
+			IF 従業員部屋割り配列:(LOCAL) < 1
+				従業員部屋割り配列:(LOCAL) = 対象キャラ
 				RETURNF LOCAL + 1000
 			ENDIF
 		NEXT
@@ -851,6 +1014,19 @@ FOR LOCAL, 0, 滞在キャラ上限
 NEXT
 RETURN 0
 
+@滞在者部屋空き確認()
+#FUNCTION
+
+FOR LOCAL, 0, 滞在キャラ上限
+	IF 滞在者部屋割り配列:LOCAL < 1
+		;空きがある
+		RETURNF 1
+	ENDIF
+NEXT
+
+;空きがない
+RETURNF 0
+
 @滞在者部屋割り配列削除処理(ARG)
 
 CALL ユニーク客人数チェック()
@@ -872,8 +1048,19 @@ ELSEIF TALENT:ARG:定住者 == 1
 			定住者部屋割り配列:LOCAL = %SUBSTRING(定住者部屋割り配列:LOCAL, STRLENS(@"{ARG}_"), -1)%
 		ENDIF
 	NEXT
+ELSEIF TALENT:ARG:定住者 == 3
+	FOR LOCAL, 0, VARSIZE("定住者部屋割り配列")
+		SIF 飼育区部屋割り配列:LOCAL == ""
+			CONTINUE
+		;部屋の居住者を見る
+		IF STRFIND(飼育区部屋割り配列:LOCAL, @"_{ARG}_") > -1
+			飼育区部屋割り配列:LOCAL = %REPLACE(飼育区部屋割り配列:LOCAL, @"_{ARG}_", "_")%
+		ELSEIF STRFIND(飼育区部屋割り配列:LOCAL, @"{ARG}_") == 0
+			飼育区部屋割り配列:LOCAL = %SUBSTRING(飼育区部屋割り配列:LOCAL, STRLENS(@"{ARG}_"), -1)%
+		ENDIF
+	NEXT
 ELSE
-	FOR LOCAL, 0, 100
+	FOR LOCAL, 0, 滞在部屋拡張上限
 		IF 滞在者部屋割り配列:LOCAL == ARG
 			滞在者部屋割り配列:LOCAL = 0
 			BREAK
@@ -959,7 +1146,7 @@ FOR LOCAL, (ページ数 * 16), (ページ数 * 16) + 16
 		IF 部屋主配列:1 > 0
 			LOCALS += @"<div rect='{横位置 + 125},{縦位置 + 125},1000,362'>■집주인<br>%CALLNAME:(部屋主配列:0)%외{LOCAL:2 - 1}명<br>（%LOCALS:1%）</div>"
 		ELSE
-			LOCALS += @"<div rect='{横位置 + 125},{縦位置 + 125},1000,362'>■집주인<br>%CALLNAME:(部屋主配列:0)%<br> (%LOCALS:1%)</div>"
+			LOCALS += @"<div rect='{横位置 + 125},{縦位置 + 125},1000,362'>■집주인<br>%CALLNAME:(部屋主配列:0)%<br>（%LOCALS:1%）</div>"
 		ENDIF
 	ELSE
 		IF 空き部屋非ボタンフラグ
@@ -991,6 +1178,40 @@ SIF 居住区改造度:14:0
 
 RETURNF LOCAL
 
+@特別飼育区広さ()
+#FUNCTION
+
+;とりあえず固定
+LOCAL = 40
+
+RETURNF LOCAL
+
+@自宅広さ()
+#FUNCTION
+
+;解像度で
+IF 施設改造度:20:0 == 1
+	RETURNF 2
+ELSEIF 施設改造度:20:0 == 2
+	RETURNF 6
+ELSEIF 施設改造度:20:0 == 3
+	RETURNF 20
+ENDIF
+
+@特別飼育区満杯()
+#FUNCTION
+
+RFLAG:定住枠残りカウント = 0
+FOR LOCAL, 0, 特別飼育区広さ()
+	SIF 飼育区部屋割り配列:LOCAL == ""
+		RFLAG:定住枠残りカウント ++
+NEXT
+
+SIF RFLAG:定住枠残りカウント > 0
+	RETURNF 0
+
+RETURNF 1
+
 
 @部屋なしキャラチェック(対象キャラ)
 #DIM 対象キャラ
@@ -1006,7 +1227,30 @@ SIF NO:対象キャラ == 998
 ;部屋の無いキャラがいないかチェック
 部屋セットチェック = 0
 IF キャラクター部屋検索(対象キャラ) == -1 && CFLAG:対象キャラ:スイートルーム滞在フラグ == 0
-	IF TALENT:対象キャラ:従業員
+	IF TALENT:対象キャラ:定住者 == 3
+		;家に突っ込む
+		FOR LOCAL, 0, 特別飼育区広さ()
+			IF 飼育区部屋割り配列:LOCAL == ""
+				飼育区部屋割り配列:LOCAL = {対象キャラ}_
+				CFLAG:対象キャラ:現在マップ種別 = 大規模番号_牧場エリア
+				CFLAG:対象キャラ:現在位置 = LOCAL + 1000
+				部屋セットチェック = 1
+				BREAK
+			ENDIF
+		NEXT
+		IF 部屋セットチェック == 0
+			PRINTL 예상치 못한 동작으로 인해, 방이 없는 사육 캐릭터가 존재합니다.
+			PRINTFORMW 대상 캐릭터：%NAME表示(対象キャラ)%
+			PRINTW 특별 사육 구역이 가득 찼으므로, 해당 캐릭터의 정주 플래그를 해제하고 일단 섬 밖으로 이동시킵니다.
+			PRINTW 번거로우시겠지만, 다시 캐릭터를 초대해 주세요.
+			PRINTW 사과 루피로 1만 루피를 증가시켰습니다.
+			MONEY += 10000
+			CFLAG:対象キャラ:滞在期間 = -1
+			TALENT:対象キャラ:従業員 = 0
+			TALENT:対象キャラ:定住者 = 0
+			CALL 滞在終了時初期化(対象キャラ)
+		ENDIF
+	ELSEIF TALENT:対象キャラ:従業員
 		FOR LOCAL, 0, 従業員部屋数
 			IF 従業員部屋割り配列:(LOCAL) < 1
 				従業員部屋割り配列:(LOCAL) = 対象キャラ
@@ -1018,7 +1262,7 @@ IF キャラクター部屋検索(対象キャラ) == -1 && CFLAG:対象キャ�
 		NEXT
 		IF 部屋セットチェック == 0
 			PRINTL 예상치 못한 동작으로 인해, 방이 없는 직원이 존재합니다.
-			PRINTFORMW 対象キャラ:%NAME表示(対象キャラ)%
+			PRINTFORMW 대상 캐릭터：%NAME表示(対象キャラ)%
 			PRINTW 직원 방이 가득 찼으므로, 해당 캐릭터의 직원 플래그를 해제하고 일단 섬 밖으로 이동시킵니다.
 			PRINTW 번거로우시겠지만, 다시 캐릭터를 초대해 주세요.
 			PRINTW 사과 루피로 1만 루피를 증가시켰습니다.
@@ -1032,7 +1276,7 @@ IF キャラクター部屋検索(対象キャラ) == -1 && CFLAG:対象キャ�
 		CALL 滞在者部屋割り配列挿入処理(対象キャラ)
 		IF RESULT == 0
 			PRINTL 예상치 못한 동작으로 인해, 방이 없는 캐릭터가 존재합니다.
-			PRINTFORMW 対象キャラ:%NAME表示(対象キャラ)%
+			PRINTFORMW 대상 캐릭터：%NAME表示(対象キャラ)%
 			PRINTW 객실이 가득 찼으므로, 해당 캐릭터를 일단 섬 밖으로 이동시킵니다.
 			PRINTW 번거로우시겠지만, 다시 캐릭터를 초대해 주세요.
 			PRINTW 사과 루피로 1만 루피를 증가시켰습니다.
@@ -1064,7 +1308,7 @@ ELSE
 	LOCALS += "　　　　　　　　　　　　　　　　　　　　　"
 ENDIF
 IF ページ数 < (VARSIZE("商業区店割り配列", 1) - 1) / 16
-	LOCALS += "<button value='1001'>[1001]다음 상점가 지역으로</button>"
+	LOCALS += "<button value='1001'>[1001]다음 상점가 구역으로</button>"
 ENDIF
 LOCALS += "</div>"
 
@@ -1098,7 +1342,7 @@ FOR LOCAL, (ページ数 * 16), (ページ数 * 16) + 16
 			ENDIF
 		NEXT
 		IF LOCAL:1
-			LOCALS:1 = 개점 중
+			LOCALS:1 = 영업 중
 			LOCALS:2 = #C0C000
 		ELSE
 			LOCALS:1 = 폐점 중
@@ -1116,7 +1360,7 @@ FOR LOCAL, (ページ数 * 16), (ページ数 * 16) + 16
 					モブ店主名 = モブ女性
 			ENDSELECT
 			IF TIME >= 540 && TIME <= 1200
-				LOCALS:1 = 개점 중
+				LOCALS:1 = 영업 중
 				LOCALS:2 = #C0C000
 			ELSE
 				LOCALS:1 = 폐점 중
@@ -1130,11 +1374,11 @@ FOR LOCAL, (ページ数 * 16), (ページ数 * 16) + 16
 		LOCALS += @"<div rect='{横位置},{縦位置},1125,587' border='31' bcolor='%LOCALS:2%'><button value='{LOCAL}'><img src='透過アイコン' srcb='透過アイコン_選択' height='587' width='1125'></button></div>"
 		LOCALS += @"<div width='500' height='125' xpos='{319 + 横位置}' ypos='{縦位置２}' color='#101010'></div>"
 		IF 部屋主配列:0 < 0
-			LOCALS += @"<div rect='{横位置 + 75},{縦位置 + 125},1000,362'>%モブ店主名%의%商業区店割り配列:LOCAL:店舗名%<br> (%LOCALS:1%)</div>"
+			LOCALS += @"<div rect='{横位置 + 75},{縦位置 + 125},1000,362'>%モブ店主名%의%商業区店割り配列:LOCAL:店舗名%<br>(%LOCALS:1%)</div>"
 		ELSEIF 部屋主配列:1 > 0
-			LOCALS += @"<div rect='{横位置 + 75},{縦位置 + 125},1000,362'>%CALLNAME:(部屋主配列:0)%의%商業区店割り配列:LOCAL:店舗名%<br>■점원 외{LOCAL:1 - 1}명<br> (%LOCALS:1%)</div>"
+			LOCALS += @"<div rect='{横位置 + 75},{縦位置 + 125},1000,362'>%CALLNAME:(部屋主配列:0)%의%商業区店割り配列:LOCAL:店舗名%<br>■점원 외{LOCAL:1 - 1}명<br>(%LOCALS:1%)</div>"
 		ELSE
-			LOCALS += @"<div rect='{横位置 + 75},{縦位置 + 125},1000,362'>%CALLNAME:(部屋主配列:0)%의%商業区店割り配列:LOCAL:店舗名%<br> (%LOCALS:1%)</div>"
+			LOCALS += @"<div rect='{横位置 + 75},{縦位置 + 125},1000,362'>%CALLNAME:(部屋主配列:0)%의%商業区店割り配列:LOCAL:店舗名%<br>(%LOCALS:1%)</div>"
 		ENDIF
 	ELSE
 		LOCALS += @"<div rect='{横位置},{縦位置},1125,587' border='31' bcolor='#333333'><button value='{LOCAL}'><img src='透過アイコン' srcb='透過アイコン_選択' height='587' width='1125'></button></div>"
@@ -1146,3 +1390,99 @@ NEXT
 HTML_PRINT LOCALS, 1
 
 RETURN (VARSIZE("商業区店割り配列", 1) - 1) / 16
+
+
+
+
+@牧場エリア_特別飼育区_表示(ページ数, 空き部屋非ボタンフラグ = 0)
+#DIM ページ数
+#DIM 家最大数
+#DIM ループ用
+#DIM 縦位置
+#DIM 横位置
+#DIM 縦位置２
+#DIM 位置基準
+#DIM 空き部屋非ボタンフラグ
+#DIM 部屋主配列, 10
+
+VARSET LOCAL
+家最大数 = 特別飼育区広さ()
+FOR LOCAL, 499, 特別飼育区広さ() - 1, -1
+	IF 飼育区部屋割り配列:LOCAL != ""
+		家最大数 = LOCAL + 1 
+		BREAK
+	ENDIF
+NEXT
+
+LOCALS = <div rect='1375,0,5000,125'>
+IF ページ数 > 0
+	LOCALS += "<button value='1000'>[1000]이전 특별 사육 구역으로</button>　　　　　　　　　"
+ELSE
+	LOCALS += "　　　　　　　　　　　　　　　　　　　　　"
+ENDIF
+IF ページ数 < (家最大数 - 1) / 16
+	LOCALS += "<button value='1001'>[1001]다음 특별 사육 구역으로</button>"
+ENDIF
+LOCALS += "</div>"
+
+HTML_PRINT LOCALS
+VARSET LOCALS
+
+FOR LOCAL, (ページ数 * 16), (ページ数 * 16) + 16
+	SIF LOCAL >= 家最大数
+		BREAK
+	;部屋の居住者を配列化
+	VARSET 部屋主配列
+	VARSET RESULTS
+	SPLIT 飼育区部屋割り配列:LOCAL, "_", RESULTS
+	FOR ループ用, 0, RESULT
+		SIF RESULTS:ループ用 == ""
+			BREAK
+		部屋主配列:ループ用 = TOINT(RESULTS:ループ用)
+	NEXT
+
+	位置基準 = LOCAL - (ページ数 * 16)
+	縦位置 = 31 + (位置基準 / 4 * 625) + ((位置基準 / 4 + 1) / 2 * 175)
+	横位置 = 1375 + (位置基準 % 4) * 1187
+	縦位置２ = 562 + (位置基準 / 4 * 207) + ((位置基準 / 4) / 2 * 1011)
+	IF 部屋主配列:0 > 0
+		LOCAL:1 = 0
+		LOCAL:2 = 0
+		FOR ループ用, 0, 10
+			SIF 部屋主配列:ループ用 < 1
+				BREAK
+			LOCAL:2 ++
+			IF CFLAG:(部屋主配列:ループ用):現在位置 == LOCAL + 1000 && CFLAG:(部屋主配列:ループ用):現在マップ種別 == 大規模番号_牧場エリア
+				LOCAL:1 += 1
+			ENDIF
+		NEXT
+		IF LOCAL:1
+			LOCALS:1 = 재택 중
+			LOCALS:2 = #C0C000
+		ELSE
+			LOCALS:1 = 부재 중
+			LOCALS:2 = #C0C0C0
+		ENDIF
+		LOCALS += @"<div rect='{横位置},{縦位置},1125,587' border='31' bcolor='%LOCALS:2%'><button value='{LOCAL}'><img src='透過アイコン' srcb='透過アイコン_選択' height='587' width='1125'></button></div>"
+		LOCALS += @"<div width='500' height='125' xpos='{319 + 横位置}' ypos='{縦位置２}' color='#101010'></div>"
+		IF 部屋主配列:1 > 0
+			LOCALS += @"<div rect='{横位置 + 125},{縦位置 + 125},1000,362'>■집주인<br>%CALLNAME:(部屋主配列:0)%외{LOCAL:2 - 1}명<br>（%LOCALS:1%）</div>"
+		ELSE
+			LOCALS += @"<div rect='{横位置 + 125},{縦位置 + 125},1000,362'>■집주인<br>%CALLNAME:(部屋主配列:0)%<br>（%LOCALS:1%）</div>"
+		ENDIF
+	ELSE
+		IF 空き部屋非ボタンフラグ
+			LOCALS += @"<div rect='{横位置},{縦位置},1125,587' border='31' bcolor='#333333'><img src='透過アイコン' srcb='透過アイコン_選択' height='587' width='1125'></div>"
+			LOCALS += @"<div width='500' height='125' xpos='{319 + 横位置}' ypos='{縦位置２}' color='#101010'></div>"
+			LOCALS += @"<div rect='{横位置 + 125},{縦位置 + 125},1000,362'>빈집</div>"
+		ELSE
+			LOCALS += @"<div rect='{横位置},{縦位置},1125,587' border='31' bcolor='#333333'><button value='{LOCAL}'><img src='透過アイコン' srcb='透過アイコン_選択' height='587' width='1125'></button></div>"
+			LOCALS += @"<div width='500' height='125' xpos='{319 + 横位置}' ypos='{縦位置２}' color='#101010'></div>"
+			LOCALS += @"<div rect='{横位置 + 125},{縦位置 + 125},1000,362'>빈집</div>"
+		ENDIF
+	ENDIF
+NEXT
+
+HTML_PRINT LOCALS, 1
+
+RETURN (家最大数 - 1) / 16

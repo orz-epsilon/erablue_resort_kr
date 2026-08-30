@@ -84,10 +84,10 @@ RETURN 1
 ;-------------------------------------------------
 @MESSAGE_COM380_0_504
 
-PRINTFORML %CALLNAME:PLAYER%은(는)%CALLNAME:TARGET%\@ GET_TARGETNUM() > 1 ? 達 # \@와(과) 주사위 놀이를 했다.
+PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%\@ GET_TARGETNUM() > 1 ? 들 # \@과(와) 주사위 놀이를 했다.
 IF RFLAG:コマンド結果受渡し変数 > 0
-	PRINTFORML 백열하는 싸움의 결과, %CALLNAME:(RFLAG:コマンド結果受渡し変数)%이(가) 승리했다!
+	PRINTFORML 치열한 싸움의 결과, %CALLNAME:(RFLAG:コマンド結果受渡し変数)%이(가) 승리했다!
 ELSEIF RFLAG:コマンド結果受渡し変数 < 0
-	PRINTFORML 백열하는 싸움의 결과, %CALLNAME:MASTER%이(가) 승리했다!
+	PRINTFORML 치열한 싸움의 결과, %CALLNAME:MASTER%이(가) 승리했다!
 ENDIF
 

@@ -16,7 +16,7 @@ TFLAG:コマンドタイプ受渡 = COMTYPE("セクハラ")
 
 @COM_TOOLTIP_361
 LOCALS = <br>■하빈딜도<br>
-LOCALS += "이미 동의를 얻었고, 체격이 하빈급인 상대를<br>자신의 V, 혹은 A에 삽입시킨 채 옷 아래에 고정하는 커맨드. <br>같은 방에 있는 사람이 모두 함락되었을 때만 가능하지만, 함께 은밀 행동 중일 때는 같은 장소에 비함락 캐릭터가 있어도 가능."
+LOCALS += "이미 합의를 얻었고, 체격이 하빈급인 상대를<br>자신의 V, 혹은 A에 삽입시킨 채 옷 아래에 고정하는 커맨드. <br>동실자가 전원 함락된 때에만 가능하지만, 함께 은밀히 할 때는 같은 장소에 비함락 캐릭터가 있어도 가능."
 LOCALS += "<br>COM 타입: 성희롱<br>획득 소스: 없음"
 LOCALS += "<br>고유 획득 경험: 없음<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
@@ -46,7 +46,7 @@ IF GETBIT(TALENT:PLAYER:性別, 0) == 1 && TALENT:PLAYER:Ｖ感度 != -2
 	IF TEQUIP:PLAYER:膣 == 0
 		LOCALS = V 삽입
 		SIF TALENT:PLAYER:処女
-			LOCALS += "（처녀）"
+			LOCALS += "(처녀)"
 		PRINTBUTTONLC @"[1] %LOCALS%", 1
 		LOCAL += 1
 	ENDIF
@@ -55,7 +55,7 @@ IF TALENT:PLAYER:Ａ感度 != -2
 	IF TEQUIP:PLAYER:アナル == 0
 		LOCALS = A 삽입
 		SIF TALENT:PLAYER:Ａ処女
-			LOCALS += "（A 처녀）"
+			LOCALS += "(A 처녀)"
 		PRINTBUTTONLC @"[2] %LOCALS%", 2
 		LOCAL += 1
 	ENDIF
@@ -166,7 +166,7 @@ IF ABL:Ｃ感覚
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += ABL:Ｃ感覚 * 2
-	PRINTFORM C감각LV{ABL:Ｃ感覚}({ABL:Ｃ感覚 * 2})
+	PRINTFORM C 감각LV{ABL:Ｃ感覚}({ABL:Ｃ感覚 * 2})
 	＋表示フラグ = 1
 ENDIF
 
@@ -183,21 +183,21 @@ IF GETPALAMLV(PALAM:欲情, 5)
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += GETPALAMLV(PALAM:欲情, 5) * 3
-	PRINTFORM 욕정LV{GETPALAMLV(PALAM:欲情, 5)}({GETPALAMLV(PALAM:欲情, 5) * 3})
+	PRINTFORM 欲情LV{GETPALAMLV(PALAM:欲情, 5)}({GETPALAMLV(PALAM:欲情, 5) * 3})
 	＋表示フラグ = 1
 ENDIF
 ;恥じらい
 IF TALENT:羞恥心 > 0
 	PRINT  - 
 	実行値 -= 2
-	PRINT 수치심(2)
+	PRINT 羞恥心(2)
 	＋表示フラグ = 1
 ENDIF
 ;快感の否定
 IF TALENT:快感応答 < 0 && !TALENT:恋慕
 	PRINT  - 
 	実行値 -= 5
-	PRINT 쾌감의 부정(5)
+	PRINT 快感の否定(5)
 	＋表示フラグ = 1
 ENDIF
 ;恋慕
@@ -205,21 +205,21 @@ IF TALENT:恋慕
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += 15
-	PRINT 연모(15)
+	PRINT 恋慕(15)
 	＋表示フラグ = 1
 ELSE
 	;男嫌い（恋慕で無効）
 	IF TALENT:性別嗜好 & 1 && TALENT:PLAYER:性別 == 2
 		PRINT  - 
 		実行値 -= 12
-		PRINT 남성혐오(12)
+		PRINT 男嫌い(12)
 		＋表示フラグ = 1
 	ENDIF
 	;女嫌い（恋慕で無効）
 	IF TALENT:性別嗜好 & 2 && TALENT:PLAYER:性別 == 1
 		PRINT  - 
 		実行値 -= 12
-		PRINT 여성혐오(12)
+		PRINT 女嫌い(12)
 		＋表示フラグ = 1
 	ENDIF
 ENDIF
@@ -228,21 +228,21 @@ IF TALENT:セフレ
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += 10
-	PRINT 섹스친구(10)
+	PRINT セフレ(10)
 	＋表示フラグ = 1
 ENDIF
 ;未陥落
 IF 陥落チェック_性的(TARGET) == 0
 	PRINT  - 
 	実行値 -= 10
-	PRINT 미함락(10)
+	PRINT 未陥落(10)
 	＋表示フラグ = 1
 ENDIF
 ;C経験
 IF EXP:Ｃ経験 < EXPLV:2
 	PRINT  - 
 	実行値 -= 15
-	PRINT C경험 부족(15)
+	PRINT Ｃ経験不足(15)
 	＋表示フラグ = 1
 ENDIF
 
@@ -250,7 +250,7 @@ ENDIF
 IF ABL:マゾ性感 < 3
 	PRINT  - 
 	実行値 -= 15
-	PRINT 마조 성감 부족(15)
+	PRINT マゾ性感不足(15)
 	＋表示フラグ = 1
 ENDIF
 
@@ -259,7 +259,7 @@ IF (TALENT:PLAYER:性別 & 3) == 3
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += 4
-	PRINT 후타나리(4)
+	PRINT ふたなり(4)
 	＋表示フラグ = 1
 ENDIF
 
@@ -268,7 +268,7 @@ IF TEQUIP:媚薬
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += 6
-	PRINT 최음제(6)
+	PRINT 媚薬(6)
 	＋表示フラグ = 1
 ENDIF
 
@@ -277,7 +277,7 @@ IF CFLAG:発情期フラグ < 0
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += 6
-	PRINT 발정 중(6)
+	PRINT 発情中(6)
 	＋表示フラグ = 1
 ENDIF
 
@@ -290,7 +290,7 @@ SIF 実行値 == 必要実行値
 	PRINT  = 
 SIF 実行値 > 必要実行値
 	PRINT  > 
-PRINTFORM 실행값{必要実行値}
+PRINTFORM 実行値{必要実行値}
 
 WAIT
 SKIPDISP 0
@@ -360,15 +360,15 @@ ENDIF
 
 IF MODE_存在判定_完全一致("ハーヴィンオナホ系", PLAYER, TARGET)
 	;実行時
-	PRINTFORM %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%을(를) 알몸으로 벗기고,
+	PRINTFORM %CALLNAME:PLAYER%は%CALLNAME:TARGET%を全裸に剥き、
 	SELECTCASE RFLAG:コマンド結果受渡し変数
 		CASE 1
-			PRINTL 끌어안게 하는 형태로 자신의 비열에 삽입시켰다……
+			PRINTL 안게 하는 형태로 자신의 은밀한 틈에 삽입시켰다……
 		CASE 2
-			PRINTL 등에 끌어안게 하는 형태로 자신의 항문에 삽입시켰다……
+			PRINTL 등에 안게 하는 형태로 자신의 항문에 삽입시켰다……
 	ENDSELECT
 	PRINTFORML 그대로%CALLNAME:TARGET%을(를) 밀착시키듯이 몸에 고정하고, 옷 아래에 숨겼다.
 ELSE
 	;解除時
-	PRINTFORML %CALLNAME:PLAYER%은(는) 옷을 벗고, 고정되어 있던%CALLNAME:TARGET%을(를) 해방했다.
+	PRINTFORML %CALLNAME:PLAYER%은(는) 옷을 벗고, 고정하고 있던%CALLNAME:TARGET%을(를) 해방했다.
 ENDIF

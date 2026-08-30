@@ -14,9 +14,9 @@ TFLAG:コマンドタイプ受渡 = COMTYPE("日常")
 
 @COM_TOOLTIP_604
 LOCALS = <br>■정주 권유<br>
-LOCALS += "상대를 주거 구역에 정주하지 않겠냐고 권유하는 커맨드. <br>"
-LOCALS += "성공 시, 주거 구역에 정주하게 된다. <br>"
-LOCALS += "<br>COM 타입: 일상<br>획득 소스: 없음"
+LOCALS += "상대를 거주구역에 정주하지 않겠냐고 권유하는 커맨드. <br>"
+LOCALS += "성공 시, 거주구역에 정주하게 된다. <br>"
+LOCALS += "<br>COM 타입: 일상<br>획득 출처: 없음"
 LOCALS += "<br>고유 획득 경험: 없음<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
@@ -25,19 +25,19 @@ TSTR:ツールチップ受渡 = %LOCALS%
 
 ;定住エリアが一杯
 IF 定住エリア満杯()
-	PRINTW 주거 구역은 현재 만원인 것 같다……
+	PRINTW 거주구역은 현재 만원인 것 같다……
 	RETURN -1
 ENDIF
 
 DRAWLINE
-PRINTFORML %CALLNAME:TARGET%을(를) 주거 구역으로 정주하도록 권유하시겠습니까?
+PRINTFORML %CALLNAME:TARGET%을(를) 거주구역으로 정주하도록 권유하시겠습니까?
 PRINTFORML 남은 방 수: {RFLAG:定住枠残りカウント, 3}개
 DRAWLINE
 
 
 PRINTBUTTON "[0]예", 0
 PRINTL
-PRINTBUTTON "[1]아니요", 1
+PRINTBUTTON "[1]아니오", 1
 PRINTL
 $INPUT_LOOP
 BINPUT
@@ -111,10 +111,10 @@ RETURN 1
 
 IF RFLAG:コマンド結果受渡し変数
 	;成功
-	PRINTFORML %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%의 권유에 응해, 주거 구역에 정주하게 되었다!
+	PRINTFORML %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%의 권유에 응해, 거주구역에 정주하게 되었다!
 ELSE
 	;失敗
-	PRINTFORML %CALLNAME:TARGET%은(는) 아직 여기에 정주할 마음이 없는 것 같다……
+	PRINTFORML %CALLNAME:TARGET%은(는) 아직 여기에 정주할 생각은 없는 것 같다……
 ENDIF
 
 

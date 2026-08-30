@@ -1,0 +1,124 @@
+
+@アメニティ変更(配置番号)
+#DIM 配置番号
+
+DRAWLINE
+PRINTL 설치할 어메니티를 선택해주세요.
+PRINT 설정 중인 어메니티:
+IF 配置アメニティ:配置番号 > 0
+	TSTR:コマンド名受渡 = 
+	TSTR:ツールチップ受渡 = 
+	CALLFORM アメニティ_%ERDNAME(アメニティ, 配置アメニティ:配置番号)%("名前取得", アメニティ:(配置アメニティ:配置番号))
+	IF TSTR:ツールチップ受渡 != ""
+		HTML_PRINT @"<nonbutton  title='%TSTR:ツールチップ受渡%'>%TSTR:コマンド名受渡%</nonbutton>", 1
+		PRINTL
+	ELSE
+		PRINTFORML %TSTR:コマンド名受渡%
+	ENDIF
+ELSE
+	PRINTL ----------
+ENDIF
+DRAWLINE
+FOR LOCAL, 1, VARSIZE("アメニティ")
+	SIF アメニティ:LOCAL < 1
+		CONTINUE
+	SIF MATCH(配置アメニティ, LOCAL)
+		CONTINUE
+	TSTR:コマンド名受渡 = 
+	TSTR:ツールチップ受渡 = 
+	CALLFORM アメニティ_%ERDNAME(アメニティ, LOCAL)%("名前取得", アメニティ:LOCAL)
+	IF TSTR:ツールチップ受渡 != ""
+		HTML_PRINT @"<button value='{LOCAL}' title='%TSTR:ツールチップ受渡%'>[{LOCAL}] %TSTR:コマンド名受渡%</button>", 1
+		PRINTL
+	ELSE
+		HTML_PRINT @"<button value='{LOCAL}'>[{LOCAL}] %TSTR:コマンド名受渡%</button>", 1
+		PRINTL
+	ENDIF
+NEXT
+PRINTL
+IF 配置アメニティ:配置番号 > 0
+	PRINTBUTTON "[998] 설정 중인 설비를 제외", 998
+	PRINTL
+ELSE
+	SETCOLOR カラーパレット("グレーアウト")
+	PRINTPLAIN [998] 설정 중인 설비를 제외
+	RESETCOLOR
+	PRINTL
+ENDIF
+PRINTBUTTON "[999] 돌아가기", 999
+PRINTL
+PRINTL
+BINPUT
+PRINTL
+PRINTL
+SELECTCASE RESULT
+	CASE 999
+		RETURN 0
+	CASE 998
+		TSTR:コマンド名受渡 = 
+		TSTR:ツールチップ受渡 = 
+		CALLFORM アメニティ_%ERDNAME(アメニティ, 配置アメニティ:配置番号)%("名前取得", アメニティ:(配置アメニティ:配置番号))
+		PRINTFORMW 어메니티 「%TSTR:コマンド名受渡%」을(를) 해제했습니다.
+		配置アメニティ:配置番号 = 0
+	CASEELSE
+		配置アメニティ:配置番号 = RESULT
+		TSTR:コマンド名受渡 = 
+		TSTR:ツールチップ受渡 = 
+		CALLFORM アメニティ_%ERDNAME(アメニティ, 配置アメニティ:配置番号)%("名前取得", アメニティ:(配置アメニティ:配置番号))
+		DRAWLINE
+		PRINTFORML 어메니티 「%TSTR:コマンド名受渡%」을(를) 설치했습니다.
+		IF TSTR:ツールチップ受渡 != ""
+			DRAWLINE
+			HTML_PRINT TSTR:ツールチップ受渡
+			DRAWLINE
+		ENDIF
+		WAIT
+ENDSELECT
+
+
+@アメニティ_入浴セット系列(動作モード, Lv指定 = 1)
+#DIMS 動作モード
+#DIM Lv指定
+
+SELECTCASE Lv指定
+	CASE 1
+		SELECTCASE 動作モード
+			CASE "名前取得"
+				TSTR:コマンド名受渡 = 입욕 세트
+				TSTR:ツールチップ受渡 = 평범한 입욕 세트. <br>
+				TSTR:ツールチップ受渡 += "유카타나 목욕 타월 등 필요 최소한의 입욕 용품이 한데 모여 있습니다. <br>"
+				;価格を返す
+				RETURN 3000
+		ENDSELECT
+	CASE 2
+		SELECTCASE 動作モード
+			CASE "名前取得"
+				TSTR:コマンド名受渡 = 고급 입욕 세트
+				TSTR:ツールチップ受渡 = 조금 고급스러운 입욕 세트. <br>
+				TSTR:ツールチップ受渡 += "유카타나 목욕 타월, 면도기 외에 화장수나 드라프용 각질 제거 천 등이 준비되어 있습니다. <br>"
+				TSTR:ツールチップ受渡 += "화장수는 로션 타입으로 점막에 닿아도 괜찮은 종류입니다. <br>"
+				;価格を返す
+				RETURN 20000
+		ENDSELECT
+ENDSELECT
+
+RETURN -1
+
+
+@アメニティ_遊戯場クーポン系列(動作モード, Lv指定 = 1)
+#DIMS 動作モード
+#DIM Lv指定
+
+SELECTCASE Lv指定
+	CASE 1
+		SELECTCASE 動作モード
+			CASE "名前取得"
+				TSTR:コマンド名受渡 = 유희장 3게임 무료 이용권
+				TSTR:ツールチップ受渡 = 유희장에서 놀 때 몇 번 무료로 이용할 수 있는 쿠폰입니다. <br>
+				TSTR:ツールチップ受渡 += "설치하면 관광객이 유원지에 방문하기 쉬워진다。<br>"
+				;価格を返す
+				RETURN 4000
+		ENDSELECT
+ENDSELECT
+
+RETURN -1

@@ -1,7 +1,7 @@
 
 @RAPE_COMNAME_S9_1
 #FUNCTIONS
-TSTR:コマンド名受渡 = 혀를 비집어 넣다
+TSTR:コマンド名受渡 = 혀를 비집어 넣기
 
 ;===================================================
 ;コマンドタイプ
@@ -12,10 +12,10 @@ TFLAG:コマンドタイプ受渡 = RAPE_COMTYPE("うふふ_被挿入中")
 
 
 @RAPE_COM_TOOLTIP_S9_1
-LOCALS = <br>■혀를 비집어 넣다<br>
-LOCALS += "키스하는 상대의 입안에 혀를 비집어 넣어 얽히게 한다. <br>딥 키스 모드로 이행. <br>[혀놀림][고양이 혀]에 따라 효과가 증감."
-LOCALS += "<br>RAPE_COM 타입: 우후후or피삽입중or성희롱<br>획득 소스: 노출・접촉・쾌S・불결・고통(일정 조건 시)"
-LOCALS += "<br>고유 획득 경험: 키스 경험(당신・TARGET)<br>"
+LOCALS = <br>■혀를 비집어 넣기<br>
+LOCALS += "키스하는 상대의 입안에 혀를 비집어 넣어 얽히게 한다. <br>딥 키스 모드로 이행. <br>[혀놀림][고양이혀]에 따라 효과가 증감."
+LOCALS += "<br>RAPE_COM 타입：우후후or피삽입중or성희롱<br>획득 소스：노출・접촉・쾌S・불결・고통(일정조건시)"
+LOCALS += "<br>고유 획득 경험：키스 경험(당신・TARGET)<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
 @RAPE_COM_S9_1
@@ -106,11 +106,11 @@ RETURN 1
 ;-------------------------------------------------
 @RAPE_MESSAGE_COM_S9_1
 
-PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%의 입술 틈새%TEXTR("에 혀를 비집어 넣고/를 혀로 벌려")%, %CALLNAME:TARGET%의 %TEXTR("구강을 구석구석 핥아 돌았다/혀의 감촉을 만끽했다/")%…
+PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%의 입술 틈새%TEXTR("로 혀를 비집고 들어가/를 혀로 벌려")%、%CALLNAME:TARGET%의%TEXTR("구강을 구석구석 핥아 돌았다/혀의 감촉을 만끽했다/")%…
 
 ;朦朧を前提としているので
 IF CFLAG:TARGET:発情期フラグ < 0
-	PRINTFORML 억지로 범하고 있음에도 불구하고, 발정으로 몽롱해진 %CALLNAME:TARGET%은(는) 무의식적으로 %CALLNAME:PLAYER%에게 아양을 떨며, 느릿느릿 스스로 혀를 얽히게 하고 있다…
+	PRINTFORML 억지로 범하고 있음에도 불구하고, 발정으로 몽롱해진 %CALLNAME:TARGET%은(는) 무의식적으로 %CALLNAME:PLAYER%에게 아양을 떨며, 느릿느릿 스스로 혀를 얽어오고 있다…
 ELSEIF PALAM:欲情 >= PALAMLV:4
-	PRINTFORML 억지로 범하고 있음에도 불구하고, 욕정으로 몽롱해진 %CALLNAME:TARGET%은(는) 무의식적으로 %CALLNAME:PLAYER%에게 아양을 떨며, 쾌락을 찾아 스스로 혀를 얽히게 하고 있다…
+	PRINTFORML 억지로 범하고 있음에도 불구하고, 욕정으로 몽롱해진 %CALLNAME:TARGET%은(는) 무의식적으로 %CALLNAME:PLAYER%에게 아양을 떨며, 쾌락을 찾아 스스로 혀를 얽어오고 있다…
 ENDIF

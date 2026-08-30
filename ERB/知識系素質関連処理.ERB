@@ -5,104 +5,104 @@ IF ARG == MASTER
 	SELECTCASE EXP:MASTER:会話経験
 		CASE IS >= 5000
 			IF ABL:MASTER:話術技能 <= 9
-				PRINTFORML %CALLNAME:MASTER%의 화술 기능이 Lv10이 되었다!
+				PRINTFORML %CALLNAME:MASTER%의화술 기술이(가) Lv10이(가) 되었다!
 				ABL:MASTER:話術技能 = 10
 			ENDIF
 		CASE IS >= 2500
 			IF ABL:MASTER:話術技能 <= 8
-				PRINTFORML %CALLNAME:MASTER%의 화술 기능이 Lv9이 되었다!
+				PRINTFORML %CALLNAME:MASTER%의화술 기술이(가) Lv9이(가) 되었다!
 				ABL:MASTER:話術技能 = 9
 			ENDIF
 		CASE IS >= 1500
 			IF ABL:MASTER:話術技能 <= 7
-				PRINTFORML %CALLNAME:MASTER%의 화술 기능이 Lv8이 되었다!
+				PRINTFORML %CALLNAME:MASTER%의화술 기술이(가) Lv8이(가) 되었다!
 				ABL:MASTER:話術技能 = 8
 			ENDIF
 		CASE IS >= 1000
 			IF ABL:MASTER:話術技能 <= 6
-				PRINTFORML %CALLNAME:MASTER%의 화술 기능이 Lv7이 되었다!
+				PRINTFORML %CALLNAME:MASTER%의화술 기술이(가) Lv7이(가) 되었다!
 				ABL:MASTER:話術技能 = 7
 			ENDIF
 		CASE IS >= 750
 			IF ABL:MASTER:話術技能 <= 5
-				PRINTFORML %CALLNAME:MASTER%의 화술 기능이 Lv6이 되었다!
+				PRINTFORML %CALLNAME:MASTER%의화술 기술이(가) Lv6이(가) 되었다!
 				ABL:MASTER:話術技能 = 6
 			ENDIF
 		CASE IS >= 500
 			IF ABL:MASTER:話術技能 <= 4
-				PRINTFORML %CALLNAME:MASTER%의 화술 기능이 Lv5이 되었다!
+				PRINTFORML %CALLNAME:MASTER%의화술 기술이(가) Lv5이(가) 되었다!
 				ABL:MASTER:話術技能 = 5
 			ENDIF
 		CASE IS >= 300
 			IF ABL:MASTER:話術技能 <= 3
-				PRINTFORML %CALLNAME:MASTER%의 화술 기능이 Lv4이 되었다!
+				PRINTFORML %CALLNAME:MASTER%의화술 기술이(가) Lv4이(가) 되었다!
 				ABL:MASTER:話術技能 = 4
 			ENDIF
 		CASE IS >= 100
 			IF ABL:MASTER:話術技能 <= 2
-				PRINTFORML %CALLNAME:MASTER%의 화술 기능이 Lv3이 되었다!
+				PRINTFORML %CALLNAME:MASTER%의화술 기술이(가) Lv3이(가) 되었다!
 				ABL:MASTER:話術技能 = 3
 			ENDIF
 		CASE IS >= 30
 			IF ABL:MASTER:話術技能 <= 1
-				PRINTFORML %CALLNAME:MASTER%의 화술 기능이 Lv2이 되었다!
+				PRINTFORML %CALLNAME:MASTER%의화술 기술이(가) Lv2이(가) 되었다!
 				ABL:MASTER:話術技能 = 2
 			ENDIF
 		CASE IS >= 5
 			IF ABL:MASTER:話術技能 <= 0
-				PRINTFORML %CALLNAME:MASTER%의 화술 기능이 Lv1이 되었다!
+				PRINTFORML %CALLNAME:MASTER%의화술 기술이(가) Lv1이(가) 되었다!
 				ABL:MASTER:話術技能 = 1
 			ENDIF
 	ENDSELECT
 	SELECTCASE EXP:MASTER:釣り経験
 		CASE IS >= 1000
 			IF ABL:MASTER:釣り技能 <= 9
-				PRINTFORML %CALLNAME:MASTER%의 낚시 기능이 Lv10이 되었다!
+				PRINTFORML %CALLNAME:MASTER%의낚시 기술이(가) Lv10이(가) 되었다!
 				ABL:MASTER:釣り技能 = 10
 			ENDIF
 		CASE IS >= 800
 			IF ABL:MASTER:釣り技能 <= 8
-				PRINTFORML %CALLNAME:MASTER%의 낚시 기능이 Lv9이 되었다!
+				PRINTFORML %CALLNAME:MASTER%의낚시 기술이(가) Lv9이(가) 되었다!
 				ABL:MASTER:釣り技能 = 9
 			ENDIF
 		CASE IS >= 650
 			IF ABL:MASTER:釣り技能 <= 7
-				PRINTFORML %CALLNAME:MASTER%의 낚시 기능이 Lv8이 되었다!
+				PRINTFORML %CALLNAME:MASTER%의낚시 기술이(가) Lv8이(가) 되었다!
 				ABL:MASTER:釣り技能 = 8
 			ENDIF
 		CASE IS >= 500
 			IF ABL:MASTER:釣り技能 <= 6
-				PRINTFORML %CALLNAME:MASTER%의 낚시 기능이 Lv7이 되었다!
+				PRINTFORML %CALLNAME:MASTER%의낚시 기술이(가) Lv7이(가) 되었다!
 				ABL:MASTER:釣り技能 = 7
 			ENDIF
 		CASE IS >= 350
 			IF ABL:MASTER:釣り技能 <= 5
-				PRINTFORML %CALLNAME:MASTER%의 낚시 기능이 Lv6이 되었다!
+				PRINTFORML %CALLNAME:MASTER%의낚시 기술이(가) Lv6이(가) 되었다!
 				ABL:MASTER:釣り技能 = 6
 			ENDIF
 		CASE IS >= 200
 			IF ABL:MASTER:釣り技能 <= 4
-				PRINTFORML %CALLNAME:MASTER%의 낚시 기술이 Lv5가 되었다!
+				PRINTFORML %CALLNAME:MASTER%의낚시 기술이(가) Lv5이(가) 되었다!
 				ABL:MASTER:釣り技能 = 5
 			ENDIF
 		CASE IS >= 100
 			IF ABL:MASTER:釣り技能 <= 3
-				PRINTFORML %CALLNAME:MASTER%의 낚시 기술이 Lv4가 되었다!
+				PRINTFORML %CALLNAME:MASTER%의낚시 기술이(가) Lv4이(가) 되었다!
 				ABL:MASTER:釣り技能 = 4
 			ENDIF
 		CASE IS >= 50
 			IF ABL:MASTER:釣り技能 <= 2
-				PRINTFORML %CALLNAME:MASTER%의 낚시 기술이 Lv3이 되었다!
+				PRINTFORML %CALLNAME:MASTER%의낚시 기술이(가) Lv3이(가) 되었다!
 				ABL:MASTER:釣り技能 = 3
 			ENDIF
 		CASE IS >= 20
 			IF ABL:MASTER:釣り技能 <= 1
-				PRINTFORML %CALLNAME:MASTER%의 낚시 기술이 Lv2가 되었다!
+				PRINTFORML %CALLNAME:MASTER%의낚시 기술이(가) Lv2이(가) 되었다!
 				ABL:MASTER:釣り技能 = 2
 			ENDIF
 		CASE IS >= 5
 			IF ABL:MASTER:釣り技能 <= 0
-				PRINTFORML %CALLNAME:MASTER%의 낚시 기술이 Lv1이 되었다!
+				PRINTFORML %CALLNAME:MASTER%의낚시 기술이(가) Lv1이(가) 되었다!
 				ABL:MASTER:釣り技能 = 1
 			ENDIF
 	ENDSELECT
@@ -111,27 +111,27 @@ ENDIF
 SELECTCASE EXP:ARG:マッサージ施術経験
 	CASE IS >= 1000
 		IF ABL:ARG:マッサージ技能 <= 4
-			PRINTFORML %CALLNAME:ARG%의 마사지 기술이 Lv5가 되었다!
+			PRINTFORML %CALLNAME:ARG%의마사지 기술이(가) Lv5이(가) 되었다!
 			ABL:ARG:マッサージ技能 = 5
 		ENDIF
 	CASE IS >= 650
 		IF ABL:ARG:マッサージ技能 <= 3
-			PRINTFORML %CALLNAME:ARG%의 마사지 기술이 Lv4가 되었다!
+			PRINTFORML %CALLNAME:ARG%의마사지 기술이(가) Lv4이(가) 되었다!
 			ABL:ARG:マッサージ技能 = 4
 		ENDIF
 	CASE IS >= 350
 		IF ABL:ARG:マッサージ技能 <= 2
-			PRINTFORML %CALLNAME:ARG%의 마사지 기술이 Lv3이 되었다!
+			PRINTFORML %CALLNAME:ARG%의마사지 기술이(가) Lv3이(가) 되었다!
 			ABL:ARG:マッサージ技能 = 3
 		ENDIF
 	CASE IS >= 100
 		IF ABL:ARG:マッサージ技能 <= 1
-			PRINTFORML %CALLNAME:ARG%의 마사지 기술이 Lv2가 되었다!
+			PRINTFORML %CALLNAME:ARG%의마사지 기술이(가) Lv2이(가) 되었다!
 			ABL:ARG:マッサージ技能 = 2
 		ENDIF
 	CASE IS >= 20
 		IF ABL:ARG:マッサージ技能 <= 0
-			PRINTFORML %CALLNAME:ARG%의 마사지 기술이 Lv1이 되었다!
+			PRINTFORML %CALLNAME:ARG%의마사지 기술이(가) Lv1이(가) 되었다!
 			ABL:ARG:マッサージ技能 = 1
 		ENDIF
 ENDSELECT
@@ -146,7 +146,7 @@ FOR LOCAL, 1, 100
 	LOCAL:1 = POWER(10, 知識素質:ARG:LOCAL) * 100
 	IF 知識素質:ARG:(LOCAL + 100) >= LOCAL:1
 		知識素質:ARG:LOCAL += 1
-		PRINTFORMW %CALLNAME:ARG%은(는) [%ERDNAME(知識素質, LOCAL)%Lv{知識素質:ARG:LOCAL}]를 습득했다!
+		PRINTFORMW %CALLNAME:ARG%은(는) [%ERDNAME(知識素質, LOCAL)%Lv{知識素質:ARG:LOCAL}]을(를) 습득했다!
 		;知識成長口上
 		TRYCALLFORM KOJO_SKILLUP_知識素質_{NO:ARG}(ARG, LOCAL)
 		;経験値を0に戻す
@@ -156,15 +156,15 @@ NEXT
 
 ;買春経験が10を超えた場合
 IF EXP:PLAYER:買春経験 >= 10 && あなた特殊能力:ルピえっち交渉術 < 1
-	PRINTFORML 말을 거는 방법이나 싫어하지 않는 대화의 시작 방법, 원하는 말을 이끌어내는 기술…….
-	PRINTFORMW 지금까지 수많은 직원에게 루피로 야한 짓을 시켜온 %CALLNAME:PLAYER%은, 이러한 협상에 익숙해졌다는 실감을 느낀다…….
+	PRINTFORML 말을 거는 법, 싫어하지 않게 화제를 꺼내는 법, 원하는 말을 이끌어내는 기술…….
+	PRINTFORMW 지금까지 여러 명의 종업원에게 루피를 주고 야한 일을 시켜온 %CALLNAME:PLAYER%은(는) 이런 협상에 익숙해지고 있다는 실감을 느낍니다…….
 	PRINTL
 	PRINTFORM %CALLNAME:PLAYER%은(는)
 	SETCOLOR カラーパレット("赤ピンク")
 	PRINTFORM 루피 야한 협상술
 	RESETCOLOR
 	PRINTFORML 을(를) 익혔다!
-	PRINTFORMW 이거라면 직원이 아니더라도, 루피로 야한 짓을 하게 해달라고 교섭할 수 있을지도 모른다!
+	PRINTFORMW 이 정도면 종업원이 아니어도 루피를 주고 야한 일을 해달라고 협상할 수 있을지도 모른다!
 	あなた特殊能力:ルピえっち交渉術 = 1
 ENDIF
 
@@ -176,54 +176,56 @@ IF ARG == MASTER
 			IF あなた特殊能力:ハーレム < 4
 				DRAWLINE
 				PRINTFORML %CALLNAME:MASTER%은(는) 하렘의 극의를 깨달았다!
-				PRINTFORMW 능력[%GET_あなた特殊能力NAME(1, あなた特殊能力:ハーレム)%]이(가) 성장하여, [%GET_あなた特殊能力NAME(1, 4)%]에 눈떴다!
+				PRINTFORMW 능력 [%GET_あなた特殊能力NAME(1, あなた特殊能力:ハーレム)%]이 성장해 [%GET_あなた特殊能力NAME(1, 4)%]에 눈떴다!
 				あなた特殊能力:ハーレム = 4
 			ENDIF
 		CASE IS >= 5
 			IF あなた特殊能力:ハーレム < 3
 				DRAWLINE
 				PRINTFORML %CALLNAME:MASTER%은(는) 하렘 관리에 숙달했다!
-				PRINTFORMW 능력[%GET_あなた特殊能力NAME(1, あなた特殊能力:ハーレム)%]이(가) 성장하여, [%GET_あなた特殊能力NAME(1, 3)%]에 눈떴다!
+				PRINTFORMW 능력 [%GET_あなた特殊能力NAME(1, あなた特殊能力:ハーレム)%]이 성장해 [%GET_あなた特殊能力NAME(1, 3)%]에 눈떴다!
 				あなた特殊能力:ハーレム = 3
 			ENDIF
 		CASE IS >= 3
 			IF あなた特殊能力:ハーレム < 2
 				DRAWLINE
-				PRINTFORML %CALLNAME:MASTER%은(는) 하렘의 요령을 터득했다!
-				PRINTFORMW 능력[%GET_あなた特殊能力NAME(1, あなた特殊能力:ハーレム)%]이(가) 성장하여, [%GET_あなた特殊能力NAME(1, 2)%]에 눈떴다!
+				PRINTFORML %CALLNAME:MASTER%은(는) 하렘의 요령을 익혔다!
+				PRINTFORMW 능력 [%GET_あなた特殊能力NAME(1, あなた特殊能力:ハーレム)%]이 성장해 [%GET_あなた特殊能力NAME(1, 2)%]에 눈떴다!
 				あなた特殊能力:ハーレム = 2
 			ENDIF
 	ENDSELECT
 
 	;遊び人素質成長処理
-	SELECTCASE あなたセフレ人数()
-		CASE IS >= 10
-			IF あなた特殊能力:遊び人 < 4
-				DRAWLINE
-				PRINTFORML %CALLNAME:MASTER%은(는) 밤놀이의 극의를 깨달았다!
-				PRINTFORMW 능력[%GET_あなた特殊能力NAME(11, あなた特殊能力:遊び人)%]이(가) 성장하여, [%GET_あなた特殊能力NAME(11, 4)%]에 눈떴다!
-				あなた特殊能力:遊び人 = 4
-			ENDIF
-		CASE IS >= 5
-			IF あなた特殊能力:遊び人 < 3
-				DRAWLINE
-				PRINTFORML %CALLNAME:MASTER%은(는) 밤놀이에 숙달했다!
-				PRINTFORMW 능력[%GET_あなた特殊能力NAME(11, あなた特殊能力:遊び人)%]이(가) 성장하여, [%GET_あなた特殊能力NAME(11, 3)%]에 눈떴다!
-				あなた特殊能力:遊び人 = 3
-			ENDIF
-		CASE IS >= 3
-			IF あなた特殊能力:遊び人 < 2
-				DRAWLINE
-				PRINTFORML %CALLNAME:MASTER%은(는) 밤놀이의 요령을 터득했다!
-				PRINTFORMW 능력[%GET_あなた特殊能力NAME(11, あなた特殊能力:遊び人)%]이(가) 성장하여, [%GET_あなた特殊能力NAME(11, 2)%]에 눈떴다!
-				あなた特殊能力:遊び人 = 2
-			ENDIF
-	ENDSELECT
+	IF あなた特殊能力:遊び人 > 0
+		SELECTCASE あなたセフレ人数()
+			CASE IS >= 10
+				IF あなた特殊能力:遊び人 < 4
+					DRAWLINE
+					PRINTFORML %CALLNAME:MASTER%은(는) 밤놀이의 극의를 깨달았다!
+					PRINTFORMW 능력 [%GET_あなた特殊能力NAME(11, あなた特殊能力:遊び人)%]이 성장해 [%GET_あなた特殊能力NAME(11, 4)%]에 눈떴다!
+					あなた特殊能力:遊び人 = 4
+				ENDIF
+			CASE IS >= 5
+				IF あなた特殊能力:遊び人 < 3
+					DRAWLINE
+					PRINTFORML %CALLNAME:MASTER%은(는) 밤놀이에 숙달했다!
+					PRINTFORMW 능력 [%GET_あなた特殊能力NAME(11, あなた特殊能力:遊び人)%]이 성장해 [%GET_あなた特殊能力NAME(11, 3)%]에 눈떴다!
+					あなた特殊能力:遊び人 = 3
+				ENDIF
+			CASE IS >= 3
+				IF あなた特殊能力:遊び人 < 2
+					DRAWLINE
+					PRINTFORML %CALLNAME:MASTER%은(는) 밤놀이의 요령을 익혔다!
+					PRINTFORMW 능력 [%GET_あなた特殊能力NAME(11, あなた特殊能力:遊び人)%]이 성장해 [%GET_あなた特殊能力NAME(11, 2)%]에 눈떴다!
+					あなた特殊能力:遊び人 = 2
+				ENDIF
+		ENDSELECT
+	ENDIF
 
 	;触手技能成長処理
 	IF EXP:MASTER:触手操作経験 > 5000 && あなた特殊能力:触手変化術 < 5
 		DRAWLINE
-		PRINTFORML %CALLNAME:MASTER%은(는) 촉수 다루기를 통달했다!
+		PRINTFORML %CALLNAME:MASTER%은(는) 촉수 다루기를 극한까지 익혔다!
 		PRINTW 촉수 변화술의 레벨이 5로 상승했다!
 		あなた特殊能力:触手変化術 = 5
 	ELSEIF EXP:MASTER:触手操作経験 > 2500 && あなた特殊能力:触手変化術 < 4
@@ -233,21 +235,21 @@ IF ARG == MASTER
 		あなた特殊能力:触手変化術 = 4
 	ELSEIF EXP:MASTER:触手操作経験 > 1000 && あなた特殊能力:触手変化術 < 3
 		DRAWLINE
-		PRINTFORML %CALLNAME:MASTER%은(는) 촉수 다루기에 자신감을 가질 수 있게 되었다!
-		PRINTW 촉수 변화술의 레벨이 3으로 상승했다!
+		PRINTFORML %CALLNAME:MASTER%은(는) 촉수 다루기에 자신감을 가질 정도가 되었다!
+		PRINTW 촉수 변화술의 레벨이 3로 상승했다!
 		あなた特殊能力:触手変化術 = 3
 	ELSEIF EXP:MASTER:触手操作経験 > 300 && あなた特殊能力:触手変化術 < 2
 		DRAWLINE
-		PRINTFORML %CALLNAME:MASTER%은(는) 촉수 다루기의 요령을 터득했다!
+		PRINTFORML %CALLNAME:MASTER%은(는) 촉수 다루기의 요령을 익혔다!
 		PRINTW 촉수 변화술의 레벨이 2로 상승했다!
 		あなた特殊能力:触手変化術 = 2
 	ENDIF
 
 	;ギャンブラー成長
-	IF EXP:PLAYER:ギャンブル経験 > 50 && あなた特殊能力:ギャンブラー < 2
+	IF EXP:PLAYER:ギャンブル経験 > 50 && あなた特殊能力:ギャンブラー > 0 && あなた特殊能力:ギャンブラー < 2
 		DRAWLINE
-		PRINTFORML %CALLNAME:MASTER%은(는) 도박사의 분위기를 터득했다!
-		PRINTFORMW 능력[%GET_あなた特殊能力NAME(2, あなた特殊能力:ギャンブラー)%]이 성장하여, 능력[%GET_あなた特殊能力NAME(2, 2)%]에 눈떴다!
+		PRINTFORML %CALLNAME:MASTER%은(는) 도박사의 분위기를 익혔다!
+		PRINTFORMW 능력 [%GET_あなた特殊能力NAME(2, あなた特殊能力:ギャンブラー)%]이 성장해 능력 [%GET_あなた特殊能力NAME(2, 2)%]에 눈떴다!
 		あなた特殊能力:ギャンブラー = 2
 	ENDIF
 ENDIF
@@ -262,41 +264,41 @@ ENDIF
 SELECTCASE ARG
 	CASE -2
 		IF ツールチップフラグ
-			RETURNF "<br>知識レベル：マイナス<br>性行為そのものを知らない、理解していない状態。いわゆる無知シチュ。<br>特別な手段を用いない限り、レベルは上昇しない。<br>"
+			RETURNF "<br>지식 레벨: 마이너스<br>성행위 자체를 모르고 이해하지 못하는 상태. 이른바 무지 시추에이션.<br>특별한 수단을 사용하지 않는 한 레벨은 상승하지 않습니다.<br>"
 		ENDIF
-		RETURNF "無知"
+		RETURNF "무지"
 	CASE -1
 		IF ツールチップフラグ
-			RETURNF "<br>知識レベル：マイナス<br>性行為＝交尾のような認識をもつ状態。恋愛などは存在は知っていても、理解はしていない。<br>特別な手段を用いない限り、レベルは上昇しない。<br>"
+			RETURNF "<br>지식 레벨: 마이너스<br>성행위=교미 정도로 인식하는 상태. 연애 등의 존재는 알아도 이해하지는 못합니다.<br>특별한 수단을 사용하지 않는 한 레벨은 상승하지 않습니다.<br>"
 		ENDIF
-		RETURNF "獣並み"
+		RETURNF "짐승 수준"
 	CASE 0
 		IF ARG:1 > 0 && TALENT:(ARG:1):性的興味 > 0
 			IF ツールチップフラグ
-				RETURNF "<br>知識レベル：０<br>性的興味が強く、聞きかじりの知識は多いが正確な知識は少ない。<br>"
+				RETURNF "<br>지식 레벨: 0<br>성적 흥미가 강하고 주워들은 지식은 많지만 정확한 지식은 적습니다.<br>"
 			ENDIF
-			RETURNF "耳年増"
+			RETURNF "귀동냥으로 밝음"
 		ELSE
 			IF ツールチップフラグ
-				RETURNF "<br>知識レベル：０<br>性的な知識が少なく、経験も乏しい状態。<br>処女、あるいは未成年者などが多く該当する。<br>"
+				RETURNF "<br>지식 레벨: 0<br>성적 지식이 적고 경험도 부족한 상태.<br>처녀 또는 미성년자 등이 주로 해당합니다.<br>"
 			ENDIF
-			RETURNF "疎い"
+			RETURNF "서툼"
 		ENDIF
 	CASE 1
 		IF ツールチップフラグ
-			RETURNF "<br>知識レベル：１<br>正しく性知識があり、恋愛を楽しむ下地がある状態。<br>非処女、あるいは成人などが多く該当する。<br>"
+			RETURNF "<br>지식 레벨: 1<br>올바른 성 지식이 있고 연애를 즐길 바탕이 갖춰진 상태.<br>비처녀 또는 성인 등이 주로 해당합니다.<br>"
 		ENDIF
-		RETURNF "必要十分"
+		RETURNF "필요충분"
 	CASE 2
 		IF ツールチップフラグ
-			RETURNF "<br>知識レベル：２<br>マニアックな性知識にも精通しており、詳しく説明する能力がある状態。<br>"
+			RETURNF "<br>지식 레벨: 2<br>마니악한 성 지식에도 정통해 자세히 설명할 능력이 있는 상태.<br>"
 		ENDIF
-		RETURNF "有識者"
+		RETURNF "유식자"
 	CASE 3
 		IF ツールチップフラグ
-			RETURNF "<br>知識レベル：３<br>性について殆どのことを知り尽くしている状態。<br>"
+			RETURNF "<br>지식 레벨: 3<br>성에 관해 거의 모든 것을 알고 있는 상태.<br>"
 		ENDIF
-		RETURNF "百戦錬磨"
+		RETURNF "백전노장"
 ENDSELECT
 
 
@@ -390,3 +392,19 @@ IF 教師レベル保存:学習対象 > 0
 ENDIF
 
 知識素質:対象キャラ:(学習対象 + 100) += MAX(1, 入手経験値)
+
+
+@高貴知識_初期所持判定(対象キャラ)
+#FUNCTION
+#DIM 対象キャラ
+#DIMS 判定文字列, 30
+
+;対象キャラが初期に高貴をLv幾つ持っていたかを判定
+SPLIT CSVCSTR(NO:対象キャラ, GETNUM(CSTR, "知識素質設定")), " ", 判定文字列
+;全部チェック
+FOR LOCAL, 0, RESULT
+	IF STRFIND(判定文字列:LOCAL, "高貴") >= 0
+		SPLIT 判定文字列:LOCAL, "Lv", 判定文字列
+		RETURNF TOINT(判定文字列:1)
+	ENDIF
+NEXT

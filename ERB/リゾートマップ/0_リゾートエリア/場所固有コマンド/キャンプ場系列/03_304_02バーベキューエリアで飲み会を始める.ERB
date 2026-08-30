@@ -9,7 +9,7 @@ IF 施設改造度:3:0 == 0
 	TSTR:コマンド名受渡 = 
 	RETURNF 0
 ENDIF
-TSTR:コマンド名受渡 = 회식을 시작한다
+TSTR:コマンド名受渡 = 술자리를 시작한다
 RETURNF 1
 
 ;===================================================
@@ -49,10 +49,10 @@ RETURN 1
 @MESSAGE_COM381_0_304
 
 IF RFLAG:コマンド結果受渡し変数 == 1
-	PRINTFORM %CALLNAME:PLAYER%은(는)%CALLNAME:TARGET%
+	PRINTFORM %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%
 	SIF RFLAG:コマンド結果受渡し変数２ > 0
 		PRINT 들
-	PRINTL 와(과) 함께 회식을 시작했다.
+	PRINTL 과 함께 술자리를 시작했다.
 ELSE
-	PRINTFORM %CALLNAME:PLAYER%은(는)%CALLNAME:TARGET%을(를) 회식에 초대했지만, 거절당하고 말았다…
+	PRINTFORM %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%를 술자리에 초대했지만, 거절당하고 말았다…
 ENDIF

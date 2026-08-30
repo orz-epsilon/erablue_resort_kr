@@ -5,9 +5,13 @@
 #DIM ソートフラグ
 #DIM 表示のみフラグ
 #DIM 表示行数 = 20; 履歴の表示行数
-#DIMS CONST 表示文字列 = "通常能力", "性的能力", "戦闘能力", "キャラ解説", "血縁関係", "キャラ履歴"
+#DIM g_loop
+#DIM 画像数
+#DIM L_C
+#DIMS CONST 表示文字列 = "일반 능력", "성적 능력", "전투 능력", "캐릭터 해설", "혈연 관계", "기타 능력", "캐릭터 이력"
 
-$STATE_START
+;画像リソースを全解放
+SPRITEDISPOSEALL 0
 ;ツールチップ設定
 TOOLTIP_CUSTOM 1
 TOOLTIP_SETFONTSIZE 12
@@ -37,9 +41,35 @@ PRINTL
 PRINTL
 
 DRAWLINE
+L_C = LINECOUNT
+
+;大画像表示
+SIF CSTR:ARG:画像フォルダ == ""
+	CSTR:ARG:画像フォルダ '= GET_RESOURCES_BASE_FOLDER(ARG)
+
+VARSET RESULTS
+画像数 = ENUMFILES(@"resources/%CSTR:ARG:画像フォルダ%", "能力表示画面*.*", 0)
+IF 画像数 > 0
+	g_loop = 0
+	;リソース解放
+	SPRITEDISPOSE @"能力グラ{g_loop}"
+	GDISPOSE 4000 + g_loop
+	
+	LOCALS '= RESULTS:(RAND:画像数)
+	LOCALS '= SUBSTRING(LOCALS, STRFIND(LOCALS, "能力表示画面"), -1)
+	CALLF GCREATE_拡張子F(4000 + g_loop, @"%CSTR:ARG:画像フォルダ%/%LOCALS%")
+	IF スプライト作成(@"能力グラ{g_loop}", 4000 + g_loop, 1)
+		HTML_PRINT @"<div rect='6000, 0, 2310, 4460' padding='50' border='30' bcolor='#C0C0C0'><img src='能力グラ{g_loop}' width='2150' height='4300'></div>", 1
+	ENDIF
+ELSE
+	IF ENUMFILES(@"resources/%CSTR:ARG:画像フォルダ%", "短冊_デフォルト.*", 0) > 0
+		HTML_PRINT @"<div rect='6000, 0, 2410, 4460' padding='50' border='30' bcolor='#C0C0C0'>%短冊グラ表示用文字列関数(ARG, 1000, 2250)%</div>", 1
+	ENDIF
+ENDIF
 
 IF 能力表示 == 0
 	CALL 通常能力表示画面(ARG)
+	L_C = LINECOUNT - RESULT + 1
 ELSEIF 能力表示 == 1
 	CALL 性的能力表示画面(ARG)
 ELSEIF 能力表示 == 2
@@ -49,23 +79,32 @@ ELSEIF 能力表示 == 3
 ELSEIF 能力表示 == 4
 	CALL 血縁関係表示画面(ARG)
 ELSEIF 能力表示 == 5
+	CALL その他表示画面(ARG)
+ELSEIF 能力表示 == 6
 	CALL キャラ履歴表示画面(ARG)
 	イベント件数 = RESULT
-ELSEIF 能力表示 == 6
-	CALL デート履歴表示画面(ソートフラグ)
 ELSEIF 能力表示 == 7
+	CALL デート履歴表示画面(ソートフラグ)
+ELSEIF 能力表示 == 8
 	CALL 弱点の欠片表示画面(ソートフラグ)
 ENDIF
 
 
 ;CALL CHOICE_LOVE(ARG)
 PRINTL
+
+IF LINECOUNT - L_C < 40
+	FOR LOCAL, 0, 40 - (LINECOUNT - L_C)
+		PRINTL 
+	NEXT
+ENDIF
+
 DRAWLINE
 IF 能力表示 != 0
-	PRINTBUTTON "[90]통상 능력　　", 90
+	PRINTBUTTON "[90]일반 능력　　", 90
 ELSE
 	SETCOLOR カラーパレット("黄")
-	PRINTPLAIN [90]통상 능력　　
+	PRINTPLAIN [90]일반 능력　　
 	RESETCOLOR
 ENDIF
 IF 能力表示 != 1
@@ -86,10 +125,10 @@ IF TALENT:ARG:非戦闘キャラ == 0 && ARG != MASTER
 ENDIF
 IF EXISTFUNCTION(@"口上_ステータス画面_キャラ解説_{NO:ARG}")
 	IF 能力表示 != 3
-		PRINTBUTTON "[93]캐릭터 설명　　", 93
+		PRINTBUTTON "[93]캐릭터 해설　　", 93
 	ELSE
 		SETCOLOR カラーパレット("黄")
-		PRINTPLAIN [93]캐릭터 설명　　
+		PRINTPLAIN [93]캐릭터 해설　　
 		RESETCOLOR
 	ENDIF
 ENDIF
@@ -98,32 +137,39 @@ IF EXIST_FAMILY(CFLAG:ARG:人物番号)
 		PRINTBUTTON "[94]혈연관계　　", 94
 	ELSE
 		SETCOLOR カラーパレット("黄")
-		PRINTPLAIN [94]혈연관계　　
+		PRINTPLAIN [94]혈연 관계　　
 		RESETCOLOR
 	ENDIF
 ENDIF
 IF 能力表示 != 5
-	PRINTBUTTON "[95]캐릭터 이력　　", 95
+	PRINTBUTTON "[95]기타 능력　　", 95
 ELSE
 	SETCOLOR カラーパレット("黄")
-	PRINTPLAIN [95]캐릭터 이력　　
+	PRINTPLAIN [95]기타 능력　　
+	RESETCOLOR
+ENDIF
+IF 能力表示 != 6
+	PRINTBUTTON "[96]캐릭터 이력　　", 96
+ELSE
+	SETCOLOR カラーパレット("黄")
+	PRINTPLAIN [96]캐릭터 이력　　
 	RESETCOLOR
 ENDIF
 IF ARG == MASTER
-	IF 能力表示 != 6
-		PRINTBUTTON "[96]데이트 이력　", 96
+	IF 能力表示 != 7
+		PRINTBUTTON "[97]데이트 이력　", 97
 	ELSE
 		SETCOLOR カラーパレット("黄")
-		PRINTPLAIN [96]데이트 이력　
+		PRINTPLAIN [97]데이트 이력　
 		RESETCOLOR
 	ENDIF
 ENDIF
 IF ARG == MASTER
-	IF 能力表示 != 7
-		PRINTBUTTON "[97]약점 조각　", 97
+	IF 能力表示 != 8
+		PRINTBUTTON "[98]약점의 조각　", 98
 	ELSE
 		SETCOLOR カラーパレット("黄")
-		PRINTPLAIN [97]약점 조각　
+		PRINTPLAIN [98]약점의 조각　
 		RESETCOLOR
 	ENDIF
 ENDIF
@@ -154,7 +200,7 @@ IF TFLAG:調教モード == -1
 			SIF LOCAL:2 >= 0
 				LOCAL += MAX(GET_ALL_RESOURCES_FOLDERS(LOCAL:2), 0)
 			IF LOCAL > 0
-				PRINTBUTTONLC "[130]이미지 폴더 선택(상위)", 130
+				PRINTBUTTONLC @"[130]이미지 폴더 선택(상위)", 130
 				LOCAL = -1
 			ENDIF
 		ENDIF
@@ -175,6 +221,20 @@ ELSE
 	PRINTBUTTONLC "[142]동실 화면 표시 설정", 142
 	RESETCOLOR
 ENDIF
+IF ARG == MASTER && TFLAG:調教モード != -2 && FLAG:あなたキャラ化記録 > 0
+	IF EXISTFUNCTION(@"スタイル変更_{FLAG:あなたキャラ化記録}")
+		TRYCALLFORM スタイル変更_{FLAG:あなたキャラ化記録}(ARG, "スタイル名取得")
+		;変化可能なスタイルが２個以上ある場合に選択肢を表示
+		PRINT 　　　
+		IF MATCH(RESULTS, "") < VARSIZE("RESULTS") - 2
+			PRINTBUTTONLC "[115]스타일 변경", 115
+		ELSE
+			SETCOLOR 0x666666
+			PRINTPLAIN [115]스타일 변경(조건 미달)
+			RESETCOLOR
+		ENDIF
+	ENDIF
+ENDIF
 
 IF ARG != MASTER && TFLAG:調教モード != -2
 	PRINTL
@@ -182,9 +242,12 @@ IF ARG != MASTER && TFLAG:調教モード != -2
 		IF 能力表示 == 2
 			IF CFLAG:ARG:滞在期間 >= 0
 				PRINTL
-				PRINTBUTTONLC "[120]반지 장비 변경", 120
-				PRINTBUTTONLC "[121]귀걸이 장비 변경", 121
-				PRINTBUTTONLC "[122]직업의 증표 장비 변경", 122
+				SIF CFLAG:ARG:指輪変更禁止 == 0
+					PRINTBUTTONLC "[120]반지 장비 변경", 120
+				SIF CFLAG:ARG:耳飾り変更禁止 == 0
+					PRINTBUTTONLC "[121]귀 장식 장비 변경", 121
+				SIF CFLAG:ARG:ジョブ証変更禁止 == 0
+					PRINTBUTTONLC "[122]직업 증표 장비 변경", 122
 				PRINTL
 				PRINTBUTTONLC "[123]경험치 증가 아이템 사용", 123
 				PRINTL
@@ -197,7 +260,7 @@ IF ARG != MASTER && TFLAG:調教モード != -2
 						PRINTBUTTONLC "[115]스타일 변경", 115
 					ELSE
 						SETCOLOR 0x666666
-						PRINTPLAIN [115]스타일 변경(조건 미달성)
+						PRINTPLAIN [115]스타일 변경(조건 미달)
 						RESETCOLOR
 					ENDIF
 				ENDIF
@@ -226,9 +289,9 @@ IF TFLAG:調教モード == -2
 	PRINTL
 	PRINTL 이 캐릭터로 하시겠습니까?　
 	PRINTBUTTONLC "[990]예", 990
-	PRINTBUTTONLC "[991]아니요", 991
+	PRINTBUTTONLC "[991]아니오", 991
 ELSE
-	PRINTBUTTON "[999]돌아가기", 999
+	PRINTBUTTON "[999] 돌아가기", 999
 ENDIF
 PRINTL
 DO
@@ -247,7 +310,7 @@ SELECTCASE RESULT
 	CASE 101
 		能力表示現在ページ = 0
 		RETURN 101
-	CASE 90 TO 97
+	CASE 90 TO 98
 		能力表示 = RESULT - 90
 		能力表示現在ページ = 0
 		RESTART
@@ -320,6 +383,9 @@ SELECTCASE RESULT
 		RESTART
 	CASE 200
 		INVERTBIT 全表示フラグ:0, 0
+		RESTART
+	CASE 201
+		INVERTBIT 子供_詳細表示フラグ, 0
 		RESTART
 	CASE 301 TO 399
 		;性癖素質の無効化
@@ -431,6 +497,9 @@ SELECTCASE RESULT
 	CASE 1014 TO 1020
 		ソートフラグ = RESULT - 1014
 		RESTART
+	CASE 1021
+		INVERTBIT 履歴表示順保存, 0
+		RESTART
 ENDSELECT
 LOOP 1
 
@@ -450,6 +519,9 @@ ENDIF
 #DIM 同行キャラ番, 100
 #DIM 同行キャラ値, 100
 #DIMS Arrays = "同行キャラ番", "同行キャラ値"
+#DIM 縁結び数
+
+
 ;ここで立ち絵表示
 CALL 画像描画終了
 IF GETBIT(画像サイズ切り替えOPTION記憶, 1)
@@ -461,16 +533,16 @@ ENDIF
 VARSET 同行キャラ番
 VARSET 同行キャラ値
 
-LOCALS = □ 招待時同行キャラ □-----------------<br>
+LOCALS = □ 초대 시 동행 캐릭터 □-----------------<br>
 FOR LOCAL, 0, 100
 	同行キャラ番:LOCAL = 同行候補キャラ番号:ARG:LOCAL
 	同行キャラ値:LOCAL = 同行候補キャラ確率:ARG:LOCAL
 NEXT
-IF 同行キャラ番:15 > 0
+IF 同行キャラ番:10 > 0
 	;同行候補キャラが15人以上いる場合、確率の高い順でソートする
 	ARRAYMSORTEX 同行キャラ値, Arrays, 0
 ENDIF
-FOR LOCAL, 0, 15
+FOR LOCAL, 0, 10
 	IF 同行キャラ番:LOCAL < 1
 		BREAK
 	ENDIF
@@ -483,14 +555,36 @@ FOR LOCAL, 0, 15
 	[ENDIF]
 	LOCALS += "％<br>"
 NEXT
-SIF 同行キャラ番:15 > 0
-	LOCALS += @"　他、{(FINDELEMENT(同行キャラ番, 0) >  0 ? FINDELEMENT(同行キャラ番, 0)# 100) - 15}名<br>"
+SIF 同行キャラ番:10 > 0
+	LOCALS += @"　그 외 {(FINDELEMENT(同行キャラ番, 0) >  0 ? FINDELEMENT(同行キャラ番, 0)# 100) - 10}명<br>"
 
+
+VARSET 同行キャラ番
+縁結び数 = DT_SELECT("縁結びデータベース", @"対象キャラ１ = {CFLAG:ARG:人物番号} Or 対象キャラ２ = {CFLAG:ARG:人物番号}", "進展度 DESC", 同行キャラ番)
+IF 縁結び数 > 0
+	LOCALS += "<br>"
+	LOCALS += "□ 인연 맺기 상대 캐릭터 □-----------------<br>"
+	FOR LOCAL, 0, 5
+		SIF LOCAL >= 縁結び数
+			BREAK
+		LOCALS += @"　%CALLNAME:(FIND_CHARA_FROM_PERSON_ID(縁結び_相手人物番号取得(CFLAG:ARG:人物番号, 同行キャラ番:LOCAL))), 20, LEFT%"
+		LOCALS += @"（%DT_CELL_GETS("縁結びデータベース", 同行キャラ番:LOCAL, "縁結び種別", 1)%）"
+
+		LOCALS += @"{DT_CELL_GET("縁結びデータベース", 同行キャラ番:LOCAL, "進展度", 1), 3}"
+		LOCALS += "％<br>"
+	NEXT
+	SIF 縁結び数 > 5
+		LOCALS += @"　그 외 {縁結び数 - 5}명<br>"
+ENDIF
 
 LOCALS += "<br>"
 CALL PRINT_STATE_弱点コマンド(ARG, "998")
 LOCALS += @"%RESULTS%"
-L_C:0 = 360 / GETCONFIG("フォントサイズ") + STRCOUNT(LOCALS, "<br>")
+IF GETBIT(画像サイズ切り替えOPTION記憶, 1)
+	L_C:0 = 360 / GETCONFIG("フォントサイズ") + STRCOUNT(LOCALS, "<br>")
+ELSE
+	L_C:0 = 180 / GETCONFIG("フォントサイズ") + STRCOUNT(LOCALS, "<br>")
+ENDIF
 
 IF GETBIT(画像サイズ切り替えOPTION記憶, 1)
 	HTML_PRINT @"<div rect = '4000, 2393, 2500, 4375'>%LOCALS%</div>", 1
@@ -525,21 +619,15 @@ L_C:1 -= RESULT
 PRINTL
 IF ARG != MASTER
 	CALL PRINT_STATE_好感度詳細(ARG)
-	IF TALENT:ARG:従業員
-		CALL PRINT_STATE_仕事レベル表示(ARG)
-	ENDIF
-ELSE
-	CALL PRINT_STATE_仕事レベル表示(ARG)
-	CALL PRINT_ITEMCOUNT
-	CALL PRINT_STATE_あなた特殊能力
-	PRINTL
 ENDIF
 L_C:1 = LINECOUNT - L_C:1
-IF  L_C:0 > L_C:1
+
+IF L_C:0 > L_C:1
 	FOR LOCAL, 0, L_C:0 - L_C:1
 		PRINTL
 	NEXT
 ENDIF
+RETURN L_C:1
 
 @戦闘能力表示画面(ARG)
 #DIMS 装備証名
@@ -565,9 +653,9 @@ ELSE
 	LOCALS += @"<br><br><br><br><br><br><br><br><br>"
 ENDIF
 
-LOCALS += @"□探索経験・知識素質□<br>"
-LOCALS += @"　　　探索経験：{EXP:ARG:探索経験, 5}<br>"
-LOCALS += @"　同行勝利経験：{EXP:ARG:同行勝利経験, 5}<br>"
+LOCALS += @"□탐색 경험·지식 소질□<br>"
+LOCALS += @"　　　탐색 경험: {EXP:ARG:探索経験, 5}<br>"
+LOCALS += @"　동행 승리 경험: {EXP:ARG:同行勝利経験, 5}<br>"
 
 FOR ループ用, 1, 100
 	SIF ERDNAME(知識素質, ループ用) == ""
@@ -594,15 +682,18 @@ HTML_PRINT LOCALS
 PRINTFORM ■%NAME表示(ARG)%
 PRINTL
 PRINTL
-SIF 基礎BATTLE_STATE:ARG:Lv == 0
-	基礎BATTLE_STATE:ARG:Lv = 1
-LOCALS = <div rect='0,0,1125,2387'>□ ステータス □------<br>
+LOCALS = <div rect='0,0,1125,2387'>□ 상태 □------<br>
 LOCALS += @"Lv　　　　：{基礎BATTLE_STATE:ARG:Lv, 5}<br>"
 LOCALS += @"EXP 　　　：{基礎BATTLE_STATE:ARG:蓄積EXP, 5}<br>"
-LOCALS += @"　LvUPまで：{戦闘経験値テーブル:(基礎BATTLE_STATE:ARG:Lv - 1) - 基礎BATTLE_STATE:ARG:蓄積EXP, 5}<br>"
+LOCALS += @"　LvUP까지:"
+IF 基礎BATTLE_STATE:ARG:Lv >= 80
+	LOCALS += @"Lv 상한입니다<br>"
+ELSE
+	LOCALS += @"{戦闘経験値テーブル:(基礎BATTLE_STATE:ARG:Lv - 1) - 基礎BATTLE_STATE:ARG:蓄積EXP, 5}<br>"
+ENDIF
 IF 装備ステータス補正保存:ARG:属性
 	LOCALS:1 = %属性数値文字色変換_HTML(装備ステータス補正保存:ARG:属性 - 10)%
-	LOCALS += @"<font color='#%LOCALS:1%'>属性　　　：%属性数値文字列変換(装備ステータス補正保存:ARG:属性 - 10), 5%</font><br>"
+	LOCALS += @"<font color='#%LOCALS:1%'>속성　　　: %属性数値文字列変換(装備ステータス補正保存:ARG:属性 - 10), 5%</font><br>"
 	IF 基礎BATTLE_STATE:ARG:属性 == 装備ステータス補正保存:ARG:属性 - 10
 		LOCAL = 40
 		LOCAL:1 = 25
@@ -612,47 +703,47 @@ IF 装備ステータス補正保存:ARG:属性
 	ENDIF
 	IF 装備ステータス補正保存:ARG:属性 - 10 < 4
 		LOCALS:1 = %属性数値文字色変換_HTML(有利属性変換(装備ステータス補正保存:ARG:属性 - 10))%
-		LOCALS += @"<font color='#%LOCALS:1%'>　対%属性数値文字列変換(有利属性変換(装備ステータス補正保存:ARG:属性 - 10))%</font>　　공격력＋{LOCAL}％<br>"
+		LOCALS += @"<font color='#%LOCALS:1%'>　대 %属性数値文字列変換(有利属性変換(装備ステータス補正保存:ARG:属性 - 10))%</font>　　공격력＋{LOCAL}％<br>"
 		LOCALS:1 = %属性数値文字色変換_HTML(不利属性変換(装備ステータス補正保存:ARG:属性 - 10))%
-		LOCALS += @"<font color='#%LOCALS:1%'>　対%属性数値文字列変換(不利属性変換(装備ステータス補正保存:ARG:属性 - 10))%</font>　　공격력－{LOCAL:1}％<br>"
+		LOCALS += @"<font color='#%LOCALS:1%'>　대 %属性数値文字列変換(不利属性変換(装備ステータス補正保存:ARG:属性 - 10))%</font>　　공격력－{LOCAL:1}％<br>"
 	ELSEIF 装備ステータス補正保存:ARG:属性 - 10 < 6
 		LOCALS:1 = %属性数値文字色変換_HTML(有利属性変換(装備ステータス補正保存:ARG:属性 - 10))%
-		LOCALS += @"<font color='#%LOCALS:1%'>　対%属性数値文字列変換(有利属性変換(装備ステータス補正保存:ARG:属性 - 10))%</font>　　공격력＋{LOCAL}％<br>"
+		LOCALS += @"<font color='#%LOCALS:1%'>　대 %属性数値文字列変換(有利属性変換(装備ステータス補正保存:ARG:属性 - 10))%</font>　　공격력＋{LOCAL}％<br>"
 	ENDIF
 	SIF 基礎BATTLE_STATE:ARG:属性 == 装備ステータス補正保存:ARG:属性 - 10
-		LOCALS += @"　その他　공격력＋5％<br>"
+		LOCALS += @"　기타 공격력 +5％<br>"
 ELSE
 	LOCALS:1 = %属性数値文字色変換_HTML(基礎BATTLE_STATE:ARG:属性)%
-	LOCALS += @"<font color='#%LOCALS:1%'>属性　　　：%属性数値文字列変換(基礎BATTLE_STATE:ARG:属性), 5%</font><br>"
+	LOCALS += @"<font color='#%LOCALS:1%'>속성　　　: %属性数値文字列変換(基礎BATTLE_STATE:ARG:属性), 5%</font><br>"
 	IF 基礎BATTLE_STATE:ARG:属性 < 4
 		LOCALS:1 = %属性数値文字色変換_HTML(有利属性変換(基礎BATTLE_STATE:ARG:属性))%
-		LOCALS += @"<font color='#%LOCALS:1%'>　対%属性数値文字列変換(有利属性変換(基礎BATTLE_STATE:ARG:属性))%</font>　　공격력＋30％<br>"
+		LOCALS += @"<font color='#%LOCALS:1%'>　대 %属性数値文字列変換(有利属性変換(基礎BATTLE_STATE:ARG:属性))%</font>　　공격력＋30％<br>"
 		LOCALS:1 = %属性数値文字色変換_HTML(不利属性変換(基礎BATTLE_STATE:ARG:属性))%
-		LOCALS += @"<font color='#%LOCALS:1%'>　対%属性数値文字列変換(不利属性変換(基礎BATTLE_STATE:ARG:属性))%</font>　　공격력－30％<br>"
+		LOCALS += @"<font color='#%LOCALS:1%'>　대 %属性数値文字列変換(不利属性変換(基礎BATTLE_STATE:ARG:属性))%</font>　　공격력－30％<br>"
 	ELSEIF 基礎BATTLE_STATE:ARG:属性 < 6
 		LOCALS:1 = %属性数値文字色変換_HTML(有利属性変換(基礎BATTLE_STATE:ARG:属性))%
-		LOCALS += @"<font color='#%LOCALS:1%'>　対%属性数値文字列変換(有利属性変換(基礎BATTLE_STATE:ARG:属性))%</font>　　공격력＋30％<br>"
+		LOCALS += @"<font color='#%LOCALS:1%'>　대 %属性数値文字列変換(有利属性変換(基礎BATTLE_STATE:ARG:属性))%</font>　　공격력＋30％<br>"
 	ENDIF
 ENDIF
-LOCALS += @"得意武器　：%得意武器表示文字列(基礎BATTLE_STATE:ARG:得意武器), 5%<br>"
-LOCALS += @"タイプ　　：%タイプ数値文字列変換(基礎BATTLE_STATE:ARG:ステータスタイプ保存), 5%<br>"
-LOCALS += @"최대HP　：{基礎BATTLE_STATE:ARG:최대HP + 装備ステータス補正保存:ARG:최대HP, 5}<br>"
-LOCALS += @"최대MP　：{基礎BATTLE_STATE:ARG:최대MP + 装備ステータス補正保存:ARG:최대MP, 5}<br>"
-LOCALS += @"공격력　　：{基礎BATTLE_STATE:ARG:공격력 + 装備ステータス補正保存:ARG:공격력, 5}<br>"
-LOCALS += @"방어력　　：{基礎BATTLE_STATE:ARG:방어력 + 装備ステータス補正保存:ARG:방어력, 5}<br>"
-LOCALS += @"회복력　　：{基礎BATTLE_STATE:ARG:회복력 + 装備ステータス補正保存:ARG:회복력, 5}<br>"
-LOCALS += @"행동속도　：{基礎BATTLE_STATE:ARG:행동속도 + 装備ステータス補正保存:ARG:행동속도, 5}<br>"
-LOCALS += @"DA율　　　：{基礎BATTLE_STATE:ARG:DA율 + 装備ステータス補正保存:ARG:DA율, 5}\%<br>"
-LOCALS += @"TA율　　　：{基礎BATTLE_STATE:ARG:TA율 + 装備ステータス補正保存:ARG:TA율, 5}\%<br>"
-LOCALS += @"명중률　　：{基礎BATTLE_STATE:ARG:명중률 + 装備ステータス補正保存:ARG:명중률, 5}\%<br>"
-LOCALS += @"회피율　　：{基礎BATTLE_STATE:ARG:회피율 + 装備ステータス補正保存:ARG:회피율, 5}\%<br></div>"
+LOCALS += @"특기 무기　: %得意武器表示文字列(基礎BATTLE_STATE:ARG:得意武器), 5%<br>"
+LOCALS += @"타입　　: %タイプ表示関数(ARG), 5%<br>"
+LOCALS += @"최대 HP　: {MAX(1, 基礎BATTLE_STATE:ARG:最大ＨＰ + 装備ステータス補正保存:ARG:最大ＨＰ), 5}<br>"
+LOCALS += @"최대 MP　: {MAX(1, 基礎BATTLE_STATE:ARG:最大ＭＰ + 装備ステータス補正保存:ARG:最大ＭＰ), 5}<br>"
+LOCALS += @"공격력　　: {基礎BATTLE_STATE:ARG:攻撃力 + 装備ステータス補正保存:ARG:攻撃力, 5}<br>"
+LOCALS += @"방어력　　: {基礎BATTLE_STATE:ARG:防御力 + 装備ステータス補正保存:ARG:防御力, 5}<br>"
+LOCALS += @"회복력　　: {基礎BATTLE_STATE:ARG:回復力 + 装備ステータス補正保存:ARG:回復力, 5}<br>"
+LOCALS += @"행동 속도　: {基礎BATTLE_STATE:ARG:行動速度 + 装備ステータス補正保存:ARG:行動速度, 5}<br>"
+LOCALS += @"DA율　　　: {基礎BATTLE_STATE:ARG:DA率 + 装備ステータス補正保存:ARG:DA率, 5}\%<br>"
+LOCALS += @"TA율　　　: {基礎BATTLE_STATE:ARG:TA率 + 装備ステータス補正保存:ARG:TA率, 5}\%<br>"
+LOCALS += @"명중률　　: {基礎BATTLE_STATE:ARG:命中率 + 装備ステータス補正保存:ARG:命中率, 5}\%<br>"
+LOCALS += @"회피율　　: {基礎BATTLE_STATE:ARG:回避率 + 装備ステータス補正保存:ARG:回避率, 5}\%<br></div>"
 
 縦幅調整 = 787
 表示位置調整 = 0
 詳細文文字列受け渡し変数 = 
 LOCALS:1 = 
 IF 装備ステータス補正保存:ARG:装備指輪番号 == 0
-	LOCALS:1 += "なし<br>"
+	LOCALS:1 += "없음<br>"
 	LOCALS:1 += "<br>"
 	LOCALS:1 += "<br>"
 	LOCALS:1 += "<br>"
@@ -662,14 +753,14 @@ ELSE
 	LOCALS:1 += @"■%DT_CELL_GETS("所持指輪データベース", 装備ステータス補正保存:ARG:装備指輪番号, "指輪名", 1)%<br>%詳細文文字列受け渡し変数%<br>"
 	縦幅調整 = 787 + (MAX(0, HTML_STRINGLINES(LOCALS:1, 72) - 6) * 110)
 ENDIF
-LOCALS += @"<div rect='1250,{表示位置調整},3750,{縦幅調整}'>□ 装備指輪 □--------------------------------------------------<br>%LOCALS:1%"
+LOCALS += @"<div rect='1250,{表示位置調整},3750,{縦幅調整}'>□ 장비 반지 □--------------------------------------------------<br>%LOCALS:1%"
 LOCALS += "<br></div>"
 詳細文文字列受け渡し変数 = 
 表示位置調整 = 縦幅調整
 縦幅調整 = 787
 LOCALS:1 = 
 IF 装備ステータス補正保存:ARG:装備耳飾り番号 == 0
-	LOCALS:1 += "なし<br>"
+	LOCALS:1 += "없음<br>"
 	LOCALS:1 += "<br>"
 	LOCALS:1 += "<br>"
 	LOCALS:1 += "<br>"
@@ -679,13 +770,13 @@ ELSE
 	LOCALS:1 += @"■%DT_CELL_GETS("所持耳飾りデータベース", 装備ステータス補正保存:ARG:装備耳飾り番号, "耳飾り名", 1)%<br>%詳細文文字列受け渡し変数%<br>"
 	縦幅調整 = 787 + (MAX(0, HTML_STRINGLINES(LOCALS:1, 72) - 6) * 110)
 ENDIF
-LOCALS += @"<div rect='1250,{表示位置調整},3750,{縦幅調整}'>□ 装備耳飾り □------------------------------------------------<br>%LOCALS:1%"
+LOCALS += @"<div rect='1250,{表示位置調整},3750,{縦幅調整}'>□ 장비 귀걸이 □------------------------------------------------<br>%LOCALS:1%"
 LOCALS += "<br></div>"
 
 表示位置調整 += 縦幅調整
 詳細文文字列受け渡し変数 = 
 装備証名 = %DT_CELL_GETS("所持ジョブ証データベース", 装備ステータス補正保存:ARG:装備証番号, "ジョブ証名", 1)%
-LOCALS += @"<div rect='1250,{表示位置調整},3750,787'>□ ジョブの証 □------------------------------------------------<br>"
+LOCALS += @"<div rect='1250,{表示位置調整},3750,787'>□ 직업의 증표 □------------------------------------------------<br>"
 IF 装備ステータス補正保存:ARG:装備証番号
 	RESULT = 0
 	TRYCALLFORM 証関数_%DT_CELL_GETS("所持ジョブ証データベース", 装備ステータス補正保存:ARG:装備証番号, "ジョブ証名", 1)%("クラス名", ARG)
@@ -694,12 +785,12 @@ IF 装備ステータス補正保存:ARG:装備証番号
 	ELSE
 		LOCALS += @"%装備証名%<br>"
 	ENDIF
-	LOCALS += "説明："
+	LOCALS += "설명:"
 	TRYCALLFORM 証関数_%DT_CELL_GETS("所持ジョブ証データベース", 装備ステータス補正保存:ARG:装備証番号, "ジョブ証名", 1)%("フレーバー")
 	LOCALS += @"%詳細文文字列受け渡し変数%"
 	LOCALS += "</div>"
 ELSE
-	LOCALS += @"装備なし<br>"
+	LOCALS += @"장비 없음<br>"
 	LOCALS += "<br>"
 	LOCALS += "<br>"
 	LOCALS += "<br>"
@@ -710,19 +801,19 @@ LOCALS:1 =
 HTML_PRINT LOCALS, 1
 
 FOR LOCAL, 0, (表示位置調整 + 787) / 100
-	PRINTL
+	PRINTL 
 NEXT
 L_C = LINECOUNT
 LOCALS =
 
-LOCALS += "<div rect='0,0,5000,900'>□ 奥義・アビリティ □-------------------------------------------------------------------<br>"
+LOCALS += "<div rect='0,0,5000,900'>□ 오의·어빌리티 □-------------------------------------------------------------------<br>"
 VARSET RESULTS
 縦幅調整 = 1
 
 詳細文文字列受け渡し変数 = 
 CALL 奥義名呼び出し(ARG)
 CALL 奥義威力呼び出し(ARG)
-LOCALS += "　　　오의　　："
+LOCALS += "　　　오의　　:"
 IF OPTION変数:ツールチップ切り替え == 0
 	LOCALS += @"<nonbutton title='<br>%詳細文文字列受け渡し変数%<br>'>[%TSTR:コマンド名受渡%]</nonbutton>"
 ELSE
@@ -735,7 +826,7 @@ LOCALS += "<br>"
 VARSET RESULTS
 表示アビ数 = ENUMFUNCBEGINSWITH(@"固有アビ_{NO:ARG}_")
 IF 表示アビ数
-	LOCALS += "　고유어빌리티："
+	LOCALS += "고유 어빌리티:"
 	LOCAL = 16
 	FOR アビ番号, 0, 表示アビ数
 		TSTR:コマンド名受渡 = 
@@ -760,7 +851,7 @@ IF 表示アビ数
 	縦幅調整 ++
 ELSE
 	VARSET RESULTS
-	LOCALS += "범용 어빌리티："
+	LOCALS += "범용 어빌리티:"
 	LOCAL = 16
 	表示アビ数 = ENUMFUNCBEGINSWITH("汎用固有アビ_")
 	FOR アビ番号, 0, 表示アビ数
@@ -786,10 +877,10 @@ ELSE
 ENDIF
 
 IF 装備証名 == ""
-	LOCALS += "　証アビリティ：なし"
+	LOCALS += "　증표 어빌리티: 없음"
 ELSE
 	LOCAL:1 = 0
-	LOCALS += "　証アビリティ："
+	LOCALS += "　증표 어빌리티:"
 	VARSET RESULTS
 	LOCAL:1 = 0
 	表示アビ数 = ENUMFUNCBEGINSWITH(@"証アビ関数_%DT_CELL_GETS("所持ジョブ証データベース", 装備ステータス補正保存:ARG:装備証番号, "ジョブ証名", 1)%_")
@@ -870,12 +961,13 @@ ENDIF
 ; ENDIF
 
 危険日感知フラグ = 0
-SIF あなた特殊能力:朔望鑑定術 >= 1 && 発情期判定(ARG)
+SIF あなた特殊能力:朔望鑑定術 >= 1 && 発情期存在判定(ARG)
 	SETBIT 危険日感知フラグ, 0
 SIF あなた特殊能力:朔望鑑定術 >= 2 && GETBIT(TALENT:ARG:性別, 0) && TALENT:ARG:Ｖ感度 > -2
 	SETBIT 危険日感知フラグ, 1
 
 IF 危険日感知フラグ
+	;ここはサイクルを確認するための領域なので強制発情は意図的に無視する
 	IF GETBIT(危険日感知フラグ, 1)
 		PRINTL □ 위험일 □-------------------------------------------------------------------
 	ELSE
@@ -887,19 +979,19 @@ IF 危険日感知フラグ
 		危険日サイクル = PREG_CYCLE(ARG) - ABS(危険日サイクル)
 	IF TALENT:ARG:妊娠
 		SETCOLOR カラーパレット("ピンク")
-		PRINT 임신중
+		PRINT 임신 중
 		PRINT_IMG "えっちハート"
 	ELSE
 		SELECTCASE RISKY_DAY(ARG)
 			CASE -2
-				PRINT 임신불가
+				PRINT 임신 불가
 			CASE 2
 				IF GETBIT(危険日感知フラグ, 1)
-					LOCALS '= "超危険日"
-					SIF 発情期判定(ARG)
-						LOCALS += "・強発情中"
-				ELSEIF 発情期判定(ARG)
-					LOCALS '= "強発情中"
+					LOCALS '= "초위험일"
+					SIF 発情期存在判定(ARG)
+						LOCALS += "・강한 발정 중"
+				ELSEIF 発情期存在判定(ARG)
+					LOCALS '= "강한 발정 중"
 				ENDIF
 
 				SETCOLOR カラーパレット("赤ピンク")
@@ -907,40 +999,40 @@ IF 危険日感知フラグ
 				PRINTFORM %LOCALS%
 				PRINT_IMG "えっちハート"
 				RESETCOLOR
-				PRINTFORM 　\@ GETBIT(危険日感知フラグ, 1) ? 위험일 # 발정기 \@종료까지 2일 남았습니다.
+				PRINTFORM 　\@ GETBIT(危険日感知フラグ, 1) ? 위험일 # 발정기 \@ 종료까지 앞으로 2일
 			CASE 1
 				IF GETBIT(危険日感知フラグ, 1)
-					LOCALS '= "危険日"
-					SIF 発情期判定(ARG)
-						LOCALS += "・発情中"
-				ELSEIF 発情期判定(ARG)
-					LOCALS '= "発情中"
+					LOCALS '= "위험일"
+					SIF 発情期存在判定(ARG)
+						LOCALS += "・발정 중"
+				ELSEIF 発情期存在判定(ARG)
+					LOCALS '= "발정 중"
 				ENDIF
 
 				SETCOLOR カラーパレット("薄ピンク")
 				PRINTFORM %LOCALS%
 				PRINT_IMG "えっちハート"
 				RESETCOLOR
-				PRINTFORM 　\@ GETBIT(危険日感知フラグ, 1) ? 위험일 # 발정기 \@종료까지{1 + (危険日サイクル / 9 * 2), 2}일 남았습니다.
+				PRINTFORM 　\@ GETBIT(危険日感知フラグ, 1) ? 위험일 # 발정기 \@ 종료까지 앞으로 {1 + (危険日サイクル / 9 * 2), 2}일
 			CASE -1
 				IF GETBIT(危険日感知フラグ, 1) && GETBIT(TALENT:ARG:性別, 0) && TALENT:ARG:Ｖ感度 > -2
 					SETCOLOR 0xccffff
 					PRINT 안전일
 					RESETCOLOR
 				ENDIF
-				PRINTFORM 　\@ GETBIT(危険日感知フラグ, 1) ? 위험일 # 발정기 \@까지 {危険日サイクル, 2}일 남았습니다.
+				PRINTFORM 　\@ GETBIT(危険日感知フラグ, 1) ? 위험일 # 발정기 \@까지 앞으로 {危険日サイクル, 2}일
 			CASEELSE
-				PRINTFORM 　\@ GETBIT(危険日感知フラグ, 1) ? 위험일 # 발정기 \@까지 {危険日サイクル, 2}일 남았습니다.
+				PRINTFORM 　\@ GETBIT(危険日感知フラグ, 1) ? 위험일 # 발정기 \@까지 앞으로 {危険日サイクル, 2}일
 		ENDSELECT
 	ENDIF
 	RESETCOLOR
 	IF TCVAR:ARG:排卵誘発薬
 		SETCOLOR カラーパレット("えっちな色")
-		PRINT (배란 유도 중!)
+		PRINT （배란 유도 중!）
 		RESETCOLOR
 	ELSEIF TCVAR:ARG:避妊薬
 		SETCOLOR 0xccffff
-		PRINT (피임 중)
+		PRINT （피임 중）
 		RESETCOLOR
 	ENDIF
 	PRINTL
@@ -951,7 +1043,7 @@ IF ARG != MASTER
 	IF 干渉強化変数:ARG:干渉種類 > 0
 		LOCALS = <div rect='112,0,3750,375'>
 		CALLFORM 干渉強化関数_{干渉強化変数:ARG:干渉種類}("名前")
-		LOCALS += @"■%TSTR:コマンド名受渡%　ランク：%TOFULL(TOSTR(干渉強化変数:ARG:干渉ランク))%<br><br></div><div rect='225,225,3750,2500'>"
+		LOCALS += @"■%TSTR:コマンド名受渡%　랭크: %TOFULL(TOSTR(干渉強化変数:ARG:干渉ランク))%<br><br></div><div rect='225,225,3750,2500'>"
 		CALLFORM 干渉強化関数_{干渉強化変数:ARG:干渉種類}("詳細文章")
 		LOCALS += @"%TSTR:コマンド名受渡%<br></div>"
 		HTML_PRINT LOCALS, 1
@@ -1006,7 +1098,7 @@ FOR 項目番号, 1, フレーバー素質_項目数 + 1
 			SIF !HAS_VAGINA(ARG)
 				CONTINUE
 		CASE フレーバー素質_ほくろ位置
-			;フレーバー素質_ほくろ位置 は表示文字数が多くなる可能性があるので表示前に改行
+			;フレーバー素質_점 위치 は表示文字数が多くなる可能性があるので表示前に改行
 			改行チェック = 0
 			PRINTL
 		CASE フレーバー素質_ふたなり時_玉ありなし
@@ -1055,7 +1147,7 @@ ENDIF
 PRINTL
 PRINTL □ 해설 □---------------------------------------------------------------------
 IF CSTR:ARG:出演作品 != ""
-	PRINTFORML ■출처: %CSTR:ARG:出演作品%
+	PRINTFORML ■출전: %CSTR:ARG:出演作品%
 	PRINTL
 ENDIF
 
@@ -1075,9 +1167,15 @@ NEXT
 #DIM BIRTHDAY
 #DIM LAP
 #DIM CHILD_COUNT
+#DIM CHILD_COUNT_MAN
 #DIMS CHILD_NAME
 #DIM MASTERとの子供人数
+#DIM それ以外の子供人数
+#DIM 相手ID
+#DIM 子供_相手配列, キャラクタ数上限
+#DIM 子供_人数配列, キャラクタ数上限
 #DIM 子供表示人数
+#DIM 配列番号
 
 ;ここで立ち絵表示
 CALL 画像描画終了
@@ -1098,6 +1196,9 @@ IF ARG != MASTER
 	PRINT 　
 	CALL 通常時性欲ゲージ表示(ARG, 1)
 	PRINTL 
+; ELSE
+; 	PRINT 孕ませた人数：
+
 ENDIF
 PRINTL 
 
@@ -1107,7 +1208,7 @@ IF BIRTHDAY >= 0
 	PRINT 　
 	LAP = GET_PERSON_出会った周回(CFLAG:ARG:人物番号)
 	SIF LAP >= 0 && LAP != 周回回数累計:0
-		PRINTFORM {LAP + 1}주차 
+		PRINTFORM {LAP + 1}회차 
 	PRINTFORML {BIRTHDAY / 120 + 1}년째 %月登録:((BIRTHDAY / 30) % 4)% {BIRTHDAY % 30 + 1}일(%曜日登録:(BIRTHDAY % 7)%)
 	PRINTL 
 ENDIF
@@ -1132,12 +1233,53 @@ CHILD_COUNT = RESULT
 IF CHILD_COUNT > 0
 	PRINTL □ 자녀 □---------------------------------------------------------------------
 	MASTERとの子供人数 = 0
-	FOR LOCAL, 1, (1 + CHILD_COUNT)
-		SIF GET_PERSON_父親(RESULT:LOCAL) == CFLAG:MASTER:人物番号
-			MASTERとの子供人数 ++
-	NEXT
-	PRINTFORML 　%CALLNAME:MASTER%와의 자녀: {MASTERとの子供人数, 2}명
-	PRINTFORML 　그 외의 아이: {EXP:ARG:出産経験 - MASTERとの子供人数, 2}명
+	それ以外の子供人数 = 0
+	VARSET 子供_相手配列
+	VARSET 子供_人数配列
+	IF 子供_詳細表示フラグ
+		FOR LOCAL, 1, (1 + CHILD_COUNT)
+			相手ID = GET_PERSON_父親(RESULT:LOCAL)
+			IF MATCH(子供_相手配列, 相手ID)
+				FINDELEMENT 子供_相手配列, 相手ID
+				子供_人数配列:RESULT ++
+			ELSE
+				子供_相手配列:それ以外の子供人数 = 相手ID
+				子供_人数配列:それ以外の子供人数 = 1
+				それ以外の子供人数 ++
+			ENDIF
+		NEXT
+		
+		FOR 配列番号, 0, それ以外の子供人数
+			相手ID = FIND_CHARA_FROM_PERSON_ID(子供_相手配列:配列番号)
+			IF 相手ID < 0
+				PRINTFORML 　다른 회차의 자녀: {子供_人数配列:配列番号, 2}명
+			ELSE
+				PRINTFORML 　%CALLNAME:相手ID%와의 자녀: {子供_人数配列:配列番号, 2}명
+			ENDIF
+		NEXT
+		PRINT 　
+		PRINTBUTTON "[간략 표시]", 201
+	ELSE
+		FOR LOCAL, 1, (1 + CHILD_COUNT)
+			IF GET_PERSON_父親(RESULT:LOCAL) == CFLAG:MASTER:人物番号
+				MASTERとの子供人数 ++
+			ELSE
+				それ以外の子供人数 ++
+			ENDIF
+		NEXT
+		
+		IF ARG != MASTER
+			PRINTFORML 　%CALLNAME:MASTER%와의 자녀: {MASTERとの子供人数, 2}명
+			PRINTFORM 　그 외 자녀: {それ以外の子供人数, 2}명
+		ELSE
+			PRINTFORM 　자신이 낳은 자녀: {それ以外の子供人数, 2}명
+		ENDIF
+		PRINTL 
+		PRINT 　
+		PRINTBUTTON "[상세 표시]", 201
+	ENDIF
+
+	PRINTL 
 	PRINTL 
 	FOR LOCAL, (1 + 子供表示人数 * 能力表示現在ページ), MIN(1 + CHILD_COUNT, 1 + 子供表示人数 * (能力表示現在ページ + 1))
 		PRINTFORM 　%"第" + TOSTR(LOCAL + MAX(0, EXP:ARG:出産経験 - CHILD_COUNT)) + "子", 7, LEFT% 
@@ -1159,16 +1301,16 @@ IF CHILD_COUNT > 0
 		IF BIRTHDAY >= 0
 			LAP = GET_PERSON_出会った周回(RESULT:LOCAL)
 			SIF LAP >= 0 && LAP != 周回回数累計:0
-				PRINTFORM {LAP + 1}주차 
+				PRINTFORM {LAP + 1}회차 
 			PRINTFORM {BIRTHDAY / 120 + 1}년째 %月登録:((BIRTHDAY / 30) % 4)% {BIRTHDAY % 30 + 1}일(%曜日登録:(BIRTHDAY % 7)%)에
 		ENDIF
 		PERSON = GET_PERSON_父親(RESULT:LOCAL)
 		IF PERSON == CFLAG:ARG:人物番号
-			PRINT 자신의 정액으로 태어났다
+			PRINT 자신의 정자로 태어난
 		ELSEIF PERSON != 0
-			PRINTFORM %GET_PERSON_呼び名_代替あり(PERSON)%와의 사이에 태어났다
+			PRINTFORM %GET_PERSON_呼び名_代替あり(PERSON)%와의 사이에서 태어난
 		ELSEIF BIRTHDAY >= 0
-			PRINT 태어났다
+			PRINT 태어남
 		ENDIF
 		IF CHILD_NAME == ""
 			IF GET_PERSON_性別(RESULT:LOCAL) == 2
@@ -1179,7 +1321,104 @@ IF CHILD_COUNT > 0
 		ENDIF
 		PRINTL 
 	NEXT
+ENDIF
 
+CALL FIND_CHILDREN(0, CFLAG:ARG:人物番号)
+CHILD_COUNT_MAN = RESULT
+IF CHILD_COUNT_MAN > 0
+	;男側は出産経験に相当するものがないので、子供を全部見てチェック
+	MASTERとの子供人数 = 0
+	それ以外の子供人数 = 0
+	VARSET 子供_相手配列
+	VARSET 子供_人数配列
+	IF 子供_詳細表示フラグ
+		FOR LOCAL, 1, (1 + CHILD_COUNT_MAN)
+			相手ID = GET_PERSON_母親(RESULT:LOCAL)
+			IF MATCH(子供_相手配列, 相手ID)
+				FINDELEMENT 子供_相手配列, 相手ID
+				子供_人数配列:RESULT ++
+			ELSE
+				子供_相手配列:それ以外の子供人数 = 相手ID
+				子供_人数配列:それ以外の子供人数 = 1
+				それ以外の子供人数 ++
+			ENDIF
+		NEXT
+		
+		SIF CHILD_COUNT < 1
+			PRINTL □ 자녀 □---------------------------------------------------------------------
+		FOR 配列番号, 0, それ以外の子供人数
+			相手ID = FIND_CHARA_FROM_PERSON_ID(子供_相手配列:配列番号)
+			IF 相手ID < 0
+				PRINTFORML 　다른 회차의 자녀: {子供_人数配列:配列番号, 2}명
+			ELSE
+				PRINTFORML 　%CALLNAME:相手ID%와의 자녀: {子供_人数配列:配列番号, 2}명
+			ENDIF
+		NEXT
+		PRINT 　
+		PRINTBUTTON "[간략 표시]", 201
+	ELSE
+		FOR LOCAL, 1, (1 + CHILD_COUNT_MAN)
+			IF GET_PERSON_母親(RESULT:LOCAL) == CFLAG:MASTER:人物番号
+				MASTERとの子供人数 ++
+			ELSE
+				それ以外の子供人数 ++
+			ENDIF
+		NEXT
+		
+		SIF CHILD_COUNT < 1
+			PRINTL □ 자녀 □---------------------------------------------------------------------
+		IF ARG != MASTER
+			PRINTFORML 　%CALLNAME:MASTER%와의 자녀: {MASTERとの子供人数, 2}명
+			PRINTFORM 　그 외 자녀: {それ以外の子供人数, 2}명
+		ELSE
+			PRINTFORM 　상대가 낳아준 자녀: {それ以外の子供人数, 2}명
+		ENDIF
+		PRINTL 
+		PRINT 　
+		PRINTBUTTON "[상세 표시]", 201
+	ENDIF
+	PRINTL 
+	PRINTL 
+	FOR LOCAL, (1 + 子供表示人数 * 能力表示現在ページ), MIN(1 + CHILD_COUNT_MAN, 1 + 子供表示人数 * (能力表示現在ページ + 1))
+		PRINTFORM 　%"第" + TOSTR(LOCAL + MAX(0, MASTERとの子供人数 + それ以外の子供人数 - CHILD_COUNT_MAN)) + "子", 7, LEFT% 
+		CHILD_NAME '= GET_PERSON_呼び名(RESULT:LOCAL)
+		IF CHILD_NAME != ""
+			PRINTFORM %CHILD_NAME%
+			SELECTCASE GET_PERSON_性別(RESULT:LOCAL)
+				CASE 1
+					PRINT (♀) 
+				CASE 2
+					PRINT (♂) 
+				CASE 3
+					PRINT (♀?) 
+				CASEELSE
+					PRINT (？) 
+			ENDSELECT
+		ENDIF
+		BIRTHDAY = GET_PERSON_生年日(RESULT:LOCAL)
+		IF BIRTHDAY >= 0
+			LAP = GET_PERSON_出会った周回(RESULT:LOCAL)
+			SIF LAP >= 0 && LAP != 周回回数累計:0
+				PRINTFORM {LAP + 1}회차 
+			PRINTFORM {BIRTHDAY / 120 + 1}년째 %月登録:((BIRTHDAY / 30) % 4)% {BIRTHDAY % 30 + 1}일(%曜日登録:(BIRTHDAY % 7)%)에
+		ENDIF
+		PERSON = GET_PERSON_母親(RESULT:LOCAL)
+		IF PERSON == CFLAG:ARG:人物番号
+			PRINT 자신이 낳음
+		ELSEIF PERSON != 0
+			PRINTFORM %GET_PERSON_呼び名_代替あり(PERSON)%와의 사이에서 태어난
+		ELSEIF BIRTHDAY >= 0
+			PRINT 태어남
+		ENDIF
+		IF CHILD_NAME == ""
+			IF GET_PERSON_性別(RESULT:LOCAL) == 2
+				PRINT 남자아이
+			ELSE
+				PRINT 여자아이
+			ENDIF
+		ENDIF
+		PRINTL 
+	NEXT
 ENDIF
 
 FOR LOCAL, 0, 27 - (LINECOUNT - L_C)
@@ -1187,15 +1426,15 @@ FOR LOCAL, 0, 27 - (LINECOUNT - L_C)
 NEXT
 
 PRINTL 
-IF CHILD_COUNT > 0
-	IF CHILD_COUNT > 子供表示人数 && 能力表示現在ページ > 0
+IF CHILD_COUNT + CHILD_COUNT_MAN > 0
+	IF CHILD_COUNT + CHILD_COUNT_MAN > 子供表示人数 && 能力表示現在ページ > 0
 		PRINTBUTTONLC "[900]이전 페이지로", 900
 	ELSE
 		SETCOLOR カラーパレット("グレーアウト")
 		PRINTLC [---]이전 페이지로
 		RESETCOLOR
 	ENDIF
-	IF CHILD_COUNT > 子供表示人数 && 能力表示現在ページ < (CHILD_COUNT - 1) / 子供表示人数
+	IF CHILD_COUNT + CHILD_COUNT_MAN > 子供表示人数 && 能力表示現在ページ < (CHILD_COUNT + CHILD_COUNT_MAN - 1) / 子供表示人数
 		PRINTBUTTONLC "[901]다음 페이지로", 901
 	ELSE
 		SETCOLOR カラーパレット("グレーアウト")
@@ -1216,7 +1455,7 @@ LOCAL:2 = RESULT
 
 ;まず恋慕対象かどうかを判定
 LOCAL:1 = -1
-FOR LOCAL, 0, 恋慕枠数
+FOR LOCAL, 0, CHARANUM
 	IF 恋慕対象フラグ:LOCAL == ARG
 		LOCAL:1 = LOCAL
 		BREAK
@@ -1226,28 +1465,28 @@ NEXT
 IF TALENT:ARG:恋慕 == 1
 ;既に恋慕達成済み時はそもそも選択肢すら出ない
 	SETCOLOR カラーパレット("えっちな色")
-	PRINTFORM %CALLNAME:PLAYER%는 %CALLNAME:ARG%와 이미 연인입니다
+	PRINTFORM %CALLNAME:PLAYER%은(는) 이미 %CALLNAME:ARG%와 연인입니다
 	PRINT_IMG "えっちハート"
 	RESETCOLOR
 	PRINT 　　　
 ELSEIF TALENT:ARG:恋慕 == 2
 ;既に恋慕達成済み時はそもそも選択肢すら出ない
 	SETCOLOR カラーパレット("えっちな色")
-	PRINTFORM %CALLNAME:PLAYER%는 %CALLNAME:ARG%와 결혼했습니다
+	PRINTFORM %CALLNAME:PLAYER%은(는) %CALLNAME:ARG%와 결혼했습니다
 	PRINT_IMG "えっちハート"
 	RESETCOLOR
 	PRINT 　　　
 ELSEIF TALENT:ARG:疑似恋慕 > 0
 ;既に恋慕達成済み時はそもそも選択肢すら出ない
 	SETCOLOR カラーパレット("えっちな色")
-	PRINTFORM %CALLNAME:ARG%는 %CALLNAME:PLAYER%의 %CSTR:(恋慕対象フラグ:LOCAL):擬似恋慕陥落名称%입니다
+	PRINTFORM %CALLNAME:ARG%은(는) %CALLNAME:PLAYER%의 %CSTR:ARG:擬似恋慕陥落名称%입니다
 	PRINT_IMG "えっちハート"
 	RESETCOLOR
 	PRINT 　　　
 ELSEIF LOCAL:1 >= 0
-	PRINTBUTTONLC @"[1] %CALLNAME:ARG%를 연모 대상에서 제외", 1
+	PRINTBUTTONLC @"[1] %CALLNAME:ARG%을(를) 연모 대상에서 제외", 1
 ELSE
-	PRINTBUTTONLC @"[0] %CALLNAME:ARG%를 연모 대상으로 설정", 0
+	PRINTBUTTONLC @"[0] %CALLNAME:ARG%을(를) 연모 대상으로 삼기", 0
 ENDIF
 PRINTBUTTONC "[9] 돌아가기", 9
 
@@ -1265,42 +1504,42 @@ ELSEIF RESULT == 0
 		;もう枠がない場合、入れ替える
 		IF 恋慕枠数 == 1
 			IF TALENT:(恋慕対象フラグ:0):恋慕 == 1
-				PRINTFORMW 연모 대상인 %CALLNAME:(恋慕対象フラグ:0)%는 이미 %CALLNAME:PLAYER%와 연인이므로 제외할 수 없습니다.
+				PRINTFORMW 연모 대상인 %CALLNAME:(恋慕対象フラグ:0)%은(는) 이미 %CALLNAME:PLAYER%와 연인이므로 제외할 수 없습니다.
 				RETURN 0
 			ELSEIF TALENT:(恋慕対象フラグ:0):恋慕 == 2
-				PRINTFORMW 연모 대상인 %CALLNAME:(恋慕対象フラグ:0)%는 이미 %CALLNAME:PLAYER%와 결혼했으므로 제외할 수 없습니다.
+				PRINTFORMW 연모 대상인 %CALLNAME:(恋慕対象フラグ:0)%은(는) 이미 %CALLNAME:PLAYER%와 결혼했으므로 제외할 수 없습니다.
 				RETURN 0
 			ELSEIF TALENT:(恋慕対象フラグ:0):疑似恋慕 > 0
-				PRINTFORMW 연모 대상인 %CALLNAME:(恋慕対象フラグ:0)%는 %CSTR:(恋慕対象フラグ:LOCAL):擬似恋慕陥落名称%이므로 제외할 수 없습니다
+				PRINTFORMW 연모 대상인 %CALLNAME:(恋慕対象フラグ:0)%은(는) %CSTR:(恋慕対象フラグ:0):擬似恋慕陥落名称%이므로 제외할 수 없습니다
 				RETURN 0
 			ELSE
-				PRINTFORML 현재 연모 대상으로 %CALLNAME:(恋慕対象フラグ:0)%가 선택되어 있지만, %CALLNAME:ARG%로 변경하시겠습니까?
+				PRINTFORML 현재 연모 대상으로 %CALLNAME:(恋慕対象フラグ:0)%이(가) 선택되어 있습니다. %CALLNAME:ARG%(으)로 변경하시겠습니까?
 				PRINTBUTTONLC "[0] 예", 0
-				PRINTBUTTONLC "[999] 아니요", 999
+				PRINTBUTTONLC "[999] 아니오", 999
 			ENDIF
 		ELSE
-			PRINTFORML 현재 연모 슬롯이 가득 찼습니다. 다른 사람과 교체하시겠습니까?
-			FOR LOCAL, 0, 恋慕枠数
+			PRINTFORML 현재 연모 슬롯이 가득 찼습니다. 누군가와 교체하시겠습니까?
+			FOR LOCAL, 0, CHARANUM
 				IF 恋慕対象フラグ:LOCAL
 					IF TALENT:(恋慕対象フラグ:LOCAL):恋慕 == 1
 						SETCOLOR 0x666666
-						PRINTFORML [{LOCAL}]%CALLNAME:(恋慕対象フラグ:LOCAL)%는 연인이므로 제외할 수 없습니다
+						PRINTFORML [{LOCAL}]%CALLNAME:(恋慕対象フラグ:LOCAL)%은(는) 연인이므로 제외할 수 없습니다
 						RESETCOLOR
 					ELSEIF TALENT:(恋慕対象フラグ:LOCAL):恋慕 == 2
 						SETCOLOR 0x666666
-						PRINTFORML [{LOCAL}]%CALLNAME:(恋慕対象フラグ:0)%는 결혼했으므로 제외할 수 없습니다
+						PRINTFORML [{LOCAL}]%CALLNAME:(恋慕対象フラグ:0)%은(는) 결혼했으므로 제외할 수 없습니다
 						RESETCOLOR
 					ELSEIF TALENT:(恋慕対象フラグ:LOCAL):疑似恋慕 > 0
 						SETCOLOR 0x666666
-						PRINTFORML [{LOCAL}]%CALLNAME:(恋慕対象フラグ:LOCAL)%은/는 %CSTR:(恋慕対象フラグ:LOCAL):擬似恋慕陥落名称%이기 때문에 제외할 수 없습니다.
+						PRINTFORML [{LOCAL}]%CALLNAME:(恋慕対象フラグ:LOCAL)%은(는) %CSTR:(恋慕対象フラグ:LOCAL):擬似恋慕陥落名称%이므로 제외할 수 없습니다
 						RESETCOLOR
 					ELSE
-						PRINTBUTTON @"[{LOCAL}]%CALLNAME:(恋慕対象フラグ:LOCAL)%과(와) 교체한다", LOCAL
+						PRINTBUTTON @"[{LOCAL}]%CALLNAME:(恋慕対象フラグ:LOCAL)%와 교체하기", LOCAL
 						PRINTL
 					ENDIF
 				ENDIF
 			NEXT
-			PRINTBUTTONLC "[999] 아니요", 999
+			PRINTBUTTONLC "[999] 아니오", 999
 		ENDIF
 		$INPUT_LOOP2
 		INPUT
@@ -1334,7 +1573,7 @@ ELSEIF RESULT == 1
 	恋慕対象フラグ:(LOCAL:1) = 0
 	CFLAG:ARG:ゲージ起動分類 = 0
 	PRINTFORML %CALLNAME:ARG%을(를) 연모 대상에서 제외했습니다.
-	PRINTW (연모 레벨은 현 상태 그대로 유지됩니다)
+	PRINTW （연모 레벨은 현재 상태로 유지됩니다）
 	RETURN 0
 ELSEIF RESULT == 9
 	RETURN 0
@@ -1367,23 +1606,31 @@ ENDSELECT
 
 DRAWLINE
 恋慕枠数 = 恋慕枠判定()
-PRINTFORML 현재 연모 대상자　　최대:{恋慕枠数}명
-LOCAL:2 = 0
-FOR LOCAL, 0, 恋慕枠数
-	SIF 全表示フラグ:0 == 0 && LOCAL > 9
+PRINTFORML 현재 연모 대상자　　상한: {恋慕枠数}명
+VARSET LOCAL
+FOR LOCAL, 0, CHARANUM
+	SIF 全表示フラグ:0 == 0 && LOCAL:2 > 9
 		SKIPDISP 1
 	IF 恋慕対象フラグ:LOCAL
 		PRINTPLAINFORM %CALLNAME:(恋慕対象フラグ:LOCAL), 25, LEFT%　　연모 레벨:{CFLAG:(恋慕対象フラグ:LOCAL):恋慕レベル, 3} / 100　　
 		IF TALENT:(恋慕対象フラグ:LOCAL):恋慕 == 1
 			SETCOLOR カラーパレット("ピンク")
-			PRINT 연모　
+			IF CSTR:(恋慕対象フラグ:LOCAL):擬似恋慕陥落名称 != ""
+				PRINTFORM %CSTR:(恋慕対象フラグ:LOCAL):擬似恋慕陥落名称%　
+			ELSE
+				PRINT 연모　
+			ENDIF
 		ELSEIF TALENT:(恋慕対象フラグ:LOCAL):恋慕 == 2
 			SETCOLOR カラーパレット("ピンク")
-			PRINT 반려　
+			IF CSTR:(恋慕対象フラグ:LOCAL):擬似恋慕陥落名称 != ""
+				PRINTFORM %CSTR:(恋慕対象フラグ:LOCAL):擬似恋慕陥落名称%　
+			ELSE
+				PRINT 반려자　
+			ENDIF
 		ENDIF
 		IF TALENT:(恋慕対象フラグ:LOCAL):セフレ
 			SETCOLOR カラーパレット("薄ピンク")
-			PRINT 잠자리 친구
+			PRINT 섹스 프렌드
 		ENDIF
 		RESETCOLOR
 
@@ -1391,13 +1638,29 @@ FOR LOCAL, 0, 恋慕枠数
 		LOCAL:2 += 1
 	ENDIF
 NEXT
+;擬似恋慕
+FOR LOCAL, 0, CHARANUM
+	SIF 全表示フラグ:0 == 0 && LOCAL:2 > 9
+		SKIPDISP 1
+	SIF MATCH(恋慕対象フラグ, LOCAL)
+		CONTINUE
+	IF TALENT:LOCAL:疑似恋慕 > 0
+		PRINTPLAINFORM %CALLNAME:LOCAL, 25, LEFT%　　연모 레벨:{CFLAG:LOCAL:恋慕レベル, 3} / 100　　
+		SETCOLOR カラーパレット("ピンク")
+		PRINTFORM %CSTR:LOCAL:擬似恋慕陥落名称%
+		RESETCOLOR
+
+		PRINTL
+		LOCAL:3 += 1
+	ENDIF
+NEXT
 SKIPDISP 0
-SIF LOCAL:2 == 0
+SIF LOCAL:2 + LOCAL:3 == 0
 	PRINTL 없음
 
-IF 全表示フラグ:0 == 0 && LOCAL:2 > 10
-	PRINTFORML 외 {LOCAL:2 - 10, 2}명
-	PRINTBUTTON "[200] 모두 표시", 200
+IF 全表示フラグ:0 == 0 && LOCAL:2 + LOCAL:3 > 10
+	PRINTFORML 그 외 {LOCAL:2 + LOCAL:3 - 10, 2}명
+	PRINTBUTTON "[200] 전원 표시", 200
 	PRINTL
 ELSEIF 全表示フラグ:0 && LOCAL:2 > 10
 	PRINTBUTTON "[200] 표시 생략", 200
@@ -1407,20 +1670,22 @@ ENDIF
 RETURN LOCAL:2
 
 @PRINT_STATE_CLOTH(ARG)
-LOCALS = □ 服装 □---------------------------------------------------------------------<br>
+LOCALS = □ 복장 □---------------------------------------------------------------------<br>
 VARSET LOCAL
 IF CSTR:ARG:着せ替え服 != ""
 	IF CSTR:ARG:着せ替え服 == "浴衣"
-		LOCALS += "　■ユカタヴィラ"
+		LOCALS += "　■유카타 빌라"
+	ELSEIF ISNUMERIC(CSTR:ARG:着せ替え服)
+		LOCALS += @"%CSVCSTR(TOINT(CSTR:ARG:着せ替え服), GETNUM(CSTR, "服名称"))%"
 	ELSE
 		LOCALS += @"　■%CSTR:ARG:着せ替え服%"
 	ENDIF
 	SIF CSTR:ARG:着せ替え服追加名 != ""
 		LOCALS += @"（%CSTR:ARG:着せ替え服追加名%）"
 	IF OPTION変数:服装解説表示
-		LOCALS += "　　<button value='160'>[解説非表示]</button><br>"
+		LOCALS += "　　<button value='160'>[해설 숨김]</button><br>"
 	ELSE
-		LOCALS += "　　<button value='160'>[解説表示]</button><br>"
+		LOCALS += "　　<button value='160'>[해설 표시]</button><br>"
 	ENDIF
 	IF OPTION変数:服装解説表示
 		VARSET RESULTS
@@ -1428,16 +1693,21 @@ IF CSTR:ARG:着せ替え服 != ""
 		IF RESULTS != ""
 			LOCALS += @"　　%REPLACE(RESULTS, "<br>", "<br>　　")%"
 			SIF RESULTS:1 != ""
-				LOCALS += @"出典元：%RESULTS:1%'>"
+				LOCALS += @"출전: %RESULTS:1%'>"
 			LOCALS += "<br>"
+		ENDIF
+		IF ISNUMERIC(CSTR:ARG:着せ替え服)
+			SIF LOCALS == ""
+				LOCALS += "<br>"
+			LOCALS += @"원래 소유자: %CSVNAME(TOINT(CSTR:ARG:着せ替え服))%<br>"
 		ENDIF
 	ENDIF
 ELSE
 	LOCALS += @"　■%CSTR:ARG:服名称%"
 	IF OPTION変数:服装解説表示
-		LOCALS += "　　<button value='160'>[解説非表示]</button><br>"
+		LOCALS += "　　<button value='160'>[해설 숨김]</button><br>"
 	ELSE
-		LOCALS += "　　<button value='160'>[解説表示]</button><br>"
+		LOCALS += "　　<button value='160'>[해설 표시]</button><br>"
 	ENDIF
 	IF OPTION変数:服装解説表示 && CSTR:ARG:普段着解説 != ""
 		LOCALS += @"%REPLACE(CSTR:ARG:普段着解説, " ", "<br>　　")%<br>"
@@ -1447,18 +1717,18 @@ ENDIF
 LOCALS += "　　"
 ;鎧
 IF TEQUIP:ARG:上半身鎧あり
-	LOCALS += "[上半身鎧]"
+	LOCALS += "[상반신 갑옷]"
 	LOCAL = 1
 ENDIF
 ;鎧
 IF TEQUIP:ARG:下腹部前鎧あり && TEQUIP:ARG:下腹部後鎧あり
-	LOCALS += "[下半身鎧]<br>"
+	LOCALS += "[하반신 갑옷]<br>"
 	LOCALS += "　　"
 ELSEIF TEQUIP:ARG:下腹部後鎧あり
-	LOCALS += "[下半身後方鎧]<br>"
+	LOCALS += "[하반신 후방 갑옷]<br>"
 	LOCALS += "　　"
 ELSEIF TEQUIP:ARG:下腹部前鎧あり
-	LOCALS += "[下半身前方鎧]<br>"
+	LOCALS += "[하반신 전방 갑옷]<br>"
 	LOCALS += "　　"
 ELSEIF LOCAL
 	LOCALS += "<br>"
@@ -1467,22 +1737,22 @@ ENDIF
 
 ;上半身服
 IF TEQUIP:ARG:上半身服あり
-	LOCALS += "[上半身服"
+	LOCALS += "[상반신 의복"
 	LOCAL = 9
 	IF TEQUIP:ARG:脇出し
-		LOCALS += "（脇露出）"
+		LOCALS += "（겨드랑이 노출）"
 		LOCAL += 10
 	ENDIF
 	IF TEQUIP:ARG:へそ出し
-		LOCALS += "（へそ露出）"
+		LOCALS += "（배꼽 노출）"
 		LOCAL += 12
 	ENDIF
 	IF TEQUIP:ARG:はだけ可
-		LOCALS += "（はだけ可）"
+		LOCALS += "（풀어헤치기 가능）"
 		LOCAL += 12
 	ENDIF
 	IF TEQUIP:ARG:手差し込み可
-		LOCALS += "（差し込み可）"
+		LOCALS += "（삽입 가능）"
 		LOCAL += 14
 	ENDIF
 	IF TEQUIP:ARG:パイズリ可
@@ -1492,7 +1762,7 @@ IF TEQUIP:ARG:上半身服あり
 			LOCALS += "　　 　　　　"
 			LOCAL = 0
 		ENDIF
-		LOCALS += "（着衣パイズリ可）"
+		LOCALS += "（착의 파이즈리 가능）"
 	ENDIF
 	IF TEQUIP:ARG:上半身下着抜き取り可 && TEQUIP:ARG:上半身下着あり
 		LOCAL += 18
@@ -1501,7 +1771,7 @@ IF TEQUIP:ARG:上半身服あり
 			LOCALS += "　　 　　　　"
 			LOCAL = 0
 		ENDIF
-		LOCALS += "（ブラ抜き取り可）"
+		LOCALS += "（브라 빼내기 가능）"
 	ENDIF
 	LOCALS += "]<br>"
 	LOCALS += "　　"
@@ -1511,68 +1781,68 @@ ENDIF
 
 ;下半身服
 IF TEQUIP:ARG:下半身服あり
-	LOCALS += "[下半身服"
+	LOCALS += "[하반신 의복"
 	SIF TEQUIP:ARG:スカートめくり可
-		LOCALS += "（めくり可）"
+		LOCALS += "（걷어올리기 가능）"
 	SIF TEQUIP:ARG:ずらし可
-		LOCALS += "（ずらし可）"
+		LOCALS += "（비켜놓기 가능）"
 	SIF TEQUIP:ARG:下半身下着抜き取り可 && TEQUIP:ARG:下半身下着あり > 0
-		LOCALS += "（下着抜き取り可）"
+		LOCALS += "（속옷 빼내기 가능）"
 	LOCALS += "]<br>"
 	LOCALS += "　　"
 ENDIF
 
 IF TEQUIP:ARG:上下一体タイツ
-	LOCALS += "[上下タイツ"
+	LOCALS += "[상하 타이츠"
 	SIF TEQUIP:ARG:上タイツ破れ || TEQUIP:ARG:下タイツ破れ
-		LOCALS += "（破れ）"
+		LOCALS += "（찢어짐）"
 	LOCALS += "]"
 ELSEIF TEQUIP:ARG:上タイツあり
-	LOCALS += "[インナー"
+	LOCALS += "[이너"
 	SIF TEQUIP:ARG:上タイツ破れ
-		LOCALS += "（破れ）"
+		LOCALS += "（찢어짐）"
 	LOCALS += "]"
 ELSEIF TEQUIP:ARG:下タイツあり
-	LOCALS += "[タイツ"
+	LOCALS += "[타이츠"
 	SIF TEQUIP:ARG:下タイツ破れ
-		LOCALS += "（破れ）"
+		LOCALS += "（찢어짐）"
 	LOCALS += "]"
 ENDIF
 
 
 SIF TEQUIP:ARG:上半身下着あり == -1
-	LOCALS += "[オープンカップブラ]"
+	LOCALS += "[오픈컵 브라]"
 SIF TEQUIP:ARG:上半身下着あり == -2
-	LOCALS += "[ニップルピアス]"
+	LOCALS += "[니플 피어스]"
 SIF TEQUIP:ARG:上半身下着あり == -3
-	LOCALS += "[乳首に名札]"
+	LOCALS += "[유두에 명찰]"
 SIF TEQUIP:ARG:上半身下着あり == 0
-	LOCALS += "[ノーブラ]"
+	LOCALS += "[노브라]"
 SIF TEQUIP:ARG:上半身下着あり == 1
-	LOCALS += "[ブラ着用]"
+	LOCALS += "[브라 착용]"
 SIF TEQUIP:ARG:上半身下着あり == 2
-	LOCALS += "[ニプレス]"
+	LOCALS += "[니플 패치]"
 SIF TEQUIP:ARG:上半身下着あり == 3
-	LOCALS += "[さらし]"
+	LOCALS += "[사라시]"
 SIF TEQUIP:ARG:上半身下着あり == 4
-	LOCALS += "[リボン]"
+	LOCALS += "[리본]"
 
 SIF TEQUIP:ARG:下半身下着あり == -1
-	LOCALS += "[オープンショーツ]"
+	LOCALS += "[오픈 쇼츠]"
 SIF TEQUIP:ARG:下半身下着あり == -2
-	LOCALS += "[性器ピアス]"
+	LOCALS += "[성기 피어스]"
 SIF TEQUIP:ARG:下半身下着あり == -3
-	LOCALS += "[クリに名札]"
+	LOCALS += "[클리에 명찰]"
 SIF TEQUIP:ARG:下半身下着あり == 0
-	LOCALS += "[ノーパン]"
+	LOCALS += "[노팬티]"
 SIF TEQUIP:ARG:下半身下着あり == 1
-	LOCALS += "[下着着用]"
+	LOCALS += "[속옷 착용]"
 SIF TEQUIP:ARG:下半身下着あり == 2
-	LOCALS += "[前張り]"
+	LOCALS += "[전면 가리개]"
 SIF TEQUIP:ARG:下半身下着あり == 3
-	LOCALS += "[ふんどし]"
+	LOCALS += "[훈도시]"
 SIF TEQUIP:ARG:下半身下着あり == 4
-	LOCALS += "[リボン]"
+	LOCALS += "[리본]"
 
 LOCALS += "<br>"
 RESULTS = %LOCALS%
@@ -1634,96 +1904,98 @@ SIF LOCAL:1 % 4
 #DIM 予定時間
 #DIM 画像総数
 
-LOCALS = □ 情報 □---------------------------------------------------------------------<br>
-名前格納 '= @"　種族：%GET_TALENTNAME(200,TALENT:ARG:種族,,ARG)%"
+LOCALS = □ 정보 □---------------------------------------------------------------------<br>
+名前格納 '= @"　종족:%GET_TALENTNAME(200,TALENT:ARG:種族,,ARG)%"
 IF CSTR:ARG:特殊種族 != ""
 	LOCALS += @" [%CSTR:ARG:特殊種族%]"
 ENDIF
 SIF TALENT:ARG:角あり
-	名前格納 += "（角あり）"
+	名前格納 += "（뿔 있음）"
 SIF TALENT:ARG:尻尾あり
-	名前格納 += "（尻尾）"
+	名前格納 += "（꼬리）"
 SIF TALENT:ARG:エルーン耳
-	名前格納 += "（エルーン耳）"
+	名前格納 += "（엘룬 귀）"
 SIF TALENT:ARG:ハーヴィン耳
-	名前格納 += "（ハーヴィン耳）"
+	名前格納 += "（하빈 귀）"
 SIF TALENT:ARG:発情期あり > 0
-	名前格納 += "（発情期あり）"
+	名前格納 += "（발정기 있음）"
 SIF TALENT:ARG:発情期あり < 0
-	名前格納 += "（発情期なし）"
+	名前格納 += "（발정기 없음）"
 名前格納 '= REPLACE(名前格納, "）（", "／")
 LOCALS += 名前格納
-IF 発情期判定(ARG)
+IF SAVESTR:ゲームフェイズ管理 != "" && TCVAR:ARG:強制発情フラグ > 0
+	LOCALS += @"<font color='#%カラーパレット_HTML("薄ピンク")%'>（강제 발정 중<img src='えっちハート'>）</font>"
+ELSEIF 発情期存在判定(ARG)
 	SELECTCASE RISKY_DAY(ARG)
 		CASE 1
-			LOCALS += @"<font color='#%カラーパレット_HTML("薄ピンク")%'>（発情中<img src='えっちハート'>）</font>"
+			LOCALS += @"<font color='#%カラーパレット_HTML("薄ピンク")%'>（발정 중<img src='えっちハート'>）</font>"
 		CASE 2
-			LOCALS += @"<font color='#%カラーパレット_HTML("赤ピンク")%'>（<img src='えっちハート'>強発情中<img src='えっちハート'>）</font>"
+			LOCALS += @"<font color='#%カラーパレット_HTML("赤ピンク")%'>（<img src='えっちハート'>강한 발정 중<img src='えっちハート'>）</font>"
 	ENDSELECT
 ENDIF
 IF TALENT:ARG:妊娠
 	LOCALS += @"<font color='#%カラーパレット_HTML("ピンク")%'>"
 	IF PREGNANCY_PROGRESS(ARG) == 5
-		LOCALS += "（臨月"
+		LOCALS += "（만삭"
 	ELSE
-		LOCALS += "（妊娠中"
+		LOCALS += "（임신 중"
 	ENDIF
 	LOCALS += "<img src='えっちハート'>）</font>"
 ELSEIF あなた特殊能力:朔望鑑定術 >= 2 && GETBIT(TALENT:ARG:性別, 0) && TALENT:ARG:Ｖ感度 > -2
 	SELECTCASE RISKY_DAY(ARG)
 		CASE 1
-			LOCALS += @"<font color='#%カラーパレット_HTML("薄ピンク")%'>（危険日<img src='えっちハート'>）</font>"
+			LOCALS += @"<font color='#%カラーパレット_HTML("薄ピンク")%'>（위험일<img src='えっちハート'>）</font>"
 		CASE 2
-			LOCALS += @"<font color='#%カラーパレット_HTML("赤ピンク")%'>（<img src='えっちハート'>超危険日<img src='えっちハート'>）</font>"
+			LOCALS += @"<font color='#%カラーパレット_HTML("赤ピンク")%'>（<img src='えっちハート'>초위험일<img src='えっちハート'>）</font>"
 		CASE -1
-			LOCALS += @"<font color='#ccffff'>（安全日）</font>"
+			LOCALS += @"<font color='#ccffff'>（안전일）</font>"
 	ENDSELECT
 ENDIF
 LOCALS += "<br><br>"
 
 名前格納 = 
-名前格納 += "　性別："
+名前格納 += "　성별:"
 IF CSTR:ARG:性別表記 != ""
 	名前格納 += CSTR:ARG:性別表記
 	SIF TALENT:ARG:非童貞 == 0 && CFLAG:ARG:童貞表示
-		名前格納 += "（童貞）"
+		名前格納 += "（동정）"
 	SIF TALENT:ARG:処女 && CFLAG:ARG:処女表示
-		名前格納 += "（処女）"
+		名前格納 += "（처녀）"
 	SIF TALENT:ARG:Ａ処女 && CFLAG:ARG:Ａ処女表示
-		名前格納 += "（Ａ処女）"
+		名前格納 += "（A처녀）"
 ;	名前格納 += "<br>　"
 ELSEIF TALENT:ARG:性別 == 1
-	名前格納 += "女性"
+	名前格納 += "여성"
 	SIF TALENT:ARG:処女
-		名前格納 += "（処女）"
+		名前格納 += "（처녀）"
 	SIF TALENT:ARG:Ａ処女
-		名前格納 += "（Ａ処女）"
+		名前格納 += "（A처녀）"
 ELSEIF TALENT:ARG:性別 == 2
-	名前格納 += "男性"
+	名前格納 += "남성"
 	SIF TALENT:ARG:非童貞 == 0
-		名前格納 += "（童貞）"
+		名前格納 += "（동정）"
 	SIF TALENT:ARG:Ａ処女
-		名前格納 += "（Ａ処女）"
+		名前格納 += "（A처녀）"
 ELSEIF TALENT:ARG:性別 == 3
-	名前格納 += "ふたなり"
+	名前格納 += "후타나리"
 	SIF TALENT:ARG:非童貞 == 0
-		名前格納 += "(童貞)"
+		名前格納 += "(동정)"
 	SIF TALENT:ARG:処女
-		名前格納 += "（処女）"
+		名前格納 += "（처녀）"
 	SIF TALENT:ARG:Ａ処女
-		名前格納 += "（Ａ処女）"
+		名前格納 += "（A처녀）"
 ELSE
-	名前格納 += "その他"
+	名前格納 += "기타"
 ENDIF
 名前格納 '= REPLACE(名前格納, "）（", "／")
 名前格納 = %名前格納, 40,LEFT%
 
 名前格納 += "<button value='133'>"
 IF GETBIT(OPTION変数:身体項目表示切り替え, 0)
-	LOCALS:1 = 　身長：%DECIMAL_STRING(BASE:ARG:身長, 1)%cm
+	LOCALS:1 = 　신장:%DECIMAL_STRING(BASE:ARG:身長, 1)%cm
 	名前格納 += @"%LOCALS:1, 25, LEFT%"
 ELSE
-	LOCALS:1 = 　体格：%GET_TALENTNAME(161,TALENT:ARG:体格,,ARG)%
+	LOCALS:1 = 　체격：%GET_TALENTNAME(161,TALENT:ARG:体格,,ARG)%
 	名前格納 += @"%LOCALS:1, 25, LEFT%"
 ENDIF
 名前格納 += "</button>"
@@ -1733,10 +2005,10 @@ LOCALS += @"%名前格納%<br>"
 名前格納 += "<button value='132'>"
 IF TALENT:ARG:性別 != 2 || GETBIT(OPTION変数:身体項目表示切り替え, 4)
 	IF GETBIT(OPTION変数:身体項目表示切り替え, 1)
-		LOCALS:1 = 　バスト：%DECIMAL_STRING(補正込みバストサイズ(ARG), 1)%cm%GET_CUPSIZE(ARG)%
+		LOCALS:1 = 　가슴:%DECIMAL_STRING(補正込みバストサイズ(ARG), 1)%cm%GET_CUPSIZE(ARG)%
 		名前格納 += @"%LOCALS:1, 25, LEFT%"
 	ELSE
-		LOCALS:1 = 　バスト：%GET_TALENTNAME(205,TALENT:ARG:バストサイズ,,ARG)%
+		LOCALS:1 = 　가슴:%GET_TALENTNAME(205,TALENT:ARG:バストサイズ,,ARG)%
 		名前格納 += @"%LOCALS:1, 25, LEFT%"
 	ENDIF
 ENDIF
@@ -1747,10 +2019,10 @@ IF TALENT:ARG:性別 != 2 || GETBIT(OPTION変数:身体項目表示切り替え,
 	名前格納 = 
 	名前格納 += "<button value='134'>"
 	IF GETBIT(OPTION変数:身体項目表示切り替え, 2)
-		LOCALS:1 = ウエスト：%DECIMAL_STRING(補正込みウエストサイズ(ARG), 1)%cm
+		LOCALS:1 = 허리:%DECIMAL_STRING(補正込みウエストサイズ(ARG), 1)%cm
 		名前格納 += @"%LOCALS:1, 25, LEFT%"
 	ELSE
-		LOCALS:1 = 　　体型：%GET_TALENTNAME(163, TALENT:ARG:体型,,ARG)%
+		LOCALS:1 = 　　체형：%GET_TALENTNAME(163, TALENT:ARG:体型,,ARG)%
 		名前格納 += @"%LOCALS:1, 25, LEFT%"
 	ENDIF
 	名前格納 += "</button>"
@@ -1759,9 +2031,9 @@ IF TALENT:ARG:性別 != 2 || GETBIT(OPTION変数:身体項目表示切り替え,
 	名前格納 = 
 	名前格納 += "<button value='135'>"
 	IF GETBIT(OPTION変数:身体項目表示切り替え, 3)
-		名前格納 += @"ヒップ：%DECIMAL_STRING(補正込みヒップサイズ(ARG), 1)%cm"
+		名前格納 += @"엉덩이:%DECIMAL_STRING(補正込みヒップサイズ(ARG), 1)%cm"
 	ELSE
-		名前格納 += @"下半身：%GET_TALENTNAME(210,TALENT:ARG:下半身,,ARG)%"
+		名前格納 += @"하반신：%GET_TALENTNAME(210,TALENT:ARG:下半身,,ARG)%"
 	ENDIF
 	名前格納 += "</button>"
 	LOCALS += @"%名前格納%<br>"
@@ -1769,10 +2041,15 @@ ENDIF
 LOCALS += "<br>"
 
 IF ARG
-	IF OPTION変数:ツールチップ切り替え == 0
-		LOCALS += @"<nonbutton title = '%性知識段階表示(知識素質:ARG:性知識, ARG, 1)%'>　性知識Ｌｖ：%性知識段階表示(知識素質:ARG:性知識, ARG), 13, LEFT%</nonbutton><nonbutton>肉体熟知：{EXP:ARG:肉体熟知, 5}</nonbutton><br>"
+	IF CFLAG:ARG:性知識成長禁止
+		名前格納 = %性知識段階表示(知識素質:ARG:性知識, ARG)%（成長✕）
 	ELSE
-		LOCALS += @"<nonbutton>　性知識Ｌｖ：%性知識段階表示(知識素質:ARG:性知識, ARG), 13, LEFT%</nonbutton><nonbutton>肉体熟知：{EXP:ARG:肉体熟知, 5}</nonbutton><br>"
+		名前格納 = %性知識段階表示(知識素質:ARG:性知識, ARG)%
+	ENDIF
+	IF OPTION変数:ツールチップ切り替え == 0
+		LOCALS += @"<nonbutton title = '%性知識段階表示(知識素質:ARG:性知識, ARG, 1)%'>　성지식 Lv:%名前格納, 19, LEFT%</nonbutton><nonbutton>육체 숙지:{EXP:ARG:肉体熟知, 5}</nonbutton><br>"
+	ELSE
+		LOCALS += @"<nonbutton>　성지식 Lv:%名前格納, 19, LEFT%</nonbutton><nonbutton>육체 숙지:{EXP:ARG:肉体熟知, 5}</nonbutton><br>"
 	ENDIF
 ENDIF
 IF CSTR:ARG:特殊年齢 != ""
@@ -1792,20 +2069,20 @@ ELSEIF BASE:ARG:年齢 || TALENT:ARG:年齢層
 ELSE
 	名前格納 '= ""
 ENDIF
-IF ARG == MASTER || TALENT:ARG:ランダムキャラ
-	LOCALS += @"　容姿：%GET_TALENTNAME(160,TALENT:ARG:容姿,,ARG), 17, LEFT%"
+IF (ARG == MASTER && !FLAG:あなたキャラ化記録) || ランダムキャラ判定(NO:ARG)
+	LOCALS += @"　외모: %GET_TALENTNAME(160,TALENT:ARG:容姿,,ARG), 17, LEFT%"
 	IF 名前格納 != ""
-		LOCALS += @"<button value='136'>\@ CSTR:ARG:特殊年齢 == "" && TALENT:ARG:外見年齢 ? 外見# 年齢\@：%名前格納, 17, LEFT%</button>"
+		LOCALS += @"<button value='136'>\@ CSTR:ARG:特殊年齢 == "" && TALENT:ARG:外見年齢 ? 외모# 나이\@：%名前格納, 17, LEFT%</button>"
 	ENDIF
 	LOCALS += "<br>"
 ELSE
 	IF 名前格納 != ""
-		LOCALS += @"<button value='136'>　\@ CSTR:ARG:特殊年齢 == "" && TALENT:ARG:外見年齢 ? 外見# 年齢\@：%名前格納, 17, LEFT%</button>"
+		LOCALS += @"<button value='136'>　\@ CSTR:ARG:特殊年齢 == "" && TALENT:ARG:外見年齢 ? 외모# 나이\@：%名前格納, 17, LEFT%</button>"
 		LOCALS += "<br>"
 	ENDIF
 ENDIF
 IF TALENT:ARG:性別 & 2
-	LOCALS += @"　男性器サイズ：%GET_TALENTNAME(162,TALENT:ARG:男性器サイズ,,ARG)%"
+	LOCALS += @"　남성기 크기: %GET_TALENTNAME(162,TALENT:ARG:男性器サイズ,,ARG)%"
 	LOCALS += "<br>"
 ENDIF
 IF あなた特殊能力:フレンドリーセンス
@@ -1813,16 +2090,16 @@ IF あなた特殊能力:フレンドリーセンス
 	SIF CSTR:ARG:プレゼント好み_恋慕影響 != ""
 		RESULTS += @"、%CSTR:ARG:プレゼント好み_恋慕影響%"
 	IF STRLENS(RESULTS) > 25
-		LOCALS += @"　プレゼントの好み：%SUBSTRING(RESULTS, 0, 16)%…<button value='171'>[詳細]</button>"
+		LOCALS += @"　선물 취향: %SUBSTRING(RESULTS, 0, 16)%…<button value='171'>[상세]</button>"
 	ELSE
-		LOCALS += @"　プレゼントの好み：%RESULTS,25,LEFT%"
+		LOCALS += @"　선물 취향: %RESULTS,25,LEFT%"
 	ENDIF
 	
 	画像総数 = CHAR_GRAPHIC_COUNT(ARG, 0)
-	LOCALS += "　画像数:"
+	LOCALS += "　이미지 수:"
 	LOCALS += @"{画像総数,4,RIGHT}"
 	IF 画像総数 > 0
-		LOCALS += "　<button value='170'>[詳細]</button>"
+		LOCALS += "　<button value='170'>[상세]</button>"
 	ENDIF
 	
 	LOCALS += "<br>"
@@ -1831,16 +2108,16 @@ IF あなた特殊能力:睡眠診断 > 0 && SAVESTR:ゲームフェイズ管理
 	IF CFLAG:ARG:睡眠
 		CALL CHARA_ROUTINE_STATUS(ARG, "起床時刻")
 		予定時間 = RESULT + TCVAR:ARG:行動時間ゆらぎ
-		LOCALS += @"　起床予定時間：{予定時間 / 60}時 {予定時間 % 60}分"
+		LOCALS += @"　기상 예정 시간: {予定시間 / 60}시 {予定시間 % 60}분"
 	ELSE
 		CALL CHARA_ROUTINE_STATUS(ARG, "就寝時刻")
 		予定時間 = RESULT + TCVAR:ARG:行動時間ゆらぎ
-		LOCALS += @"　就寝予定時間：{予定時間 / 60}時 {予定時間 % 60}分"
+		LOCALS += @"　취침 예정 시간: {予定시間 / 60}시 {予定시間 % 60}분"
 	ENDIF
 	LOCALS += "<br>"
 ENDIF
 IF CFLAG:ARG:元気になる薬フラグ > 0
-	LOCALS += @"　<font color='#%カラーパレット_HTML("黄")%'>元気になる薬使用中：残り%TOFULL(TOSTR(CFLAG:ARG:元気になる薬フラグ))%日</font>"
+	LOCALS += @"　<font color='#%カラーパレット_HTML("黄")%'>기운이 나는 약 사용 중: 남은 %TOFULL(TOSTR(CFLAG:ARG:元気になる薬フラグ))%일</font>"
 	LOCALS += "<br>"
 ENDIF
 
@@ -1848,21 +2125,26 @@ RESULTS = %LOCALS%
 RETURN STRCOUNT(LOCALS, "<br>") - 2
 
 
-@PRINT_STATE_弱点コマンド(対象キャラ, 全て表示ボタン番号 = "")
+@PRINT_STATE_弱点コマンド(対象キャラ, 全て表示ボタン番号 = "", 表示数変更 = 0)
 #DIM  対象キャラ
 #DIMS 全て表示ボタン番号
 #DIM  弱点コマンド数
 #DIM  L_CNT
 #DIMS HTML_TEXT
 #DIM  グレーアウト中
-#DIMS 弱点コマンドリスト, 8
-#DIM  看破状態リスト    , 8
+#DIMS 弱点コマンドリスト, 30
+#DIM  看破状態リスト    , 30
 #DIM  弱点コマンド表示数
+#DIM  表示数変更
 
-HTML_TEXT = □ 弱点コマンド □---------------------<br>
+HTML_TEXT = □ 약점 커맨드 □---------------------<br>
 
 弱点コマンド数 = GET_WEAKCOMMAND_LIST(対象キャラ, 弱点コマンドリスト, 看破状態リスト)
-弱点コマンド表示数 = VARSIZE("弱点コマンドリスト")
+IF 表示数変更 < 1
+	弱点コマンド表示数 = VARSIZE("弱点コマンドリスト")
+ELSE
+	弱点コマンド表示数 = 表示数変更
+ENDIF
 グレーアウト中 = 0
 FOR L_CNT, 0, 弱点コマンド表示数
 	; 途中で空になったら終了
@@ -1886,13 +2168,13 @@ SIF グレーアウト中
 ; 表示数以上に弱点コマンドがある場合
 IF 弱点コマンド数 > 弱点コマンド表示数
 	; 件数表示
-	HTML_TEXT += @"　他{弱点コマンド数 - 弱点コマンド表示数, 2}件"
+	HTML_TEXT += @"　그 외 {弱点コマンド数 - 弱点コマンド表示数, 2}건"
 	; 全て表示ボタンの番号設定がある場合はボタンも表示
 	IF 全て表示ボタン番号 != ""
 		IF ISNUMERIC(全て表示ボタン番号)
-			HTML_TEXT += @"　　　<button value='%全て表示ボタン番号%'>[%全て表示ボタン番号%] 全て表示</button>"
+			HTML_TEXT += @"　　　<button value='%全て表示ボタン番号%'>[%全て表示ボタン番号%] 모두 표시</button>"
 		ELSE
-			HTML_TEXT += @"　　　<button value='%全て表示ボタン番号%'>[全て表示]</button>"
+			HTML_TEXT += @"　　　<button value='%全て表示ボタン番号%'>[모두 표시]</button>"
 		ENDIF
 	ENDIF
 ENDIF
@@ -1906,7 +2188,7 @@ RETURN STRCOUNT(HTML_TEXT, "<br>") - 2
 #DIMS 性癖段階
 #DIM 改行カウント
 LOCAL:1 = 0
-LOCALS = □ 素質 □---------------------------------------------------------------------<br>　
+LOCALS = □ 소질 □---------------------------------------------------------------------<br>　
 改行カウント = 1
 名前格納 = 
 FOR ループ用,6,160
@@ -1914,7 +2196,7 @@ FOR ループ用,6,160
 		;男の時、V感覚はスキップ
 		SIF ループ用 == 102 && GETBIT(TALENT:ARG:性別, 0) == 0
 			CONTINUE
-		IF STRLENS(名前格納) + STRLENS(GET_TALENTNAME(ループ用,TALENT:ARG:ループ用, 0,ARG)) > 38
+		IF STRLENS(名前格納) + STRLENS(GET_TALENTNAME(ループ用,TALENT:ARG:ループ用, 0,ARG)) > 40
 			名前格納 = 
 			LOCALS += "<br>　"
 			改行カウント += 1
@@ -1929,7 +2211,7 @@ FOR ループ用,6,160
 NEXT
 FOR ループ用,220,300
 	IF STRLENS(GET_TALENTNAME(ループ用,TALENT:ARG:ループ用,,ARG))
-		IF STRLENS(名前格納) + STRLENS(GET_TALENTNAME(ループ用,TALENT:ARG:ループ用,,ARG)) > 38
+		IF STRLENS(名前格納) + STRLENS(GET_TALENTNAME(ループ用,TALENT:ARG:ループ用,,ARG)) > 40
 			名前格納 = 
 			LOCALS += "<br>　"
 			改行カウント += 1
@@ -1944,7 +2226,7 @@ FOR ループ用,220,300
 NEXT
 FOR ループ用,0,10
 	IF GETVARS(@"CSTR:ARG:固有素質{ループ用}") !=""
-		IF STRLENS(名前格納) + STRLENS(GETVARS(@"CSTR:ARG:固有素質{ループ用}")) > 38
+		IF STRLENS(名前格納) + STRLENS(GETVARS(@"CSTR:ARG:固有素質{ループ用}")) > 40
 			名前格納 = 
 			LOCALS += "<br>　"
 			改行カウント += 1
@@ -1955,7 +2237,7 @@ FOR ループ用,0,10
 			TRYCCALLFORM 固有素質解説_{NO:ARG}_%GETVARS(@"CSTR:ARG:固有素質{ループ用}")%
 				LOCALS += @"<nonbutton title='%RESULTS%'>[%GETVARS(@"CSTR:ARG:固有素質{ループ用}")%]</nonbutton>"
 			CATCH
-				LOCALS += @"<nonbutton title='<br>固有素質<br>'>[%GETVARS(@"CSTR:ARG:固有素質{ループ用}")%]</nonbutton>"
+				LOCALS += @"<nonbutton title='<br>고유 소질<br>'>[%GETVARS(@"CSTR:ARG:固有素質{ループ用}")%]</nonbutton>"
 			ENDCATCH
 		ELSE
 			LOCALS += @"<nonbutton>[%GETVARS(@"CSTR:ARG:固有素質{ループ用}")%]</nonbutton>"
@@ -1964,7 +2246,7 @@ FOR ループ用,0,10
 NEXT
 FOR ループ用,1,100
 	IF 知識素質:ARG:ループ用
-		IF STRLENS(名前格納) + STRLENS(@"[%ERDNAME(知識素質,ループ用)%Lv{知識素質:ARG:ループ用}]") > 38 - 2
+		IF STRLENS(名前格納) + STRLENS(@"[%ERDNAME(知識素質,ループ用)%Lv{知識素質:ARG:ループ用}]") > 40 - 2
 			名前格納 = 
 			LOCALS += "<br>　"
 			改行カウント += 1
@@ -1989,7 +2271,7 @@ RETURN 改行カウント - 2
 #DIMS 性癖段階
 #DIMS 素質名
 
-PRINTL □ 성벽 □--(클릭하여 무효화 가능)-------------------------------------
+PRINTL □ 성벽 □--(클릭하여 비활성화 가능)-------------------------------------
 FOR LOCAL, 1, 100
 	IF 性癖素質:ARG:LOCAL
 		素質名 = %GET_性癖素質NAME(LOCAL, ARG, 1)%
@@ -2031,13 +2313,13 @@ LOCALS =
 #DIM ループ用
 PRINTL
 PRINTL □ 소지품 □-------------------------------------------------------------------
-PRINTFORML 　소지금：%NUM_FORMAT(MONEY)%%MONEYLABEL%
-PRINTFORML 　소지 ZP：{FLAG:ZP所持量}
+PRINTFORML 　소지금: %NUM_FORMAT(MONEY)%%MONEYLABEL%
+PRINTFORML 　보유 ZP: {FLAG:ZP所持量}
 PRINT 　
 LOCAL:1 = 0
 FOR ループ用,0,200
 	IF ITEM:ループ用
-		PRINTFORM %ITEMNAME:ループ用, 30, LEFT%：{ITEM:ループ用, 3}개　
+		PRINTFORM %ITEMNAME:ループ用, 30, LEFT%: {ITEM:ループ用, 3}개　
 		LOCAL:1 += 1
 		IF LOCAL:1 == 3
 			PRINTL
@@ -2049,7 +2331,7 @@ NEXT
 
 FOR ループ用,1000,1100
 	IF ITEM:ループ用
-		PRINTFORM %ITEMNAME:ループ用, 30, LEFT%：{ITEM:ループ用, 3}개　
+		PRINTFORM %ITEMNAME:ループ用, 30, LEFT%: {ITEM:ループ用, 3}개　
 		LOCAL:1 += 1
 		IF LOCAL:1 == 3
 			PRINTL
@@ -2061,7 +2343,7 @@ NEXT
 
 FOR ループ用,1900,2000
 	IF ITEM:ループ用
-		PRINTFORM %ITEMNAME:ループ用, 30, LEFT%：{ITEM:ループ用, 3}개　
+		PRINTFORM %ITEMNAME:ループ用, 30, LEFT%: {ITEM:ループ用, 3}개　
 		LOCAL:1 += 1
 		IF LOCAL:1 == 3
 			PRINTL
@@ -2121,7 +2403,7 @@ FOR LOCAL,0,22
 		LOCALS = {JUEL:ARG:LOCAL / 1000}k
 	SIF JUEL:ARG:LOCAL > 1000000000
 		LOCALS = {JUEL:ARG:LOCAL / 1000000}m
-	PRINTFORM %PALAMNAME:LOCAL,6%의 보주:%LOCALS,7,LEFT%
+	PRINTFORM %PALAMNAME:LOCAL,6%의 구슬:%LOCALS,7,LEFT%
 	LOCAL:1 += 1
 	;改行or表示位置あけ
 	SIF LOCAL:1 % 4 == 0
@@ -2131,7 +2413,7 @@ NEXT
 LOCALS = {JUEL:ARG:100}
 SIF JUEL:ARG:100 > 1000000
 	LOCALS = {JUEL:ARG:100 / 1000}k
-PRINTFORM %PALAMNAME:100,6%의 보주:%LOCALS,7,LEFT%
+PRINTFORM %PALAMNAME:100,6%의 구슬:%LOCALS,7,LEFT%
 
 @PRINT_STATE_EX(ARG)
 SIF EX:ARG:Ｃ絶頂 + EX:ARG:Ｖ絶頂 + EX:ARG:Ａ絶頂 + EX:ARG:Ｂ絶頂 + EX:ARG:Ｓ絶頂 == 0
@@ -2151,7 +2433,7 @@ FOR LOCAL, 0, 20
 NEXT
 IF ARG != MASTER
 	PRINTL 
-	PRINTFORML %"오늘의 점수 " + NUM_FORMAT(EX:ARG:スコア), 72%
+	PRINTFORML %"今日のスコア " + NUM_FORMAT(EX:ARG:スコア), 72%
 ELSEIF LOCAL:1 % 4 != 0
 	PRINTL 
 ENDIF
@@ -2183,21 +2465,21 @@ IF DT_SELECT("関係性データベース", @"(対象キャラ１ = {CFLAG:ARG:�
 	ELSE
 		恋慕相手 = FIND_CHARA_FROM_PERSON_ID(DT_CELL_GET("関係性データベース", RESULT:1, "対象キャラ１", 1))
 	ENDIF
-	PRINTFORML 　연모 성립 상대:%NAME表示(恋慕相手)%
+	PRINTFORML 　연모 성립 상대: %NAME表示(恋慕相手)%
 ELSE
 	IF CFLAG:ARG:ゲージ起動分類 == 1
 		PRINTFORM 　연모도:Lv{CFLAG:ARG:恋慕レベル}　
 		SELECTCASE CFLAG:ARG:恋慕レベル
 			CASE 0
-				PRINT 희망 없음
+				PRINT 가망 없음
 			CASE IS <= 関係閾値:1
 				PRINT 조금 신경 쓰임
 			CASE IS <= 関係閾値:2
-				PRINT 왠지 좋을지도
+				PRINT 왠지 괜찮을지도
 			CASE IS <= 関係閾値:3
-				PRINT 호감을 자각
+				PRINT 호의를 자각
 			CASE IS <= 関係閾値:4
-				PRINT 깨가 쏟아짐
+				PRINT 러브러브
 			CASEELSE
 				PRINT 가장 사랑하는 사람
 		ENDSELECT
@@ -2221,15 +2503,15 @@ IF CFLAG:対象キャラ:ゲージ起動分類 == 1
 	PRINTFORM 연모도:Lv{CFLAG:対象キャラ:恋慕レベル}　
 	SELECTCASE CFLAG:対象キャラ:恋慕レベル
 		CASE 0
-			PRINT 희망 없음
+			PRINT 가망 없음
 		CASE IS <= 関係閾値:1
 			PRINT 조금 신경 쓰임
 		CASE IS <= 関係閾値:2
-			PRINT 왠지 좋을지도
+			PRINT 왠지 괜찮을지도
 		CASE IS <= 関係閾値:3
-			PRINT 호감을 자각
+			PRINT 호의를 자각
 		CASE IS <= 関係閾値:4
-			PRINT 깨가 쏟아짐
+			PRINT 러브러브
 		CASEELSE
 			PRINT 가장 사랑하는 사람
 	ENDSELECT
@@ -2242,7 +2524,7 @@ ENDIF
 
 IF TALENT:ARG:セフレ
 	PRINTL
-	PRINTFORML 　섹프 성립 상대: %NAME表示(MASTER)% 
+	PRINTFORML 　섹스 프렌드 성립 상대: %NAME表示(MASTER)% 
 ENDIF
 
 VARSET RESULT
@@ -2258,14 +2540,14 @@ FOR LOCAL, 1, 関係数 + 1
 	ELSE
 		セフレ相手 = FIND_CHARA_FROM_PERSON_ID(DT_CELL_GET("関係性データベース", RESULT:LOCAL, "対象キャラ１", 1))
 	ENDIF
-	PRINTFORML 　섹프 성립 상대: %NAME表示(セフレ相手)%
+	PRINTFORML 　섹스 프렌드 성립 상대: %NAME表示(セフレ相手)%
 	IF LOCAL > 3 && OPTION変数:セフレ相手全表示 == 0
-		PRINTFORM 외, 섹프 {関係数 - 3}명
+		PRINTFORM 그 외 섹스 프렌드 {関係数 - 3}명
 		BREAK
 	ENDIF
 NEXT
 IF OPTION変数:セフレ相手全表示
-	PRINTBUTTON "[1013] 생략 표시", 1013
+	PRINTBUTTON "[1013] 간략 표시", 1013
 ELSE
 	PRINTBUTTON "[1013] 전원 표시", 1013
 ENDIF
@@ -2273,6 +2555,12 @@ PRINTL
 
 @PRINT_STATE_好感度詳細(ARG)
 #DIMS CONST 好感度種類 = "友情", "信頼", "恋心", "性愛"
+
+;ツールチップ設定
+TOOLTIP_CUSTOM 1
+TOOLTIP_SETFONTSIZE 12
+TOOLTIP_SETDURATION 100000
+
 IF ARG
 	PRINTBUTTON @"□ \@ GETBIT(INFO格納フィルタ:9, 0)? |▶ # ▽\@ 관계 □------------------------------------------------------------------", 800
 	PRINTL 
@@ -2281,7 +2569,14 @@ IF ARG
 		CALL PRINT_好感度レベル表示(ARG)
 		PRINTL
 		IF CFLAG:ARG:友情度 >= 100500
-			PRINTFORM 　　├ 요소: 우정 MAX!!
+			IF OPTION変数:ツールチップ切り替え == 0
+				HTML_PRINT @"<nonbutton title='友情度：%NUM_FORMAT(CFLAG:ARG:友情度)% / 100,500'>　　├ 요소: 우정  <font color='#%カラーパレット_HTML("黄")%'>MAX!!</font></nonbutton>" ,1
+			ELSE
+				PRINTFORM 　　├ 요소: 우정  
+				SETCOLOR カラーパレット("黄")
+				PRINTFORM MAX!!
+				RESETCOLOR
+			ENDIF
 			HTML_PRINT "<shape type='rect' param='62, 56, 2625, 37' color='red'>", 1
 		ELSE
 			IF あなた特殊能力:フレンドリーセンス
@@ -2300,7 +2595,14 @@ IF ARG
 			ENDCATCH
 		ENDIF
 		IF CFLAG:ARG:信頼度 >= 100500
-			PRINTFORM 　　├ 요소: 신뢰 MAX!!
+			IF OPTION変数:ツールチップ切り替え == 0
+				HTML_PRINT @"<nonbutton title='信頼度：%NUM_FORMAT(CFLAG:ARG:信頼度)% / 100,500'>　　├ 요소: 신뢰  <font color='#%カラーパレット_HTML("黄")%'>MAX!!</font></nonbutton>" ,1
+			ELSE
+				PRINTFORM 　　├ 요소: 신뢰  
+				SETCOLOR カラーパレット("黄")
+				PRINTFORM MAX!!
+				RESETCOLOR
+			ENDIF
 			HTML_PRINT "<shape type='rect' param='62, 56, 2625, 37' color='red'>", 1
 		ELSE
 			IF あなた特殊能力:フレンドリーセンス
@@ -2319,7 +2621,14 @@ IF ARG
 			ENDCATCH
 		ENDIF
 		IF CFLAG:ARG:恋心度 >= 100500
-			PRINTFORM 　　├ 요소: 연심 MAX!!
+			IF OPTION変数:ツールチップ切り替え == 0
+				HTML_PRINT @"<nonbutton title='恋心度：%NUM_FORMAT(CFLAG:ARG:恋心度)% / 100,500'>　　├ 요소: 연심  <font color='#%カラーパレット_HTML("黄")%'>MAX!!</font></nonbutton>" ,1
+			ELSE
+				PRINTFORM 　　├ 요소: 연심  
+				SETCOLOR カラーパレット("黄")
+				PRINTFORM MAX!!
+				RESETCOLOR
+			ENDIF
 			HTML_PRINT "<shape type='rect' param='62, 56, 2625, 37' color='red'>", 1
 		ELSE
 			IF あなた特殊能力:フレンドリーセンス
@@ -2338,7 +2647,14 @@ IF ARG
 			ENDCATCH
 		ENDIF
 		IF CFLAG:ARG:性愛度 >= 100500
-			PRINTFORM 　　└ 요소: 성애 MAX!!
+			IF OPTION変数:ツールチップ切り替え == 0
+				HTML_PRINT @"<nonbutton title='性愛度：%NUM_FORMAT(CFLAG:ARG:性愛度)% / 100,500'>　　├ 요소: 성애  <font color='#%カラーパレット_HTML("黄")%'>MAX!!</font></nonbutton>" ,1
+			ELSE
+				PRINTFORM 　　├ 요소: 성애  
+				SETCOLOR カラーパレット("黄")
+				PRINTFORM MAX!!
+				RESETCOLOR
+			ENDIF
 			HTML_PRINT "<shape type='rect' param='62, 56, 2625, 37' color='red'>", 1
 		ELSE
 			IF あなた特殊能力:フレンドリーセンス
@@ -2357,7 +2673,7 @@ IF ARG
 		CALL PRINT_好感度レベル表示(ARG)
 		IF FLAG:口上表示切り替えオプション > 0
 			LOCAL = MAXFIND(5, CFLAG:ARG:友情度, CFLAG:ARG:信頼度, CFLAG:ARG:恋心度, CFLAG:ARG:性愛度, CFLAG:ARG:キャラ固有好感度)
-			LOCALS = \@ LOCAL < 5 ? %好感度種類:LOCAL% # キャラ固有好感度要素\@
+			LOCALS = \@ LOCAL < 5 ? %好感度種類:LOCAL% # 캐릭터 고유 호감도 요소\@
 			PRINTL  
 			TRYCALLFORM 口上_ステータス画面_%LOCALS%コメント_{NO:ARG}(ARG)
 		ENDIF
@@ -2371,7 +2687,15 @@ IF ARG && !GETBIT(INFO格納フィルタ:9, 0)
 		PRINTL
 		PRINTL □ 고유 관계성 □---------------------------------------------------------------
 		IF CFLAG:ARG:キャラ固有好感度 >= 100500
-			PRINTFORM 　%CSTR:ARG:キャラ固有好感度要素% Lv100 MAX!!：%RESULTS%
+			IF OPTION変数:ツールチップ切り替え == 0
+				HTML_PRINT @"<nonbutton title='%CSTR:ARG:キャラ固有好感度要素%：%NUM_FORMAT(CFLAG:ARG:キャラ固有好感度)% / 100,500'>　%CSTR:ARG:キャラ固有好感度要素% Lv100  <font color='#%カラーパレット_HTML("黄")%'>MAX!!</font>：%RESULTS%</nonbutton>" ,1
+			ELSE
+				PRINTFORM 　%CSTR:ARG:キャラ固有好感度要素% Lv100 
+				SETCOLOR カラーパレット("黄")
+				PRINTFORM MAX!!
+				RESETCOLOR
+				PRINTFORM ：%RESULTS%
+			ENDIF
 			HTML_PRINT "<shape type='rect' param='62, 56, 2625, 37' color='red'>", 1
 		ELSE
 			IF あなた特殊能力:フレンドリーセンス
@@ -2399,7 +2723,7 @@ CALL PRINT_セフレ相手表示(ARG)
 PRINTL
 
 @PRINT_STATE_仕事レベル表示(ARG)
-PRINTL □ 직업 레벨 □---------------------------------------------------------------
+PRINTL □ 업무 레벨 □---------------------------------------------------------------
 LOCAL:1 = 0
 FOR LOCAL, 1, 50
 	IF 現在仕事数字文字列変換(LOCAL) == ""
@@ -2411,7 +2735,7 @@ FOR LOCAL, 1, 50
 		CONTINUE
 	SIF 仕事レベル:ARG:LOCAL <= 0
 		CONTINUE
-	PRINTFORMLC 　%現在仕事数字文字列変換(LOCAL)% 레벨：{仕事レベル:ARG:LOCAL}
+	PRINTFORMLC 　%現在仕事数字文字列変換(LOCAL)% 레벨: {仕事レベル:ARG:LOCAL}
 	LOCAL:1 ++
 	IF LOCAL:1 == 3
 		PRINTL
@@ -2423,11 +2747,11 @@ PRINTL ・상주 업무 레벨
 IF 現在仕事:ARG:0 == 2
 	LOCALS = %MAP_GET("常駐業務名", REPLACE(GETPLACENAME(現在仕事:ARG:1 / 10000, 現在仕事:ARG:1 % 10000), "『.*』", ""))%
 ELSE
-	LOCALS = 常駐業務でないため該当させない
+	LOCALS = 상주 업무가 아니므로 해당되지 않음
 ENDIF
 FOR LOCAL, 0, 30
 	IF 常駐業務レベル:ARG:LOCAL > 0 || ERDNAME(常駐業務レベル, LOCAL) == LOCALS
-		PRINTFORMLC 　%ERDNAME(常駐業務レベル, LOCAL)% 레벨：{常駐業務レベル:ARG:LOCAL}
+		PRINTFORMLC 　%ERDNAME(常駐業務レベル, LOCAL)% 레벨: {常駐業務レベル:ARG:LOCAL}
 	ENDIF
 NEXT
 PRINTL
@@ -2437,12 +2761,12 @@ SIF !EXP:MASTER:孕ませ経験 && !EXP:MASTER:妊娠経験
 	RETURN 0
 DRAWLINE
 IF EXP:MASTER:孕ませ経験
-	PRINTFORML %CALLNAME:MASTER%이 임신시킨 횟수　　： {EXP:MASTER:孕ませ経験}회
-	PRINTFORML %CALLNAME:MASTER%이 낳게 한 아이의 수： {MASTERの子供の数:0}명
+	PRINTFORML %CALLNAME:MASTER%이(가) 임신시킨 횟수　　: {EXP:MASTER:孕ませ経験}회
+	PRINTFORML %CALLNAME:MASTER%이(가) 낳게 한 자녀 수: {MASTERの子供の数:0}명
 ENDIF
 IF EXP:MASTER:妊娠経験
-	PRINTFORML %CALLNAME:MASTER%이 임신당한 횟수　： {EXP:MASTER:妊娠経験}회
-	PRINTFORML %CALLNAME:MASTER%이 낳은 아이의 수　： {MASTERの子供の数:1}명
+	PRINTFORML %CALLNAME:MASTER%이(가) 임신당한 횟수　: {EXP:MASTER:妊娠経験}회
+	PRINTFORML %CALLNAME:MASTER%이(가) 낳은 자녀 수　: {MASTERの子供の数:1}명
 ENDIF
 
 @PRINT_STATE_妊娠状態(ARG)
@@ -2452,32 +2776,32 @@ PRINTFORML 　임신 경과 기간:{CFLAG:ARG:妊娠経過日}
 PRINT 　
 SELECTCASE PREGNANCY_SIZE(ARG)
 	CASE 0
-		PRINTL 복부의 모습은 임신 전과 전혀 변하지 않았다
+		PRINTL 복부의 외관은 임신 전과 전혀 달라지지 않았다
 	CASE 1
-		PRINTL 약간 부풀어 있지만, 옷 위에서는 거의 눈치채지 못할 것이다
+		PRINTL 약간 부풀어 있지만 옷 위로는 거의 알아보기 힘들 것이다
 	CASE 2
-		PRINTL 옷 위에서는 아직 알기 어렵지만, 만져보면 확실한 팽창감을 느낀다
+		PRINTL 옷 위로는 아직 알아보기 어렵지만 쓰다듬으면 확실한 부풀어 오름이 느껴진다
 	CASE 3
-		PRINTL 복부는 볼록하게 솟아올라 있어, 멀리서도 임신했다는 것을 한눈에 알 수 있다
+		PRINTL 복부가 봉긋하게 솟아 있어 멀리서도 임신했다는 사실을 한눈에 알 수 있다
 	CASE 4
-		PRINTFORML 커다란 복부 안에서, 아이\@ CFLAG:ARG:今回受胎人数 > 1 ? 들 # \@은(는) 순조롭게 무럭무럭 자라고 있는 것 같아.
+		PRINTFORML 커다란 배 속에서 아이 \@ CFLAG:ARG:今回受胎人数 > 1 ? たち # \@은(는) 순조롭게 무럭무럭 자라고 있는 듯하다
 	CASE 5
 		IF 異種妊娠(ARG) && TALENT:ARG:種族 == 種族_ハーヴィン
-			PRINTFORML 크게 솟아오른 불룩한 배는 심상치 않은 크기로, 이종족 수컷에게 임신된 것이 한눈에 뻔히 보여.
+			PRINTFORML 크게 앞으로 나온 임신 배는 심상치 않은 크기라, 이종족 수컷에게 임신당했다는 사실이 한눈에 드러난다
 		ELSEIF (CFLAG:ARG:今回受胎人数 > 1 && TALENT:ARG:種族 == 種族_ハーヴィン) || CFLAG:ARG:今回受胎人数 > 2
-			PRINTFORML 크게 솟아오른 불룩한 배는 심상치 않은 크기로, 다태 임신한 것이 한눈에 뻔히 보여.
+			PRINTFORML 크게 앞으로 나온 임신 배는 심상치 않은 크기라, 다태 임신했다는 사실이 한눈에 드러난다
 		ELSEIF TALENT:ARG:体格 <= -2
-			PRINTFORML 작은 몸과는 반대로 불룩한 배는 마치 만삭처럼 크게 솟아올랐어.
+			PRINTFORML 작은 몸과 달리 임신 배는 마치 만삭처럼 크게 앞으로 나와 있다
 		ELSE
-			PRINTL 무겁게 부풀어 오른 만삭 배는, 어쩔 수 없이 보는 사람에게 출산이 임박했음을 떠올리게 해.
+			PRINTL 무겁게 팽팽히 부른 만삭의 배는 보는 이에게 출산이 임박했음을 절로 떠올리게 한다
 		ENDIF
 	CASE 6
-		PRINTFORML \@ (CFLAG:ARG:子の父親 >= 0 && INRANGE(TALENT:(CFLAG:ARG:子の父親):種族, 1, 5) && 異種妊娠(ARG)) ? %GET_TALENTNAME(200,TALENT:(CFLAG:ARG:子の父親):種族,,CFLAG:ARG:子の父親)% # 이종족 \@과의 아이\@ CFLAG:ARG:今回受胎人数 > 1 ? 들 # \@을 출산이 임박한 만삭 배는 너무나 거대해서, 걷는 것도 힘들어 보여.
+		PRINTFORML \@ (CFLAG:ARG:子の父親 >= 0 && INRANGE(TALENT:(CFLAG:ARG:子の父親):種族, 1, 5) && 異種妊娠(ARG)) ? %GET_TALENTNAME(200,TALENT:(CFLAG:ARG:子の父親):種族,,CFLAG:ARG:子の父親)% # 이종족 \@와의 아이 \@ CFLAG:ARG:今回受胎人数 > 1 ? たち # \@의 출산을 앞둔 만삭 배는 너무나 거대해 걷는 것조차 힘들어 보인다
 ENDSELECT
 SIF (GROUPMATCH(TALENT:ARG:種族,種族_ドラフ,種族_ハーヴィン) || TALENT:ARG:体格 < 0) && TALENT:ARG:バストサイズ >= 2 && PREGNANCY_SIZE(ARG) >= 4
-	PRINTFORML 　%CALLNAME:ARG%의 거대한 흉부는 크게 솟아오른 불룩한 배에 밀려 올라가 있어.
+	PRINTFORML 　%CALLNAME:ARG%의 거대한 가슴은 크게 튀어나온 임신 배에 떠밀려 올라가 있다
 SIF TALENT:ARG:母乳体質 == 3
-	PRINTFORML 　가슴은 임신의 영향으로 조금 커지고, 아이를 위한 모유를 저장하고 있어.
+	PRINTFORML 　가슴은 임신의 영향으로 조금 커졌으며 아이를 위한 모유를 비축하고 있다
 
 
 
@@ -2534,7 +2858,7 @@ WAIT
 #DIMS 能力
 VARSET LOCAL
 PRINTL
-LOCALS = □ 特殊能力 □-----------------------------------------------------------------
+LOCALS = □ 특수 능력 □-----------------------------------------------------------------
 LOCALS += "<br>　"
 FOR LOCAL, 0, VARSIZE("あなた特殊能力")
 	IF あなた特殊能力:LOCAL > 0
@@ -2606,3 +2930,40 @@ PRINTL
 
 WAIT
 DRAWLINE
+
+
+@その他表示画面(対象キャラ)
+#DIM 対象キャラ
+#DIM L_C
+
+;ここで立ち絵表示
+CALL 画像描画終了
+L_C = LINECOUNT
+
+IF GETBIT(画像サイズ切り替えOPTION記憶, 2)
+	HTML_PRINT @"<div rect='4062, 237, 1125, 2250'>%短冊グラ表示用文字列関数(対象キャラ)%</div>", 1
+ELSE
+	HTML_PRINT @"<div rect='4062, 237, 1125, 1125'>%顔グラ表示用文字列関数(対象キャラ)%</div>", 1
+ENDIF
+PRINTL
+PRINTFORM ■%NAME表示(対象キャラ)%
+PRINTL
+
+IF 対象キャラ != MASTER
+	CALL PRINT_STATE_好感度詳細(対象キャラ)
+	IF TALENT:対象キャラ:従業員
+		CALL PRINT_STATE_仕事レベル表示(対象キャラ)
+	ENDIF
+ELSE
+	CALL PRINT_STATE_仕事レベル表示(対象キャラ)
+	CALL PRINT_ITEMCOUNT
+	CALL PRINT_STATE_あなた特殊能力
+	PRINTL
+ENDIF
+
+FOR LOCAL, 0, 29 - (LINECOUNT - L_C)
+	PRINTL
+NEXT
+
+
+

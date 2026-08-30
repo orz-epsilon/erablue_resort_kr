@@ -8,17 +8,17 @@ SELECTCASE ARGS
 		LOCALS = <div rect='2125,500,3762,2812'>
 		LOCALS += "■크리스마스 파티<br>"
 		LOCALS += "<br>"
-		LOCALS += "리조트 전체를 크리스마스 분위기로 띄웁니다.<br>"
+		LOCALS += "리조트 전체를 크리스마스 무드로 북돋웁니다.<br>"
 		LOCALS += "즐거운 분위기에 휩싸여, 조건 없이 모든 캐릭터가 우정을 느끼기 쉬워질 것입니다.<br>"
 		LOCALS += "<br>"
-		LOCALS += "호감도 요소: 우정 상승률이 1.2배가 됩니다.<br>"
+		LOCALS += "호감도 요소: 우정의 상승률이 1.2배가 됩니다.<br>"
 		LOCALS += "직원의 제복이 크리스마스 의상이 됩니다.<br>"
 		LOCALS += "일정 조건을 만족한 캐릭터가 크리스마스 의상을 입을 수 있습니다.<br>"
 		LOCALS += "<br>"
 		IF 10000 > MONEY
-			LOCALS += @"루피가 부족합니다. (필요 루피：%NUM_FORMAT(開催費用)%）<br>"
+			LOCALS += @"루피가 부족합니다.（필요 루피：%NUM_FORMAT(開催費用)%）<br>"
 		ELSE
-			LOCALS += @"<button value='0'>[0] 이 축제를 기획한다 (필요 루피：%NUM_FORMAT(開催費用)%）</button><br>"
+			LOCALS += @"<button value='0'>[0] 이 축제를 기획한다（필요 루피：%NUM_FORMAT(開催費用)%）</button><br>"
 		ENDIF
 		LOCALS += "</div>"
 		HTML_PRINT LOCALS, 1
@@ -51,7 +51,9 @@ SELECTCASE ARGS
 		;お祭り開催で服入手
 		CALL 制服登録処理("ミニスカサンタ")
 		;女性のみ
-		IF GETBIT(TALENT:対象キャラ:性別, 0)
+		RESULT = 0
+		TRYCALLFORMF 性別処理制御_{NO:対象キャラ}(対象キャラ, "服着用性別")
+		IF GETBIT(TALENT:対象キャラ:性別, 0) || RESULT == 1
 			IF TALENT:対象キャラ:従業員
 				;従業員は全員着る
 			ELSEIF TALENT:対象キャラ:目立ちたがり

@@ -94,7 +94,7 @@ RETURN 1
 ;-------------------------------------------------
 @MESSAGE_COM381_0_711
 
-PRINTFORML %CALLNAME:PLAYER%은(는)%CALLNAME:TARGET%에게 마사지를 부탁했다.
+PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%에게 마사지를 부탁했다.
 
 IF PREGNANCY_SIZE(PLAYER) >= 2 && EXIST画像FILE("resources/" + CSTR:PLAYER:画像フォルダ + "/マッサージ開始_妊娠")
 	CALL PRINT_STRW(@"IMAGEPATH_%CSTR:PLAYER:画像フォルダ%/マッサージ開始_妊娠")

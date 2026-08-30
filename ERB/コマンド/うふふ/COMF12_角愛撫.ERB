@@ -4,7 +4,7 @@
 ;-------------------------------------------------
 @COMNAME12
 #FUNCTIONS
-TSTR:コマンド名受渡 = 뿔 애무
+TSTR:コマンド名受渡 = 角愛撫
 
 ;===================================================
 ;コマンドタイプ
@@ -14,7 +14,7 @@ TSTR:コマンド名受渡 = 뿔 애무
 TFLAG:コマンドタイプ受渡 = COMTYPE("うふふ_被挿入中")
 
 @COM_TOOLTIP_12
-LOCALS = <br>■뿔 애무<br>
+LOCALS = <br>■角愛撫<br>
 LOCALS += "상대의 뿔을 성적으로 애무하는 커맨드."
 LOCALS += "<br>COM 타입: 우후후or피삽입중<br>획득 소스: 쾌S・노출・접촉・고통"
 LOCALS += "<br>고유 획득 경험: 뿔 개발(TARGET)<br>"
@@ -73,12 +73,12 @@ RETURN 1
 ;実行時メッセージ
 ;-------------------------------------------------
 @MESSAGE_COM12
-PRINTFORML %CALLNAME:PLAYER%은/는 %CALLNAME:TARGET%의 뿔을 살살 긁듯이 애무했다…
+PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%의 뿔을 사각사각 긁듯이 애무했다…
 
 @MESSAGE_COM12_非口上時
 
 IF EXP:TARGET:角開発 < 100
-	PRINTFORML %CALLNAME:TARGET%은/는 간지러운 듯 몸을 비틀거렸다…
+	PRINTFORML %CALLNAME:TARGET%은(는) 간지러운 듯 몸을 비틀고 있다…
 ELSE
-	PRINTFORML %CALLNAME:TARGET%은/는 뿔에서 오는 쾌락에 얼굴을 풀고 있다…
+	PRINTFORML %CALLNAME:TARGET%은(는) 뿔에서 오는 쾌락에 얼굴을 풀고 있다…
 ENDIF

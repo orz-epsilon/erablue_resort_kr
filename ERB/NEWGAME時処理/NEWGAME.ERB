@@ -2,6 +2,8 @@
 ;タイトル画面
 ;-------------------------------------------------
 @SYSTEM_TITLE
+#DIM エディタ開閉
+
 DRAWLINE
 ALIGNMENT CENTER
 PRINT_IMG "タイトルロゴ", 5330, 1520
@@ -30,36 +32,46 @@ PRINTS "Ver" + TOSTR(GAMEBASE_VERSION, "0,.000")
 PRINTL
 PRINTFORML %GAMEBASE_INFO%
 DRAWLINE
-PRINTBUTTON "[0] 처음부터 시작하기", 0
+PRINTBUTTON "[0] 처음부터 시작한다", 0
 PRINTL
-PRINTBUTTON "[1] 로드해서 시작하기", 1
+PRINTBUTTON "[1] 불러와서 시작한다", 1
 PRINTL
 PRINTL
 PRINTL
-PRINTL ■데이터 에디터 기능
+IF エディタ開閉
+PRINTBUTTON "■데이터 에디터 기능 [닫기]", 99
+	PRINTL
 PRINT 　├
-PRINTBUTTON "[2] CSV 에디터 실행하기", 2
-PRINTL
+PRINTBUTTON "[2] CSV 에디터를 실행한다", 2
+	PRINTL
 PRINT 　├
-PRINTBUTTON "[3] 의상 ERB 에디터 실행하기", 3
-PRINTL
+PRINTBUTTON "[3] 옷 ERB 에디터를 실행한다", 3
+	PRINTL
 PRINT 　├
-PRINTBUTTON "[4] 약점 커맨드 설정 ERB 에디터 실행하기", 4
-PRINTL
+PRINTBUTTON "[4] 약점 커맨드 설정 ERB 에디터를 실행한다", 4
+	PRINTL
+PRINT 　├
+PRINTBUTTON "[5] 한마디 코멘트/해설 에디터를 실행한다", 5
+	PRINTL
+PRINT 　├
+PRINTBUTTON "[6] 어빌리티 에디터를 실행한다", 6
+	PRINTL
 PRINT 　└
-PRINTBUTTON "[5] 한마디 코멘트/해설 에디터 실행하기", 5
-; PRINTL
-; PRINT 　├
-; PRINTBUTTON "[5] 一言コメント/解説エディタを起動する", 5
-; PRINTL
-; PRINT 　└
-; PRINTBUTTON "[6] 料理レシピエディタを起動する", 6
-PRINTL
-PRINTL
-PRINTL
-PRINTL ■erablue_resort 개발 디스코드
+PRINTBUTTON "[7] 오의 에디터를 실행한다", 7
+	PRINTL
+[IF_DEBUG]
 PRINT 　└
-PRINTBUTTON "[100] 디스코드 채널로 이동하기", 100
+PRINTBUTTON "[8] 요리 레시피 에디터를 실행한다", 8
+	PRINTL
+[ENDIF]
+ELSE
+	PRINTBUTTON "■데이터 에디터 기능 [열기]", 99
+ENDIF
+PRINTL
+PRINTL
+PRINTL ■erablue_resort 개발 Discord
+PRINT 　└
+PRINTBUTTON "[100] Discord 채널로 이동", 100
 
 
 
@@ -71,13 +83,13 @@ PRINTL
 PRINTL
 PRINTL ■디버그용 기능
 PRINT 　├
-PRINTBUTTON "[ 9] 이미지 파일명 체크", 9
+PRINTBUTTON "[109] 이미지 파일명 체크", 109
 PRINTL
 PRINT 　├
-PRINTBUTTON "[11] 이미지 파일명 체크(CSV 번호 지정)", 11
+PRINTBUTTON "[111] 이미지 파일명 체크(CSV 번호 지정)", 111
 PRINTL
 PRINT 　└
-PRINTBUTTON "[10] CSV 초기 동행률 체크", 10
+PRINTBUTTON "[110] CSV 초기 동행률 체크", 110
 [ENDIF]
 
 BINPUT
@@ -86,6 +98,8 @@ SELECTCASE RESULT
 		BEGIN FIRST
 	CASE 1
 		LOADGAME
+	CASE 99
+		INVERTBIT エディタ開閉, 0
 	CASE 2
 		CSVエディタフラグ = 1
 		CALL 従業員素質指定雇用
@@ -97,15 +111,19 @@ SELECTCASE RESULT
 	CASE 5
 		CALL 一言コメント解説エディタ
 	CASE 6
+		CALL アビリティエディタ
+	CASE 7
+		CALL 奥義エディタ
+	CASE 8
 		CALL 料理レシピエディタ
 	CASE 100
 		CALLSHARP LAUNCH_BROWSER("https://discord.gg/zCWzA8kbgp")
 [IF_DEBUG]
-	CASE 9
+	CASE 109
 		CALL デバッグ用_画像ファイル名チェック()
-	CASE 11
+	CASE 111
 		CALL デバッグ用_画像ファイル名チェック_キャラ指定()
-	CASE 10
+	CASE 110
 		CALL デバッグ用_初期同行率チェック()
 	CASE 5656
 		CALL バージョンアップ準備処理
@@ -122,10 +140,13 @@ RESTART
 #DIM 引き継いだキャラ人数
 #DIMS 分割文字列, 3
 #DIM era番号
+#DIM キャラ番号記録, 2
+#DIM 対象キャラ
 
 VARSET LOCAL
 VARSET LOCALS
 TARGET = 0
+DAY = 0
 
 CALL DEFAULT_OPTION
 
@@ -261,6 +282,7 @@ IF 引き継ぎ中フラグ
 	ARRAYCOPY "画像サイズ切り替え引き継ぎ", "画像サイズ切り替えOPTION記憶"
 	ARRAYCOPY "一日終了時オナニー引き継ぎ", "一日終了時オナニーOPTION"
 	ARRAYCOPY "アイテム引き継ぎ", "ITEM"
+	ARRAYCOPY "キャラ衣装引き継ぎ", "キャラ衣装所持フラグ"
 ELSE
 
 	CALL アイテムデータベースセット
@@ -318,33 +340,70 @@ AWAIT
 CALL RESET_GRAPH_0
 AWAIT
 
-PRINTW 파라미터 초기화 처리를 진행합니다.
+;客室初期値
+客室テーマ:設定テーマ = 1
+客室テーマ:簡素な部屋 = 1
+客室テーマ:アロハスな部屋 = 1
+客室テーマ:東方風の部屋 = 1
+客室設備:ベッド_通常系列 = 1
+客室設備:家具_テーブル系列 = 1
+配置客室設備:0 = 1
+配置客室設備:1 = 10
+アメニティ:入浴セット系列 = 1
+配置アメニティ:0 = 1
+
+PRINTL 파라미터 초기화 처리를 진행합니다
 PRINTL 
 SAVESTR:10 = /
-LOCAL:1 = CHARANUM / 10
+LOCAL:1 = CHARANUM / 100
 REDRAW 0
-IF 引き継ぎ中フラグ && キャラ同士関係性データ != ""
-	VARSET LOCALS
-	SPLIT キャラ同士関係性データ, "+++", LOCALS
-	FOR LOCAL, 0, RESULT
-		SPLIT LOCALS:LOCAL, "_", 分割文字列
-		LOCAL:2 = キャラ検索(分割文字列:0)
-		LOCAL:3 = キャラ検索(分割文字列:1)
-		SIF LOCAL:2 > 0 && LOCAL:3 > 0
-			DT_ROW_ADD "関係性データベース", "対象キャラ１", CFLAG:(LOCAL:2):人物番号, "対象キャラ２", CFLAG:(LOCAL:3):人物番号, "関係性種別", 分割文字列:2
+IF 引き継ぎ中フラグ && キャラ縁結び引き継ぎフラグ
+	CALL 周回時縁結び引き継ぎデータベースセット
+	LOADTEXT "dat/縁結び引き継ぎDT_XML.txt"
+	LOCALS:0 = %RESULTS%
+	LOADTEXT "dat/縁結び引き継ぎDT_schema.txt"
+	LOCALS:1 = %RESULTS%
+	DT_FROMXML "縁結び引き継ぎデータベース", LOCALS:1, LOCALS:0
+	FOR LOCAL, 0, DT_ROW_LENGTH("縁結び引き継ぎデータベース")
+		IF DT_CELL_GET("縁結び引き継ぎデータベース", LOCAL, "対象キャラ１") > 0
+			;通常キャラ
+			キャラ番号記録:0 = GETCHARA(DT_CELL_GET("縁結び引き継ぎデータベース", LOCAL, "対象キャラ１"))
+		ELSE
+			;ランダムキャラ
+			FOR 対象キャラ, 1, キャラクタ数上限
+				IF ランダムキャラ引き継ぎナンバー記録:対象キャラ:0 == DT_CELL_GET("縁結び引き継ぎデータベース", LOCAL, "対象キャラ１")
+					キャラ番号記録:0 = 対象キャラ
+					BREAK
+				ENDIF
+			NEXT
+		ENDIF
+		IF DT_CELL_GET("縁結び引き継ぎデータベース", LOCAL, "対象キャラ２") > 0
+			;通常キャラ
+			キャラ番号記録:1 = GETCHARA(DT_CELL_GET("縁結び引き継ぎデータベース", LOCAL, "対象キャラ２"))
+		ELSE
+			;ランダムキャラ
+			FOR 対象キャラ, 1, キャラクタ数上限
+				IF ランダムキャラ引き継ぎナンバー記録:対象キャラ:0 == DT_CELL_GET("縁結び引き継ぎデータベース", LOCAL, "対象キャラ２")
+					キャラ番号記録:1 = 対象キャラ
+					BREAK
+				ENDIF
+			NEXT
+		ENDIF
+
+		DT_ROW_ADD "縁結びデータベース", "対象キャラ１", CFLAG:(キャラ番号記録:0):人物番号, "対象キャラ２", CFLAG:(キャラ番号記録:1):人物番号, "進展度", 100, "縁結び種別", DT_CELL_GETS("縁結び引き継ぎデータベース", LOCAL, "関係性種別"), "受け攻め設定", DT_CELL_GETS("縁結び引き継ぎデータベース", LOCAL, "受け攻め設定")
 	NEXT
 ENDIF
 FOR LOCAL, 0, CHARANUM
 	IF LOCAL > 0 && LOCAL <= 引き継いだキャラ人数
 		CALL キャラクター初期化(LOCAL, 1)
-	ELSEIF NO:LOCAL == 999
+	ELSEIF ランダムキャラ判定(NO:LOCAL)
 		CALL キャラクター初期化(LOCAL, 1)
 	ELSE
 		CALL キャラクター初期化(LOCAL)
 	ENDIF
 	IF LOCAL % LOCAL:1 == 0
 		CLEARLINE 1
-		PRINTFORML 진행도……{LOCAL / LOCAL:1 * 10}\%
+		PRINTFORML 진행도……{LOCAL / LOCAL:1}\%
 		AWAIT
 		;TWAIT 100, 1
 	ENDIF
@@ -354,9 +413,7 @@ PRINTL 진행도……100%
 
 REDRAW 1
 
-
-
-PRINTW 파라미터 초기화 처리가 완료되었습니다.
+PRINTW 파라미터 초기화 처리가 완료되었습니다
 
 ;呼び出し設定
 PRINTL
@@ -403,7 +460,7 @@ ELSEIF SAVESTR:あなたスタイル == "ジータちゃんスタイル"
 	CALL シナリオ_OP_グランくんスタイル(1)
 ELSEIF SAVESTR:あなたスタイル == "任意キャラスタイル"
 	CALL 任意キャラスタイル_キャラ選定()
-	SAVESTR:あなたスタイル = 임의 캐릭터 스타일_{RESULT}
+	SAVESTR:あなたスタイル = 任意キャラスタイル_{RESULT}
 ELSEIF SAVESTR:あなたスタイル == "スタートダッシュモード"
 	従業員部屋数 = 4
 	従業員部屋_増築数 = 2
@@ -411,15 +468,15 @@ ELSEIF SAVESTR:あなたスタイル == "スタートダッシュモード"
 	CALL 初期従業員選択(4)
 	
 	IF 引き継ぎ中フラグ == 0
-		PRINTL 메인 시나리오 진행도를 특정 지점까지 건너뛸 수 있습니다.
+		PRINTL 메인 시나리오 진행도를 특정 지점까지 건너뛸 수 있습니다
 		PRINTL 
 		PRINTL ※주의※
-		PRINTL 나중에 변경할 수 없습니다
-		PRINTBUTTON "[0] 건너뛰지 않음", 0
+		PRINTL 나중에는 변경할 수 없습니다
+		PRINTBUTTON "[0] 건너뛰지 않는다", 0
 		PRINTL 
-		PRINTBUTTON "[1] 인육 조류 섬 클리어까지 건너뛰기 (EX 캐릭터 해방 가능)", 1
+		PRINTBUTTON "[1] 식인조의 섬 클리어까지 건너뛴다（EX 캐릭터 해방 가능）", 1
 		PRINTL 
-		PRINTBUTTON "[2] 온천 해방까지 건너뛰기 (마사지 해방 가능)", 2
+		PRINTBUTTON "[2] 온천 해방까지 건너뛴다（마사지 해방 가능）", 2
 		$INPUT_LOOP_Q
 		BINPUT
 		SELECTCASE RESULT
@@ -452,6 +509,7 @@ OPTION変数:汎用喘ぎ使用 = 3
 OPTION変数:汎用喘ぎ使用_男 = 0
 CALL 最大レベル算出保存
 VARSET 同時モード_選択キャラ, -1
+USERCOM表示文字列 = 804_820_999_998_830_831_840_841_850_856_892_893_860_861_895
 
 ボタン化用カラーマトリクス:0:0 = 768,256,256,  0,  0
 ボタン化用カラーマトリクス:1:0 = 256,768,256,  0,  0
@@ -468,13 +526,6 @@ VARSET ＤＭキャラ招待
 モブ観光客数 = 0
 ;あなたは初期状態で雑務に従事している
 現在仕事:0:0 = 1
-;eraエンドを見てるならeraをキャラ解放
-IF エンディングイベント完了フラグ確認("era") > 0
-	era番号 = GETCHARA(998)
-	CFLAG:era番号:招待不可フラグ = 0
-	CFLAG:era番号:滞在期間 = 999
-	TALENT:era番号:妊娠不可 = 1
-ENDIF
 
 ;編成画面初期表示
 メンバーリスト表示欄:1 = Ｌｖ
@@ -503,7 +554,7 @@ IF 引き継ぎ中フラグ
 	VARSET あなた特殊能力引き継ぎ
 	引き継ぎ中フラグ = 0
 	あなた引き継ぎ = 0
-	キャラ同士関係性データ = 
+	キャラ縁結び引き継ぎフラグ = 0
 
 	最大レベル保存_周回 = 最大レベル引き継ぎ
 	;最大レベルに応じて経験値アイテム配布
@@ -525,6 +576,7 @@ NEXT
 ;変数リセット
 CALL TURN_RESET
 CALL 最大レベル算出保存
+VARSET 呼び出し履歴
 
 ;OPTION数値のチェック
 SIF OPTION変数:招待画像枚数閾値 < 1
@@ -534,6 +586,11 @@ SIF OPTION変数:招待画像枚数閾値 < 1
 LOCAL = GETSECOND() / 3600
 ;日単位
 LOCAL:1 = (LOCAL + 19) / 24
+
+;縁結び引き継ぎ用
+SKIPDISP 1
+CALL 縁結び完了処理()
+SKIPDISP 0
 
 IF (REAL_TIME < LOCAL:1)
 	REAL_TIME = LOCAL:1
@@ -557,11 +614,18 @@ CALL VERSION_UP
 #DIMS 小分割文字列, 1000
 #DIM 引き継いだランダムキャラ, 10
 #DIM 引き継いだキャラ人数
+#DIM 関数総数
+#DIM 関数番号
 
 VARSET 引き継いだランダムキャラ, -1
 VARSET 大分割文字列
 VARSET 小分割文字列
 引き継いだキャラ人数 = 0
+
+PRINTL 캐릭터의 초기 등록을 진행합니다
+PRINTL 진행도…0％
+REDRAW 0
+LOCAL = 1
 
 IF 引き継ぎ中フラグ
 	キャラ番号 = 0
@@ -571,7 +635,7 @@ IF 引き継ぎ中フラグ
 			;引き継ぎキャラは先に登録
 			LOADCHARA TOSTR(引き継ぎ番号)
 			キャラ番号 += 1
-			IF NO:キャラ番号 == 999
+			IF ランダムキャラ判定(NO:キャラ番号)
 				引き継いだランダムキャラ:ランダム引き継ぎ番号 = ランダムキャラデータ_GET_KEY_FROM_PERSON(, CFLAG:キャラ番号:人物番号)
 				ランダム引き継ぎ番号 += 1
 			ENDIF
@@ -585,7 +649,7 @@ FOR キャラ番号, 1, キャラクタ数上限
 	SIF !EXISTCSV(キャラ番号)
 		CONTINUE
 	;ランダムキャラ排除
-	SIF キャラ番号 == 999
+	SIF ランダムキャラ判定(キャラ番号)
 		CONTINUE
 	;登録済みのキャラ(=引き継ぎキャラ)はスキップ
 	GETCHARA キャラ番号
@@ -607,7 +671,23 @@ FOR キャラ番号, 1, キャラクタ数上限
 		NEXT
 		CALL 弱点妥当性チェック(設定中キャラ番号)
 	ENDIF
+	;初期履歴の登録
+	VARSET RESULTS
+	関数総数 = ENUMFUNCENDSWITH(@"_初期履歴登録_{キャラ番号}")
+	FOR 関数番号, 0, 関数総数
+		CALLFORM %RESULTS:関数番号%(設定中キャラ番号)
+	NEXT
+	IF LOCAL % 100 == 1
+		CLEARLINE 1
+		PRINTFORML 진행도……{キャラ番号 * 100 / キャラクタ数上限}\%
+		AWAIT
+	ENDIF
+	LOCAL ++
 NEXT
+CLEARLINE 1
+PRINTL 진행도……100%
+PRINTL 캐릭터의 초기 등록이 완료되었습니다
+REDRAW 1
 
 ;引き継ぎランダムキャラの追加
 IF 引き継ぎ中フラグ
@@ -617,10 +697,16 @@ IF 引き継ぎ中フラグ
 			LOCAL ++
 			CONTINUE
 		ENDIF
-		ADDCHARA 999
-		設定中キャラ番号 = CHARANUM - 1
 		FOR 引き継ぎ番号, 0, キャラクタ数上限
 			IF キャラ変数引き継ぎ:引き継ぎ番号:キャラナンバー == LOCAL * -1
+				;ランダムキャラじゃないCSV番号は入らないはずだがエラー防止のため一応フォロー
+				IF ランダムキャラ判定(キャラ変数引き継ぎ:引き継ぎ番号:ランダムキャラCSV)
+					ADDCHARA キャラ変数引き継ぎ:引き継ぎ番号:ランダムキャラCSV
+				ELSE
+					ADDCHARA 999
+				ENDIF
+				設定中キャラ番号 = CHARANUM - 1
+
 				EXP:設定中キャラ番号:肉体熟知 = キャラ変数引き継ぎ:引き継ぎ番号:肉体熟知
 				FOR 弱点配列, 0, 50
 					弱点看破:設定中キャラ番号:弱点配列 = キャラ変数引き継ぎ:引き継ぎ番号:(弱点配列 + 2)
@@ -635,10 +721,13 @@ IF 引き継ぎ中フラグ
 		CALL ランダムキャラデータ_SET(, LOCAL, "人物番号", 0, CFLAG:設定中キャラ番号:人物番号)
 
 		;素質の調整
-		NAME:設定中キャラ番号 = [一般人]%CALLNAME:設定中キャラ番号%
+		IF NO:設定中キャラ番号 == 999
+			NAME:設定中キャラ番号 = [一般人]%CALLNAME:設定中キャラ番号%
+		ENDIF
 		TALENT:設定中キャラ番号:従業員 = 0
 		TALENT:設定中キャラ番号:定住者 = 0
 		CFLAG:設定中キャラ番号:招待不可フラグ = 0
+		ランダムキャラ引き継ぎナンバー記録:設定中キャラ番号:0 = LOCAL * -1
 
 		LOCAL ++
 	WEND
@@ -660,6 +749,7 @@ VARSET CSTR切り分け文字列格納
 ;全員睡眠状態
 CFLAG:ARG:睡眠 = 1
 CFLAG:ARG:滞在期間 = -1
+
 CFLAG:ARG:現在位置 = 999
 CFLAG:ARG:現在マップ種別 = 0
 BASE:ARG:酩酊 = 0
@@ -688,12 +778,15 @@ CFLAG:ARG:同行 = 0
 CFLAG:ARG:デート = 0
 CFLAG:ARG:酔いすぎ = 0
 ;発情期
-; SIF 発情期判定(ARG)
+; SIF 発情期存在判定(ARG)
 ; 	CFLAG:ARG:発情期フラグ = RAND:9 + 1
 
 IF 引き継ぎキャラフラグ == 0
 	;招待時同行キャラ
-	IF CSTR:ARG:同行キャラ != ""
+	IF ランダムキャラ判定(NO:ARG)
+		;ランダムキャラの場合、招待時同行キャラを初期値記録ＤＢの値で初期化
+		CALL ランダムキャラ初期化処理_同行候補キャラ(, ARG, 0)
+	ELSEIF CSTR:ARG:同行キャラ != ""
 		VARSET LOCALS
 		REPLACE CSTR:ARG:同行キャラ, " ", ""
 		SPLIT RESULTS, "%", LOCALS
@@ -711,6 +804,7 @@ IF 引き継ぎキャラフラグ == 0
 
 	;性別保存
 	CFLAG:ARG:元性別保存 = TALENT:ARG:性別
+	TRYCALLFORM 特殊性別設定_{NO:ARG}(ARG)
 
 	;知識素質
 	IF CSTR:ARG:知識素質設定 != ""
@@ -844,13 +938,24 @@ IF 引き継ぎキャラフラグ == 0
 	; ENDIF
 
 	;画像フォルダで有効なものを探す
-	CALL FIX_RESOURCES_FOLDER(ARG)
+	IF STRFIND(CSTR:ARG:汎用立ち絵登録文字列, "そっくりさん設定_") >= 0
+		CSTR:ARG:画像フォルダ '= REPLACE(CSTR:ARG:汎用立ち絵登録文字列, "そっくりさん設定_", "")
+	ELSE
+		CALL FIX_RESOURCES_FOLDER(ARG)
+	ENDIF
 
+	;eraエンドを見てるならeraをキャラ解放
+	IF エンディングイベント完了フラグ確認("era") > 0 && NO:ARG == 998
+		CFLAG:ARG:招待不可フラグ = 0
+		CFLAG:ARG:滞在期間 = 999
+		TALENT:ARG:陥落不可 = 3
+		TALENT:ARG:妊娠不可 = 1
+	ENDIF
 ELSE
 	SIF !BASE:ARG:身長
 		CALL INIT_BODYSIZE(ARG)
 
-	;同行キャラをCSVを見て入れ直す
+	;同行キャラを入れ直す
 	VARSET LOCAL
 	VARSET LOCALS
 	;まず引き継ぎキャラ同士の同行記録を見る
@@ -868,25 +973,33 @@ ELSE
 			LOCAL += 1
 		NEXT
 	ENDIF
-	;招待時同行キャラをCSVから見直す
-	VARSET LOCALS
-	CSTR:ARG:同行キャラ = %CSVCSTR(NO:ARG, GETNUM(CSTR, "同行キャラ"))%
-	REPLACE CSTR:ARG:同行キャラ, " ", ""
-	SPLIT RESULTS, "%", LOCALS
-	FOR LOCAL, 0, 100
-		SIF LOCALS:LOCAL == ""
-			BREAK
-		SPLIT LOCALS:LOCAL, "_", CSTR切り分け文字列格納
-		キャラ番号記録 = FINDCHARA(NAME, CSTR切り分け文字列格納:0)
-		SIF キャラ番号記録 < 0
-			CONTINUE
-		SIF FINDELEMENT(同行候補キャラ番号:ARG:0, キャラ番号記録) > -1
-			CONTINUE
-		;同行キャラ格納格納:0に名前、同行キャラ格納:1に確率が入っているはず
-		同行候補キャラ番号:ARG:(LOCAL:1) = キャラ番号記録
-		同行候補キャラ確率:ARG:(LOCAL:1) = TOINT(CSTR切り分け文字列格納:1)
-		LOCAL:1 += 1
-	NEXT
+	IF ランダムキャラ判定(NO:ARG)
+		;ランダムキャラの場合、招待時同行キャラを初期値記録ＤＢから見直す
+		CALL ランダムキャラ初期化処理_同行候補キャラ(, ARG, LOCAL:1)
+		LOCAL:1 = RESULT
+	ELSE
+		;非ランダムキャラの場合、招待時同行キャラをCSVから見直す
+		CSTR:ARG:同行キャラ '= CSVCSTR(NO:ARG, GETNUM(CSTR, "同行キャラ"))
+		IF CSTR:ARG:同行キャラ != ""
+			VARSET LOCALS
+			REPLACE CSTR:ARG:同行キャラ, " ", ""
+			SPLIT RESULTS, "%", LOCALS
+			FOR LOCAL, 0, 100
+				SIF LOCALS:LOCAL == ""
+					BREAK
+				SPLIT LOCALS:LOCAL, "_", CSTR切り分け文字列格納
+				キャラ番号記録 = FINDCHARA(NAME, CSTR切り分け文字列格納:0)
+				SIF キャラ番号記録 < 0
+					CONTINUE
+				SIF FINDELEMENT(同行候補キャラ番号:ARG:0, キャラ番号記録) > -1
+					CONTINUE
+				;同行キャラ格納格納:0に名前、同行キャラ格納:1に確率が入っているはず
+				同行候補キャラ番号:ARG:(LOCAL:1) = キャラ番号記録
+				同行候補キャラ確率:ARG:(LOCAL:1) = TOINT(CSTR切り分け文字列格納:1)
+				LOCAL:1 += 1
+			NEXT
+		ENDIF
+	ENDIF
 	;キャラ妊娠引き継ぎ時
 	IF TALENT:ARG:妊娠
 		;引き継ぎキャラが種親の場合、-10000するとキャラIDになるようにいじってある
@@ -919,6 +1032,11 @@ CALL INIT_RELATION(ARG)
 
 ;初期関係性のセット、引き継ぎキャラの場合は先に設定してあるので同じ処理でOK
 CALL 初期関係性データベース登録(ARG)
+
+;ランダムキャラの場合、親子関係を初期化
+IF ランダムキャラ判定(NO:ARG)
+	CALL ランダムキャラ初期化処理_出生(, ARG)
+ENDIF
 
 ;性癖の設定
 IF TALENT:ARG:性愛傾向 == 3
@@ -1120,21 +1238,23 @@ FOR LOCAL, 0, 1000
 	;場所固有コマンド
 	ELSEIF INRANGE(LOCAL, 380, 384)
 		FOR LOCAL:1, 0, 20
-			FOR LOCAL:2, 0, 20
-				SIF !GETBIT(場所固有コマンド存在フラグ:(LOCAL - 380):(LOCAL:5):(LOCAL:1), LOCAL:2)
-					CONTINUE
-				LOCAL:3 = LOCAL:1 * 100 + LOCAL : 2 + 1
-				;口上側と被ってるなら飛ばす
-				SIF MATCH(弱点コマンド枠:ARG:0, @"{LOCAL}_{LOCAL:5}_{LOCAL:3}")
-					CONTINUE
-				SELECTCASE 弱点コマンド候補判定(ARG, @"COMTYPE_{LOCAL}_{LOCAL:5}_{LOCAL:3}")
-					CASE 1
-						弱点候補_セクハラ:セクハラ候補数 = {LOCAL}_{LOCAL:5}_{LOCAL:3}
-						セクハラ候補数 += 1
-					CASE 2
-						弱点候補_うふふ:うふふ候補数 = {LOCAL}_{LOCAL:5}_{LOCAL:3}
-						うふふ候補数 += 1
-				ENDSELECT
+			FOR LOCAL:5, 0, 1
+				FOR LOCAL:2, 0, 20
+					SIF !GETBIT(場所固有コマンド存在フラグ:(LOCAL - 380):(LOCAL:5):(LOCAL:1), LOCAL:2)
+						CONTINUE
+					LOCAL:3 = LOCAL:1 * 100 + LOCAL : 2 + 1
+					;口上側と被ってるなら飛ばす
+					SIF MATCH(弱点コマンド枠:ARG:0, @"{LOCAL}_{LOCAL:5}_{LOCAL:3}")
+						CONTINUE
+					SELECTCASE 弱点コマンド候補判定(ARG, @"COMTYPE_{LOCAL}_{LOCAL:5}_{LOCAL:3}")
+						CASE 1
+							弱点候補_セクハラ:セクハラ候補数 = {LOCAL}_{LOCAL:5}_{LOCAL:3}
+							セクハラ候補数 += 1
+						CASE 2
+							弱点候補_うふふ:うふふ候補数 = {LOCAL}_{LOCAL:5}_{LOCAL:3}
+							うふふ候補数 += 1
+					ENDSELECT
+				NEXT
 			NEXT
 		NEXT
 	ENDIF
@@ -1254,15 +1374,17 @@ FOR LOCAL, 0, 1000
 	;場所固有コマンド
 	ELSEIF INRANGE(LOCAL, 380, 384)
 		FOR LOCAL:1, 0, 20
-			FOR LOCAL:2, 0, 20
-				SIF !GETBIT(場所固有コマンド存在フラグ:(LOCAL - 380):(LOCAL:5):(LOCAL:1), LOCAL:2)
-					CONTINUE
-				LOCAL:3 = LOCAL:1 * 100 + LOCAL : 2 + 1
-				;口上側と被ってるなら飛ばす
-				IF !MATCH(弱点コマンド枠:ARG:0, @"{LOCAL}_{LOCAL:5}_{LOCAL:3}") && 弱点コマンド候補判定(ARG, @"COMTYPE_{LOCAL}_{LOCAL:5}_{LOCAL:3}")
-					弱点候補:弱点候補数 = {LOCAL}_{LOCAL:5}_{LOCAL:3}
-					弱点候補数 += 1
-				ENDIF
+			FOR LOCAL:5, 0, 1
+				FOR LOCAL:2, 0, 20
+					SIF !GETBIT(場所固有コマンド存在フラグ:(LOCAL - 380):(LOCAL:5):(LOCAL:1), LOCAL:2)
+						CONTINUE
+					LOCAL:3 = LOCAL:1 * 100 + LOCAL : 2 + 1
+					;口上側と被ってるなら飛ばす
+					IF !MATCH(弱点コマンド枠:ARG:0, @"{LOCAL}_{LOCAL:5}_{LOCAL:3}") && 弱点コマンド候補判定(ARG, @"COMTYPE_{LOCAL}_{LOCAL:5}_{LOCAL:3}")
+						弱点候補:弱点候補数 = {LOCAL}_{LOCAL:5}_{LOCAL:3}
+						弱点候補数 += 1
+					ENDIF
+				NEXT
 			NEXT
 		NEXT
 	ENDIF
@@ -1442,7 +1564,7 @@ MAXBASE:キャラ番号:性欲 = MIN(RESULT, 9999)
 
 BASE:キャラ番号:体力 = MIN(MAXBASE:キャラ番号:体力, BASE:キャラ番号:体力)
 BASE:キャラ番号:性欲 = MIN(MAXBASE:キャラ番号:性欲, BASE:キャラ番号:性欲)
-MAXBASE:キャラ番号:満足 = MAXBASE:キャラ番号:性欲
+MAXBASE:キャラ番号:満足 = MAXBASE:キャラ番号:性欲 + 50000
 BASE:キャラ番号:満足 = 0
 
 @フレーバー素質初期設定
@@ -1450,43 +1572,43 @@ BASE:キャラ番号:満足 = 0
 #DIM 残りキャラ設定
 
 DRAWLINE
-PRINTL 음모의 진하기나 유륜의 크기 등, 쾌락 발생량에 직접적으로 관련 없는 소질을 설정합니다.
-PRINTL (구상 측의 변동이나 커맨드 발생 조건에는 관여할 가능성이 있습니다)
+PRINTL 음모의 농도나 유륜의 크기 등 쾌락 발생량과 직접 관련되지 않는 소질을 설정합니다.
+PRINTL （대사 변화나 커맨드 발생 조건에는 영향을 줄 수 있습니다）
 PRINTL 
-PRINTL 또한 이러한 설정에 구애받지 않는 경우, [모두 표시 안 함]을 선택하여 캐릭터의 이미지를 망치지 않을 수 있습니다.
+PRINTL 또한 이러한 설정에 특별한 취향이 없다면 ［모두 표시하지 않음］을 선택해 캐릭터의 이미지를 해치지 않을 수 있습니다.
 DRAWLINE
 PRINTL 
 PRINT 현재 설정:
 SELECTCASE 全体設定
 	CASE 0
-		PRINTBUTTON "[모두 표시 안 함]", 100
+		PRINTBUTTON "[모두 표시하지 않음]", 100
 		PRINTL
 	CASE 1
 		PRINTBUTTON "[첫 대면 시 설정]", 100
 		PRINTL
-		PRINT 구상 측에서 설정이 있는 캐릭터에 대해:
+		PRINT 대사 측에 설정이 있는 캐릭터에 대해：
 		IF 残りキャラ設定 == 0
-			PRINTBUTTON "[구상 측 설정 유지]", 101
+			PRINTBUTTON "[대사 측 설정 유지]", 101
 		ELSE
 			PRINTBUTTON "[첫 대면 시 설정]", 101
 		ENDIF
 		PRINTL
 	CASE 2
-		PRINTBUTTON "[첫 우후후 시 설정]", 100
+		PRINTBUTTON "[첫 관계 시 설정]", 100
 		PRINTL
-		PRINT 구상 측에서 설정이 있는 캐릭터에 대해:
+		PRINT 대사 측에 설정이 있는 캐릭터에 대해：
 		IF 残りキャラ設定 == 0
-			PRINTBUTTON "[구상 측 설정 유지]", 101
+			PRINTBUTTON "[대사 측 설정 유지]", 101
 		ELSE
-			PRINTBUTTON "[첫 우후후 시 설정]", 101
+			PRINTBUTTON "[첫 관계 시 설정]", 101
 		ENDIF
 		PRINTL
 	CASE 3
 		PRINTBUTTON "[무작위로 설정]", 100
 		PRINTL
-		PRINT 구상 쪽에 설정이 있는 캐릭터에 대해:
+		PRINT 대사 측에 설정이 있는 캐릭터에 대해：
 		IF 残りキャラ設定 == 0
-			PRINTBUTTON "[구상 쪽 설정을 유지]", 101
+			PRINTBUTTON "[대사 측 설정 유지]", 101
 		ELSE
 			PRINTBUTTON "[무작위로 설정]", 101
 		ENDIF
@@ -1494,19 +1616,19 @@ SELECTCASE 全体設定
 ENDSELECT
 
 PRINTL
-PRINTBUTTON "[998] 구상 쪽에 설정이 있는 캐릭터 목록 보기", 998
+PRINTBUTTON "[998] 대사 측 설정이 있는 캐릭터 목록을 본다", 998
 PRINTL
-PRINTBUTTON "[999] 설정 마치기", 999
+PRINTBUTTON "[999] 설정을 끝낸다", 999
 
 BINPUT
 SELECTCASE RESULT
 	CASE 100
 		DRAWLINE
-		PRINTBUTTON "[모두 표시 안 함]", 0
+		PRINTBUTTON "[모두 표시하지 않음]", 0
 		PRINTL
 		PRINTBUTTON "[첫 대면 시 설정]", 1
 		PRINTL
-		PRINTBUTTON "[첫 우후후 시 설정]", 2
+		PRINTBUTTON "[첫 관계 시 설정]", 2
 		PRINTL
 		PRINTBUTTON "[무작위로 설정]", 3
 		PRINTL
@@ -1523,17 +1645,17 @@ SELECTCASE RESULT
 		DRAWLINE
 		SELECTCASE 全体設定
 			CASE 1
-				PRINTBUTTON "[구상 쪽・승계 캐릭터 설정 유지]", 0
+				PRINTBUTTON "[대사 측・인계 캐릭터 설정 유지]", 0
 				PRINTL
 				PRINTBUTTON "[첫 대면 시 설정]", 1
 				PRINTL
 			CASE 2
-				PRINTBUTTON "[구상 쪽・승계 캐릭터 설정 유지]", 0
+				PRINTBUTTON "[대사 측・인계 캐릭터 설정 유지]", 0
 				PRINTL
-				PRINTBUTTON "[첫 우후후 시 설정]", 1
+				PRINTBUTTON "[첫 관계 시 설정]", 1
 				PRINTL
 			CASE 3
-				PRINTBUTTON "[구상 쪽・승계 캐릭터 설정 유지]", 0
+				PRINTBUTTON "[대사 측・인계 캐릭터 설정 유지]", 0
 				PRINTL
 				PRINTBUTTON "[무작위로 설정]", 1
 				PRINTL
@@ -1553,7 +1675,7 @@ ENDSELECT
 
 SELECTCASE 全体設定
 	CASE 0
-		PRINTL [모두 표시 안 함] 설정으로 게임을 시작합니다.
+		PRINTL [모두 표시하지 않음] 설정으로 게임을 시작합니다.
 		FOR COUNT, 1, CHARANUM
 			フレーバー素質:COUNT:素質表示設定 = 0
 		NEXT
@@ -1561,11 +1683,11 @@ SELECTCASE 全体設定
 	CASE 1
 		PRINT [첫 대면 시 설정]、
 		IF 残りキャラ設定 == 0
-			PRINT 입장 대사가 있는 캐릭터・인계 캐릭터는 [설정을 유지]
+			PRINT 대사 존재 캐릭터・인계 캐릭터는[설정 유지]
 		ELSE
-			PRINT 입장 대사가 있는 캐릭터・인계 캐릭터도 [첫 대면 시 설정]
+			PRINT 대사 존재 캐릭터・인계 캐릭터도[첫 대면 시 설정]
 		ENDIF
-		PRINTL 설정으로 게임을 시작합니다.
+		PRINTL 의 설정으로 게임을 시작합니다.
 		FOR COUNT, 1, CHARANUM
 			IF 残りキャラ設定 == 0 && フレーバー素質:COUNT:素質表示設定 == 1
 				CONTINUE
@@ -1574,13 +1696,13 @@ SELECTCASE 全体設定
 		NEXT
 		フレーバー素質設定 = 2
 	CASE 2
-		PRINT [첫 우후후 시 설정]、
+		PRINT [첫 관계 시 설정],
 		IF 残りキャラ設定 == 0
-			PRINT 입장 대사가 있는 캐릭터・인계 캐릭터는 [설정을 유지]
+			PRINT 대사 존재 캐릭터・인계 캐릭터는[설정 유지]
 		ELSE
-			PRINT 입장 대사가 있는 캐릭터・인계 캐릭터도 [첫 우후후 시 설정]
+			PRINT 대사 존재 캐릭터・인계 캐릭터도[첫 관계 시 설정]
 		ENDIF
-		PRINTL 설정으로 게임을 시작합니다.
+		PRINTL 의 설정으로 게임을 시작합니다.
 		FOR COUNT, 1, CHARANUM
 			IF 残りキャラ設定 == 0 && フレーバー素質:COUNT:素質表示設定 == 1
 				CONTINUE
@@ -1589,13 +1711,13 @@ SELECTCASE 全体設定
 		NEXT
 		フレーバー素質設定 = 3
 	CASE 3
-		PRINT [무작위로 설정]、
+		PRINT [무작위로 설정],
 		IF 残りキャラ設定 == 0
-			PRINT 입장 대사가 있는 캐릭터・인계 캐릭터는 [설정을 유지]
+			PRINT 대사 존재 캐릭터・인계 캐릭터는[설정 유지]
 		ELSE
-			PRINT 입장 대사가 있는 캐릭터・인계 캐릭터도 [무작위로 설정]
+			PRINT 대사 존재 캐릭터・인계 캐릭터도[무작위로 설정]
 		ENDIF
-		PRINTL 설정으로 게임을 시작합니다.
+		PRINTL 의 설정으로 게임을 시작합니다.
 		FOR COUNT, 1, CHARANUM
 			IF 残りキャラ設定 == 0 && フレーバー素質:COUNT:素質表示設定 == 1
 				CONTINUE
@@ -1654,7 +1776,7 @@ ELSE
 	LOCALS += @"<font color='#%LOCALS:1%'>속성：%属性数値文字列変換(基礎BATTLE_STATE:キャラ番号:属性)%</font>"
 ENDIF
 LOCALS += @"　특기 무기：%得意武器表示文字列(基礎BATTLE_STATE:キャラ番号:得意武器)%　"
-LOCALS += @"　타입：%タイプ数値文字列変換(基礎BATTLE_STATE:キャラ番号:ステータスタイプ保存)%"
+LOCALS += @"　타입：%タイプ表示関数(キャラ番号)%"
 LOCALS += "<br><br>"
 LOCALS += "□ 정보 □---------------------------------------------------------------------<br>"
 LOCALS += @"　종족：%GET_TALENTNAME(200,TALENT:キャラ番号:種族,,キャラ番号)%"
@@ -1688,20 +1810,20 @@ ELSEIF TALENT:キャラ番号:性別 == 3
 	SIF TALENT:キャラ番号:非童貞 == 0
 		LOCALS += "(동정)"
 	SIF TALENT:キャラ番号:処女
-		LOCALS += "(처녀)"
+		LOCALS += "（처녀）"
 ELSE
 	LOCALS += "그 외"
 ENDIF
 IF GETBIT(TALENT:キャラ番号:性別, 0)
-LOCALS += @"가슴 사이즈: %GET_TALENTNAME(205,TALENT:キャラ番号:バストサイズ,,キャラ番号)%"
+LOCALS += @"가슴 사이즈：%GET_TALENTNAME(205,TALENT:キャラ番号:バストサイズ,,キャラ番号)%"
 ENDIF
 LOCALS += "<br>"
 
-LOCALS += @"　성지식 레벨: %性知識段階表示(知識素質:キャラ番号:性知識, キャラ番号), 17, LEFT%"
+LOCALS += @"　성지식 레벨：%性知識段階表示(知識素質:キャラ番号:性知識, キャラ番号), 17, LEFT%"
 LOCALS += "<br>"
 
 IF TALENT:キャラ番号:性別 & 2
-	LOCALS += @"　남성기 사이즈: %GET_TALENTNAME(162,TALENT:キャラ番号:男性器サイズ,,キャラ番号)%"
+	LOCALS += @"　남성기 사이즈：%GET_TALENTNAME(162,TALENT:キャラ番号:男性器サイズ,,キャラ番号)%"
 	LOCALS += "<br>"
 ENDIF
 LOCALS += "<br>"
@@ -1717,7 +1839,7 @@ FOR COUNT, 1, 6
 		CONTINUE
 	SIF IS_MALE(キャラ番号) && COUNT >= 1
 		BREAK
-	LOCALS += @"　%ERDNAME(フレーバー素質, COUNT), 12, LEFT%: "
+	LOCALS += @"　%ERDNAME(フレーバー素質, COUNT), 12, LEFT%："
 	FOR LOCAL:1, 0, 6
 		LOCALS:2 = %GET_フレーバー素質NAME(COUNT,LOCAL:1)%
 		IF LOCAL:1 == 0
@@ -1737,7 +1859,7 @@ FOR COUNT, 1, 6
 	NEXT
 	LOCALS += "<br>"
 NEXT
-LOCALS += @"　%ERDNAME(フレーバー素質, フレーバー素質_ほくろ位置), 12, LEFT%: 　　　　"
+LOCALS += @"　%ERDNAME(フレーバー素質, フレーバー素質_ほくろ位置), 12, LEFT%：　　　　"
 FOR LOCAL:1, 0, 4
 	LOCALS:2 = %GET_フレーバー素質NAME(フレーバー素質_ほくろ位置, POWER(2, LOCAL:1))%
 	SIF LOCALS:2 == ""
@@ -1755,7 +1877,7 @@ FOR LOCAL:1, 0, 4
 NEXT
 LOCALS += "<br>"
 IF TALENT:キャラ番号:性別 == 3 && OPTION変数:ふたなり玉設定 == 0
-	LOCALS += @"　%ERDNAME(フレーバー素質, フレーバー素質_ふたなり時_玉ありなし), 12, LEFT%: 　　　　"
+	LOCALS += @"　%ERDNAME(フレーバー素質, フレーバー素質_ふたなり時_玉ありなし), 12, LEFT%：　　　　"
 	FOR LOCAL:1, 0, 3
 		LOCALS:2 = %GET_フレーバー素質NAME(フレーバー素質_ふたなり時_玉ありなし, LOCAL:1)%
 		IF LOCALS:2 == ""
@@ -1770,7 +1892,7 @@ IF TALENT:キャラ番号:性別 == 3 && OPTION変数:ふたなり玉設定 == 0
 	NEXT
 ENDIF
 LOCALS += "</div>"
-LOCALS += "<div rect='2812,3562,1875,312'><button value='999'>[999] 이걸로 결정</button></div>"
+LOCALS += "<div rect='2812,3562,1875,312'><button value='999'>[999] 이것으로 결정</button></div>"
 
 HTML_PRINT LOCALS, 1
 FOR COUNT, 0, 35
@@ -1848,16 +1970,16 @@ IF LOCALS != ""
 ENDIF
 PRINTL 
 IF 現在ページ > 0
-	PRINTLC  [900] 이전 페이지로
+	PRINTLC  [900]이전 페이지
 ELSE
 	PRINTLC  
 ENDIF
 IF 現在ページ < 候補人数 / 30
-	PRINTLC  [901] 다음 페이지로
+	PRINTLC  [901]다음 페이지
 ENDIF
 PRINTL
 DRAWLINE
-PRINTBUTTONLC "[1000] 되돌아가기", 1000
+PRINTBUTTONLC "[1000]돌아가기", 1000
 PRINTL
 
 $INPUT_LOOP
@@ -1952,20 +2074,20 @@ GOTO 最初から
 ; DRAWLINE
 ; PRINTL ・
 ; DRAWLINE
-; PRINTL ・現在の選択キャラ
+; PRINTL ・현재 선택 캐릭터
 ; FOR LOCAL, 0, 追加人数
 ; 	IF 追加候補:LOCAL < 0
-; 		PRINTL 未選択
+; 		PRINTL 미선택
 ; 	ELSE
 ; 		PRINTFORML %NAME表示((追加候補:LOCAL))%
 ; 	ENDIF
 ; NEXT
 ; PRINTL 
 ; IF 10 - MATCH(追加候補, -1) == 追加人数
-; 	PRINTBUTTON "[9999] これで決定する", 9999
+; 	PRINTBUTTON "[9999] 이대로 결정한다", 9999
 ; ELSE
 ; 	SETCOLOR カラーパレット("グレーアウト")
-; 	PRINTPLAIN [9999] これで決定する
+; 	PRINTPLAIN [9999] 이대로 결정한다
 ; 	RESETCOLOR
 ; ENDIF
 ; PRINTL 
@@ -2003,7 +2125,7 @@ GOTO 最初から
 ; 			;初期状態雑務
 ; 			現在仕事:対象キャラ:0 = 1
 ; 		NEXT
-; 		PRINTW 初期従業員キャラを設定しました。
+; 		PRINTW 초기 종업원 캐릭터를 설정했습니다.
 ; 		RETURN 0
 ; 	CASEELSE
 		
@@ -2082,19 +2204,19 @@ CALL キャラ簡易紹介(対象キャラ)
 PRINTL
 ; 確認メッセージ
 IF セットフラグ
-	PRINTFORML %NAME表示(対象キャラ)%를 초기 종업원에서 제외하시겠습니까?
+	PRINTFORML %NAME表示(対象キャラ)%을(를) 초기 종업원에서 제외하시겠습니까?
 ELSE
-	PRINTFORML %NAME表示(対象キャラ)%를 초기 종업원으로 설정하시겠습니까?
+	PRINTFORML %NAME表示(対象キャラ)%을(를) 초기 종업원으로 설정하시겠습니까?
 ENDIF
 ; ボタン表示
-PRINTBUTTONLC "[0]네", 0
+PRINTBUTTONLC "[0]예", 0
 PRINTBUTTONLC "[1]아니오", 1
 PRINTBUTTONLC "[10]상세 능력 표시", 10
 PRINTL
 PRINTBUTTONLC "[2]이전 캐릭터", 2
 PRINTBUTTONLC "[3]다음 캐릭터", 3
 SIF リロールボタン有効
-	PRINTBUTTONLC "[4]이미지 랜덤 표시 리롤", 4
+	PRINTBUTTONLC "[4]이미지 무작위 표시 다시 추첨", 4
 PRINTL
 
 ; 入力ループ
@@ -2225,12 +2347,12 @@ IF LOCALS != ""
 ENDIF
 PRINTL 
 ;IF 現在ページ > 0
-;	PRINTLC  [-1]前のページへ
+;	PRINTLC  [-1]이전 페이지
 ;ELSE
 ;	PRINTLC  
 ;ENDIF
 ;IF 現在ページ < 候補人数 / 30
-;	PRINTLC  [-2]次のページへ
+;	PRINTLC  [-2]다음 페이지
 ;ENDIF
 ;PRINTL
 ;ページめくり表示
@@ -2243,18 +2365,18 @@ FOR LOCAL, 0, 追加人数
 	IF 追加候補:LOCAL < 0
 		PRINTL 미선택
 	ELSE
-		PRINTBUTTON "[제외하기]", 9900 + LOCAL
-		PRINTFORML 　%GET_NAME(追加候補:LOCAL, 1, 24)%
+		PRINTBUTTON "[제외]", 9900 + LOCAL
+		PRINTFORML 　%GET_NAME(追加候補:LOCAL, 1)%
 	ENDIF
 NEXT
 PRINTL 
-PRINTBUTTON "[9998] 추천 세트 선택", 9998
+PRINTBUTTON "[9998] 추천 세트를 선택한다", 9998
 PRINTL 
 IF 10 - MATCH(追加候補, -1) == 追加人数
-	PRINTBUTTON "[9999] 이걸로 결정", 9999
+	PRINTBUTTON "[9999] 이대로 결정한다", 9999
 ELSE
 	SETCOLOR カラーパレット("グレーアウト")
-	PRINTPLAIN [9999] 이걸로 결정
+	PRINTPLAIN [9999] 이대로 결정한다
 	RESETCOLOR
 ENDIF
 
@@ -2267,7 +2389,7 @@ SELECTCASE LOCAL
 		追加候補:(LOCAL - 9900) = -1
 	CASE 9000 TO 9007
 		CALL ページ送り共通実行(LOCAL, 現在ページ, 項目表示数, 最大表示数, 9000, 9003)
-	CASE 2000, 3000, 3100, 4000
+	CASE 2000, 3000, 3100, 3101, 3102, 4000
 		;出典フィルタに全作品を強制表示させる(通常表示だとグラブルしか表示されないため)
 		出典フィルタ強制全表示フラグ = 1
 		CALL フィルタソートボタンセット実行部(LOCAL, 2000, 3000, 3100, 4000)
@@ -2291,7 +2413,7 @@ SELECTCASE LOCAL
 			対象キャラ = 追加候補:配列番号
 			SIF 対象キャラ < 1
 				CONTINUE
-			CFLAG:対象キャラ:信頼度 = 5000
+			CFLAG:対象キャラ:信頼度 += 5000
 			CFLAG:対象キャラ:招待不可フラグ = 0
 			TALENT:対象キャラ:従業員 = 1
 			CFLAG:対象キャラ:滞在期間 = 999
@@ -2308,7 +2430,7 @@ SELECTCASE LOCAL
 			;初期状態雑務
 			現在仕事:対象キャラ:0 = 1
 		NEXT
-		PRINTW 초기 직원 캐릭터를 설정했습니다.
+		PRINTW 초기 종업원 캐릭터를 설정했습니다.
 		RETURN 0
 	CASEELSE
 		
@@ -2367,7 +2489,7 @@ ARRAYCOPY "RESULTS", "関数配列"
 
 $表示ループ
 DRAWLINE
-PRINTL 원하는 세트를 선택해주세요.
+PRINTL 임의의 세트를 선택해 주세요.
 DRAWLINE
 
 ;左側
@@ -2398,7 +2520,7 @@ BINPUT 999
 SELECTCASE RESULT
 	CASE 998
 		CALLFORM %関数配列:選択セット番号%("キャラセット", 追加候補)
-		PRINTFORMW %REPLACE(関数配列:選択セット番号, "オススメセット処理_", "")%를 적용했습니다.
+		PRINTFORMW %REPLACE(関数配列:選択セット番号, "オススメセット処理_", "")%을(를) 적용했습니다.
 		RETURN 0
 	CASE 999
 		RETURN 0
@@ -2417,7 +2539,10 @@ GOTO 表示ループ
 #DIM キャラ番号記録
 #DIMS CSTR切り分け文字列格納, 2
 
-IF CSTR:対象キャラ:初期関係性 != ""
+IF ランダムキャラ判定(NO:対象キャラ)
+	;ランダムキャラの場合、初期値記録ＤＢの値で初期化
+	CALL ランダムキャラ初期化処理_初期関係性(, 対象キャラ)
+ELSEIF CSTR:対象キャラ:初期関係性 != ""
 	VARSET LOCALS
 	REPLACE CSTR:対象キャラ:初期関係性, " ", ""
 	SPLIT RESULTS, "%", LOCALS
@@ -2428,8 +2553,12 @@ IF CSTR:対象キャラ:初期関係性 != ""
 		キャラ番号記録 = FINDCHARA(NAME, CSTR切り分け文字列格納:0)
 		SIF キャラ番号記録 < 0
 			CONTINUE
+		;同行率セット
+		IF GET_RELATION(対象キャラ, キャラ番号記録) / 100 < 80
+			CALL SET_同行候補(対象キャラ, キャラ番号記録, 8000)
+		ENDIF
 		;同一組み合わせはスキップ
-		SIF DT_SELECT("関係性データベース", @"(対象キャラ１ = {CFLAG:対象キャラ:人物番号} Or 対象キャラ２ = {CFLAG:対象キャラ:人物番号}) And (対象キャラ１ = {CFLAG:キャラ番号記録:人物番号} Or 対象キャラ２ = {CFLAG:キャラ番号記録:人物番号})")
+		SIF DT_SELECT("関係性データベース", @"(対象キャラ１ = {CFLAG:対象キャラ:人物番号} Or 対象キャラ２ = {CFLAG:対象キャラ:人物番号}) And (対象キャラ１ = {CFLAG:キャラ番号記録:人物番号} Or 対象キャラ２ = {CFLAG:キャラ番号記録:人物番号}) And 関係性種別 = '%CSTR切り分け文字列格納:1%'")
 			CONTINUE
 		;既に恋慕があるなら恋慕初期はスキップ
 		SIF CSTR切り分け文字列格納:1 == "恋慕" && (DT_SELECT("関係性データベース", @"(対象キャラ１ = {CFLAG:対象キャラ:人物番号} Or 対象キャラ２ = {CFLAG:対象キャラ:人物番号} Or 対象キャラ１ = {CFLAG:キャラ番号記録:人物番号} Or 対象キャラ２ = {CFLAG:キャラ番号記録:人物番号}) And 関係性種別 = '恋慕'") || TALENT:対象キャラ:恋慕 || TALENT:キャラ番号記録:恋慕)
@@ -2456,13 +2585,13 @@ ENDIF
 @リゾート名決定処理()
 
 DRAWLINE
-PRINTL 리조트 이름을 결정해주세요.
-PRINTL ※리조트 이름은 게임 시작 후, 옵션에서 언제든지 변경할 수 있습니다.
+PRINTL 리조트의 이름을 정해 주세요.
+PRINTL ※리조트 이름은 게임 시작 후 옵션에서 언제든 변경할 수 있습니다.
 DRAWLINE
 
 PRINT 현재 이름:
 IF リゾート名称 == ""
-	PRINTL (미정)
+	PRINTL （미정）
 ELSE
 	PRINTFORML %リゾート名称%
 ENDIF
@@ -2471,6 +2600,10 @@ DRAWLINE
 PRINTBUTTON @"[0] 『%CALLNAME:MASTER% 리조트』로 한다", 0
 PRINTL
 PRINTBUTTON @"[1] 『era 리조트』로 한다", 1
+PRINTL
+PRINTBUTTON @"[2] 『스파 리조트 %CALLNAME:MASTER%』로 한다", 2
+PRINTL
+PRINTBUTTON @"[3] 『스파 리조트 era』로 한다", 3
 PRINTL
 PRINTBUTTON @"[10] 직접 입력한다", 10
 PRINTL
@@ -2485,12 +2618,16 @@ SELECTCASE RESULT
 		リゾート名称 = %CALLNAME:MASTER% 리조트
 	CASE 1
 		リゾート名称 = era 리조트
+	CASE 2
+		リゾート名称 = 스파 리조트 %CALLNAME:MASTER%
+	CASE 3
+		リゾート名称 = 스파 리조트 era
 	CASE 10
 		$名称ループ
 		PRINTL
 		PRINTL
 		DRAWLINE
-		PRINTL 원하는 명칭을 입력해주세요.
+		PRINTL 원하는 이름을 입력해 주세요.
 		CALL 入力処理_HTML記法警告付き()
 		IF RESULTS == ""
 			PRINTW 공백은 입력할 수 없습니다.
@@ -2507,7 +2644,7 @@ SELECTCASE RESULT
 			PRINTL
 			PRINTL
 		ELSE
-			PRINTFORMW 리조트 이름을 '%リゾート名称%'으로 결정했습니다.
+			PRINTFORMW 리조트 이름을 『%リゾート名称%』(으)로 결정했습니다.
 			RETURN 0
 		ENDIF
 ENDSELECT

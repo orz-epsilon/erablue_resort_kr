@@ -388,8 +388,8 @@ CALL キャラ配列フィルタ処理(表示候補, -1)
 $表示_LOOP
 ;広告対象の表示
 DRAWLINE
-PRINTL 스리사이즈 변동의 OPTION 제어로 캐릭터마다 개별적으로 설정할 수 있습니다.
-PRINTL 기본 설정은 모든 항목 '전체 설정에 따름'입니다.
+PRINTL 쓰리사이즈 변동의 OPTION 제어에서 캐릭터별로 개별 설정할 수 있습니다.
+PRINTL 기본 설정은 모든 항목이 「전체 설정 따르기」입니다.
 DRAWLINE
 LOCAL:1 = 0
 ;キャラの表示（15人まで）
@@ -431,7 +431,7 @@ CALL ページ送り共通表示(現在ページ, 項目表示数, 最大表示�
 DRAWLINE
 CALL フィルタソートボタンセット表示(9020, 9030, 9031, 9040)
 DRAWLINE
-PRINTBUTTON "[9990] 표시 캐릭터 전원을 '전체 설정에 따름'으로 변경한다", 9990
+PRINTBUTTON "[9990] 표시 캐릭터 전원을 「전체 설정을 따름」으로 변경", 9990
 PRINTL 
 DRAWLINE
 PRINTBUTTONLC "[9999] 돌아가기", 9999
@@ -444,7 +444,7 @@ BINPUT
 ;広告対象のINPUT
 入力値 = RESULT
 SELECTCASE 入力値
-	CASE 9020, 9030, 9031, 9040
+	CASE 9020, 9030, 9031, 9032, 9033, 9040
 		CALL フィルタソートボタンセット実行部(入力値, 9020, 9030, 9031, 9040)
 		現在ページ = 0
 		RESTART
@@ -576,19 +576,19 @@ CALL キャラ簡易紹介(対象キャラ)
 リロールボタン有効 = 対象画像数 > 5
 PRINTL
 ; 確認メッセージ
-PRINTL 캐릭터의 스리사이즈 성장의 허가/불허가를 개별적으로 설정합니다.
-PRINTL 스리사이즈는 원래 수치보다 감소하는 일은 없습니다. 증가분은 무제한으로 증가합니다.
+PRINTL 캐릭터의 쓰리사이즈 성장 허용·불허를 개별 설정합니다.
+PRINTL 쓰리사이즈는 원래 수치보다 감소하지 않습니다. 증가분은 제한 없이 증가합니다.
 PRINTL 
-PRINT 　　・임신・출산 후의 스리사이즈 변화　　
+PRINT 　　・임신·출산 후 쓰리사이즈 변화　　
 PRINTBUTTON @"[해설]", 100
 PRINTL 
 PRINT 　　　　B 증가　　
 SELECTCASE CFLAG:対象キャラ:妊娠スリーサイズ成長_Ｂ増加
 	CASE -1
 		;不許可
-		PRINTPLAIN [불허가] / 
+		PRINTPLAIN [불허] / 
 		SETCOLOR カラーパレット("グレーアウト")
-		PRINTBUTTON "[전체 설정에 따름]", 102
+		PRINTBUTTON "[전체 설정을 따름]", 102
 		PRINT  / 
 		PRINTBUTTON "[허가]", 103
 		RESETCOLOR
@@ -598,7 +598,7 @@ SELECTCASE CFLAG:対象キャラ:妊娠スリーサイズ成長_Ｂ増加
 		PRINTBUTTON "[불허]", 101
 		RESETCOLOR
 		PRINT  / 
-		PRINTPLAIN [전체 설정에 따름] / 
+		PRINTPLAIN [전체 설정 따르기] / 
 		SETCOLOR カラーパレット("グレーアウト")
 		PRINTBUTTON "[허가]", 103
 		RESETCOLOR
@@ -609,10 +609,10 @@ SELECTCASE CFLAG:対象キャラ:妊娠スリーサイズ成長_Ｂ増加
 		RESETCOLOR
 		PRINT  / 
 		SETCOLOR カラーパレット("グレーアウト")
-		PRINTBUTTON "[전체 설정에 따름]", 102
+		PRINTBUTTON "[전체 설정을 따름]", 102
 		RESETCOLOR
 		PRINT  / 
-		PRINTPLAIN [허가]
+		PRINTPLAIN [허용]
 ENDSELECT
 PRINTL 
 PRINT 　　　　B 감소　　
@@ -621,7 +621,7 @@ SELECTCASE CFLAG:対象キャラ:妊娠スリーサイズ成長_Ｂ減少
 		;不許可
 		PRINTPLAIN [불허] / 
 		SETCOLOR カラーパレット("グレーアウト")
-		PRINTBUTTON "[전체 설정에 따름]", 112
+		PRINTBUTTON "[전체 설정을 따름]", 112
 		PRINT  / 
 		PRINTBUTTON "[허가]", 113
 		RESETCOLOR
@@ -631,7 +631,7 @@ SELECTCASE CFLAG:対象キャラ:妊娠スリーサイズ成長_Ｂ減少
 		PRINTBUTTON "[불허]", 111
 		RESETCOLOR
 		PRINT  / 
-		PRINTPLAIN [전체 설정에 따름] / 
+		PRINTPLAIN [전체 설정 따르기] / 
 		SETCOLOR カラーパレット("グレーアウト")
 		PRINTBUTTON "[허가]", 113
 		RESETCOLOR
@@ -642,26 +642,26 @@ SELECTCASE CFLAG:対象キャラ:妊娠スリーサイズ成長_Ｂ減少
 		RESETCOLOR
 		PRINT  / 
 		SETCOLOR カラーパレット("グレーアウト")
-		PRINTBUTTON "[전체 설정에 따름]", 112
+		PRINTBUTTON "[전체 설정을 따름]", 112
 		RESETCOLOR
 		PRINT  / 
-		PRINTPLAIN [허가]
+		PRINTPLAIN [허용]
 ENDSELECT
 PRINTL 
 PRINT 　　　　W 증가　　
 SELECTCASE CFLAG:対象キャラ:妊娠スリーサイズ成長_Ｗ増加
 	CASE -1
 		;不許可
-		PRINTPLAIN [불허가] / 
+		PRINTPLAIN [불허] / 
 		SETCOLOR カラーパレット("グレーアウト")
-		PRINTBUTTON "[전체 설정 따르기]", 122
+		PRINTBUTTON "[전체 설정을 따름]", 122
 		PRINT  / 
 		PRINTBUTTON "[허가]", 123
 		RESETCOLOR
 	CASE 0
 		;全体設定
 		SETCOLOR カラーパレット("グレーアウト")
-		PRINTBUTTON "[불허가]", 121
+		PRINTBUTTON "[불허]", 121
 		RESETCOLOR
 		PRINT  / 
 		PRINTPLAIN [전체 설정 따르기] / 
@@ -671,23 +671,23 @@ SELECTCASE CFLAG:対象キャラ:妊娠スリーサイズ成長_Ｗ増加
 	CASE 1
 		;許可
 		SETCOLOR カラーパレット("グレーアウト")
-		PRINTBUTTON "[불허가]", 121
+		PRINTBUTTON "[불허]", 121
 		RESETCOLOR
 		PRINT  / 
 		SETCOLOR カラーパレット("グレーアウト")
-		PRINTBUTTON "[전체 설정 따르기]", 122
+		PRINTBUTTON "[전체 설정을 따름]", 122
 		RESETCOLOR
 		PRINT  / 
-		PRINTPLAIN [허가]
+		PRINTPLAIN [허용]
 ENDSELECT
 PRINTL 
 PRINT 　　　　W 감소　　
 SELECTCASE CFLAG:対象キャラ:妊娠スリーサイズ成長_Ｗ減少
 	CASE -1
 		;不許可
-		PRINTPLAIN [불허가] / 
+		PRINTPLAIN [불허] / 
 		SETCOLOR カラーパレット("グレーアウト")
-		PRINTBUTTON "[전체 설정 따르기]", 132
+		PRINTBUTTON "[전체 설정을 따름]", 132
 		PRINT  / 
 		PRINTBUTTON "[허가]", 133
 		RESETCOLOR
@@ -697,7 +697,7 @@ SELECTCASE CFLAG:対象キャラ:妊娠スリーサイズ成長_Ｗ減少
 		PRINTBUTTON "[불허]", 131
 		RESETCOLOR
 		PRINT  / 
-		PRINTPLAIN [전체 설정 따름] / 
+		PRINTPLAIN [전체 설정 따르기] / 
 		SETCOLOR カラーパレット("グレーアウト")
 		PRINTBUTTON "[허가]", 133
 		RESETCOLOR
@@ -708,10 +708,10 @@ SELECTCASE CFLAG:対象キャラ:妊娠スリーサイズ成長_Ｗ減少
 		RESETCOLOR
 		PRINT  / 
 		SETCOLOR カラーパレット("グレーアウト")
-		PRINTBUTTON "[전체 설정 따름]", 132
+		PRINTBUTTON "[전체 설정을 따름]", 132
 		RESETCOLOR
 		PRINT  / 
-		PRINTPLAIN [허가]
+		PRINTPLAIN [허용]
 ENDSELECT
 PRINTL 
 PRINT 　　　　H 증가　　
@@ -720,7 +720,7 @@ SELECTCASE CFLAG:対象キャラ:妊娠スリーサイズ成長_Ｈ増加
 		;不許可
 		PRINTPLAIN [불허] / 
 		SETCOLOR カラーパレット("グレーアウト")
-		PRINTBUTTON "[전체 설정 따름]", 142
+		PRINTBUTTON "[전체 설정을 따름]", 142
 		PRINT  / 
 		PRINTBUTTON "[허가]", 143
 		RESETCOLOR
@@ -730,7 +730,7 @@ SELECTCASE CFLAG:対象キャラ:妊娠スリーサイズ成長_Ｈ増加
 		PRINTBUTTON "[불허]", 141
 		RESETCOLOR
 		PRINT  / 
-		PRINTPLAIN [전체 설정 따름] / 
+		PRINTPLAIN [전체 설정 따르기] / 
 		SETCOLOR カラーパレット("グレーアウト")
 		PRINTBUTTON "[허가]", 143
 		RESETCOLOR
@@ -741,56 +741,56 @@ SELECTCASE CFLAG:対象キャラ:妊娠スリーサイズ成長_Ｈ増加
 		RESETCOLOR
 		PRINT  / 
 		SETCOLOR カラーパレット("グレーアウト")
-		PRINTBUTTON "[전체 설정 따름]", 142
+		PRINTBUTTON "[전체 설정을 따름]", 142
 		RESETCOLOR
 		PRINT  / 
-		PRINTPLAIN [허가]
+		PRINTPLAIN [허용]
 ENDSELECT
 PRINTL 
 PRINT 　　　　H 감소　　
 SELECTCASE CFLAG:対象キャラ:妊娠スリーサイズ成長_Ｈ減少
 	CASE -1
 		;不許可
-		PRINTPLAIN [불허가] / 
+		PRINTPLAIN [불허] / 
 		SETCOLOR カラーパレット("グレーアウト")
-		PRINTBUTTON "[전체 설정에 따름]", 152
+		PRINTBUTTON "[전체 설정을 따름]", 152
 		PRINT  / 
 		PRINTBUTTON "[허가]", 153
 		RESETCOLOR
 	CASE 0
 		;全体設定
 		SETCOLOR カラーパレット("グレーアウト")
-		PRINTBUTTON "[불허가]", 151
+		PRINTBUTTON "[불허]", 151
 		RESETCOLOR
 		PRINT  / 
-		PRINTPLAIN [전체 설정에 따름] / 
+		PRINTPLAIN [전체 설정 따르기] / 
 		SETCOLOR カラーパレット("グレーアウト")
 		PRINTBUTTON "[허가]", 153
 		RESETCOLOR
 	CASE 1
 		;許可
 		SETCOLOR カラーパレット("グレーアウト")
-		PRINTBUTTON "[불허가]", 151
+		PRINTBUTTON "[불허]", 151
 		RESETCOLOR
 		PRINT  / 
 		SETCOLOR カラーパレット("グレーアウト")
-		PRINTBUTTON "[전체 설정에 따름]", 152
+		PRINTBUTTON "[전체 설정을 따름]", 152
 		RESETCOLOR
 		PRINT  / 
-		PRINTPLAIN [허가]
+		PRINTPLAIN [허용]
 ENDSELECT
 PRINTL 
 PRINTL 
-PRINT 　　・명령 선택에 따른 스리사이즈 변화　　
+PRINT 　　・커맨드 선택에 따른 쓰리사이즈 변화　　
 PRINTBUTTON @"[해설]", 200
 PRINTL 
 PRINT 　　　　B 증가　　
 SELECTCASE CFLAG:対象キャラ:愛撫スリーサイズ成長_Ｂ増加
 	CASE -1
 		;不許可
-		PRINTPLAIN [불허가] / 
+		PRINTPLAIN [불허] / 
 		SETCOLOR カラーパレット("グレーアウト")
-		PRINTBUTTON "[전체 설정에 따름]", 202
+		PRINTBUTTON "[전체 설정을 따름]", 202
 		PRINT  / 
 		PRINTBUTTON "[허가]", 203
 		RESETCOLOR
@@ -800,7 +800,7 @@ SELECTCASE CFLAG:対象キャラ:愛撫スリーサイズ成長_Ｂ増加
 		PRINTBUTTON "[불허]", 201
 		RESETCOLOR
 		PRINT  / 
-		PRINTPLAIN [전체 설정에 따름] / 
+		PRINTPLAIN [전체 설정 따르기] / 
 		SETCOLOR カラーパレット("グレーアウト")
 		PRINTBUTTON "[허가]", 203
 		RESETCOLOR
@@ -811,10 +811,10 @@ SELECTCASE CFLAG:対象キャラ:愛撫スリーサイズ成長_Ｂ増加
 		RESETCOLOR
 		PRINT  / 
 		SETCOLOR カラーパレット("グレーアウト")
-		PRINTBUTTON "[전체 설정에 따름]", 202
+		PRINTBUTTON "[전체 설정을 따름]", 202
 		RESETCOLOR
 		PRINT  / 
-		PRINTPLAIN [허가]
+		PRINTPLAIN [허용]
 ENDSELECT
 PRINTL 
 PRINT 　　　　B 감소　　
@@ -823,7 +823,7 @@ SELECTCASE CFLAG:対象キャラ:愛撫スリーサイズ成長_Ｂ減少
 		;不許可
 		PRINTPLAIN [불허] / 
 		SETCOLOR カラーパレット("グレーアウト")
-		PRINTBUTTON "[전체 설정에 따름]", 212
+		PRINTBUTTON "[전체 설정을 따름]", 212
 		PRINT  / 
 		PRINTBUTTON "[허가]", 213
 		RESETCOLOR
@@ -833,7 +833,7 @@ SELECTCASE CFLAG:対象キャラ:愛撫スリーサイズ成長_Ｂ減少
 		PRINTBUTTON "[불허]", 211
 		RESETCOLOR
 		PRINT  / 
-		PRINTPLAIN [전체 설정에 따름] / 
+		PRINTPLAIN [전체 설정 따르기] / 
 		SETCOLOR カラーパレット("グレーアウト")
 		PRINTBUTTON "[허가]", 213
 		RESETCOLOR
@@ -844,7 +844,7 @@ SELECTCASE CFLAG:対象キャラ:愛撫スリーサイズ成長_Ｂ減少
 		RESETCOLOR
 		PRINT  / 
 		SETCOLOR カラーパレット("グレーアウト")
-		PRINTBUTTON "[전체 설정 따름]", 212
+		PRINTBUTTON "[전체 설정을 따름]", 212
 		RESETCOLOR
 		PRINT  / 
 		PRINTPLAIN [허용]
@@ -856,9 +856,9 @@ SELECTCASE CFLAG:対象キャラ:愛撫スリーサイズ成長_Ｗ増加
 		;不許可
 		PRINTPLAIN [불허] / 
 		SETCOLOR カラーパレット("グレーアウト")
-		PRINTBUTTON "[전체 설정 따름]", 222
+		PRINTBUTTON "[전체 설정을 따름]", 222
 		PRINT  / 
-		PRINTBUTTON "[허용]", 223
+		PRINTBUTTON "[허가]", 223
 		RESETCOLOR
 	CASE 0
 		;全体設定
@@ -866,9 +866,9 @@ SELECTCASE CFLAG:対象キャラ:愛撫スリーサイズ成長_Ｗ増加
 		PRINTBUTTON "[불허]", 221
 		RESETCOLOR
 		PRINT  / 
-		PRINTPLAIN [전체 설정 따름] / 
+		PRINTPLAIN [전체 설정 따르기] / 
 		SETCOLOR カラーパレット("グレーアウト")
-		PRINTBUTTON "[허용]", 223
+		PRINTBUTTON "[허가]", 223
 		RESETCOLOR
 	CASE 1
 		;許可
@@ -877,7 +877,7 @@ SELECTCASE CFLAG:対象キャラ:愛撫スリーサイズ成長_Ｗ増加
 		RESETCOLOR
 		PRINT  / 
 		SETCOLOR カラーパレット("グレーアウト")
-		PRINTBUTTON "[전체 설정 따름]", 222
+		PRINTBUTTON "[전체 설정을 따름]", 222
 		RESETCOLOR
 		PRINT  / 
 		PRINTPLAIN [허용]
@@ -889,50 +889,50 @@ SELECTCASE CFLAG:対象キャラ:愛撫スリーサイズ成長_Ｗ減少
 		;不許可
 		PRINTPLAIN [불허] / 
 		SETCOLOR カラーパレット("グレーアウト")
-		PRINTBUTTON "[전체 설정에 따름]", 232
+		PRINTBUTTON "[전체 설정을 따름]", 232
 		PRINT  / 
 		PRINTBUTTON "[허가]", 233
 		RESETCOLOR
 	CASE 0
 		;全体設定
 		SETCOLOR カラーパレット("グレーアウト")
-		PRINTBUTTON "[불허가]", 231
+		PRINTBUTTON "[불허]", 231
 		RESETCOLOR
 		PRINT  / 
-		PRINTPLAIN [전체 설정에 따름] / 
+		PRINTPLAIN [전체 설정 따르기] / 
 		SETCOLOR カラーパレット("グレーアウト")
 		PRINTBUTTON "[허가]", 233
 		RESETCOLOR
 	CASE 1
 		;許可
 		SETCOLOR カラーパレット("グレーアウト")
-		PRINTBUTTON "[불허가]", 231
+		PRINTBUTTON "[불허]", 231
 		RESETCOLOR
 		PRINT  / 
 		SETCOLOR カラーパレット("グレーアウト")
-		PRINTBUTTON "[전체 설정에 따름]", 232
+		PRINTBUTTON "[전체 설정을 따름]", 232
 		RESETCOLOR
 		PRINT  / 
-		PRINTPLAIN [허가]
+		PRINTPLAIN [허용]
 ENDSELECT
 PRINTL 
 PRINT 　　　　H 증가　　
 SELECTCASE CFLAG:対象キャラ:愛撫スリーサイズ成長_Ｈ増加
 	CASE -1
 		;不許可
-		PRINTPLAIN [불허가] / 
+		PRINTPLAIN [불허] / 
 		SETCOLOR カラーパレット("グレーアウト")
-		PRINTBUTTON "[전체 설정에 따름]", 242
+		PRINTBUTTON "[전체 설정을 따름]", 242
 		PRINT  / 
 		PRINTBUTTON "[허가]", 243
 		RESETCOLOR
 	CASE 0
 		;全体設定
 		SETCOLOR カラーパレット("グレーアウト")
-		PRINTBUTTON "[불허가]", 241
+		PRINTBUTTON "[불허]", 241
 		RESETCOLOR
 		PRINT  / 
-		PRINTPLAIN [전체 설정에 따름] / 
+		PRINTPLAIN [전체 설정 따르기] / 
 		SETCOLOR カラーパレット("グレーアウト")
 		PRINTBUTTON "[허가]", 243
 		RESETCOLOR
@@ -943,10 +943,10 @@ SELECTCASE CFLAG:対象キャラ:愛撫スリーサイズ成長_Ｈ増加
 		RESETCOLOR
 		PRINT  / 
 		SETCOLOR カラーパレット("グレーアウト")
-		PRINTBUTTON "[전체 설정 따르기]", 242
+		PRINTBUTTON "[전체 설정을 따름]", 242
 		RESETCOLOR
 		PRINT  / 
-		PRINTPLAIN [허가]
+		PRINTPLAIN [허용]
 ENDSELECT
 PRINTL 
 PRINT 　　　　H 감소　　
@@ -955,7 +955,7 @@ SELECTCASE CFLAG:対象キャラ:愛撫スリーサイズ成長_Ｈ減少
 		;不許可
 		PRINTPLAIN [불허] / 
 		SETCOLOR カラーパレット("グレーアウト")
-		PRINTBUTTON "[전체 설정 따르기]", 252
+		PRINTBUTTON "[전체 설정을 따름]", 252
 		PRINT  / 
 		PRINTBUTTON "[허가]", 253
 		RESETCOLOR
@@ -976,14 +976,14 @@ SELECTCASE CFLAG:対象キャラ:愛撫スリーサイズ成長_Ｈ減少
 		RESETCOLOR
 		PRINT  / 
 		SETCOLOR カラーパレット("グレーアウト")
-		PRINTBUTTON "[전체 설정 따르기]", 252
+		PRINTBUTTON "[전체 설정을 따름]", 252
 		RESETCOLOR
 		PRINT  / 
-		PRINTPLAIN [허가]
+		PRINTPLAIN [허용]
 ENDSELECT
 PRINTL 
 PRINTL 
-PRINT 　　・음식에 의한 스리사이즈 성장　　
+PRINT 　　・음식에 따른 쓰리사이즈 성장　　
 PRINTBUTTON @"[해설]", 300
 PRINTL 
 PRINT 　　　　B 증가　　
@@ -992,9 +992,9 @@ SELECTCASE CFLAG:対象キャラ:食事スリーサイズ成長_Ｂ増加
 		;不許可
 		PRINTPLAIN [불허] / 
 		SETCOLOR カラーパレット("グレーアウト")
-		PRINTBUTTON "[전체 설정 따르기]", 302
+		PRINTBUTTON "[전체 설정을 따름]", 302
 		PRINT  / 
-		PRINTBUTTON "[허용]", 303
+		PRINTBUTTON "[허가]", 303
 		RESETCOLOR
 	CASE 0
 		;全体設定
@@ -1004,7 +1004,7 @@ SELECTCASE CFLAG:対象キャラ:食事スリーサイズ成長_Ｂ増加
 		PRINT  / 
 		PRINTPLAIN [전체 설정 따르기] / 
 		SETCOLOR カラーパレット("グレーアウト")
-		PRINTBUTTON "[허용]", 303
+		PRINTBUTTON "[허가]", 303
 		RESETCOLOR
 	CASE 1
 		;許可
@@ -1013,7 +1013,7 @@ SELECTCASE CFLAG:対象キャラ:食事スリーサイズ成長_Ｂ増加
 		RESETCOLOR
 		PRINT  / 
 		SETCOLOR カラーパレット("グレーアウト")
-		PRINTBUTTON "[전체 설정 따르기]", 302
+		PRINTBUTTON "[전체 설정을 따름]", 302
 		RESETCOLOR
 		PRINT  / 
 		PRINTPLAIN [허용]
@@ -1025,9 +1025,9 @@ SELECTCASE CFLAG:対象キャラ:食事スリーサイズ成長_Ｂ減少
 		;不許可
 		PRINTPLAIN [불허] / 
 		SETCOLOR カラーパレット("グレーアウト")
-		PRINTBUTTON "[전체 설정 따르기]", 312
+		PRINTBUTTON "[전체 설정을 따름]", 312
 		PRINT  / 
-		PRINTBUTTON "[허용]", 313
+		PRINTBUTTON "[허가]", 313
 		RESETCOLOR
 	CASE 0
 		;全体設定
@@ -1035,65 +1035,65 @@ SELECTCASE CFLAG:対象キャラ:食事スリーサイズ成長_Ｂ減少
 		PRINTBUTTON "[불허]", 311
 		RESETCOLOR
 		PRINT  / 
-		PRINTPLAIN [전체 설정에 따름] / 
+		PRINTPLAIN [전체 설정 따르기] / 
 		SETCOLOR カラーパレット("グレーアウト")
 		PRINTBUTTON "[허가]", 313
 		RESETCOLOR
 	CASE 1
 		;許可
 		SETCOLOR カラーパレット("グレーアウト")
-		PRINTBUTTON "[불허가]", 311
+		PRINTBUTTON "[불허]", 311
 		RESETCOLOR
 		PRINT  / 
 		SETCOLOR カラーパレット("グレーアウト")
-		PRINTBUTTON "[전체 설정에 따름]", 312
+		PRINTBUTTON "[전체 설정을 따름]", 312
 		RESETCOLOR
 		PRINT  / 
-		PRINTPLAIN [허가]
+		PRINTPLAIN [허용]
 ENDSELECT
 PRINTL 
 PRINT 　　　　W 증가　　
 SELECTCASE CFLAG:対象キャラ:食事スリーサイズ成長_Ｗ増加
 	CASE -1
 		;不許可
-		PRINTPLAIN [불허가] / 
+		PRINTPLAIN [불허] / 
 		SETCOLOR カラーパレット("グレーアウト")
-		PRINTBUTTON "[전체 설정에 따름]", 322
+		PRINTBUTTON "[전체 설정을 따름]", 322
 		PRINT  / 
 		PRINTBUTTON "[허가]", 323
 		RESETCOLOR
 	CASE 0
 		;全体設定
 		SETCOLOR カラーパレット("グレーアウト")
-		PRINTBUTTON "[불허가]", 321
+		PRINTBUTTON "[불허]", 321
 		RESETCOLOR
 		PRINT  / 
-		PRINTPLAIN [전체 설정에 따름] / 
+		PRINTPLAIN [전체 설정 따르기] / 
 		SETCOLOR カラーパレット("グレーアウト")
 		PRINTBUTTON "[허가]", 323
 		RESETCOLOR
 	CASE 1
 		;許可
 		SETCOLOR カラーパレット("グレーアウト")
-		PRINTBUTTON "[불허가]", 321
+		PRINTBUTTON "[불허]", 321
 		RESETCOLOR
 		PRINT  / 
 		SETCOLOR カラーパレット("グレーアウト")
-		PRINTBUTTON "[전체 설정에 따름]", 322
+		PRINTBUTTON "[전체 설정을 따름]", 322
 		RESETCOLOR
 		PRINT  / 
-		PRINTPLAIN [허가]
+		PRINTPLAIN [허용]
 ENDSELECT
 PRINTL 
-PRINT 　　　　W감소　　
+PRINT 　　　　W 감소　　
 SELECTCASE CFLAG:対象キャラ:食事スリーサイズ成長_Ｗ減少
 	CASE -1
 		;不許可
 		PRINTPLAIN [불허] / 
 		SETCOLOR カラーパレット("グレーアウト")
-		PRINTBUTTON "[전체 설정 따르기]", 332
+		PRINTBUTTON "[전체 설정을 따름]", 332
 		PRINT  / 
-		PRINTBUTTON "[허용]", 333
+		PRINTBUTTON "[허가]", 333
 		RESETCOLOR
 	CASE 0
 		;全体設定
@@ -1103,7 +1103,7 @@ SELECTCASE CFLAG:対象キャラ:食事スリーサイズ成長_Ｗ減少
 		PRINT  / 
 		PRINTPLAIN [전체 설정 따르기] / 
 		SETCOLOR カラーパレット("グレーアウト")
-		PRINTBUTTON "[허용]", 333
+		PRINTBUTTON "[허가]", 333
 		RESETCOLOR
 	CASE 1
 		;許可
@@ -1112,21 +1112,21 @@ SELECTCASE CFLAG:対象キャラ:食事スリーサイズ成長_Ｗ減少
 		RESETCOLOR
 		PRINT  / 
 		SETCOLOR カラーパレット("グレーアウト")
-		PRINTBUTTON "[전체 설정 따르기]", 332
+		PRINTBUTTON "[전체 설정을 따름]", 332
 		RESETCOLOR
 		PRINT  / 
 		PRINTPLAIN [허용]
 ENDSELECT
 PRINTL 
-PRINT 　　　　H증가　　
+PRINT 　　　　H 증가　　
 SELECTCASE CFLAG:対象キャラ:食事スリーサイズ成長_Ｈ増加
 	CASE -1
 		;不許可
 		PRINTPLAIN [불허] / 
 		SETCOLOR カラーパレット("グレーアウト")
-		PRINTBUTTON "[전체 설정 따르기]", 342
+		PRINTBUTTON "[전체 설정을 따름]", 342
 		PRINT  / 
-		PRINTBUTTON "[허용]", 343
+		PRINTBUTTON "[허가]", 343
 		RESETCOLOR
 	CASE 0
 		;全体設定
@@ -1134,7 +1134,7 @@ SELECTCASE CFLAG:対象キャラ:食事スリーサイズ成長_Ｈ増加
 		PRINTBUTTON "[불허]", 341
 		RESETCOLOR
 		PRINT  / 
-		PRINTPLAIN [전체 설정에 따름] / 
+		PRINTPLAIN [전체 설정 따르기] / 
 		SETCOLOR カラーパレット("グレーアウト")
 		PRINTBUTTON "[허가]", 343
 		RESETCOLOR
@@ -1145,10 +1145,10 @@ SELECTCASE CFLAG:対象キャラ:食事スリーサイズ成長_Ｈ増加
 		RESETCOLOR
 		PRINT  / 
 		SETCOLOR カラーパレット("グレーアウト")
-		PRINTBUTTON "[전체 설정에 따름]", 342
+		PRINTBUTTON "[전체 설정을 따름]", 342
 		RESETCOLOR
 		PRINT  / 
-		PRINTPLAIN [허가]
+		PRINTPLAIN [허용]
 ENDSELECT
 PRINTL 
 PRINT 　　　　H 감소　　
@@ -1157,7 +1157,7 @@ SELECTCASE CFLAG:対象キャラ:食事スリーサイズ成長_Ｈ減少
 		;不許可
 		PRINTPLAIN [불허] / 
 		SETCOLOR カラーパレット("グレーアウト")
-		PRINTBUTTON "[전체 설정에 따름]", 352
+		PRINTBUTTON "[전체 설정을 따름]", 352
 		PRINT  / 
 		PRINTBUTTON "[허가]", 353
 		RESETCOLOR
@@ -1167,7 +1167,7 @@ SELECTCASE CFLAG:対象キャラ:食事スリーサイズ成長_Ｈ減少
 		PRINTBUTTON "[불허]", 351
 		RESETCOLOR
 		PRINT  / 
-		PRINTPLAIN [전체 설정에 따름] / 
+		PRINTPLAIN [전체 설정 따르기] / 
 		SETCOLOR カラーパレット("グレーアウト")
 		PRINTBUTTON "[허가]", 353
 		RESETCOLOR
@@ -1178,10 +1178,10 @@ SELECTCASE CFLAG:対象キャラ:食事スリーサイズ成長_Ｈ減少
 		RESETCOLOR
 		PRINT  / 
 		SETCOLOR カラーパレット("グレーアウト")
-		PRINTBUTTON "[전체 설정에 따름]", 352
+		PRINTBUTTON "[전체 설정을 따름]", 352
 		RESETCOLOR
 		PRINT  / 
-		PRINTPLAIN [허가]
+		PRINTPLAIN [허용]
 ENDSELECT
 PRINTL 
 PRINTL 
@@ -1189,7 +1189,7 @@ PRINTL
 PRINTBUTTONLC "[1]돌아가기", 1
 PRINTBUTTONLC "[10]상세 능력", 10
 SIF リロールボタン有効
-	PRINTBUTTONLC "[4]이미지 랜덤 표시를 리롤", 4
+	PRINTBUTTONLC "[4]이미지 랜덤 표시 다시 굴리기", 4
 PRINTL
 PRINTBUTTONLC "[2]이전 캐릭터", 2
 PRINTBUTTONLC "[3]다음 캐릭터", 3
@@ -1312,48 +1312,48 @@ WHILE 1
 		CASE 100
 			リスタートフラグ = 1
 			DRAWLINE
-			PRINTL 출산 후, B와 H가 증가하고 W가 미세하게 증가합니다. 불허가한 항목은 증가하지 않습니다.
-			PRINTL 임신 중의 가슴 확대가 산후에 원래대로 돌아올 때 B의 기초값이 재계산되므로,
-			PRINTL 결과적으로 가슴이 임신 전보다 처질 수 있습니다.
+			PRINTL 출산 후 B와 H가 증가하고 W가 소폭 증가합니다. 불허로 설정한 항목은 증가하지 않습니다.
+			PRINTL 임신 중 커진 가슴이 출산 후 원래대로 돌아올 때 B의 기초값이 재계산되므로,
+			PRINTL 결과적으로 가슴 크기가 임신 전보다 작아질 수 있습니다.
 			WAIT
 			BREAK
 		CASE 200
 			リスタートフラグ = 1
 			DRAWLINE
-			PRINTL 특정 명령을 실행했을 때, 각 스리사이즈가 증감합니다.
-			PRINTL 해당 명령은 다음과 같습니다.
+			PRINTL 특정 커맨드를 실행하면 각 쓰리사이즈가 증감합니다.
+			PRINTL 해당 커맨드는 다음과 같습니다.
 			PRINTL
-			PRINTL ・B 증가 명령
-			PRINTL 　　가슴 애무・착유기(장착 시・장착 중 모두)・가슴 주무르기・어깨동무 가슴 주무르기(실행 시・모드 지속 중 모두)・가슴 확대 오일 에스테・가슴을 주무르다
+			PRINTL ・B 증가 커맨드
+			PRINTL 　　가슴 애무·착유기(장착 시·장착 중 모두)·가슴 주무르기·어깨동무 가슴 주무르기(실행 시·모드 지속 중 모두)·가슴 확대 오일 에스테·가슴 마구 주무르기
 			PRINTL
-			PRINTL ・B 감소 명령
+			PRINTL ・B 감소 커맨드
 			PRINTL 　　미유 오일 에스테
 			PRINTL
 			PRINTL ・W 감소 커맨드
-			PRINTL 　　기승위 (모드 지속 중)・A 기승위 (모드 지속 중)・미용 피부와 잘록한 허리 오일 스파・복직근 오일 에스테
+			PRINTL 　　기승위(모드 지속 중)·A기승위(모드 지속 중)·미 피부와 잘록한 허리 오일 스파·복직근 오일 에스테
 			PRINTL
 			PRINTL ・H 증가 커맨드
-			PRINTL 　　스팽킹・엉덩이를 주무르기 (실행 시・모드 지속 중 양쪽)
+			PRINTL 　　스팽킹·엉덩이 주무르기(실행 시·모드 지속 중 모두)
 			PRINTL
 			PRINTL ・H 감소 커맨드
 			PRINTL 　　대둔근 골반 마사지
 			PRINTL
 			PRINTL ・식사 취급 커맨드
-			PRINTL 　(실행함으로써 쓰리 사이즈가 증가하지만, 커맨드 선택에 의한 쓰리 사이즈 변화가 아닌 음식에 의한 쓰리 사이즈 성장으로 취급)
-			PRINTL 　　술을 마시다・BBQ를 하다
+			PRINTL 　(실행하면 쓰리사이즈가 증가하지만, 커맨드 선택에 의한 변화가 아니라 음식에 의한 쓰리사이즈 성장으로 취급합니다)
+			PRINTL 　　술 마시기·BBQ 하기
 			WAIT
 			BREAK
 		CASE 300
 			リスタートフラグ = 1
 			DRAWLINE
-			PRINTL 특정 아이템을 선물했을 때, 혹은 사용했을 때 각각의 쓰리 사이즈가 증감합니다.
+			PRINTL 특정 아이템을 선물하거나 사용하면 각 쓰리사이즈가 증감합니다.
 			PRINTL 해당 아이템에는 칼로리가 표기되어 있습니다.
 			PRINTL
-			PRINTL 하루에 1000kcal까지는 섭취해도 살찌지 않습니다.
-			PRINTL 1000kcal를 초과한 부분을 기준으로, 하루의 마지막에 쓰리 사이즈 변동이 발생합니다.
+			PRINTL 하루 1000kcal까지는 섭취해도 살이 찌지 않습니다.
+			PRINTL 1000kcal를 초과한 양을 기준으로 하루 마지막에 쓰리사이즈 변동이 발생합니다.
 			PRINTL 
-			PRINTL 또한, 전투나 운동 등에 의해 섭취 칼로리가 감산될 수 있습니다.
-			PRINTL 하루에 섭취한 칼로리가 마이너스가 된 경우, 마이너스 부분이 그대로 쓰리 사이즈 변동으로 계산됩니다.
+			PRINTL 또한 전투나 운동 등으로 섭취 칼로리가 차감될 수 있습니다.
+			PRINTL 하루 섭취 칼로리가 마이너스가 되면 그 마이너스분이 그대로 쓰리사이즈 변동으로 계산됩니다.
 			WAIT
 			BREAK
 	ENDSELECT

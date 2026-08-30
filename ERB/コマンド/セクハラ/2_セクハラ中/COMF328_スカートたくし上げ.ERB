@@ -12,8 +12,8 @@ TFLAG:コマンドタイプ受渡 = COMTYPE("セクハラ")
 
 @COM_TOOLTIP_328
 LOCALS = <br>■치마 걷어올리기<br>
-LOCALS += "자신의 치마를 걷어올려 상대를 유혹하는 커맨드. <br>그 자리에 있는 인원수가 많을수록 반감이 증가한다."
-LOCALS += "<br>COM 타입: 성희롱<br>획득 소스: 쾌락・반감"
+LOCALS += "자신의 치마를 올려 상대를 유혹하는 커맨드. <br>그 자리에 있는 인원수가 많을수록 반감이 증가한다."
+LOCALS += "<br>COM 타입: 성희롱<br>획득 소스: 환락・반감"
 LOCALS += "<br>고유 획득 경험: 없음<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
@@ -107,7 +107,7 @@ PRINTFORM %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%의
 IF TEQUIP:PLAYER:下半身下着あり == 0
 	PRINTL 아무것도 입지 않은 사타구니를 보고 말았다…
 ELSEIF TEQUIP:PLAYER:下半身下着あり == 2
-	PRINTL 중요한 부분만을 가리는 작은 앞가리개를 보고 말았다…
+	PRINTL 중요한 부분만 가리는 작은 앞가리개를 보고 말았다…
 ELSE
 	PRINTFORML %今日の下着文字列生成(PLAYER)%을(를) 보고 말았다…
 ENDIF
@@ -117,7 +117,7 @@ IF RFLAG:コマンド結果受渡し変数３ == 1
 	PRINTFORML 유혹당한 %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%의 몸을 끌어당겨, 침대에 밀어 넘어뜨렸다
 ELSEIF RFLAG:コマンド結果受渡し変数３ == 2
 	WAIT
-	PRINTFORML 유혹당한 %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%을(를) 물가로 데려가, 끌어안았다
+	PRINTFORML 유혹당한 %CALLNAME:TARGET%은(는) %CALLNAME:PLAYER%을(를) 구석으로 데려가, 끌어안았다
 ENDIF
 
 
@@ -132,24 +132,24 @@ ELSE
 	SELECTCASE RFLAG:コマンド結果受渡し変数２
 		CASE 1
 			;無知
-			PRINTFORM 무엇을 하고 있는지 모르는 듯한 모습으로, %CALLNAME:PLAYER%을(를) 보고 있다.
+			PRINTFORM 무엇을 하는지 모르는 듯한 모습으로, %CALLNAME:PLAYER%을(를) 보고 있다.
 		CASE 2
 			;無反応
 			PRINTFORM 아무것도 신경 쓰지 않는 듯 무표정으로 %CALLNAME:PLAYER%을(를) 보고 있다.
 		CASEELSE
 			;汎用
 			IF GET_TARGETNUM() > 1
-				PRINTFORM 황급히 %CALLNAME:PLAYER%의 옷을 붙잡고, 이런 짓을 하지 않도록 주의를 주었다.
+				PRINTFORM 황급히 %CALLNAME:PLAYER%의 옷을 붙잡고, 이런 짓을 하지 말라고 주의를 주었다.
 			ELSE
 				IF RFLAG:コマンド結果受渡し変数 == 1
 					;拒絶
-					PRINTFORM 황급히 %CALLNAME:PLAYER%의 옷을 붙잡고, 이런 짓을 하지 않도록 주의를 주었다.
+					PRINTFORM 황급히 %CALLNAME:PLAYER%의 옷을 붙잡고, 이런 짓을 하지 말라고 주의를 주었다.
 				ELSEIF RFLAG:コマンド結果受渡し変数 == 2
 					;受け入れ
 					PRINTFORM 쓴웃음을 지으며 %CALLNAME:PLAYER%에게 가볍게 주의를 주었다.
 				ELSE
 					;喜び
-					PRINTFORM 자신 이외의 사람에게는 하지 않도록, 라고 %CALLNAME:PLAYER%에게 주의를 주었다.
+					PRINTFORM 자신 이외의 사람에게는 하지 말라고, %CALLNAME:PLAYER%에게 주의를 주었다.
 				ENDIF
 			ENDIF
 	ENDSELECT

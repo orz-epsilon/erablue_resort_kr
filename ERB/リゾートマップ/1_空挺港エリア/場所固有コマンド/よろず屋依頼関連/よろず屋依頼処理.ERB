@@ -26,7 +26,7 @@ NEXT
 
 LOCALS = 
 DRAWLINE
-PRINTL ・현재 내고 있는 의뢰
+PRINTL ・진행 중인 의뢰
 FOR LOCAL, 0, 依頼同時最大数
 	LOCALS += @"<div rect='62,{LOCAL * 450},4375,419'>"
 	LOCALS += @"<button value='{LOCAL + 1}'><img width = '4375' height = '419' src='依頼_{LOCAL + 1}' srcb='依頼_{LOCAL + 1}_ボタン'></button>"
@@ -34,10 +34,19 @@ FOR LOCAL, 0, 依頼同時最大数
 	
 	LOCALS += @"<div rect='125,{LOCAL * 450 + 87},4375,419'>"
 	IF 遂行中依頼:(LOCAL + 1) == ""
-		LOCALS += @"수행 중인 의뢰: 없음"
+		LOCALS += @"수행 중인 의뢰:없음"
 	ELSE
 		CALL 依頼情報表示処理(LOCAL + 1)
 		LOCALS += @"%詳細文文字列受け渡し変数%"
+	ENDIF
+	LOCALS += "</div>"
+
+	LOCALS += @"<div rect='4500,{LOCAL * 450},2500,419' border='31' bcolor='#C0C0C0' padding='50'>"
+	LOCALS += @"연속 의뢰:"
+	IF 連続依頼設定:(LOCAL + 1)
+		LOCALS += @"ON / <button value='{LOCAL + 201}'><font color='#%カラーパレット_HTML("グレーアウト")%'>OFF</font></button>"
+	ELSE
+		LOCALS += @"<button value='{LOCAL + 201}'><font color='#%カラーパレット_HTML("グレーアウト")%'>ON</font></button> / OFF"
 	ENDIF
 	LOCALS += "</div>"
 NEXT
@@ -50,7 +59,7 @@ LOCALS =
 DRAWLINE
 LOCALS += @"<div rect='62,0,4375,3000' border='31' bcolor='#C0C0C0'></div>"
 LOCALS += @"<div rect='4469,0,1562,625' border='31' bcolor='#C0C0C0'></div>"
-LOCALS += @"<div rect='4531,62,1562,625'>소지 루피: %NUM_FORMAT(MONEY)%루피<br>소지 ZP　: %ZP所持量全文字列()%</div>"
+LOCALS += @"<div rect='4531,62,1562,625'>보유 루피:%NUM_FORMAT(MONEY)%루피<br>보유 ZP　:%ZP所持量全文字列()%</div>"
 LOCALS += @"<div rect='125,62,4375,2812'>"
 SELECTCASE 表示依頼枠番号
 	CASE 0
@@ -62,18 +71,18 @@ SELECTCASE 表示依頼枠番号
 		LOCALS += @"%詳細文文字列受け渡し変数%"
 		LOCALS += "------------------------------------------------------------------------------------<br>"
 		IF 遂行中依頼:表示依頼枠番号 != ""
-			LOCALS += "이 의뢰 칸에는 이미 다른 의뢰가 할당되어 있습니다. <br>"
+			LOCALS += "이 의뢰 칸에는 이미 다른 의뢰가 할당되어 있습니다.<br>"
 			LOCALS += "의뢰를 파기하고 다른 의뢰를 발주하시겠습니까?<br>"
-			LOCALS += "(보수는 환불되지 않습니다)<br>"
+			LOCALS += "（보상은 환불되지 않습니다）<br>"
 			LOCALS += "<br>"
 		ELSE
-			LOCALS += "이 의뢰 칸에는 현재 의뢰가 할당되어 있지 않습니다. <br>"
+			LOCALS += "이 의뢰 칸에는 현재 의뢰가 할당되어 있지 않습니다.<br>"
 			LOCALS += "새로운 의뢰를 발주하시겠습니까?<br><br>"
 		ENDIF
 		ENUMFUNCBEGINSWITH "発注依頼_"
 		FOR LOCAL, 0, RESULT
 			SPLIT RESULTS:LOCAL, "_", 依頼名分割用
-			LOCALS += @"<button value='{100 + LOCAL}'>[{100 + LOCAL}] %依頼名分割用:1% 을(를) 발주한다</button><br>"
+			LOCALS += @"<button value='{100 + LOCAL}'>[{100 + LOCAL}] %依頼名分割用:1%을(를) 발주한다</button><br>"
 		NEXT
 	CASE 101 TO 110
 		;依頼内容表示・決定
@@ -116,9 +125,11 @@ SELECTCASE RESULT
 		表示依頼枠番号 = 100 + 表示依頼枠番号
 		SPLIT RESULTS:(RESULT - 100), "_", 依頼名分割用:1
 		表示依頼名 = %依頼名分割用:1%
+	CASE 200 TO 210
+		INVERTBIT 連続依頼設定:(RESULT - 200), 0
 	CASE 998
 		DRAWLINE
-		PRINTL [의뢰를 내는 시스템: 튜토리얼]
+		PRINTL ［의뢰 발주 시스템:튜토리얼］
 		DRAWLINE
 		HTML_PRINT "<img src='顔エラ' height='900' width='900'>"
 		PRINTL 
@@ -145,21 +156,21 @@ RESTART
 
 LOCALS = 
 IF 遂行中依頼:依頼番号 != ""
-	LOCALS += @"수행 중인 의뢰: %遂行中依頼:依頼番号%　　"
+	LOCALS += @"수행 중인 의뢰:%遂行中依頼:依頼番号%　　"
 	TRYCALLFORM 依頼追加表示情報_%遂行中依頼:依頼番号%(依頼番号)
 	LOCALS += @"%詳細文文字列受け渡し変数%<br>"
 	IF 依頼受注者名:依頼番号 != ""
-		LOCALS += @"의뢰 수주자: %依頼受注者名:依頼番号%　　"
+		LOCALS += @"의뢰 수주자:%依頼受注者名:依頼番号%　　"
 		IF 依頼残り期間:依頼番号 > 0
-			LOCALS += @"현지로 이동 중: 남은%TOFULL(TOSTR(依頼残り期間:依頼番号))%일<br>"
+			LOCALS += @"현지로 이동 중：남은%TOFULL(TOSTR(依頼残り期間:依頼番号))%일<br>"
 		ELSE
-			LOCALS += @"오늘의 의뢰 완료 확률: %TOFULL(TOSTR(依頼完了確率_初期値:依頼番号))%％<br>"
+			LOCALS += @"오늘의 의뢰 완료 확률：%TOFULL(TOSTR(依頼完了確率_初期値:依頼番号))%％<br>"
 		ENDIF
 	ELSE
-		LOCALS += "의뢰 수주자: 미수주<br>"
+		LOCALS += "의뢰 수주자：미수주<br>"
 	ENDIF
 ELSE
-	LOCALS += @"수행 중 의뢰: 없음<br><br>"
+	LOCALS += @"수행 중인 의뢰：없음<br><br>"
 ENDIF
 
 詳細文文字列受け渡し変数 = %LOCALS%
@@ -175,7 +186,7 @@ VARSET LOCAL
 LOCAL = RAND:100
 IF LOCAL < 30
 	;キャラ受注
-	FOR LOCAL, 0, 500
+	FOR LOCAL, 1, 500
 		SIF LOCAL >= CHARANUM
 			CONTINUE
 		SIF LOCAL > CHARANUM

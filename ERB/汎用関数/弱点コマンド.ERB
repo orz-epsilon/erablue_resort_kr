@@ -204,7 +204,7 @@ ELSE
 	弱点コマンド名 '= 弱点コマンド名確定(マスク用キャラ番号, 弱点コマンド欄表示名, TSTR:コマンド名受渡)
 ENDIF
 IF PLAYER側フラグ
-	弱点コマンド名 += "：플레이어 측"
+	弱点コマンド名 += "：PLAYER측"
 ENDIF
 RETURNF 弱点コマンド名
 
@@ -270,7 +270,7 @@ FOR LOCAL, 0, コマンド文字長さ
 	IF LOCAL == CHARPOS:0 || LOCAL == CHARPOS:1
 		マスク結果 += CHARATU(マスク元:0, LOCAL)
 	ELSE
-		マスク結果 += "?"
+		マスク結果 += "？"
 	ENDIF
 NEXT
 RETURNF マスク結果

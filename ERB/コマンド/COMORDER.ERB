@@ -7,6 +7,15 @@
 実行値 = 0
 ＋表示フラグ = 0
 
+;自分の分身
+IF TALENT:分身 == 2
+	SIF ＋表示フラグ
+		PRINT  + 
+	実行値 += 999
+	PRINTFORM 自분自身(999)
+	＋表示フラグ = 1
+ENDIF
+
 ;好感度
 IF CFLAG:好感度レベル
 	SIF ＋表示フラグ
@@ -205,7 +214,7 @@ ENDIF
 IF TALENT:プライド > 0
 	PRINT  - 
 	実行値 -= 15
-	PRINT 자존심 강함(15)
+	PRINT 자존심 높음(15)
 	＋表示フラグ = 1
 ENDIF
 ;プライド低い
@@ -229,7 +238,7 @@ IF TALENT:即落ち
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 +=10
-	PRINT 즉시 함락(10)
+	PRINT 즉락(10)
 	＋表示フラグ = 1
 ENDIF
 ;妄信
@@ -343,7 +352,7 @@ IF TALENT:PLAYER:謎の魅力
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += 8
-	PRINT 조교자의 미스터리한 매력(8)
+	PRINT 조교자의 의문의 매력(8)
 	＋表示フラグ = 1
 ENDIF
 
@@ -351,3 +360,17 @@ RESULT:1 = ＋表示フラグ
 RETURN 実行値
 
 
+
+@特殊言いなり分岐(対象キャラ)
+#FUNCTIONS
+#DIM 対象キャラ
+
+;特殊言いなりの値により表示を分岐する
+SELECTCASE TCVAR:対象キャラ:特殊言いなり
+	CASE 1
+		RETURNF "『신데렐라』"
+	CASE 2
+		RETURNF "「복종시키는 마법」"
+	CASE 3
+		RETURNF "「성정령주」"
+ENDSELECT

@@ -3,7 +3,7 @@
 ;-------------------------------------------------
 @COMNAME200
 #FUNCTIONS
-TSTR:コマンド名受渡 = 상갑옷을 벗기다
+TSTR:コマンド名受渡 = 상의 갑옷을 벗기다
 
 ;===================================================
 ;コマンドタイプ
@@ -17,7 +17,7 @@ SIF CFLAG:TARGET:睡眠
 オートコマンド許可 = 3
 
 @COM_TOOLTIP_200
-LOCALS = <br>■상갑옷을 벗기다<br>
+LOCALS = <br>■상의 갑옷을 벗기다<br>
 LOCALS += "상대의 상반신 갑옷을 벗기는 커맨드."
 LOCALS += "<br>COM 타입: 우후후<br>획득 소스: 없음"
 LOCALS += "<br>고유 획득 경험: 없음<br>"
@@ -83,7 +83,7 @@ ENDIF
 IF TALENT:羞恥心 > 0
 	PRINT  - 
 	実行値 -= 1
-	PRINT 수줍음(1)
+	PRINT 수치심(1)
 	＋表示フラグ = 1
 ENDIF
 ;男嫌い（恋慕、親愛で無効）
@@ -115,7 +115,16 @@ IF TCVAR:言いなり
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += 999
-	PRINT 당신의 뜻대로(999)
+	PRINT 당신의 말대로(999)
+	＋表示フラグ = 1
+ENDIF
+
+;特殊言いなり
+IF TCVAR:特殊言いなり
+	SIF ＋表示フラグ
+		PRINT  + 
+	実行値 += 999
+	PRINTFORM %特殊言いなり分岐(TARGET)%(999)
 	＋表示フラグ = 1
 ENDIF
 
@@ -128,7 +137,7 @@ SIF 実行値 == 必要実行値
 	PRINT  = 
 SIF 実行値 > 必要実行値
 	PRINT  > 
-PRINTFORM 실행값{必要実行値}
+PRINTFORM 실행치{必要実行値}
 
 WAIT
 SKIPDISP 0
@@ -162,6 +171,6 @@ RETURN 1
 ;実行時メッセージ
 ;-------------------------------------------------
 @MESSAGE_COM200
-PRINTFORML %CALLNAME:PLAYER%는 %CALLNAME:TARGET%의 상갑옷을 벗겼다…
+PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%의 상의 갑옷을 벗겼다…
 
 

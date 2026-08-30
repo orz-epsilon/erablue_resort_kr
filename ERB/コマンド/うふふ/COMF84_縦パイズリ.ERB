@@ -3,7 +3,7 @@
 ;-------------------------------------------------
 @COMNAME84
 #FUNCTIONS
-TSTR:コマンド名受渡 = 세로 파이즈리
+TSTR:コマンド名受渡 = 縦パイズリ
 
 ;===================================================
 ;コマンドタイプ
@@ -16,14 +16,14 @@ TFLAG:コマンドタイプ受渡 = COMTYPE("うふふ&奉仕")
 
 @COM_TOOLTIP_84
 IF RFLAG:奉仕逆転時ツールチップフラグ
-	LOCALS = <br>■縦パイズリする<br>
-	LOCALS += "자신의 가슴골에 정면으로 상대의 페니스를 삽입하는 커맨드.<br>세로 파이즈리 모드가 되어, 모드를 변경하거나 성행위를 종료할 때까지 지속적으로 특정 소스가 발생한다."
+	LOCALS = <br>■세로 파이즈리 하기<br>
+	LOCALS += "자신의 가슴골에 정면으로 상대의 페니스를 삽입하는 커맨드. <br>세로 파이즈리 모드가 되어, 모드를 변경하거나 성행위를 종료할 때까지 지속적으로 특정 소스가 발생한다."
 ELSE
-	LOCALS = <br>■縦パイズリ<br>
-	LOCALS += "상대의 가슴골에 정면으로 페니스를 삽입하는 커맨드.<br>세로 파이즈리 모드가 되어, 모드를 변경하거나 성행위를 종료할 때까지 지속적으로 특정 소스가 발생한다."
+	LOCALS = <br>■세로 파이즈리<br>
+	LOCALS += "상대의 가슴골에 정면으로 페니스를 삽입하는 커맨드. <br>세로 파이즈리 모드가 되어, 모드를 변경하거나 성행위를 종료할 때까지 지속적으로 특정 소스가 발생한다."
 ENDIF
-LOCALS += "<br>COM 타입: 우후후<br>획득 소스: 쾌B・노출・접촉・봉사・불결"
-LOCALS += "<br>고유 획득 경험: 파이즈리 경험(TARGET)<br>"
+LOCALS += "<br>COM 타입: 우후후<br>획득 소스: 쾌Ｂ・노출・접촉・봉사・불결"
+LOCALS += "<br>고유 획득 경험: 가슴 애무 경험(TARGET)<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
 @COM84
@@ -97,7 +97,7 @@ IF ABL:奉仕精神
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += ABL:奉仕精神 * 4
-	PRINTFORM 봉사 정신LV{ABL:奉仕精神}({ABL:奉仕精神 * 4})
+	PRINTFORM 봉사정신LV{ABL:奉仕精神}({ABL:奉仕精神 * 4})
 	＋表示フラグ = 1
 ENDIF
 ;ABL:精液中毒
@@ -105,7 +105,7 @@ IF ABL:精液中毒
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += ABL:精液中毒 * 3
-	PRINTFORM 정액 중독LV{ABL:精液中毒}({ABL:精液中毒 * 3})
+	PRINTFORM 정액중독LV{ABL:精液中毒}({ABL:精液中毒 * 3})
 	＋表示フラグ = 1
 ENDIF
 
@@ -113,7 +113,7 @@ IF MARK:快楽刻印
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += MARK:快楽刻印 * 1
-	PRINTFORM 쾌락 각인LV{MARK:快楽刻印}({MARK:快楽刻印 * 1})
+	PRINTFORM 쾌락각인LV{MARK:快楽刻印}({MARK:快楽刻印 * 1})
 	＋表示フラグ = 1
 ENDIF
 ;PALAM:欲情
@@ -128,7 +128,7 @@ ENDIF
 IF TALENT:羞恥心 > 0
 	PRINT  - 
 	実行値 -= 3
-	PRINT 수줍음(3)
+	PRINT 수치심(3)
 	＋表示フラグ = 1
 ENDIF
 ;汚臭鈍感
@@ -158,7 +158,7 @@ ENDIF
 IF TALENT:快感応答 < 0 && !TALENT:淫乱
 	PRINT  - 
 	実行値 -= 3
-	PRINT 쾌감 부정(3)
+	PRINT 쾌감의 부정(3)
 	＋表示フラグ = 1
 ENDIF
 ;男嫌い（恋慕、親愛で無効）
@@ -199,7 +199,16 @@ IF TCVAR:言いなり
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += 999
-	PRINT 당신이 시키는 대로(999)
+	PRINT 당신의 뜻대로(999)
+	＋表示フラグ = 1
+ENDIF
+
+;特殊言いなり
+IF TCVAR:特殊言いなり
+	SIF ＋表示フラグ
+		PRINT  + 
+	実行値 += 999
+	PRINTFORM %特殊言いなり分岐(TARGET)%(999)
 	＋表示フラグ = 1
 ENDIF
 
@@ -274,14 +283,14 @@ RETURN 1
 ;実行時メッセージ
 ;-------------------------------------------------
 @MESSAGE_COM84
-PRINTFORM %CALLNAME:TARGET%는
+PRINTFORM %CALLNAME:TARGET%은(는)
 ;恋慕か親愛
 SIF TEQUIP:上半身服あり
-	PRINT 옷을 입은 채로,
+	PRINT 옷을 입은 채,
 IF 知識素質:性知識 < 0
 	PRINTFORM %CALLNAME:PLAYER%의 지시대로
 ENDIF
-PRINT 그 깊은 골짜기로 페니스를 감싸고, 유압을 사용해서
-PRINTL 쓸어 올리고 있다…
+PRINT 그 깊은 골짜기로 페니스를 감싸 안고, 유압을 이용해
+PRINTL 문지르고 있다…
 
 

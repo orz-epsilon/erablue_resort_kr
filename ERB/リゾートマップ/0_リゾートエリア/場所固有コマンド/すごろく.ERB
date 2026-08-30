@@ -202,7 +202,7 @@ IF !移動状態 && ターン終了:0
 		SETCOLOR すごろくカラーパレット(行動手番)
 		TRYCALLFORM KOJO_EVENT_すごろく_{NO:(参加者:行動手番)}(参加者:行動手番, "手番_ダイスロール", ターン数)
 		PRINTFORML ■%CALLNAME:(参加者:行動手番)%의 주사위
-		PRINT 데굴데굴……
+		PRINT 데구르르……
 		TWAIT 200, 0
 		PRINTFORMW %TOFULL(TOSTR(移動状態:行動手番))%！
 		RESETCOLOR
@@ -234,11 +234,11 @@ ELSEIF !移動状態
 	PRINT 　　　　　　　　 │
 	LOCAL:1 = 現在地算出(0, すごろくマップ種別)
 	SETCOLOR すごろくカラーパレット(0)
-	PRINTFORM ■%CALLNAME:(参加者:0),14,LEFT%: 골까지 남은{LOCAL:1,8,LEFT}
+	PRINTFORM ■%CALLNAME:(参加者:0),14,LEFT%：골까지 남은 거리{LOCAL:1,8,LEFT}
 	RESETCOLOR
 	LOCAL:1 = 現在地算出(1, すごろくマップ種別)
 	SETCOLOR すごろくカラーパレット(1)
-	PRINTFORM ■%CALLNAME:(参加者:1),14,LEFT%：골까지 남은{LOCAL:1,8,LEFT}
+	PRINTFORM ■%CALLNAME:(参加者:1),14,LEFT%：골까지 남은 거리{LOCAL:1,8,LEFT}
 	RESETCOLOR
 	PRINTL
 	PRINT 　　　　　　　　　　　　│
@@ -250,7 +250,7 @@ ELSEIF !移動状態
 		ENDIF
 		LOCAL:1 = 現在地算出(LOCAL, すごろくマップ種別)
 		SETCOLOR すごろくカラーパレット(LOCAL)
-		PRINTFORM ■%CALLNAME:(参加者:LOCAL),14,LEFT%：골까지 남은{LOCAL:1,8,LEFT}
+		PRINTFORM ■%CALLNAME:(参加者:LOCAL),14,LEFT%：골까지 남은 거리{LOCAL:1,8,LEFT}
 		RESETCOLOR
 		LOCAL:2 += 1
 		IF (LOCAL:2 % 2) == 0
@@ -305,11 +305,11 @@ ELSE
 		PRINT 　　　　　　 │
 		LOCAL:1 = 現在地算出(0, すごろくマップ種別)
 		SETCOLOR すごろくカラーパレット(0)
-		PRINTFORM ■%CALLNAME:(参加者:0),14,LEFT%：골까지 남은{LOCAL:1,8,LEFT}
+		PRINTFORM ■%CALLNAME:(参加者:0),14,LEFT%：골까지 남은 거리{LOCAL:1,8,LEFT}
 		RESETCOLOR
 		LOCAL:1 = 現在地算出(1, すごろくマップ種別)
 		SETCOLOR すごろくカラーパレット(1)
-		PRINTFORM ■%CALLNAME:(参加者:1),14,LEFT%：골까지 남은{LOCAL:1,8,LEFT}
+		PRINTFORM ■%CALLNAME:(参加者:1),14,LEFT%：골까지 남은 거리{LOCAL:1,8,LEFT}
 		RESETCOLOR
 		PRINTL
 		
@@ -318,17 +318,17 @@ ELSE
 			IF GETBIT(分岐情報, LOCAL)
 				SELECTCASE LOCAL
 					CASE 2
-						PRINTBUTTON "[4]왼쪽으로 이동", 4
+PRINTBUTTON "[4]왼쪽으로 진행", 4
 					CASE 3
-						PRINTBUTTON "[6]오른쪽으로 이동", 6
+PRINTBUTTON "[6]오른쪽으로 진행", 6
 				ENDSELECT
 				BREAK
 				LOCAL:1 = 1
 			ENDIF
 		NEXT
 		SIF !LOCAL:1
-			PRINT 　 　　　　
-		PRINT 　　　　　　 │
+PRINT 　 　　　　
+PRINT 　　　　　　 │
 		LOCAL:2 = 0
 		FOR LOCAL, 2, 10
 			IF 参加者:LOCAL < 0
@@ -337,12 +337,12 @@ ELSE
 			ENDIF
 			LOCAL:1 = 現在地算出(LOCAL, すごろくマップ種別)
 			SETCOLOR すごろくカラーパレット(LOCAL)
-			PRINTFORM ■%CALLNAME:(参加者:LOCAL),14,LEFT%：골까지 남은{LOCAL:1,8,LEFT}
+PRINTFORM ■%CALLNAME:(参加者:LOCAL),14,LEFT%：골까지 남은 거리{LOCAL:1,8,LEFT}
 			RESETCOLOR
 			LOCAL:2 += 1
 			IF (LOCAL:2 % 2) == 0
 				PRINTL
-				PRINT 　　　　　　　　　　　　│
+PRINT 　　　　　　　　　　　　│
 			ENDIF
 		NEXT
 		SIF LOCAL:2 == 0
@@ -361,10 +361,10 @@ SELECTCASE RESULT
 		ENDIF
 		移動状態 = RAND:6 + 1
 		SETCOLOR すごろくカラーパレット(行動手番)
-		PRINTFORML ■%CALLNAME:(参加者:0)%의 주사위
+PRINTFORML ■%CALLNAME:(参加者:0)%의 주사위
 PRINT 데구르르……
 		TWAIT 500, 0
-PRINTFORMW %TOFULL(TOSTR(移動状態))%!
+PRINTFORMW %TOFULL(TOSTR(移動状態))%！
 		RESETCOLOR
 		GOTO 移動処理スタート
 	CASE 2
@@ -400,26 +400,26 @@ PRINTFORMW %TOFULL(TOSTR(移動状態))%!
 		CALL MOVE_すごろく(すごろくマップ種別, 8, MASTER)
 		GOTO すごろく_LOOP
 	CASE 9
-PRINTL 주사위 놀이 미니게임입니다.
-PRINTFORML %CALLNAME:MASTER%부터 순서대로 주사위를 굴려, 가장 먼저 골에 도착한 사람의 승리입니다.
+PRINTL 주사위 게임 미니게임입니다.
+PRINTFORML %CALLNAME:MASTER%부터 순서대로 주사위를 굴려, 가장 먼저 골에 도착한 사람이 승리합니다.
 PRINTW (정확히 멈출 필요는 없습니다)
 		PRINTL 
 PRINTL 4종류의 칸으로 구성되어 있으며, 멈추면 각 칸 종류에 따른 이벤트가 무작위로 발생합니다.
-PRINTL 예외적으로 「스」 칸은 시작 칸, 「골」 칸은 골 칸입니다.
+PRINTL 예외적으로 「스」 칸은 시작 칸, 「고」 칸은 골 칸입니다.
 PRINTL ■칸 종류에 따른 경향
 		PRINT_IMG "ダメアビ"
-PRINTL …그 자리에 있는 전원에게 영향을 주는 이벤트가 발생하는 칸입니다.
-PRINTL 　　칸을 전진하거나 후퇴하거나 벌칙 게임이거나 하는 등, 유리한지 불리한지는 알 수 없습니다.
-PRINTL 　　이 이벤트로 칸을 이동한 경우, 이동한 곳의 이벤트는 발생하지 않습니다.
+		PRINTL …그 자리에 있는 전원에게 영향을 주는 이벤트가 발생하는 칸입니다.
+		PRINTL 　　칸을 나아가거나 돌아가거나 벌칙 게임을 받거나 하는 등, 유리할지 불리할지는 알 수 없습니다.
+		PRINTL 　　이 이벤트로 칸을 이동한 경우, 이동한 곳의 이벤트는 발생하지 않습니다.
 		PRINT_IMG "回復アビ"
-PRINTL …의상 체인지나 간단한 벌칙 게임 등의 이벤트가 발생하는 칸입니다.
-PRINTL 　　놀고 있는 멤버에 따라서는, 더욱 과격한 내용의 벌칙 게임이 발생할지도 모릅니다…(미구현)
+		PRINTL …의상 체인지나 간단한 벌칙 게임 등의 이벤트가 발생하는 칸입니다.
+		PRINTL 　　플레이하는 멤버에 따라서는, 더욱 과격한 내용의 벌칙 게임이 발생할 수도 있습니다… (미구현)
 		PRINT_IMG "バフアビ"
-PRINTL …「○칸 전진」이나 「한 번 더 주사위를 굴린다」 등, 유리한 이벤트가 발생하는 칸입니다.
-PRINTL 　　이 이벤트로 칸을 이동한 경우, 이동한 곳의 이벤트가 추가로 발생합니다.
+		PRINTL …「○칸 전진」이나 「주사위를 한 번 더 던진다」 등, 유리한 이벤트가 발생하는 칸입니다.
+		PRINTL 　　이 이벤트로 칸을 이동한 경우, 이동한 곳의 이벤트가 추가로 발생합니다.
 		PRINT_IMG "弱体アビ"
-		PRINTW …「○칸 뒤로」나 「한 번 쉬기」 등, 불리한 이벤트가 발생하는 칸입니다.
-		PRINTL 　　이 이벤트로 칸을 이동했을 경우, 이동한 곳의 이벤트가 추가로 발생합니다.
+		PRINTW …「○칸 돌아가기」나 「한 턴 쉬기」 등, 불리한 이벤트가 발생하는 칸입니다.
+		PRINTL 　　이 이벤트로 칸을 이동한 경우, 이동한 곳의 이벤트가 추가로 발생합니다.
 		GOTO すごろく_LOOP
 	CASEELSE
 		REUSELASTLINE 
@@ -473,7 +473,7 @@ LOCAL = RAND:2
 SELECTCASE LOCAL
 	CASE 0
 		LOCAL:1 = RAND:3 + 1
-		PRINTFORMW 전원 %TOFULL(TOSTR(LOCAL:1))%칸 앞으로 나아간다!　※갈림길은 랜덤!
+		PRINTFORMW 전원 %TOFULL(TOSTR(LOCAL:1))%칸 앞으로 전진!　※갈림길은 랜덤!
 		FOR LOCAL, 0, 10
 			SIF 参加者:LOCAL < 0
 				BREAK
@@ -485,7 +485,7 @@ SELECTCASE LOCAL
 		NEXT
 	CASE 1
 		LOCAL:1 = (RAND:3 + 1) * -1
-		PRINTFORMW 전원 %TOFULL(TOSTR(LOCAL:1))%칸 뒤로 돌아간다!　※갈림길은 랜덤!
+		PRINTFORMW 전원 %TOFULL(TOSTR(LOCAL:1))%칸 앞으로 돌아가기!　※갈림길은 랜덤!
 		FOR LOCAL, 0, 10
 			SIF 参加者:LOCAL < 0
 				BREAK
@@ -511,7 +511,7 @@ LOCAL:1 = RAND:6
 SELECTCASE LOCAL:1
 	CASE 0
 		PRINTL 신비한 힘으로 의상이 바니가 되어버렸다!
-		PRINTW ※목욕하거나 하루가 끝날 때까지 지속
+		PRINTW ※입욕하거나 하루가 끝날 때까지 계속
 		CALL CLOTHES_CHANGE_バニー服(参加者:行動手番)
 		SIF TALENT:(参加者:行動手番):羞恥心 > 0
 			CALL SOURCE_CALC_露出(参加者:行動手番, PLAYER, 50)
@@ -519,7 +519,7 @@ SELECTCASE LOCAL:1
 		PRINTL 개인기를 선보이게 되었다!
 		PRINTFORM %CALLNAME:(参加者:行動手番)%은(는)
 		IF TALENT:(参加者:行動手番):羞恥心 > 0
-			PRINT 부끄러움에 어색한 움직임이 되면서, 어떻게든
+			PRINT 부끄러움에 어색한 움직임을 보이면서도, 어떻게든
 		ELSEIF TALENT:(参加者:行動手番):羞恥心 < 0 || TALENT:(参加者:行動手番):芸達者 > 0
 			PRINT 신나게 준비를 마치고, 멋진
 		ENDIF
@@ -529,8 +529,8 @@ SELECTCASE LOCAL:1
 		SIF TALENT:(参加者:行動手番):羞恥心 > 0
 			CALL SOURCE_CALC_露出(参加者:行動手番, PLAYER, 50)
 	CASE 2
-		PRINTL 신비한 힘으로 의상이 메이드복이 되어버렸다!
-PRINTW ※목욕하거나 하루가 끝날 때까지 계속
+		PRINTL 신기한 힘으로 의상이 메이드복이 되어버렸다!
+		PRINTW ※입욕하거나 하루가 끝날 때까지 계속
 		CALL CLOTHES_CHANGE_メイド服(参加者:行動手番)
 	CASE 3
 		LOCAL = RAND:参加人数
@@ -538,8 +538,8 @@ PRINTW ※목욕하거나 하루가 끝날 때까지 계속
 		WHILE LOCAL == 行動手番
 			LOCAL = RAND:参加人数
 		WEND
-PRINTL 다음 턴까지 누군가를 무릎베개한 채로 플레이할 것!
-PRINTFORMW 주사위를 굴려, %CALLNAME:(参加者:行動手番)%은(는) %CALLNAME:(参加者:LOCAL)%의 머리를 무릎에 얹었다.
+		PRINTL 다음 턴까지 누군가를 무릎베개한 채로 플레이할 것!
+		PRINTFORMW 주사위를 굴려, %CALLNAME:(参加者:行動手番)%은(는) %CALLNAME:(参加者:LOCAL)%의 머리를 무릎에 얹었다.
 		SIF LOCAL == 0
 			CALL SOURCE_CALC_接触(参加者:行動手番, PLAYER, 50)
 	CASE 4
@@ -548,14 +548,14 @@ PRINTFORMW 주사위를 굴려, %CALLNAME:(参加者:行動手番)%은(는) %CAL
 		WHILE LOCAL == 行動手番
 			LOCAL = RAND:参加人数
 		WEND
-PRINTL 누군가에게 마음껏 간지럼을 당할 것!
-PRINTFORML 주사위를 굴려, %CALLNAME:(参加者:LOCAL)%은(는) 마음껏 %CALLNAME:(参加者:行動手番)%을(를) 간지럽혔다!
+		PRINTL 누군가에게 실컷 간지럼을 당할 것!
+		PRINTFORML 주사위를 굴려, %CALLNAME:(参加者:LOCAL)%은(는) %CALLNAME:(参加者:行動手番)%를 실컷 간지럼 태웠다!
 		IF TALENT:(参加者:行動手番):Ｓ感度 > 0
-	PRINTFORMW %CALLNAME:(参加者:行動手番)%은(는) 눈물이 맺힐 정도로 웃고 있다…
+			PRINTFORMW %CALLNAME:(参加者:行動手番)%은(는) 눈물이 맺힐 정도로 웃고 있다…
 		ELSEIF TALENT:(参加者:行動手番):Ｓ感度 < 0
-	PRINTFORMW 간지럼에 강한 건지, %CALLNAME:(参加者:行動手番)%은(는) 가볍게 웃으며 간지럼을 당하고 있다.
+			PRINTFORMW 간지럼에 강한 건지, %CALLNAME:(参加者:行動手番)%은(는) 가볍게 웃으며 간지럼을 당하고 있다.
 		ELSE
-	PRINTFORMW 크게 웃으면서, %CALLNAME:(参加者:行動手番)%은(는) 간지럼을 참고 있다.
+			PRINTFORMW 크게 웃으면서, %CALLNAME:(参加者:行動手番)%은(는) 간지럼을 참고 있다.
 		ENDIF
 		SIF LOCAL == 0
 			CALL SOURCE_CALC_接触(参加者:行動手番, PLAYER, 100)
@@ -565,14 +565,14 @@ PRINTFORML 주사위를 굴려, %CALLNAME:(参加者:LOCAL)%은(는) 마음껏 %
 		WHILE LOCAL == 行動手番
 			LOCAL = RAND:参加人数
 		WEND
-PRINTL 누군가를 마음껏 안아줄 것!
-PRINTFORM 주사위를 굴려, %CALLNAME:(参加者:行動手番)%은(는) 
+		PRINTL 누군가를 힘껏 안아준다!
+		PRINTFORM 주사위를 굴려, %CALLNAME:(参加者:行動手番)%은(는)
 		IF TALENT:(参加者:行動手番):羞恥心 > 0
-	PRINT 머뭇거리며, 망설이면서
+			PRINT 머뭇거리며, 조심스럽게
 		ELSEIF TALENT:(参加者:行動手番):羞恥心 < 0
-	PRINT 두 팔을 벌려, 마음껏
+			PRINT 두 팔을 벌려, 힘껏
 		ENDIF
-PRINTFORMW %CALLNAME:(参加者:LOCAL)%을(를) 꼬옥 안아주었다.
+		PRINTFORMW %CALLNAME:(参加者:LOCAL)%을(를) 꼬옥 안아주었다.
 		SIF LOCAL == 0
 			CALL SOURCE_CALC_接触(参加者:行動手番, PLAYER, 50)
 ENDSELECT
@@ -594,7 +594,7 @@ LOCAL = RAND:4
 SELECTCASE LOCAL
 	CASE 0
 		;もっかいダイス
-PRINTW 다시 한번 주사위를 굴려 나아갈 것!
+		PRINTW 한 번 더 주사위를 굴려 나아간다!
 		移動状態:行動手番 = RAND:6 + 1
 		PRINTFORML ■%CALLNAME:(参加者:行動手番)%의 주사위
 		PRINT 데구르르……
@@ -621,25 +621,25 @@ RESETCOLOR
 
 @マスイベント処理_3(行動手番)
 ;弱体アビマスイベント、不利イベ
-PRINTL 불리 이벤트 칸이다!
+PRINTL 불리한 이벤트 칸이다!
 SETCOLOR すごろくカラーパレット(行動手番)
 LOCAL = RAND:4
 SELECTCASE LOCAL
 	CASE 0
 		;一回休み
-		PRINTW 한 번 쉬게 되어버렸다…
+		PRINTW 한 턴 쉬게 되었다…
 		一回休みフラグ:行動手番 = 1
 	CASE 1
 		;２マス戻る
-		PRINTW 2칸 뒤로 돌아가 버린다
+		PRINTW 2칸 뒤로 되돌려집니다
 		移動状態:行動手番 = -2
 	CASE 2
 		;３マス戻る
-		PRINTW 3칸 뒤로 돌아가 버린다
+		PRINTW 3칸 뒤로 되돌려집니다
 		移動状態:行動手番 = -3
 	CASE 3
 		;４マス戻る
-		PRINTW 4칸 뒤로 돌아가 버린다
+		PRINTW 4칸 뒤로 되돌려집니다
 		移動状態:行動手番 = -4
 ENDSELECT
 TRYCALLFORM KOJO_EVENT_すごろく_{NO:(参加者:行動手番)}(参加者:行動手番, "不利イベント", LOCAL)

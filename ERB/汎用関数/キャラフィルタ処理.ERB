@@ -28,6 +28,13 @@
 REDRAW_TEMP = CURRENTREDRAW()
 REDRAW 0
 
+;ソート用データベース
+DT_CREATE "ソート用データベース"
+DT_COLUMN_ADD "ソート用データベース", "対象キャラ番号", 3
+DT_COLUMN_ADD "ソート用データベース", "ソート変数１", 3
+DT_COLUMN_ADD "ソート用データベース", "ソート変数２", 3
+DT_COLUMN_ADD "ソート用データベース", "ソート変数３", 3
+
 VARSET 返し配列, 配列初期値
 候補人数 = 0
 VARSET 弱点フィルタマッチ配列
@@ -104,14 +111,16 @@ FOR 配列番号, 0, CHARANUM
 		IF キャラ一覧フィルタ:タイプ != ""
 			SIF STRCOUNT(キャラ一覧フィルタ:タイプ, @"タイプ：%タイプ数値文字列変換(基礎BATTLE_STATE:対象キャラ:ステータスタイプ保存)%")
 				CONTINUE
+			SIF タイプ文字列数値変換(タイプ表示関数(対象キャラ)) == -1 && STRCOUNT(キャラ一覧フィルタ:タイプ, @"タイプ：固有")
+				CONTINUE
 		ENDIF
 		;発情期はちょっと面倒だけどオール手打ち
 		IF キャラ一覧フィルタ:発情期 != ""
-			SIF STRCOUNT(キャラ一覧フィルタ:発情期, @"発情期フラグ：発情期なし") && !発情期判定(対象キャラ)
+			SIF STRCOUNT(キャラ一覧フィルタ:発情期, @"発情期フラグ：発情期なし") && !発情期存在判定(対象キャラ)
 				CONTINUE
-			SIF STRCOUNT(キャラ一覧フィルタ:発情期, @"発情期フラグ：発情中") && 発情期判定(対象キャラ) && CFLAG:対象キャラ:発情期フラグ < 0
+			SIF STRCOUNT(キャラ一覧フィルタ:発情期, @"発情期フラグ：発情中") && 発情期存在判定(対象キャラ) && CFLAG:対象キャラ:発情期フラグ < 0
 				CONTINUE
-			SIF STRCOUNT(キャラ一覧フィルタ:発情期, @"発情期フラグ：発情期ではない") && 発情期判定(対象キャラ) && CFLAG:対象キャラ:発情期フラグ > -1
+			SIF STRCOUNT(キャラ一覧フィルタ:発情期, @"発情期フラグ：発情期ではない") && 発情期存在判定(対象キャラ) && CFLAG:対象キャラ:発情期フラグ >= 0
 				CONTINUE
 		ENDIF
 		IF キャラ一覧フィルタ:妊娠 != ""
@@ -152,6 +161,8 @@ FOR 配列番号, 0, CHARANUM
 				スキップフラグ = 0
 			SIF !STRCOUNT(キャラ一覧フィルタ:画像, @"画像：裸あり") && HAS_COSTUME(対象キャラ, "全裸")
 				スキップフラグ = 0
+			SIF !STRCOUNT(キャラ一覧フィルタ:画像, @"画像：妊婦あり") && HAS_PREGNANCY(対象キャラ)
+				スキップフラグ = 0
 			SIF !STRCOUNT(キャラ一覧フィルタ:画像, @"画像：なし") && !HAS_RESOURCES(対象キャラ)
 				スキップフラグ = 0
 			SIF スキップフラグ
@@ -165,11 +176,14 @@ FOR 配列番号, 0, CHARANUM
 				CONTINUE
 		ENDIF
 		IF キャラ一覧フィルタ:陥落 != ""
-			SIF STRCOUNT(キャラ一覧フィルタ:陥落, @"陥落：恋慕") && TALENT:対象キャラ:恋慕
-				CONTINUE
-			SIF STRCOUNT(キャラ一覧フィルタ:陥落, @"陥落：セフレ") && TALENT:対象キャラ:セフレ
-				CONTINUE
-			SIF STRCOUNT(キャラ一覧フィルタ:陥落, @"陥落：なし") && !TALENT:対象キャラ:セフレ && !TALENT:対象キャラ:恋慕
+			スキップフラグ = 1
+			SIF !STRCOUNT(キャラ一覧フィルタ:陥落, @"陥落：恋慕") && TALENT:対象キャラ:恋慕
+				スキップフラグ = 0
+			SIF !STRCOUNT(キャラ一覧フィルタ:陥落, @"陥落：セフレ") && TALENT:対象キャラ:セフレ
+				スキップフラグ = 0
+			SIF !STRCOUNT(キャラ一覧フィルタ:陥落, @"陥落：なし") && !TALENT:対象キャラ:セフレ && !TALENT:対象キャラ:恋慕
+				スキップフラグ = 0
+			SIF スキップフラグ
 				CONTINUE
 		ENDIF
 		IF キャラ一覧フィルタ:名前着色 != ""
@@ -243,37 +257,82 @@ FOR 配列番号, 0, CHARANUM
 
 	;条件を満たす場合は合致フラグに１以上が入る
 	合致フラグ = 1
+	SIF キャラ一覧素質絞り込み:99 != "AND" && キャラ一覧素質絞り込み:0 != ""
+		合致フラグ = 0
+
 	FOR LOCAL, 0, 99
 		SIF キャラ一覧素質絞り込み:LOCAL == ""
 			BREAK
+
+		VARSET LOCALS
 		SPLIT キャラ一覧素質絞り込み:LOCAL, "_", LOCALS
-		IF キャラ一覧素質絞り込み:99 == "AND"
-			IF TALENT:対象キャラ:(TOINT(LOCALS:0)) != TOINT(LOCALS:1)
-				;ANDの場合は一個でもアウトだとNG
-				合致フラグ = 0
+		;素質ごとの個別分岐
+		;処理の問題で一括処理出来ないものがあるので別関数で対処
+		IF TOINT(LOCALS:0) == 228
+			CALL キャラ一覧素質絞り込み_感覚共有(対象キャラ, キャラ一覧素質絞り込み:LOCAL)
+			IF RESULT > -1
+				合致フラグ = RESULT
 				BREAK
 			ENDIF
+			CONTINUE
+		ENDIF
+
+		;以下通常対処
+		IF LOCALS:2 == "▲"
+			;マイナス検索
+			IF キャラ一覧素質絞り込み:99 == "AND"
+				IF TALENT:対象キャラ:(TOINT(LOCALS:0)) == TOINT(LOCALS:1)
+					;ANDの場合は一個でも合致だとNG
+					合致フラグ = 0
+					BREAK
+				ENDIF
+			ELSE
+				IF TALENT:対象キャラ:(TOINT(LOCALS:0)) != TOINT(LOCALS:1)
+					;OR条件の場合は一個アウトならOK
+					合致フラグ = 1
+					BREAK
+				ENDIF
+			ENDIF
 		ELSE
-			合致フラグ = 0
-			IF TALENT:対象キャラ:(TOINT(LOCALS:0)) == TOINT(LOCALS:1)
-				;OR条件の場合は一個当てはまればOK
-				合致フラグ = 1
-				BREAK
+			;通常検索
+			IF キャラ一覧素質絞り込み:99 == "AND"
+				IF TALENT:対象キャラ:(TOINT(LOCALS:0)) != TOINT(LOCALS:1)
+					;ANDの場合は一個でもアウトだとNG
+					合致フラグ = 0
+					BREAK
+				ENDIF
+			ELSE
+				IF TALENT:対象キャラ:(TOINT(LOCALS:0)) == TOINT(LOCALS:1)
+					;OR条件の場合は一個当てはまればOK
+					合致フラグ = 1
+					BREAK
+				ENDIF
 			ENDIF
 		ENDIF
 	NEXT
 	SIF 合致フラグ == 0
 		CONTINUE
 
-	返し配列:候補人数 = 対象キャラ
-	ソート基準値:候補人数 = ソート情報登録(返し配列:候補人数, 候補人数)
-	候補人数 += 1
+	DT_ROW_ADD "ソート用データベース", "対象キャラ番号", 対象キャラ, "ソート変数１", ソート情報登録(対象キャラ), "ソート変数２", ソート情報登録(対象キャラ, 2), "ソート変数３", ソート情報登録(対象キャラ, 4)
+
+	; 返し配列:候補人数 = 対象キャラ
+	; ソート基準値:候補人数 = ソート情報登録(返し配列:候補人数, 候補人数)
+	; 候補人数 += 1
 NEXT
 
 ;ソート実行
-ARRAYMSORT ソート基準値, 返し配列
+; ARRAYMSORT ソート基準値, 返し配列
 
-ARRAYCOPY "返し配列", "対象キャラ配列"
+; ARRAYCOPY "返し配列", "対象キャラ配列"
+
+VARSET RESULT
+VARSET 対象キャラ配列, -1
+DT_SELECT "ソート用データベース", "", "ソート変数１ ASC, ソート変数２ ASC, ソート変数３ ASC"
+候補人数 = RESULT
+FOR LOCAL, 1, 候補人数 + 1
+	対象キャラ配列:(LOCAL - 1) = DT_CELL_GET("ソート用データベース", RESULT:LOCAL, "対象キャラ番号", 1)
+NEXT
+DT_RELEASE "ソート用データベース"
 
 CLEARLINE 1
 PRINTL 필터 처리 진행도……100%
@@ -304,35 +363,35 @@ JUMP SHOW_CHARADATA_FILTA()
 PRINTL
 DRAWLINE
 PRINTL 캐릭터 표시에 다음 조건으로 필터를 적용합니다.
-PRINTL 어두운 색으로 표시된 조건은 숨김 설정되어 있습니다.
+PRINTL 어두운 색으로 표시된 조건은 비표시 설정입니다.
 DRAWLINE
 
 IF 表示フィルタ種類 == ""
 	PRINTL ■ 성별
 	PRINT 　 
-	SIF STRCOUNT(キャラ一覧フィルタ:性別, "性別：여성")
+	SIF STRCOUNT(キャラ一覧フィルタ:性別, "性別：女性")
 		SETCOLOR 0x666666
-	PRINTBUTTON "[여성]", "性別：여성"
+	PRINTBUTTON "[여성]", "성별：女性"
 	RESETCOLOR
 	PRINT  / 
-	SIF STRCOUNT(キャラ一覧フィルタ:性別, "性別：남성")
+	SIF STRCOUNT(キャラ一覧フィルタ:性別, "性別：男性")
 		SETCOLOR 0x666666
-	PRINTBUTTON "[남성]", "性別：남성"
+	PRINTBUTTON "[남성]", "성별：男性"
 	RESETCOLOR
 	PRINT  / 
-	SIF STRCOUNT(キャラ一覧フィルタ:性別, "性別：후타나리")
+	SIF STRCOUNT(キャラ一覧フィルタ:性別, "性別：ふたなり")
 		SETCOLOR 0x666666
-	PRINTBUTTON "[후타나리]", "性別：후타나리"
+	PRINTBUTTON "[후타나리]", "성별：ふたなり"
 	RESETCOLOR
 	PRINT  / 
-	SIF STRCOUNT(キャラ一覧フィルタ:性別, "性別：그외")
+	SIF STRCOUNT(キャラ一覧フィルタ:性別, "性別：その他")
 		SETCOLOR 0x666666
-	PRINTBUTTON "[기타]", "性別：그외"
+	PRINTBUTTON "[기타]", "성별：その他"
 	RESETCOLOR
 	PRINT 　　　　　
-	PRINTBUTTON "[모두 표시]", "性別：全て表示"
+	PRINTBUTTON "[모두 표시]", "성별：全て表示"
 	PRINT /
-	PRINTBUTTON "[모두 숨기기]", "性別：全て非表示"
+	PRINTBUTTON "[모두 비표시]", "성별：全て非表示"
 	PRINTL
 	DRAWLINE
 	PRINTL ■ 함락
@@ -344,7 +403,7 @@ IF 表示フィルタ種類 == ""
 	PRINT  / 
 	SIF STRCOUNT(キャラ一覧フィルタ:陥落, "陥落：セフレ")
 		SETCOLOR 0x666666
-	PRINTBUTTON "[섹스 프렌드]", "陥落：セフレ"
+	PRINTBUTTON "[섹프]", "陥落：セフレ"
 	RESETCOLOR
 	PRINT  / 
 	SIF STRCOUNT(キャラ一覧フィルタ:陥落, "陥落：なし")
@@ -362,40 +421,40 @@ IF 表示フィルタ種類 == ""
 	FOR LOCAL, 1, 7
 		SIF STRCOUNT(キャラ一覧フィルタ:種族, GET_TALENTNAME(200, LOCAL))
 			SETCOLOR 0x666666
-		PRINTBUTTON @"[%GET_TALENTNAME(200, LOCAL)%]", @"種族：%GET_TALENTNAME(200, LOCAL)%"
+		PRINTBUTTON @"[%GET_TALENTNAME(200, LOCAL)%]", @"종족:%GET_TALENTNAME(200, LOCAL)%"
 		RESETCOLOR
 		IF LOCAL == 6
 			PRINT 　　　　　
-			PRINTBUTTON "[모두 표시]", "種族：全て表示"
+			PRINTBUTTON "[모두 표시]", "종족：全て表示"
 			PRINT /
-			PRINTBUTTON "[모두 숨기기]", "種族：全て非表示"
+			PRINTBUTTON "[모두 숨기기]", "종족：全て非表示"
 			PRINTL
 		ELSE
 			PRINT  / 
 		ENDIF
 	NEXT
 	DRAWLINE
-	PRINTL ■ 가슴 사이즈
+	PRINTL ■ 가슴サイズ
 	PRINT 　 
 	FOR LOCAL, -2, 4
 		SIF STRCOUNT(キャラ一覧フィルタ:バストサイズ, GET_TALENTNAME(205, LOCAL))
 			SETCOLOR 0x666666
-		PRINTBUTTON @"[%GET_TALENTNAME(205, LOCAL)%]", @"バストサイズ：%GET_TALENTNAME(205, LOCAL)%"
+		PRINTBUTTON @"[%GET_TALENTNAME(205, LOCAL)%]", @"가슴サイズ：%GET_TALENTNAME(205, LOCAL)%"
 		RESETCOLOR
 		IF LOCAL == 3
 			PRINT  / 
 			SIF STRCOUNT(キャラ一覧フィルタ:バストサイズ, "バストサイズ：なし")
 				SETCOLOR 0x666666
-			PRINTBUTTON "[가슴 없음]", "バストサイズ：なし"
+			PRINTBUTTON "[가슴 없음]", "가슴サイズ：なし"
 			RESETCOLOR
 			PRINT 　　　　　　　　　　
-			PRINTBUTTON "[모두 표시]", "バストサイズ：全て表示"
+			PRINTBUTTON "[모두 표시]", "가슴サイズ：全て表示"
 			PRINT /
-			PRINTBUTTON "[모두 숨기기]", "バストサイズ：全て非表示"
+			PRINTBUTTON "[모두 숨기기]", "가슴サイズ：全て非表示"
 			PRINTL
 		ELSEIF LOCAL == 1
 			PRINTL 
-			PRINT 　 
+			PRINT 　
 		ELSE
 			PRINT  / 
 		ENDIF
@@ -488,7 +547,7 @@ IF 表示フィルタ種類 == ""
 	PRINTBUTTON "[모두 숨기기]", "妊娠フラグ：全て非表示"
 	PRINTL
 	DRAWLINE
-	PRINTL ■ 구상 유무
+	PRINTL ■ 대사有無
 	PRINT 　 
 	SIF STRCOUNT(キャラ一覧フィルタ:口上, @"口上：口上あり")
 		SETCOLOR 0x666666
@@ -522,7 +581,7 @@ IF 表示フィルタ種類 == ""
 	PRINTL
 	DRAWLINE
 	PRINTL ■ 고유 어빌리티 오의 유무
-	PRINT 　 
+	PRINT 　
 	SIF STRCOUNT(キャラ一覧フィルタ:固有アビ奥義, @"固有アビ奥義：あり")
 		SETCOLOR 0x666666
 	PRINTBUTTON @"[고유 어빌리티 오의 있음]", "固有アビ奥義：あり"
@@ -555,6 +614,11 @@ IF 表示フィルタ種類 == ""
 	PRINTBUTTON @"[이미지 있음(나체)]", "画像：裸あり"
 	RESETCOLOR
 	PRINT  / 
+	SIF STRCOUNT(キャラ一覧フィルタ:画像, @"画像：妊婦あり")
+		SETCOLOR 0x666666
+	PRINTBUTTON @"[이미지 있음(임산부)]", "画像：妊婦あり"
+	RESETCOLOR
+	PRINT  / 
 	SIF STRCOUNT(キャラ一覧フィルタ:画像, @"画像：なし")
 		SETCOLOR 0x666666
 	PRINTBUTTON @"[이미지 없음]", "画像：なし"
@@ -565,34 +629,34 @@ IF 表示フィルタ種類 == ""
 	PRINTBUTTON "[모두 숨기기]", "画像：全て非表示"
 	PRINTL
 	DRAWLINE
-	PRINTL ■ 표시색 설정
-	PRINT 　 
+PRINTL ■ 표시색 설정
+PRINT 　 
 	SIF STRCOUNT(キャラ一覧フィルタ:名前着色, @"名前着色：あり")
 		SETCOLOR 0x666666
-	PRINTBUTTON @"[이름 착색 있음]", "名前着色：あり"
+PRINTBUTTON @"[이름着色あり]", "名前着色：あり"
 	RESETCOLOR
 	PRINT  / 
 	SIF STRCOUNT(キャラ一覧フィルタ:名前着色, @"名前着色：なし")
 		SETCOLOR 0x666666
-	PRINTBUTTON @"[이름 착색 없음]", "名前着色：なし"
+PRINTBUTTON @"[이름着色없음]", "名前着色：なし"
 	RESETCOLOR
-	PRINT 　　　　　
-	PRINTBUTTON "[모두 표시]", "名前着色：全て表示"
+PRINT 　　　　　
+PRINTBUTTON "[모두 표시]", "名前着色：全て表示"
 	PRINT /
-	PRINTBUTTON "[모두 숨기기]", "名前着色：全て非表示"
+PRINTBUTTON "[모두 숨기기]", "名前着色：全て非表示"
 	PRINTL
 	DRAWLINE
-	PRINTL ■ 외부 필터
-	PRINT 　 
-	PRINTBUTTON "[약점 커맨드 필터 시작]", "弱点コマンドフィルタ"
+PRINTL ■ 외부 필터
+PRINT 　 
+PRINTBUTTON "[약점 커맨드 필터 활성화]", "弱点コマンドフィルタ"
 	PRINT  / 
 	IF 弱点コマンド検索タイプ == 0
 		HTML_PRINT @"<button value='弱点コマンド検索タイプ'>[OR検索 / <font color='#%カラーパレット_HTML("グレーアウト")%'>AND検索</font>]</button>", 1
 	ELSEIF 弱点コマンド検索タイプ == 1
 		HTML_PRINT @"<button value='弱点コマンド検索タイプ'>[<font color='#%カラーパレット_HTML("グレーアウト")%'>OR検索</font> / AND検索]</button>", 1
 	ENDIF
-	PRINT 　　　　　
-	PRINTBUTTON "[모두 표시]", "弱点コマンド：全て表示"
+PRINT 　　　　　
+PRINTBUTTON "[모두 표시]", "弱点コマンド：全て表示"
 	PRINTL
 	IF キャラ一覧フィルタ:弱点コマンド != ""
 		PRINT 　 
@@ -608,7 +672,7 @@ IF 表示フィルタ種類 == ""
 		PRINTL 　 필터 설정 없음
 	ENDIF
 	PRINT 　 
-	PRINTBUTTON "[출전 필터 시작]", "出典フィルタ"
+	PRINTBUTTON "[출전 필터 실행]", "出典フィルタ"
 	PRINT 　　　　　
 	PRINTBUTTON "[모두 표시]", "出典：全て表示"
 	PRINTL
@@ -623,10 +687,10 @@ IF 表示フィルタ種類 == ""
 		NEXT
 		PRINTL
 	ELSE
-		PRINTL 　 필터 설정 없음
+		PRINTL 　 필터 설정없음
 	ENDIF
 	PRINT 　 
-	PRINTBUTTON "[이름 검색 시작]", "名前検索フィルタ"
+	PRINTBUTTON "[이름 검색 실행]", "名前検索フィルタ"
 	PRINTL
 	IF キャラ一覧フィルタ:名前検索 != ""
 		PRINT 　 
@@ -635,12 +699,12 @@ IF 表示フィルタ種類 == ""
 		PRINTBUTTON "[검색 해제]", "名前検索：全て表示"
 		PRINTL
 	ELSE
-		PRINTL 　 검색 설정 없음
+		PRINTL 　 검색 설정없음
 	ENDIF
 	PRINTL
 	PRINTL
 	PRINTBUTTONLC "[999]돌아가기", 999
-	PRINTBUTTONLC "[1000]전투계 필터로", 1000
+	PRINTBUTTONLC "[1000]전투 계열 필터로", 1000
 	PRINTBUTTONLC "[1002]모든 항목 모두 표시", 1002
 	PRINTL
 ELSEIF 表示フィルタ種類 == "戦闘系フィルタ"
@@ -649,13 +713,13 @@ ELSEIF 表示フィルタ種類 == "戦闘系フィルタ"
 	FOR LOCAL, 0, 6
 		SIF STRCOUNT(キャラ一覧フィルタ:属性, 属性数値文字列変換(LOCAL))
 			SETCOLOR 0x666666
-		PRINTBUTTON @"[%属性数値文字列変換(LOCAL)%]", @"속성：%属性数値文字列変換(LOCAL)%"
+		PRINTBUTTON @"[%属性数値文字列変換(LOCAL)%]", @"属性：%属性数値文字列変換(LOCAL)%"
 		RESETCOLOR
 		IF LOCAL == 5
 			PRINT 　　　　　
-			PRINTBUTTON "[모두 표시]", "속성：모두 표시"
+			PRINTBUTTON "[모두 표시]", "属性：全て表示"
 			PRINT /
-			PRINTBUTTON "[모두 숨기기]", "속성：모두 숨기기"
+			PRINTBUTTON "[모두 숨기기]", "属性：全て非表示"
 			PRINTL
 		ELSE
 			PRINT  / 
@@ -667,13 +731,13 @@ ELSEIF 表示フィルタ種類 == "戦闘系フィルタ"
 	FOR LOCAL, 0, 10
 		SIF STRCOUNT(キャラ一覧フィルタ:得意武器, @"：%得意武器数値文字列変換(LOCAL)%")
 			SETCOLOR 0x666666
-		PRINTBUTTON @"[%得意武器数値文字列変換(LOCAL)%]", @"특기 무기：%得意武器数値文字列変換(LOCAL)%"
+		PRINTBUTTON @"[%得意武器数値文字列変換(LOCAL)%]", @"得意武器：%得意武器数値文字列変換(LOCAL)%"
 		RESETCOLOR
 		IF LOCAL == 9
 			PRINT 　　　　　
-			PRINTBUTTON "[모두 표시]", "특기 무기：모두 표시"
+			PRINTBUTTON "[모두 표시]", "得意武器：全て表示"
 			PRINT /
-			PRINTBUTTON "[모두 숨기기]", "특기 무기：모두 숨기기"
+			PRINTBUTTON "[모두 숨기기]", "得意武器：全て非表示"
 			PRINTL
 		ELSE
 			PRINT  / 
@@ -682,16 +746,16 @@ ELSEIF 表示フィルタ種類 == "戦闘系フィルタ"
 	DRAWLINE
 	PRINTL ■ 타입
 	PRINT 　 
-	FOR LOCAL, 0, 8
+	FOR LOCAL, -1, 8
 		SIF STRCOUNT(キャラ一覧フィルタ:タイプ, タイプ数値文字列変換(LOCAL))
 			SETCOLOR 0x666666
-		PRINTBUTTON @"[%タイプ数値文字列変換(LOCAL)%]", @"타입：%タイプ数値文字列変換(LOCAL)%"
+		PRINTBUTTON @"[%タイプ数値文字列変換(LOCAL)%]", @"タイプ：%タイプ数値文字列変換(LOCAL)%"
 		RESETCOLOR
 		IF LOCAL == 7
 			PRINT 　　　　　
-			PRINTBUTTON "[모두 표시]", "타입：모두 표시"
+			PRINTBUTTON "[모두 표시]", "タイプ：全て表示"
 			PRINT /
-			PRINTBUTTON "[모두 숨기기]", "타입：모두 숨기기"
+			PRINTBUTTON "[모두 숨기기]", "タイプ：全て非表示"
 			PRINTL
 		ELSE
 			PRINT  / 
@@ -764,9 +828,9 @@ IF 入力_文字 != ""
 		;全て非表示 > リストに全項目を設定
 		SELECTCASE リスト番号
 			CASE 0
-				キャラ一覧フィルタ:種族 = "種族：휴먼_種族：엘룬_種族：드라프_種族：하빈_種族：성정수_種族：기타_"
+				キャラ一覧フィルタ:種族 = "種族：ヒューマン_種族：エルーン_種族：ドラフ_種族：ハーヴィン_種族：星晶獣_種族：その他_"
 			CASE 1
-				キャラ一覧フィルタ:バストサイズ = "バストサイズ：절벽（AAA~AA）_バストサイズ：빈유（A~B）_バストサイズ：평유（C~D）_バストサイズ：거유（E~F）_バストサイズ：폭유（G~I）_バストサイズ：마유（J↑）_バストサイズ：なし_"
+				キャラ一覧フィルタ:バストサイズ = "バストサイズ：絶壁（AAA～AA）_バストサイズ：貧乳（A～B）_バストサイズ：並乳（C～D）_バストサイズ：巨乳（E～F）_バストサイズ：爆乳（G～I）_バストサイズ：魔乳（J↑）_バストサイズ：なし_"
 			CASE 2
 				キャラ一覧フィルタ:性知識Lv = "性知識Lv：無知_性知識Lv：獣並み_性知識Lv：疎い_性知識Lv：耳年増_性知識Lv：必要十分_性知識Lv：有識者_性知識Lv：百戦錬磨_"
 			CASE 3
@@ -774,17 +838,17 @@ IF 入力_文字 != ""
 			CASE 4
 				キャラ一覧フィルタ:妊娠 = "妊娠フラグ：妊娠中_妊娠フラグ：妊娠していない_"
 			CASE 5
-				キャラ一覧フィルタ:男性器サイズ = "男性器サイズ：어린이　고추_男性器サイズ：단소_男性器サイズ：평범_男性器サイズ：거근_男性器サイズ：규격　외_男性器サイズ：なし_"
+				キャラ一覧フィルタ:男性器サイズ = "男性器サイズ：こどもちんこ_男性器サイズ：短小_男性器サイズ：平凡_男性器サイズ：巨根_男性器サイズ：規格外_男性器サイズ：なし_"
 			CASE 6
 				キャラ一覧フィルタ:陥落 = "陥落：恋慕_陥落：セフレ_陥落：なし_"
 			CASE 7
-				キャラ一覧フィルタ:性別 = "性別：여성_性別：남성_性別：후타나리_性別：기타_"
+				キャラ一覧フィルタ:性別 = "性別：女性_性別：男性_性別：ふたなり_性別：その他_"
 			CASE 10
 				キャラ一覧フィルタ:属性 = "属性：火_属性：水_属性：風_属性：土_属性：光_属性：闇_"
 			CASE 11
 				キャラ一覧フィルタ:得意武器 = "得意武器：剣_得意武器：短剣_得意武器：斧_得意武器：槍_得意武器：弓_得意武器：銃_得意武器：楽器_得意武器：格闘_得意武器：刀_得意武器：杖_"
 			CASE 12
-				キャラ一覧フィルタ:タイプ = "タイプ：バランス_タイプ：攻撃_タイプ：防御_タイプ：回復_タイプ：サポート_タイプ：連撃_タイプ：回避_タイプ：奥義_"
+				キャラ一覧フィルタ:タイプ = "タイプ：固有_タイプ：バランス_タイプ：攻撃_タイプ：防御_タイプ：回復_タイプ：サポート_タイプ：連撃_タイプ：回避_タイプ：奥義_"
 			CASE 13
 				キャラ一覧フィルタ:名前着色 = "名前着色：あり_名前着色：なし"
 			CASE 18
@@ -792,9 +856,9 @@ IF 入力_文字 != ""
 			CASE 19
 				キャラ一覧フィルタ:口上 = "口上：口上あり_口上：口上なし"
 			CASE 20
-				キャラ一覧フィルタ:画像 = "画像：あり_画像：水着あり_画像：裸あり_画像：なし"
+				キャラ一覧フィルタ:画像 = "画像：あり_画像：水着あり_画像：裸あり_画像：妊婦あり_画像：なし"
 			CASE 21
-				キャラ一覧フィルタ:画像 = "解説：解説あり_解説：解説なし"
+				キャラ一覧フィルタ:解説 = "解説：解説あり_解説：解説なし"
 		ENDSELECT
 	ELSEIF STRCOUNT(キャラ一覧フィルタ:リスト番号, 入力_文字)
 		;リストに既にある項目 > リストから削除
@@ -814,6 +878,8 @@ RESTART
 JUMP SHOW_CHARADATA_素質絞り込み
 
 @SHOW_CHARADATA_素質絞り込み
+#DIM DYNAMIC マイナス検索フラグ
+
 DRAWLINE
 PRINTL 캐릭터 표시를 소질 유무로 필터링합니다.
 PRINTL 복수 선택 시에는 AND 조건과 OR 조건을 전환할 수 있습니다.
@@ -831,12 +897,11 @@ IF キャラ一覧素質絞り込み:0 != ""
 	ENDIF
 	PRINT 현재 필터링 소질:
 	FOR LOCAL, 0, 99
-		LOCALS:0 = 
-		LOCALS:1 = 
+		VARSET LOCALS
 		SIF キャラ一覧素質絞り込み:LOCAL == ""
 			CONTINUE
 		SPLIT キャラ一覧素質絞り込み:LOCAL, "_", LOCALS
-		PRINTBUTTON @"[%GET_TALENTNAME(TOINT(LOCALS:0), TOINT(LOCALS:1))%]", LOCAL
+		PRINTBUTTON @"%LOCALS:2%[%GET_TALENTNAME(TOINT(LOCALS:0), TOINT(LOCALS:1))%]", LOCAL
 		LOCAL:10 += STRLENS(GET_TALENTNAME(TOINT(LOCALS:0), TOINT(LOCALS:1)))
 		IF LOCAL:10 > 50
 			PRINTL
@@ -848,6 +913,15 @@ ELSE
 	PRINT 현재 필터링 소질: 없음
 ENDIF
 PRINTL
+
+DRAWLINE
+IF マイナス検索フラグ
+	PRINTBUTTON "[일반 검색으로 전환]", 202
+ELSE
+	PRINTBUTTON "[마이너스 검색으로 전환]", 202
+ENDIF
+PRINTL
+
 DRAWLINE
 FOR LOCAL, 0, 1000
 	SIF TALENTNAME:LOCAL == ""
@@ -860,10 +934,25 @@ FOR LOCAL, 0, 1000
 		CONTINUE
 	FOR LOCAL:1 , -10, 11
 		IF GET_TALENTNAME(LOCAL, LOCAL:1) != ""
-			SIF MATCH(キャラ一覧素質絞り込み, @"{LOCAL}_{LOCAL:1}")
+			;素質ごとの個別分岐
+			;処理の問題で一括処理出来ないものがあるのでここで対処
+			IF LOCAL == 228
+				;感覚共有・命のリンクは１と２のみ表示
+				SIF LOCAL:1 < 1 || LOCAL:1 > 2
+					CONTINUE
+			ENDIF
+			;時空移動は１のみ
+			IF LOCAL == 255 && LOCAL:1 > 1
+				CONTINUE
+			ENDIF
+			SIF STRFIND(キャラ一覧素質絞り込み, @"{LOCAL}_{LOCAL:1}") >= 0
 				SETCOLOR カラーパレット("黄")
 			LOCALS = [%GET_TALENTNAME(LOCAL, LOCAL:1)%]
-			PRINTBUTTON @"%LOCALS, 20, LEFT%", @"{LOCAL}_{LOCAL:1}"
+			IF マイナス検索フラグ
+				PRINTBUTTON @"▲%LOCALS, 20, LEFT%", @"{LOCAL}_{LOCAL:1}"
+			ELSE
+				PRINTBUTTON @"%LOCALS, 20, LEFT%", @"{LOCAL}_{LOCAL:1}"
+			ENDIF
 			RESETCOLOR
 		ENDIF
 	NEXT
@@ -879,6 +968,9 @@ VARSET LOCALS
 INPUTANY
 IF RESULT == 999
 	RETURN 0
+ELSEIF RESULT == 202
+	INVERTBIT マイナス検索フラグ, 0
+	RESTART
 ELSEIF RESULT == 201
 	IF キャラ一覧素質絞り込み:99 == "AND"
 		キャラ一覧素質絞り込み:99 = 
@@ -903,19 +995,96 @@ ELSEIF RESULT >= 0 && RESULT < 99
 ENDIF
 LOCALS = %RESULTS%
 IF STRCOUNT(LOCALS, "_")
+	IF マイナス検索フラグ
+		LOCALS = %LOCALS%_▲
+	ENDIF
 	IF MATCH(キャラ一覧素質絞り込み, LOCALS)
 		キャラ一覧素質絞り込み:(FINDELEMENT(キャラ一覧素質絞り込み, LOCALS)) = 
 		RESTART
 	ELSE
 		SPLIT LOCALS, "_", LOCALS
 		IF GET_TALENTNAME(TOINT(LOCALS:0), TOINT(LOCALS:1)) != ""
-			キャラ一覧素質絞り込み:(FINDELEMENT(キャラ一覧素質絞り込み, "", , , 1)) = %LOCALS:0%_%LOCALS:1%
+			キャラ一覧素質絞り込み:(FINDELEMENT(キャラ一覧素質絞り込み, "", , , 1)) = %LOCALS:0%_%LOCALS:1%_%LOCALS:2%
 			RESTART
 		ENDIF
 	ENDIF
 ENDIF
 REUSELASTLINE 
 GOTO INPUT_LOOP_ANY
+
+
+
+@キャラ一覧素質絞り込み_感覚共有(対象キャラ, 判定文字列)
+#DIM 対象キャラ
+#DIMS 判定文字列
+
+VARSET LOCALS
+SPLIT 判定文字列, "_", LOCALS
+
+IF TOINT(LOCALS:1) == 1
+	;命のリンクパターン（グランジータルリア専用）
+	;これは数値一致なので通常処理のコピペで良い
+	IF LOCALS:2 == "▲"
+		;マイナス検索
+		IF キャラ一覧素質絞り込み:99 == "AND"
+			IF TALENT:対象キャラ:(TOINT(LOCALS:0)) == TOINT(LOCALS:1)
+				;ANDの場合は一個でも合致だとNG
+				RETURN 0
+			ENDIF
+		ELSE
+			IF TALENT:対象キャラ:(TOINT(LOCALS:0)) != TOINT(LOCALS:1)
+				;OR条件の場合は一個アウトならOK
+				RETURN 1
+			ENDIF
+		ENDIF
+	ELSE
+		;通常検索
+		IF キャラ一覧素質絞り込み:99 == "AND"
+			IF TALENT:対象キャラ:(TOINT(LOCALS:0)) != TOINT(LOCALS:1)
+				;ANDの場合は一個でもアウトだとNG
+				RETURN 0
+			ENDIF
+		ELSE
+			IF TALENT:対象キャラ:(TOINT(LOCALS:0)) == TOINT(LOCALS:1)
+				;OR条件の場合は一個当てはまればOK
+				RETURN 1
+			ENDIF
+		ENDIF
+	ENDIF
+ELSE
+	;他、感覚共有パターン
+	;これは数値でNOを管理しているので、０と１以外は全部同じ扱い
+	IF LOCALS:2 == "▲"
+		;マイナス検索
+		IF キャラ一覧素質絞り込み:99 == "AND"
+			IF TALENT:対象キャラ:(TOINT(LOCALS:0)) > 1 || TALENT:対象キャラ:(TOINT(LOCALS:0)) < 0
+				;ANDの場合は一個でも合致だとNG
+				RETURN 0
+			ENDIF
+		ELSE
+			IF TALENT:対象キャラ:(TOINT(LOCALS:0)) == 0 || TALENT:対象キャラ:(TOINT(LOCALS:0)) == 1
+				;OR条件の場合は一個アウトならOK
+				RETURN 1
+			ENDIF
+		ENDIF
+	ELSE
+		;通常検索
+		IF キャラ一覧素質絞り込み:99 == "AND"
+			IF TALENT:対象キャラ:(TOINT(LOCALS:0)) == 0 || TALENT:対象キャラ:(TOINT(LOCALS:0)) == 1
+				;ANDの場合は一個でもアウトだとNG
+				RETURN 0
+			ENDIF
+		ELSE
+			IF TALENT:対象キャラ:(TOINT(LOCALS:0)) > 1 || TALENT:対象キャラ:(TOINT(LOCALS:0)) < 0
+				;OR条件の場合は一個当てはまればOK
+				RETURN 1
+			ENDIF
+		ENDIF
+	ENDIF
+ENDIF
+
+RETURN -1
+
 
 ;---------------------------------------------------------
 ;フィルタ/ソートボタンセット表示
@@ -932,10 +1101,10 @@ GOTO INPUT_LOOP_ANY
 #DIM CONST SPACE_CNT = 26
 
 ;フィルタボタン
-ボタンテキスト '= @"[{フィルタボタン番号}]フィルタ機能"
+ボタンテキスト '= @"[{フィルタボタン番号}]필터 기능"
 PRINTBUTTON ボタンテキスト, フィルタボタン番号
 PRINTS " " * (SPACE_CNT - STRLENS(ボタンテキスト))
-PRINTFORML 현재 필터 설정:%フィルタ設定内容取得()%
+PRINTFORML 현재 필터 설정: %フィルタ設定内容取得()%
 ;フィルタボタン(追加)
 IF 追加フィルタボタン番号 != -1 && 追加フィルタボタンテキスト != ""
 	ボタンテキスト '= @"[{追加フィルタボタン番号}]%追加フィルタボタンテキスト%"
@@ -944,27 +1113,51 @@ IF 追加フィルタボタン番号 != -1 && 追加フィルタボタンテキ�
 	PRINTL
 ENDIF
 ;ソートボタン
-ボタンテキスト '= @"[{ソートボタン番号}]ソート機能"
+ボタンテキスト '= @"[{ソートボタン番号}]정렬 기능"
 PRINTBUTTON ボタンテキスト, ソートボタン番号
 PRINTS " " * (SPACE_CNT - STRLENS(ボタンテキスト))
-PRINT 현재 정렬 설정　：
+PRINT 현재 정렬 설정: 
 IF キャラ一覧ソート:0 != ""
 	ソート設定 '= @"%キャラ一覧ソート:0%(%キャラ一覧ソート:1%)"
-	PRINTFORM %ソート設定, 21, LEFT%
+	PRINTFORM %ソート設定%
 	IF STRCOUNT(キャラ一覧ソート:1, "昇順")
-		PRINTBUTTON "[내림차순으로]", ソート順ボタン番号
+		PRINTBUTTON "[내림차순으로 정렬]", ソート順ボタン番号
 	ELSEIF STRCOUNT(キャラ一覧ソート:1, "降順")
-		PRINTBUTTON "[오름차순으로]", ソート順ボタン番号
+		PRINTBUTTON "[오름차순으로 정렬]", ソート順ボタン番号
 	ENDIF
 ELSE
 	PRINT 없음(캐릭터 번호순)
 ENDIF
+PRINT  / 
+IF キャラ一覧ソート:2 != ""
+	ソート設定 '= @"%キャラ一覧ソート:2%(%キャラ一覧ソート:3%)"
+	PRINTFORM %ソート設定%
+	IF STRCOUNT(キャラ一覧ソート:3, "昇順")
+		PRINTBUTTON "[내림차순으로 정렬]", ソート順ボタン番号 + 1
+	ELSEIF STRCOUNT(キャラ一覧ソート:3, "降順")
+		PRINTBUTTON "[오름차순으로 정렬]", ソート順ボタン番号 + 1
+	ENDIF
+ELSE
+	PRINT 없음
+ENDIF
+PRINT  / 
+IF キャラ一覧ソート:4 != ""
+	ソート設定 '= @"%キャラ一覧ソート:2%(%キャラ一覧ソート:5%)"
+	PRINTFORM %ソート設定%
+	IF STRCOUNT(キャラ一覧ソート:5, "昇順")
+		PRINTBUTTON "[내림차순으로 정렬]", ソート順ボタン番号 + 2
+	ELSEIF STRCOUNT(キャラ一覧ソート:5, "降順")
+		PRINTBUTTON "[오름차순으로 정렬]", ソート順ボタン番号 + 2
+	ENDIF
+ELSE
+	PRINT 없음
+ENDIF
 PRINTL
 ;素質絞り込みボタン
-ボタンテキスト '= @"[{素質絞込ボタン番号}]素質絞り込み機能"
+ボタンテキスト '= @"[{素質絞込ボタン番号}]소질 필터링 기능"
 PRINTBUTTON ボタンテキスト, 素質絞込ボタン番号
 PRINTS " " * (SPACE_CNT - STRLENS(ボタンテキスト))
-PRINTFORML 현재 필터링 설정：%素質絞り込み設定内容取得()%
+PRINTFORML 현재 필터링 설정: %素質絞り込み設定内容取得()%
 
 ;---------------------------------------------------------
 ;フィルタ/ソートボタンセット実行部
@@ -985,7 +1178,13 @@ SELECTCASE 入力ボタン番号
 		CALL ソート設定画面表示()
 	CASE ソート順ボタン番号
 		;- キャラソート順設定
-		CALL ソート順反転処理()
+		CALL ソート順反転処理(1)
+	CASE ソート順ボタン番号 + 1
+		;- キャラソート順設定
+		CALL ソート順反転処理(3)
+	CASE ソート順ボタン番号 + 2
+		;- キャラソート順設定
+		CALL ソート順反転処理(5)
 	CASE 素質絞込ボタン番号
 		;- キャラフィルタ設定：素質絞り込み
 		CALL 素質絞り込み設定画面表示()
@@ -1005,7 +1204,7 @@ RETURN 1
 
 ;全部空なら設定なし
 SIF MATCH(キャラ一覧フィルタ, "") == VARSIZE("キャラ一覧フィルタ")
-	RETURNF "なし"
+	RETURNF "없음"
 
 FOR L_CNT, 0, VARSIZE("キャラ一覧フィルタ")
 	フィルタ項目名 '= ERDNAME(キャラ一覧フィルタ, L_CNT)
@@ -1026,17 +1225,18 @@ RETURNF 設定内容
 
 IF キャラ一覧素質絞り込み:0 != ""
 	IF キャラ一覧素質絞り込み:99 == "AND"
-		設定内容 += "(AND 조건)："
+		設定内容 += "(AND 조건):"
 	ELSE
-		設定内容 += "(OR 조건)："
+		設定内容 += "(OR 조건):"
 	ENDIF
 	FOR LOCAL, 0, 99
 		SIF キャラ一覧素質絞り込み:LOCAL == ""
 			BREAK
 		LOCALS:0 = 
 		LOCALS:1 = 
+		LOCALS:2 = 
 		SPLIT キャラ一覧素質絞り込み:LOCAL, "_", LOCALS
-		設定内容 += @"[%GET_TALENTNAME(TOINT(LOCALS:0), TOINT(LOCALS:1))%]"
+		設定内容 += @"%LOCALS:2%[%GET_TALENTNAME(TOINT(LOCALS:0), TOINT(LOCALS:1))%]"
 	NEXT
 ELSE
 	設定内容 += "없음"
@@ -1171,7 +1371,7 @@ ENDSELECT
 
 $表示処理
 DRAWLINE
-PRINTL 표시하고 싶은 약점 커맨드를 선택해 주세요.
+PRINTL 표시하고 싶은 약점 커맨드를 선택해주세요.
 DRAWLINE
 PRINTL
 
@@ -1182,7 +1382,7 @@ FOR 行カウント, 現在ページ * 表示行数, 現在ページ * 表示行
 		PRINTL
 	SIF MATCH(設定フィルタ配列, 弱点候補:行カウント)
 		SETCOLOR カラーパレット("黄")
-	PRINTBUTTON @"%@"[%弱点の欠片名前表示(弱点候補:行カウント)%]", 32, LEFT%", 行カウント
+	PRINTBUTTON @"%@"[%약점 조각 이름 표시(약점 후보:행 카운트)%]", 32, LEFT%", 行カウント
 	RESETCOLOR
 NEXT
 PRINTL
@@ -1200,7 +1400,7 @@ ELSE
 	PRINT 　　　　　　　　
 ENDIF
 PRINT 　　　
-PRINTBUTTON "[902] 선택 전체 해제", 902
+PRINTBUTTON "[902] 선택 모두 해제", 902
 PRINTL 
 PRINTL 
 
@@ -1338,7 +1538,7 @@ ARRAYSORT 出典候補, FORWARD, 1, 出典候補数-1
 
 $表示処理
 DRAWLINE
-PRINTL 표시하고 싶은 출전의 제목을 선택해 주세요.
+PRINTL 표시할 출전의 제목을 선택해 주세요.
 DRAWLINE
 PRINTL
 
@@ -1350,7 +1550,7 @@ FOR 行カウント, 現在ページ * 表示件数, 現在ページ * 表示件
 	ENDIF
 	SIF MATCH(設定フィルタ配列, 出典候補:行カウント)
 		SETCOLOR カラーパレット("黄")
-	PRINTBUTTON @"%@"[%出典候補:行カウント%]", 40, LEFT%", 行カウント
+	PRINTBUTTON @"%@"[%출전 후보:行カウント%]", 40, LEFT%", 行カウント
 	RESETCOLOR
 NEXT
 PRINTL
@@ -1416,9 +1616,9 @@ RESTART
 
 DRAWLINE
 PRINTL 검색할 문자열을 입력해 주세요.
-PRINTL ※검색 대상은 캐릭터의 NAME(별명 + 풀네임)입니다.
+PRINTL ※검색 대상은 캐릭터의NAME（별명＋풀네임）입니다.
 PRINTL ※부분 일치 검색입니다.
-PRINTL ※공백 등의 구분으로 인한 복수 검색에는 대응하고 있지 않습니다.
+PRINTL ※공백 등의 구분자로 인한 복수 검색은 지원하지 않습니다.
 DRAWLINE
 PRINTL
 INPUTS

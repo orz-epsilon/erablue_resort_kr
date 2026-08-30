@@ -13,23 +13,23 @@ TFLAG:コマンドタイプ受渡 = COMTYPE("セクハラ")
 
 @COM_TOOLTIP_360
 LOCALS = <br>■역삽입 걷기<br>
-LOCALS += "자신의 V, 혹은 A에 삽입시킨 채 상대를 행동시키는 커맨드. <br>같은 방 사람이 모두 함락된 상태일 때만 가능하지만, 함께 은밀 중일 때는 같은 장소에 비함락 캐릭터가 있어도 가능."
-LOCALS += "<br>COM 타입: 성희롱<br>획득 소스: 쾌락 C·접촉"
-LOCALS += "<br>고유 획득 경험: VorA 성교 경험(PLAYER)·C 성교 경험_VorA 삽입(TARGET)<br>"
+LOCALS += "자신의 V, 혹은 A에 삽입시킨 채 상대를 행동시키는 커맨드. <br>동실자가 전원 함락된 시에만 가능하지만, 함께 은밀 시에는 같은 장소에 비함락 캐릭터가 있어도 가능."
+LOCALS += "<br>COM 타입: 성희롱<br>획득 소스: 쾌C・접촉"
+LOCALS += "<br>고유 획득 경험: VorA 성교 경험(PLAYER)・C 성교 경험_V_or_A 삽입(TARGET)<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
 @COM360
 ;固定された後は自動で時間が進むのでモード化しない
 
 DRAWLINE
-PRINTL ■삽입할 곳을 선택해 주세요
+PRINTL ■삽입할 곳을 선택해주세요
 PRINTL
 LOCAL = 0
 IF GETBIT(TALENT:PLAYER:性別, 0) == 1 && TALENT:PLAYER:Ｖ感度 != -2
 	IF TEQUIP:PLAYER:膣 == 0
 		LOCALS = V 삽입
 		SIF TALENT:PLAYER:処女
-			LOCALS += "(처녀)"
+			LOCALS += "（처녀）"
 		PRINTBUTTONLC @"[1] %LOCALS%", 1
 		LOCAL += 1
 	ENDIF
@@ -38,7 +38,7 @@ IF TALENT:PLAYER:Ａ感度 != -2
 	IF TEQUIP:PLAYER:アナル == 0
 		LOCALS = A 삽입
 		SIF TALENT:PLAYER:Ａ処女
-			LOCALS += "(A 처녀)"
+			LOCALS += "（A 처녀）"
 		PRINTBUTTONLC @"[2] %LOCALS%", 2
 		LOCAL += 1
 	ENDIF
@@ -152,5 +152,5 @@ SELECTCASE RFLAG:コマンド結果受渡し変数
 	CASE 2
 		PRINTL 항문에 삽입했다
 ENDSELECT
-PRINTFORML 더욱 삽입한 채, 다른 작업을 시작했다……
+PRINTFORML 더욱이 삽입한 채로, 다른 작업을 시작했다……
 

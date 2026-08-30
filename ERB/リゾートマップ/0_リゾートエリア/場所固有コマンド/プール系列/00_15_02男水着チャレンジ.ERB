@@ -5,7 +5,7 @@
 ;-------------------------------------------------
 @COMNAME_PLACE_381_0_15
 #FUNCTION
-TSTR:コマンド名受渡 = 남자 수영복 챌린지
+TSTR:コマンド名受渡 = 男水着チャレンジ
 IF 施設改造度:15:0
 	TSTR:コマンド名受渡 = 
 	RETURNF 0
@@ -20,7 +20,7 @@ RETURNF 1
 TFLAG:コマンドタイプ受渡 = COMTYPE("セクハラ強")
 
 @COM_TOOLTIP_381_0_15
-LOCALS = <br>■남자 수영복 챌린지<br>
+LOCALS = <br>■男水着チャレンジ<br>
 LOCALS += "여성, 혹은 후타나리 캐릭터에게 남자 수영복을 입혀 들키지 않는지 도전하게 하는 커맨드. <br>일정 확률로 성공, 실패로 분기."
 LOCALS += "<br>COM 타입: 성희롱<br>획득 소스: 노출"
 LOCALS += "<br>고유 획득 경험: 노출 쾌락 경험(TARGET)<br>"
@@ -50,12 +50,12 @@ SIF TALENT:TARGET:目立ちたがり > 0
 IF LOCAL >= 成功閾値
 	;失敗
 	RFLAG:コマンド結果受渡し変数 = -1
-	SIF 知識素質:TARGET:性知識 > -1
+	SIF 知識素質:TARGET:性知識 > -1 && TALENT:TARGET:毛皮 < 1
 		CALL SOURCE_CALC_露出(TARGET, PLAYER, 800)
 ELSE
 	;成功
 	RFLAG:コマンド結果受渡し変数 = 1
-	SIF 知識素質:TARGET:性知識 > -1
+	SIF 知識素質:TARGET:性知識 > -1 && TALENT:TARGET:毛皮 < 1
 		CALL SOURCE_CALC_露出(TARGET, PLAYER, 500)
 ENDIF
 
@@ -72,7 +72,7 @@ SIF RFLAG:指示モード対象あなたフラグ
 	RETURN 1
 
 SKIPDISP ARG
-PRINTFORML 남자 수영복 챌린지(%CALLNAME:TARGET%)
+PRINTFORML 男水着チャレンジ(%CALLNAME:TARGET%)
 ;-------------------------------------------------
 ;実行判定処理
 ;-------------------------------------------------
@@ -134,7 +134,7 @@ IF TALENT:セフレ
 	SIF ＋表示フラグ
 		PRINT  + 
 	実行値 += 3
-	PRINT 섹스 프렌드(3)
+	PRINT 섹스 친구(3)
 	＋表示フラグ = 1
 ENDIF
 ;性知識不足
@@ -207,7 +207,7 @@ RETURN 1
 ;-------------------------------------------------
 @MESSAGE_COM381_0_15
 
-PRINTFORM %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%에게 남자 수영복을 입히고, 주변을 한 바퀴 돌고 오는 플레이를 시켰다.
+PRINTFORM %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%에게 남자 수영복을 입히고, 주변을 한 바퀴 돌고 오게 하는 플레이를 시켰다.
 
 
 @MESSAGE_COM381_0_15_非口上時
@@ -217,11 +217,11 @@ SELECTCASE RFLAG:コマンド結果受渡し変数
 		;失敗時
 		PRINTL 
 		PRINTL ……주변에 있는 엑스트라 관광객들이 수상하게 여기고 있다.
-		PRINTFORML 소곤소곤, %CALLNAME:TARGET%이(가) 여자가 아니냐는 속삭임이 들려왔다……
+			PRINTFORML 속닥속닥, %CALLNAME:TARGET%이(가) 여자가 아니냐는 속삭임이 들려왔다……
 		IF 知識素質:TARGET:性知識 < 0
 			PRINTFORML %CALLNAME:TARGET%은(는) 그 시선을 개의치 않고, 당당하게 %CALLNAME:PLAYER%의 곁으로 돌아왔다.
 		ELSE
-			PRINTFORML %CALLNAME:TARGET%은(는) 호기와 의심의 시선에 얼굴을 붉히며 견디고, 어떻게든 %CALLNAME:PLAYER%의 곁으로 돌아왔다.
+			PRINTFORML %CALLNAME:TARGET%은(는) 호기심과 의심의 시선에 얼굴을 붉히면서 견디고, 간신히 %CALLNAME:PLAYER%의 곁으로 돌아왔다.
 		ENDIF
 	CASE 1
 		;成功時
@@ -231,7 +231,7 @@ SELECTCASE RFLAG:コマンド結果受渡し変数
 		IF 知識素質:TARGET:性知識 < 0
 			PRINTFORML %CALLNAME:TARGET%은(는) 무슨 의미가 있었을까, 하고 고개를 갸웃거리고 있다.
 		ELSE
-			PRINTFORML %CALLNAME:TARGET%은(는) 들키지 않았을까 불안해하면서, 서둘러 원래 수영복으로 갈아입었다.
+			PRINTFORML %CALLNAME:TARGET%은(는) 들키지 않았을까 불안해하면서, 서둘러 원래 수영복을 다시 입었다.
 		ENDIF
 ENDSELECT
 

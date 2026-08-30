@@ -22,16 +22,16 @@ SIF PLAYER != MASTER
 RETURN 1
 
 @MESSAGE_PRE_AUTOCOM1
-PRINTFORM %CALLNAME:AUTOCOM_実行番号保存%는 커다란 가슴을 좌우로 벌려, 가슴골에 사정된
+PRINTFORM %CALLNAME:AUTOCOM_実行番号保存%은(는) 커다란 가슴을 좌우로 벌리고, 골짜기에 사정당했다
 SIF RFLAG:フィニッシュフラグ > 1
 	PRINT 대량의
 PRINT 정액을
 IF TALENT:AUTOCOM_実行番号保存:羞恥心 > 0
 	PRINT 부끄러운 듯이
 ELSEIF TALENT:AUTOCOM_実行番号保存:性的興味 && 知識素質:AUTOCOM_実行番号保存:性知識 < 3
-	PRINT 호기심 가득하게
+	PRINT 흥미진진하게
 ELSEIF TALENT:AUTOCOM_実行番号保存:恋慕
-	PRINT 사랑스러운 듯이
+	PRINT 사랑스럽게
 ENDIF
 PRINTL 보고 있다…
 

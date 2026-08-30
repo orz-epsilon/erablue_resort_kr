@@ -1,7 +1,7 @@
 
 @COMNAME502
 #FUNCTIONS
-TSTR:コマンド名受渡 = 「맛있는 술」을 권하다
+TSTR:コマンド名受渡 = 「맛있는 술」을 권한다
 
 ;===================================================
 ;コマンドタイプ
@@ -11,11 +11,11 @@ TSTR:コマンド名受渡 = 「맛있는 술」을 권하다
 TFLAG:コマンドタイプ受渡 = COMTYPE("飲み会")
 
 @COM_TOOLTIP_502
-LOCALS = <br>「맛있는 술」을 권하다<br>
+LOCALS = <br>「맛있는 술」을 권한다<br>
 LOCALS += "마시기 쉽고 도수가 높은, 통칭 「레이디 킬러」라고 불리는 술을 권한다. <br>"
 LOCALS += "<br>레이디 킬러를 소비하는 대신, 보통 술을 마시는 것보다 상대의 만취 게이지를 더 많이 증가시킬 수 있다."
-LOCALS += "<br>COM 타입: 술자리<br>취득 소스: 환락"
-LOCALS += "<br>고유 취득 경험: 음주 경험(전원)<br>"
+LOCALS += "<br>COM 타입: 술자리<br>획득 소스: 환락"
+LOCALS += "<br>고유 획득 경험: 음주 경험(전원)<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
 @COM502
@@ -87,7 +87,7 @@ RETURN 1
 ;実行時メッセージ
 ;-------------------------------------------------
 @MESSAGE_COM502
-PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%에게 「깔끔하고 달콤하며 맛있는 술」을 권했다…….
+PRINTFORML %CALLNAME:PLAYER%은(는) %CALLNAME:TARGET%에게 「깔끔하고 달콤한 맛있는 술」을 권했다……。
 PRINTL
-PRINTFORMW %TEXTR("즐거워 보이는/맛있어 보이는")% 모습으로 마시는 %CALLNAME:TARGET%의 모습에, 무심코 %CALLNAME:PLAYER%도 미소가 흘러나왔다.
+PRINTFORMW %TEXTR("즐거워 보이는/맛있어 보이는")%으로 술을 마시는 %CALLNAME:TARGET%의 모습에, 무심코 %CALLNAME:PLAYER%도 미소가 흘러나왔다.
 

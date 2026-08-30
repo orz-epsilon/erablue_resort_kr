@@ -3,7 +3,7 @@
 ;-------------------------------------------------
 @RAPE_COMNAME209
 #FUNCTIONS
-TSTR:コマンド名受渡 = 가슴을 드러내게 하다
+TSTR:コマンド名受渡 = 가슴을 드러내게 한다
 
 
 
@@ -16,10 +16,10 @@ TFLAG:コマンドタイプ受渡 = RAPE_COMTYPE("うふふ")
 
 
 @RAPE_COM_TOOLTIP_209
-LOCALS = <br>■가슴을 드러내게 하다<br>
+LOCALS = <br>■가슴을 드러내게 한다<br>
 LOCALS += "상대의 상반신 옷을 벗겨, 가슴을 노출시킨다."
 LOCALS += "<br>RAPE_COM타입：우후후<br>취득 소스：없음"
-LOCALS += "<br>고유의 취득 경험：없음<br>"
+LOCALS += "<br>고유 획득 경험: 없음<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
 @RAPE_COM209
@@ -86,7 +86,7 @@ RETURN 1
 
 IF CFLAG:TARGET:睡眠
 	IF TCVAR:TARGET:泥酔眠姦
-		PRINTFORM 만취했다
+		PRINTFORM 술에 취해 쓰러진
 	ELSE
 		PRINTFORM 숨소리를 낸다
 	ENDIF

@@ -20,8 +20,8 @@ TFLAG:コマンドタイプ受渡 = COMTYPE("日常")
 
 @COM_TOOLTIP_380_0_506
 LOCALS = <br>■성지식을 배우다<br>
-LOCALS += "상대와 함께 성지식을 공부하는 커맨드。<br>"
-LOCALS += "<br>COM 타입: 일상<br>획득 소스: 환락・정복(일정 조건 시)"
+LOCALS += "상대와 함께 성지식을 공부하는 커맨드.<br>"
+LOCALS += "<br>COM 타입: 일상<br>획득 출처: 환락・정복(일정 조건 시)"
 LOCALS += "<br>고유 획득 경험: 성지식 경험치(TARGET)<br>"
 TSTR:ツールチップ受渡 = %LOCALS%
 
@@ -110,7 +110,7 @@ SELECTCASE RFLAG:コマンド結果受渡し変数
 	CASE 0
 		PRINTFORML 몇 가지 의문점에 대해, %CALLNAME:TARGET%은(는) 올바른 지식을 얻을 수 있었다
 	CASE -1
-		PRINTFORML 별로 집중하지 못해서, %CALLNAME:TARGET%은(는) 거의 공부가 진전되지 않았다…
+		PRINTFORML 별로 집중하지 못해서, %CALLNAME:TARGET%은(는) 거의 공부를 진전시키지 못했다…
 ENDSELECT
 
 PRINTL 
