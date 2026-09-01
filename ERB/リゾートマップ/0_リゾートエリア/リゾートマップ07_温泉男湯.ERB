@@ -67,6 +67,8 @@ SELECTCASE ARG
 	CASE 711
 		TSTR:場所名受渡 = マッサージルーム
 ENDSELECT
+
+
 @DRAW_MAP_BG_0_7(SLICED, 表示文字列)
 #DIMS REF 表示文字列
 #DIMS SLICED
@@ -269,7 +271,7 @@ PRINTL 사우나를 좋아하는 소질을 가진 캐릭터는 낮에도 사우�
 		PRINTL 변화탕 라인업에 엘릭서 탕이 추가됩니다.
 		PRINTL 그 효과로 인해, 다운 상태의 캐릭터만 일일 종료 시의 체력 회복 기초값이 +1000됩니다.
 		PRINTL 
-		PRINTFORML 엘릭서 탕을 추가하시겠습니까? (필요:%{エリクシール湯費}%루피 / 유지비:1일10,000루피)
+		PRINTFORML 엘릭서 탕을 추가하시겠습니까? (필요:{エリクシール湯費}루피 / 유지비:1일10,000루피)
 		PRINTBUTTONLC "[0] 예", 0
 		PRINTBUTTONLC "[1] 아니오", 1
 		BINPUT
@@ -295,7 +297,7 @@ PRINTL 사우나를 좋아하는 소질을 가진 캐릭터는 낮에도 사우�
 		PRINTL 변화탕 라인업에 유자 탕이 추가됩니다.
 		PRINTL 그 효과로 인해, 일반 관광객이 오는 수가 미미하게 증가합니다.
 		PRINTL 
-		PRINTFORML 유자 탕을 추가하시겠습니까? (필요:%{ユズ湯費}%루피 / 유지비:1일1,000루피)
+		PRINTFORML 유자 탕을 추가하시겠습니까? (필요:{ユズ湯費}루피 / 유지비:1일1,000루피)
 		PRINTBUTTONLC "[0] 예", 0
 		PRINTBUTTONLC "[1] 아니오", 1
 		BINPUT
