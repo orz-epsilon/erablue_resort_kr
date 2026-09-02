@@ -83,7 +83,7 @@ PRINTL
 ;本来は80階まであるが、とりあえず20階まで
 FOR LOCAL, 0, 2
 	IF 開拓エリア解放フラグ:LOCAL
-		PRINTBUTTON @"[%{LOCAL * 10 + 10}%] %%TOFULL(TOSTR(LOCAL * 10 + 11))%%층부터", LOCAL * 10 + 10
+		PRINTBUTTON @"[{LOCAL * 10 + 10}] %TOFULL(TOSTR(LOCAL * 10 + 11))%층부터", LOCAL * 10 + 10
 		PRINTL
 	ENDIF
 NEXT
