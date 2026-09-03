@@ -94,7 +94,7 @@ SELECTCASE 表示キー_左
 
 		IF MONEY < 3000
 			右側表示文字列 += @"<font color='#%カラーパレット_HTML("グレーアウト")%'>[100] 가까운 섬에 광고를 낸다　(루피 부족)</font><br>"
-		ELSEIF 表示キー_右 == "近くの島"
+		ELSEIF 表示キー_右 == "가까운 섬"
 			右側表示文字列 += @"<font color='#%カラーパレット_HTML("黄")%'>[100] 가까운 섬에 광고를 낸다</font><br>"
 		ELSE
 			右側表示文字列 += "<button value='100'>[100] 가까운 섬에 광고를 낸다</button><br>"
@@ -103,7 +103,7 @@ SELECTCASE 表示キー_左
 
 		IF MONEY < 5000
 			右側表示文字列 += @"<font color='#%カラーパレット_HTML("グレーアウト")%'>[101] 넓은 범위에 광고를 낸다　(루피 부족)</font><br>"
-		ELSEIF 表示キー_右 == "広範囲"
+		ELSEIF 表示キー_右 == "광범위"
 			右側表示文字列 += @"<font color='#%カラーパレット_HTML("黄")%'>[102] 넓은 범위에 광고를 낸다</font><br>"
 		ELSE
 			右側表示文字列 += "<button value='101'>[101] 넓은 범위에 광고를 낸다</button><br>"
@@ -112,7 +112,7 @@ SELECTCASE 表示キー_左
 
 		IF MONEY < 10000
 			右側表示文字列 += @"<font color='#%カラーパレット_HTML("グレーアウト")%'>[102] 공역 전체에 광고를 낸다　(루피 부족)</font><br>"
-		ELSEIF 表示キー_右 == "空域全体"
+		ELSEIF 表示キー_右 == "공역 전체"
 			右側表示文字列 += @"<font color='#%カラーパレット_HTML("黄")%'>[102] 공역 전체에 광고를 낸다</font><br>"
 		ELSE
 			右側表示文字列 += "<button value='102'>[102] 공역 전체에 광고를 낸다</button><br>"
@@ -230,13 +230,13 @@ SELECTCASE 表示キー_左
 	CASE "通常の広告"
 		SELECTCASE RESULT
 			CASE 100
-				表示キー_右 = 近くの島
+				表示キー_右 = 가까운 섬
 				RESTART
 			CASE 101
-				表示キー_右 = 広範囲
+				表示キー_右 = 광범위
 				RESTART
 			CASE 102
-				表示キー_右 = 空域全体
+				表示キー_右 = 공역 전체
 				RESTART
 			CASE 103
 				CALL 通常広告
