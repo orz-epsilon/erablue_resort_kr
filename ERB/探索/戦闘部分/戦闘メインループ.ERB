@@ -587,19 +587,19 @@ IF ターン中奥義回数保存 > 1
 		戦闘行動キャラ = チェンバ基準キャラ保存:0
 		CALL バフ込み数値算出("攻撃力")
 		LOCAL = RESULT
-		LOCALS = 공격력
+		LOCALS = 攻撃力
 		CALL バフ込み数値算出("防御力")
 		IF LOCAL < RESULT
 			LOCAL = RESULT
-			LOCALS = 방어력
+			LOCALS = 防御力
 		ENDIF
 		CALL バフ込み数値算出("回復力")
 		IF LOCAL < RESULT
 			LOCAL = RESULT
-			LOCALS = 회복력
+			LOCALS = 回復力
 		ENDIF
 		CALL アビ対象選択テンプレート_敵全体_生者のみ
-		アビ汎用文字列:ダメージ種類 = 체인버스트 대미지
+		アビ汎用文字列:ダメージ種類 = チェンバダメージ
 		アビ汎用文字列:攻撃側使用能力値 = %LOCALS%
 		アビ汎用文字列:実行時メッセージ１ = %CALLNAME:(BATTLE_STATE:(チェンバ基準キャラ保存:0):キャラ登録番号)%들이 날린 오의의 마력이 형체를 이루어 적을 덮친다!
 		SELECTCASE ターン中奥義回数保存
