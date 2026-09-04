@@ -113,7 +113,7 @@ ELSEIF 戦闘行動キャラ < 10
 		探索口上キャラ番号 = (BATTLE_STATE:(RAND:LOCAL):キャラ登録番号)
 		TRYCALLFORM KOJO_DUNGEON_逃走時_{NO:探索口上キャラ番号}(探索口上キャラ番号)
 		CALL 口上変数初期化
-		KSTR:(K++) = 너희는 도주했다……
+		KSTR:(K++) = 너희들은 도주했다……
 		CALL メッセージ欄表示用関数()
 		探索中全体カウント:累積逃走数 += 1
 		CALL 戦闘終了時処理
