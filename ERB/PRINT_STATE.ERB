@@ -2108,11 +2108,11 @@ IF あなた特殊能力:睡眠診断 > 0 && SAVESTR:ゲームフェイズ管理
 	IF CFLAG:ARG:睡眠
 		CALL CHARA_ROUTINE_STATUS(ARG, "起床時刻")
 		予定時間 = RESULT + TCVAR:ARG:行動時間ゆらぎ
-		LOCALS += @"　기상 예정 시간: {予定시間 / 60}시 {予定시間 % 60}분"
+		LOCALS += @"　기상 예정 시간: {予定時間 / 60}시 {予定時間 % 60}분"
 	ELSE
 		CALL CHARA_ROUTINE_STATUS(ARG, "就寝時刻")
 		予定時間 = RESULT + TCVAR:ARG:行動時間ゆらぎ
-		LOCALS += @"　취침 예정 시간: {予定시間 / 60}시 {予定시間 % 60}분"
+		LOCALS += @"　취침 예정 시간: {予定時間 / 60}시 {予定時間 % 60}분"
 	ENDIF
 	LOCALS += "<br>"
 ENDIF
